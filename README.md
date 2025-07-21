@@ -40,8 +40,8 @@ For all requirements suggest latest state of the art Typescript libraries.
 
 # Execute the Programm
 
-Let the LLM act as the scrum master to coordinate the different roles and promp the user about what the next planned step is. Then lat the PO structure the requirements and create tasks in seperated nubered files for a work breakdown structure. At first coarse grained and the later detailed in a braod first approach.
-The PO (Product Owner) creates a role based promt for each task and the scrum master then loops through the tasks and works them of by assining the tasks to the next LLM role. between each assignment and execution the user is prompted for what will happen next and if there is any feedback for quality assurance.
+Let the LLM act as the scrum master to coordinate the different roles and prompt the user about what the next planned step is. Then let the PO structure the requirements and create tasks in seperated nubered files for a work breakdown structure. At first coarse grained and the later detailed in a braod first approach.
+The PO (Product Owner) creates a role based prompt for each task and the scrum master then loops through the tasks and works them of by assining the tasks to the next LLM role. between each assignment and execution the user is prompted for what will happen next and if there is any feedback for quality assurance.
 
 Quality assurance is always first priority and will lead to restructuring and repriorisation of the next tasks. If the user feedback is empty, just continue to loop the execution. Otherwise try to plan the user feedback with the PO and continue looping the tasks.
 
