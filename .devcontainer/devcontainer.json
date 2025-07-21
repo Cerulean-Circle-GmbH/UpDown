@@ -1,0 +1,14 @@
+{
+  "name": "UpDown Dev Container",
+  "dockerFile": "Dockerfile",
+  "runArgs": ["--init"],
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "ms-vscode.vscode-typescript-next",
+    "eg2.tslint",
+    "ms-azuretools.vscode-docker"
+  ],
+  "postCreateCommand": "bun --version && git --version"
+}
