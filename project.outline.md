@@ -1,5 +1,7 @@
 # Project Status Outline
 
+[Project Description](README.md)
+
 **Date:** 2025-07-21
 
 ## Current Task In Progress

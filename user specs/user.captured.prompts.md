@@ -48,3 +48,18 @@
 **Context:** Iteration 2, QA ([po/iteration-2-task-qa.md](../../po/iteration-2-task-qa.md))
 - src/shared/Scenario.ts is not a valid TypeScript file; it contains markdown formatting. Needs to be fixed.
 - Player, Lobby, and Card classes are all defined in src/shared/Player.ts. Each class should be in its own file for maintainability and DRY compliance. Needs refactoring.
+
+**Context:** Iteration 2, DevOps ([devops/iteration-2.md](../../devops/iteration-2.md))
+- The DevOps role must not only install required dependencies, but also update the package.json and run an npm update and build, so that node_modules are downloaded and the environment is ready for development. The Product Owner should be aware of these details and ensure they are included in the work breakdown and acceptance criteria.
+
+**Context:** Iteration 2, DevOps/PO ([devops/iteration-2.md](../../devops/iteration-2.md), [po/iteration-1-task-2.md](../../po/iteration-1-task-2.md))
+- The project needs a working Docker dev container that includes Bun and all required dependencies. The dev container should be built and deployed, and VS Code should be connected to the container, ensuring Bun is present and available for development. This is essential for a consistent development environment on macOS and other platforms.
+
+**Context:** Restart.md
+- Copilot: Based on the project description and outline, I am currently in the Scrum Master role. My responsibility is to coordinate the workflow, assign tasks to the appropriate roles, and ensure the process follows the work breakdown structure.
+
+    The next step, according to the project outline, is to proceed with:
+
+    Iteration 2 Task 4: Frontend Developer/Architect—Identify the main components/modules for the client.
+    I will now switch to the Frontend Developer/Architect role and begin working on identifying the main client-side components and modules. If you have any feedback or specific requirements for the frontend architecture, please let me know before I proceed.
+- User: nearly perfect, we where at task building the dev container here in po/iteration-2-task-devcontainer.md. The Devops screwed the context and you are now setting up again as a scrum master. well understood. please create arestart.md that you can read as a summay, so that next time it happens, you can bootstrap yourself into the context. then continue with the devops task and go on with the scrum master orchestration afterwards. so the overnext task is the one you found, but you missed the point where it broke in the devops task. also read the /Users/Shared/Workspaces/2cuGitHub/UpDown/user specs/user.captured.prompts.md on recover and add this user prompt to the file. then go on.

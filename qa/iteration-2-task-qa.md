@@ -23,7 +23,7 @@
 - [x] Task 1: Fix Scenario.ts File Format (done)
 - [x] Task 2: Refactor Shared Classes into Separate Files (done)
 - [x] Task 3: Remove Duplicate Scenario Type from GameModel.ts (done)
-- [ ] Task 4: Check and Report Missing TypeScript/NPM Dependencies (to do)
+- [x] Task 4: Check and Report Missing TypeScript/NPM Dependencies (done)
 
 ## Next Step
 - Continue with QA tasks and document progress in this qa/ directory.

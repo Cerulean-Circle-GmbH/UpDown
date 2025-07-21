@@ -5,7 +5,10 @@
   "main": "src/server/index.ts",
   "scripts": {
     "start:server": "bun src/server/index.ts",
-    "start:client": "bun src/client/index.ts"
+    "start:client": "bun src/client/index.ts",
+    "build": "tsc",
+    "docker:build": "docker build -f .devcontainer/Dockerfile -t updown-dev .",
+    "docker:start": "docker run -it --rm -v $(pwd):/workspace -p 3000:3000 updown-dev /bin/bash"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

@@ -2,7 +2,7 @@
 FROM ubuntu:22.04
 
 # Copy and run install script
-COPY install-dev-env.sh /tmp/install-dev-env.sh
+COPY .devcontainer/install-dev-env.sh /tmp/install-dev-env.sh
 RUN bash /tmp/install-dev-env.sh
 
 # Add non-root user
