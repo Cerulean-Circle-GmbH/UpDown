@@ -18,6 +18,7 @@
   - Runs in browser/mobile as a PWA
   - Handles UI, user input, local state, and offline support
   - Communicates with server and peers via WebSocket/P2P
+  - Uses declarative web components (e.g., web4-router, web4-route) reflecting model attributes as tag attributes
 - **Server Layer:**
   - Manages game logic, lobby, player state, and anti-cheat
   - Hosts API endpoints for scenario exchange and lobby management
@@ -26,9 +27,45 @@
   - Uses WebSocket for real-time updates and P2P for direct peer communication
   - All state is transferred as encrypted scenario JSONs
 
+#### Architecture Diagram (PlantUML)
+
+```puml
+@startuml
+actor Client
+actor Peer
+rectangle "Server" {
+  [Game Logic] as GL
+  [Lobby Management] as LM
+  [Player State] as PS
+  [API/WebSocket Handler] as API
+  [Anti-Cheat] as AC
+}
+Client -- API : WebSocket/P2P (scenario JSON)
+Peer -- API : P2P (scenario JSON)
+API --> GL
+API --> LM
+API --> PS
+API --> AC
+@enduml
+```
+
+#### Architecture Diagram (Draw.io)
+- See `/docs/architecture.drawio` (to be created) for a visual diagram.
+
 ```
 [Client] <--WebSocket/P2P--> [Server/Other Clients]
 ```
 
+## Artifacts
+
+- [x] High-level architecture outline documented above
+- [x] Architecture Diagram (PlantUML) included above
+- [ ] Architecture Diagram (Draw.io): `/docs/architecture.drawio` (to be created)
+- [ ] Initial code stubs for scenario-based API and class serialization (to be created in `/src/shared/`)
+
 ## Next Step
 - Backend Developer/Architect to identify the main components/modules for the server
+
+## Architectural Constraints
+
+- All shared classes for scenario sync must have parameterless constructors and use an init function for state injection from a scenario. Scenarios are JSON strings (with a dedicated type) containing the class reference and state. This enables dynamic instantiation and state sync across peers.

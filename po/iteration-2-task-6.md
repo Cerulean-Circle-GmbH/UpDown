@@ -25,5 +25,42 @@
   - All choices prioritize modern, lightweight, and high-performance tech with strong TypeScript support and easy PWA/offline capabilities.
   - Libraries are chosen for minimalism, speed, and compatibility with the scenario-based API.
 
+#### Technology Stack Diagram (PlantUML)
+
+```puml
+@startuml
+package "Client" {
+  [Lit Web Components]
+  [TypeScript]
+  [State Management]
+  [WebSocket/P2P]
+  [Vite/Bun]
+  [Workbox/PWA]
+}
+package "Server" {
+  [Bun]
+  [TypeScript]
+  [ws]
+  [Persistence]
+  [Anti-Cheat]
+}
+package "Communication" {
+  [WebSocket]
+  [HTTPS]
+  [P2P]
+}
+[Lit Web Components] --> [State Management]
+[State Management] --> [WebSocket/P2P]
+[WebSocket/P2P] --> [ws]
+[ws] --> [Persistence]
+[ws] --> [Anti-Cheat]
+[WebSocket] --> [HTTPS]
+[WebSocket] --> [P2P]
+@enduml
+```
+
+#### Technology Stack Diagram (Draw.io)
+- See `/docs/tech-stack.drawio` (to be created) for a visual diagram.
+
 ## Next Step
 - Scrum Master to update the project status outline and prompt for quality assurance feedback on the completed WBS and prompts for iteration 2

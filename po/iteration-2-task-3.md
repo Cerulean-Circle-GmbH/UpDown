@@ -14,5 +14,32 @@
   - **Anti-Cheat System:** Monitors for suspicious activity, enforces fair play, and bans cheaters.
 - High-level interaction: The API/WebSocket handler is the main entry point, routing scenario messages to the appropriate modules. Game logic and player state modules interact closely, while lobby management coordinates player flow. Persistence and anti-cheat modules support the core gameplay loop.
 
+#### Server Architecture Diagram (PlantUML)
+
+```puml
+@startuml
+actor Client
+rectangle "Server" {
+  [Game Logic Engine]
+  [Lobby Management]
+  [Player State Management]
+  [Session/Authentication]
+  [API/WebSocket Handler]
+  [Persistence/Storage]
+  [Anti-Cheat System]
+}
+Client -- [API/WebSocket Handler]
+[API/WebSocket Handler] --> [Game Logic Engine]
+[API/WebSocket Handler] --> [Lobby Management]
+[API/WebSocket Handler] --> [Player State Management]
+[API/WebSocket Handler] --> [Session/Authentication]
+[API/WebSocket Handler] --> [Persistence/Storage]
+[API/WebSocket Handler] --> [Anti-Cheat System]
+@enduml
+```
+
+#### Server Architecture Diagram (Draw.io)
+- See `/docs/server-architecture.drawio` (to be created) for a visual diagram.
+
 ## Next Step
 - Frontend Developer/Architect to identify the main components/modules for the client
