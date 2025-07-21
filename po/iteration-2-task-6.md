@@ -5,10 +5,10 @@
 ## Task 6: Document the Technology Stack and Libraries for Each Layer/Component
 
 - **Client:**
-  - Framework: Lit (Web Components)
-  - Language: TypeScript (ES2020+)
-  - State Management: Custom or lightweight (e.g., Redux, Zustand)
-  - Networking: Native WebSocket API, P2P (simple-peer or similar)
+  - Framework: Lit (Web Components) for declarative UI, including custom elements like web4-router and web4-route that reflect model attributes as tag attributes.
+  - Language: TypeScript (ES2020+), sharing class definitions with backend for consistent state handling.
+  - State Management: Custom or lightweight (e.g., Redux, Zustand), with real-time sync to backend and peers using scenario-based API.
+  - Networking: Native WebSocket API, P2P (simple-peer or similar), exchanging scenario JSONs for state sync.
   - Build Tools: Vite or Bun
   - PWA Support: Workbox or native browser APIs
 - **Server:**

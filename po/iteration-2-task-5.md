@@ -8,7 +8,7 @@
 - **Game State:** Current round, cards in play, player list, lobby state, etc.
 - **Lobby:** Lobby ID, host, player list, settings, status.
 - **Card:** Suit, value, type (up/down/even/special), owner.
-- **Message/Event Types:** Scenario JSONs for state sync, join/leave, play card, chat, error, etc.
+- **Message/Event Types:** Scenario JSONs for state sync, join/leave, play card, chat, error, etc. All scenario messages include class references and encrypted model attributes, supporting real-time sync between frontend and backend.
 - **API Interfaces:**
   - Client-to-server: Send scenario (join, play, chat)
   - Server-to-client: Broadcast scenario (state update, error, lobby update)

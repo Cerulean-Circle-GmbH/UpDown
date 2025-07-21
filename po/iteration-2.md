@@ -10,6 +10,7 @@
 4. Identify the main components/modules for the client (UI, state management, networking, etc.).
 5. Specify the initial data models and interfaces for communication between client and server.
 6. Document the technology stack and libraries to be used for each layer/component.
+7. Ensure that the same classes are loaded on both frontend and backend, with real-time state sync on any change. The frontend must be programmed declaratively, using web components (e.g., web4-router and web4-route) that reflect model attributes as tag attributes, which are also included in scenarios for sync.
 
 ## Next Step
 - Generate role-based prompts for each WBS task.
@@ -41,3 +42,7 @@
 ## 6. Document the technology stack and libraries to be used for each layer/component
 **Role:** Tech Lead / Architect
 - Prompt: Specify the recommended technology stack and libraries for each architectural layer and component, justifying choices where relevant.
+
+## 7. Ensure real-time state synchronization and declarative frontend programming
+**Role:** Full Stack Developer / Architect
+- Prompt: Describe the approach to ensure real-time state synchronization between frontend and backend, and how the frontend will be programmed declaratively using web components.
