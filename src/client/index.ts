@@ -1,0 +1,3 @@
+// ...client entry point stub...
+console.log('Client booting...');
+// TODO: Import and initialize client-side classes and web components

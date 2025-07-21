@@ -69,3 +69,49 @@ API --> AC
 ## Architectural Constraints
 
 - All shared classes for scenario sync must have parameterless constructors and use an init function for state injection from a scenario. Scenarios are JSON strings (with a dedicated type) containing the class reference and state. This enables dynamic instantiation and state sync across peers.
+- The codebase must avoid duplicate definitions of Scenario (DRY). Scenario must be strictly typed (e.g., state: Model), not any. Each class should be in its own file and organized for easy import in both server and client.
+
+# Architect Log - Bun Project Structure Proposal
+
+**Date:** 2025-07-21
+
+## Task: Design a Scalable Bun Project Structure
+
+- Propose a filesystem structure for a scalable Bun-based project supporting both server and client code, with shared models and strict typing.
+- Include locations for:
+  - Server entry point (e.g., src/server/index.ts)
+  - Client entry point (e.g., src/client/index.ts)
+  - Shared code (e.g., src/shared/)
+  - Web components (e.g., src/client/components/)
+  - Scenario and model types (e.g., src/shared/Scenario.ts)
+  - Diagrams and docs (e.g., docs/)
+  - Tests (e.g., tests/)
+  - Configuration files (package.json, tsconfig.json, bunfig.toml)
+
+## Proposed Structure
+
+```
+UpDown/
+├── src/
+│   ├── server/
+│   │   └── index.ts
+│   ├── client/
+│   │   ├── index.ts
+│   │   └── components/
+│   │       └── web4-router.ts
+│   └── shared/
+│       ├── GameModel.ts
+│       ├── Player.ts
+│       ├── Lobby.ts
+│       ├── Card.ts
+│       └── Scenario.ts
+├── tests/
+├── docs/
+├── package.json
+├── tsconfig.json
+├── bunfig.toml
+└── README.md
+```
+
+## Next Step
+- Create minimal package.json, tsconfig.json, and bunfig.toml files, and add server/client entry points as stubs.

@@ -19,6 +19,7 @@
 - The same class definitions are loaded on both frontend and backend, and state is synced in real time using scenario JSONs.
 - The frontend is programmed declaratively using web components (e.g., web4-router, web4-route), where tag attributes reflect model attributes and are included in scenarios for sync.
 - The scenario sync architecture requires that all class constructors are parameterless. Instances must be created without prior knowledge of constructor signatures. Initialization with state should be done via an init function that takes a scenario. Scenarios are JSON strings (with a dedicated type) containing the class reference and state. This enables components to move or be recreated across peers in their state.
+- The current code structure is not scalable. Each class should be in its own TypeScript file and organized for easy import in both server and client. Avoid duplicate definitions of Scenario (DRY principle). Scenario must be strictly typed (e.g., state: Model), not any.
 
 #### Product Flow Diagram (PlantUML)
 

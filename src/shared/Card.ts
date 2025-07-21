@@ -1,9 +1,7 @@
 import { Scenario, Model } from './Scenario';
 
-// src/shared/Player.ts
-export class Player {
-  // Example attributes: id, name, score, hand, etc.
-  // Always use a parameterless constructor for scenario sync
+export class Card {
+  // Example attributes: suit, value, type, owner, etc.
   constructor() {
     // Set up default state here
   }
@@ -11,11 +9,11 @@ export class Player {
     Object.assign(this, scenario.state);
   }
   serializeScenario(): string {
-    return JSON.stringify({ class: 'Player', state: this });
+    return JSON.stringify({ class: 'Card', state: this });
   }
-  static deserializeScenario(scenario: string): Player {
+  static deserializeScenario(scenario: string): Card {
     const obj = JSON.parse(scenario);
-    const instance = new Player();
+    const instance = new Card();
     instance.initFromScenario(obj);
     return instance;
   }

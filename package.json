@@ -1,0 +1,13 @@
+{
+  "name": "updown",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/server/index.ts",
+  "scripts": {
+    "start:server": "bun src/server/index.ts",
+    "start:client": "bun src/client/index.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
