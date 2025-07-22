@@ -6,30 +6,27 @@ This file documents the next planned step for each role. After user confirmation
 
 ---
 
-## Planned Restart Note
-- The user will perform a planned shutdown after this prompt. Upon restart, the Scrum Master will:
-  - Read restart.md, the latest sprint’s outline.md, user-prompts.md, and daily.md.
-  - Resume orchestration as Scrum Master, starting with the first planned step for Sprint 3.
-  - Ensure all roles, tasks, and feedback are aligned with the current sprint context.
-  - After Sprint 3, proceed to Sprint 4 to repeat unfinished Sprint 2 tasks.
+## Sprint 3 Planning Phase (in progress)
+- Sprint 3 planning is underway. The PO has created and numbered the first DevOps task ([sprints/iteration-3/iteration-3-task-1-devops.md](../sprints/iteration-3/iteration-3-task-1-devops.md)), and the outline has been updated to reference it.
+- The Scrum Master must continue to update this file after every step, including after any change to task files, outline, or user-prompts.
 
 ## Scrum Master
-- Orchestrate the start of Sprint 3 by confirming the Architect's completion of the containerized developer workflow documentation ([docs/container-workflow.md](../../docs/container-workflow.md)). After user confirmation, prompt DevOps to refactor npm scripts and provide attach/exec instructions as described in [sprints/iteration-3/iteration-3-task-2.md](../sprints/iteration-3/iteration-3-task-2.md).
+- Monitor planning progress and ensure all roles are aligned with the updated outline and task files.
 
 ## Product Owner (PO)
-- Await completion of DevOps and Architect tasks in Sprint 3. Next, update onboarding and developer documentation as described in [sprints/iteration-3/iteration-3-task-3.md](../sprints/iteration-3/iteration-3-task-3.md) after DevOps completes their step.
+- Continue creating and numbering tasks for Sprint 3 as needed, referencing them in the outline and user-prompts.
 
 ## Architect
-- Completed: Documented the containerized developer workflow in [docs/container-workflow.md](../../docs/container-workflow.md). Await user confirmation to proceed to the next role.
+- Review and update the containerized developer workflow documentation as needed for Sprint 3.
 
 ## DevOps
-- Next: Refactor npm scripts for container lifecycle and provide attach/exec instructions as described in [sprints/iteration-3/iteration-3-task-2.md](../sprints/iteration-3/iteration-3-task-2.md). Await user confirmation to proceed.
+- Begin work on [Sprint 3 Task 1: Robust Container and Local Workflow](../sprints/iteration-3/iteration-3-task-1-devops.md).
 
 ## Developer
-- No planned next step (awaiting DevOps and PO).
+- Await completion of DevOps and PO tasks before starting implementation.
 
 ## QA
-- No planned next step (awaiting PO and DevOps).
+- Review planning progress and confirm that all new tasks are numbered, referenced, and documented before implementation begins.
 
 ---
 

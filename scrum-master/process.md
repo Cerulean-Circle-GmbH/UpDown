@@ -10,6 +10,8 @@
 - All roles must review the planning summary and update their own documentation and task files accordingly.
 - The planning phase is documented in process.md and referenced in daily.md and outline.md.
 - Only after QA user approval does the PO proceed to create or update tasks for the new sprint.
+- The Scrum Master must guarantee that before every question to the QA/user, the PO has created or updated the relevant task files for all new or changed requirements, and that these files exist and are referenced in the outline and user-prompts for the sprint. This is second priority after fulfilling direct user requests.
+- The PO must number all new task files for each sprint, starting with 1, and ensure filenames reflect their order and role (e.g., iteration-3-task-1-devops.md). This ensures clarity and extensibility for additional tasks per role.
 
 ## Role of the Scrum Master
 - Always start as Scrum Master after a restart or context loss.
@@ -41,6 +43,7 @@
 - Maintain a daily.md file in the scrum-master folder to document the next planned step for each role. This file is updated daily or after each major process step, and always documents the next planned step for each role. After user confirmation, the Scrum Master executes the next step for each role until QA, guidance, or confirmation is required.
 - The daily.md file in scrum-master/ must always reference task files using markdown links and reflect the current, unique state for each role after every role change or major process step. Do not concatenate entries; always keep the file short and up to date.
 - The daily.md file is updated after every role change or major process step, and is the authoritative source for the next planned step for each role.
+- The Scrum Master must update `scrum-master/daily.md` after every step, including after any change to task files, outline, or user-prompts, to reflect the current next step for each role. This is mandatory for every process or planning action.
 
 ## Information for the Team
 - The Scrum Master is responsible for process integrity, traceability, and quality assurance.

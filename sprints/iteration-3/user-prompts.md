@@ -20,6 +20,10 @@
 ### DevOps
 - Refactor npm scripts for container lifecycle and provide attach/exec instructions ([devops/](../../devops/)).
 - Ensure all scripts are maintainable and documented in the `devops` directory.
+- Ensure that the project can be bootstrapped, built, and started both inside and outside the dev container. The process must:
+  - Detect if it is running inside a Docker container and if the correct Docker image is used.
+  - Ensure that running `npm start` inside or outside the container always does the right thing (bootstraps, builds, and starts the container or the app as appropriate).
+  - Capture all cases in the DevOps scripts for robust developer onboarding and workflow.
 
 ### Developer
 - Begin producing implementation artifacts for assigned tasks as soon as DevOps and PO complete their steps.
@@ -39,3 +43,13 @@
 ---
 
 This file documents the PO's planning and task assignments for Sprint 3. All roles must review and follow these tasks as they proceed.
+
+# Sprint 3 User Prompts and Requirements
+
+**Date:** 2025-07-22
+
+- The PO must specify DevOps tasks to ensure that the project can be bootstrapped, built, and started both inside and outside the dev container. The process must:
+  - Detect if it is running inside a Docker container and if the correct Docker image is used.
+  - Ensure that running `npm start` inside or outside the container always does the right thing (bootstraps, builds, and starts the container or the app as appropriate).
+  - Capture all cases in the DevOps scripts for robust developer onboarding and workflow.
+- These requirements must be reflected in the DevOps scripts and onboarding documentation for Sprint 3.

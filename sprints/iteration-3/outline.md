@@ -16,6 +16,11 @@
 - Coordinate the start of Sprint 3 and monitor progress.
 
 ### Product Owner (PO)
+- Specify DevOps tasks to ensure that the project can be bootstrapped, built, and started both inside and outside the dev container. The process must:
+  - Detect if it is running inside a Docker container and if the correct Docker image is used.
+  - Ensure that running `npm start` inside or outside the container always does the right thing (bootstraps, builds, and starts the container or the app as appropriate).
+  - Capture all cases in the DevOps scripts for robust developer onboarding and workflow.
+- Assign these tasks to DevOps for implementation in Sprint 3.
 - Create and update onboarding and developer documentation to reflect new process and workflow.
 - Assign tasks to all roles for Sprint 3, ensuring each task produces a concrete artifact.
 - Ensure all new requirements and user feedback are reflected in the sprint’s task files.
@@ -25,8 +30,10 @@
 - Ensure all architectural artifacts are created and referenced in the relevant files.
 
 ### DevOps
+- [Sprint 3 Task 1: Robust Container and Local Workflow](./iteration-3-task-1-devops.md)
 - Refactor npm scripts for container lifecycle and provide attach/exec instructions.
 - Ensure all scripts are maintainable and documented in the `devops` directory.
+- Implement PO-specified tasks to handle all bootstrap/build/start cases inside and outside the dev container.
 
 ### Developer
 - Begin producing implementation artifacts for assigned tasks as soon as DevOps and PO complete their steps.
