@@ -1,0 +1,91 @@
+- on the front end side the same classes have to be loaded as on the backend. the state of these classes has to be synced in realtime on any change. the front end shall be programmed in a very declarative way. here an idea for a web component usage on the cliient index.html page:
+
+    ```
+    <web4-router>
+    <web4-route page="Lobby" path="lobby">
+    <web4-route page="Login" path="login">
+    <web4-route page="Player" path="login/player">
+    <web4-route page="Spectator" path="login/spectator">
+    ...
+    </web4-router>
+    ```
+
+    while  web4-router is a webComponent extending a serverside component and configuring the app in a declarative way. the attributes of the tags are the same as the model attributes in the corresponding classes and will also be reflected in the scenarios, that are then exchnaged for sync.
+
+    Please check ho this spec influences the itteration2 and add it to the high level iteration2 file and see how the itteration 2 files will change. then go on as planned.
+
+# User Quality Feedback (2025-07-21)
+
+- The Scrum Master marked Iteration 2 tasks as complete, but the roles have not yet produced any implementation artifacts (e.g., code, diagrams, class/module files).
+- Best practice is for each role to execute their assigned tasks and create the required artifacts as part of the same iteration, not to defer all implementation to a later iteration.
+- The process should be updated: after each task is defined and detailed, the responsible role must immediately create the required artifacts before the task is marked as complete.
+- The Scrum Master should review the current status and prompt the roles to begin producing the actual deliverables for Iteration 2 tasks, starting with the client components for Task 4.
+- A very essential architectural constraint for the scenario sync is that constructors are never having parameters. An instance needs to be created without prior knowledge to the class and its constructor signature. The class will always create a valid default state for the instance, but can also always be brought into a synchronized state by injecting the decrypted scenario state JSON. This way components can "move" across peers in their state or be recreated somewhere in their state. If parameters are needed for the instance state, use init functions that initialize with a scenario. Scenarios are JSON strings but should be their own type, as they hold the unencrypted reference to the class they have to load to create an instance. Add this feedback to the user md and check which of the tasks have to be modified to reflect this user spec.
+
+---
+
+**Context:** Iteration 2, Task 1 ([po/iteration-2-task-1.md](../../po/iteration-2-task-1.md))
+- The scenario sync architecture requires that all class constructors are parameterless. Instances must be created without prior knowledge of constructor signatures. Initialization with state should be done via an init function that takes a scenario. Scenarios are JSON strings (with a dedicated type) containing the class reference and state. This enables components to move or be recreated across peers in their state.
+
+**Context:** Iteration 2, Task 2 ([po/iteration-2-task-2.md](../../po/iteration-2-task-2.md))
+- All shared classes for scenario sync must have parameterless constructors and use an init function for state injection from a scenario. Scenarios are JSON strings (with a dedicated type) containing the class reference and state. This enables dynamic instantiation and state sync across peers.
+
+**Context:** Iteration 2, General ([project.outline.md](../../project.outline.md))
+- The Scrum Master marked Iteration 2 tasks as complete, but the roles have not yet produced any implementation artifacts (e.g., code, diagrams, class/module files).
+- Best practice is for each role to execute their assigned tasks and create the required artifacts as part of the same iteration, not to defer all implementation to a later iteration.
+- The process should be updated: after each task is defined and detailed, the responsible role must immediately create the required artifacts before the task is marked as complete.
+- The Scrum Master should review the current status and prompt the roles to begin producing the actual deliverables for Iteration 2 tasks, starting with the client components for Task 4.
+
+**Context:** Iteration 2, Task 1 & 2 ([po/iteration-2-task-1.md](../../po/iteration-2-task-1.md), [po/iteration-2-task-2.md](../../po/iteration-2-task-2.md))
+- A very essential architectural constraint for the scenario sync is that constructors are never having parameters. An instance needs to be created without prior knowledge to the class and its constructor signature. The class will always create a valid default state for the instance, but can also always be brought into a synchronized state by injecting the decrypted scenario state JSON. This way components can "move" across peers in their state or be recreated somewhere in their state. If parameters are needed for the instance state, use init functions that initialize with a scenario. Scenarios are JSON strings but should be their own type, as they hold the unencrypted reference to the class they have to load to create an instance.
+
+**Context:** Iteration 2, Task 1 & 2 ([po/iteration-2-task-1.md](../../po/iteration-2-task-1.md), [po/iteration-2-task-2.md](../../po/iteration-2-task-2.md))
+- The current code is good, but the code structure will not be scalable. Each class should be in its own ts file and in a structure easy to find and easy to import in the later server and client. Additionally, there is a fundamental DO NOT REPEAT YOURSELF pattern, that prohibits the duplicate definition of Scenario, as it may lead to fatal inconsistencies. Also, strict typing is absolutely essential. Even if the Scenario state is a JSON it never should be of type Any. Make it e.g. of type Model.
+
+**Context:** Iteration 2, Server/Client Bootstrapping ([future tasks])
+- Server and client booting files will need to be created that load the new classes. The architect should design a viable structure of the filesystem for a Bun project, including the necessary package.json and other TypeScript meta files.
+
+**Context:** Iteration 2, QA ([po/iteration-2-task-qa.md](../../po/iteration-2-task-qa.md))
+- src/shared/Scenario.ts is not a valid TypeScript file; it contains markdown formatting. Needs to be fixed.
+- Player, Lobby, and Card classes are all defined in src/shared/Player.ts. Each class should be in its own file for maintainability and DRY compliance. Needs refactoring.
+
+**Context:** Iteration 2, DevOps ([devops/iteration-2.md](../../devops/iteration-2.md))
+- The DevOps role must not only install required dependencies, but also update the package.json and run an npm update and build, so that node_modules are downloaded and the environment is ready for development. The Product Owner should be aware of these details and ensure they are included in the work breakdown and acceptance criteria.
+
+**Context:** Iteration 2, DevOps/PO ([devops/iteration-2.md](../../devops/iteration-2.md), [po/iteration-1-task-2.md](../../po/iteration-1-task-2.md))
+- The project needs a working Docker dev container that includes Bun and all required dependencies. The dev container should be built and deployed, and VS Code should be connected to the container, ensuring Bun is present and available for development. This is essential for a consistent development environment on macOS and other platforms.
+
+**Context:** Restart.md
+- Copilot: Based on the project description and outline, I am currently in the Scrum Master role. My responsibility is to coordinate the workflow, assign tasks to the appropriate roles, and ensure the process follows the work breakdown structure.
+
+    The next step, according to the project outline, is to proceed with:
+
+    Iteration 2 Task 4: Frontend Developer/Architect—Identify the main components/modules for the client.
+    I will now switch to the Frontend Developer/Architect role and begin working on identifying the main client-side components and modules. If you have any feedback or specific requirements for the frontend architecture, please let me know before I proceed.
+- User: nearly perfect, we where at task building the dev container here in po/iteration-2-task-devcontainer.md. The Devops screwed the context and you are now setting up again as a scrum master. well understood. please create arestart.md that you can read as a summay, so that next time it happens, you can bootstrap yourself into the context. then continue with the devops task and go on with the scrum master orchestration afterwards. so the overnext task is the one you found, but you missed the point where it broke in the devops task. also read the /Users/Shared/Workspaces/2cuGitHub/UpDown/user specs/user.captured.prompts.md on recover and add this user prompt to the file. then go on.
+
+---
+
+**User Feedback (2025-07-22):**
+
+**Context:** Iteration 2, Scrum Master Process ([scrum-master/process.md](../../scrum-master/process.md), [project.outline.md](../../project.outline.md))
+- When recovering from a process interruption, always start as Scrum Master, orchestrate all roles, and update the project outline with the last successful role and task.
+- The PO must update the task files (e.g., add new tasks) to reflect new plans and requirements before implementation.
+- Every completed task must result in a concrete artifact (specification, code, or documentation) in the workspace.
+- The npm start script for Docker must be smart: it should build if needed, start the container in detached mode, and not block the terminal or Copilot.
+- User feedback must be incorporated before executing new tasks, especially after planning with the PO.
+- The API and modeling approach must follow a radical OOP, protocol-less design: all actions should be methods on model classes, not protocol-style function calls.
+- The new section "# backup and QA user annotations" in docs/api-and-model-spec.md is authoritative and must be considered in all future planning and documentation.
+- The Scrum Master must always prompt the user for feedback before executing new or changed tasks, and document all new user feedback and process changes.
+- The Scrum Master must ensure that the PO and all roles are aware of and act on QA/user annotations.
+
+**Context:** Iteration 2, DevOps/Developer/Process ([project.outline.md](../../project.outline.md), [devops/iteration-2.md](../../devops/iteration-2.md), [scrum-master/process.md](../../scrum-master/process.md))
+- The project outline must be updated after each role shift or major task completion to reflect the current status and next steps.
+- The error with Bun not being found occurred because commands were run outside the dev container. All Bun-related commands must be run inside the dev container.
+- The DevOps role must ensure onboarding and process docs clearly instruct developers to start and use the dev container for all Bun-related development.
+- The Scrum Master must guarantee these requirements are documented and enforced in the process and onboarding docs.
+
+**Context:** Iteration 2/3 Transition, Scrum Master Process ([project.outline.md](../../project.outline.md), [scrum-master/process.md](../../scrum-master/process.md))
+- As Scrum Master, always update user.captured.prompts.md and project.outline.md after every major process, role shift, or user feedback.
+- Lessons learned and process improvements must be documented in scrum-master/process.md.
+- Iteration 2's approach to container and server workflow was incomplete; a new iteration (Iteration 3) is being started to address this, and Iteration 4 will address any remaining Iteration 2 tasks after Iteration 3 is complete.

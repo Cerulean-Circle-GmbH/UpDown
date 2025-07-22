@@ -19,12 +19,23 @@
 - Always update user.captured.prompts.md and project.outline.md after every major process, role shift, or user feedback.
 - After starting a new iteration or major process change, document the rationale and next steps in process.md.
 - When fixing or refactoring an iteration, clearly mark the transition and ensure all lessons learned are captured for future reference.
+- Organize all process, outline, and user feedback files by iteration/sprint to keep context manageable and improve performance.
+- For each new iteration, create a dedicated folder (e.g., sprints/iteration-2/, sprints/iteration-3/) containing:
+  - outline.md (project outline for the iteration)
+  - user-prompts.md (user feedback for the iteration)
+  - process.md (scrum master/process notes for the iteration)
+- Only read and update the files for the current iteration unless a cross-iteration reference is needed.
+- Add this structure and best practice to restart.md and process.md.
+- At the end of each sprint, conduct a retrospective (retro) to review what went well, what could be improved, and to identify process changes or improvement actions for the next sprint.
+- Each sprint/iteration will have its own retro.md file (e.g., sprints/iteration-2/retro.md) to capture sprint-specific retrospective notes, feedback, and improvement actions.
+- The global scrum-master/process.md is updated with cross-sprint best practices and lessons learned based on retro outcomes.
 
 ## Information for the Team
 - The Scrum Master is responsible for process integrity, traceability, and quality assurance.
 - All roles must follow the radical OOP, protocol-less approach and respect QA/user annotations.
 - The process is iterative and user feedback is always prioritized.
 - All documentation, onboarding, and process files must be kept up to date as the project evolves.
+- The general scrum-master/process.md file is the authoritative source for Scrum Master and LLM process documentation and is not duplicated per sprint. Remove any process.md files from sprint folders to avoid confusion. All process improvements and lessons learned should be added to the global process.md.
 
 ---
 

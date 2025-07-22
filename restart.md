@@ -25,6 +25,10 @@
 - Always prompt the user for feedback before executing new or changed tasks.
 - Document all new user feedback and process changes in `user specs/user.captured.prompts.md`.
 
+## Iteration and Sprint Management
+- To keep context manageable, split all outline, user feedback, and process files by iteration/sprint into dedicated folders (e.g., sprints/iteration-2/, sprints/iteration-3/).
+- For each new iteration, only read and update the files for the current sprint unless a cross-iteration reference is needed.
+
 ---
 
 This file is for Scrum Master context recovery. If context is lost, read this file and the referenced files to resume work correctly. Always update the outline and task files to reflect the current state and next steps.
