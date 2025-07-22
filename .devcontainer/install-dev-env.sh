@@ -8,5 +8,5 @@ rm -rf /var/lib/apt/lists/*
 
 # Install Bun
 curl -fsSL https://bun.sh/install | bash
-# Verify Bun installation
-/root/.bun/bin/bun --version
+# Verify Bun installation for devuser
+sudo -u devuser /home/devuser/.bun/bin/bun --version

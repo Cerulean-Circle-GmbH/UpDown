@@ -28,4 +28,12 @@
 - [ ] Task 5: Verify Environment Consistency (to do)
 
 ## Next Step
-- Assign these tasks to DevOps for execution and track progress in the devops/ directory.
+
+---
+
+## Interruption/Restart Point Documentation
+
+**Status as of 2025-07-21:**
+Process interrupted at DevOps: dev container setup (Bun not installed in container).
+Next step: Install Bun in the dev container and verify installation before proceeding with further environment setup.
+
