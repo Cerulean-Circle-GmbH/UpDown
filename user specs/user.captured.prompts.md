@@ -68,6 +68,7 @@
 
 **User Feedback (2025-07-22):**
 
+**Context:** Iteration 2, Scrum Master Process ([scrum-master/process.md](../../scrum-master/process.md), [project.outline.md](../../project.outline.md))
 - When recovering from a process interruption, always start as Scrum Master, orchestrate all roles, and update the project outline with the last successful role and task.
 - The PO must update the task files (e.g., add new tasks) to reflect new plans and requirements before implementation.
 - Every completed task must result in a concrete artifact (specification, code, or documentation) in the workspace.
@@ -78,19 +79,13 @@
 - The Scrum Master must always prompt the user for feedback before executing new or changed tasks, and document all new user feedback and process changes.
 - The Scrum Master must ensure that the PO and all roles are aware of and act on QA/user annotations.
 
----
-
-**User Feedback (2025-07-22):**
-
+**Context:** Iteration 2, DevOps/Developer/Process ([project.outline.md](../../project.outline.md), [devops/iteration-2.md](../../devops/iteration-2.md), [scrum-master/process.md](../../scrum-master/process.md))
 - The project outline must be updated after each role shift or major task completion to reflect the current status and next steps.
 - The error with Bun not being found occurred because commands were run outside the dev container. All Bun-related commands must be run inside the dev container.
 - The DevOps role must ensure onboarding and process docs clearly instruct developers to start and use the dev container for all Bun-related development.
 - The Scrum Master must guarantee these requirements are documented and enforced in the process and onboarding docs.
 
----
-
-**User Feedback (2025-07-22):**
-
+**Context:** Iteration 2/3 Transition, Scrum Master Process ([project.outline.md](../../project.outline.md), [scrum-master/process.md](../../scrum-master/process.md))
 - As Scrum Master, always update user.captured.prompts.md and project.outline.md after every major process, role shift, or user feedback.
 - Lessons learned and process improvements must be documented in scrum-master/process.md.
 - Iteration 2's approach to container and server workflow was incomplete; a new iteration (Iteration 3) is being started to address this, and Iteration 4 will address any remaining Iteration 2 tasks after Iteration 3 is complete.
