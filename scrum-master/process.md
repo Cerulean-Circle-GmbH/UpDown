@@ -16,6 +16,9 @@
 - If a process or context recovery is needed, follow the steps in restart.md and update it as the process evolves.
 - Always update project.outline.md after each role shift or major task completion, so the project status and next steps are always clear for the team.
 - Guarantee onboarding and process docs clarify that all Bun-related commands must be run inside the dev container, and document how to start/enter the dev container using the provided npm/docker scripts.
+- Always update user.captured.prompts.md and project.outline.md after every major process, role shift, or user feedback.
+- After starting a new iteration or major process change, document the rationale and next steps in process.md.
+- When fixing or refactoring an iteration, clearly mark the transition and ensure all lessons learned are captured for future reference.
 
 ## Information for the Team
 - The Scrum Master is responsible for process integrity, traceability, and quality assurance.

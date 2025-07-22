@@ -86,3 +86,11 @@
 - The error with Bun not being found occurred because commands were run outside the dev container. All Bun-related commands must be run inside the dev container.
 - The DevOps role must ensure onboarding and process docs clearly instruct developers to start and use the dev container for all Bun-related development.
 - The Scrum Master must guarantee these requirements are documented and enforced in the process and onboarding docs.
+
+---
+
+**User Feedback (2025-07-22):**
+
+- As Scrum Master, always update user.captured.prompts.md and project.outline.md after every major process, role shift, or user feedback.
+- Lessons learned and process improvements must be documented in scrum-master/process.md.
+- Iteration 2's approach to container and server workflow was incomplete; a new iteration (Iteration 3) is being started to address this, and Iteration 4 will address any remaining Iteration 2 tasks after Iteration 3 is complete.

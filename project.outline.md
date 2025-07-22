@@ -14,7 +14,11 @@
 - [x] [Iteration 2 Task 7 | PO: Plan Robust Docker/NPM Workflow](po/iteration-2-task-7.md)
 - [x] [Iteration 2 Task 8 | PO: Enforce Radical OOP, Protocol-less API Design](po/iteration-2-task-8.md)
 - [x] [Iteration 2 Task 9 | PO: Integrate QA/User Annotation Section in API Documentation](po/iteration-2-task-9.md)
-- [ ] [Iteration 2 Task 10 | PO/Developer: Fix package.json and Make Server Runnable](po/iteration-2-task-10.md)
+- [x] [Iteration 2 Task 10 | PO/Developer: Fix package.json and Make Server Runnable](po/iteration-2-task-10.md)
+- [ ] [Iteration 3 Task 1 | Architect: Document Containerized Developer Workflow](po/iteration-3-task-1.md)
+- [ ] [Iteration 3 Task 2 | DevOps: Refactor NPM Scripts for Container Lifecycle](po/iteration-3-task-2.md)
+- [ ] [Iteration 3 Task 3 | PO: Update Onboarding and Developer Documentation](po/iteration-3-task-3.md)
+- [ ] [Iteration 3 Task 4 | QA: Verify Containerized Workflow and Documentation](po/iteration-3-task-4.md)
 
 ## Planned Tasks
 
@@ -45,17 +49,20 @@
 - [x] [Iteration 2 Task 7 | PO: Plan Robust Docker/NPM Workflow](po/iteration-2-task-7.md)
 - [x] [Iteration 2 Task 8 | PO: Enforce Radical OOP, Protocol-less API Design](po/iteration-2-task-8.md)
 - [x] [Iteration 2 Task 9 | PO: Integrate QA/User Annotation Section in API Documentation](po/iteration-2-task-9.md)
-- [ ] [Iteration 2 Task 10 | PO/Developer: Fix package.json and Make Server Runnable](po/iteration-2-task-10.md)
+- [x] [Iteration 2 Task 10 | PO/Developer: Fix package.json and Make Server Runnable](po/iteration-2-task-10.md)
+- [ ] [Iteration 3 Task 1 | Architect: Document Containerized Developer Workflow](po/iteration-3-task-1.md)
+- [ ] [Iteration 3 Task 2 | DevOps: Refactor NPM Scripts for Container Lifecycle](po/iteration-3-task-2.md)
+- [ ] [Iteration 3 Task 3 | PO: Update Onboarding and Developer Documentation](po/iteration-3-task-3.md)
+- [ ] [Iteration 3 Task 4 | QA: Verify Containerized Workflow and Documentation](po/iteration-3-task-4.md)
 
 ---
 
 The Scrum Master is responsible for keeping this outline up to date as tasks progress.
 
 ## Last Successful Role & Task
-- Role: Developer
-- Task: Updated package.json for server, but failed to run server due to not being inside the dev container (Bun not available).
+- Role: Scrum Master
+- Task: Initiated Iteration 3 to address container/server workflow and planned Iteration 4 for remaining Iteration 2 tasks.
 
 ## Next Step
-- Start the dev container using the documented npm/docker scripts.
-- Run server commands inside the dev container where Bun is available.
-- Update process and onboarding docs to clarify this requirement for all developers.
+- Architect to document the correct containerized developer workflow (Iteration 3 Task 1).
+- After Iteration 3, create Iteration 4 to address any remaining Iteration 2 tasks on top of the new workflow.
