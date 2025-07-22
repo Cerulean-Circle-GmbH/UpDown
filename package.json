@@ -8,9 +8,16 @@
     "start:client": "bun src/client/index.ts",
     "build": "tsc",
     "docker:build": "docker build -f .devcontainer/Dockerfile -t updown-dev .",
-    "docker:start": "docker run -it --rm -v $(pwd):/workspace -p 3000:3000 updown-dev /bin/bash"
+    "docker:check": "docker images | grep updown-dev || npm run docker:build",
+    "docker:run": "docker ps | grep updown-dev || docker run -d --name updown-dev-container -v $(pwd):/workspace -p 3000:3000 updown-dev tail -f /dev/null",
+    "docker:status": "docker ps | grep updown-dev-container || echo 'Dev container is not running.'",
+    "docker:stop": "docker stop updown-dev-container || true && docker rm updown-dev-container || true",
+    "start": "npm run docker:check && npm run docker:run && npm run docker:status"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "bun-types": "^1.0.0"
   }
 }

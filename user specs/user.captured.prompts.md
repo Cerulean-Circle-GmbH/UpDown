@@ -63,3 +63,26 @@
     Iteration 2 Task 4: Frontend Developer/Architect—Identify the main components/modules for the client.
     I will now switch to the Frontend Developer/Architect role and begin working on identifying the main client-side components and modules. If you have any feedback or specific requirements for the frontend architecture, please let me know before I proceed.
 - User: nearly perfect, we where at task building the dev container here in po/iteration-2-task-devcontainer.md. The Devops screwed the context and you are now setting up again as a scrum master. well understood. please create arestart.md that you can read as a summay, so that next time it happens, you can bootstrap yourself into the context. then continue with the devops task and go on with the scrum master orchestration afterwards. so the overnext task is the one you found, but you missed the point where it broke in the devops task. also read the /Users/Shared/Workspaces/2cuGitHub/UpDown/user specs/user.captured.prompts.md on recover and add this user prompt to the file. then go on.
+
+---
+
+**User Feedback (2025-07-22):**
+
+- When recovering from a process interruption, always start as Scrum Master, orchestrate all roles, and update the project outline with the last successful role and task.
+- The PO must update the task files (e.g., add new tasks) to reflect new plans and requirements before implementation.
+- Every completed task must result in a concrete artifact (specification, code, or documentation) in the workspace.
+- The npm start script for Docker must be smart: it should build if needed, start the container in detached mode, and not block the terminal or Copilot.
+- User feedback must be incorporated before executing new tasks, especially after planning with the PO.
+- The API and modeling approach must follow a radical OOP, protocol-less design: all actions should be methods on model classes, not protocol-style function calls.
+- The new section "# backup and QA user annotations" in docs/api-and-model-spec.md is authoritative and must be considered in all future planning and documentation.
+- The Scrum Master must always prompt the user for feedback before executing new or changed tasks, and document all new user feedback and process changes.
+- The Scrum Master must ensure that the PO and all roles are aware of and act on QA/user annotations.
+
+---
+
+**User Feedback (2025-07-22):**
+
+- The project outline must be updated after each role shift or major task completion to reflect the current status and next steps.
+- The error with Bun not being found occurred because commands were run outside the dev container. All Bun-related commands must be run inside the dev container.
+- The DevOps role must ensure onboarding and process docs clearly instruct developers to start and use the dev container for all Bun-related development.
+- The Scrum Master must guarantee these requirements are documented and enforced in the process and onboarding docs.
