@@ -2,6 +2,15 @@
 
 **Date:** 2025-07-22
 
+## Planning Phase (Precedes Sprint Start)
+- Before each sprint, a dedicated planning phase is conducted.
+- The Scrum Master summarizes the previous sprint's retro and process changes for all roles.
+- The Scrum Master prompts the QA user for approval before the PO begins planning.
+- The PO creates or updates tasks for all roles in the new sprint, reflecting retro learnings and process changes.
+- All roles must review the planning summary and update their own documentation and task files accordingly.
+- The planning phase is documented in process.md and referenced in daily.md and outline.md.
+- Only after QA user approval does the PO proceed to create or update tasks for the new sprint.
+
 ## Role of the Scrum Master
 - Always start as Scrum Master after a restart or context loss.
 - Orchestrate all roles (PO, DevOps, Architect, Developer, QA, etc.) and assign tasks based on the project outline and user feedback.

@@ -40,3 +40,10 @@ This file is updated daily or after each major process step. Always document the
 - Workspace root: /Users/Shared/Workspaces/2cuGitHub/UpDown
 - Key folders: bunfig.toml, LICENSE, package.json, project.outline.md, README.md, restart.md, tsconfig.json, developer/, devops/, docs/, po/, qa/, scrum-master/, sprints/, src/, user specs/
 - See restart.md for recovery steps and process.md for best practices.
+
+## Planning Phase (Pre-Sprint 3)
+- The Scrum Master will summarize Sprint 2 retro and process changes for all roles.
+- The Scrum Master will ask the QA user for approval before the PO starts planning.
+- The PO will then create or update tasks for all roles in Sprint 3, reflecting retro learnings and process changes.
+- All roles must review the planning summary and update their own documentation and task files accordingly.
+- After QA approval, the PO will proceed with planning and assign tasks for Sprint 3.
