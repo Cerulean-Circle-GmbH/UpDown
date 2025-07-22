@@ -12,6 +12,8 @@
 - Context and user feedback files should be split by sprint to keep context manageable.
 - All process, outline, and user feedback files are now organized by sprint.
 - The process.md file remains global and is updated with cross-sprint best practices and lessons learned.
+- The daily.md file in scrum-master/ must always reference task files using markdown links and reflect the current, unique state for each role after every role change or major process step. Do not concatenate entries; always keep the file short and up to date.
+- The daily.md file is updated after every role change or major process step, and is the authoritative source for the next planned step for each role.
 
 ---
 

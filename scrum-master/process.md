@@ -29,6 +29,9 @@
 - At the end of each sprint, conduct a retrospective (retro) to review what went well, what could be improved, and to identify process changes or improvement actions for the next sprint.
 - Each sprint/iteration will have its own retro.md file (e.g., sprints/iteration-2/retro.md) to capture sprint-specific retrospective notes, feedback, and improvement actions.
 - The global scrum-master/process.md is updated with cross-sprint best practices and lessons learned based on retro outcomes.
+- Maintain a daily.md file in the scrum-master folder to document the next planned step for each role. This file is updated daily or after each major process step, and always documents the next planned step for each role. After user confirmation, the Scrum Master executes the next step for each role until QA, guidance, or confirmation is required.
+- The daily.md file in scrum-master/ must always reference task files using markdown links and reflect the current, unique state for each role after every role change or major process step. Do not concatenate entries; always keep the file short and up to date.
+- The daily.md file is updated after every role change or major process step, and is the authoritative source for the next planned step for each role.
 
 ## Information for the Team
 - The Scrum Master is responsible for process integrity, traceability, and quality assurance.
