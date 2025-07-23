@@ -14,7 +14,8 @@
     "docker:stop": "bash ./devops/docker-stop.sh",
     "docker:clean": "bash ./devops/docker-clean.sh",
     "docker:allcheck": "bash ./devops/docker-allcheck.sh",
-    "start": "npm run docker:allcheck"
+    "copy:ssh-key": "bash ./devops/copy-ssh-key-to-container.sh $SSH_KEY_PATH",
+    "start": "npm run copy:ssh-key && npm run docker:allcheck"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

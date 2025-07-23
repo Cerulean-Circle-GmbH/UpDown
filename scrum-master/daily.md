@@ -7,7 +7,11 @@ This file documents the next planned step for each role. After user confirmation
 ---
 
 ## Sprint 3 Planning Phase (in progress)
-- Sprint 3 planning is underway. The PO has created and numbered the first DevOps task ([sprints/iteration-3/iteration-3-task-1-devops.md](../sprints/iteration-3/iteration-3-task-1-devops.md)), and the outline has been updated to reference it.
+- Sprint 3 planning is underway. The PO has created and numbered three DevOps tasks:
+  - [Task 1: Robust Container and Local Workflow](../sprints/iteration-3/iteration-3-task-1-devops.md)
+  - [Task 2: Enable GitHub SSH Access from Dev Container](../sprints/iteration-3/iteration-3-task-2-devops.md)
+  - [Task 3: Project Directory Structure and Sync](../sprints/iteration-3/iteration-3-task-3-devops.md)
+- The outline has been updated to reference all DevOps tasks.
 - The Scrum Master must continue to update this file after every step, including after any change to task files, outline, or user-prompts.
 
 ## Scrum Master
@@ -20,7 +24,7 @@ This file documents the next planned step for each role. After user confirmation
 - Review and update the containerized developer workflow documentation as needed for Sprint 3.
 
 ## DevOps
-- Begin work on [Sprint 3 Task 1: Robust Container and Local Workflow](../sprints/iteration-3/iteration-3-task-1-devops.md).
+- Begin work on the three DevOps tasks for Sprint 3, starting with [Task 1](../sprints/iteration-3/iteration-3-task-1-devops.md).
 
 ## Developer
 - Await completion of DevOps and PO tasks before starting implementation.

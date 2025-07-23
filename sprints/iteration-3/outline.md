@@ -31,6 +31,8 @@
 
 ### DevOps
 - [Sprint 3 Task 1: Robust Container and Local Workflow](./iteration-3-task-1-devops.md)
+- [Sprint 3 Task 2: Enable GitHub SSH Access from Dev Container](./iteration-3-task-2-devops.md)
+- [Sprint 3 Task 3: Project Directory Structure and Sync](./iteration-3-task-3-devops.md)
 - Refactor npm scripts for container lifecycle and provide attach/exec instructions.
 - Ensure all scripts are maintainable and documented in the `devops` directory.
 - Implement PO-specified tasks to handle all bootstrap/build/start cases inside and outside the dev container.
