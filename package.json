@@ -4,14 +4,13 @@
   "type": "module",
   "main": "src/server/index.ts",
   "scripts": {
-    "start:server": "bun src/server/index.ts",
-    "start:client": "bun src/client/index.ts",
     "build": "tsc",
     "docker:build": "docker build -f .devcontainer/Dockerfile -t updown-dev .",
     "docker:check": "docker images | grep updown-dev || npm run docker:build",
-    "docker:run": "docker ps | grep updown-dev || docker run -d --name updown-dev-container -v $(pwd):/workspace -p 3000:3000 updown-dev tail -f /dev/null",
+    "docker:run": "docker ps | grep updown-dev-container || docker run -d --name updown-dev-container -v $(pwd):/workspace -p 3000:3000 updown-dev tail -f /dev/null",
     "docker:status": "docker ps | grep updown-dev-container || echo 'Dev container is not running.'",
     "docker:stop": "docker stop updown-dev-container || true && docker rm updown-dev-container || true",
+    "attach": "docker exec -it updown-dev-container /bin/bash",
     "start": "npm run docker:check && npm run docker:run && npm run docker:status"
   },
   "devDependencies": {
