@@ -2,6 +2,10 @@
 
 **Date:** 2025-07-22
 
+## QA Guidelines
+- All team members must avoid spaces in folder names. Use '.' or '-' instead of spaces when creating directories (e.g., 'user.specs' instead of 'user specs').
+- The Scrum Master and QA must enforce this guideline for all new folders and refactor any existing folders that do not comply.
+
 ## Planning Phase (Precedes Sprint Start)
 - Before each sprint, a dedicated planning phase is conducted.
 - The Scrum Master summarizes the previous sprint's retro and process changes for all roles.

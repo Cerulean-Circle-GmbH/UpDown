@@ -7,6 +7,8 @@ This file documents the next planned step for each role. After user confirmation
 ---
 
 ## Sprint 3 Planning Phase (in progress)
+- QA guideline enforced: All folder names must use '.' or '-' instead of spaces. The folder 'user specs' was renamed to 'user.specs'.
+- The Scrum Master and QA will ensure this is followed for all future folders.
 - Sprint 3 planning is underway. The PO has created and numbered three DevOps tasks:
   - [Task 1: Robust Container and Local Workflow](../sprints/iteration-3/iteration-3-task-1-devops.md)
   - [Task 2: Enable GitHub SSH Access from Dev Container](../sprints/iteration-3/iteration-3-task-2-devops.md)
@@ -39,7 +41,7 @@ This file is updated daily or after each major process step. Always document the
 ## Workspace Context (2025-07-22)
 - OS: macOS
 - Workspace root: /Users/Shared/Workspaces/2cuGitHub/UpDown
-- Key folders: bunfig.toml, LICENSE, package.json, project.outline.md, README.md, restart.md, tsconfig.json, developer/, devops/, docs/, po/, qa/, scrum-master/, sprints/, src/, user specs/
+- Key folders: bunfig.toml, LICENSE, package.json, project.outline.md, README.md, restart.md, tsconfig.json, developer/, devops/, docs/, po/, qa/, scrum-master/, sprints/, src/, user.specs/
 - See restart.md for recovery steps and process.md for best practices.
 
 ## Planning Phase (Pre-Sprint 3)
