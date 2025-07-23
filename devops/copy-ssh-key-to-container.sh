@@ -6,20 +6,24 @@
 
 set -e
 
-if [ "$#" -lt 1 ]; then
-  echo "Usage: $0 <path-to-private-key> [container-name]"
-  exit 1
+
+# Set default key path if not provided
+if [ "$#" -lt 1 ] || [ -z "$1" ]; then
+  KEY_PATH="$HOME/.ssh/id_ed25519"
+  echo "No key path provided, using default: $KEY_PATH"
+else
+  KEY_PATH="$1"
 fi
 
-KEY_PATH="$1"
 CONTAINER_NAME="$(basename $(pwd))_devcontainer"
 if [ "$2" != "" ]; then
   CONTAINER_NAME="$2"
 fi
 
+
 if [ ! -f "$KEY_PATH" ]; then
-  echo "Key file not found: $KEY_PATH"
-  exit 2
+  echo "Warning: Key file not found: $KEY_PATH. Skipping SSH key copy."
+  exit 0
 fi
 
 PUB_KEY_PATH="${KEY_PATH}.pub"
