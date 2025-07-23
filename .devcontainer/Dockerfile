@@ -8,9 +8,11 @@ RUN bash /tmp/install-dev-env.sh
 # Add non-root user
 RUN useradd -ms /bin/bash devuser
 
+
 # Copy container startup script and set permissions as root
 COPY .devcontainer/container-startup.sh /usr/local/bin/container-startup.sh
 RUN chmod +x /usr/local/bin/container-startup.sh
+
 
 WORKDIR /workspace
 

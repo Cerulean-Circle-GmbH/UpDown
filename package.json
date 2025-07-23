@@ -14,8 +14,7 @@
     "docker:stop": "bash ./devops/docker-stop.sh",
     "docker:clean": "bash ./devops/docker-clean.sh",
     "docker:allcheck": "bash ./devops/docker-allcheck.sh",
-    "clone:repo": "docker exec updown-dev-container bash /workspace/devops/clone-updown-repo.sh",
-    "start": "npm run docker:allcheck && npm run clone:repo && npm run docker:status"
+    "start": "npm run docker:allcheck && npm run docker:run && npm run docker:status"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
