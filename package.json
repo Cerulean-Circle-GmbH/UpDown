@@ -15,7 +15,7 @@
     "docker:clean": "bash ./devops/docker-clean.sh",
     "docker:allcheck": "bash ./devops/docker-allcheck.sh",
     "copy:ssh-key": "export SSH_KEY_PATH=/root/.ssh/ids/ssh.outeruser/id_rsa && bash ./devops/copy-ssh-key-to-container.sh $SSH_KEY_PATH once-once.sh_container",
-    "start": "npm run copy:ssh-key && npm run docker:allcheck"
+    "start": "docker ps --format '{{.ID}} {{.Names}} {{.Ports}}' | grep 3000 && docker stop $(docker ps --format '{{.ID}} {{.Names}} {{.Ports}}' | grep 3000 | awk '{print $1}') || true && npm run copy:ssh-key && npm run docker:allcheck"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
