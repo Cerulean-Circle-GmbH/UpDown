@@ -1,4 +1,4 @@
-# Iteration 3 Task 1 | Architect: Document Containerized Developer Workflow
+# Iteration 3 Task 1: Document Containerized Developer Workflow
 
 **Date:** 2025-07-22
 

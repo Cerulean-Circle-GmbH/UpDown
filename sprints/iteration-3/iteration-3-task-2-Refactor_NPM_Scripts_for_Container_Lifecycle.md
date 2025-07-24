@@ -1,4 +1,4 @@
-# Iteration 3 Task 2 | DevOps: Refactor NPM Scripts for Container Lifecycle
+# Iteration 3 Task 2: Refactor NPM Scripts for Container Lifecycle
 
 **Date:** 2025-07-22
 

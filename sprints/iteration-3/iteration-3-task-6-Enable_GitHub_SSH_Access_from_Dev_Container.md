@@ -1,4 +1,4 @@
-# Sprint 3 Task 2: DevOps - Enable GitHub SSH Access from Dev Container
+# Iteration 3 Task 6: Enable GitHub SSH Access from Dev Container
 
 **Date:** 2025-07-22
 
@@ -20,4 +20,4 @@
 
 ---
 
-This file documents the second DevOps task for Sprint 3. All changes must be referenced here and in the onboarding documentation.
+This file documents the fifth DevOps task for Sprint 3. All changes must be referenced here and in the onboarding documentation.

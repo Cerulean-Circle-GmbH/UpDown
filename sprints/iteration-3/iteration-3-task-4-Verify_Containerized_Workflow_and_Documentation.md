@@ -1,4 +1,4 @@
-# Iteration 3 Task 4 | QA: Verify Containerized Workflow and Documentation
+# Iteration 3 Task 4: Verify Containerized Workflow and Documentation
 
 **Date:** 2025-07-22
 

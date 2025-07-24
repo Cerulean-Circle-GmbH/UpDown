@@ -8,48 +8,28 @@
 - The planning phase is complete and QA user has approved the start of Sprint 3.
 - The PO is responsible for creating and assigning tasks for all roles in Sprint 3, reflecting retro learnings and process changes.
 
-## Sprint 3 Tasks by Role
 
-### Scrum Master
-- Ensure all roles are aware of Sprint 2 learnings and process changes.
-- Keep `daily.md` and `project.outline.md` up to date after every major step.
-- Coordinate the start of Sprint 3 and monitor progress.
+## Sprint 3 Task Sequence
 
-### Product Owner (PO)
-- Specify DevOps tasks to ensure that the project can be bootstrapped, built, and started both inside and outside the dev container. The process must:
-  - Detect if it is running inside a Docker container and if the correct Docker image is used.
-  - Ensure that running `npm start` inside or outside the container always does the right thing (bootstraps, builds, and starts the container or the app as appropriate).
-  - Capture all cases in the DevOps scripts for robust developer onboarding and workflow.
-- Assign these tasks to DevOps for implementation in Sprint 3.
-- Create and update onboarding and developer documentation to reflect new process and workflow.
-- Assign tasks to all roles for Sprint 3, ensuring each task produces a concrete artifact.
-- Ensure all new requirements and user feedback are reflected in the sprint’s task files.
+Below is the unified, sequenced list of all Sprint 3 tasks. Each task may require multiple roles (DevOps, Developer, QA, PO, etc.) to collaborate. Tasks are ordered for logical workflow and dependency alignment. If additional tasks are identified, they should be added here and linked to their respective markdown files.
 
-### Architect
-- Review and update the containerized developer workflow documentation as needed.
-- Ensure all architectural artifacts are created and referenced in the relevant files.
 
-### DevOps
-- [Sprint 3 Task 1: Robust Container and Local Workflow](./iteration-3-task-1-devops.md)
-- [Sprint 3 Task 2: Enable GitHub SSH Access from Dev Container](./iteration-3-task-2-devops.md)
-- [Sprint 3 Task 3: Project Directory Structure and Sync](./iteration-3-task-3-devops.md)
-- Refactor npm scripts for container lifecycle and provide attach/exec instructions.
-- Ensure all scripts are maintainable and documented in the `devops` directory.
-- Implement PO-specified tasks to handle all bootstrap/build/start cases inside and outside the dev container.
+1. [Document Containerized Developer Workflow (Architect)](./iteration-3-task-1-Document_Containerized_Developer_Workflow.md)
+2. [Refactor NPM Scripts for Container Lifecycle (DevOps)](./iteration-3-task-2-Refactor_NPM_Scripts_for_Container_Lifecycle.md)
+3. [Update Onboarding and Developer Documentation (PO)](./iteration-3-task-3-Update_Onboarding_and_Developer_Documentation.md)
+4. [Verify Containerized Workflow and Documentation (QA)](./iteration-3-task-4-Verify_Containerized_Workflow_and_Documentation.md)
+5. [Robust Container and Local Workflow (DevOps)](./iteration-3-task-5-Robust_Container_and_Local_Workflow.md)
+6. [Enable GitHub SSH Access from Dev Container (DevOps)](./iteration-3-task-6-Enable_GitHub_SSH_Access_from_Dev_Container.md)
+7. [Refactor Dev Container Startup Workflow (DevOps)](./iteration-3-task-7-Refactor_Dev_Container_Startup_Workflow.md)
+8. [GitHub Actions CI/CD for Dev Container (DevOps)](./iteration-3-task-8-GitHub_Actions_CI_CD_for_Dev_Container.md)
+9. [DevOps Scripts Documentation and Onboarding (DevOps)](./iteration-3-task-9-DevOps_Scripts_Documentation_and_Onboarding.md)
 
-### Developer
-- Begin producing implementation artifacts for assigned tasks as soon as DevOps and PO complete their steps.
-
-### QA
-- Verify that all process improvements are followed and that every completed task has a concrete artifact.
-- Check that onboarding and process docs are up to date and that the dev container workflow is robust.
+<!-- Add additional Sprint 3 tasks below as they are defined, e.g.:
+6. [Frontend: Implement Web Components and Routing](./iteration-3-task-6-frontend.md)
+7. [Backend: Scenario Sync and State Management](./iteration-3-task-7-backend.md)
+8. [QA: Automated Test Coverage](./iteration-3-task-8-qa.md)
+-->
 
 ---
 
-## Next Steps
-- Each role should review their assigned tasks and update their own documentation and task files accordingly.
-- The Scrum Master will coordinate the execution of Sprint 3 and ensure all roles are aligned.
-
----
-
-This file documents the planning phase and task assignments for Sprint 3. All roles must reference this outline as they proceed.
+This sequence ensures that foundational infrastructure and workflow tasks are completed before CI/CD, documentation, and higher-level implementation tasks. All roles should reference this list and coordinate as needed.

@@ -1,4 +1,4 @@
-# Iteration 3 Task 3 | PO: Update Onboarding and Developer Documentation
+# Iteration 3 Task 3: Update Onboarding and Developer Documentation
 
 **Date:** 2025-07-22
 
