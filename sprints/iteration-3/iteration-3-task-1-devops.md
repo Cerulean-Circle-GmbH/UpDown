@@ -2,7 +2,7 @@
 
 **Date:** 2025-07-22
 
-## Task Description 1
+## Task Description
 - Refactor npm scripts and DevOps shell scripts to ensure the project can be bootstrapped, built, and started both inside and outside the dev container.
 - The process must:
   - Detect if it is running inside a Docker container and if the correct Docker image is used.
