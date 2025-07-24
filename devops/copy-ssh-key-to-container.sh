@@ -24,18 +24,21 @@ fi
 
 PUB_KEY_PATH="${KEY_PATH}.pub"
 
+# Ensure .ssh directory exists in the container
+docker exec "$CONTAINER_NAME" mkdir -p /home/developking/.ssh
+
 # Copy private key
-docker cp "$KEY_PATH" "$CONTAINER_NAME":/home/devuser/.ssh/
+docker cp "$KEY_PATH" "$CONTAINER_NAME":/home/developking/.ssh/
 # Copy public key if it exists
 if [ -f "$PUB_KEY_PATH" ]; then
-  docker cp "$PUB_KEY_PATH" "$CONTAINER_NAME":/home/devuser/.ssh/
+  docker cp "$PUB_KEY_PATH" "$CONTAINER_NAME":/home/developking/.ssh/
 fi
 
-docker exec "$CONTAINER_NAME" chown devuser:devuser /home/devuser/.ssh/$(basename "$KEY_PATH")
-docker exec "$CONTAINER_NAME" chmod 600 /home/devuser/.ssh/$(basename "$KEY_PATH")
+docker exec "$CONTAINER_NAME" chown developking:developking /home/developking/.ssh/$(basename "$KEY_PATH")
+docker exec "$CONTAINER_NAME" chmod 600 /home/developking/.ssh/$(basename "$KEY_PATH")
 if [ -f "$PUB_KEY_PATH" ]; then
-  docker exec "$CONTAINER_NAME" chown devuser:devuser /home/devuser/.ssh/$(basename "$PUB_KEY_PATH")
-  docker exec "$CONTAINER_NAME" chmod 644 /home/devuser/.ssh/$(basename "$PUB_KEY_PATH")
+  docker exec "$CONTAINER_NAME" chown developking:developking /home/developking/.ssh/$(basename "$PUB_KEY_PATH")
+  docker exec "$CONTAINER_NAME" chmod 644 /home/developking/.ssh/$(basename "$PUB_KEY_PATH")
 fi
 
 echo "SSH key(s) copied to container $CONTAINER_NAME. You may now use git inside the dev container."

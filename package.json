@@ -14,7 +14,7 @@
     "docker:stop": "bash ./devops/docker-stop.sh",
     "docker:clean": "bash ./devops/docker-clean.sh",
     "docker:allcheck": "bash ./devops/docker-allcheck.sh",
-    "copy:ssh-key": "bash ./devops/copy-ssh-key-to-container.sh $SSH_KEY_PATH",
+    "copy:ssh-key": "export SSH_KEY_PATH=/root/.ssh/ids/ssh.outeruser/id_rsa && bash ./devops/copy-ssh-key-to-container.sh $SSH_KEY_PATH once-once.sh_container",
     "start": "npm run copy:ssh-key && npm run docker:allcheck"
   },
   "devDependencies": {
