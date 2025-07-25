@@ -1,6 +1,20 @@
 # Scrum Master Process & Lessons Learned
 
 **Date:** 2025-07-22
+**Process Reminder (2025-07-24):**
+
+## Definition of Done (Scrum Master)
+- Before interacting with the user, always verify:
+    - The latest user prompt is logged in user.captured.prompts.md with a timestamp.
+    - All referenced artifacts (specs, code, docs) exist and are up to date.
+    - All process and onboarding docs reference the correct locations for key files (e.g., process.md).
+
+## Subtask Context & Status Management (Pattern)
+- When working on a subtask (e.g., 1.1 or 1.2), always check and document the current status and context of the parent task (e.g., 1) and all related subtasks.
+- Move (not copy) context and findings to the correct task files to ensure traceability and clarity.
+- Always verify that status sections are complete and correct in all related files.
+- This pattern is essential for process diligence and should be followed for all future sprint/task work.
+- Example: If Task 1.1 is in progress, document the status and findings in both Task 1 and Task 1.1 files, and update Task 1.2 as needed.
 
 ## QA Guidelines
 - All team members must avoid spaces in folder names. Use '.' or '-' instead of spaces when creating directories (e.g., 'user.specs' instead of 'user specs').
@@ -49,6 +63,34 @@
 - The daily.md file is updated after every role change or major process step, and is the authoritative source for the next planned step for each role.
 - The Scrum Master must update `scrum-master/daily.md` after every step, including after any change to task files, outline, or user-prompts, to reflect the current next step for each role. This is mandatory for every process or planning action.
 
+## Intention
++Iterated understanding: Documentation and user feedback must be added into the context of the corresponding task or subtask. Only one status can be active at a time (radio box, not checkbox). This ensures clarity after recovery.
+User queries are to be added to user.captured.prompts.md with UTC timestamp. 
+User feedback in tasks is always concatenated, never removed. 
+User Feedback in tasks are added to the corresponding task.
+Scrum Master and team prompts are documented in Next Steps with timestamp. Logic applied to all relevant files.
+### Summary
+Only user prompts (with UTC timestamp) are logged in user.captured.prompts.md. No Scrum Master or team prompts.
+User feedback in tasks is always concatenated, never removed, and must be added to the corresponding task.
+Scrum Master and team prompts are documented in the "Next Steps" section of each task/subtask, with timestamp.
+The process.md now clearly states these rules and the fail-safe mechanism for recovery.
+The intention and lessons learned from user prompts are regularly extrapolated and summarized in process.md.
+
+## Fail-Safe Mechanism: User Prompts & Recovery
+- The file `contracts/user.specs/user.captured.prompts.md` is the authoritative log for all user comments, feedback, and critical actions. It acts as a fail-safe and recovery anchor for the project.
+- After every major process step, role change, or user feedback, the Scrum Master must update this log to ensure reproducibility and traceability.
+- In case of context loss, restart, or unexpected interruption, the team can reconstruct the latest project state by replaying the entries in `user.captured.prompts.md`.
+- The Scrum Master must regularly extrapolate the most important information from user prompts and integrate it into this process.md file, ensuring the process is always aligned with user intent and project evolution.
+- This fail-safe mechanism guarantees that the project can always recover to its latest valid state, regardless of interruptions or errors.
+
+## User Prompts Logging & Process Intention
+- Every user prompt received in the chat must be logged in `contracts/user.specs/user.captured.prompts.md` as an exact copy, with a timestamp (date and time in UTC) for each entry.
+- This log serves as a complete history of user instructions, feedback, and decisions, supporting reproducibility, recovery, and auditability.
+- The Scrum Master is responsible for maintaining this log and verifying its completeness after each prompt.
+- The process ensures that, in case of context loss or recovery, the project can be restored to its latest state by replaying the user prompts log.
+- The intention is to make the development process fully transparent, test-driven, and resilient, with every user interaction traceable and actionable.
+- The process.md file should always extrapolate and summarize the underlying intention and lessons learned from the user prompts log, guiding future process improvements and team practices.
+
 ## Information for the Team
 - The Scrum Master is responsible for process integrity, traceability, and quality assurance.
 - All roles must follow the radical OOP, protocol-less approach and respect QA/user annotations.
@@ -56,6 +98,22 @@
 - All documentation, onboarding, and process files must be kept up to date as the project evolves.
 - The general scrum-master/process.md file is the authoritative source for Scrum Master and LLM process documentation and is not duplicated per sprint. Remove any process.md files from sprint folders to avoid confusion. All process improvements and lessons learned should be added to the global process.md.
 
+## Lesson: Diligent Context and Status Management for Subtasks
+- Always verify and document the current status of parent and sibling tasks when working on a subtask.
+- Place context, findings, and decisions in the correct task files for traceability.
+- This ensures process integrity and helps all roles understand the current state of work.
+- Example: When updating Task 1.1, also review and update Task 1 and Task 1.2 as needed.
+- This pattern is now part of the scrum master process best practices.
+
+## Reflection & Lesson: Status Verification Must Be Contextual
+- When updating status (e.g., for tasks 1, 1.1, 1.2), do not blindly reset to 'Planned' after 'Done'.
+- Always verify the actual content, context, and completion of the task before changing status.
+- The process is a loop: status changes must be based on real results, not protocol or habit.
+- Learn to check for completion and only update status if the task is truly incomplete.
+- This lesson is now part of the Scrum Master best practices: status management is contextual, not procedural.
+
 ---
 
 This file is a living document for Scrum Master best practices and team guidance.
+
+
