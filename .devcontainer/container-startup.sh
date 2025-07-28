@@ -56,3 +56,6 @@ fi
 
 # Drop to devuser shell for devcontainer interactive use
 exec su - devuser
+
+# At the end of the script, start an interactive shell to keep the container alive
+exec bash

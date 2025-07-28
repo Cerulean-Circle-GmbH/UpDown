@@ -47,6 +47,13 @@
 5. **Refactor to Orchestrator Script (Planned):**
     - Move all lifecycle logic into a single script to eliminate race conditions and ensure deterministic startup.
 
+## Keeping the Dev Container Running for Interactive Use (Sprint 3)
+
+- Problem: The dev container was exiting immediately after startup because the startup script finished, causing Docker to stop the container.
+- Solution: Add `exec bash` at the end of the container startup script (e.g., `docker-run.sh`). This keeps the container alive and allows interactive access for development, QA, and demos.
+- Test: After adding `exec bash`, the container remains running and can be entered interactively.
+- Next: PO and DevOps should review this approach and, if approved, update documentation and related scripts. Consider making this a Sprint 3 task.
+
 ## Lessons Learned
 - Privileged setup must be done at runtime, not build time, when using Docker volumes.
 - Chaining scripts via npm can introduce race conditions; a single orchestrator script is more reliable.

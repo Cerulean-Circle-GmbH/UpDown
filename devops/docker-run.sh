@@ -90,3 +90,6 @@ else
   echo "[INFO] Dev container '$CONTAINER_NAME' is already running and up to date."
   exit 0
 fi
+
+# At the end of the script, keep the container alive interactively
+exec bash

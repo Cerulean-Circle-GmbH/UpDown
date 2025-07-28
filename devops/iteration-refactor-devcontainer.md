@@ -41,5 +41,14 @@
 
 ---
 
+### Sprint 3: Dev Container Lifecycle Fix
+
+- Issue: Container exited after startup script finished, making it hard to use for interactive development and QA.
+- Fix: Appending `exec bash` to the end of the container startup script keeps the container running and accessible.
+- Impact: Developers and testers can now enter the container and keep it alive for as long as needed.
+- Action: PO and DevOps should consider formalizing this as a Sprint 3 task and update all relevant documentation/scripts.
+
+---
+
 **Summary:**
-We reached this point after repeated issues with race conditions and container state detection in a multi-script npm workflow. The recommended refactor is to consolidate all dev container lifecycle logic into a single orchestrator script, ensuring a robust, deterministic, and maintainable developer experience.
+We reached this point after repeated issues with race conditions and container state detection in a multi-script npm workflow. The recommended refactor is to consolidate all dev container lifecycle logic into a single orchestrator script, ensuring a robust, deterministic, and maintainable developer experience. The Sprint 3 fix further enhances the dev container usability by preventing it from exiting immediately, thus supporting interactive development and QA activities.
