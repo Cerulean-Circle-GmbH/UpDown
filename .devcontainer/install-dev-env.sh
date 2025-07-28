@@ -12,10 +12,24 @@ if ! command -v node >/dev/null 2>&1; then
   apt-get install -y --allow-unauthenticated nodejs
 fi
 
-# Install Bun
+
+# Install Bun for both root and devuser, and symlink globally
 if ! command -v bun >/dev/null 2>&1; then
+  # Install for root
   curl -fsSL https://bun.sh/install | bash
   export PATH="$HOME/.bun/bin:$PATH"
+  # Install for devuser if exists
+  if id "devuser" &>/dev/null; then
+    su - devuser -c "curl -fsSL https://bun.sh/install | bash"
+    ln -sf /home/devuser/.bun/bin/bun /usr/local/bin/bun
+  fi
+  # Also symlink root's Bun for global fallback
+  ln -sf /root/.bun/bin/bun /usr/local/bin/bun
+fi
+
+# Install TypeScript globally
+if ! command -v tsc >/dev/null 2>&1; then
+  npm install -g typescript
 fi
 
 # SSH agent forwarding setup for GitHub

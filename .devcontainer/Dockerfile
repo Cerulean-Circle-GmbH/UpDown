@@ -1,12 +1,14 @@
 # Dockerfile for UpDown Dev Container
 FROM ubuntu:22.04
 
-# Copy and run install script
+
+# Add non-root user before install steps
+RUN useradd -ms /bin/bash devuser
+
+# Copy and run install script as root (installs for both root and devuser)
 COPY .devcontainer/install-dev-env.sh /tmp/install-dev-env.sh
 RUN bash /tmp/install-dev-env.sh
 
-# Add non-root user
-RUN useradd -ms /bin/bash devuser
 USER devuser
 WORKDIR /workspace
 
