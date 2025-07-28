@@ -2,6 +2,9 @@
 
 [Project Description](README.md)
 
+# Planning Reference Process
+To always reference the latest planning documentation, search for all `planning.md` files within the `tasks/sprints/` directory. Sort these by their parent folder's iteration or sprint number (e.g., `iteration-3` > `iteration-2` > `iteration-1`). The `planning.md` file in the folder with the highest number is the most recent and should be referenced here. Update this reference as new iterations or sprints are created to avoid confusion and ensure the outline always points to the current planning document.
+
 **Date:** 2025-07-22
 
 ## Sprint 2 Status
