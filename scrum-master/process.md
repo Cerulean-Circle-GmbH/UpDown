@@ -20,6 +20,7 @@
 - All team members must avoid spaces in folder names. Use '.' or '-' instead of spaces when creating directories (e.g., 'user.specs' instead of 'user specs').
 - The Scrum Master and QA must enforce this guideline for all new folders and refactor any existing folders that do not comply.
 
+
 ## Planning Phase (Precedes Sprint Start)
 - Before each sprint, a dedicated planning phase is conducted.
 - The Scrum Master summarizes the previous sprint's retro and process changes for all roles.
@@ -30,6 +31,8 @@
 - Only after QA user approval does the PO proceed to create or update tasks for the new sprint.
 - The Scrum Master must guarantee that before every question to the QA/user, the PO has created or updated the relevant task files for all new or changed requirements, and that these files exist and are referenced in the outline and user-prompts for the sprint. This is second priority after fulfilling direct user requests.
 - The PO must number all new task files for each sprint, starting with 1, and ensure filenames reflect their order and role (e.g., iteration-3-task-1-devops.md). This ensures clarity and extensibility for additional tasks per role.
+- The PO must never write sprint tasks directly into role-specific files (e.g., po/iteration-3-task-1.md). All PO tasks must be created in the sprint's tasks directory (e.g., sprints/iteration-3/), following the template and process from sprints/iteration-n[Template].
+- The Scrum Master must ensure that QA prompt history is captured and referenced in the planning and sprint documentation, and that all QA feedback is incorporated into the process and task files.
 
 ## Role of the Scrum Master
 - Always start as Scrum Master after a restart or context loss.
