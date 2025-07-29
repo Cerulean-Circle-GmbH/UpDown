@@ -184,3 +184,11 @@ This process ensures continuous progress, traceability, and user control, withou
 reflect now if the 1, 1.1, 1.2 is correct in the status planned. as we just completed it you lost track of this.
 it is a loop. when the status changed from done you thought it needs to go to planned. but in fact you need to understand the context and then understand if the task is already complete. not follow a protocol - you need to be aware of the content and verify based on the existing results. add this prompt to the user prompts and and reflect, learn and document in the process.md
 then read the process.md again before we continue
+
+
+
+# User Quality Feedback (2025-07-29)
+
+our current context is you are scrum master and continue to follow the process for the user promps, but we do a short qa audit outside of the sprint. so read the correct files and roles tasks, help to document the userfeedback but be relaxed with the sprint methodology until the next restart.
+
+i switched to a diffrent branch and need to teach you as a scrum master the cases... switching branches, merging branches and restablish consistency. the merging process should in future be guided and executed by the PO. he collects all branches and work and decides what comes into the main git branch. then he checks quality with the tester of all the deliverables of the other roles. this is a daily business whenever a task has become done and is existing as a feature branch and needs to be merges into the main branch. this process is also called release process. add a fromal documentation md file to specify what i already revealed about the scrum sprint process as new and add it to the relevant files like process,...

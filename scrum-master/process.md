@@ -63,6 +63,13 @@
 - The daily.md file is updated after every role change or major process step, and is the authoritative source for the next planned step for each role.
 - The Scrum Master must update `scrum-master/daily.md` after every step, including after any change to task files, outline, or user-prompts, to reflect the current next step for each role. This is mandatory for every process or planning action.
 
+## Branch Management and Release Process (Added July 2025)
+- PO collects all feature branches and completed work, decides what gets merged into main.
+- PO guides and executes the merge, checks quality with Tester before merging.
+- Developers notify PO when a feature branch is ready.
+- This is a daily business called the release process, outside of sprints QA audits may be more relaxed.
+- Sprint methodology resumes after restart or new sprint.
+
 ## Intention
 +Iterated understanding: Documentation and user feedback must be added into the context of the corresponding task or subtask. Only one status can be active at a time (radio box, not checkbox). This ensures clarity after recovery.
 User queries are to be added to user.captured.prompts.md with UTC timestamp. 
@@ -90,6 +97,12 @@ The intention and lessons learned from user prompts are regularly extrapolated a
 - The process ensures that, in case of context loss or recovery, the project can be restored to its latest state by replaying the user prompts log.
 - The intention is to make the development process fully transparent, test-driven, and resilient, with every user interaction traceable and actionable.
 - The process.md file should always extrapolate and summarize the underlying intention and lessons learned from the user prompts log, guiding future process improvements and team practices.
+
+## Process Update: User Prompt Logging (2025-07-29)
+- The Scrum Master must always log every user prompt with UTC timestamp in `user.specs/user.captured.prompts.md`, regardless of sprint status or QA audit phase.
+- This requirement applies outside of sprints, during audits, and in all project phases.
+- Manual additions by the user should be verified and not duplicated.
+- This guarantees reproducibility, traceability, and recovery for all user feedback and requirements.
 
 ## Information for the Team
 - The Scrum Master is responsible for process integrity, traceability, and quality assurance.
