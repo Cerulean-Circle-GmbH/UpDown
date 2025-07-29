@@ -53,3 +53,6 @@ This file documents the PO's planning and task assignments for Sprint 3. All rol
   - Ensure that running `npm start` inside or outside the container always does the right thing (bootstraps, builds, and starts the container or the app as appropriate).
   - Capture all cases in the DevOps scripts for robust developer onboarding and workflow.
 - These requirements must be reflected in the DevOps scripts and onboarding documentation for Sprint 3.
+- QA suggests the container terminates because the startup script ends, causing Docker to exit. To keep the dev container running and allow interactive entry, add an interactive shell (e.g., `bash`) at the end of the container startup script.
+- PO, DevOps, and Tester: Please review and confirm this approach for Sprint 3.
+- Quick test: Add `bash` to the end of the container startup script and verify if the container stays running and is accessible interactively.
