@@ -11,12 +11,12 @@
 
 
 ## Task List (Sprint 1)
-- [x] [Task 0: Plan and Set Up Test-Driven Development (QA, PO)](./tasks/iteration-1-task-0.md)
-    - [x] [Task 0.1: QA defines the test documentation structure and process](./tasks/iteration-1-task-0.1.md)
-    - [x] [Task 0.2: QA and PO review all planned tasks and add subtasks for integration tests](./tasks/iteration-1-task-0.2.md)
-- [x] [Task 1: Analyze devcontainer requirements and tech stack (PO, Architect)](./tasks/iteration-1-task-1.md)
-    - [ ] [Task 1.1: Architect reviews and proposes tech stack for PDF processing and LaTeX conversion](./tasks/iteration-1-task-1.1.md)
-    - [ ] [Task 1.2: PO and Architect define the workflow for user PDF upload and script execution](./tasks/iteration-1-task-1.2.md)
+- [x] [Task 0: Plan and Set Up Test-Driven Development (QA, PO)](./tasks/iteration-n-task-0.md)
+    - [x] [Task 0.1: QA defines the test documentation structure and process](./tasks/iteration-n-task-0.1.md)
+    - [x] [Task 0.2: QA and PO review all planned tasks and add subtasks for integration tests](./tasks/iteration-n-task-0.2.md)
+- [x] [Task 1: Analyze devcontainer requirements and tech stack (PO, Architect)](./tasks/iteration-n-task-1.md)
+    - [ ] [Task 1.1: Architect reviews and proposes tech stack for PDF processing and LaTeX conversion](./tasks/iteration-n-task-1.1.md)
+    - [ ] [Task 1.2: PO and Architect define the workflow for user PDF upload and script execution](./tasks/iteration-n-task-1.2.md)
 
 
 ---
