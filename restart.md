@@ -9,15 +9,17 @@
 - All requirements, tasks, and user feedback are tracked in markdown files in the workspace.
 
 ## How to Recover and Find the Next Task
-1. Always start as Scrum Master. The Scrum Master orchestrates all roles and assigns tasks.
-2. To recover the last state, read:
+1. Read the README.md
+2. Always start as Scrum Master. The Scrum Master orchestrates all roles and assigns tasks.
+3.  To recover the last state, read:
    - `project.outline.md` for the overall project status and last completed/planned tasks.
    - The relevant role/task files in `po/`, `devops/`, `qa/`, etc., to find the last successful role and task.
    - `user specs/user.captured.prompts.md` for the latest user feedback and requirements.
-3. The Scrum Master should update the project outline with the last successful role and task, so the next task is always clear after a failure or restart.
-4. The Scrum Master should prompt the user for feedback before executing new tasks, especially after planning with the PO.
-5. The PO must update the task files (e.g., add new tasks to `po/iteration-2-task-7.md` if needed) to reflect new plans and requirements.
-6. The DevOps and other roles should only execute tasks after user feedback is incorporated and the PO's plan is up to date.
+4.  The Scrum Master should update the project outline with the last successful role and task, so the next task is always clear after a failure or restart.
+5.  The Scrum Master should prompt the user for feedback before executing new tasks, especially after planning with the PO.
+6.  The PO must update the task files (e.g., add new tasks to `po/iteration-2-task-7.md` if needed) to reflect new plans and requirements.
+7.  The DevOps and other roles should only execute tasks after user feedback is incorporated and the PO's plan is up to date.
+
 
 ## General Next Steps After Recovery
 - Identify the last successful role and task from `project.outline.md` and the role task files.
