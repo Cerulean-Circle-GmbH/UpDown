@@ -13,5 +13,8 @@
 - Clear documentation of the workflow and responsibilities for host vs. container.
 - All developers can follow the workflow to start, attach, and run bun/server/client inside the dev container.
 
+## Dependencies
+- [Iteration 3 Task 1: Document Containerized Developer Workflow](./iteration-3-task-1.md)
+
 ## Next Step
 - Assign to DevOps and PO for implementation and documentation updates.

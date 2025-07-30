@@ -13,6 +13,11 @@ The devOps scripts have evolved through several iterations. Clear documentation 
 - Onboarding is clear and up to date.
 - Troubleshooting and platform notes are included.
 
+## Dependencies
+- [Iteration 3 Task 2: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-2.md)
+- [Iteration 3 Task 4: Robust Container and Local Workflow](./iteration-3-task-4.md)
+- [Iteration 3 Task 7: Refactor Dev Container Startup Workflow](./iteration-3-task-7.md)
+
 ---
 
 **References:**

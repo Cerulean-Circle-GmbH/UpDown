@@ -12,5 +12,8 @@
 - npm start and related scripts only manage the dev container lifecycle.
 - Developers have clear instructions/scripts for attaching to the dev container and running bun/server/client inside.
 
+## Dependencies
+- [Iteration 3 Task 1: Document Containerized Developer Workflow](./iteration-3-task-1.md)
+
 ## Next Step
 - Assign to PO for onboarding and documentation updates.

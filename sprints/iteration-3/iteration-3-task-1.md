@@ -9,6 +9,9 @@
   - Provide guidance for attaching to the dev container (e.g., docker exec -it, VS Code Remote Containers).
 - Update docs/ and onboarding materials as needed.
 
+## Dependencies
+- None
+
 ## Acceptance Criteria
 - Clear documentation of the workflow and responsibilities for host vs. container.
 - All developers can follow the workflow to start, attach, and run bun/server/client inside the dev container.

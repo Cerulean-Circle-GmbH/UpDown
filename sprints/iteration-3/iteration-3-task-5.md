@@ -13,6 +13,10 @@
 - SSH key setup and troubleshooting steps are documented for onboarding.
 - The script is available and referenced in onboarding docs.
 
+## Dependencies
+- [Iteration 3 Task 2: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-2.md)
+- [Iteration 3 Task 4: Robust Container and Local Workflow](./iteration-3-task-4.md)
+
 ## References
 - [Sprint 3 User Prompts and Requirements](./user-prompts.md)
 - [Sprint 3 Outline](./outline.md)

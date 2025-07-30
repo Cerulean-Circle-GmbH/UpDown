@@ -9,6 +9,10 @@
   - Provide clear steps for attaching to the dev container (docker exec -it, VS Code Remote Containers, etc.).
 - Reference the updated docs and scripts from the Architect and DevOps tasks.
 
+## Dependencies
+- [Iteration 3 Task 2: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-2.md)
+- [Iteration 3 Task 4: Robust Container and Local Workflow](./iteration-3-task-4.md)
+
 ## Acceptance Criteria
 - Onboarding and developer docs are up to date and easy to follow.
 - All developers understand the new workflow and how to use the dev container.

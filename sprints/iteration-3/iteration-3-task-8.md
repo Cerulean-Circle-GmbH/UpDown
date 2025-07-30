@@ -16,3 +16,10 @@
 
 ## Next Step
 - Close the iteration or plan further improvements as needed.
+
+## Dependencies
+- [Iteration 3 Task 1: Document Containerized Developer Workflow](./iteration-3-task-1.md)
+- [Iteration 3 Task 2: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-2.md)
+- [Iteration 3 Task 3: Document Containerized Developer Workflow](./iteration-3-task-3.md)
+- [Iteration 3 Task 4: Robust Container and Local Workflow](./iteration-3-task-4.md)
+- [Iteration 3 Task 7: Refactor Dev Container Startup Workflow](./iteration-3-task-7.md)
