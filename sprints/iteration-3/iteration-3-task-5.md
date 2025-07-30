@@ -1,3 +1,5 @@
+[Back to Planning](./planning.md)
+
 # Iteration 3 Task 6: Enable GitHub SSH Access from Dev Container
 
 **Date:** 2025-07-22

@@ -1,3 +1,5 @@
+[Back to Planning](./planning.md)
+
 # Iteration 3 Task 8: Verify Containerized Workflow and Documentation
 
 **Date:** 2025-07-22
