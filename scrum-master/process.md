@@ -126,6 +126,29 @@ The intention and lessons learned from user prompts are regularly extrapolated a
 
 ---
 
+# Project Process Documentation
+
+## File Refactoring & Automation Process
+- All file renaming, batch operations, and navigation changes must be documented in the QA audit file for each iteration.
+- Before batch renaming, always list files with `ls` and verify targets.
+- Remove duplicates before renaming to prevent content loss.
+- Update all references in planning.md and task files after renaming.
+- Log errors and mitigation steps in the QA audit.
+- Lessons learned should be added to this section for future improvement.
+
+## Role-Specific Processes
+- Each project role (Scrum Master, QA, PO, Architect, DevOps, Developer) has a dedicated process file:
+  - [Scrum Master Process](./process-scrum-master.md)
+  - [QA Process](./process-qa.md)
+  - [PO Process](./process-po.md)
+  - [Architect Process](./process-architect.md)
+  - [DevOps Process](./process-devops.md)
+  - [Developer Process](./process-developer.md)
+- When performing any project action, always read the process documentation for your role.
+- If this file becomes too long, split out additional process elements into subfiles and reference them here as with tasks.
+
+---
+
 This file is a living document for Scrum Master best practices and team guidance.
 
 
