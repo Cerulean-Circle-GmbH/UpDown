@@ -22,17 +22,13 @@
 
 
 ## Planning Phase (Precedes Sprint Start)
-- Before each sprint, a dedicated planning phase is conducted.
-- The Scrum Master summarizes the previous sprint's retro and process changes for all roles.
-- The Scrum Master prompts the QA user for approval before the PO begins planning.
-- The PO creates or updates tasks for all roles in the new sprint, reflecting retro learnings and process changes.
-- All roles must review the planning summary and update their own documentation and task files accordingly.
-- The planning phase is documented in process.md and referenced in daily.md and outline.md.
-- Only after QA user approval does the PO proceed to create or update tasks for the new sprint.
-- The Scrum Master must guarantee that before every question to the QA/user, the PO has created or updated the relevant task files for all new or changed requirements, and that these files exist and are referenced in the outline and user-prompts for the sprint. This is second priority after fulfilling direct user requests.
-- The PO must number all new task files for each sprint, starting with 1, and ensure filenames reflect their order and role (e.g., iteration-3-task-1-devops.md). This ensures clarity and extensibility for additional tasks per role.
-- The PO must never write sprint tasks directly into role-specific files (e.g., po/iteration-3-task-1.md). All PO tasks must be created in the sprint's tasks directory (e.g., sprints/iteration-3/), following the template and process from sprints/iteration-n[Template].
-- The Scrum Master must ensure that QA prompt history is captured and referenced in the planning and sprint documentation, and that all QA feedback is incorporated into the process and task files.
+
+## Task Dependencies and Ordering in PO Planning (2025-07-30)
+- The PO must explicitly document task dependencies in each sprint task file, using markdown links to prerequisite tasks.
+- Task ordering is crucial: every task should be actionable only when its dependencies are complete, ensuring logical workflow and minimizing blockers.
+- The planning.md file must serve as the central reference for task order and dependencies, and all task files must link back to it.
+- The Scrum Master must review dependency links and ordering before sprint start and after any major planning changes.
+- This process improvement is now required for all future sprints and onboarding documentation.
 
 ## Role of the Scrum Master
 - Always start as Scrum Master after a restart or context loss.
