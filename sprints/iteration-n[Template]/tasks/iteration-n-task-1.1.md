@@ -1,3 +1,5 @@
+[Back to Parent Task](./iteration-n-task-1.md)
+
 # Task 1.1: Architect Reviews and Proposes Tech Stack
 
 ## Intention
@@ -44,3 +46,10 @@ This approach ensures maintainability, extensibility, and robust support for fut
 ## User Feedback
 - Copy of the prompt when the task is in progress will be documented here.
 - [2025-07-25T10:30:00Z]: Scrum Master: Documented findings and recommendations for tech stack selection in Task 1.1. This fulfills the updated definition of done for the Scrum Master: before marking a task as done, findings and rationale must be documented in the task context. This process improvement will be applied to all future tasks.
+
+---
+## QA Audit & Traceability
+- All changes to this file must be documented in the QA audit file for this iteration.
+- Any batch renaming, headline updates, or navigation changes must be cross-referenced in planning.md and the QA audit.
+- Manual corrections and missed tasks/subtasks should be listed in the QA audit and mitigated as described.
+- Ensure all links and headlines match the planning and file naming conventions.

@@ -19,3 +19,7 @@ QA audit identified the need for modular, maintainable scripts for container lif
 - QA Audit findings (2025-07-30)
 - [devops/devops-scripts-journey.md](../../devops/devops-scripts-journey.md)
 - [devops/copy-ssh-key-to-container.sh](../../devops/copy-ssh-key-to-container.sh)
+
+---
+## Parent Task
+- [Iteration-3-Task-4 DevOps: CI/CD Automation for Dev Container](./iteration-3-task-4-devops-ci-cd-automation-for-dev-container.md)

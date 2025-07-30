@@ -23,3 +23,6 @@
 ---
 
 This file documents the second DevOps task for Sprint 3. All changes must be referenced here and in the onboarding documentation.
+
+## Parent Task
+- [Iteration-3-Task-2 DevOps: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-2-devops-refactor-npm-scripts-for-container-lifecycle.md)

@@ -1,3 +1,5 @@
+[Back to Planning](../planning.md)
+
 # Task 1: Analyze Devcontainer Requirements and Tech Stack
 
 ## Intention
@@ -54,3 +56,15 @@ Scrum Master: I will change the test script so it calls the devcontainer and tes
 ### 2025-07-25 12:30 UTC
 User: Test the test script to see if the devcontainer is available and if it has the lib installed. If it is not installed then add the dependency and call "npm start" and afterwards test again.
 Scrum Master: Will run the updated test script, install missing dependencies if needed, restart the devcontainer with "npm start", and re-run the test to verify setup.
+
+---
+## Subtasks
+- [Iteration-n-Task-1.1: Define Devcontainer PDF Conversion Workflow](./iteration-n-task-1.1.md)
+- [Iteration-n-Task-1.2: Document Tech Stack and Test Script](./iteration-n-task-1.2.md)
+
+---
+## QA Audit & Traceability
+- All changes to this file must be documented in the QA audit file for this iteration.
+- Any batch renaming, headline updates, or navigation changes must be cross-referenced in planning.md and the QA audit.
+- Manual corrections and missed tasks/subtasks should be listed in the QA audit and mitigated as described.
+- Ensure all links and headlines match the planning and file naming conventions.

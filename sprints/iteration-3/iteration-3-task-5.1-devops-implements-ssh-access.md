@@ -18,3 +18,7 @@ QA audit identified the need for modular, maintainable scripts for test executio
 **References:**
 - QA Audit findings (2025-07-30)
 - [devops/devops-scripts-journey.md](../../devops/devops-scripts-journey.md)
+
+---
+## Parent Task
+- [Iteration-3-Task-5 Enable GitHub SSH Access from Dev Container](./iteration-3-task-5-enable-github-ssh-access-from-dev-container.md)
