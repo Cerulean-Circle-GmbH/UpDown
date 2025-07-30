@@ -1,6 +1,6 @@
 [Back to Planning](./planning.md)
 
-# Iteration-3-Task-1 Architect: Document Containerized Developer Workflow
+# Iteration-3-Task-1-Architect-Document-Containerized-Developer-Workflow
 
 **Date:** 2025-07-22
 
@@ -23,5 +23,12 @@
 
 ---
 
+## QA Audit & Traceability
+- All changes to this file must be documented in the QA audit file for this iteration.
+- Any batch renaming, headline updates, or navigation changes must be cross-referenced in planning.md and the QA audit.
+- Manual corrections and missed tasks/subtasks should be listed in the QA audit and mitigated as described.
+- Ensure all links and headlines match the planning and file naming conventions.
+
+---
 ## Subtasks
-- [Iteration-3-Task-1.1 DevOps: Robust Container and Local Workflow](./iteration-3-task-1.1-devops-robust-container-and-local-workflow.md)
+- [Iteration-3-Task-1.1-DevOps-Robust-Container-and-Local-Workflow](./iteration-3-task-1.1-devops-robust-container-and-local-workflow.md)
