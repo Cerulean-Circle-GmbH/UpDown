@@ -1,4 +1,11 @@
 # Scrum Master Process & Lessons Learned
+## First Principle: DO NOT REPEAT YOURSELF (DRY)
+- The Scrum Master and all roles must actively prevent duplication of files, text, and documentation throughout the project.
+- When a duplicate or repeated section is found, replace it in batch mode with a single, authoritative source and use consistent links and backlink structures.
+- Always prefer referencing and backlinking to canonical files (e.g., process.md, planning.md, task files) rather than copying content.
+- When refactoring, check for and remove duplicates, and update all references to point to the correct, unique file or section.
+- This principle applies to all documentation, code, and process artifacts. It ensures clarity, maintainability, and traceability across the project.
+- Document all batch deduplication actions in the QA audit and process documentation for traceability.
 
 ## Latest Learnings from QA Audit (2025-07-30)
 - Always verify file existence and naming before batch operations; use `ls` to confirm targets.
@@ -54,14 +61,14 @@
 - Ensure the presence and importance of the "# backup and QA user annotations" section in docs/api-and-model-spec.md is communicated to all roles and referenced in onboarding and process docs.
 - After each task, check that the required artifact exists and is referenced in the relevant task file.
 - If a process or context recovery is needed, follow the steps in restart.md and update it as the process evolves.
-- Always update project.outline.md after each role shift or major task completion, so the project status and next steps are always clear for the team.
+- Always update planning.md after each role shift or major task completion, so the project status and next steps are always clear for the team.
 - Guarantee onboarding and process docs clarify that all Bun-related commands must be run inside the dev container, and document how to start/enter the dev container using the provided npm/docker scripts.
-- Always update user.captured.prompts.md and project.outline.md after every major process, role shift, or user feedback.
+- Always update user.captured.prompts.md and planning.md after every major process, role shift, or user feedback.
 - After starting a new iteration or major process change, document the rationale and next steps in process.md.
 - When fixing or refactoring an iteration, clearly mark the transition and ensure all lessons learned are captured for future reference.
-- Organize all process, outline, and user feedback files by iteration/sprint to keep context manageable and improve performance.
+- Organize all process, planning, and user feedback files by iteration/sprint to keep context manageable and improve performance.
 - For each new iteration, create a dedicated folder (e.g., sprints/iteration-2/, sprints/iteration-3/) containing:
-  - outline.md (project outline for the iteration)
+  - planning.md (project planning and outline for the iteration)
   - user-prompts.md (user feedback for the iteration)
   - process.md (scrum master/process notes for the iteration)
 - Only read and update the files for the current iteration unless a cross-iteration reference is needed.
@@ -72,7 +79,7 @@
 - Maintain a daily.md file in the scrum-master folder to document the next planned step for each role. This file is updated daily or after each major process step, and always documents the next planned step for each role. After user confirmation, the Scrum Master executes the next step for each role until QA, guidance, or confirmation is required.
 - The daily.md file in scrum-master/ must always reference task files using markdown links and reflect the current, unique state for each role after every role change or major process step. Do not concatenate entries; always keep the file short and up to date.
 - The daily.md file is updated after every role change or major process step, and is the authoritative source for the next planned step for each role.
-- The Scrum Master must update `scrum-master/daily.md` after every step, including after any change to task files, outline, or user-prompts, to reflect the current next step for each role. This is mandatory for every process or planning action.
+- The Scrum Master must update `scrum-master/daily.md` after every step, including after any change to task files, planning, or user-prompts, to reflect the current next step for each role. This is mandatory for every process or planning action.
 
 ## Branch Management and Release Process (Added July 2025)
 - PO collects all feature branches and completed work, decides what gets merged into main.
@@ -82,7 +89,7 @@
 - Sprint methodology resumes after restart or new sprint.
 
 ## Intention
-+Iterated understanding: Documentation and user feedback must be added into the context of the corresponding task or subtask. Only one status can be active at a time (radio box, not checkbox). This ensures clarity after recovery.
+Iterated understanding: Documentation and user feedback must be added into the context of the corresponding task or subtask. Only one status can be active at a time (radio box, not checkbox). This ensures clarity after recovery.
 User queries are to be added to user.captured.prompts.md with UTC timestamp. 
 User feedback in tasks is always concatenated, never removed. 
 User Feedback in tasks are added to the corresponding task.
@@ -93,6 +100,12 @@ User feedback in tasks is always concatenated, never removed, and must be added 
 Scrum Master and team prompts are documented in the "Next Steps" section of each task/subtask, with timestamp.
 The process.md now clearly states these rules and the fail-safe mechanism for recovery.
 The intention and lessons learned from user prompts are regularly extrapolated and summarized in process.md.
+
+## Role-Based Process Recovery (2025-07-30)
+- The scrum-master/process.md file is the authoritative source for overall process recovery and orchestration. Always read this file first after a restart or context loss.
+- When switching to a different role during a sprint, always read the corresponding role's process.md file (e.g., devops/process.md, qa/process.md, etc.) to refresh on role-specific practices and requirements before executing any tasks.
+- Remove any process.md files from sprint folders to avoid confusion. All process improvements and lessons learned should be added to the global process.md.
+- The Scrum Master must ensure that all roles refresh their context by reading their respective role process.md files when switching roles during a sprint. This guarantees process integrity and that all best practices are followed for each role.
 
 ## Fail-Safe Mechanism: User Prompts & Recovery
 - The file `contracts/user.specs/user.captured.prompts.md` is the authoritative log for all user comments, feedback, and critical actions. It acts as a fail-safe and recovery anchor for the project.

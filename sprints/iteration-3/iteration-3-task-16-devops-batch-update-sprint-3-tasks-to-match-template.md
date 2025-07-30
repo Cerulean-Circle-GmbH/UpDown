@@ -1,4 +1,6 @@
-# Iteration-3-Task-Template-Sync: Batch Update Sprint 3 Tasks to Match Template
+[← Back to Sprint 3 Planning](./planning.md)
+
+# Iteration-3-Task-16-DevOps-Batch-Update-Sprint-3-Tasks-To-Match-Template.md
 
 ## Intention
 - Ensure all sprint 3 task and subtask markdown files are updated to match the latest template improvements for headlines, backlinks, QA audit, and process compliance.
@@ -29,3 +31,7 @@
 ## Next Steps
 - Assign to Scrum Master and QA for batch update and review.
 - Document results and lessons learned in the QA audit and process.md.
+
+---
+
+[← Back to Sprint 3 Planning](./planning.md)

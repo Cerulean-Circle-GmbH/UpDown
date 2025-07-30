@@ -4,34 +4,40 @@
 
 ## Task List (Sprint 3)
 
-- [x] [Task 1: Architect: Document Containerized Developer Workflow](./iteration-3-task-1-architect-document-containerized-developer-workflow.md)
-    - [ ] [Task 1.1: DevOps: Robust Container and Local Workflow (npm/DevOps scripts, onboarding, SSH key handling)](./iteration-3-task-1.1-devops-robust-container-and-local-workflow.md)
-
-- [x] [Task 2: DevOps: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-2-devops-refactor-npm-scripts-for-container-lifecycle.md)
-
-- [ ] [Task 4: DevOps: CI/CD Automation for Dev Container (GitHub Actions, Dockerfile, startup scripts)](./iteration-3-task-4-devops-ci-cd-automation-for-dev-container.md)
-    - [ ] [Task 4.1: DevOps implements robust workflow](./iteration-3-task-4.1-devops-implements-robust-workflow.md)
-
-- [ ] [Task 5: Enable GitHub SSH Access from Dev Container](./iteration-3-task-5-enable-github-ssh-access-from-dev-container.md)
-    - [ ] [Task 5.1: DevOps implements SSH access](./iteration-3-task-5.1-devops-implements-ssh-access.md)
-
-- [ ] [Task 6: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-6-refactor-npm-scripts-for-container-lifecycle.md)
-
-- [ ] [Task 7: Update Onboarding and Developer Documentation](./iteration-3-task-7-update-onboarding-and-developer-documentation.md)
-
-- [ ] [Task 8: Verify Containerized Workflow and Documentation](./iteration-3-task-8-verify-containerized-workflow-and-documentation.md)
-
-- [ ] [Task 9: DevOps Scripts Documentation and Onboarding](./iteration-3-task-9-devops-scripts-documentation-and-onboarding.md)
-
-- [ ] [Task 10: DevOps - Project Directory Structure and Sync](./iteration-3-task-10-devops-project-directory-structure-and-sync.md)
-
-- [ ] [Task 11: DevOps - Refactor Dev Container Startup Workflow](./iteration-3-task-11-devops-refactor-dev-container-startup-workflow.md)
-
-- [ ] [Task 12: DevOps: GitHub Actions CI/CD for Dev Container](./iteration-3-task-12-devops-github-actions-ci-cd-for-dev-container.md)
-
-- [x] [Task 13: PO QA Audit Learnings and Process Improvements](./iteration-3-task-13-po-qa-audit-learnings-and-process-improvements.md)
-
-- [x] [Task 14: Refactor and Modularize DevOps npm Scripts](./iteration-3-task-14-refactor-and-modularize-devops-npm-scripts.md)
+- [ ] [Task 16: DevOps: Batch Update Sprint 3 Tasks to Match Template](./iteration-3-task-16-devops-batch-update-sprint-3-tasks-to-match-template.md)  
+  **Priority:** 1
+- [x] [Task 1: Architect: Document Containerized Developer Workflow](./iteration-3-task-1-architect-document-containerized-developer-workflow.md)  
+  **Priority:** 2
+- [x] [Task 2: DevOps: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-2-devops-refactor-npm-scripts-for-container-lifecycle.md)  
+  **Priority:** 3
+- [ ] [Task 6: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-6-refactor-npm-scripts-for-container-lifecycle.md)  
+  **Priority:** 4
+- [ ] [Task 7: Update Onboarding and Developer Documentation](./iteration-3-task-7-update-onboarding-and-developer-documentation.md)  
+  **Priority:** 5
+- [ ] [Task 9: DevOps Scripts Documentation and Onboarding](./iteration-3-task-9-devops-scripts-documentation-and-onboarding.md)  
+  **Priority:** 6
+- [ ] [Task 10: DevOps - Project Directory Structure and Sync](./iteration-3-task-10-devops-project-directory-structure-and-sync.md)  
+  **Priority:** 7
+- [ ] [Task 11: DevOps - Refactor Dev Container Startup Workflow](./iteration-3-task-11-devops-refactor-dev-container-startup-workflow.md)  
+  **Priority:** 8
+- [ ] [Task 12: DevOps: GitHub Actions CI/CD for Dev Container](./iteration-3-task-12-devops-github-actions-ci-cd-for-dev-container.md)  
+  **Priority:** 9
+- [ ] [Task 4: DevOps: CI/CD Automation for Dev Container (GitHub Actions, Dockerfile, startup scripts)](./iteration-3-task-4-devops-ci-cd-automation-for-dev-container.md)  
+  **Priority:** 10
+    - [ ] [Task 4.1: DevOps implements robust workflow](./iteration-3-task-4.1-devops-implements-robust-workflow.md)  
+      **Priority:** 14
+- [ ] [Task 5: Enable GitHub SSH Access from Dev Container](./iteration-3-task-5-enable-github-ssh-access-from-dev-container.md)  
+  **Priority:** 11
+    - [ ] [Task 5.1: DevOps implements SSH access](./iteration-3-task-5.1-devops-implements-ssh-access.md)  
+      **Priority:** 15
+- [ ] [Task 8: Verify Containerized Workflow and Documentation](./iteration-3-task-8-verify-containerized-workflow-and-documentation.md)  
+  **Priority:** 12
+    - [ ] [Task 1.1: DevOps: Robust Container and Local Workflow (npm/DevOps scripts, onboarding, SSH key handling)](./iteration-3-task-1.1-devops-robust-container-and-local-workflow.md)  
+      **Priority:** 13
+- [x] [Task 13: PO QA Audit Learnings and Process Improvements](./iteration-3-task-13-po-qa-audit-learnings-and-process-improvements.md)  
+  **Priority:** 16
+- [x] [Task 14: Refactor and Modularize DevOps npm Scripts](./iteration-3-task-14-refactor-and-modularize-devops-npm-scripts.md)  
+  **Priority:** 17
 
 This sequence ensures the devcontainer and workflow are set up to enable robust container/local development, modular scripts, and maintainable onboarding, with clear planning, granular steps, and test-driven development for each role. All QA feedback is explicitly captured and referenced.
 
