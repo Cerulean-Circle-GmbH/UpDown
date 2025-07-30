@@ -22,23 +22,34 @@
 
 ## Task List (Sprint 3)
 
+
 - [x] [Task 1: Architect: Document Containerized Developer Workflow](./iteration-3-task-1.md)
-    - [ ] [Task 1.1: DevOps implements workflow documentation updates](./iteration-3-task-1-devops.md)
+    - [ ] [Task 1.1: DevOps: Robust Container and Local Workflow (npm/DevOps scripts, onboarding, SSH key handling)](./iteration-3-task-1-devops.md)
+
 - [x] [Task 2: DevOps: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-2.md)
-    - [ ] [Task 2.1: PO updates onboarding and documentation](./iteration-3-task-2-devops.md)
-- [ ] [Task 3: Document Containerized Developer Workflow](./iteration-3-task-3.md)
-- [ ] [Task 4: DevOps - Robust Container and Local Workflow](./iteration-3-task-4.md)
+
+- [ ] [Task 4: DevOps: CI/CD Automation for Dev Container (GitHub Actions, Dockerfile, startup scripts)](./iteration-3-task-4.md)
     - [ ] [Task 4.1: DevOps implements robust workflow](./iteration-3-task-5-devops.md)
+
 - [ ] [Task 5: Enable GitHub SSH Access from Dev Container](./iteration-3-task-5.md)
     - [ ] [Task 5.1: DevOps implements SSH access](./iteration-3-task-6-devops.md)
+
 - [ ] [Task 6: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-6.md)
+
 - [ ] [Task 7: Update Onboarding and Developer Documentation](./iteration-3-task-7.md)
+
 - [ ] [Task 8: Verify Containerized Workflow and Documentation](./iteration-3-task-8.md)
+
 - [ ] [Task 9: DevOps Scripts Documentation and Onboarding](./iteration-3-task-9.md)
+
 - [ ] [Task 10: DevOps - Project Directory Structure and Sync](./iteration-3-task-10.md)
+
 - [ ] [Task 11: DevOps - Refactor Dev Container Startup Workflow](./iteration-3-task-11.md)
-- [ ] [Task 12: GitHub Actions CI/CD for Dev Container](./iteration-3-task-12.md)
+
+- [ ] [Task 12: DevOps: GitHub Actions CI/CD for Dev Container](./iteration-3-task-12.md)
+
 - [x] [Task 13: PO QA Audit Learnings and Process Improvements](./iteration-3-task-13.md)
+
 - [x] [Task 14: Refactor and Modularize DevOps npm Scripts](./iteration-3-task-14.md)
 
 This sequence ensures the devcontainer and workflow are set up to enable robust container/local development, modular scripts, and maintainable onboarding, with clear planning, granular steps, and test-driven development for each role. All QA feedback is explicitly captured and referenced.
