@@ -138,12 +138,12 @@ The intention and lessons learned from user prompts are regularly extrapolated a
 
 ## Role-Specific Processes
 - Each project role (Scrum Master, QA, PO, Architect, DevOps, Developer) has a dedicated process file:
-  - [Scrum Master Process](./process-scrum-master.md)
-  - [QA Process](./process-qa.md)
-  - [PO Process](./process-po.md)
-  - [Architect Process](./process-architect.md)
-  - [DevOps Process](./process-devops.md)
-  - [Developer Process](./process-developer.md)
+  - [Scrum Master Process](../scrum-master/process.md)
+  - [QA Process](../qa/process.md)
+  - [PO Process](../po/process.md)
+  - [Architect Process](../architect/process.md)
+  - [DevOps Process](../devops/process.md)
+  - [Developer Process](../developer/process.md)
 - When performing any project action, always read the process documentation for your role.
 - If this file becomes too long, split out additional process elements into subfiles and reference them here as with tasks.
 
