@@ -1,6 +1,6 @@
 [Back to Planning](./planning.md)
 
-# Iteration 3 Task 4: Robust Container and Local Workflow
+# Iteration-3-Task-4 DevOps: CI/CD Automation for Dev Container
 
 ## Background
 Automate the build and startup of the dev container using GitHub Actions on every commit, ensuring all project checks run in CI.
