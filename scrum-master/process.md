@@ -1,5 +1,17 @@
 # Scrum Master Process & Lessons Learned
 
+## Latest Learnings from QA Audit (2025-07-30)
+- Always verify file existence and naming before batch operations; use `ls` to confirm targets.
+- Remove duplicates before renaming to prevent content loss and confusion.
+- After any batch file operation, immediately update all references in planning.md and task files.
+- Document every file operation, error, and mitigation step in the QA audit file for the current iteration.
+- Cross-reference all batch changes in planning.md, QA audit, and process documentation for traceability.
+- When refactoring, always check for missed tasks/subtasks and document manual corrections in the QA audit.
+- Ensure all headlines and links match the planning and file naming conventions after any batch operation.
+- Role-specific process files must backlink to this master process document for overall guidance.
+- If process.md becomes too long, split out role-specific and technical sections into dedicated files and reference them here.
+- The Scrum Master is responsible for enforcing these QA audit learnings and updating process documentation after every major change.
+
 **Date:** 2025-07-22
 **Process Reminder (2025-07-24):**
 
@@ -128,13 +140,9 @@ The intention and lessons learned from user prompts are regularly extrapolated a
 
 # Project Process Documentation
 
-## File Refactoring & Automation Process
-- All file renaming, batch operations, and navigation changes must be documented in the QA audit file for each iteration.
-- Before batch renaming, always list files with `ls` and verify targets.
-- Remove duplicates before renaming to prevent content loss.
-- Update all references in planning.md and task files after renaming.
-- Log errors and mitigation steps in the QA audit.
-- Lessons learned should be added to this section for future improvement.
+## Cross-Role Best Practices
+- See role-specific process files for detailed guidelines and lessons learned.
+- This file contains only cross-role practices, onboarding, iteration management, and references to role files.
 
 ## Role-Specific Processes
 - Each project role (Scrum Master, QA, PO, Architect, DevOps, Developer) has a dedicated process file:
