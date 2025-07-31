@@ -36,6 +36,7 @@
 - Example: If Task 1.1 is in progress, document the status and findings in both Task 1 and Task 1.1 files, and update Task 1.2 as needed.
 
 ## QA Guidelines
+2025-07-31 UTC: Daily QA Feedback: Status is planning phase, iterating on Task 16. Tasks 1 and 6 have been fixed manually by QA user. Tasks 2 and 3 are pending restoration with correct Intention and Task Description. Batch will continue with Task 4 after 2 and 3 are restored. This status is reflected in daily.md and planning.md. Always document current status and next steps in daily and planning files for full traceability.
 General Note: Always notify the QA user before deleting or replacing major sections of content in any markdown file. This is required for traceability and to prevent accidental loss of important information. Only make minimal changes unless explicitly approved by QA.
 
 2025-07-31 UTC: QA Feedback: Status and Steps were previously mixed up, and Intention was lost in Task 6. The correct template order is: Task Description, Status, Context, Intention, Steps. Always restore this order and content. If technical errors prevent automated fixes, notify QA and provide the correct structure for manual review.

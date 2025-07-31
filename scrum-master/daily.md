@@ -58,10 +58,10 @@ This file is updated daily or after each major process step. Always document the
 **Date:** 2025-07-30
 
 ## Next Planned Step (All Roles)
-- **Task:** [Task 16: DevOps: Batch Update Sprint 3 Tasks to Match Template](../sprints/iteration-3/iteration-3-task-16-devops-batch-update-sprint-3-tasks-to-match-template.md)
-- **Priority:** 1
-- **Status:** In Progress
-- **Notes:** This is a planning/meta task. All roles (PO, Architect, DevOps, QA, Developer) collaborate to ensure all sprint 3 task and subtask files match the template for headlines, backlinks, QA audit, and process compliance. Duplicates are removed, links updated, and changes documented in QA audit and [planning.md](../sprints/iteration-3/planning.md). User prompt history is captured in [user.captured.prompts.md](../user.specs/user.captured.prompts.md).
+**Task:** [Task 16: DevOps: Batch Update Sprint 3 Tasks to Match Template](../sprints/iteration-3/iteration-3-task-16-devops-batch-update-sprint-3-tasks-to-match-template.md)
+**Priority:** 1
+**Status:** Planning phase, iterating on Task 16. Tasks 1 and 6 have been fixed manually by QA user. Tasks 2 and 3 are pending restoration with correct Intention and Task Description. Batch will continue with Task 4 after 2 and 3 are restored.
+**Notes:** This is a planning/meta task. All roles (PO, Architect, DevOps, QA, Developer) collaborate to ensure all sprint 3 task and subtask files match the template for headlines, backlinks, QA audit, and process compliance. Duplicates are removed, links updated, and changes documented in QA audit and [planning.md](../sprints/iteration-3/planning.md). User prompt history is captured in [user.captured.prompts.md](../user.specs/user.captured.prompts.md).
 
 ## User Prompts Log
 - **2025-07-30 UTC:** "so execute prio 1 already with documenting user prompts and daily routine (daily md process), even if it is a planning task."
