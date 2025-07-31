@@ -43,6 +43,9 @@
 - Manual corrections and missed tasks/subtasks should be listed in the QA audit and mitigated as described.
 - Ensure all links and headlines match the planning and file naming conventions.
 
+### 2025-07-31 QA Feedback
+- Task Description section was missing and has now been restored to all batch-updated tasks. PO provides the description, context is for the role, intention is double-checked by PO. This pattern is now required for all future batch updates.
+
 ---
 
 [← Back to Sprint 3 Planning](./planning.md)

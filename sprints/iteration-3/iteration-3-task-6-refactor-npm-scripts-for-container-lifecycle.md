@@ -15,13 +15,13 @@
 ## Context
 QA audit identified complexity and maintainability issues in the current npm start script. The refactor aims to address these issues and improve onboarding for new contributors.
 
-## Intention
-Refactor the start script in `package.json` to split responsibilities into dedicated scripts for container lifecycle management, SSH key management, and test execution. Ensure modularity, maintainability, and clear documentation for onboarding.
+## Task Description
+- PO: Refactor the start script in package.json to split responsibilities into dedicated scripts for container lifecycle management, SSH key management, and test execution. Ensure modularity, maintainability, and clear documentation for onboarding.
 
 ## Steps
-- [x] Review the current npm start script and identify areas for modularization.
-- [x] Split responsibilities into dedicated scripts for each major operation.
-- [x] Update onboarding documentation to reference each new script and process.
+- [ ] Review the current npm start script and identify areas for modularization.
+- [ ] Split responsibilities into dedicated scripts for each major operation.
+- [ ] Update onboarding documentation to reference each new script and process.
 - [ ] Implement the refactored scripts and update documentation.
 - [ ] Assign to QA for verification and feedback.
 - [ ] Verify changes with QA and document all feedback.

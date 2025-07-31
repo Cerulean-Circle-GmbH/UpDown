@@ -36,6 +36,7 @@
 - Example: If Task 1.1 is in progress, document the status and findings in both Task 1 and Task 1.1 files, and update Task 1.2 as needed.
 
 ## QA Guidelines
+- Every task must include a 'Task Description' section written by the PO, a 'Context' section for the role, and an 'Intention' section for PO double-checking. This ensures clarity and traceability for all roles.
 - All team members must avoid spaces in folder names. Use '.' or '-' instead of spaces when creating directories (e.g., 'user.specs' instead of 'user specs').
 - All QA feedback must be documented with a timestamp in the QA audit section of each relevant task file (e.g., Task 16) and cross-referenced in planning.md and process documentation.
 - When performing batch updates or manual corrections, always restore and preserve previous QA feedback entries. Use git history to recover any lost feedback.

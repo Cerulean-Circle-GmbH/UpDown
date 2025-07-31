@@ -12,13 +12,14 @@
 - [ ] QA Review
 - [ ] Done
 
+## Task Description
+- PO: Describe the task for the role. This section is written by the PO and provides the initial requirements and goals for the task.
+
 ## Context
-- Task 1.1 and 1.2 are not yet done; tech stack and workflow for PDF upload/conversion are not finalized or documented.
-- Next steps: PO and architect must decide on PDF upload method and document the workflow and tech stack in 1.1 and 1.2.
+- The role derives the steps and understanding from the PO's task description and documents any additional context or constraints.
 
 ## Intention
-- PO and Architect analyze the requirements for the devcontainer and select the tech stack needed for PDF processing and LaTeX conversion.
-- Consult with Architect to ensure compatibility and future extensibility.
+- The PO double-checks that the role has captured the correct intent from the task description and context.
 
 ## Steps
 - [x] Review project goals and user requirements.
