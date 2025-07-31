@@ -1,6 +1,12 @@
+
 [Back to Planning](./planning.md)
 
+
 # Iteration-3-Task-2 DevOps: Refactor NPM Scripts for Container Lifecycle
+
+
+## Task Description
+- PO: Refactor npm scripts so that npm start (on host) only manages the dev container lifecycle (build, start, stop, status). Add scripts or documentation for attaching to the running dev container. Remove or clarify any npm scripts that attempt to run bun or server/client code directly on the host. Ensure all bun/server/client commands are run inside the dev container.
 
 ## Status
 - [x] Planned
@@ -12,8 +18,9 @@
 - [ ] QA Review
 - [ ] Done
 
-## Task Description
-- PO: Refactor npm scripts so that npm start (on host) only manages the dev container lifecycle (build, start, stop, status). Add scripts or documentation for attaching to the running dev container. Remove or clarify any npm scripts that attempt to run bun or server/client code directly on the host. Ensure all bun/server/client commands are run inside the dev container.
+## Context
+- The current npm scripts mix container lifecycle management and direct host execution of bun/server/client code, causing confusion and onboarding issues.
+- Developers need clear separation between container management and code execution inside the dev container.
 
 ## Intention
 - Ensure container lifecycle management is modular, maintainable, and clear for onboarding.
@@ -27,13 +34,13 @@
 - [ ] Assign to PO for onboarding and documentation updates.
 
 ## Requirements
-List the functional and non-functional requirements for the refactored npm scripts and container lifecycle workflow. Example:
 - Scripts must be modular and maintainable.
 - All dependencies must be installable via configuration scripts.
 - The workflow must be reproducible and documented.
 
 ## Tech Stack Rationale
-Use modular bash scripts and npm scripts to separate concerns and improve maintainability. Ensure compatibility with the devcontainer environment and cross-platform support.
+- Use modular bash scripts and npm scripts to separate concerns and improve maintainability.
+- Ensure compatibility with the devcontainer environment and cross-platform support.
 
 ## Acceptance Criteria
 - npm start and related scripts only manage the dev container lifecycle.
