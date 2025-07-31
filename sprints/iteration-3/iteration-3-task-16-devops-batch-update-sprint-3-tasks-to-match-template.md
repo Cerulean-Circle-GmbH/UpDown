@@ -37,6 +37,8 @@
 - Document results and lessons learned in the QA audit and process.md.
 
 ## QA Audit & User Feedback
+2025-07-31 UTC: QA Feedback: Status and Steps were previously mixed up, and Intention was lost in Task 6. The correct template order is: Task Description, Status, Context, Intention, Steps. Always restore this order and content. If technical errors prevent automated fixes, notify QA and provide the correct structure for manual review.
+2025-07-31 UTC: QA Feedback: Previous edits to Task 6 wrongly deleted the Steps section and duplicated the Task Description headline. Always follow the template headline order: Task Description, Status, Context, Intention, Steps. Only make minimal changes and never delete major content without QA approval. Notify QA before any large deletion or replacement. Fixes applied: Steps restored, duplicate headline removed, headline order corrected.
 2025-07-31 UTC: General Note: Before deleting or replacing large sections of content, always ask the QA user for approval. This prevents accidental loss of important information and ensures traceability.
 
 - Task Description section was missing and has now been restored to all batch-updated tasks. PO provides the description, context is for the role, intention is double-checked by PO. This pattern is now required for all future batch updates.

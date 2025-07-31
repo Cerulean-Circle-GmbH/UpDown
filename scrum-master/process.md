@@ -36,6 +36,9 @@
 - Example: If Task 1.1 is in progress, document the status and findings in both Task 1 and Task 1.1 files, and update Task 1.2 as needed.
 
 ## QA Guidelines
+General Note: Always notify the QA user before deleting or replacing major sections of content in any markdown file. This is required for traceability and to prevent accidental loss of important information. Only make minimal changes unless explicitly approved by QA.
+
+2025-07-31 UTC: QA Feedback: Status and Steps were previously mixed up, and Intention was lost in Task 6. The correct template order is: Task Description, Status, Context, Intention, Steps. Always restore this order and content. If technical errors prevent automated fixes, notify QA and provide the correct structure for manual review.
 - Every task must include a 'Task Description' section written by the PO, a 'Context' section for the role, and an 'Intention' section for PO double-checking. This ensures clarity and traceability for all roles.
 - All team members must avoid spaces in folder names. Use '.' or '-' instead of spaces when creating directories (e.g., 'user.specs' instead of 'user specs').
 - All QA feedback must be documented with a timestamp in the QA audit section of each relevant task file (e.g., Task 16) and cross-referenced in planning.md and process documentation.
