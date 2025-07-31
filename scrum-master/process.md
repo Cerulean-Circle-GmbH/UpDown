@@ -39,9 +39,9 @@
 - All team members must avoid spaces in folder names. Use '.' or '-' instead of spaces when creating directories (e.g., 'user.specs' instead of 'user specs').
 - All QA feedback must be documented with a timestamp in the QA audit section of each relevant task file (e.g., Task 16) and cross-referenced in planning.md and process documentation.
 - When performing batch updates or manual corrections, always restore and preserve previous QA feedback entries. Use git history to recover any lost feedback.
-- Add new feedback in the list without removing previous entries.
+- - Add new feedback in the list without removing previous entries.
 - The Scrum Master and QA must enforce this guideline for all new folders and refactor any existing folders that do not comply.
-
+- For role-specific refinement process requirements, see the relevant section in each role's process.md file (e.g., developer/process.md, qa/process.md, po/process.md).
 
 ## Planning Phase (Precedes Sprint Start)
 

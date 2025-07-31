@@ -15,5 +15,16 @@ This file contains process guidelines, best practices, and lessons learned for t
 - Document how to start/enter the dev container using the provided npm/docker scripts.
 - Ensure onboarding and process docs clarify container usage for all roles.
 
+# DevOps Process: Task Refinement
+
+## Task Refinement Guidelines
+- During the 'refinement' phase of any assigned task, DevOps must:
+  - Review the task's technical requirements, dependencies, and environment setup.
+  - Ensure all DevOps steps and scripts are documented as markdown checkboxes in the 'Steps' section of the task file.
+  - Collaborate with PO, Developer, and Architect to clarify requirements and environment needs.
+  - Document any infrastructure risks or decisions in the task file.
+  - Confirm that the refinement phase is complete in the Status section before QA Review can begin.
+- Reference: See 'QA Guidelines' and 'Subtask Context & Status Management' in scrum-master/process.md for cross-role best practices.
+
 ## Backlink
-- [Back to Scrum Master Process](../scrum-master/process.md)
+- [Scrum Master Process & Lessons Learned](../scrum-master/process.md)
