@@ -37,6 +37,8 @@
 - Document results and lessons learned in the QA audit and process.md.
 
 ## QA Audit & Traceability
+- 2025-07-30 UTC: Batch update initiated for Sprint 3 tasks to match template. Headlines, backlinks, QA audit, and process compliance sections will be standardized. Duplicates will be removed, links updated, and changes documented in QA audit and planning.md. User prompt history will be captured in user.captured.prompts.md.
+- 2025-07-30 UTC: well done on task 6 but i realized you did not cpature all requirements in task 16 in the first place. lets improve task 16 at first. compare all the headlines in the template of template task1 /Users/Shared/Workspaces/2cuGitHub/UpDown/sprints/iteration-n[Template]/tasks/iteration-n-task-1-analyze-devcontainer-requirements-and-tech-stack.md and compare them with the headlines in the task 6. all missing headlines from the template have to be carried over and filled with content. improve task 16 description to reflect that and add this to task 6 before i give feedback and we do the batch. put my qa feedback in task 16.
 - All changes to this file must be documented in the QA audit file for this iteration.
 - Any batch renaming, headline updates, or navigation changes must be cross-referenced in planning.md and the QA audit.
 - Manual corrections and missed tasks/subtasks should be listed in the QA audit and mitigated as described.
