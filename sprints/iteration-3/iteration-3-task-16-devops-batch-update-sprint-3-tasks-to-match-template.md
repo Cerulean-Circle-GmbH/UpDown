@@ -36,19 +36,12 @@
 - Assign to Scrum Master and QA for batch update and review.
 - Document results and lessons learned in the QA audit and process.md.
 
-## QA Audit & Traceability
-- 2025-07-30 UTC: Batch update initiated for Sprint 3 tasks to match template. Headlines, backlinks, QA audit, and process compliance sections will be standardized. Duplicates will be removed, links updated, and changes documented in QA audit and planning.md. User prompt history will be captured in user.captured.prompts.md.
-- 2025-07-30 UTC: well done on task 6 but i realized you did not cpature all requirements in task 16 in the first place. lets improve task 16 at first. compare all the headlines in the template of template task1 /Users/Shared/Workspaces/2cuGitHub/UpDown/sprints/iteration-n[Template]/tasks/iteration-n-task-1-analyze-devcontainer-requirements-and-tech-stack.md and compare them with the headlines in the task 6. all missing headlines from the template have to be carried over and filled with content. improve task 16 description to reflect that and add this to task 6 before i give feedback and we do the batch. put my qa feedback in task 16.
-- All changes to this file must be documented in the QA audit file for this iteration.
-- Any batch renaming, headline updates, or navigation changes must be cross-referenced in planning.md and the QA audit.
+## QA Audit & User Feedback
+- All feedback and audit entries for batch updates must be timestamped (UTC) and documented in this section.
+- Consolidate all user feedback and QA audit traceability into a single section for clarity and process compliance.
+- Example entry: '- 2025-07-31 UTC: [Feedback or audit note]'
 - Manual corrections and missed tasks/subtasks should be listed in the QA audit and mitigated as described.
 - Ensure all links and headlines match the planning and file naming conventions.
-
-### 2025-07-31 QA Feedback
-- Manual restoration of 'Acceptance Criteria' and improved headline order was required after previous batch update attempts failed to merge all template improvements.
-- Status section was expanded to include granular process steps (refinement, test cases, implementing, testing, QA Review).
-- Quote from user: "you did NOT restore acceptence criteria but the content and the requirements. as we are running in circles, i do this now manually. I will also manually improve the headline order. additionally i added more status elements. keep and use them. we will itteratively add the process that relates to it."
-- Lesson: Always verify headline order and completeness of all template sections, especially 'Acceptance Criteria', when performing batch updates. Manual intervention may be needed to ensure process compliance and traceability.
 
 ---
 

@@ -57,7 +57,11 @@ Define the criteria for successful completion of this task. Example:
 - Documentation is updated to reflect the tech stack and workflow.
 
 
-## QA Audit & Traceability
+## QA Audit & User Feedback
+- All feedback and audit entries must be timestamped (UTC) and documented in this section.
+- Consolidate all user feedback and QA audit traceability into a single section for clarity and process compliance.
+- Example entry: '- 2025-07-31 UTC: [Feedback or audit note]'
+
 ### 2025-07-25 12:16 UTC 
 very good. i have a questions on the task: we have the dev container already available that you can start with '''npm start''' so the tech stack can be added in the configuration and we are already set up with the container. do you agree? if so, add the task to add dependencies, configuration and also define a test that verifies then that the devcontainer is configured correctly and the libs are available in there. this test needs to be called via bash as we have done it with the hello world test script contracts/tests/hello-world-test.sh
 
