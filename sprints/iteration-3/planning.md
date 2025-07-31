@@ -39,6 +39,10 @@
 - [x] [Task 14: Refactor and Modularize DevOps npm Scripts](./iteration-3-task-14-refactor-and-modularize-devops-npm-scripts.md)  
   **Priority:** 17
 
+---
+
+For daily status updates and next planned steps for all roles, see [daily.md](../scrum-master/daily.md).
+
 This sequence ensures the devcontainer and workflow are set up to enable robust container/local development, modular scripts, and maintainable onboarding, with clear planning, granular steps, and test-driven development for each role. All QA feedback is explicitly captured and referenced.
 
 ## Planning Phase
