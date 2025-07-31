@@ -37,13 +37,8 @@
 - Document results and lessons learned in the QA audit and process.md.
 
 ## QA Audit & User Feedback
-- All feedback and audit entries for batch updates must be timestamped (UTC) and documented in this section.
-- Consolidate all user feedback and QA audit traceability into a single section for clarity and process compliance.
-- Example entry: '- 2025-07-31 UTC: [Feedback or audit note]'
-- Manual corrections and missed tasks/subtasks should be listed in the QA audit and mitigated as described.
-- Ensure all links and headlines match the planning and file naming conventions.
+2025-07-31 UTC: General Note: Before deleting or replacing large sections of content, always ask the QA user for approval. This prevents accidental loss of important information and ensures traceability.
 
-### 2025-07-31 QA Feedback
 - Task Description section was missing and has now been restored to all batch-updated tasks. PO provides the description, context is for the role, intention is double-checked by PO. This pattern is now required for all future batch updates.
 
 ---
