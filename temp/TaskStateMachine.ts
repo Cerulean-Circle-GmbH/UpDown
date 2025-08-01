@@ -1,5 +1,7 @@
 // TaskStateMachine.ts
 // OOP implementation for Task 18 state management
+// Substates for in-progress
+const substateNames = ['refinement', 'creating test cases', 'implementing', 'testing'];
 
 import fs from 'fs';
 import path from 'path';
@@ -82,9 +84,28 @@ export class TaskStateMachine {
 
   private loadDailyJson(): DailyJson {
     if (fs.existsSync(this.dailyJsonPath)) {
-      return JSON.parse(fs.readFileSync(this.dailyJsonPath, 'utf-8'));
+      try {
+        const content = fs.readFileSync(this.dailyJsonPath, 'utf-8');
+        if (!content.trim()) throw new Error('Empty daily.json');
+        return JSON.parse(content);
+      } catch (e) {
+        // If file is empty or corrupted, re-initialize
+        const initial: DailyJson = {
+          currentSprint: 'Sprint 3',
+          currentTask: this._task.id,
+          status: this._task.status,
+          files: {
+            taskMd: this._task.files.taskMd,
+            dailyMd: this._task.files.dailyMd,
+            planningMd: this._task.files.planningMd,
+          },
+          history: [],
+        };
+        this.saveDailyJson(initial);
+        return initial;
+      }
     }
-    // Create initial daily.json
+    // Create initial daily.json if not exists
     const initial: DailyJson = {
       currentSprint: 'Sprint 3',
       currentTask: this._task.id,
@@ -446,6 +467,62 @@ let taskObj: Task | undefined = undefined;
 let taskFilePath: string | undefined = undefined;
 
 const dailyJsonPath = path.join(tempDir, 'daily.json');
+
+if (args.length === 3 && args[0] === 'testing' && args[1] === 'task') {
+  // Full test run: reset and progress through all states in one go
+  taskNum = args[2];
+  taskFilePath = path.join(tempDir, `../sprints/iteration-3/iteration-3-task-${taskNum}-implement-task-state-machine.md`);
+  taskObj = parseTaskFile(taskFilePath);
+  sm = new TaskStateMachine(taskObj);
+  if (typeof sm.resetToPlanned === 'function') {
+    sm.resetToPlanned();
+    sm.logAction(`Testing mode: Reset task ${taskNum} to Planned`, 'status');
+  }
+  // Progress substates
+  let result;
+  if (!sm) {
+    console.error('Error: TaskStateMachine not initialized.');
+    process.exit(1);
+  }
+  const stateMachine = sm!;
+  for (const sub of substateNames) {
+    if (stateMachine.steps.find(s => s.name === sub)?.status !== 'done') {
+      result = progressOne(stateMachine);
+      stateMachine.logAction(`Testing mode: ${result}`, 'step');
+    }
+  }
+  // Progress steps after 'implementing' is done
+  while (true) {
+    const implementingDone = stateMachine.steps.find(s => s.name === 'implementing')?.status === 'done';
+    if (!implementingDone) break;
+    const nextStepIdx = stateMachine.steps.findIndex(s => s.status !== 'done' && !substateNames.includes(s.name));
+    if (nextStepIdx !== -1) {
+      result = progressOne(stateMachine);
+      stateMachine.logAction(`Testing mode: ${result}`, 'step');
+    } else {
+      break;
+    }
+  }
+  // Tick off 'testing' after all steps
+  if (stateMachine.steps.find(s => s.name === 'testing')?.status !== 'done') {
+    result = progressOne(stateMachine);
+    stateMachine.logAction(`Testing mode: ${result}`, 'step');
+  }
+  // Progress main status to QA Review and Done
+  for (let i = 0; i < 2; i++) {
+    const allSubstatesDone = substateNames.every(sub => {
+      const subObj = stateMachine.steps.find(s => s.name === sub);
+      return subObj && subObj.status === 'done';
+    });
+    if (allSubstatesDone && stateMachine.steps.find(s => s.name === 'testing')?.status === 'done') {
+      result = progressOne(stateMachine);
+      stateMachine.logAction(`Testing mode: ${result}`, 'status');
+    }
+  }
+  stateMachine.saveState();
+  stateMachine.logAction('Testing mode: Full progression complete.', 'status');
+}
+
 if (args.length >= 3 && args[0] === 'task' && args[2] === 'reset') {
   // Explicit reset: require 'task <num> reset'
   taskNum = args[1];
