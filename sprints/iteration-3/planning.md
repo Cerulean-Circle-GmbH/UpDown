@@ -6,7 +6,8 @@
 
 ## Task List (Sprint 3)
 
-- [ ] [Task 15: PO Role and Planning Process Onboarding](./iteration-3-task-15-PO-onboarding-and-planning.md)  
+- [ ] update planning correctly with task 17 as new prio 1
+- [x] [Task 15: PO Role and Planning Process Onboarding](./iteration-3-task-15-PO-onboarding-and-planning.md)  
   **Priority:** 1
 - [x] [Task 16: DevOps: Batch Update Sprint 3 Tasks to Match Template](./iteration-3-task-16-devops-batch-update-sprint-3-tasks-to-match-template.md)  
   **Priority:** 2

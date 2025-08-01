@@ -6,11 +6,11 @@
 - [x] Planned
 - [x] In Progress
   - [x] refinement
-  - [x] structuring headlines and sections for digestibility
-  - [x] removing redundancy and cross-referencing principles
-  - [x] QA review and feedback
-- [x] QA Review
-- [x] Done
+  - [x] creating test cases
+  - [x] implementing
+  - [ ] testing
+- [ ] QA Review
+- [ ] Done
 
 ## Task Description
 - As PO, create and assign a task to optimize `scrum-master/process.md` for DRY compliance, clarity, and digestibility.
@@ -35,7 +35,7 @@
 - [x] Review changes with Scrum Master and QA.
 - [x] Update QA Audit & User Feedback in task 15 and planning.md with learnings and actions taken.
 - [x] Move planning & QA audit update headline and content from process.md to task 17 for traceability.
-- [x] Assign to QA for final verification and feedback.
+- [ ] Assign to QA for final verification and feedback.
 
 ## Requirements
 - All first principles, process rules, and QA learnings must be preserved and cross-referenced.
