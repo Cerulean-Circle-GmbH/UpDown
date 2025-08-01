@@ -7,6 +7,8 @@
     "start:server": "bun src/server/index.ts",
     "start:client": "bun src/client/index.ts",
     "build": "tsc",
+    "test": "npm run build && node tests/game-logic.test.js",
+    "dev": "npm run build && node dist/server/index.js",
     "docker:build": "bash ./devops/docker-build.sh",
     "docker:check": "bash ./devops/docker-check.sh",
     "docker:run": "bash ./devops/docker-run.sh",
@@ -18,6 +20,7 @@
     "start": "docker ps --format '{{.ID}} {{.Names}} {{.Ports}}' | grep 3000 && docker stop $(docker ps --format '{{.ID}} {{.Names}} {{.Ports}}' | grep 3000 | awk '{print $1}') || true && npm run copy:ssh-key && npm run docker:allcheck && for f in ./tests/devcontainer/*.sh; do [ -f \"$f\" ] && bash \"$f\"; done"
   },
   "devDependencies": {
+    "@types/bun": "^1.2.19",
     "typescript": "^5.0.0"
   },
   "dependencies": {
