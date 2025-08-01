@@ -62,6 +62,7 @@
 - 2025-08-01 UTC: QA user prompt: "You are wonderful. But as the status is defined states you cannot modify the refinement state without later running in problems. You understood all well but changing fixed defined status states is a no go. Add this learning to your first principles and restore the defined status state name."
 - 2025-08-01 UTC: QA user explicit correction: "For task 15, the correct status section is: Planned and In Progress checked, refinement checked, creating test cases unchecked. Learn from this explicit correction and always use the defined state names. Continue to add my QA feedback in task 15."
 - 2025-08-01 UTC: QA user prompt: "Review the complete scrum master process md for DRY principle. The first principles are spread over multiple places and headlines. Optimize it without repeating yourself but keeping all information and make them consistent and easy to digest in the document. This is part of executing task 15. So add this prompt also in QA and continue to adjust the steps we really do."
+- 2025-08-01 UTC: QA user prompt: "Structure headlines and sections for digestibility, remove redundancy, and cross-reference principles. Collaborate with Scrum Master for review and execution. Document all actions and learnings."
 
 ## PO Process Learnings (2025-08-01)
 - Never modify the fixed defined status states in the template. Status must always use the defined state names to avoid future problems and maintain process integrity.
