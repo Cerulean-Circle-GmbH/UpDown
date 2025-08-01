@@ -4,8 +4,8 @@
 
 ## Status
 - [x] Planned
-- [x] In Progress
-  - [x] refinement (expert-driven, QA-guided)
+- [ ] In Progress
+  - [ ] refinement
   - [ ] creating test cases
   - [ ] implementing
   - [ ] testing
@@ -56,11 +56,13 @@
 - 2025-08-01 UTC: QA user prompt: "two prompts earlier you said how to update the planning md and it was very good. but you did not yet do it. just do it now and add this update learning also to the scrum master and PO process."
 - 2025-08-01 UTC: QA user prompt: "to keep up DRY you are now allowed to remove the sections from the scrum master file too. document my last three prompts in task 15, which we are basically just executing together. adapt the steps in task 15 to what we actually did and are continue to do."
 - 2025-08-01 UTC: QA user prompt: "i made manual changes to task 15 because you were deleting too much content there. read and understand it. To do task 15 together is currently a major learning expertise for you! We are not planning task 15 any more, just the last prompt was about adapting the task to what we actually need to do to fulfill the task's intentions from an expert mind (in this case mine as a QA user). This process is called refinement. Adjust the status in task 15 and update the process documentation with what you learned. Also keep updating the QA feedback in task 15."
+- 2025-08-01 UTC: QA user prompt: "You are wonderful. But as the status is defined states you cannot modify the refinement state without later running in problems. You understood all well but changing fixed defined status states is a no go. Add this learning to your first principles and restore the defined status state name."
 
 ## PO Process Learnings (2025-08-01)
+- Never modify the fixed defined status states in the template. Status must always use the defined state names to avoid future problems and maintain process integrity.
 - The refinement phase is expert-driven and QA-guided, focusing on adapting the task to fulfill its intentions based on real-time feedback and expertise.
 - The PO and team must continuously update the QA Audit & User Feedback section with every major prompt and learning.
-- Status must reflect the actual phase (e.g., refinement) and be updated as the work progresses.
+- Status must reflect the actual phase using only the defined state names and be updated as the work progresses.
 - Manual changes and expert feedback are essential for process improvement and must be documented for traceability and recovery.
 - Recovery: If process or planning files are lost or corrupted, restore from git history and reapply the template process as documented here and in po/process.md.
 
