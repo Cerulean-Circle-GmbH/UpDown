@@ -1,3 +1,13 @@
+## Restart & Recovery Process (2025-08-01)
+All restart and recovery steps for QA must:
+- Reference the latest QA feedback and user prompts from the current active task file (not user.captured.prompts.md).
+- Always start recovery by reading README.md, scrum-master/process.md, the current sprint's planning.md, daily.md, and relevant role/task files.
+- When switching to QA, read qa/process.md to refresh on role-specific practices and requirements before executing any tasks.
+- Update planning.md and daily.md with the last successful role and task after a failure or restart.
+- Prompt the user for feedback before executing new tasks, especially after planning with the PO.
+- Document all new QA feedback and process changes in the current active task file under the section `## QA Audit & User Feedback`.
+- Only execute tasks after user feedback is incorporated and the PO's plan is up to date.
+These steps must be cross-referenced in restart.md and all relevant process files for traceability and compliance.
 # QA Process Documentation
 
 This file contains process guidelines, best practices, and lessons learned for the QA role. Always read and update this file before performing QA actions.

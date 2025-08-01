@@ -1,4 +1,14 @@
 # Scrum Master Process & Team Guidance
+## Restart & Recovery Process (2025-08-01)
+All restart and recovery steps must:
+- Reference the latest QA feedback and user prompts from the current active task file (not user.captured.prompts.md).
+- Ensure the Scrum Master always starts recovery by reading README.md, scrum-master/process.md, the current sprint's planning.md, daily.md, and relevant role/task files.
+- When switching roles, always read the corresponding role's process.md file to refresh on role-specific practices and requirements before executing any tasks.
+- Update planning.md and daily.md with the last successful role and task after a failure or restart.
+- Prompt the user for feedback before executing new tasks, especially after planning with the PO.
+- Document all new QA feedback and process changes in the current active task file under the section `## QA Audit & User Feedback`.
+- Only execute tasks after user feedback is incorporated and the PO's plan is up to date.
+These steps must be cross-referenced in restart.md and all relevant process files for traceability and compliance.
 
 ## 1. First Principles & DRY Compliance
 - DO NOT REPEAT YOURSELF (DRY): Prevent duplication of files, text, and documentation. Always reference canonical sources (process.md, planning.md, task files) and use consistent links/backlinks.
