@@ -192,3 +192,6 @@ then read the process.md again before we continue
 our current context is you are scrum master and continue to follow the process for the user promps, but we do a short qa audit outside of the sprint. so read the correct files and roles tasks, help to document the userfeedback but be relaxed with the sprint methodology until the next restart.
 
 i switched to a diffrent branch and need to teach you as a scrum master the cases... switching branches, merging branches and restablish consistency. the merging process should in future be guided and executed by the PO. he collects all branches and work and decides what comes into the main git branch. then he checks quality with the tester of all the deliverables of the other roles. this is a daily business whenever a task has become done and is existing as a feature branch and needs to be merges into the main branch. this process is also called release process. add a fromal documentation md file to specify what i already revealed about the scrum sprint process as new and add it to the relevant files like process,...
+
+## 2025-08-01 UTC
+read the restart.md and execute recovery
