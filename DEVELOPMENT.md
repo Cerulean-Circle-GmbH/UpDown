@@ -14,6 +14,9 @@ npm test
 
 # Run server in development mode
 npm run dev
+
+# See a live game demo
+npm run demo
 ```
 
 ## Project Structure
@@ -23,7 +26,7 @@ src/
 ├── server/          # Backend server code
 │   └── index.ts     # Main server entry point
 ├── client/          # Frontend client code
-│   └── index.ts     # Client entry point (stub)
+│   └── index.ts     # Client demo with AI players
 └── shared/          # Shared game logic
     ├── Card.ts      # Card model and game logic
     ├── Player.ts    # Player model and scoring
@@ -67,13 +70,19 @@ src/
 - Streak tracking and bonuses
 - Serialization for network sync
 
+✅ **Demo Client**
+- Complete game simulation with AI players
+- Visual round-by-round gameplay
+- Final scoring and leaderboard
+
 ## Development Status
 
 ### Current State ✅
 - [x] Core game models implemented
 - [x] TypeScript compilation working
-- [x] Basic test framework with 9 passing tests
+- [x] Comprehensive test framework with 9 passing tests
 - [x] Server runs in fallback mode (Node.js)
+- [x] Complete client demo with AI simulation
 - [x] Serialization/deserialization working
 
 ### Next Steps 🚧
@@ -91,6 +100,7 @@ src/
 - `npm run build` - Compile TypeScript to JavaScript
 - `npm test` - Run game logic tests
 - `npm run dev` - Start server in development mode
+- `npm run demo` - Run interactive game demo with AI players
 - `npm run start:server` - Start with Bun (if available)
 - `npm run start:client` - Start client (stub)
 
@@ -103,6 +113,16 @@ The project includes a comprehensive test suite covering:
 - Game state serialization
 
 All tests are passing and validate the core game mechanics work correctly.
+
+## Game Demo
+
+Run `npm run demo` to see a complete UpDown game in action:
+- 1 human player + 3 AI players
+- Real game rounds with card guessing
+- Score tracking and streak bonuses
+- Final leaderboard with rankings
+
+The demo shows the complete game flow exactly as specified in the requirements.
 
 ## Technical Notes
 
