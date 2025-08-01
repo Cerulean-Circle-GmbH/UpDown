@@ -40,6 +40,155 @@ interface DailyJson {
 }
 
 export class TaskStateMachine {
+  // Static utility to load steps and status from a markdown task file
+  static parseTaskFile(taskMdPath: string): Task {
+    const md = fs.readFileSync(taskMdPath, 'utf-8');
+    const titleMatch = md.match(/^# (.+)$/m);
+    const title = titleMatch ? titleMatch[1].trim() : 'Untitled Task';
+    const statusMatch = md.match(/## Status([\s\S]*?)##/);
+    const stepsMatch = md.match(/## Steps([\s\S]*?)(?=##|$)/);
+    let status: TaskStatus = 'planned';
+    let steps: TaskStep[] = [];
+    // Parse substates from Status section
+    if (statusMatch) {
+      const lines = statusMatch[1].split('\n').map(l => l.trim()).filter(Boolean);
+      for (const line of lines) {
+        if (line.startsWith('- [x] Planned')) status = 'planned';
+        if (line.startsWith('- [x] In Progress')) status = 'in-progress';
+        if (line.startsWith('- [x] QA Review')) status = 'qa-review';
+        if (line.startsWith('- [x] Done')) status = 'done';
+        if (line.startsWith('- [x] Blocked')) status = 'blocked';
+      }
+      const checkedStatuses = lines.filter(l => l.match(/^- \[x\] (Planned|In Progress|QA Review|Done|Blocked)$/));
+      if (checkedStatuses.length > 0) {
+        const lastChecked = checkedStatuses[checkedStatuses.length - 1];
+        if (lastChecked.includes('Planned')) status = 'planned';
+        if (lastChecked.includes('In Progress')) status = 'in-progress';
+        if (lastChecked.includes('QA Review')) status = 'qa-review';
+        if (lastChecked.includes('Done')) status = 'done';
+        if (lastChecked.includes('Blocked')) status = 'blocked';
+      }
+      // Add substates as steps
+      for (const line of lines) {
+        const stepMatch = line.match(/^[-\s]+\[( |x)\] (refinement|creating test cases|implementing|testing)$/);
+        if (stepMatch) {
+          const stepName = stepMatch[2];
+          const stepStatus: StepStatus = stepMatch[1] === 'x' ? 'done' : 'open';
+          steps.push({ name: stepName, status: stepStatus });
+        }
+      }
+    }
+    // Parse Steps section from Intention
+    if (stepsMatch) {
+      const lines = stepsMatch[1].split('\n').map(l => l.trim()).filter(Boolean);
+      for (const line of lines) {
+        const stepMatch = line.match(/^- \[( |x)\] (.+)$/);
+        if (stepMatch) {
+          const stepName = stepMatch[2].trim();
+          // Avoid duplicates (substates already added)
+          if (!steps.some(s => s.name === stepName)) {
+            const stepStatus: StepStatus = stepMatch[1] === 'x' ? 'done' : 'open';
+            steps.push({ name: stepName, status: stepStatus });
+          }
+        }
+      }
+    }
+    return {
+      id: path.basename(taskMdPath, '.md'),
+      title,
+      status,
+      steps,
+      files: {
+        taskMd: taskMdPath,
+        dailyJson: path.join(tempDir, 'daily.json'),
+        dailyMd: path.join(tempDir, 'daily.md'),
+        planningMd: path.join(tempDir, 'planning.md'),
+      },
+    };
+  }
+
+  // Progress only one state or step per run
+  public progressOne(): string | null {
+    // 1. Progress Steps section first (Intention)
+    if (this.status === 'planned') {
+      // Only progress to 'In Progress' from 'Planned'
+      this.logAction('Transitioning status: planned -> in-progress', 'status');
+      this.transitionStatus('in-progress');
+      this.saveState();
+      return 'Status progressed to In Progress.';
+    }
+    if (this.status === 'in-progress') {
+      // Progress substates in order: refinement, creating test cases, implementing, testing
+      for (const sub of substateNames) {
+        const subObj = this.steps.find(s => s.name === sub);
+        if (subObj && subObj.status !== 'done') {
+          if (sub === 'implementing') {
+            // If 'implementing' is not done, tick it off
+            this.progressStep('implementing', 'done');
+            this.logAction(`Substate ticked off: implementing`, 'step');
+            return `Substate ticked off: implementing`;
+          } else {
+            // For other substates, just tick them off
+            this.progressStep(sub, 'done');
+            this.logAction(`Substate ticked off: ${sub}`, 'step');
+            return `Substate ticked off: ${sub}`;
+          }
+        }
+      }
+      // After 'implementing' is done, iterate Steps section (one per run)
+      const implementingDone = this.steps.find(s => s.name === 'implementing')?.status === 'done';
+      if (implementingDone) {
+        // Only tick off 'testing' after all steps are done
+        const allStepsDone = this.steps.filter(s => !substateNames.includes(s.name)).every(s => s.status === 'done');
+        const testingObj = this.steps.find(s => s.name === 'testing');
+        if (!allStepsDone) {
+          const nextStepIdx = this.steps.findIndex(s => s.status !== 'done' && !substateNames.includes(s.name));
+          if (nextStepIdx !== -1) {
+            const step = this.steps[nextStepIdx];
+            this.progressStep(step.name, 'done');
+            this.logAction(`Step ticked off: ${step.name}`, 'step');
+            return `Step ticked off: ${step.name}`;
+          }
+        } else if (testingObj && testingObj.status !== 'done') {
+          this.progressStep('testing', 'done');
+          this.logAction(`Substate ticked off: testing`, 'step');
+          return `Substate ticked off: testing`;
+        }
+      }
+      // If all substates and testing are done, progress main status
+      const allSubstatesDone = substateNames.every(sub => {
+        const subObj = this.steps.find(s => s.name === sub);
+        return subObj && subObj.status === 'done';
+      });
+      if (allSubstatesDone && this.steps.find(s => s.name === 'testing')?.status === 'done') {
+        this.logAction('Transitioning status: in-progress -> qa-review', 'status');
+        this.transitionStatus('qa-review');
+        this.saveState();
+        return 'Status progressed to QA Review.';
+      }
+      this.saveState();
+      return null;
+    }
+
+    // 2. If status is qa-review, tick it off and move to done
+    if (this.status === 'qa-review') {
+      this.logAction('Transitioning status: qa-review -> done', 'status');
+      this.transitionStatus('done');
+      this.saveState();
+      return 'Status progressed to Done.';
+    }
+
+    // 3. If status is done, nothing to do
+    if (this.status === 'done') {
+      this.logAction('Task is already done. No further progression.', 'status');
+      this.saveState();
+      return 'Task is already done.';
+    }
+
+    this.logAction('No valid progression found. Possible error.', 'error');
+    this.saveState();
+    return null;
+  }
   // Public method to persist state
   public saveState() {
     this.saveDailyJson(this.dailyJson);
@@ -306,159 +455,10 @@ export class TaskStateMachine {
 import { fileURLToPath } from 'url';
 const tempDir = path.dirname(fileURLToPath(import.meta.url));
 
-// Utility to load steps and status from a markdown task file
-function parseTaskFile(taskMdPath: string): Task {
-  const md = fs.readFileSync(taskMdPath, 'utf-8');
-  const titleMatch = md.match(/^# (.+)$/m);
-  const title = titleMatch ? titleMatch[1].trim() : 'Untitled Task';
-  const statusMatch = md.match(/## Status([\s\S]*?)##/);
-  const stepsMatch = md.match(/## Steps([\s\S]*?)(?=##|$)/);
-  let status: TaskStatus = 'planned';
-  let steps: TaskStep[] = [];
-  // Parse substates from Status section
-  if (statusMatch) {
-    const lines = statusMatch[1].split('\n').map(l => l.trim()).filter(Boolean);
-    for (const line of lines) {
-      if (line.startsWith('- [x] Planned')) status = 'planned';
-      if (line.startsWith('- [x] In Progress')) status = 'in-progress';
-      if (line.startsWith('- [x] QA Review')) status = 'qa-review';
-      if (line.startsWith('- [x] Done')) status = 'done';
-      if (line.startsWith('- [x] Blocked')) status = 'blocked';
-    }
-    const checkedStatuses = lines.filter(l => l.match(/^- \[x\] (Planned|In Progress|QA Review|Done|Blocked)$/));
-    if (checkedStatuses.length > 0) {
-      const lastChecked = checkedStatuses[checkedStatuses.length - 1];
-      if (lastChecked.includes('Planned')) status = 'planned';
-      if (lastChecked.includes('In Progress')) status = 'in-progress';
-      if (lastChecked.includes('QA Review')) status = 'qa-review';
-      if (lastChecked.includes('Done')) status = 'done';
-      if (lastChecked.includes('Blocked')) status = 'blocked';
-    }
-    // Add substates as steps
-    for (const line of lines) {
-      const stepMatch = line.match(/^[-\s]+\[( |x)\] (refinement|creating test cases|implementing|testing)$/);
-      if (stepMatch) {
-        const stepName = stepMatch[2];
-        const stepStatus: StepStatus = stepMatch[1] === 'x' ? 'done' : 'open';
-        steps.push({ name: stepName, status: stepStatus });
-      }
-    }
-  }
-  // Parse Steps section from Intention
-  if (stepsMatch) {
-    const lines = stepsMatch[1].split('\n').map(l => l.trim()).filter(Boolean);
-    for (const line of lines) {
-      const stepMatch = line.match(/^- \[( |x)\] (.+)$/);
-      if (stepMatch) {
-        const stepName = stepMatch[2].trim();
-        // Avoid duplicates (substates already added)
-        if (!steps.some(s => s.name === stepName)) {
-          const stepStatus: StepStatus = stepMatch[1] === 'x' ? 'done' : 'open';
-          steps.push({ name: stepName, status: stepStatus });
-        }
-      }
-    }
-  }
-  return {
-    id: path.basename(taskMdPath, '.md'),
-    title,
-    status,
-    steps,
-    files: {
-      taskMd: taskMdPath,
-      dailyJson: path.join(tempDir, 'daily.json'),
-      dailyMd: path.join(tempDir, 'daily.md'),
-      planningMd: path.join(tempDir, 'planning.md'),
-    },
-  };
-}
 
-// Progress only one state or step per run
-function progressOne(sm: TaskStateMachine): string | null {
-  // 1. Progress Steps section first (Intention)
-  if (sm.status === 'planned') {
-    // Only progress to 'In Progress' from 'Planned'
-    sm.logAction('Transitioning status: planned -> in-progress', 'status');
-    sm.transitionStatus('in-progress');
-    sm.saveState();
-    return 'Status progressed to In Progress.';
-  }
-  if (sm.status === 'in-progress') {
-    // Progress substates in order: refinement, creating test cases, implementing, testing
-    const substateNames = ['refinement', 'creating test cases', 'implementing', 'testing'];
-    for (const sub of substateNames) {
-      const subObj = sm.steps.find(s => s.name === sub);
-      if (subObj && subObj.status !== 'done') {
-        if (sub === 'implementing') {
-          // If 'implementing' is not done, tick it off
-          sm.progressStep('implementing', 'done');
-          sm.logAction(`Substate ticked off: implementing`, 'step');
-          return `Substate ticked off: implementing`;
-        } else {
-          // For other substates, just tick them off
-          sm.progressStep(sub, 'done');
-          sm.logAction(`Substate ticked off: ${sub}`, 'step');
-          return `Substate ticked off: ${sub}`;
-        }
-      }
-    }
-    // After 'implementing' is done, iterate Steps section (one per run)
-    const implementingDone = sm.steps.find(s => s.name === 'implementing')?.status === 'done';
-    if (implementingDone) {
-      // Only tick off 'testing' after all steps are done
-      const allStepsDone = sm.steps.filter(s => !substateNames.includes(s.name)).every(s => s.status === 'done');
-      const testingObj = sm.steps.find(s => s.name === 'testing');
-      if (!allStepsDone) {
-        const nextStepIdx = sm.steps.findIndex(s => s.status !== 'done' && !substateNames.includes(s.name));
-        if (nextStepIdx !== -1) {
-          const step = sm.steps[nextStepIdx];
-          sm.progressStep(step.name, 'done');
-          sm.logAction(`Step ticked off: ${step.name}`, 'step');
-          return `Step ticked off: ${step.name}`;
-        }
-      } else if (testingObj && testingObj.status !== 'done') {
-        sm.progressStep('testing', 'done');
-        sm.logAction(`Substate ticked off: testing`, 'step');
-        return `Substate ticked off: testing`;
-      }
-    }
-    // If all substates and testing are done, progress main status
-    const allSubstatesDone = substateNames.every(sub => {
-      const subObj = sm.steps.find(s => s.name === sub);
-      return subObj && subObj.status === 'done';
-    });
-    if (allSubstatesDone && sm.steps.find(s => s.name === 'testing')?.status === 'done') {
-      sm.logAction('Transitioning status: in-progress -> qa-review', 'status');
-      sm.transitionStatus('qa-review');
-      sm.saveState();
-      return 'Status progressed to QA Review.';
-    }
-    sm.saveState();
-    return null;
-  }
 
-  // 2. If status is qa-review, tick it off and move to done
-  if (sm.status === 'qa-review') {
-    sm.logAction('Transitioning status: qa-review -> done', 'status');
-    sm.transitionStatus('done');
-    sm.saveState();
-    return 'Status progressed to Done.';
-  }
 
-  // 3. If status is done, nothing to do
-  if (sm.status === 'done') {
-    sm.logAction('Task is already done. No further progression.', 'status');
-    sm.saveState();
-    return 'Task is already done.';
-  }
-
-  sm.logAction('No valid progression found. Possible error.', 'error');
-  sm.saveState();
-  return null;
-}
-
-// Usage: works for any task file, currently using Task 18
-// Command line interface
+// CLI orchestration: only instantiate and call class methods
 const args = process.argv.slice(2);
 let doReset = false;
 let taskNum: string | undefined = undefined;
@@ -472,7 +472,7 @@ if (args.length === 3 && args[0] === 'testing' && args[1] === 'task') {
   // Full test run: reset and progress through all states in one go
   taskNum = args[2];
   taskFilePath = path.join(tempDir, `../sprints/iteration-3/iteration-3-task-${taskNum}-implement-task-state-machine.md`);
-  taskObj = parseTaskFile(taskFilePath);
+  taskObj = TaskStateMachine.parseTaskFile(taskFilePath);
   sm = new TaskStateMachine(taskObj);
   if (typeof sm.resetToPlanned === 'function') {
     sm.resetToPlanned();
@@ -484,50 +484,49 @@ if (args.length === 3 && args[0] === 'testing' && args[1] === 'task') {
     console.error('Error: TaskStateMachine not initialized.');
     process.exit(1);
   }
-  const stateMachine = sm!;
   for (const sub of substateNames) {
-    if (stateMachine.steps.find(s => s.name === sub)?.status !== 'done') {
-      result = progressOne(stateMachine);
-      stateMachine.logAction(`Testing mode: ${result}`, 'step');
+    if (sm.steps.find(s => s.name === sub)?.status !== 'done') {
+      result = sm.progressOne();
+      sm.logAction(`Testing mode: ${result}`, 'step');
     }
   }
   // Progress steps after 'implementing' is done
   while (true) {
-    const implementingDone = stateMachine.steps.find(s => s.name === 'implementing')?.status === 'done';
+    const implementingDone = sm.steps.find(s => s.name === 'implementing')?.status === 'done';
     if (!implementingDone) break;
-    const nextStepIdx = stateMachine.steps.findIndex(s => s.status !== 'done' && !substateNames.includes(s.name));
+    const nextStepIdx = sm.steps.findIndex(s => s.status !== 'done' && !substateNames.includes(s.name));
     if (nextStepIdx !== -1) {
-      result = progressOne(stateMachine);
-      stateMachine.logAction(`Testing mode: ${result}`, 'step');
+      result = sm.progressOne();
+      sm.logAction(`Testing mode: ${result}`, 'step');
     } else {
       break;
     }
   }
   // Tick off 'testing' after all steps
-  if (stateMachine.steps.find(s => s.name === 'testing')?.status !== 'done') {
-    result = progressOne(stateMachine);
-    stateMachine.logAction(`Testing mode: ${result}`, 'step');
+  if (sm.steps.find(s => s.name === 'testing')?.status !== 'done') {
+    result = sm.progressOne();
+    sm.logAction(`Testing mode: ${result}`, 'step');
   }
   // Progress main status to QA Review and Done
   for (let i = 0; i < 2; i++) {
     const allSubstatesDone = substateNames.every(sub => {
-      const subObj = stateMachine.steps.find(s => s.name === sub);
+      const subObj = sm.steps.find(s => s.name === sub);
       return subObj && subObj.status === 'done';
     });
-    if (allSubstatesDone && stateMachine.steps.find(s => s.name === 'testing')?.status === 'done') {
-      result = progressOne(stateMachine);
-      stateMachine.logAction(`Testing mode: ${result}`, 'status');
+    if (allSubstatesDone && sm.steps.find(s => s.name === 'testing')?.status === 'done') {
+      result = sm.progressOne();
+      sm.logAction(`Testing mode: ${result}`, 'status');
     }
   }
-  stateMachine.saveState();
-  stateMachine.logAction('Testing mode: Full progression complete.', 'status');
+  sm.saveState();
+  sm.logAction('Testing mode: Full progression complete.', 'status');
 }
 
 if (args.length >= 3 && args[0] === 'task' && args[2] === 'reset') {
   // Explicit reset: require 'task <num> reset'
   taskNum = args[1];
   taskFilePath = path.join(tempDir, `../sprints/iteration-3/iteration-3-task-${taskNum}-implement-task-state-machine.md`);
-  taskObj = parseTaskFile(taskFilePath);
+  taskObj = TaskStateMachine.parseTaskFile(taskFilePath);
   sm = new TaskStateMachine(taskObj);
   doReset = true;
 } else if (fs.existsSync(dailyJsonPath)) {
@@ -535,7 +534,7 @@ if (args.length >= 3 && args[0] === 'task' && args[2] === 'reset') {
   const dailyJson = JSON.parse(fs.readFileSync(dailyJsonPath, 'utf-8'));
   taskNum = dailyJson.currentTask.replace('iteration-3-task-', '').replace('-implement-task-state-machine', '');
   taskFilePath = path.join(tempDir, `../sprints/iteration-3/iteration-3-task-${taskNum}-implement-task-state-machine.md`);
-  taskObj = parseTaskFile(taskFilePath);
+  taskObj = TaskStateMachine.parseTaskFile(taskFilePath);
   sm = new TaskStateMachine(taskObj);
 } else {
   // Require task number parameter if no daily.json
@@ -552,7 +551,7 @@ if (sm) {
       sm.logAction('resetToPlanned method not found on TaskStateMachine', 'error');
     }
   } else {
-    const result = progressOne(sm);
+    const result = sm.progressOne();
     if (result) {
       console.log('Result:', result);
     }
