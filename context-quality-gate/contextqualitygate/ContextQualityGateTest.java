@@ -2,14 +2,10 @@ package contextqualitygate;
 
 public class ContextQualityGateTest {
     public static void main(String[] args) {
-        // Example: Hello World test
-        ContextBean context = new ContextBean(
-            "Scrum Master",
-            "Task 12: GitHub Actions CI/CD for Dev Container",
-            "Task 4, Task 7, Task 9",
-            "No new feedback",
-            "All process rules loaded"
-        );
+        // Example: Hello World test using JSON initialization
+        String scenario = "{\"role\":\"Scrum Master\",\"task\":\"Task 12: GitHub Actions CI/CD for Dev Container\",\"dependencies\":\"Task 4, Task 7, Task 9\",\"userFeedback\":\"No new feedback\",\"processRules\":\"All process rules loaded\"}";
+        ContextBean context = new DefaultContextBean();
+        context.initFromJson(scenario);
         printContext(context);
         boolean result = verifyContext(context);
         if (result) {
