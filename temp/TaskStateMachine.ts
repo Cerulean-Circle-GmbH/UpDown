@@ -458,102 +458,103 @@ const tempDir = path.dirname(fileURLToPath(import.meta.url));
 
 
 
-// CLI orchestration: only instantiate and call class methods
-const args = process.argv.slice(2);
-let doReset = false;
-let taskNum: string | undefined = undefined;
-let sm: TaskStateMachine | undefined = undefined;
-let taskObj: Task | undefined = undefined;
-let taskFilePath: string | undefined = undefined;
 
-const dailyJsonPath = path.join(tempDir, 'daily.json');
+class TaskStateMachineCLI {
+  private args: string[];
+  private doReset = false;
+  private taskNum?: string;
+  private sm?: TaskStateMachine;
+  private taskObj?: Task;
+  private taskFilePath?: string;
+  private dailyJsonPath: string;
 
-if (args.length === 3 && args[0] === 'testing' && args[1] === 'task') {
-  // Full test run: reset and progress through all states in one go
-  taskNum = args[2];
-  taskFilePath = path.join(tempDir, `../sprints/iteration-3/iteration-3-task-${taskNum}-implement-task-state-machine.md`);
-  taskObj = TaskStateMachine.parseTaskFile(taskFilePath);
-  sm = new TaskStateMachine(taskObj);
-  if (typeof sm.resetToPlanned === 'function') {
-    sm.resetToPlanned();
-    sm.logAction(`Testing mode: Reset task ${taskNum} to Planned`, 'status');
+  constructor(args: string[]) {
+    this.args = args;
+    this.dailyJsonPath = path.join(tempDir, 'daily.json');
+    this.run();
   }
-  // Progress substates
-  let result;
-  if (!sm) {
-    console.error('Error: TaskStateMachine not initialized.');
-    process.exit(1);
-  }
-  for (const sub of substateNames) {
-    if (sm.steps.find(s => s.name === sub)?.status !== 'done') {
-      result = sm.progressOne();
-      sm.logAction(`Testing mode: ${result}`, 'step');
-    }
-  }
-  // Progress steps after 'implementing' is done
-  while (true) {
-    const implementingDone = sm.steps.find(s => s.name === 'implementing')?.status === 'done';
-    if (!implementingDone) break;
-    const nextStepIdx = sm.steps.findIndex(s => s.status !== 'done' && !substateNames.includes(s.name));
-    if (nextStepIdx !== -1) {
-      result = sm.progressOne();
-      sm.logAction(`Testing mode: ${result}`, 'step');
+
+  private run() {
+    if (this.args.length === 3 && this.args[0] === 'testing' && this.args[1] === 'task') {
+      this.taskNum = this.args[2];
+      this.taskFilePath = path.join(tempDir, `../sprints/iteration-3/iteration-3-task-${this.taskNum}-implement-task-state-machine.md`);
+      this.taskObj = TaskStateMachine.parseTaskFile(this.taskFilePath);
+      this.sm = new TaskStateMachine(this.taskObj);
+      if (typeof this.sm.resetToPlanned === 'function') {
+        this.sm.resetToPlanned();
+        this.sm.logAction(`Testing mode: Reset task ${this.taskNum} to Planned`, 'status');
+      }
+      let result;
+      if (!this.sm) {
+        console.error('Error: TaskStateMachine not initialized.');
+        process.exit(1);
+      }
+      for (const sub of substateNames) {
+        if (this.sm.steps.find(s => s.name === sub)?.status !== 'done') {
+          result = this.sm.progressOne();
+          this.sm.logAction(`Testing mode: ${result}`, 'step');
+        }
+      }
+      while (true) {
+        const implementingDone = this.sm.steps.find(s => s.name === 'implementing')?.status === 'done';
+        if (!implementingDone) break;
+        const nextStepIdx = this.sm.steps.findIndex(s => s.status !== 'done' && !substateNames.includes(s.name));
+        if (nextStepIdx !== -1) {
+          result = this.sm.progressOne();
+          this.sm.logAction(`Testing mode: ${result}`, 'step');
+        } else {
+          break;
+        }
+      }
+      if (this.sm.steps.find(s => s.name === 'testing')?.status !== 'done') {
+        result = this.sm.progressOne();
+        this.sm.logAction(`Testing mode: ${result}`, 'step');
+      }
+      for (let i = 0; i < 2; i++) {
+        const allSubstatesDone = substateNames.every(sub => {
+          const subObj = this.sm!.steps.find(s => s.name === sub);
+          return subObj && subObj.status === 'done';
+        });
+        if (allSubstatesDone && this.sm.steps.find(s => s.name === 'testing')?.status === 'done') {
+          result = this.sm.progressOne();
+          this.sm.logAction(`Testing mode: ${result}`, 'status');
+        }
+      }
+      this.sm.saveState();
+      this.sm.logAction('Testing mode: Full progression complete.', 'status');
+    } else if (this.args.length >= 3 && this.args[0] === 'task' && this.args[2] === 'reset') {
+      this.taskNum = this.args[1];
+      this.taskFilePath = path.join(tempDir, `../sprints/iteration-3/iteration-3-task-${this.taskNum}-implement-task-state-machine.md`);
+      this.taskObj = TaskStateMachine.parseTaskFile(this.taskFilePath);
+      this.sm = new TaskStateMachine(this.taskObj);
+      this.doReset = true;
+    } else if (fs.existsSync(this.dailyJsonPath)) {
+      const dailyJson = JSON.parse(fs.readFileSync(this.dailyJsonPath, 'utf-8'));
+      this.taskNum = dailyJson.currentTask.replace('iteration-3-task-', '').replace('-implement-task-state-machine', '');
+      this.taskFilePath = path.join(tempDir, `../sprints/iteration-3/iteration-3-task-${this.taskNum}-implement-task-state-machine.md`);
+      this.taskObj = TaskStateMachine.parseTaskFile(this.taskFilePath);
+      this.sm = new TaskStateMachine(this.taskObj);
     } else {
-      break;
+      console.error('\x1b[31mError: No daily.json found. Please run with a task number (e.g., "task 18" or "task 18 reset").\x1b[0m');
+      process.exit(1);
+    }
+
+    if (this.sm) {
+      if (this.doReset) {
+        if (typeof this.sm.resetToPlanned === 'function') {
+          this.sm.resetToPlanned();
+          console.log(`\x1b[36mTask ${this.taskNum} has been reset to planned.\x1b[0m`);
+        } else {
+          this.sm.logAction('resetToPlanned method not found on TaskStateMachine', 'error');
+        }
+      } else if (this.args.length !== 3 || this.args[0] !== 'testing') {
+        const result = this.sm.progressOne();
+        if (result) {
+          console.log('Result:', result);
+        }
+      }
     }
   }
-  // Tick off 'testing' after all steps
-  if (sm.steps.find(s => s.name === 'testing')?.status !== 'done') {
-    result = sm.progressOne();
-    sm.logAction(`Testing mode: ${result}`, 'step');
-  }
-  // Progress main status to QA Review and Done
-  for (let i = 0; i < 2; i++) {
-    const allSubstatesDone = substateNames.every(sub => {
-      const subObj = sm.steps.find(s => s.name === sub);
-      return subObj && subObj.status === 'done';
-    });
-    if (allSubstatesDone && sm.steps.find(s => s.name === 'testing')?.status === 'done') {
-      result = sm.progressOne();
-      sm.logAction(`Testing mode: ${result}`, 'status');
-    }
-  }
-  sm.saveState();
-  sm.logAction('Testing mode: Full progression complete.', 'status');
 }
 
-if (args.length >= 3 && args[0] === 'task' && args[2] === 'reset') {
-  // Explicit reset: require 'task <num> reset'
-  taskNum = args[1];
-  taskFilePath = path.join(tempDir, `../sprints/iteration-3/iteration-3-task-${taskNum}-implement-task-state-machine.md`);
-  taskObj = TaskStateMachine.parseTaskFile(taskFilePath);
-  sm = new TaskStateMachine(taskObj);
-  doReset = true;
-} else if (fs.existsSync(dailyJsonPath)) {
-  // Autonomous progression: no parameter needed
-  const dailyJson = JSON.parse(fs.readFileSync(dailyJsonPath, 'utf-8'));
-  taskNum = dailyJson.currentTask.replace('iteration-3-task-', '').replace('-implement-task-state-machine', '');
-  taskFilePath = path.join(tempDir, `../sprints/iteration-3/iteration-3-task-${taskNum}-implement-task-state-machine.md`);
-  taskObj = TaskStateMachine.parseTaskFile(taskFilePath);
-  sm = new TaskStateMachine(taskObj);
-} else {
-  // Require task number parameter if no daily.json
-  console.error('\x1b[31mError: No daily.json found. Please run with a task number (e.g., "task 18" or "task 18 reset").\x1b[0m');
-  process.exit(1);
-}
-
-if (sm) {
-  if (doReset) {
-    if (typeof sm.resetToPlanned === 'function') {
-      sm.resetToPlanned();
-      console.log(`\x1b[36mTask ${taskNum} has been reset to planned.\x1b[0m`);
-    } else {
-      sm.logAction('resetToPlanned method not found on TaskStateMachine', 'error');
-    }
-  } else {
-    const result = sm.progressOne();
-    if (result) {
-      console.log('Result:', result);
-    }
-  }
-}
+new TaskStateMachineCLI(process.argv.slice(2));
