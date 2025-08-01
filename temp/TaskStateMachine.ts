@@ -161,16 +161,17 @@ export class TaskStateMachine {
     // Only update the status and in-progress substates checkboxes, preserve all other content
     let md = fs.readFileSync(this._task.files.taskMd, 'utf-8');
     // Update main status checkboxes and in-progress substates only
-    md = md.replace(/(## Status[\s\S]*?)(?=##|$)/, (match) => {
+    md = md.replace(/(## Status[\s\S]*?)(?=\n\n|$)/, (match) => {
       let lines = match.split('\n');
-      let statusOrder: TaskStatus[] = ['planned', 'in-progress', 'qa-review', 'done', 'blocked'];
-      // Only one status can be checked at a time: the most advanced
-      let checkedIdx = statusOrder.indexOf(this._task.status);
+      let statusOrder = ['Planned', 'In Progress', 'Testing', 'QA Review', 'Done', 'Blocked'];
+      let checkedIdx = statusOrder.findIndex(s => s.replace(/\s+/g, '').toLowerCase() === this._task.status.replace(/[-\s]+/g, '').toLowerCase());
       lines = lines.map(line => {
+        // Tick off all statuses up to and including the current status
         for (let i = 0; i < statusOrder.length; i++) {
           const status = statusOrder[i];
-          if (line.match(new RegExp(`^- \[.\] ${status.replace('-', ' ')}$`, 'i'))) {
-            return `- [${i === checkedIdx ? 'x' : ' '}] ${status.replace('-', ' ')}`;
+          const statusRegex = new RegExp(`^- \[.\] *${status} *$`, 'i');
+          if (line.trim().startsWith(`- [`) && line.trim().includes(status)) {
+            return i <= checkedIdx ? `- [x] ${status}` : `- [ ] ${status}`;
           }
         }
         return line;
@@ -182,7 +183,6 @@ export class TaskStateMachine {
           const stepName = stepMatch[1];
           const stepObj = this._task.steps.find(s => s.name === stepName);
           const done = stepObj && stepObj.status === 'done';
-          // Preserve indentation
           const indent = line.match(/^\s*/)?.[0] || '';
           return `${indent}- [${done ? 'x' : ' '}] ${stepName}`;
         }
@@ -227,10 +227,30 @@ export class TaskStateMachine {
     this.dailyJson.status = 'planned';
     this.dailyJson.history = [];
     this.saveDailyJson(this.dailyJson);
-    this.updateTaskMd();
+
+    // Reset the markdown file to all unchecked status and steps, with correct spacing
+    let md = fs.readFileSync(this._task.files.taskMd, 'utf-8');
+    md = md.replace(/(## Status[\s\S]*?)(?=##|$)/, (match) => {
+      // Always reset to the initial template, with two blank lines after status
+      return [
+        '## Status',
+        '- [ ] Planned',
+        '- [ ] In Progress',
+        '  - [ ] refinement',
+        '  - [ ] creating test cases',
+        '  - [ ] implementing',
+        '  - [ ] testing',
+        '- [ ] QA Review',
+        '- [ ] Done',
+        '',
+        '',
+      ].join('\n');
+    });
+    fs.writeFileSync(this._task.files.taskMd, md);
+
     this.updateDailyMd();
     this.updatePlanningMd();
-    this.logAction('State machine reset to Planned and daily history cleared.');
+    this.logAction('State machine reset to Planned and daily history cleared. Markdown file reset to initial state.');
   }
 }
 
@@ -293,60 +313,55 @@ function parseTaskFile(taskMdPath: string): Task {
 
 // Progress only one state or step per run
 function progressOne(sm: TaskStateMachine): string | null {
+  // 1. If status is planned, tick it off and move to in-progress
   if (sm.status === 'planned') {
-    // Only transition to in-progress if all steps are open
-    const allStepsOpen = sm.steps.every(s => s.status === 'open');
-    if (allStepsOpen) {
-      sm.logAction('Transitioning status: planned -> in-progress', 'status');
-      sm.transitionStatus('in-progress');
-      // Immediately progress the first unticked step
-      for (const step of sm.steps) {
-        if (step.status !== 'done') {
-          sm.logAction(`Progressing substate: ${step.name} -> done`, 'step');
-          sm.progressStep(step.name, 'done');
-          // Persist state to daily.json
-          sm.saveState();
-          const nextStep = sm.steps.find(s => s.status !== 'done');
-          return nextStep
-            ? `Status progressed to In Progress. Substate progressed: ${step.name}. Next step: ${nextStep.name}`
-            : `Status progressed to In Progress. Substate progressed: ${step.name}. All steps done.`;
-        }
-      }
-      // Persist state to daily.json
-      sm.saveState();
-      return 'Status progressed to In Progress.';
-    } else {
-      // If any step is done, treat as in-progress
-      sm.transitionStatus('in-progress');
-      sm.saveState();
-    }
-  }
-  if (sm.status === 'in-progress') {
-    // Progress only one step per run
-    for (const step of sm.steps) {
-      if (step.status !== 'done') {
-        sm.logAction(`Progressing substate: ${step.name} -> done`, 'step');
-        // Use progressStep to update status and tick markdown
-        sm.progressStep(step.name, 'done');
-        sm.saveState();
-        const nextStep = sm.steps.find(s => s.status !== 'done');
-        return nextStep
-          ? `Substate progressed: ${step.name}. Next step: ${nextStep.name}`
-          : `Substate progressed: ${step.name}. All steps done.`;
-      }
-    }
-    // If all steps are done, progress to QA Review
-    sm.logAction('Transitioning status: in-progress -> qa-review', 'status');
-    sm.transitionStatus('qa-review');
+    sm.logAction('Transitioning status: planned -> in-progress', 'status');
+    sm.transitionStatus('in-progress');
     sm.saveState();
-    return 'Status progressed to QA Review.';
+    return 'Status progressed to In Progress.';
   }
+
+  // 2. If status is in-progress, tick it off and start ticking steps
+  if (sm.status === 'in-progress') {
+    // Find next open step
+    const nextStep = sm.steps.find(s => s.status !== 'done');
+    if (nextStep) {
+      sm.logAction(`Progressing substate: ${nextStep.name} -> done`, 'step');
+      sm.progressStep(nextStep.name, 'done');
+      sm.saveState();
+      const followingStep = sm.steps.find(s => s.status !== 'done');
+      return followingStep
+        ? `Substate progressed: ${nextStep.name}. Next step: ${followingStep.name}`
+        : `Substate progressed: ${nextStep.name}. All steps done.`;
+    }
+    // Only move to QA Review if all steps are done
+    const allStepsDone = sm.steps.every(s => s.status === 'done');
+    if (allStepsDone) {
+      sm.logAction('Transitioning status: in-progress -> qa-review', 'status');
+      sm.transitionStatus('qa-review');
+      sm.saveState();
+      return 'Status progressed to QA Review.';
+    }
+    // Otherwise, do not progress status
+    sm.saveState();
+    return null;
+  }
+
+  // 3. If status is qa-review, tick it off and move to done
   if (sm.status === 'qa-review') {
     sm.logAction('Transitioning status: qa-review -> done', 'status');
     sm.transitionStatus('done');
     sm.saveState();
     return 'Status progressed to Done.';
   }
+
+  // 4. If status is done, nothing to do
+  if (sm.status === 'done') {
+    sm.logAction('Task is already done. No further progression.', 'status');
+    sm.saveState();
+    return 'Task is already done.';
+  }
+
   sm.logAction('No valid progression found. Possible error.', 'error');
   sm.saveState();
   return null;
@@ -355,26 +370,45 @@ function progressOne(sm: TaskStateMachine): string | null {
 // Usage: works for any task file, currently using Task 18
 // Command line interface
 const args = process.argv.slice(2);
-let taskNum = '18';
 let doReset = false;
-if (args.length >= 3 && args[0] === 'task' && args[2] === 'reset') {
-  taskNum = args[1];
-  doReset = true;
-}
-const taskFilePath = path.join(tempDir, `../sprints/iteration-3/iteration-3-task-${taskNum}-implement-task-state-machine.md`);
-const taskObj = parseTaskFile(taskFilePath);
-const sm = new TaskStateMachine(taskObj);
+let taskNum: string | undefined = undefined;
+let sm: TaskStateMachine | undefined = undefined;
+let taskObj: Task | undefined = undefined;
+let taskFilePath: string | undefined = undefined;
 
-if (doReset) {
-  if (typeof sm.resetToPlanned === 'function') {
-    sm.resetToPlanned();
-    console.log(`\x1b[36mTask ${taskNum} has been reset to planned.\x1b[0m`);
-  } else {
-    sm.logAction('resetToPlanned method not found on TaskStateMachine', 'error');
-  }
+const dailyJsonPath = path.join(tempDir, 'daily.json');
+if (args.length >= 3 && args[0] === 'task' && args[2] === 'reset') {
+  // Explicit reset: require 'task <num> reset'
+  taskNum = args[1];
+  taskFilePath = path.join(tempDir, `../sprints/iteration-3/iteration-3-task-${taskNum}-implement-task-state-machine.md`);
+  taskObj = parseTaskFile(taskFilePath);
+  sm = new TaskStateMachine(taskObj);
+  doReset = true;
+} else if (fs.existsSync(dailyJsonPath)) {
+  // Autonomous progression: no parameter needed
+  const dailyJson = JSON.parse(fs.readFileSync(dailyJsonPath, 'utf-8'));
+  taskNum = dailyJson.currentTask.replace('iteration-3-task-', '').replace('-implement-task-state-machine', '');
+  taskFilePath = path.join(tempDir, `../sprints/iteration-3/iteration-3-task-${taskNum}-implement-task-state-machine.md`);
+  taskObj = parseTaskFile(taskFilePath);
+  sm = new TaskStateMachine(taskObj);
 } else {
-  const result = progressOne(sm);
-  if (result) {
-    console.log('Result:', result);
+  // Require task number parameter if no daily.json
+  console.error('\x1b[31mError: No daily.json found. Please run with a task number (e.g., "task 18" or "task 18 reset").\x1b[0m');
+  process.exit(1);
+}
+
+if (sm) {
+  if (doReset) {
+    if (typeof sm.resetToPlanned === 'function') {
+      sm.resetToPlanned();
+      console.log(`\x1b[36mTask ${taskNum} has been reset to planned.\x1b[0m`);
+    } else {
+      sm.logAction('resetToPlanned method not found on TaskStateMachine', 'error');
+    }
+  } else {
+    const result = progressOne(sm);
+    if (result) {
+      console.log('Result:', result);
+    }
   }
 }

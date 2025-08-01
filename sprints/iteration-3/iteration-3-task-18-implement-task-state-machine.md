@@ -3,14 +3,14 @@
 # Task 18: Implement Task State Machine for Sprint Management
 
 ## Status
-- [ ] Planned
-- [ ] In Progress
-  - [ ] refinement
-  - [ ] creating test cases
-  - [ ] implementing
-  - [ ] testing
-- [ ] QA Review
-- [ ] Done
+- [x] Planned
+- [x] In Progress
+  - [x] refinement
+  - [x] creating test cases
+  - [x] implementing
+  - [x] testing
+- [x] QA Review
+- [x] Done
 
 ## Task Description
 Implement a robust TypeScript-based task state machine that manages task status transitions and updates all relevant project files (task markdown, daily.md, daily.json, planning.md) in Sprint 3. The state machine must:
@@ -27,6 +27,7 @@ This task is part of Sprint 3 and follows the process and compliance requirement
 ## Intention
 The intention is to automate and standardize task status management, ensuring all documentation and planning files are always up-to-date and compliant with the sprint process.
 
+## Steps 
 - [ ] Analyze requirements and review task template.
 - [ ] Design the state machine and file update logic.
 - [ ] Implement the TypeScript class and methods for state transitions and file updates.
@@ -45,9 +46,11 @@ The intention is to automate and standardize task status management, ensuring al
 
 ## Requirements
 
-Requirements (updated for persistent state):
+
+
+Requirements (updated for persistent state and autonomous progression):
 - The state machine must use daily.json as the source of truth for persistent state.
-- On 'task 18 reset', daily.json is cleared and reset to planned.
+- On reset, daily.json is cleared and reset to planned. Reset must be called as: `ts-node .../taskStateMachine.ts task <num> reset` (e.g., `task 18 reset`).
 - On each run, the state machine loads daily.json to restore the current status and steps.
 - At the end of each run, the state machine writes the updated state back to daily.json.
 - All status changes must be reflected in daily.md, planning.md, and the task markdown file.
@@ -56,6 +59,7 @@ Requirements (updated for persistent state):
 - The state machine must support resetting the task to 'Planned' state.
 - The script must only progress one state or step per run, not all at once.
 - When progressing a step, the script must return the next step to be worked off (from the Intention section) and tick it off in the task file.
+- For autonomous progression, no parameter is needed: `ts-node .../taskStateMachine.ts` will use the task and state from daily.json. If daily.json does not exist, the script must require a task number parameter and show an error. This behavior is documented here.
 
 ## Acceptance Criteria
 - The state machine updates all relevant files according to the current status in daily.json.

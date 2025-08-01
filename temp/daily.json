@@ -1,7 +1,7 @@
 {
   "currentSprint": "Sprint 3",
   "currentTask": "iteration-3-task-18",
-  "status": "in-progress",
+  "status": "done",
   "files": {
     "taskMd": "/Users/Shared/Workspaces/2cuGitHub/UpDown/sprints/iteration-3/iteration-3-task-18-implement-task-state-machine.md",
     "dailyMd": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scrum-master/daily.md",
@@ -9,28 +9,36 @@
   },
   "history": [
     {
-      "timestamp": "2025-08-01T14:56:20.687Z",
+      "timestamp": "2025-08-01T15:29:40.939Z",
       "status": "in-progress"
     },
     {
-      "timestamp": "2025-08-01T14:56:20.689Z",
+      "timestamp": "2025-08-01T15:29:44.856Z",
       "status": "in-progress",
       "step": "refinement"
     },
     {
-      "timestamp": "2025-08-01T14:56:25.592Z",
+      "timestamp": "2025-08-01T15:29:50.585Z",
       "status": "in-progress",
       "step": "creating test cases"
     },
     {
-      "timestamp": "2025-08-01T14:56:29.210Z",
+      "timestamp": "2025-08-01T15:29:54.482Z",
       "status": "in-progress",
       "step": "implementing"
     },
     {
-      "timestamp": "2025-08-01T14:56:32.893Z",
+      "timestamp": "2025-08-01T15:29:58.873Z",
       "status": "in-progress",
       "step": "testing"
+    },
+    {
+      "timestamp": "2025-08-01T15:30:02.937Z",
+      "status": "qa-review"
+    },
+    {
+      "timestamp": "2025-08-01T15:30:09.035Z",
+      "status": "done"
     }
   ]
 }
