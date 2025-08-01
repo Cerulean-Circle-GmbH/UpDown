@@ -1,7 +1,7 @@
 # Context Quality Gate
 
 ## Intention
-This module provides a formalized process quality gate for the Scrum Master (SM) and all roles in the UpDown project. It enables explicit context management, verification, and alignment before handing over to QA or moving to the next process step.
+This module provides a formalized process quality gate for the Scrum Master (SM) and all roles in the UpDown project. It enables explicit context management, verification, and alignment before handing over to QA User or moving to the next process step.
 
 ## Description
 The Context Quality Gate is a set of classes and tests that:
