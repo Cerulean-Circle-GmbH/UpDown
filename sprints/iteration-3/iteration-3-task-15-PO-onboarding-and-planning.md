@@ -4,8 +4,8 @@
 
 ## Status
 - [x] Planned
-- [ ] In Progress
-  - [ ] refinement
+- [x] In Progress
+  - [x] refinement
   - [ ] creating test cases
   - [ ] implementing
   - [ ] testing
@@ -30,10 +30,13 @@
 ## Steps
 - [x] Review and refactor all PO and Scrum Master process documentation to remove duplication and enforce DRY.
 - [x] Move PO-relevant process sections from scrum-master/process.md to po/process.md.
-- [x] Update planning.md to list all tasks/subtasks, correct priorities, and document process updates.
-- [x] Document all learnings, user prompts, and process changes in task 15 and po/process.md.
-- [x] Adapt onboarding and process documentation to match the new template and recovery process.
-- [ ] Assign to QA for verification and feedback.
+- [x] Update planning.md to list all tasks/subtasks, correct priorities, and document process updates as per QA feedback.
+- [x] Restore and enforce the defined status state machine in all task files, documenting this as a first principle in po/process.md.
+- [x] Document all major QA prompts, learnings, and process changes in task 15 and po/process.md for traceability and recovery.
+- [x] Adapt onboarding and process documentation to match the new template and recovery process, ensuring compliance and recoverability.
+- [x] Validate all changes with QA feedback and update the QA Audit & User Feedback section accordingly.
+- [x] Review and optimize scrum-master/process.md for DRY, clarity, and consistency per QA feedback.
+- [ ] Assign to QA for final verification and feedback.
 
 ## Requirements
 - Onboarding documentation must clearly explain the PO role and planning process.
@@ -57,6 +60,8 @@
 - 2025-08-01 UTC: QA user prompt: "to keep up DRY you are now allowed to remove the sections from the scrum master file too. document my last three prompts in task 15, which we are basically just executing together. adapt the steps in task 15 to what we actually did and are continue to do."
 - 2025-08-01 UTC: QA user prompt: "i made manual changes to task 15 because you were deleting too much content there. read and understand it. To do task 15 together is currently a major learning expertise for you! We are not planning task 15 any more, just the last prompt was about adapting the task to what we actually need to do to fulfill the task's intentions from an expert mind (in this case mine as a QA user). This process is called refinement. Adjust the status in task 15 and update the process documentation with what you learned. Also keep updating the QA feedback in task 15."
 - 2025-08-01 UTC: QA user prompt: "You are wonderful. But as the status is defined states you cannot modify the refinement state without later running in problems. You understood all well but changing fixed defined status states is a no go. Add this learning to your first principles and restore the defined status state name."
+- 2025-08-01 UTC: QA user explicit correction: "For task 15, the correct status section is: Planned and In Progress checked, refinement checked, creating test cases unchecked. Learn from this explicit correction and always use the defined state names. Continue to add my QA feedback in task 15."
+- 2025-08-01 UTC: QA user prompt: "Review the complete scrum master process md for DRY principle. The first principles are spread over multiple places and headlines. Optimize it without repeating yourself but keeping all information and make them consistent and easy to digest in the document. This is part of executing task 15. So add this prompt also in QA and continue to adjust the steps we really do."
 
 ## PO Process Learnings (2025-08-01)
 - Never modify the fixed defined status states in the template. Status must always use the defined state names to avoid future problems and maintain process integrity.

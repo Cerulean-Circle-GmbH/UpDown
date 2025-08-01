@@ -1,5 +1,3 @@
-
-
 # PO Process Documentation
 
 This file contains process guidelines, best practices, and lessons learned for the Product Owner role. Always read and update this file before performing PO actions.
@@ -127,3 +125,9 @@ The intention and lessons learned from user prompts are regularly extrapolated a
 
 ## Backlink
 - [Scrum Master Process & Lessons Learned](../scrum-master/process.md)
+
+## First Principles (2025-08-01)
+- Never remove or modify the fixed status states (Planned, In Progress, QA Review, Done, etc.) in any task file. These are essential for process integrity, recovery, and machine-readability. Status must always use the defined state names.
+
+## QA Feedback Documentation
+- Continue to document all QA feedback and major user prompts in the QA Audit & User Feedback section of each relevant task (see task 15 for example).

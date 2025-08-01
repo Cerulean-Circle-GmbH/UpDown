@@ -1,11 +1,12 @@
-# Scrum Master Process & Lessons Learned
-## First Principle: DO NOT REPEAT YOURSELF (DRY)
-- The Scrum Master and all roles must actively prevent duplication of files, text, and documentation throughout the project.
-- When a duplicate or repeated section is found, replace it in batch mode with a single, authoritative source and use consistent links and backlink structures.
-- Always prefer referencing and backlinking to canonical files (e.g., process.md, planning.md, task files) rather than copying content.
-- When refactoring, check for and remove duplicates, and update all references to point to the correct, unique file or section.
-- This principle applies to all documentation, code, and process artifacts. It ensures clarity, maintainability, and traceability across the project.
-- Document all batch deduplication actions in the QA audit and process documentation for traceability.
+# Scrum Master Process & Team Guidance
+
+## 1. First Principles & DRY Compliance
+- DO NOT REPEAT YOURSELF (DRY): Prevent duplication of files, text, and documentation. Always reference canonical sources (process.md, planning.md, task files) and use consistent links/backlinks.
+- Status state machine: Never modify fixed defined status states in templates. Status must use only defined state names for process integrity.
+- QA feedback: Document all QA/user feedback with timestamps in QA audit sections and cross-reference in planning.md and process docs.
+- Recovery: Restore lost/corrupted files from git history and reapply template process as documented here and in role process files.
+- Role-specific process files must backlink to this master process document for overall guidance.
+- All batch deduplication actions must be documented for traceability.
 
 ## Latest Learnings from QA Audit (2025-07-30)
 - Always verify file existence and naming before batch operations; use `ls` to confirm targets.
