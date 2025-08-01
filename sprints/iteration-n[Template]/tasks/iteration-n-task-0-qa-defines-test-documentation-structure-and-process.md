@@ -1,3 +1,5 @@
+[Back to Parent Task](./iteration-n-task-0.md)
+
 # Task 0.1: QA Defines Test Documentation Structure and Process
 
 ## Intention
@@ -19,4 +21,15 @@
 
 ## User Feedback
 - Copy of the prompt when the task is in progress will be documented here.
+
+---
+## Parent Task
+- [Task 0](./iteration-n-task-0.md)
+
+---
+## QA Audit & Traceability
+- All changes to this file must be documented in the QA audit file for this iteration.
+- Any batch renaming, headline updates, or navigation changes must be cross-referenced in planning.md and the QA audit.
+- Manual corrections and missed tasks/subtasks should be listed in the QA audit and mitigated as described.
+- Ensure all links and headlines match the planning and file naming conventions.
 

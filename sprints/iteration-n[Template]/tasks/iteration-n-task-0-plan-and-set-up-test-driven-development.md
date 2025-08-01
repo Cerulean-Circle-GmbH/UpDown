@@ -1,3 +1,5 @@
+[Back to Planning](../planning.md)
+
 # Task 0: Plan and Set Up Test-Driven Development
 
 ## Intention
@@ -56,5 +58,17 @@
     - [iteration-1-task-5.md](iteration-1-task-5.md)
     - [iteration-1-task-5.1.md](iteration-1-task-5.1.md)
     - [iteration-1-task-5.2.md](iteration-1-task-5.2.md)
+
+---
+## Subtasks
+- [Task 0.1](./iteration-n-task-0.1.md)
+- [Task 0.2](./iteration-n-task-0.2.md)
+
+---
+## QA Audit & Traceability
+- All changes to this file must be documented in the QA audit file for this iteration.
+- Any batch renaming, headline updates, or navigation changes must be cross-referenced in planning.md and the QA audit.
+- Manual corrections and missed tasks/subtasks should be listed in the QA audit and mitigated as described.
+- Ensure all links and headlines match the planning and file naming conventions.
 
 

@@ -1,3 +1,5 @@
+[← Back to Sprint 3 Planning](../sprints/iteration-3/planning.md)
+
 # Daily Role Planning
 
 **Date:** 2025-07-22
@@ -13,8 +15,8 @@ This file documents the next planned step for each role. After user confirmation
   - [Task 1: Robust Container and Local Workflow](../sprints/iteration-3/iteration-3-task-1-devops.md)
   - [Task 2: Enable GitHub SSH Access from Dev Container](../sprints/iteration-3/iteration-3-task-2-devops.md)
   - [Task 3: Project Directory Structure and Sync](../sprints/iteration-3/iteration-3-task-3-devops.md)
-- The outline has been updated to reference all DevOps tasks.
-- The Scrum Master must continue to update this file after every step, including after any change to task files, outline, or user-prompts.
+- The current status and next planned step for all roles is now tracked in [planning.md](../sprints/iteration-3/planning.md) and this daily log. QA user feedback for the latest task is documented in the planning file and referenced here.
+- The Scrum Master must continue to update this file after every step, including after any change to task files, planning.md, or user-prompts.
 
 ## Scrum Master
 - Monitor planning progress and ensure all roles are aligned with the updated outline and task files.
@@ -50,3 +52,30 @@ This file is updated daily or after each major process step. Always document the
 - The PO will then create or update tasks for all roles in Sprint 3, reflecting retro learnings and process changes.
 - All roles must review the planning summary and update their own documentation and task files accordingly.
 - After QA approval, the PO will proceed with planning and assign tasks for Sprint 3.
+
+# Daily Routine Log (Sprint 3)
+
+**Date:** 2025-07-30
+
+## Next Planned Step (All Roles)
+**Task:** [Task 16: DevOps: Batch Update Sprint 3 Tasks to Match Template](../sprints/iteration-3/iteration-3-task-16-devops-batch-update-sprint-3-tasks-to-match-template.md)
+**Priority:** 1
+**Status:** Planning phase, iterating on Task 16. Tasks 1 and 6 have been fixed manually by QA user. Tasks 2 and 3 are pending restoration with correct Intention and Task Description. Batch will continue with Task 4 after 2 and 3 are restored.
+**Notes:** This is a planning/meta task. All roles (PO, Architect, DevOps, QA, Developer) collaborate to ensure all sprint 3 task and subtask files match the template for headlines, backlinks, QA audit, and process compliance. Duplicates are removed, links updated, and changes documented in QA audit and [planning.md](../sprints/iteration-3/planning.md). User prompt history is captured in [user.captured.prompts.md](../user.specs/user.captured.prompts.md).
+
+## User Prompts Log
+
+---
+
+**Date:** 2025-08-01
+
+## Next Planned Step (All Roles)
+**Task:** [Task 17: PO & Scrum Master - Optimize scrum-master/process.md for DRY, Structure, and Clarity](../sprints/iteration-3/iteration-3-task-17-PO-scrum-master-process-md-DRY-optimization.md)
+**Priority:** 1
+**Status:** Status section in task 17 needs to be restored to strict compliance (only "Planned", "In Progress", "QA Review", "Done" with checkboxes). All process learnings, requirements, and QA audit documentation are present and traceable. Ready for final review and QA assignment.
+**Notes:** Compared current and previous versions for compliance. Confirmed all learnings and actions are documented in QA Audit & Planning Update. Next: edit file for status compliance, assign to QA, and document further learnings.
+
+## User Prompts Log
+- **2025-08-01 UTC:** "show me where you think you are here as a prompt answer in the format of a daily md."
+- **2025-08-01 UTC:** "ok. update the daily md  (See <attachments> above for file contents. You may not need to search or read the file again.)"
+- **2025-08-01 UTC:** "ok. update the daily md in the md file. (See <attachments> above for file contents. You may not need to search or read the file again.)"

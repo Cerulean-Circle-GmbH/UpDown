@@ -1,6 +1,8 @@
-# Sprint 3 Task 2: DevOps - Enable GitHub SSH Access from Dev Container
+# Iteration-3-Task-2.1 DevOps: Enable GitHub SSH Access from Dev Container
 
 **Date:** 2025-07-22
+
+[Back to Main Task](./iteration-3-task-2-devops-refactor-npm-scripts-for-container-lifecycle.md)
 
 ## Task Description
 - Ensure that developers can commit and push to GitHub from inside the dev container.
@@ -21,3 +23,6 @@
 ---
 
 This file documents the second DevOps task for Sprint 3. All changes must be referenced here and in the onboarding documentation.
+
+## Parent Task
+- [Iteration-3-Task-2 DevOps: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-2-devops-refactor-npm-scripts-for-container-lifecycle.md)
