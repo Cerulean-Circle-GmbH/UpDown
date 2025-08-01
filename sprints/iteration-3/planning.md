@@ -76,3 +76,7 @@ This sequence ensures the devcontainer and workflow are set up to enable robust 
   > you just found new templates and an upgraded process of describing tasks. read it and aply it while doing this last step again but this time correctly. still remember to capture my QA prompt history too.
   > (See <attachments> above for file contents. You may not need to search or read the file again.)
 
+---
+
+2025-08-01 UTC: Task 17 executed: scrum-master/process.md restructured for DRY, clarity, and digestibility. All unique content preserved, redundant statements removed, and principles cross-referenced. Headline structure now matches project requirements and onboarding standards. Learnings and actions documented in QA Audit & User Feedback in task 17 and process.md.
+
