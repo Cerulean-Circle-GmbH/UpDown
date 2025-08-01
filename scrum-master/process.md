@@ -48,14 +48,6 @@ General Note: Always notify the QA user before deleting or replacing major secti
 - The Scrum Master and QA must enforce this guideline for all new folders and refactor any existing folders that do not comply.
 - For role-specific refinement process requirements, see the relevant section in each role's process.md file (e.g., developer/process.md, qa/process.md, po/process.md).
 
-## Planning Phase (Precedes Sprint Start)
-
-## Task Dependencies and Ordering in PO Planning (2025-07-30)
-- The PO must explicitly document task dependencies in each sprint task file, using markdown links to prerequisite tasks.
-- Task ordering is crucial: every task should be actionable only when its dependencies are complete, ensuring logical workflow and minimizing blockers.
-- The planning.md file must serve as the central reference for task order and dependencies, and all task files must link back to it.
-- The Scrum Master must review dependency links and ordering before sprint start and after any major planning changes.
-- This process improvement is now required for all future sprints and onboarding documentation.
 
 ## Role of the Scrum Master
 - Always start as Scrum Master after a restart or context loss.
@@ -95,19 +87,6 @@ General Note: Always notify the QA user before deleting or replacing major secti
 - Developers notify PO when a feature branch is ready.
 - This is a daily business called the release process, outside of sprints QA audits may be more relaxed.
 - Sprint methodology resumes after restart or new sprint.
-
-## Intention
-Iterated understanding: Documentation and user feedback must be added into the context of the corresponding task or subtask. Only one status can be active at a time (radio box, not checkbox). This ensures clarity after recovery.
-User queries are to be added to user.captured.prompts.md with UTC timestamp. 
-User feedback in tasks is always concatenated, never removed. 
-User Feedback in tasks are added to the corresponding task.
-Scrum Master and team prompts are documented in Next Steps with timestamp. Logic applied to all relevant files.
-### Summary
-Only user prompts (with UTC timestamp) are logged in user.captured.prompts.md. No Scrum Master or team prompts.
-User feedback in tasks is always concatenated, never removed, and must be added to the corresponding task.
-Scrum Master and team prompts are documented in the "Next Steps" section of each task/subtask, with timestamp.
-The process.md now clearly states these rules and the fail-safe mechanism for recovery.
-The intention and lessons learned from user prompts are regularly extrapolated and summarized in process.md.
 
 ## Role-Based Process Recovery (2025-07-30)
 - The scrum-master/process.md file is the authoritative source for overall process recovery and orchestration. Always read this file first after a restart or context loss.

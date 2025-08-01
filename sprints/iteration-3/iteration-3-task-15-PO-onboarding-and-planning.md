@@ -1,12 +1,11 @@
-
 [Back to Planning](./planning.md)
 
 # Iteration 3 Task 15: PO Role and Planning Process Onboarding
 
 ## Status
 - [x] Planned
-- [ ] In Progress
-  - [ ] refinement
+- [x] In Progress
+  - [x] refinement (expert-driven, QA-guided)
   - [ ] creating test cases
   - [ ] implementing
   - [ ] testing
@@ -29,11 +28,11 @@
 - Ensure process compliance and traceability for onboarding and QA.
 
 ## Steps
-- [x] Document the PO role and planning process in onboarding documentation.
-- [x] Explain how to create, number, and link sprint tasks, including dependency management.
-- [x] Describe how to use planning.md as the central reference for task order and dependencies.
-- [x] Include examples of markdown links for dependencies and backlinks to planning.md.
-- [x] Reference the updated scrum-master/process.md for process compliance.
+- [x] Review and refactor all PO and Scrum Master process documentation to remove duplication and enforce DRY.
+- [x] Move PO-relevant process sections from scrum-master/process.md to po/process.md.
+- [x] Update planning.md to list all tasks/subtasks, correct priorities, and document process updates.
+- [x] Document all learnings, user prompts, and process changes in task 15 and po/process.md.
+- [x] Adapt onboarding and process documentation to match the new template and recovery process.
 - [ ] Assign to QA for verification and feedback.
 
 ## Requirements
@@ -54,14 +53,15 @@
 ## QA Audit & User Feedback
 - 2025-08-01 UTC: Task refactored to strictly match template headlines/order and process compliance.
 - 2025-08-01 UTC: QA user comment: "As of task 15 this is exactly what we are supposed to do now. The PO will always create new tasks in the template format as we just refactored. When we are working on a task, the corresponding role will refine the tasks into subtasks that are assigned to the role responsible to solve it. The refinement can also define collaboration subtasks with other roles. Document all these learnings and add my comment as QA user to task 15. Goal is to be able to recover at any time into this process."
+- 2025-08-01 UTC: QA user prompt: "two prompts earlier you said how to update the planning md and it was very good. but you did not yet do it. just do it now and add this update learning also to the scrum master and PO process."
+- 2025-08-01 UTC: QA user prompt: "to keep up DRY you are now allowed to remove the sections from the scrum master file too. document my last three prompts in task 15, which we are basically just executing together. adapt the steps in task 15 to what we actually did and are continue to do."
+- 2025-08-01 UTC: QA user prompt: "i made manual changes to task 15 because you were deleting too much content there. read and understand it. To do task 15 together is currently a major learning expertise for you! We are not planning task 15 any more, just the last prompt was about adapting the task to what we actually need to do to fulfill the task's intentions from an expert mind (in this case mine as a QA user). This process is called refinement. Adjust the status in task 15 and update the process documentation with what you learned. Also keep updating the QA feedback in task 15."
 
 ## PO Process Learnings (2025-08-01)
-- The PO must always create new tasks in the strict template format established in Sprint 3.
-- Each new task must include all required template headlines in the correct order: Status, Task Description, Context, Intention, Steps, Requirements, Tech Stack Rationale, Acceptance Criteria, QA Audit & User Feedback, Dependencies, Subtasks, References, Backlinks.
-- When a task is assigned, the corresponding role (Developer, DevOps, Architect, QA, etc.) is responsible for refining the task into actionable subtasks, which are documented in the 'Subtasks' section and assigned to the appropriate role.
-- Subtasks may include collaboration items with other roles as needed.
-- All dependencies must be documented as markdown links in the 'Dependencies' section and referenced in planning.md.
-- The planning.md file is the central reference for task order, dependencies, and status. All task files must link back to it.
+- The refinement phase is expert-driven and QA-guided, focusing on adapting the task to fulfill its intentions based on real-time feedback and expertise.
+- The PO and team must continuously update the QA Audit & User Feedback section with every major prompt and learning.
+- Status must reflect the actual phase (e.g., refinement) and be updated as the work progresses.
+- Manual changes and expert feedback are essential for process improvement and must be documented for traceability and recovery.
 - Recovery: If process or planning files are lost or corrupted, restore from git history and reapply the template process as documented here and in po/process.md.
 
 ## Dependencies
