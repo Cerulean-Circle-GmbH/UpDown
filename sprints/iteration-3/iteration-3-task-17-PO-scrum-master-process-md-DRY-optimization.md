@@ -32,21 +32,23 @@
 - Enable rapid onboarding, process recovery, and traceability for the team.
 
 ## Steps
-- [ ] Move QA/DRY process note from planning.md to this task's QA Audit & User Feedback section and ensure all future status/notes are only in the task file, not planning.md (per QA/DRY process).
-- [x] Plan and create the task as PO.
-- [x] Structure `scrum-master/process.md` with clear, numbered headlines and sections for digestibility.
-- [x] Remove redundancy, keeping only the most complete version and cross-referencing principles as needed.
-- [x] Review changes with Scrum Master and QA.
-- [x] Update QA Audit & User Feedback in task 15 and planning.md with learnings and actions taken.
-- [x] Move planning & QA audit update headline and content from process.md to task 17 for traceability.
+- [ ] Review all QA feedback in this file and related tasks (18, 19, 20) and consolidate requirements.
+- [ ] Refactor the process optimization to:
+  - Require and document the use of the Task State Machine for all process/status updates (see Task 18).
+  - Integrate first principles and process requirements from Task 20.
+  - Plan for future improvements and subproject evolution as described in Task 19 (Web4Scrum foundation).
+  - Ensure planning.md is always kept ordered by priority and checked after every update.
+  - Update all process documentation and onboarding to reflect these requirements.
 - [ ] Assign to QA for final verification and feedback.
 - [ ] Update restart.md to optimize the recovery process: read QA prompts and user feedback from the latest active task file (not user.captured.prompts.md).
 - [ ] Ensure all new QA feedback and process changes are documented in the current active task file under `## QA Audit & User Feedback`.
-- [ ] On every prompt while working on a task, double-check the status, the steps, and the QA feedback section to ensure compliance and traceability.
-- [ ] Read all QA feedbacks in the current task and identify which process files (e.g., scrum-master/process.md, devops/process.md, qa/process.md, etc.) are affected and require updates to fully reflect all learnings.
-- [ ] Add/update steps in this task to ensure all affected process files are listed and updated as needed to incorporate the latest QA learnings.
 - [ ] At the end of every update, always review and update the status and steps of the current task file to reflect the latest progress.
 - [ ] Explicitly check and document that the DRY first principle has been followed in every change and update.
+
+## Interlinks
+- [Task 18: Implement Task State Machine for Sprint Management](./iteration-3-task-18-implement-task-state-machine.md)
+- [Task 19: PO Create TypeScript CLI (once.ts) for Subproject/Submodule Management - Web4Scrum foundation](./iteration-3-task-19-once-ts-cli-submodule-management.md)
+- [Task 20: Update Developer Process with First Principles for Development](./iteration-3-task-20-update-developer-process-first-principles.md)
 
 ## Requirements
 ### Refined Requirements: Affected Process Files
@@ -87,6 +89,17 @@ Per QA/DRY process: Status and notes are now only maintained in the task file, n
 
 ### 2025-08-01 QA Audit & Planning Update
 Task 17 executed: scrum-master/process.md restructured for DRY, clarity, and digestibility. All unique content preserved, redundant statements removed, and principles cross-referenced. Headline structure now matches project requirements and onboarding standards. Learnings and actions documented in QA Audit & User Feedback in task 17 and process.md.
+
+### 2025-08-02 QA Comment
+QA: The planning.md file must always be kept ordered by priority. This is now a process requirement and must be checked after every planning or status update.
+
+### 2025-08-02 QA Feedback (Consolidation)
+Due to the addition of tasks 20 and 19, tasks 17 and 18 must be reset and refactored. All steps must be consolidated based on QA feedback in all related tasks. The process must:
+- Require the use of the Task State Machine for all process/status updates.
+- Integrate first principles and process requirements from Task 20.
+- Plan for future improvements and subproject evolution as described in Task 19 (Web4Scrum foundation).
+- Ensure planning.md is always kept ordered by priority and checked after every update.
+- Update all process documentation and onboarding to reflect these requirements.
 
 ## Dependencies
 - [scrum-master/process.md](../../scrum-master/process.md)

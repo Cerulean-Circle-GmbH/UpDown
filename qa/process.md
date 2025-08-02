@@ -1,4 +1,6 @@
 ## Restart & Recovery Process (2025-08-01)
+All process and status updates (task files, daily.md, daily.json, planning.md) for QA must be performed using the Task State Machine implemented in [Task 18](../sprints/iteration-3/iteration-3-task-18-implement-task-state-machine.md). Reference Task 19 for future improvements (Web4Scrum foundation).
+
 All restart and recovery steps for QA must:
 - Reference the latest QA feedback and user prompts from the current active task file (not user.captured.prompts.md).
 - Always start recovery by reading README.md, scrum-master/process.md, the current sprint's planning.md, sprints/iteration-3/daily.md, and relevant role/task files.
@@ -9,6 +11,9 @@ All restart and recovery steps for QA must:
 - Only execute tasks after user feedback is incorporated and the PO's plan is up to date.
 These steps must be cross-referenced in restart.md and all relevant process files for traceability and compliance.
 # QA Process Documentation
+
+## Integration of Task State Machine
+All QA status and file updates must use the Task State Machine for traceability and compliance. Manual updates are deprecated except for emergency recovery. See [Task 18](../sprints/iteration-3/iteration-3-task-18-implement-task-state-machine.md) and [Task 19](../sprints/iteration-3/iteration-3-task-19-once-ts-cli-submodule-management.md).
 
 This file contains process guidelines, best practices, and lessons learned for the QA role. Always read and update this file before performing QA actions.
 

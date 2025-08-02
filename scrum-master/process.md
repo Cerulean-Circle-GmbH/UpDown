@@ -1,4 +1,13 @@
 # Scrum Master Process & Team Guidance
+
+## Integration of Task State Machine (from Task 18)
+All process and status updates (task files, daily.md, daily.json, planning.md) must be performed using the Task State Machine implemented in [Task 18](../sprints/iteration-3/iteration-3-task-18-implement-task-state-machine.md). The Scrum Master and all roles must:
+- Use the state machine for all status transitions and file updates.
+- Reference Task 18 for implementation and usage details.
+- Ensure all process documentation and onboarding reference this requirement.
+- Document all improvements and feedback in the relevant QA Audit & User Feedback section of the current task file.
+- Plan for future improvements and subproject evolution as described in [Task 19: Web4Scrum foundation](../sprints/iteration-3/iteration-3-task-19-once-ts-cli-submodule-management.md).
+
 ## Restart & Recovery Process (2025-08-01)
 All restart and recovery steps must:
 - Reference the latest QA feedback and user prompts from the current active task file (not user.captured.prompts.md).
@@ -11,6 +20,8 @@ All restart and recovery steps must:
 These steps must be cross-referenced in restart.md and all relevant process files for traceability and compliance.
 
 ## 1. First Principles & DRY Compliance
+All process automation and status management must use the Task State Machine for traceability and compliance. Manual status/file updates are deprecated except for emergency recovery.
+
 - DO NOT REPEAT YOURSELF (DRY): Prevent duplication of files, text, and documentation. Always reference canonical sources (process.md, planning.md, task files) and use consistent links/backlinks.
 - Status state machine: Never modify fixed defined status states in templates. Status must use only defined state names for process integrity. Status must always be: Planned, In Progress (with subtasks), QA Review, Done. Never add, remove, or rename these states in any task file.
 - QA feedback: Document all QA/user feedback with timestamps in QA audit sections and cross-reference in planning.md and process docs.
@@ -69,6 +80,8 @@ These steps must be cross-referenced in restart.md and all relevant process file
 - Always update sprints/iteration-3/daily.md after each task and process step to ensure restart and recovery are possible.
 
 ## 5. Process Recovery & Fail-Safe
+If process or context recovery is needed, always use the Task State Machine to restore and update status in all relevant files. Manual edits should be avoided unless the state machine is non-functional.
+
 - scrum-master/process.md is the authoritative source for overall process recovery and orchestration. Always read this file first after a restart or context loss.
 - When switching roles, read the corresponding role's process.md file to refresh on practices and requirements.
 - Remove process.md files from sprint folders to avoid confusion. All improvements and lessons learned go in the global process.md.
@@ -116,6 +129,8 @@ These steps must be cross-referenced in restart.md and all relevant process file
 - The general scrum-master/process.md file is the authoritative source for Scrum Master and LLM process documentation and is not duplicated per sprint. Remove any process.md files from sprint folders to avoid confusion. All process improvements and lessons learned should be added to the global process.md.
 
 ## 10. References
+- [Task 18: Implement Task State Machine for Sprint Management](../sprints/iteration-3/iteration-3-task-18-implement-task-state-machine.md)
+- [Task 19: PO Create TypeScript CLI (once.ts) for Subproject/Submodule Management - Web4Scrum foundation](../sprints/iteration-3/iteration-3-task-19-once-ts-cli-submodule-management.md)
 - [QA Process](../qa/process.md)
 - [PO Process](../po/process.md)
 - [Architect Process](../architect/process.md)

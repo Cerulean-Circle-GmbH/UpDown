@@ -9,18 +9,19 @@ The goal for Sprint 3 is to optimize the project’s process documentation for D
 
 ## Task List (Sprint 3)
 
- [ ] [Task 20: Update Developer Process with First Principles for Development](./iteration-3-task-20-update-developer-process-first-principles.md)  
+
+- [ ] [Task 20: Update Developer Process with First Principles for Development](./iteration-3-task-20-update-developer-process-first-principles.md)  
   **Priority:** 1
-- [ ] [Task 19: PO Create TypeScript CLI (once.ts) for Subproject/Submodule Management](./iteration-3-task-19-once-ts-cli-submodule-management.md)  
-  **Priority:** 1
-- [ ] [Task 17: PO & Scrum Master - Optimize scrum-master/process.md for DRY, Structure, and Clarity](./iteration-3-task-17-PO-scrum-master-process-md-DRY-optimization.md)  
-  **Priority:** 2
-- [x] [Task 18: Implement Task State Machine for Sprint Management](./iteration-3-task-18-implement-task-state-machine.md)  
+- [ ] [Task 19: PO Create TypeScript CLI (once.ts) for Subproject/Submodule Management (Web4Scrum foundation)](./iteration-3-task-19-once-ts-cli-submodule-management.md)  
   **Priority:** 3
-- [x] [Task 15: PO Role and Planning Process Onboarding](./iteration-3-task-15-PO-onboarding-and-planning.md)  
+- [x] [Task 18: Implement Task State Machine for Sprint Management](./iteration-3-task-18-implement-task-state-machine.md)  
+  **Priority:** 2
+- [ ] [Task 17: PO & Scrum Master - Optimize scrum-master/process.md for DRY, Structure, and Clarity (now depends on Task 18, integrates state machine)](./iteration-3-task-17-PO-scrum-master-process-md-DRY-optimization.md)  
   **Priority:** 4
-- [x] [Task 16: DevOps: Batch Update Sprint 3 Tasks to Match Template](./iteration-3-task-16-devops-batch-update-sprint-3-tasks-to-match-template.md)  
+- [x] [Task 15: PO Role and Planning Process Onboarding](./iteration-3-task-15-PO-onboarding-and-planning.md)  
   **Priority:** 5
+- [x] [Task 16: DevOps: Batch Update Sprint 3 Tasks to Match Template](./iteration-3-task-16-devops-batch-update-sprint-3-tasks-to-match-template.md)  
+  **Priority:** 6
 - [x] [Task 1: Architect: Document Containerized Developer Workflow](./iteration-3-task-1-architect-document-containerized-developer-workflow.md)  
   **Priority:** 6
 - [x] [Task 2: DevOps: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-2-devops-refactor-npm-scripts-for-container-lifecycle.md)  
