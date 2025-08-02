@@ -18,6 +18,7 @@
     "start": "docker ps --format '{{.ID}} {{.Names}} {{.Ports}}' | grep 3000 && docker stop $(docker ps --format '{{.ID}} {{.Names}} {{.Ports}}' | grep 3000 | awk '{print $1}') || true && npm run copy:ssh-key && npm run docker:allcheck && for f in ./tests/devcontainer/*.sh; do [ -f \"$f\" ] && bash \"$f\"; done"
   },
   "devDependencies": {
+    "@types/node": "^24.1.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {
