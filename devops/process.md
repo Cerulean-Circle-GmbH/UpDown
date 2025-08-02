@@ -1,9 +1,9 @@
 ## Restart & Recovery Process (2025-08-01)
 All restart and recovery steps for DevOps must:
 - Reference the latest QA feedback and user prompts from the current active task file (not user.captured.prompts.md).
-- Always start recovery by reading README.md, scrum-master/process.md, the current sprint's planning.md, daily.md, and relevant role/task files.
+- Always start recovery by reading README.md, scrum-master/process.md, the current sprint's planning.md, sprints/iteration-3/daily.md, and relevant role/task files.
 - When switching to DevOps, read devops/process.md to refresh on role-specific practices and requirements before executing any tasks.
-- Update planning.md and daily.md with the last successful role and task after a failure or restart.
+- Update planning.md and sprints/iteration-3/daily.md with the last successful role and task after a failure or restart.
 - Prompt the user for feedback before executing new tasks, especially after planning with the PO.
 - Document all new QA feedback and process changes in the current active task file under the section `## QA Audit & User Feedback`.
 - Only execute tasks after user feedback is incorporated and the PO's plan is up to date.

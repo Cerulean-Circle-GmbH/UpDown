@@ -5,55 +5,57 @@ The goal for Sprint 3 is to optimize the project’s process documentation for D
 
 
 
-## Task List (Sprint 3)
-
 
 ## Task List (Sprint 3)
 
-- [ ] [Task 17: PO & Scrum Master - Optimize scrum-master/process.md for DRY, Structure, and Clarity](./iteration-3-task-17-PO-scrum-master-process-md-DRY-optimization.md)  
+- [ ] [Task 19: PO Create TypeScript CLI (once.ts) for Subproject/Submodule Management](./iteration-3-task-19-once-ts-cli-submodule-management.md)  
   **Priority:** 1
-  **Status:** QA Review
-  **Notes:** See daily.md and task 17 for all details, learnings, and process updates. Scrum Master must augment each step with updates in daily.md and task files, per process best practices.
-- [x] [Task 15: PO Role and Planning Process Onboarding](./iteration-3-task-15-PO-onboarding-and-planning.md)  
+  **Status:** Planned
+  **Notes:** Implement a TypeScript CLI (once.ts) and bash wrapper (oosh) for managing subprojects as submodules, using this project as a template. Strict OOP, shell completion, and onboarding documentation required.
+- [ ] [Task 17: PO & Scrum Master - Optimize scrum-master/process.md for DRY, Structure, and Clarity](./iteration-3-task-17-PO-scrum-master-process-md-DRY-optimization.md)  
   **Priority:** 2
-- [x] [Task 16: DevOps: Batch Update Sprint 3 Tasks to Match Template](./iteration-3-task-16-devops-batch-update-sprint-3-tasks-to-match-template.md)  
+  **Status:** QA Review
+  **Notes:** See sprints/iteration-3/daily.md and task 17 for all details, learnings, and process updates. Scrum Master must augment each step with updates in sprints/iteration-3/daily.md and task files, per process best practices.
+- [x] [Task 15: PO Role and Planning Process Onboarding](./iteration-3-task-15-PO-onboarding-and-planning.md)  
   **Priority:** 3
-- [x] [Task 1: Architect: Document Containerized Developer Workflow](./iteration-3-task-1-architect-document-containerized-developer-workflow.md)  
+- [x] [Task 16: DevOps: Batch Update Sprint 3 Tasks to Match Template](./iteration-3-task-16-devops-batch-update-sprint-3-tasks-to-match-template.md)  
   **Priority:** 4
-- [x] [Task 2: DevOps: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-2-devops-refactor-npm-scripts-for-container-lifecycle.md)  
+- [x] [Task 1: Architect: Document Containerized Developer Workflow](./iteration-3-task-1-architect-document-containerized-developer-workflow.md)  
   **Priority:** 5
+- [x] [Task 2: DevOps: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-2-devops-refactor-npm-scripts-for-container-lifecycle.md)  
+  **Priority:** 6
     - [ ] [Task 2.1: DevOps: Enable GitHub SSH Access from Dev Container](./iteration-3-task-2.1-devops-enable-github-ssh-access-from-dev-container.md)  
-      **Priority:** 6
+      **Priority:** 7
 - [ ] [Task 3: Architect: Document Containerized Developer Workflow](./iteration-3-task-3-architect-document-containerized-developer-workflow.md)  
-  **Priority:** 7
-- [ ] [Task 6: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-6-refactor-npm-scripts-for-container-lifecycle.md)  
   **Priority:** 8
-- [ ] [Task 7: Update Onboarding and Developer Documentation](./iteration-3-task-7-update-onboarding-and-developer-documentation.md)  
+- [ ] [Task 6: Refactor NPM Scripts for Container Lifecycle](./iteration-3-task-6-refactor-npm-scripts-for-container-lifecycle.md)  
   **Priority:** 9
-- [ ] [Task 9: DevOps Scripts Documentation and Onboarding](./iteration-3-task-9-devops-scripts-documentation-and-onboarding.md)  
+- [ ] [Task 7: Update Onboarding and Developer Documentation](./iteration-3-task-7-update-onboarding-and-developer-documentation.md)  
   **Priority:** 10
-- [ ] [Task 10: DevOps - Project Directory Structure and Sync](./iteration-3-task-10-devops-project-directory-structure-and-sync.md)  
+- [ ] [Task 9: DevOps Scripts Documentation and Onboarding](./iteration-3-task-9-devops-scripts-documentation-and-onboarding.md)  
   **Priority:** 11
-- [ ] [Task 11: DevOps - Refactor Dev Container Startup Workflow](./iteration-3-task-11-devops-refactor-dev-container-startup-workflow.md)  
+- [ ] [Task 10: DevOps - Project Directory Structure and Sync](./iteration-3-task-10-devops-project-directory-structure-and-sync.md)  
   **Priority:** 12
-- [ ] [Task 12: DevOps: GitHub Actions CI/CD for Dev Container](./iteration-3-task-12-devops-github-actions-ci-cd-for-dev-container.md)  
+- [ ] [Task 11: DevOps - Refactor Dev Container Startup Workflow](./iteration-3-task-11-devops-refactor-dev-container-startup-workflow.md)  
   **Priority:** 13
-- [ ] [Task 4: DevOps: CI/CD Automation for Dev Container (GitHub Actions, Dockerfile, startup scripts)](./iteration-3-task-4-devops-ci-cd-automation-for-dev-container.md)  
+- [ ] [Task 12: DevOps: GitHub Actions CI/CD for Dev Container](./iteration-3-task-12-devops-github-actions-ci-cd-for-dev-container.md)  
   **Priority:** 14
+- [ ] [Task 4: DevOps: CI/CD Automation for Dev Container (GitHub Actions, Dockerfile, startup scripts)](./iteration-3-task-4-devops-ci-cd-automation-for-dev-container.md)  
+  **Priority:** 15
     - [ ] [Task 4.1: DevOps implements robust workflow](./iteration-3-task-4.1-devops-implements-robust-workflow.md)  
-      **Priority:** 15
+      **Priority:** 16
 - [ ] [Task 5: Enable GitHub SSH Access from Dev Container](./iteration-3-task-5-enable-github-ssh-access-from-dev-container.md)  
-  **Priority:** 16
+  **Priority:** 17
     - [ ] [Task 5.1: DevOps implements SSH access](./iteration-3-task-5.1-devops-implements-ssh-access.md)  
-      **Priority:** 17
+      **Priority:** 18
 - [ ] [Task 8: Verify Containerized Workflow and Documentation](./iteration-3-task-8-verify-containerized-workflow-and-documentation.md)  
-  **Priority:** 18
+  **Priority:** 19
     - [ ] [Task 1.1: DevOps: Robust Container and Local Workflow (npm/DevOps scripts, onboarding, SSH key handling)](./iteration-3-task-1.1-devops-robust-container-and-local-workflow.md)  
-      **Priority:** 19
+      **Priority:** 20
 - [x] [Task 13: PO QA Audit Learnings and Process Improvements](./iteration-3-task-13-po-qa-audit-learnings-and-process-improvements.md)  
-  **Priority:** 20
-- [x] [Task 14: Refactor and Modularize DevOps npm Scripts](./iteration-3-task-14-refactor-and-modularize-devops-npm-scripts.md)  
   **Priority:** 21
+- [x] [Task 14: Refactor and Modularize DevOps npm Scripts](./iteration-3-task-14-refactor-and-modularize-devops-npm-scripts.md)  
+  **Priority:** 22
 
 ---
 
@@ -62,7 +64,7 @@ All missing tasks/subtasks are now listed, priorities are updated so the next op
 
 ---
 
-For daily status updates and next planned steps for all roles, see [daily.md](../scrum-master/daily.md).
+For daily status updates and next planned steps for all roles in Sprint 3, see [daily.md](./daily.md).
 
 This sequence ensures the devcontainer and workflow are set up to enable robust container/local development, modular scripts, and maintainable onboarding, with clear planning, granular steps, and test-driven development for each role. All QA feedback is explicitly captured and referenced.
 
