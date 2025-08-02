@@ -300,16 +300,33 @@ export class TaskStateMachine {
       // Update the markdown and log the ticked line in blue
       let md = fs.readFileSync(this._task.files.taskMd, 'utf-8');
       let updatedLine = '';
+      // Update substates in Status section
       md = md.replace(/(## Status[\s\S]*?)(?=##|$)/, (match) => {
         let lines = match.split('\n');
         lines = lines.map(line => {
-          // Match indented step lines
-          const stepMatch = line.match(/^\s*- \[.\] (refinement|creating test cases|implementing|testing)$/);
-          if (stepMatch) {
-            const name = stepMatch[1];
+          // Match indented substate lines
+          const substateMatch = line.match(/^\s*- \[.\] (refinement|creating test cases|implementing|testing)$/);
+          if (substateMatch) {
+            const name = substateMatch[1];
             if (name === stepName && newStatus === 'done') {
               const indent = line.match(/^\s*/)?.[0] || '';
               updatedLine = `${indent}- [x] ${name}`;
+              return updatedLine;
+            }
+          }
+          return line;
+        });
+        return lines.join('\n');
+      });
+      // Update Steps section (Intention) for non-substate steps
+      md = md.replace(/(## Steps[\s\S]*?)(?=\n##|$)/, (match) => {
+        let lines = match.split('\n');
+        lines = lines.map(line => {
+          const stepMatch = line.match(/^- \[.\] (.+)$/);
+          if (stepMatch) {
+            const name = stepMatch[1].trim();
+            if (name === stepName && newStatus === 'done') {
+              updatedLine = `- [x] ${name}`;
               return updatedLine;
             }
           }
