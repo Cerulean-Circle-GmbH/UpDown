@@ -71,6 +71,10 @@ Requirements (updated for persistent state and autonomous progression):
 ## QA Audit & User Feedback
 All feedback and audit entries must be timestamped (UTC) and documented in this section.
 
+### 2025-08-02T10:03Z QA Audit Entry
+- When running the Task State Machine script, it must be executed from within the `temp/` directory for correct path resolution. Running from the project root or other directories may cause module resolution errors (e.g., `Cannot find module './TaskStateMachine.ts'`).
+- Recommendation: Update the script to resolve all file and module paths robustly, regardless of the working directory, or document this requirement clearly in process and onboarding documentation.
+
 - 2025-08-01 UTC: QA feedback: Strict OOP implementation required. State machine must not skip substates. Implementation must work for any task file, but currently uses Task 18 for demonstration. Non-OOP scripts (e.g., task18StateMachine.ts) must be removed. All transitions must be stepwise and auditable.
 - 2025-08-01 UTC: QA feedback: Do not mix status states, in-progress substates, and free-text steps. Script must log all actions, update status, and progress all steps correctly. Adapt script to distinguish between main status, in-progress substates, and intention steps. Test and document this feedback.
 

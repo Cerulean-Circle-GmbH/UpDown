@@ -9,18 +9,14 @@ The goal for Sprint 3 is to optimize the project’s process documentation for D
 
 ## Task List (Sprint 3)
 
+ [ ] [Task 20: Update Developer Process with First Principles for Development](./iteration-3-task-20-update-developer-process-first-principles.md)  
+  **Priority:** 1
 - [ ] [Task 19: PO Create TypeScript CLI (once.ts) for Subproject/Submodule Management](./iteration-3-task-19-once-ts-cli-submodule-management.md)  
   **Priority:** 1
-  **Status:** Planned
-  **Notes:** Implement a TypeScript CLI (once.ts) and bash wrapper (oosh) for managing subprojects as submodules, using this project as a template. Strict OOP, shell completion, and onboarding documentation required.
 - [ ] [Task 17: PO & Scrum Master - Optimize scrum-master/process.md for DRY, Structure, and Clarity](./iteration-3-task-17-PO-scrum-master-process-md-DRY-optimization.md)  
   **Priority:** 2
-  **Status:** QA Review
-  **Notes:** See sprints/iteration-3/daily.md and task 17 for all details, learnings, and process updates. Scrum Master must augment each step with updates in sprints/iteration-3/daily.md and task files, per process best practices.
 - [x] [Task 18: Implement Task State Machine for Sprint Management](./iteration-3-task-18-implement-task-state-machine.md)  
   **Priority:** 3
-  **Status:** Done
-  **Notes:** Implement a robust TypeScript-based task state machine that manages task status transitions and updates all relevant project files (task markdown, daily.md, daily.json, planning.md) in Sprint 3. See task file for requirements, audit, and acceptance criteria.
 - [x] [Task 15: PO Role and Planning Process Onboarding](./iteration-3-task-15-PO-onboarding-and-planning.md)  
   **Priority:** 4
 - [x] [Task 16: DevOps: Batch Update Sprint 3 Tasks to Match Template](./iteration-3-task-16-devops-batch-update-sprint-3-tasks-to-match-template.md)  
