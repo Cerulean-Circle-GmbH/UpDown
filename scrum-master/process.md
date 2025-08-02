@@ -2,9 +2,9 @@
 ## Restart & Recovery Process (2025-08-01)
 All restart and recovery steps must:
 - Reference the latest QA feedback and user prompts from the current active task file (not user.captured.prompts.md).
-- Ensure the Scrum Master always starts recovery by reading README.md, scrum-master/process.md, the current sprint's planning.md, daily.md, and relevant role/task files.
+- Ensure the Scrum Master always starts recovery by reading README.md, scrum-master/process.md, the current sprint's planning.md, sprints/iteration-3/daily.md, and relevant role/task files.
 - When switching roles, always read the corresponding role's process.md file to refresh on role-specific practices and requirements before executing any tasks.
-- Update planning.md and daily.md with the last successful role and task after a failure or restart.
+- Update planning.md and sprints/iteration-3/daily.md with the last successful role and task after a failure or restart.
 - Prompt the user for feedback before executing new tasks, especially after planning with the PO.
 - Document all new QA feedback and process changes in the current active task file under the section `## QA Audit & User Feedback`.
 - Only execute tasks after user feedback is incorporated and the PO's plan is up to date.
@@ -66,6 +66,7 @@ These steps must be cross-referenced in restart.md and all relevant process file
 - Enforce that the API and modeling approach follows radical OOP, protocol-less design, as formalized by the PO and Architect.
 - Ensure the presence and importance of the "# backup and QA user annotations" section in docs/api-and-model-spec.md is communicated to all roles and referenced in onboarding and process docs.
 - After each task, check that the required artifact exists and is referenced in the relevant task file.
+- Always update sprints/iteration-3/daily.md after each task and process step to ensure restart and recovery are possible.
 
 ## 5. Process Recovery & Fail-Safe
 - scrum-master/process.md is the authoritative source for overall process recovery and orchestration. Always read this file first after a restart or context loss.
@@ -96,10 +97,10 @@ These steps must be cross-referenced in restart.md and all relevant process file
 - At the end of each sprint, conduct a retrospective (retro.md) to review and improve process.
 - Each sprint/iteration will have its own retro.md file (e.g., sprints/iteration-2/retro.md) to capture sprint-specific retrospective notes, feedback, and improvement actions.
 - The global scrum-master/process.md is updated with cross-sprint best practices and lessons learned based on retro outcomes.
-- Maintain a daily.md file in the scrum-master folder to document the next planned step for each role. This file is updated daily or after each major process step, and always documents the next planned step for each role. After user confirmation, the Scrum Master executes the next step for each role until QA, guidance, or confirmation is required.
-- The daily.md file in scrum-master/ must always reference task files using markdown links and reflect the current, unique state for each role after every role change or major process step. Do not concatenate entries; always keep the file short and up to date.
+- Maintain a single daily.md file in sprints/iteration-3/ to document the next planned step for each role. This file is updated daily or after each major process step, and always documents the next planned step for each role. After user confirmation, the Scrum Master executes the next step for each role until QA, guidance, or confirmation is required.
+- The daily.md file in sprints/iteration-3/ must always reference task files using markdown links and reflect the current, unique state for each role after every role change or major process step. Do not concatenate entries; always keep the file short and up to date.
 - The daily.md file is updated after every role change or major process step, and is the authoritative source for the next planned step for each role.
-- The Scrum Master must update `scrum-master/daily.md` after every step, including after any change to task files, planning, or user-prompts, to reflect the current next step for each role. This is mandatory for every process or planning action.
+- The Scrum Master must update `sprints/iteration-3/daily.md` after every step, including after any change to task files, planning, or user-prompts, to reflect the current next step for each role. This is mandatory for every process or planning action.
 
 ## 8. Branch & Release Management
 - PO collects feature branches, decides what gets merged, and guides the merge with QA checks. Sprint methodology resumes after restart or new sprint.
