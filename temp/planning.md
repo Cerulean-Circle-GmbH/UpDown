@@ -1,4 +1,4 @@
 # Planning
 
-Task: Task 18: Implement Task State Machine for Sprint Management
-Status: done
+Task: Task 20: Update Developer Process with First Principles for Development
+Status: planned

@@ -5,6 +5,7 @@ const substateNames = ['refinement', 'creating test cases', 'implementing', 'tes
 
 import fs from 'fs';
 import path from 'path';
+import { globSync } from 'glob';
 
 export type TaskStatus = 'planned' | 'in-progress' | 'qa-review' | 'done' | 'blocked';
 export type StepStatus = 'open' | 'in-progress' | 'done';
@@ -491,10 +492,29 @@ class TaskStateMachineCLI {
     this.run();
   }
 
+  // Find the task file for a given task number using glob
+  private findTaskFile(taskNum: string): string | undefined {
+    const sprintDir = path.join(tempDir, '../sprints/iteration-3');
+    const pattern = `iteration-3-task-${taskNum}-*.md`;
+    const matches = globSync(pattern, { cwd: sprintDir });
+    if (matches.length > 0) {
+      return path.join(sprintDir, matches[0]);
+    }
+    return undefined;
+  }
+
   private run() {
     if (this.args.length === 3 && this.args[0] === 'testing' && this.args[1] === 'task') {
       this.taskNum = this.args[2];
-      this.taskFilePath = path.join(tempDir, `../sprints/iteration-3/iteration-3-task-${this.taskNum}-implement-task-state-machine.md`);
+      if (!this.taskNum) {
+        console.error(`\x1b[31mError: Task number is undefined.\x1b[0m`);
+        process.exit(1);
+      }
+      this.taskFilePath = this.findTaskFile(this.taskNum);
+      if (!this.taskFilePath) {
+        console.error(`\x1b[31mError: Could not find task file for task ${this.taskNum}.\x1b[0m`);
+        process.exit(1);
+      }
       this.taskObj = TaskStateMachine.parseTaskFile(this.taskFilePath);
       this.sm = new TaskStateMachine(this.taskObj);
       if (typeof this.sm.resetToPlanned === 'function') {
@@ -541,14 +561,30 @@ class TaskStateMachineCLI {
       this.sm.logAction('Testing mode: Full progression complete.', 'status');
     } else if (this.args.length >= 3 && this.args[0] === 'task' && this.args[2] === 'reset') {
       this.taskNum = this.args[1];
-      this.taskFilePath = path.join(tempDir, `../sprints/iteration-3/iteration-3-task-${this.taskNum}-implement-task-state-machine.md`);
+      if (!this.taskNum) {
+        console.error(`\x1b[31mError: Task number is undefined.\x1b[0m`);
+        process.exit(1);
+      }
+      this.taskFilePath = this.findTaskFile(this.taskNum);
+      if (!this.taskFilePath) {
+        console.error(`\x1b[31mError: Could not find task file for task ${this.taskNum}.\x1b[0m`);
+        process.exit(1);
+      }
       this.taskObj = TaskStateMachine.parseTaskFile(this.taskFilePath);
       this.sm = new TaskStateMachine(this.taskObj);
       this.doReset = true;
     } else if (fs.existsSync(this.dailyJsonPath)) {
       const dailyJson = JSON.parse(fs.readFileSync(this.dailyJsonPath, 'utf-8'));
-      this.taskNum = dailyJson.currentTask.replace('iteration-3-task-', '').replace('-implement-task-state-machine', '');
-      this.taskFilePath = path.join(tempDir, `../sprints/iteration-3/iteration-3-task-${this.taskNum}-implement-task-state-machine.md`);
+      this.taskNum = dailyJson.currentTask.replace('iteration-3-task-', '').replace(/-.+$/, '');
+      if (!this.taskNum) {
+        console.error(`\x1b[31mError: Task number is undefined.\x1b[0m`);
+        process.exit(1);
+      }
+      this.taskFilePath = this.findTaskFile(this.taskNum);
+      if (!this.taskFilePath) {
+        console.error(`\x1b[31mError: Could not find task file for task ${this.taskNum}.\x1b[0m`);
+        process.exit(1);
+      }
       this.taskObj = TaskStateMachine.parseTaskFile(this.taskFilePath);
       this.sm = new TaskStateMachine(this.taskObj);
     } else {
