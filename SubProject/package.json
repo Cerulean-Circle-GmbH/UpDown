@@ -1,0 +1,29 @@
+{
+  "name": "updown",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/server/index.ts",
+  "scripts": {
+    "start:server": "bun src/server/index.ts",
+    "start:client": "bun src/client/index.ts",
+    "build": "tsc",
+    "docker:build": "bash ./devops/docker-build.sh",
+    "docker:check": "bash ./devops/docker-check.sh",
+    "docker:run": "bash ./devops/docker-run.sh",
+    "docker:status": "bash ./devops/docker-status.sh",
+    "docker:stop": "bash ./devops/docker-stop.sh",
+    "docker:clean": "bash ./devops/docker-clean.sh",
+    "docker:allcheck": "bash ./devops/docker-allcheck.sh",
+    "copy:ssh-key": "export SSH_KEY_PATH=/root/.ssh/ids/ssh.outeruser/id_rsa && bash ./devops/copy-ssh-key-to-container.sh $SSH_KEY_PATH once-once.sh_container",
+    "start": "docker ps --format '{{.ID}} {{.Names}} {{.Ports}}' | grep 3000 && docker stop $(docker ps --format '{{.ID}} {{.Names}} {{.Ports}}' | grep 3000 | awk '{print $1}') || true && npm run copy:ssh-key && npm run docker:allcheck && for f in ./tests/devcontainer/*.sh; do [ -f \"$f\" ] && bash \"$f\"; done"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/node": "^24.1.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "bun-types": "^1.0.0",
+    "glob": "^11.0.3"
+  }
+}
