@@ -413,9 +413,32 @@ export class TaskStateMachine {
   }
 
   private updatePlanningMd() {
-    // Simple planning update
-    let content = `# Planning\n\nTask: ${this._task.title}\nStatus: ${this._task.status}\n`;
-    fs.writeFileSync(this._task.files.planningMd, content);
+    // Read the existing planning.md file
+    let content = fs.readFileSync(this._task.files.planningMd, 'utf-8');
+    
+    // Extract task number from the task title or ID
+    const taskMatch = this._task.title.match(/Task (\d+):/);
+    if (!taskMatch) {
+      this.logAction('Could not extract task number from title', 'error');
+      return;
+    }
+    const taskNumber = taskMatch[1];
+    
+    // Find the specific task line and update its status
+    const lines = content.split('\n');
+    const updatedLines = lines.map(line => {
+      // Look for the specific task line (e.g., "- [ ] [Task 18: ...")
+      const taskLineMatch = line.match(new RegExp(`^- \\[ \\] \\[Task ${taskNumber}:`));
+      if (taskLineMatch) {
+        // Update the checkbox based on status
+        const checkbox = this._task.status === 'done' ? '- [x]' : '- [ ]';
+        return line.replace(/^- \[ \]/, checkbox);
+      }
+      return line;
+    });
+    
+    // Write back the updated content
+    fs.writeFileSync(this._task.files.planningMd, updatedLines.join('\n'));
   }
 
   public resetToPlanned() {

@@ -5,11 +5,11 @@ The goal for Sprint 3 is to optimize the project's process documentation for DRY
 
 ## Task List (Sprint 3)
 
-- [ ] [Task 22: Implement Comprehensive Logger with Colored Logging and Log Levels](./task-22-logger.md)  
+- [x] [Task 22: Implement Comprehensive Logger with Colored Logging and Log Levels](./task-22-logger.md)  
   **Priority:** 1
 - [ ] [Task 21: Create Background Agents for Project Intentions and Roles](./task-21-background-agents.md)  
   **Priority:** 2
-- [ ] [Task 18: Implement Task State Machine for Sprint Management](./task-18-state-machine.md)  
+- [x] [Task 18: Implement Task State Machine for Sprint Management](./task-18-state-machine.md)  
   **Priority:** 3
 - [ ] [Task 20: Update Developer Process with First Principles for Development](./task-20-developer-principles.md)  
   **Priority:** 4
