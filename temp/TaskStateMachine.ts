@@ -47,6 +47,14 @@ export class TaskStateMachine {
     const md = fs.readFileSync(taskMdPath, 'utf-8');
     const titleMatch = md.match(/^# (.+)$/m);
     const title = titleMatch ? titleMatch[1].trim() : 'Untitled Task';
+    
+    // Extract task number from title for proper ID generation
+    const taskMatch = title.match(/Task (\d+):/);
+    const taskNumber = taskMatch ? taskMatch[1] : 'unknown';
+    
+    // Generate proper task ID using new naming convention
+    const taskId = `task-${taskNumber}`;
+    
     const statusMatch = md.match(/## Status([\s\S]*?)##/);
     const stepsMatch = md.match(/## Steps([\s\S]*?)(?=##|$)/);
     let status: TaskStatus = 'planned';
@@ -96,7 +104,7 @@ export class TaskStateMachine {
       }
     }
     return {
-      id: path.basename(taskMdPath, '.md'),
+      id: taskId,
       title,
       status,
       steps,
@@ -224,7 +232,25 @@ export class TaskStateMachine {
       try {
         const content = fs.readFileSync(this.dailyJsonPath, 'utf-8');
         if (!content.trim()) throw new Error('Empty daily.json');
-        return JSON.parse(content);
+        const dailyJson = JSON.parse(content);
+        
+        // Update file paths to use new naming convention if needed
+        const updatedDailyJson = {
+          ...dailyJson,
+          currentTask: this._task.id, // Always use current task ID
+          files: {
+            taskMd: this._task.files.taskMd,
+            dailyMd: this._task.files.dailyMd,
+            planningMd: this._task.files.planningMd,
+          },
+        };
+        
+        // Save updated daily.json if paths changed
+        if (JSON.stringify(dailyJson) !== JSON.stringify(updatedDailyJson)) {
+          this.saveDailyJson(updatedDailyJson);
+        }
+        
+        return updatedDailyJson;
       } catch (e) {
         // If file is empty or corrupted, re-initialize
         const initial: DailyJson = {
@@ -751,4 +777,7 @@ class TaskStateMachineCLI {
   }
 }
 
-new TaskStateMachineCLI(process.argv.slice(2));
+// Only run CLI when this file is executed directly, not when imported
+if (import.meta.url === `file://${process.argv[1]}`) {
+  new TaskStateMachineCLI(process.argv.slice(2));
+}

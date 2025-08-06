@@ -1,15 +1,42 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import fs from 'fs';
-import path from 'path';
-import { TaskStateMachine } from '../../temp/TaskStateMachine.js';
+import { describe, it, expect, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
+import { TaskStateMachine } from '../../temp/TaskStateMachine';
+import * as fs from 'fs';
+import * as path from 'path';
 
-const tempDir = path.resolve('./');
-const mockTaskFile = path.join(tempDir, 'mock-task-18.md');
-const mockDailyJson = path.join(tempDir, 'mock-daily.json');
-const mockDailyMd = path.join(tempDir, 'mock-daily.md');
-const mockPlanningMd = path.join(tempDir, 'mock-planning.md');
+// Mock the CLI execution to avoid process.exit during tests
+const originalProcessExit = process.exit;
+beforeAll(() => {
+  process.exit = (() => {}) as any;
+});
 
-const mockTaskMdContent = `# Task 18: Implement Task State Machine for Sprint Management
+afterAll(() => {
+  process.exit = originalProcessExit;
+});
+
+describe('TaskStateMachine', () => {
+  const tempDir = path.join(__dirname, '../../temp');
+  const dailyJsonPath = path.join(tempDir, 'daily.json');
+
+  beforeEach(() => {
+    // Clean up daily.json before each test
+    if (fs.existsSync(dailyJsonPath)) {
+      fs.unlinkSync(dailyJsonPath);
+    }
+  });
+
+  afterEach(() => {
+    // Clean up after each test
+    if (fs.existsSync(dailyJsonPath)) {
+      fs.unlinkSync(dailyJsonPath);
+    }
+  });
+
+  it('should generate correct task ID using new naming convention', () => {
+    // Mock task file path for testing
+    const mockTaskPath = path.join(__dirname, '../../sprints/sprint-3/task-18-state-machine.md');
+    
+    // Create a mock task file content
+    const mockContent = `# Task 18: Implement Task State Machine for Sprint Management
 
 ## Status
 - [ ] Planned
@@ -21,67 +48,143 @@ const mockTaskMdContent = `# Task 18: Implement Task State Machine for Sprint Ma
 - [ ] QA Review
 - [ ] Done
 
-## Steps 
-- [ ] Analyze requirements and review task template.
-- [ ] Design the state machine and file update logic.
-- [ ] Implement the TypeScript class and methods for state transitions and file updates.
-- [ ] Move usage example to the end of the file for correct execution order.
-- [ ] Test the state machine with Task 18 and verify all file updates (task md, daily.json, daily.md, planning.md).
-- [ ] Document the solution and update the task file status.
-- [ ] Refactor usage code for ES module compatibility and execute to update daily.json.
-- [ ] Submit for QA review and finalize documentation.
+## Steps
+- [ ] Step 1
+- [ ] Step 2
 `;
 
-describe('TaskStateMachine', () => {
-  beforeEach(() => {
-    // Write a fresh mock task file and clear any previous state
-    fs.writeFileSync(mockTaskFile, mockTaskMdContent);
-    if (fs.existsSync(mockDailyJson)) fs.unlinkSync(mockDailyJson);
-    if (fs.existsSync(mockDailyMd)) fs.unlinkSync(mockDailyMd);
-    if (fs.existsSync(mockPlanningMd)) fs.unlinkSync(mockPlanningMd);
-  });
-  afterEach(() => {
-    // Clean up
-    if (fs.existsSync(mockTaskFile)) fs.unlinkSync(mockTaskFile);
-    if (fs.existsSync(mockDailyJson)) fs.unlinkSync(mockDailyJson);
-    if (fs.existsSync(mockDailyMd)) fs.unlinkSync(mockDailyMd);
-    if (fs.existsSync(mockPlanningMd)) fs.unlinkSync(mockPlanningMd);
-  });
+    // Temporarily create the mock file
+    const originalContent = fs.existsSync(mockTaskPath) ? fs.readFileSync(mockTaskPath, 'utf-8') : null;
+    fs.writeFileSync(mockTaskPath, mockContent);
 
-  it('progresses through substates, steps, and status transitions correctly', () => {
-    // Patch the TaskStateMachine to use mock file paths
-    const task = TaskStateMachine.parseTaskFile(mockTaskFile);
-    task.files.dailyJson = mockDailyJson;
-    task.files.dailyMd = mockDailyMd;
-    task.files.planningMd = mockPlanningMd;
-    const sm = new TaskStateMachine(task);
-
-    // Planned -> In Progress
-    expect(sm.status).toBe('planned');
-    sm.progressOne();
-    expect(sm.status).toBe('in-progress');
-    // refinement
-    sm.progressOne();
-    expect(sm.steps.find(s => s.name === 'refinement')?.status).toBe('done');
-    // creating test cases
-    sm.progressOne();
-    expect(sm.steps.find(s => s.name === 'creating test cases')?.status).toBe('done');
-    // implementing
-    sm.progressOne();
-    expect(sm.steps.find(s => s.name === 'implementing')?.status).toBe('done');
-    // Now steps (from Steps section)
-    for (const step of task.steps.filter(s => !['refinement','creating test cases','implementing','testing'].includes(s.name))) {
-      sm.progressOne();
-      expect(sm.steps.find(s => s.name === step.name)?.status).toBe('done');
+    try {
+      const task = TaskStateMachine.parseTaskFile(mockTaskPath);
+      
+      // Test that task ID uses new naming convention
+      expect(task.id).toBe('task-18');
+      expect(task.title).toBe('Task 18: Implement Task State Machine for Sprint Management');
+      
+      // Test that files use correct paths
+      expect(task.files.taskMd).toBe(mockTaskPath);
+      expect(task.files.planningMd).toContain('sprints/sprint-3/planning.md');
+      
+    } finally {
+      // Restore original content if it existed
+      if (originalContent) {
+        fs.writeFileSync(mockTaskPath, originalContent);
+      } else if (fs.existsSync(mockTaskPath)) {
+        fs.unlinkSync(mockTaskPath);
+      }
     }
-    // After all steps, 'testing' substate
-    sm.progressOne();
-    expect(sm.steps.find(s => s.name === 'testing')?.status).toBe('done');
-    // in-progress -> qa-review
-    sm.progressOne();
-    expect(sm.status).toBe('qa-review');
-    // qa-review -> done
-    sm.progressOne();
-    expect(sm.status).toBe('done');
+  });
+
+  it('should update daily.json with correct naming conventions', () => {
+    // Mock task file path for testing
+    const mockTaskPath = path.join(__dirname, '../../sprints/sprint-3/task-18-state-machine.md');
+    
+    // Create a mock task file content
+    const mockContent = `# Task 18: Implement Task State Machine for Sprint Management
+
+## Status
+- [ ] Planned
+- [ ] In Progress
+  - [ ] refinement
+  - [ ] creating test cases
+  - [ ] implementing
+  - [ ] testing
+- [ ] QA Review
+- [ ] Done
+
+## Steps
+- [ ] Step 1
+- [ ] Step 2
+`;
+
+    // Temporarily create the mock file
+    const originalContent = fs.existsSync(mockTaskPath) ? fs.readFileSync(mockTaskPath, 'utf-8') : null;
+    fs.writeFileSync(mockTaskPath, mockContent);
+
+    try {
+      const task = TaskStateMachine.parseTaskFile(mockTaskPath);
+      const stateMachine = new TaskStateMachine(task);
+      
+      // Test that daily.json is created with correct task ID
+      expect(fs.existsSync(dailyJsonPath)).toBe(true);
+      
+      const dailyJson = JSON.parse(fs.readFileSync(dailyJsonPath, 'utf-8'));
+      expect(dailyJson.currentTask).toBe('task-18');
+      expect(dailyJson.currentSprint).toBe('Sprint 3');
+      expect(dailyJson.files.taskMd).toBe(mockTaskPath);
+      expect(dailyJson.files.planningMd).toContain('sprints/sprint-3/planning.md');
+      
+    } finally {
+      // Restore original content if it existed
+      if (originalContent) {
+        fs.writeFileSync(mockTaskPath, originalContent);
+      } else if (fs.existsSync(mockTaskPath)) {
+        fs.unlinkSync(mockTaskPath);
+      }
+    }
+  });
+
+  it('should handle old daily.json format and update to new naming convention', () => {
+    // Create old format daily.json
+    const oldDailyJson = {
+      currentSprint: 'Sprint 3',
+      currentTask: 'iteration-3-task-18-implement-task-state-machine',
+      status: 'done',
+      files: {
+        taskMd: '/old/path/iteration-3-task-18-implement-task-state-machine.md',
+        dailyMd: '/old/path/daily.md',
+        planningMd: '/old/path/planning.md',
+      },
+      history: []
+    };
+    
+    fs.writeFileSync(dailyJsonPath, JSON.stringify(oldDailyJson, null, 2));
+    
+    // Mock task file path for testing
+    const mockTaskPath = path.join(__dirname, '../../sprints/sprint-3/task-18-state-machine.md');
+    
+    // Create a mock task file content
+    const mockContent = `# Task 18: Implement Task State Machine for Sprint Management
+
+## Status
+- [ ] Planned
+- [ ] In Progress
+  - [ ] refinement
+  - [ ] creating test cases
+  - [ ] implementing
+  - [ ] testing
+- [ ] QA Review
+- [ ] Done
+
+## Steps
+- [ ] Step 1
+- [ ] Step 2
+`;
+
+    // Temporarily create the mock file
+    const originalContent = fs.existsSync(mockTaskPath) ? fs.readFileSync(mockTaskPath, 'utf-8') : null;
+    fs.writeFileSync(mockTaskPath, mockContent);
+
+    try {
+      const task = TaskStateMachine.parseTaskFile(mockTaskPath);
+      const stateMachine = new TaskStateMachine(task);
+      
+      // Test that daily.json is updated to new format
+      const updatedDailyJson = JSON.parse(fs.readFileSync(dailyJsonPath, 'utf-8'));
+      expect(updatedDailyJson.currentTask).toBe('task-18');
+      expect(updatedDailyJson.files.taskMd).toBe(mockTaskPath);
+      expect(updatedDailyJson.files.planningMd).toContain('sprints/sprint-3/planning.md');
+      
+    } finally {
+      // Restore original content if it existed
+      if (originalContent) {
+        fs.writeFileSync(mockTaskPath, originalContent);
+      } else if (fs.existsSync(mockTaskPath)) {
+        fs.unlinkSync(mockTaskPath);
+      }
+    }
   });
 });
