@@ -233,6 +233,25 @@ All feedback and audit entries must be timestamped (UTC) and documented in this 
 
 **Impact**: This ensures TaskStateMachine continues to function correctly after the naming convention optimization.
 
+### 2025-08-06T10:25Z QA Feedback - Directory Structure Safety
+**Issue**: Need to maintain old directory structure until QA confirms new naming conventions are working perfectly.
+
+**Solution**: 
+- **Keep Old Directory**: Maintain `sprints/iteration-3/` until QA confirms `sprints/sprint-3/` is working perfectly
+- **Complete New Directory**: Rename all tasks in `sprints/sprint-3/` to new naming conventions
+- **Update Planning**: Ensure `sprints/sprint-3/planning.md` matches the structure of `sprints/iteration-3/planning.md`
+- **Test Thoroughly**: Verify TaskStateMachine works with both old and new naming conventions
+- **QA Approval**: Only remove old directory after QA confirms everything is working correctly
+
+**Implementation**:
+- ✅ All task files in `sprints/sprint-3/` renamed to new format: `task-{number}-{max 3 words}.md`
+- ✅ Planning.md updated with all new task links and proper structure
+- ✅ TaskStateMachine updated with fallback support for both naming conventions
+- ✅ Old directory `sprints/iteration-3/` maintained for safety
+- ⏳ Awaiting QA confirmation before removing old directory
+
+**Impact**: This ensures safe transition and allows rollback if any issues are discovered during QA testing.
+
 ### 2025-08-02T10:03Z QA Audit Entry
 - When running the Task State Machine script, it must be executed from within the `temp/` directory for correct path resolution. Running from the project root or other directories may cause module resolution errors (e.g., `Cannot find module './TaskStateMachine.ts'`).
 - Recommendation: Update the script to resolve all file and module paths robustly, regardless of the working directory, or document this requirement clearly in process and onboarding documentation.
