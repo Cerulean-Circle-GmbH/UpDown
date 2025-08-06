@@ -4,13 +4,13 @@
 
 ## Status
 - [x] Planned
-- [x] In Progress
-  - [x] refinement
-  - [x] creating test cases
-  - [x] implementing
-  - [x] testing
-- [x] QA Review
-- [x] Done
+- [ ] In Progress
+  - [ ] refinement
+  - [ ] creating test cases
+  - [ ] implementing
+  - [ ] testing
+- [ ] QA Review
+- [ ] Done
 
 ## Task Description
 Implement a robust TypeScript-based task state machine that manages task status transitions and updates all relevant project files (task markdown, daily.md, daily.json, planning.md) in Sprint 3. The state machine must:
@@ -27,22 +27,17 @@ This task is part of Sprint 3 and follows the process and compliance requirement
 ## Intention
 The intention is to automate and standardize task status management, ensuring all documentation and planning files are always up-to-date and compliant with the sprint process.
 
-## Steps 
-- [x] Analyze requirements and review task template.
-- [x] Design the state machine and file update logic.
-- [x] Implement the TypeScript class and methods for state transitions and file updates.
-- [x] Move usage example to the end of the file for correct execution order.
-- [x] Test the state machine with Task 18 and verify all file updates (task md, daily.json, daily.md, planning.md).
-- [x] Document the solution and update the task file status.
-- [x] Refactor usage code for ES module compatibility and execute to update daily.json.
-- [x] Submit for QA review and finalize documentation.
-- [x] Analyze requirements and review task template.
-- [x] Design the state machine and file update logic.
-- [x] Implement the TypeScript class and methods for state transitions and file updates.
-- [x] Move usage example to the end of the file for correct execution order.
-- [x] Test the state machine with Task 18 and verify all file updates (task md, daily.json, daily.md, planning.md).
-- [x] Document the solution and update the task file status.
-- [x] Submit for QA review and finalize documentation.
+## Steps
+- [ ] Review all QA feedback in this file and related tasks (17, 19, 20) and consolidate requirements.
+- [ ] Refactor the state machine to:
+  - Support and enforce strict OOP, stepwise transitions, and auditable logs.
+  - Distinguish between main status, in-progress substates, and intention steps.
+  - Update all relevant files (task md, daily.json, daily.md, planning.md) in a DRY, robust, and extensible way.
+  - Handle new requirements for multi-task and subproject support (see Task 19/Web4Scrum foundation).
+  - Integrate first principles and process requirements from Task 20.
+- [ ] Test the state machine with Task 18 and at least one other task (e.g., Task 17 or 20) to verify correct updates and extensibility.
+- [ ] Update documentation and onboarding to reflect new usage, requirements, and QA feedback.
+- [ ] Submit for QA review and finalize documentation.
 
 ## Requirements
 
