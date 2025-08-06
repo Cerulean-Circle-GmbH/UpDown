@@ -1,0 +1,9 @@
+#!/bin/bash
+# oosh: Shell wrapper for GitScrumProject TypeScript CLI (strict OOP, class/method/param only)
+
+dir=$(dirname "$0")
+UPDOWN_ROOT="$(cd "$dir/../.." && pwd)"
+TS_NODE_PROJECT="$UPDOWN_ROOT/tsconfig.json"
+
+cd "$UPDOWN_ROOT"
+npx ts-node --esm --project "$TS_NODE_PROJECT" "src/ts/layer2/GitScrumProject.cli.ts" "$@"

@@ -2,6 +2,8 @@
 
 **Date:** 2025-07-21
 
+**Recovery means that the LLM (AI assistant) must autonomously perform all the recovery steps listed below, in order, until it fully embraces the project and the current state, unless user feedback is required. The process is not just a checklist, but an active, self-driven restoration of project context and readiness to proceed.**
+
 ## Project Context
 - Project: UpDown (multiplayer card game, P2P, web-first, Bun/TypeScript stack)
 - All roles (PO, Scrum Master, DevOps, Backend, Frontend, QA, etc.) are played by the LLM, orchestrated by the Scrum Master.

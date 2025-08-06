@@ -1,14 +1,22 @@
-# Scrum Master Process & Team Guidance
-## Restart & Recovery Process (2025-08-01)
-All restart and recovery steps must:
-- Reference the latest QA feedback and user prompts from the current active task file (not user.captured.prompts.md).
-- Ensure the Scrum Master always starts recovery by reading README.md, scrum-master/process.md, the current sprint's planning.md, sprints/iteration-3/daily.md, and relevant role/task files.
-- When switching roles, always read the corresponding role's process.md file to refresh on role-specific practices and requirements before executing any tasks.
-- Update planning.md and sprints/iteration-3/daily.md with the last successful role and task after a failure or restart.
-- Prompt the user for feedback before executing new tasks, especially after planning with the PO.
-- Document all new QA feedback and process changes in the current active task file under the section `## QA Audit & User Feedback`.
-- Only execute tasks after user feedback is incorporated and the PO's plan is up to date.
-These steps must be cross-referenced in restart.md and all relevant process files for traceability and compliance.
+# Scrum Master Process
+
+## Overview
+The Scrum Master orchestrates all roles and assigns tasks. This is the authoritative process for recovery and orchestration.
+
+## CMM Level 3+ Requirements
+**Reference**: See [CMM Level 3+ Requirements Documentation](../docs/cmm-level3-requirements.md) for process compliance requirements.
+
+## Test Configuration
+**Reference**: See [Test Configuration Documentation](../docs/test-configuration.md) for current test setup and exclusions.
+
+## Test-Driven Development (TDD) Requirements
+**Reference**: See [Process Standards Documentation](../docs/process-standards.md) for TDD integration requirements.
+
+## Process Improvement
+**Reference**: See [Process Standards Documentation](../docs/process-standards.md) for process improvement requirements.
+
+## Restart & Recovery Process
+**Reference**: See [Restart & Recovery Process Documentation](../docs/restart-recovery-process.md) for recovery steps and procedures.
 
 ## 1. First Principles & DRY Compliance
 - DO NOT REPEAT YOURSELF (DRY): Prevent duplication of files, text, and documentation. Always reference canonical sources (process.md, planning.md, task files) and use consistent links/backlinks.

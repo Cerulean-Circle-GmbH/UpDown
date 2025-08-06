@@ -1,11 +1,24 @@
 {
   "currentSprint": "Sprint 3",
   "currentTask": "iteration-3-task-18-implement-task-state-machine",
-  "status": "planned",
+  "status": "done",
   "files": {
     "taskMd": "/Users/Shared/Workspaces/2cuGitHub/UpDown/sprints/iteration-3/iteration-3-task-18-implement-task-state-machine.md",
     "dailyMd": "/Users/Shared/Workspaces/2cuGitHub/UpDown/temp/daily.md",
     "planningMd": "/Users/Shared/Workspaces/2cuGitHub/UpDown/temp/planning.md"
   },
-  "history": []
+  "history": [
+    {
+      "timestamp": "2025-08-06T09:34:16.964Z",
+      "status": "in-progress"
+    },
+    {
+      "timestamp": "2025-08-06T09:34:16.980Z",
+      "status": "qa-review"
+    },
+    {
+      "timestamp": "2025-08-06T09:34:16.981Z",
+      "status": "done"
+    }
+  ]
 }

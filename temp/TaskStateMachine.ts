@@ -6,6 +6,7 @@ const substateNames = ['refinement', 'creating test cases', 'implementing', 'tes
 import fs from 'fs';
 import path from 'path';
 import { globSync } from 'glob';
+import { logger } from './Logger.js';
 
 export type TaskStatus = 'planned' | 'in-progress' | 'qa-review' | 'done' | 'blocked';
 export type StepStatus = 'open' | 'in-progress' | 'done';
@@ -119,75 +120,60 @@ export class TaskStateMachine {
       return 'Status progressed to In Progress.';
     }
     if (this.status === 'in-progress') {
-      // Progress substates in order: refinement, creating test cases, implementing, testing
+      // Progress substates in order: refinement, creating test cases, implementing
       for (const sub of substateNames) {
-        const subObj = this.steps.find(s => s.name === sub);
-        if (subObj && subObj.status !== 'done') {
-          if (sub === 'implementing') {
-            // If 'implementing' is not done, tick it off
-            this.progressStep('implementing', 'done');
-            this.logAction(`Substate ticked off: implementing`, 'step');
-            return `Substate ticked off: implementing`;
-          } else {
-            // For other substates, just tick them off
-            this.progressStep(sub, 'done');
-            this.logAction(`Substate ticked off: ${sub}`, 'step');
-            return `Substate ticked off: ${sub}`;
-          }
+        if (sub === 'testing') break; // Do not tick 'testing' yet
+        const subObj = this._task.steps.find(s => s.name === sub);
+        if (subObj && subObj.status === 'open') {
+          this.logAction(`Ticking off substate: ${sub}`, 'step');
+          subObj.status = 'done';
+          this.updateTaskMd();
+          this.saveState();
+          return `Substate ticked off: ${sub}`;
         }
       }
-      // After 'implementing' is done, iterate Steps section (one per run)
-      const implementingDone = this.steps.find(s => s.name === 'implementing')?.status === 'done';
-      if (implementingDone) {
-        // Only tick off 'testing' after all steps are done
-        const allStepsDone = this.steps.filter(s => !substateNames.includes(s.name)).every(s => s.status === 'done');
-        const testingObj = this.steps.find(s => s.name === 'testing');
-        if (!allStepsDone) {
-          const nextStepIdx = this.steps.findIndex(s => s.status !== 'done' && !substateNames.includes(s.name));
-          if (nextStepIdx !== -1) {
-            const step = this.steps[nextStepIdx];
-            this.progressStep(step.name, 'done');
-            this.logAction(`Step ticked off: ${step.name}`, 'step');
-            return `Step ticked off: ${step.name}`;
-          }
-        } else if (testingObj && testingObj.status !== 'done') {
-          this.progressStep('testing', 'done');
-          this.logAction(`Substate ticked off: testing`, 'step');
-          return `Substate ticked off: testing`;
-        }
-      }
-      // If all substates and testing are done, progress main status
-      const allSubstatesDone = substateNames.every(sub => {
-        const subObj = this.steps.find(s => s.name === sub);
-        return subObj && subObj.status === 'done';
-      });
-      if (allSubstatesDone && this.steps.find(s => s.name === 'testing')?.status === 'done') {
-        this.logAction('Transitioning status: in-progress -> qa-review', 'status');
-        this.transitionStatus('qa-review');
+      
+      // After all substates up to 'implementing' are done, progress steps
+      const stepsToProcess = this._task.steps.filter(s => 
+        !substateNames.includes(s.name) && s.status === 'open'
+      );
+      
+      if (stepsToProcess.length > 0) {
+        const nextStep = stepsToProcess[0];
+        this.logAction(`Ticking off step: ${nextStep.name}`, 'step');
+        nextStep.status = 'done';
+        this.updateTaskMd();
         this.saveState();
-        return 'Status progressed to QA Review.';
+        return `Step ticked off: ${nextStep.name}`;
       }
+      
+      // After all steps are done, tick 'testing' substate
+      const testingSub = this._task.steps.find(s => s.name === 'testing');
+      if (testingSub && testingSub.status === 'open') {
+        this.logAction('Ticking off substate: testing', 'step');
+        testingSub.status = 'done';
+        this.updateTaskMd();
+        this.saveState();
+        return 'Substate ticked off: testing';
+      }
+      
+      // After testing is done, progress to QA Review
+      this.logAction('Transitioning status: in-progress -> qa-review', 'status');
+      this.transitionStatus('qa-review');
       this.saveState();
-      return null;
+      return 'Status progressed to QA Review.';
     }
-
-    // 2. If status is qa-review, tick it off and move to done
     if (this.status === 'qa-review') {
+      // Progress to Done
       this.logAction('Transitioning status: qa-review -> done', 'status');
       this.transitionStatus('done');
       this.saveState();
       return 'Status progressed to Done.';
     }
-
-    // 3. If status is done, nothing to do
     if (this.status === 'done') {
-      this.logAction('Task is already done. No further progression.', 'status');
-      this.saveState();
-      return 'Task is already done.';
+      return null; // No more progression possible
     }
-
-    this.logAction('No valid progression found. Possible error.', 'error');
-    this.saveState();
+    
     return null;
   }
   // Public method to persist state
@@ -338,7 +324,7 @@ export class TaskStateMachine {
       fs.writeFileSync(this._task.files.taskMd, md);
       if (updatedLine) {
         // Log the ticked line in blue
-        console.log(`\x1b[34m[Ticked Line] ${updatedLine}\x1b[0m`);
+        logger.log(`[Ticked Line] ${updatedLine}`);
       }
       this.updateDailyMd();
       this.updatePlanningMd();
@@ -395,14 +381,25 @@ export class TaskStateMachine {
     fs.writeFileSync(this._task.files.taskMd, md);
   }
   // Logging utility
-  public logAction(action: string, type: 'status' | 'step' | 'error' = 'status') {
+  public logAction(action: string, type: 'status' | 'step' | 'error' | 'reset' | 'blue' | 'gray' = 'status') {
     const timestamp = new Date().toISOString();
     let colorStart = '';
-    let colorEnd = '\x1b[0m';
-    if (type === 'status') colorStart = '\x1b[33m'; // yellow
-    if (type === 'step') colorStart = '\x1b[32m'; // green
-    if (type === 'error') colorStart = '\x1b[31m'; // red
-    console.log(`${colorStart}[TaskStateMachine] ${timestamp} - ${action}${colorEnd}`);
+    let colorEnd = '';
+    
+    // Check if colors are supported
+    const supportsColor = process.stdout.isTTY && process.env.TERM !== 'dumb';
+    
+    if (supportsColor) {
+      colorEnd = '\x1b[0m';
+      if (type === 'status') colorStart = '\x1b[33m'; // yellow
+      if (type === 'step') colorStart = '\x1b[34m'; // blue
+      if (type === 'error') colorStart = '\x1b[31m'; // red
+      if (type === 'reset') colorStart = '\x1b[36m'; // cyan
+      if (type === 'blue') colorStart = '\x1b[34m'; // blue
+      if (type === 'gray') colorStart = '\x1b[90m'; // gray
+    }
+    
+    logger.logAction(action, type);
   }
 
   private updateDailyMd() {
@@ -466,6 +463,71 @@ export class TaskStateMachine {
     this.updatePlanningMd();
     this.logAction('State machine reset to Planned and daily history cleared. Markdown file and all steps reset to initial state.');
   }
+
+  public reset(): string {
+    // Reset status to planned
+    this._task.status = 'planned';
+    
+    // Reset all substates
+    for (const sub of substateNames) {
+      const subObj = this._task.steps.find(s => s.name === sub);
+      if (subObj) {
+        subObj.status = 'open';
+      }
+    }
+    
+    // Reset all steps (find and uncheck all step checkboxes)
+    let md = fs.readFileSync(this._task.files.taskMd, 'utf-8');
+    md = md.replace(/(## Status[\s\S]*?)(?=##|$)/, (match) => {
+      let lines = match.split('\n');
+      lines = lines.map(line => {
+        // Uncheck step checkboxes (lines starting with - [x] that are not substates)
+        if (line.trim().match(/^- \[x\] .+/) && 
+            !line.includes('refinement') && 
+            !line.includes('creating test cases') && 
+            !line.includes('implementing') && 
+            !line.includes('testing')) {
+          return line.replace('- [x]', '- [ ]');
+        }
+        // Uncheck status checkboxes
+        if (line.trim().match(/^- \[x\] (Planned|In Progress|QA Review|Done)/)) {
+          return line.replace('- [x]', '- [ ]');
+        }
+        // Uncheck substate checkboxes
+        if (line.trim().match(/^- \[x\] (refinement|creating test cases|implementing|testing)/)) {
+          return line.replace('- [x]', '- [ ]');
+        }
+        return line;
+      });
+      return lines.join('\n');
+    });
+    md = md.replace(/(## Steps[\s\S]*?)(?=\n##|$)/, (match) => {
+      let lines = match.split('\n');
+      lines = lines.map(line => {
+        const stepMatch = line.match(/^- \[.\] (.+)$/);
+        if (stepMatch) {
+          const stepName = stepMatch[1].trim();
+          return `- [ ] ${stepName}`;
+        }
+        return line;
+      });
+      return lines.join('\n');
+    });
+    fs.writeFileSync(this._task.files.taskMd, md);
+    
+    // Clear daily history
+    if (fs.existsSync(this.dailyJsonPath)) {
+      const dailyData = JSON.parse(fs.readFileSync(this.dailyJsonPath, 'utf-8'));
+      if (dailyData.currentTask === this._task.id) {
+        dailyData.status = 'planned';
+        dailyData.history = [];
+        fs.writeFileSync(this.dailyJsonPath, JSON.stringify(dailyData, null, 2));
+      }
+    }
+    
+    this.logAction('Task reset to Planned state. All steps and substates cleared.', 'reset');
+    return 'Task reset to Planned state.';
+  }
 }
 
 
@@ -519,46 +581,71 @@ class TaskStateMachineCLI {
       this.sm = new TaskStateMachine(this.taskObj);
       if (typeof this.sm.resetToPlanned === 'function') {
         this.sm.resetToPlanned();
-        this.sm.logAction(`Testing mode: Reset task ${this.taskNum} to Planned`, 'status');
+        this.sm.logAction(`Testing mode: Reset task ${this.taskNum} to Planned`, 'gray');
       }
       let result;
       if (!this.sm) {
         console.error('Error: TaskStateMachine not initialized.');
         process.exit(1);
       }
+      // Loop guard: exit if already done
+      if (this.sm.status === ('done' as TaskStatus)) {
+        this.sm.logAction('Task is already done. Exiting test loop.', 'blue');
+        return;
+      }
+      // Substate progression
       for (const sub of substateNames) {
         if (this.sm.steps.find(s => s.name === sub)?.status !== 'done') {
           result = this.sm.progressOne();
-          this.sm.logAction(`Testing mode: ${result}`, 'step');
+          this.sm.logAction(`Testing mode: ${result}`, 'gray');
         }
       }
+      // Steps progression with max iteration limit
+      let stepIterations = 0;
+      const MAX_STEP_ITER = 50;
       while (true) {
+        if (this.sm.status === ('done' as TaskStatus)) {
+          this.sm.logAction('Task is done. Exiting step loop.', 'status');
+          break;
+        }
+        if (++stepIterations > MAX_STEP_ITER) {
+          this.sm.logAction('Max step iterations reached. Exiting to prevent infinite loop.', 'error');
+          break;
+        }
         const implementingDone = this.sm.steps.find(s => s.name === 'implementing')?.status === 'done';
         if (!implementingDone) break;
         const nextStepIdx = this.sm.steps.findIndex(s => s.status !== 'done' && !substateNames.includes(s.name));
         if (nextStepIdx !== -1) {
           result = this.sm.progressOne();
-          this.sm.logAction(`Testing mode: ${result}`, 'step');
+          this.sm.logAction(`Testing mode: ${result}`, 'gray');
         } else {
           break;
         }
       }
-      if (this.sm.steps.find(s => s.name === 'testing')?.status !== 'done') {
+      // Testing substate progression
+      if (this.sm.status !== ('done' as TaskStatus) && this.sm.steps.find(s => s.name === 'testing')?.status !== 'done') {
         result = this.sm.progressOne();
-        this.sm.logAction(`Testing mode: ${result}`, 'step');
+        this.sm.logAction(`Testing mode: ${result}`, 'gray');
       }
-      for (let i = 0; i < 2; i++) {
+      // Final status progression with max iteration limit
+      let statusIterations = 0;
+      const MAX_STATUS_ITER = 10;
+      for (let i = 0; i < MAX_STATUS_ITER; i++) {
+        if (this.sm.status === ('done' as TaskStatus)) {
+          this.sm.logAction('Task is done. Exiting status loop.', 'status');
+          break;
+        }
         const allSubstatesDone = substateNames.every(sub => {
           const subObj = this.sm!.steps.find(s => s.name === sub);
           return subObj && subObj.status === 'done';
         });
         if (allSubstatesDone && this.sm.steps.find(s => s.name === 'testing')?.status === 'done') {
           result = this.sm.progressOne();
-          this.sm.logAction(`Testing mode: ${result}`, 'status');
+          this.sm.logAction(`Testing mode: ${result}`, 'gray');
         }
       }
       this.sm.saveState();
-      this.sm.logAction('Testing mode: Full progression complete.', 'status');
+      this.sm.logAction('Testing mode: Full progression complete.', 'gray');
     } else if (this.args.length >= 3 && this.args[0] === 'task' && this.args[2] === 'reset') {
       this.taskNum = this.args[1];
       if (!this.taskNum) {
@@ -573,7 +660,28 @@ class TaskStateMachineCLI {
       this.taskObj = TaskStateMachine.parseTaskFile(this.taskFilePath);
       this.sm = new TaskStateMachine(this.taskObj);
       this.doReset = true;
-    } else if (fs.existsSync(this.dailyJsonPath)) {
+    } else if (this.args.length === 3 && this.args[0] === 'reset' && this.args[1] === 'task') {
+      const taskNumber = this.args[2];
+      const taskFilePath = this.findTaskFile(taskNumber);
+      
+      if (!taskFilePath) {
+        console.error(`\x1b[31mError: Task file for task ${taskNumber} not found.\x1b[0m`);
+        process.exit(1);
+      }
+      
+      const taskObj = TaskStateMachine.parseTaskFile(taskFilePath);
+      this.sm = new TaskStateMachine(taskObj);
+      
+      if (!this.sm) {
+        console.error('\x1b[31mError: TaskStateMachine not initialized.\x1b[0m');
+        process.exit(1);
+      }
+      
+      const result = this.sm.reset();
+      console.log(`\x1b[36mResult: ${result}\x1b[0m`);
+      return;
+    }
+    else if (fs.existsSync(this.dailyJsonPath)) {
       const dailyJson = JSON.parse(fs.readFileSync(this.dailyJsonPath, 'utf-8'));
       this.taskNum = dailyJson.currentTask.replace('iteration-3-task-', '').replace(/-.+$/, '');
       if (!this.taskNum) {

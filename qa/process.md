@@ -8,6 +8,26 @@ All restart and recovery steps for QA must:
 - Document all new QA feedback and process changes in the current active task file under the section `## QA Audit & User Feedback`.
 - Only execute tasks after user feedback is incorporated and the PO's plan is up to date.
 These steps must be cross-referenced in restart.md and all relevant process files for traceability and compliance.
+# QA Process
+
+## Overview
+QA ensures quality, testing, and validation of all deliverables.
+
+## CMM Level 3+ Requirements
+**Reference**: See [CMM Level 3+ Requirements Documentation](../docs/cmm-level3-requirements.md) for process compliance requirements.
+
+## Test Configuration
+**Reference**: See [Test Configuration Documentation](../docs/test-configuration.md) for current test setup and exclusions.
+
+## Test-Driven Development (TDD) Requirements
+**Reference**: See [Process Standards Documentation](../docs/process-standards.md) for TDD integration requirements.
+
+## Process Improvement
+**Reference**: See [Process Standards Documentation](../docs/process-standards.md) for process improvement requirements.
+
+## Restart & Recovery Process
+**Reference**: See [Restart & Recovery Process Documentation](../docs/restart-recovery-process.md) for recovery steps and procedures.
+
 # QA Process Documentation
 
 This file contains process guidelines, best practices, and lessons learned for the QA role. Always read and update this file before performing QA actions.

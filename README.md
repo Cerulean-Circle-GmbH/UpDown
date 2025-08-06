@@ -1,6 +1,14 @@
 # UpDown
 Web4Games vibecoding web2
 
+## Project Recovery
+
+To recover the project state after a context loss or restart, simply say:
+
+    read the README.md and recover
+
+This will trigger the LLM to autonomously perform all recovery steps, as detailed in [restart.md](./restart.md), until it fully embraces the project and its current state. See `restart.md` for the authoritative recovery process and details.
+
 ## Creating a Multiplayer online first game with P2P nodes
 
 This project will create a game with its correspondent multiplayer server and role based mbmobile responsive web first primitive visual.

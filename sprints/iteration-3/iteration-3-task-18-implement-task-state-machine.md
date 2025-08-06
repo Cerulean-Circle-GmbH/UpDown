@@ -71,6 +71,154 @@ Requirements (updated for persistent state and autonomous progression):
 ## QA Audit & User Feedback
 All feedback and audit entries must be timestamped (UTC) and documented in this section.
 
+### 2025-08-06T08:30Z QA Audit Entry
+- The TaskStateMachine script was successfully tested on Task 18 using `npx tsx TaskStateMachine.ts testing task 18` for full modern ESM module compliance.
+- All steps, substates, and status transitions were correctly executed and ticked off in the task markdown, daily.json, daily.md, and planning.md.
+- The script is fully compatible with the tech stack and ESM modules, and `tsx` is recommended for all future TypeScript/ESM script execution.
+- The state machine correctly progresses through: substates (refinement, creating test cases, implementing) → steps (from Steps section) → testing substate → qa-review → done.
+
+### 2025-08-06T09:15Z QA Feedback - Reset Functionality Fix
+**Issue**: The reset functionality was not working properly. When testing Task 21, the script showed "Task is already done. No further progression" instead of properly resetting the task.
+
+**Root Cause**: The TaskStateMachine script was missing proper reset functionality that could:
+1. Reset task status back to "Planned"
+2. Uncheck all substates (refinement, creating test cases, implementing, testing)
+3. Uncheck all steps in the Steps section
+4. Clear daily history for the task
+5. Update the markdown file with unchecked checkboxes
+
+**Solution Implemented**:
+1. **Added reset() method** to TaskStateMachine class that:
+   - Resets status to 'planned'
+   - Resets all substates to 'open'
+   - Uses regex to find and uncheck all step checkboxes in the markdown file
+   - Clears daily.json history for the task
+   - Updates the task markdown file with unchecked status
+
+2. **Added CLI support** for reset command:
+   - `npx tsx TaskStateMachine.ts reset task 21` now works properly
+   - Finds the task file, parses it, and calls the reset method
+   - Provides proper error handling for missing task files
+
+3. **Fixed TypeScript type issues**:
+   - Added explicit type casting for status comparisons: `('done' as TaskStatus)`
+   - Fixed constructor usage to properly parse task files before creating TaskStateMachine instance
+
+**Testing Results**:
+- ✅ Reset command now works: `npx tsx TaskStateMachine.ts reset task 21`
+- ✅ Task 21 properly resets to Planned state with all checkboxes unchecked
+- ✅ Daily history is cleared for the reset task
+- ✅ No infinite loops or type errors
+- ✅ Script maintains full ESM compliance with `tsx`
+
+**Impact**: The TaskStateMachine script now has complete functionality for both progression and reset, making it a robust tool for task lifecycle management in the project.
+
+### 2025-08-06T09:20Z QA Feedback - Color Coding Fix
+**Issue**: The reset functionality was working but the color coding was broken compared to the previous version. Error messages and result messages were not showing in their proper colors (red for errors, cyan for results).
+
+**Root Cause**: When implementing the reset functionality, the ANSI color codes were removed from the error messages in the CLI class.
+
+**Solution Implemented**:
+1. **Restored ANSI color codes** in the reset functionality:
+   - `\x1b[31m` (red) for error messages
+   - `\x1b[36m` (cyan) for result messages
+   - `\x1b[0m` (reset) to end color formatting
+
+2. **Fixed error message color coding**:
+   - `Error: Task file for task ${taskNumber} not found.` now shows in red
+   - `Error: TaskStateMachine not initialized.` now shows in red
+   - `Result: ${result}` now shows in cyan
+
+**Testing Results**:
+- ✅ Reset command works with proper color coding
+- ✅ Error messages display in red when task files are not found
+- ✅ Result messages display in cyan for successful operations
+- ✅ LogAction method maintains its existing color coding (green for steps, red for errors, cyan for reset)
+- ✅ All functionality preserved while restoring visual consistency
+
+**Impact**: The TaskStateMachine script now maintains consistent color coding across all functionality, providing better visual feedback and maintaining the professional appearance of the tool.
+
+### 2025-08-06T09:26Z QA Feedback - Blue Color for Step Messages
+**Issue**: User requested to change the "Ticking off step:" messages to blue color for better visual distinction.
+
+**Solution Implemented**:
+1. **Added blue color option** to the `logAction` method:
+   - `\x1b[34m` (blue) for step tick messages
+   - Added 'blue' type parameter to the method signature
+
+2. **Updated step tick messages**:
+   - Changed `this.logAction(\`Ticking off step: ${nextStep.name}\`, 'step')` to `this.logAction(\`Ticking off step: ${nextStep.name}\`, 'blue')`
+   - This makes step progression messages appear in blue instead of green
+
+3. **Enhanced color detection**:
+   - Added proper color support detection using `process.stdout.isTTY && process.env.TERM !== 'dumb'`
+   - Ensures colors only display when terminal supports them
+
+**Testing Results**:
+- ✅ "Ticking off step:" messages now display in blue color
+- ✅ Color detection works properly for different terminal environments
+- ✅ All other color coding (green for substates, yellow for status, red for errors, cyan for reset) remains intact
+- ✅ Visual distinction between step progression and other operations is improved
+
+**Impact**: The TaskStateMachine script now provides better visual feedback with blue-colored step progression messages, making it easier to distinguish between different types of operations during task progression.
+
+### 2025-08-06T09:34Z QA Feedback - Corrected Color Mapping
+**Issue**: The color mapping was incorrect. The 'step' type should map to blue, and testing mode messages should be gray.
+
+**Solution Implemented**:
+1. **Fixed color mapping**:
+   - `'step'` now maps to `\x1b[34m` (blue) instead of green
+   - Added `'gray'` type mapping to `\x1b[90m` for testing mode messages
+   - Removed redundant `'blue'` type since `'step'` now serves this purpose
+
+2. **Updated testing mode messages**:
+   - All "Testing mode:" messages now use `'gray'` type
+   - This includes: "Testing mode: Reset task X to Planned", "Testing mode: Substate ticked off: X", "Testing mode: Step ticked off: X", "Testing mode: Status progressed to X", "Testing mode: Full progression complete."
+
+3. **Corrected step tick messages**:
+   - "Ticking off step:" messages now use `'step'` type (which maps to blue)
+   - This provides proper visual distinction for step progression
+
+**Testing Results**:
+- ✅ "Ticking off step:" messages display in blue (using 'step' type)
+- ✅ All "Testing mode:" messages display in gray
+- ✅ Color mapping is now logically correct
+- ✅ Visual distinction between actual operations and testing feedback is clear
+- ✅ Testing mode messages are appropriately subdued with gray color
+
+**Impact**: The TaskStateMachine script now has correct color mapping where step progression is blue and testing feedback is gray, providing clear visual distinction between actual operations and testing mode output.
+
+### 2025-08-06T09:40Z QA Feedback - Logger Integration Requirements
+**Issue**: Task 18 needs to be updated for consistency with the new comprehensive logger requirements from Task 22.
+
+**Requirements Added**:
+1. **Logger Integration**: TaskStateMachine must integrate with the new Logger class from Task 22
+2. **DRY Compliance**: Remove all inline color coding and replace with logger calls
+3. **Log Level Support**: Support different log levels (ERROR, WARN, LOG, DEBUG, TESTING)
+4. **Color Mapping**: Ensure proper color mapping:
+   - Status progression - yellow
+   - Status logging - green  
+   - Step logging - blue
+   - Testing mode - gray (level 4)
+5. **Backward Compatibility**: Maintain existing logAction method functionality
+6. **OOP Principles**: Follow radical OOP programming with proper encapsulation
+
+**Integration Points**:
+- Replace all `console.log` calls with appropriate logger methods
+- Replace inline color coding with logger color mapping
+- Add log level filtering support
+- Ensure singleton logger instance is used throughout
+- Maintain existing API for backward compatibility
+
+**Testing Requirements**:
+- Test logger integration with TaskStateMachine
+- Verify all color coding works correctly
+- Test log level filtering
+- Ensure no functionality is lost during migration
+- Validate DRY principle compliance
+
+**Impact**: Task 18 will be updated to use the comprehensive logger from Task 22, ensuring consistent logging across the project and eliminating DRY violations.
+
 ### 2025-08-02T10:03Z QA Audit Entry
 - When running the Task State Machine script, it must be executed from within the `temp/` directory for correct path resolution. Running from the project root or other directories may cause module resolution errors (e.g., `Cannot find module './TaskStateMachine.ts'`).
 - Recommendation: Update the script to resolve all file and module paths robustly, regardless of the working directory, or document this requirement clearly in process and onboarding documentation.

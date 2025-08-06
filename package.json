@@ -20,7 +20,8 @@
   "devDependencies": {
     "@types/glob": "^8.1.0",
     "@types/node": "^24.1.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "bun-types": "^1.0.0",

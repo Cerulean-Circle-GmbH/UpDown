@@ -1,3 +1,20 @@
+# Product Owner Process
+
+## Overview
+The Product Owner (PO) manages requirements, user stories, and product backlog.
+
+## CMM Level 3+ Requirements
+**Reference**: See [CMM Level 3+ Requirements Documentation](../docs/cmm-level3-requirements.md) for process compliance requirements.
+
+## Test Configuration
+**Reference**: See [Test Configuration Documentation](../docs/test-configuration.md) for current test setup and exclusions.
+
+## Test-Driven Development (TDD) Requirements
+**Reference**: See [Process Standards Documentation](../docs/process-standards.md) for TDD integration requirements.
+
+## Process Improvement
+**Reference**: See [Process Standards Documentation](../docs/process-standards.md) for process improvement requirements.
+
 # PO Process Documentation
 
 This file contains process guidelines, best practices, and lessons learned for the Product Owner role. Always read and update this file before performing PO actions.
