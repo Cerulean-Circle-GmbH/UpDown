@@ -3,10 +3,16 @@
 // Substates for in-progress
 const substateNames = ['refinement', 'creating test cases', 'implementing', 'testing'];
 
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 import { globSync } from 'glob';
-import { logger } from './Logger.js';
+import { logger } from './Logger';
+import { NamingConventionManager } from './NamingConventionManager';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const tempDir = path.join(__dirname, 'temp');
 
 export type TaskStatus = 'planned' | 'in-progress' | 'qa-review' | 'done' | 'blocked';
 export type StepStatus = 'open' | 'in-progress' | 'done';
@@ -42,7 +48,39 @@ interface DailyJson {
 }
 
 export class TaskStateMachine {
-  // Static utility to load steps and status from a markdown task file
+  private _task: Task;
+  private dailyJsonPath: string;
+  private dailyJson: DailyJson;
+  private namingManager: NamingConventionManager;
+
+  constructor(task: Task) {
+    this._task = task;
+    this.dailyJsonPath = task.files.dailyJson;
+    this.namingManager = new NamingConventionManager();
+    // Always load daily.json at the start for persistent state
+    this.dailyJson = this.loadDailyJson();
+    // Restore status and steps from daily.json if present
+    if (this.dailyJson.status) {
+      this._task.status = this.dailyJson.status;
+    }
+    if (Array.isArray(this.dailyJson.history) && this.dailyJson.history.length > 0) {
+      // Restore steps from history (last status for each step)
+      const stepStatusMap: Record<string, StepStatus> = {};
+      for (const entry of this.dailyJson.history) {
+        if (entry.step) {
+          stepStatusMap[entry.step] = 'done';
+        }
+      }
+      for (const step of this._task.steps) {
+        if (stepStatusMap[step.name]) {
+          step.status = stepStatusMap[step.name];
+        } else {
+          step.status = 'open';
+        }
+      }
+    }
+  }
+
   static parseTaskFile(taskMdPath: string): Task {
     const md = fs.readFileSync(taskMdPath, 'utf-8');
     const titleMatch = md.match(/^# (.+)$/m);
@@ -52,8 +90,9 @@ export class TaskStateMachine {
     const taskMatch = title.match(/Task (\d+):/);
     const taskNumber = taskMatch ? taskMatch[1] : 'unknown';
     
-    // Generate proper task ID using new naming convention
-    const taskId = `task-${taskNumber}`;
+    // Use NamingConventionManager to generate proper task ID
+    const namingManager = new NamingConventionManager();
+    const taskId = namingManager.getTaskId(taskNumber);
     
     const statusMatch = md.match(/## Status([\s\S]*?)##/);
     const stepsMatch = md.match(/## Steps([\s\S]*?)(?=##|$)/);
@@ -110,10 +149,9 @@ export class TaskStateMachine {
       steps,
       files: {
         taskMd: taskMdPath,
-        dailyJson: path.join(tempDir, 'daily.json'),
-        dailyMd: path.join(tempDir, 'daily.md'),
-        // Try new directory structure first, fallback to old
-        planningMd: path.join(tempDir, '../sprints/sprint-3/planning.md'),
+        dailyJson: path.join(__dirname, 'daily.json'),
+        dailyMd: path.join(__dirname, 'daily.md'),
+        planningMd: namingManager.getPlanningFile(),
       },
     };
   }
@@ -188,36 +226,6 @@ export class TaskStateMachine {
   // Public method to persist state
   public saveState() {
     this.saveDailyJson(this.dailyJson);
-  }
-  private _task: Task;
-  private dailyJsonPath: string;
-  private dailyJson: DailyJson;
-
-  constructor(task: Task) {
-    this._task = task;
-    this.dailyJsonPath = task.files.dailyJson;
-    // Always load daily.json at the start for persistent state
-    this.dailyJson = this.loadDailyJson();
-    // Restore status and steps from daily.json if present
-    if (this.dailyJson.status) {
-      this._task.status = this.dailyJson.status;
-    }
-    if (Array.isArray(this.dailyJson.history) && this.dailyJson.history.length > 0) {
-      // Restore steps from history (last status for each step)
-      const stepStatusMap: Record<string, StepStatus> = {};
-      for (const entry of this.dailyJson.history) {
-        if (entry.step) {
-          stepStatusMap[entry.step] = 'done';
-        }
-      }
-      for (const step of this._task.steps) {
-        if (stepStatusMap[step.name]) {
-          step.status = stepStatusMap[step.name];
-        } else {
-          step.status = 'open';
-        }
-      }
-    }
   }
 
   public get status(): TaskStatus {
@@ -582,13 +590,6 @@ export class TaskStateMachine {
 
 
 // --- Strict OOP Progression Example ---
-import { fileURLToPath } from 'url';
-const tempDir = path.dirname(fileURLToPath(import.meta.url));
-
-
-
-
-
 class TaskStateMachineCLI {
   private args: string[];
   private doReset = false;
@@ -597,34 +598,56 @@ class TaskStateMachineCLI {
   private taskObj?: Task;
   private taskFilePath?: string;
   private dailyJsonPath: string;
+  private namingManager: NamingConventionManager;
 
   constructor(args: string[]) {
     this.args = args;
     this.dailyJsonPath = path.join(tempDir, 'daily.json');
+    this.namingManager = new NamingConventionManager();
     this.run();
   }
 
-  // Find the task file for a given task number using glob
+  // Find the task file for a given task number using NamingConventionManager
   private findTaskFile(taskNum: string): string | undefined {
-    // Try new directory structure first
-    let sprintDir = path.join(tempDir, '../sprints/sprint-3');
-    let pattern = `task-${taskNum}-*.md`;
-    let matches = globSync(pattern, { cwd: sprintDir });
-    
-    if (matches.length === 0) {
-      // Fallback to old directory structure
-      sprintDir = path.join(tempDir, '../sprints/iteration-3');
-      pattern = `iteration-3-task-${taskNum}-*.md`;
-      matches = globSync(pattern, { cwd: sprintDir });
-    }
-    
-    if (matches.length > 0) {
-      return path.join(sprintDir, matches[0]);
-    }
-    return undefined;
+    return this.namingManager.findTaskFile(taskNum);
   }
 
   private run() {
+    if (this.args.length === 2 && this.args[0] === 'convention') {
+      if (this.args[1] === 'show') {
+        const current = this.namingManager.getCurrentConvention();
+        const config = this.namingManager.getConfig();
+        console.log(`\x1b[36mCurrent Naming Convention: ${current.name}\x1b[0m`);
+        console.log(`\x1b[36mDescription: ${current.description}\x1b[0m`);
+        console.log(`\x1b[36mSprint Directory: ${current.sprintDirectory}\x1b[0m`);
+        console.log(`\x1b[36mTask File Pattern: ${current.taskFilePattern}\x1b[0m`);
+        console.log(`\x1b[36mTask ID Format: ${current.taskIdFormat}\x1b[0m`);
+        console.log(`\x1b[36mFallback Enabled: ${config.fallbackEnabled}\x1b[0m`);
+        return;
+      } else if (this.args[1] === 'new') {
+        const success = this.namingManager.switchConvention('new');
+        if (success) {
+          console.log(`\x1b[32mSwitched to New Naming Convention\x1b[0m`);
+        } else {
+          console.log(`\x1b[31mFailed to switch to New Naming Convention\x1b[0m`);
+        }
+        return;
+      } else if (this.args[1] === 'old') {
+        const success = this.namingManager.switchConvention('old');
+        if (success) {
+          console.log(`\x1b[32mSwitched to Old Naming Convention\x1b[0m`);
+        } else {
+          console.log(`\x1b[31mFailed to switch to Old Naming Convention\x1b[0m`);
+        }
+        return;
+      } else if (this.args[1] === 'fallback') {
+        const enabled = this.namingManager.isFallbackEnabled();
+        this.namingManager.setFallbackEnabled(!enabled);
+        console.log(`\x1b[32mFallback ${!enabled ? 'enabled' : 'disabled'}\x1b[0m`);
+        return;
+      }
+    }
+    
     if (this.args.length === 3 && this.args[0] === 'testing' && this.args[1] === 'task') {
       this.taskNum = this.args[2];
       if (!this.taskNum) {

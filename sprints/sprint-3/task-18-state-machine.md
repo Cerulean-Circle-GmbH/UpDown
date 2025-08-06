@@ -38,6 +38,13 @@ The intention is to automate and standardize task status management, ensuring al
 - [x] Test the state machine with Task 18 and at least one other task (e.g., Task 17 or 20) to verify correct updates and extensibility.
 - [x] Update documentation and onboarding to reflect new usage, requirements, and QA feedback.
 - [x] Submit for QA review and finalize documentation.
+- [x] Implement configurable naming convention system:
+  - Create JSON configuration files for old and new naming conventions
+  - Implement NamingConventionManager class for switching between conventions
+  - Add CLI commands for convention management (show, switch, fallback)
+  - Integrate with TaskStateMachine for dynamic naming support
+  - Add comprehensive test cases for naming convention functionality
+  - Update task documentation with new naming convention features
 
 ## Requirements
 

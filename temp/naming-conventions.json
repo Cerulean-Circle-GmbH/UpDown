@@ -1,0 +1,25 @@
+{
+  "conventions": {
+    "new": {
+      "name": "New Naming Convention",
+      "description": "Optimized naming with sprint-3 directory and task-{number}-{description}.md format",
+      "sprintDirectory": "sprints/sprint-3",
+      "taskFilePattern": "task-{number}-*.md",
+      "taskIdFormat": "task-{number}",
+      "planningFile": "sprints/sprint-3/planning.md",
+      "active": true
+    },
+    "old": {
+      "name": "Legacy Naming Convention",
+      "description": "Original naming with iteration-3 directory and iteration-3-task-{number}-{description}.md format",
+      "sprintDirectory": "sprints/iteration-3",
+      "taskFilePattern": "iteration-3-task-{number}-*.md",
+      "taskIdFormat": "iteration-3-task-{number}",
+      "planningFile": "sprints/iteration-3/planning.md",
+      "active": false
+    }
+  },
+  "current": "new",
+  "fallbackEnabled": false,
+  "autoMigrate": true
+}
