@@ -26,6 +26,9 @@ This file contains process guidelines, best practices, and lessons learned for t
 - **QA Review**: All task files must be reviewed for backlink presence and correct format during QA audit.
 - **Process Integration**: This requirement is part of the CMM Level 3+ compliance and ensures proper documentation structure.
 
+## Naming Conventions
+**Reference**: See [Naming Conventions Documentation](../docs/naming-conventions.md) for standardized file and directory naming requirements.
+
 ## Planning Phase (Precedes Sprint Start)
 - The planning.md file must always list all tasks and subtasks for the sprint, with correct links and numbering.
 - Priorities are updated so the next open task is priority 1, completed tasks are marked for audit traceability.

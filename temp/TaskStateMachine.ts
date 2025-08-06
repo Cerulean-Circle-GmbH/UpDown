@@ -104,7 +104,8 @@ export class TaskStateMachine {
         taskMd: taskMdPath,
         dailyJson: path.join(tempDir, 'daily.json'),
         dailyMd: path.join(tempDir, 'daily.md'),
-        planningMd: path.join(tempDir, 'planning.md'),
+        // Try new directory structure first, fallback to old
+        planningMd: path.join(tempDir, '../sprints/sprint-3/planning.md'),
       },
     };
   }
@@ -556,9 +557,18 @@ class TaskStateMachineCLI {
 
   // Find the task file for a given task number using glob
   private findTaskFile(taskNum: string): string | undefined {
-    const sprintDir = path.join(tempDir, '../sprints/iteration-3');
-    const pattern = `iteration-3-task-${taskNum}-*.md`;
-    const matches = globSync(pattern, { cwd: sprintDir });
+    // Try new directory structure first
+    let sprintDir = path.join(tempDir, '../sprints/sprint-3');
+    let pattern = `task-${taskNum}-*.md`;
+    let matches = globSync(pattern, { cwd: sprintDir });
+    
+    if (matches.length === 0) {
+      // Fallback to old directory structure
+      sprintDir = path.join(tempDir, '../sprints/iteration-3');
+      pattern = `iteration-3-task-${taskNum}-*.md`;
+      matches = globSync(pattern, { cwd: sprintDir });
+    }
+    
     if (matches.length > 0) {
       return path.join(sprintDir, matches[0]);
     }
