@@ -1,7 +1,7 @@
 # Web4 First Principles
 
 ## Overview
-Web4 principles fundamentally change how we develop code by introducing scenario-based configuration and instance recovery. This document captures the learning journey and principles as we iterate the TaskStateMachine to Web4 compliance.
+Web4 principles fundamentally change how we develop code by introducing scenario-based configuration and instance recovery. This document defines the core Web4 principles and concepts.
 
 ## Core Web4 Concepts
 
@@ -21,81 +21,111 @@ Web4 principles fundamentally change how we develop code by introducing scenario
 - Scenario files contain all necessary configuration and state information
 - No external dependencies for recovery - self-contained scenarios
 
-## Learning Journey
+## Web4 Principles
 
-### 2025-08-06: Initial Web4 Introduction
-- **Discovery**: Naming conventions can be scenarios instead of shared configurations
-- **Principle**: Each naming convention (old/new) should be a separate scenario file
-- **Impact**: Enables running multiple TaskStateMachine instances with different naming conventions
-- **Recovery**: Each instance can recover using its specific scenario file
+### 1. Instance Independence
+- **Principle**: Each instance is completely self-contained
+- **Impact**: Eliminates shared state conflicts
+- **Benefit**: Multiple instances can run simultaneously with different configurations
 
-### 2025-08-06: Scenario Implementation
-- **Discovery**: Merged daily.json and naming-conventions.json into unified scenario files
-- **Structure**: Each scenario contains naming convention + instance state + recovery config
-- **Implementation**: Created ScenarioManager class for Web4 scenario-based architecture
-- **Files Created**:
-  - `sprints/sprint-3/new-naming.a1b2c3d4-e5f6-7890-abcd-ef1234567890.scenario.json`
-  - `sprints/iteration-3/old-naming.f9e8d7c6-b5a4-3210-fedc-ba9876543210.scenario.json`
-- **Key Learning**: Scenarios eliminate shared state and enable true instance independence
+### 2. Scenario-Based Configuration
+- **Principle**: Configuration is instance-specific, not shared
+- **Impact**: Each instance has its own scenario file
+- **Benefit**: Complete isolation between instances
 
-## Current TaskStateMachine Analysis
+### 3. Complete Recovery
+- **Principle**: Single scenario file enables full instance recovery
+- **Impact**: No need for multiple configuration files
+- **Benefit**: Simplified recovery and deployment
 
-### Current State
-- `naming-conventions.json`: Contains both old and new configurations
-- `daily.json`: Contains instance-specific state
-- Mixed approach: shared configuration + instance state
+### 4. No Shared State
+- **Principle**: Avoid shared configurations between instances
+- **Impact**: Eliminates configuration conflicts
+- **Benefit**: Predictable instance behavior
 
-### Web4 Refactoring Completed
-1. **✅ Split Configurations**: Separated old and new into individual scenario files
-2. **✅ Merge State**: Moved relevant daily.json data into scenario files
-3. **✅ Instance Recovery**: Each scenario file enables complete instance recovery
-4. **✅ Directory Structure**: Scenarios live in their respective sprint directories
+### 5. Directory Alignment
+- **Principle**: Scenarios live with their respective content
+- **Impact**: Logical organization of scenarios
+- **Benefit**: Easy discovery and management
+
+### 6. UUID-based Identification
+- **Principle**: Each scenario has unique identifier
+- **Impact**: Guaranteed uniqueness across instances
+- **Benefit**: No naming conflicts
+
+### 7. Recovery Tracking
+- **Principle**: Track when scenarios were last recovered
+- **Impact**: Audit trail for recovery operations
+- **Benefit**: Debugging and monitoring capabilities
 
 ## Scenario Structure
 
-### Scenario File Components
+### Standard Scenario File Components
 ```json
 {
   "scenario": {
-    "name": "new-naming",
-    "uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "description": "New naming convention scenario for sprint-3 directory",
-    "created": "2025-08-06T10:58:00.000Z",
-    "version": "1.0.0"
+    "name": "scenario-name",
+    "uuid": "unique-identifier",
+    "description": "Scenario description",
+    "created": "ISO-timestamp",
+    "version": "semantic-version"
   },
   "naming": {
     // Naming convention configuration
   },
   "instance": {
-    // Instance-specific state (previously in daily.json)
+    // Instance-specific state
   },
   "recovery": {
     "enabled": true,
     "autoSave": true,
-    "lastRecovery": "2025-08-06T10:58:00.000Z"
+    "lastRecovery": "ISO-timestamp"
   }
 }
 ```
 
-### Key Benefits
-1. **Instance Independence**: Each scenario is completely self-contained
-2. **Recovery**: Complete state recovery from single scenario file
-3. **No Shared State**: Eliminates conflicts between multiple instances
-4. **Directory Alignment**: Scenarios live with their respective content
-5. **Versioning**: Each scenario has version and creation tracking
+## Web4 vs Traditional Architecture
 
-## Next Steps
-- Update TaskStateMachine to use ScenarioManager
-- Implement scenario-based recovery in TaskStateMachine
-- Add CLI commands for scenario management
-- Create comprehensive tests for scenario functionality
-- Maintain backward compatibility during transition
+### Traditional Approach
+- Shared configuration files
+- Multiple state files per instance
+- Complex recovery mechanisms
+- Potential conflicts between instances
 
-## Principles to Follow
-1. **Instance Independence**: Each instance is self-contained
-2. **Scenario Recovery**: Complete recovery from scenario file
-3. **No Shared State**: Avoid shared configurations between instances
-4. **Directory Alignment**: Scenarios live with their respective content
-5. **Backward Compatibility**: Maintain existing functionality during transition
-6. **UUID-based Identification**: Each scenario has unique identifier
-7. **Recovery Tracking**: Track when scenarios were last recovered 
+### Web4 Approach
+- Instance-specific scenario files
+- Single file contains all instance data
+- Simple recovery from scenario file
+- Complete instance isolation
+
+## Implementation Guidelines
+
+### 1. Scenario File Naming
+- Use descriptive names: `new-naming`, `old-naming`
+- Include UUID for uniqueness
+- Use `.scenario.json` extension
+
+### 2. Scenario Location
+- Place scenarios in relevant directories
+- Align with content they manage
+- Enable easy discovery
+
+### 3. Recovery Implementation
+- Load complete state from scenario file
+- Update recovery timestamp on save
+- Validate scenario file structure
+
+### 4. Instance Management
+- Each instance loads its own scenario
+- No cross-instance communication
+- Independent state management
+
+## Benefits of Web4 Architecture
+
+1. **Simplicity**: Single file per instance
+2. **Reliability**: Complete recovery from scenario
+3. **Scalability**: Multiple independent instances
+4. **Maintainability**: Clear instance boundaries
+5. **Debugging**: Self-contained scenarios
+6. **Deployment**: Easy instance replication
+7. **Versioning**: Scenario-level version control 
