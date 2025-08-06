@@ -1,0 +1,47 @@
+{
+  "scenario": {
+    "name": "new-naming",
+    "uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "description": "New naming convention scenario for sprint-3 directory",
+    "created": "2025-08-06T10:58:00.000Z",
+    "version": "1.0.0"
+  },
+  "naming": {
+    "name": "New Naming Convention",
+    "description": "Optimized naming with sprint-3 directory and task-{number}-{description}.md format",
+    "sprintDirectory": "sprints/sprint-3",
+    "taskFilePattern": "task-{number}-*.md",
+    "taskIdFormat": "task-{number}",
+    "planningFile": "sprints/sprint-3/planning.md",
+    "active": true
+  },
+  "instance": {
+    "currentSprint": "Sprint 3",
+    "currentTask": "task-18",
+    "status": "done",
+    "files": {
+      "taskMd": "/Users/Shared/Workspaces/2cuGitHub/UpDown/sprints/sprint-3/task-18-state-machine.md",
+      "dailyMd": "/Users/Shared/Workspaces/2cuGitHub/UpDown/temp/daily.md",
+      "planningMd": "/Users/Shared/Workspaces/2cuGitHub/UpDown/sprints/sprint-3/planning.md"
+    },
+    "history": [
+      {
+        "timestamp": "2025-08-06T10:57:07.054Z",
+        "status": "in-progress"
+      },
+      {
+        "timestamp": "2025-08-06T10:57:07.068Z",
+        "status": "qa-review"
+      },
+      {
+        "timestamp": "2025-08-06T10:57:07.070Z",
+        "status": "done"
+      }
+    ]
+  },
+  "recovery": {
+    "enabled": true,
+    "autoSave": true,
+    "lastRecovery": "2025-08-06T10:58:00.000Z"
+  }
+} 

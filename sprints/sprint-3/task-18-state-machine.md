@@ -45,6 +45,15 @@ The intention is to automate and standardize task status management, ensuring al
   - Integrate with TaskStateMachine for dynamic naming support
   - Add comprehensive test cases for naming convention functionality
   - Update task documentation with new naming convention features
+- [ ] Refactor to Web4 scenario-based architecture:
+  - Split naming-conventions.json into separate scenario files
+  - Create new-naming.${uuid}.scenario.json for sprint-3 directory
+  - Create old-naming.${uuid}.scenario.json for iteration-3 directory
+  - Merge relevant daily.json data into scenario files
+  - Implement scenario-based instance recovery
+  - Update TaskStateMachine to use scenario files instead of shared config
+  - Maintain backward compatibility during transition
+  - Add Web4 first principles documentation
 
 ## Requirements
 
