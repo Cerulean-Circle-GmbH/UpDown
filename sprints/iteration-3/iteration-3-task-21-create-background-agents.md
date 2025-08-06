@@ -1,3 +1,5 @@
+[Back to Planning](./planning.md)
+
 # Task 21: Create Background Agents for Project Intentions and Roles
 
 ## Status
@@ -88,8 +90,4 @@ All feedback and audit entries must be timestamped (UTC) and documented in this 
 - [Developer Process](../developer/process.md)
 - [Process Standards Documentation](../docs/process-standards.md)
 - [CMM Level 3+ Requirements Documentation](../docs/cmm-level3-requirements.md)
-- [Task Refinement Guidelines Documentation](../docs/task-refinement-guidelines.md)
-
-## Backlinks
-- [Sprint 3 Planning](./planning.md)
-- [Daily Status](./daily.md) 
+- [Task Refinement Guidelines Documentation](../docs/task-refinement-guidelines.md) 

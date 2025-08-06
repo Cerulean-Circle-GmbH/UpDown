@@ -1,4 +1,4 @@
-[Back to Planning](../planning.md)
+[Back to Planning](./planning.md)
 
 # Task 18: Implement Task State Machine for Sprint Management
 

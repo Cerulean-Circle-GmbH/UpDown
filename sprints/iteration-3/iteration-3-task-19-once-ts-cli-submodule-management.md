@@ -1,4 +1,4 @@
-[Back to Planning](../planning.md)
+[Back to Planning](./planning.md)
 
 # Task 19: [PO] Create TypeScript CLI (once.ts) for Subproject/Submodule Management
 

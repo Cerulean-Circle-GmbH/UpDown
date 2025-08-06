@@ -19,6 +19,13 @@ The Product Owner (PO) manages requirements, user stories, and product backlog.
 
 This file contains process guidelines, best practices, and lessons learned for the Product Owner role. Always read and update this file before performing PO actions.
 
+## Task File Backlink Requirements (2025-08-06)
+- **Standard Format**: All task files must include `[Back to Planning](./planning.md)` at the top of the file, immediately after the title.
+- **Consistency**: This backlink must be present in all sprint task files to ensure proper navigation and process compliance.
+- **Template Compliance**: The backlink format must match the template: `[Back to Planning](./planning.md)` (not `../planning.md`).
+- **QA Review**: All task files must be reviewed for backlink presence and correct format during QA audit.
+- **Process Integration**: This requirement is part of the CMM Level 3+ compliance and ensures proper documentation structure.
+
 ## Planning Phase (Precedes Sprint Start)
 - The planning.md file must always list all tasks and subtasks for the sprint, with correct links and numbering.
 - Priorities are updated so the next open task is priority 1, completed tasks are marked for audit traceability.

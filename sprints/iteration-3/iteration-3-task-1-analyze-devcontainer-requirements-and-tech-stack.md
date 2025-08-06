@@ -1,4 +1,4 @@
-[Back to Planning](../planning.md)
+[Back to Planning](./planning.md)
 
 # Task 1: Analyze Devcontainer Requirements and Tech Stack
 

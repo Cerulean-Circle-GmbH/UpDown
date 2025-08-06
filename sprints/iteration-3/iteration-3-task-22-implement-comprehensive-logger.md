@@ -1,3 +1,5 @@
+[Back to Planning](./planning.md)
+
 # Task 22: Implement Comprehensive Logger with Colored Logging and Log Levels
 
 ## Status
@@ -48,6 +50,7 @@ Create a robust, reusable logger class that supports colored logging, log levels
 - **ESM Modules**: Modern ES module syntax
 - **Singleton Pattern**: Ensure single logger instance across application
 - **Color Support**: Proper ANSI color code handling with fallback
+- **LogType Separation**: Clear separation between general and domain-specific log types
 
 ### Role-Specific Requirements
 
@@ -56,12 +59,14 @@ Create a robust, reusable logger class that supports colored logging, log levels
 - **Type Safety**: Full TypeScript type safety and interfaces
 - **Performance**: Efficient logging with minimal overhead
 - **Testability**: Comprehensive unit tests for all logger functionality
+- **LogType Design**: Separate general LogType from TaskStateMachine-specific types
 
 #### QA Requirements
 - **Log Level Testing**: Verify all log levels work correctly
 - **Color Testing**: Test color output in different terminal environments
 - **Integration Testing**: Ensure logger integrates properly with TaskStateMachine
 - **Regression Testing**: Verify no functionality is lost during migration
+- **LogType Testing**: Verify separation between general and domain-specific types
 
 #### DevOps Requirements
 - **Build Integration**: Ensure logger compiles correctly with TypeScript
@@ -72,6 +77,7 @@ Create a robust, reusable logger class that supports colored logging, log levels
 - **Scalability**: Logger should support future expansion
 - **Maintainability**: Clean, well-documented code structure
 - **Extensibility**: Easy to add new log types and levels
+- **Separation of Concerns**: Clear distinction between generic and domain-specific functionality
 
 ## Tech Stack Rationale
 - **TypeScript**: Provides type safety and better development experience
@@ -97,6 +103,8 @@ Create a robust, reusable logger class that supports colored logging, log levels
 7. ✅ Comprehensive test coverage
 8. ✅ Proper integration with TaskStateMachine
 9. ✅ Documentation complete and accurate
+10. ✅ LogType separation: General types (LOG, WARN, ERROR, DEBUG) separate from domain-specific types (STATUS, STEP, PROGRESSION, TESTING)
+11. ✅ Clear API distinction between generic logger methods and domain-specific logAction method
 
 ## Dependencies
 - Task 18 (TaskStateMachine) - for integration testing
@@ -119,10 +127,16 @@ Create a robust, reusable logger class that supports colored logging, log levels
 2. **Log Level Implementation** - Implement log level enumeration and filtering
 3. **Color Mapping System** - Implement color code mapping for different log types
 4. **Standard Logging Methods** - Implement .log, .warn, .error, .debug methods
-5. **State Machine Integration** - Integrate logger with TaskStateMachine
-6. **Backward Compatibility** - Ensure existing logAction method works
-7. **Testing Implementation** - Create comprehensive test suite
-8. **Documentation** - Document logger usage and configuration
+5. **LogType Separation** - Separate general LogType from domain-specific TaskStateMachine types
+   - **General LogTypes**: LOG, WARN, ERROR, DEBUG (for generic application logging)
+   - **Domain-Specific LogTypes**: STATUS, STEP, PROGRESSION, TESTING (for TaskStateMachine only)
+   - **API Design**: Clear distinction between generic methods (.log, .warn, .error, .debug) and domain-specific logAction method
+   - **Type Safety**: Ensure TypeScript properly distinguishes between general and domain-specific types
+   - **Documentation**: Document the separation and usage guidelines
+6. **State Machine Integration** - Integrate logger with TaskStateMachine
+7. **Backward Compatibility** - Ensure existing logAction method works
+8. **Testing Implementation** - Create comprehensive test suite
+9. **Documentation** - Document logger usage and configuration
 
 ## QA Audit & User Feedback
 
@@ -212,6 +226,25 @@ Create a robust, reusable logger class that supports colored logging, log levels
 - ✅ Demo script shows proper usage
 
 **Impact**: The logger is now properly generic and follows the principle that logging infrastructure should not be aware of specific domain concepts. The TaskStateMachine uses the generic logger appropriately for its domain-specific logging needs.
+
+### 2025-08-06T09:55Z QA Feedback - LogType Separation Required
+**Issue**: The current logger implementation mixes general LogTypes (LOG, WARN, ERROR, DEBUG) with domain-specific LogTypes (STATUS, STEP, PROGRESSION, TESTING) in a single enum, which violates separation of concerns.
+
+**Solution Needed**:
+1. **Separate LogType Enums**: Create distinct enums for general and domain-specific types
+2. **General LogTypes**: LOG, WARN, ERROR, DEBUG (for any application)
+3. **Domain-Specific LogTypes**: STATUS, STEP, PROGRESSION, TESTING (for TaskStateMachine only)
+4. **API Clarity**: Clear distinction between generic methods and domain-specific logAction
+5. **Type Safety**: Ensure TypeScript properly handles the separation
+
+**Design Requirements**:
+- **General LogTypes**: Should be usable by any application component
+- **Domain-Specific LogTypes**: Should only be used by TaskStateMachine
+- **Backward Compatibility**: Existing logAction method must continue to work
+- **Documentation**: Clear guidelines on when to use which types
+- **Testing**: Verify separation works correctly
+
+**Impact**: This separation will make the logger truly generic and reusable across different parts of the application while maintaining domain-specific functionality where needed.
 
 ## Daily Status
 *To be populated during development*
