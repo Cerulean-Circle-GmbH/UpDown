@@ -549,6 +549,31 @@ function setupTUI(): void {
         console.log(`\n${colors.dim}Press ${colors.brightGreen}[q]${colors.reset}${colors.dim} to return to help...${colors.reset}`);
         break;
 
+      case 'r':
+        if (liveLogInterval) {
+          clearInterval(liveLogInterval);
+          liveLogInterval = null;
+        }
+        clearScreen();
+        console.log(`${colors.brightYellow}🔨 Rebuilding client...${colors.reset}\n`);
+        
+        try {
+          const { stdout, stderr } = await execAsync('npm run build', { cwd: __dirname });
+          clearScreen();
+          console.log(`${colors.brightGreen}✅ Build successful!${colors.reset}\n`);
+          if (stdout) console.log(stdout);
+          console.log(`\n${colors.brightCyan}💡 Reload your browser to see changes${colors.reset}`);
+          console.log(`${colors.dim}Press ${colors.brightGreen}[q]${colors.reset}${colors.dim} to return to help...${colors.reset}\n`);
+          addLog('🔨 Client rebuilt successfully');
+        } catch (error: any) {
+          clearScreen();
+          console.log(`${colors.brightRed}❌ Build failed!${colors.reset}\n`);
+          console.log(error.stderr || error.message);
+          console.log(`${colors.dim}\nPress ${colors.brightGreen}[q]${colors.reset}${colors.dim} to return to help...${colors.reset}\n`);
+          addLog('❌ Client build failed');
+        }
+        break;
+
       default:
         if (key.name === 'return' && str === 'clear') {
           clearScreen();
