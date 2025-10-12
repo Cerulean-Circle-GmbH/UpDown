@@ -15,11 +15,6 @@ body {
   padding: 0;
   margin: 0;
   overflow: hidden;
-  /* Safe area for notch/island on iPhone */
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
 }
 
 .game-container {
@@ -45,8 +40,6 @@ body {
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
   position: relative;
-  /* Extra padding for notch in standalone mode */
-  padding-top: max(10px, env(safe-area-inset-top));
 }
 
 .game-header::before {
@@ -425,21 +418,7 @@ body {
 :-webkit-full-screen body,
 :-moz-full-screen body,
 :-ms-fullscreen body {
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-}
-
-/* Standalone mode (PWA) - iOS notch support */
-@media (display-mode: standalone) {
-  body {
-    padding-top: env(safe-area-inset-top);
-  }
-  
-  .game-header {
-    padding-top: max(10px, env(safe-area-inset-top));
-  }
+  padding: 0;
 }
 
 /* Mobile devices - Full height optimization */
