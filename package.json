@@ -4,6 +4,8 @@
   "type": "module",
   "main": "src/server/index.ts",
   "scripts": {
+    "start": "bash ./updown.sh",
+    "stop": "bash ./stop.sh",
     "start:server": "bun src/server/index.ts",
     "start:client": "bun src/client/index.ts",
     "build": "tsc",
@@ -13,8 +15,7 @@
     "docker:status": "bash ./devops/docker-status.sh",
     "docker:stop": "bash ./devops/docker-stop.sh",
     "docker:clean": "bash ./devops/docker-clean.sh",
-    "docker:allcheck": "bash ./devops/docker-allcheck.sh",
-    "start": "npm run docker:allcheck && npm run docker:run && npm run docker:status"
+    "docker:allcheck": "bash ./devops/docker-allcheck.sh"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

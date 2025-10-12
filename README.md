@@ -1,6 +1,24 @@
 # UpDown
 Web4Games vibecoding web2
 
+## 🎮 Quick Play
+
+**Start the game now:**
+```bash
+npm start
+```
+
+This launches the server and opens your browser automatically!
+
+**Stop the server:**
+```bash
+npm run stop
+```
+
+**Keyboard Shortcuts:**
+- `U` = Game Up (Start)
+- `D` = Game Down (Stop)
+
 ## Creating a Multiplayer online first game with P2P nodes
 
 This project will create a game with its correspondent multiplayer server and role based mbmobile responsive web first primitive visual.
