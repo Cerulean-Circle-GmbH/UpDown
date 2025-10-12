@@ -476,6 +476,91 @@ window.addEventListener('load', () => {
   }
 });
 
+// PWA Install Prompt Handler
+let deferredInstallPrompt = null;
+
+// Listen for install prompt
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevent the default mini-infobar
+  e.preventDefault();
+  
+  // Stash the event for later use
+  deferredInstallPrompt = e;
+  
+  console.log('✅ PWA install prompt ready');
+  
+  // Show custom install hint (optional - could add a button)
+  showInstallHint();
+});
+
+// Handle successful install
+window.addEventListener('appinstalled', () => {
+  console.log('✅ PWA installed successfully!');
+  deferredInstallPrompt = null;
+  
+  // Hide install hint if showing
+  const hint = document.querySelector('.install-hint');
+  if (hint) {
+    hint.remove();
+  }
+});
+
+// Show install hint
+function showInstallHint() {
+  // Check if already installed or hint already showing
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    return; // Already installed
+  }
+  
+  if (document.querySelector('.install-hint')) {
+    return; // Already showing
+  }
+  
+  const hint = document.createElement('div');
+  hint.className = 'install-hint';
+  hint.innerHTML = `
+    <div class="install-hint-content">
+      <span class="install-icon">📱</span>
+      <span class="install-text">Install UpDown as an app</span>
+      <button class="install-btn">Install</button>
+      <button class="install-close">✕</button>
+    </div>
+  `;
+  
+  document.body.appendChild(hint);
+  
+  // Handle install button click
+  hint.querySelector('.install-btn').addEventListener('click', async () => {
+    if (!deferredInstallPrompt) {
+      return;
+    }
+    
+    // Show the install prompt
+    deferredInstallPrompt.prompt();
+    
+    // Wait for user response
+    const { outcome } = await deferredInstallPrompt.userChoice;
+    console.log(`PWA install ${outcome}`);
+    
+    // Clear the prompt
+    deferredInstallPrompt = null;
+    hint.remove();
+  });
+  
+  // Handle close button
+  hint.querySelector('.install-close').addEventListener('click', () => {
+    hint.remove();
+  });
+  
+  // Auto-hide after 10 seconds
+  setTimeout(() => {
+    if (hint.parentElement) {
+      hint.classList.add('fade-out');
+      setTimeout(() => hint.remove(), 500);
+    }
+  }, 10000);
+}
+
 // Register Service Worker for PWA support
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js')
