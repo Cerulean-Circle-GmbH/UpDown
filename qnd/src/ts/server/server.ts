@@ -64,6 +64,7 @@ interface WebSocketClient {
   id: string;
   ip: string;
   connectedAt: number;
+  avatarUrl: string;
 }
 
 // Global state for TUI
@@ -248,7 +249,11 @@ function setupWebSocketServer(server: https.Server): void {
     const clientId = `${ip}-${Date.now()}`;
     const connectedAt = Date.now();
     
-    const client: WebSocketClient = { ws, id: clientId, ip, connectedAt };
+    // Generate a unique avatar URL for this player session
+    // Each call to thispersondoesnotexist.com generates a new image
+    const avatarUrl = `https://thispersondoesnotexist.com/?${clientId}`;
+    
+    const client: WebSocketClient = { ws, id: clientId, ip, connectedAt, avatarUrl };
     wsClients.add(client);
     
     addLog(`🎮 WebSocket connected: ${ip} (${wsClients.size} online)`);
@@ -286,7 +291,8 @@ function getAllPlayers() {
   return Array.from(wsClients).map(client => ({
     playerId: client.id,
     playerIp: client.ip.replace(/^::ffff:/, ''),
-    connectedAt: client.connectedAt
+    connectedAt: client.connectedAt,
+    avatarUrl: client.avatarUrl
   }));
 }
 
@@ -315,6 +321,7 @@ function broadcastNewPlayer(newClient: WebSocketClient): void {
     type: 'player-joined',
     playerId: newClient.id,
     playerIp: newClient.ip.replace(/^::ffff:/, ''), // Clean IPv6 prefix
+    avatarUrl: newClient.avatarUrl,
     timestamp: Date.now()
   });
   

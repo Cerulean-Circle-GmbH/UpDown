@@ -339,12 +339,9 @@ export class PlayerNotification extends LitElement {
           this.onlineCount = data.onlineCount || 1;
           console.log(`Welcome! ${this.onlineCount} player(s) online`);
           
-          // Initialize players list
+          // Initialize players list (server provides avatar URLs)
           if (data.players && Array.isArray(data.players)) {
-            this.players = data.players.map((p: any) => ({
-              ...p,
-              avatarUrl: this.generateUniqueAvatar(p.playerId)
-            }));
+            this.players = data.players;
             
             // Show dock if there are other players
             if (this.players.length > 1) {
@@ -374,28 +371,12 @@ export class PlayerNotification extends LitElement {
     };
   }
 
-  private generateUniqueAvatar(playerId: string): string {
-    // Use DiceBear API to generate unique, fun avatars based on player ID
-    // Available styles: adventurer, avataaars, big-ears, bottts, fun-emoji, lorelei, micah, personas
-    const styles = ['adventurer', 'avataaars', 'big-ears', 'bottts', 'fun-emoji', 'lorelei', 'micah', 'personas'];
-    
-    // Pick a style based on player ID for variety
-    const styleIndex = playerId.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
-    const style = styles[styleIndex % styles.length];
-    
-    // Use player ID as seed to ensure same player always gets same avatar
-    return `https://api.dicebear.com/7.x/${style}/svg?seed=${encodeURIComponent(playerId)}`;
-  }
-
-  private handlePlayerJoined(data: { playerId: string; playerIp: string; timestamp: number }) {
-    // Generate a unique avatar based on player ID
-    const avatarUrl = this.generateUniqueAvatar(data.playerId);
-    
-    // Add to players list
+  private handlePlayerJoined(data: { playerId: string; playerIp: string; avatarUrl: string; timestamp: number }) {
+    // Server provides the avatar URL (generated once per session)
     const player: Player = {
       playerId: data.playerId,
       playerIp: data.playerIp,
-      avatarUrl,
+      avatarUrl: data.avatarUrl,
       connectedAt: data.timestamp
     };
     
@@ -413,7 +394,7 @@ export class PlayerNotification extends LitElement {
       id: `notif-${Date.now()}`,
       playerId: data.playerId,
       playerIp: data.playerIp,
-      avatarUrl,
+      avatarUrl: data.avatarUrl,
       timestamp: data.timestamp
     };
 
