@@ -169,7 +169,7 @@ async function generateCertificate(): Promise<boolean> {
 }
 
 /**
- * Start HTTP and HTTPS servers
+ * Start HTTP and HTTPS servers (silently)
  */
 async function startServers(httpOnly: boolean = false): Promise<void> {
   // HTTP server (redirects to HTTPS if available)
@@ -186,14 +186,7 @@ async function startServers(httpOnly: boolean = false): Promise<void> {
     }
   });
 
-  httpServer.listen(PORT, () => {
-    if (httpOnly) {
-      console.log(`🎴 UpDown server running at http://localhost:${PORT}`);
-      console.log(`📱 Open your browser to start playing!`);
-    } else {
-      console.log(`🔄 HTTP redirect running on port ${PORT}`);
-    }
-  });
+  httpServer.listen(PORT);
 
   // HTTPS server (if certificates available)
   if (!httpOnly) {
@@ -208,15 +201,9 @@ async function startServers(httpOnly: boolean = false): Promise<void> {
         handleRequest(req, res);
       });
 
-      httpsServer.listen(HTTPS_PORT, () => {
-        console.log(`🎴 UpDown HTTPS server running at https://localhost:${HTTPS_PORT}`);
-        console.log(`🔒 SSL/TLS encryption enabled`);
-        console.log(`📱 Open your browser to start playing!`);
-        console.log(`\n⚠️  Accept the self-signed certificate warning in your browser`);
-      });
+      httpsServer.listen(HTTPS_PORT);
     } catch (error) {
-      console.error('❌ Failed to start HTTPS server:', error);
-      console.log('📝 Falling back to HTTP only...');
+      // Silently fall back to HTTP only
       await startServers(true);
     }
   }
