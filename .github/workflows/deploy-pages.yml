@@ -51,10 +51,17 @@ jobs:
         run: |
           # Copy game files to root directory
           cp -r qnd/src/public/* .
-          # Ensure index.html is at root
+          # Create index.html in js/ directory for /js route
+          cp index-js.html js/index.html
+          # Create index.html in ts/ directory for /ts route  
+          cp index-ts.html ts/index.html
+          # Verify structure
+          echo "Root index.html:"
           ls -la index.html
-          ls -la js/
-          ls -la ts/
+          echo "JS directory:"
+          ls -la js/index.html
+          echo "TS directory:"
+          ls -la ts/index.html
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
