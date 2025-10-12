@@ -345,8 +345,9 @@ function showHelp(): void {
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[h]${colors.reset} or ${colors.brightGreen}[?]${colors.reset} - Show this help screen`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[s]${colors.reset} - Show server status`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[c]${colors.reset} - Show connected clients`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[r]${colors.reset} - Show recent requests`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[e]${colors.reset} - Show recent requests`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[l]${colors.reset} - Show live request log`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightYellow}[r]${colors.reset} - ${colors.yellow}Rebuild client and restart${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[q]${colors.reset} - Return to this help screen`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightRed}[d]${colors.reset} - ${colors.red}Stop server and exit${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth('', boxWidth)}${colors.brightMagenta}║${colors.reset}`);
@@ -520,7 +521,7 @@ function setupTUI(): void {
         }
         break;
 
-      case 'r':
+      case 'e':
         if (liveLogInterval) {
           clearInterval(liveLogInterval);
           liveLogInterval = null;
