@@ -5,8 +5,9 @@
 > **Quote 0**: "write an ux.spec.md and quote all my ux requirements in chapter one in a table and track which are already realized and do s short code quotea and filename into the table. keep the file up to date with my further quotes. also make this prompt hte entry quote in that new file."
 
 **Status**: ✅ REALIZED  
-**Implementation**: This document  
-**File**: `ux.spec.md`
+**Implementation**: This document with commit SHA tracking  
+**File**: `ux.spec.md`  
+**Commit**: `94423fe` (added SHA column)
 
 ---
 
