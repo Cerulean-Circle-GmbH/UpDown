@@ -61,6 +61,20 @@ interface ClientSession {
 const clientSessions = new Map<string, ClientSession>();
 let totalRequests = 0;
 let serverStartTime = new Date();
+const serverLogs: string[] = [];
+const MAX_LOGS = 1000; // Keep last 1000 log entries
+
+/**
+ * Add a log entry
+ */
+function addLog(message: string): void {
+  const timestamp = new Date().toLocaleTimeString();
+  const logEntry = `[${timestamp}] ${message}`;
+  serverLogs.push(logEntry);
+  if (serverLogs.length > MAX_LOGS) {
+    serverLogs.shift();
+  }
+}
 
 /**
  * Track client session
@@ -69,6 +83,8 @@ function trackClient(req: http.IncomingMessage): void {
   const ip = req.socket.remoteAddress || 'unknown';
   const userAgent = req.headers['user-agent'] || 'unknown';
   const sessionId = `${ip}-${userAgent}`;
+  const url = req.url || '/';
+  const method = req.method || 'GET';
   
   totalRequests++;
   
@@ -81,11 +97,15 @@ function trackClient(req: http.IncomingMessage): void {
       requestCount: 1,
       lastRequest: new Date()
     });
+    addLog(`New client: ${ip}`);
   } else {
     const session = clientSessions.get(sessionId)!;
     session.requestCount++;
     session.lastRequest = new Date();
   }
+  
+  // Log request
+  addLog(`${method} ${url} - ${ip}`);
 }
 
 /**
@@ -212,6 +232,30 @@ function clearScreen(): void {
   process.stdout.write('\x1b[H'); // Move cursor to home
 }
 
+/**
+ * Get available lines for logs based on terminal height and current view
+ */
+function getAvailableLogLines(viewLines: number): number {
+  const terminalHeight = process.stdout.rows || 24;
+  const availableLines = terminalHeight - viewLines - 3; // -3 for spacing
+  return Math.max(5, Math.min(availableLines, 20)); // Between 5 and 20 lines
+}
+
+/**
+ * Display log tail below the current view
+ */
+function displayLogTail(viewLines: number): void {
+  const logLines = getAvailableLogLines(viewLines);
+  const recentLogs = serverLogs.slice(-logLines);
+  
+  console.log('\n─────────────────────── Server Log ────────────────────────');
+  if (recentLogs.length === 0) {
+    console.log('No activity yet...');
+  } else {
+    recentLogs.forEach(log => console.log(log));
+  }
+}
+
 function showHelp(): void {
   clearScreen();
   const uptime = Math.floor((Date.now() - serverStartTime.getTime()) / 1000);
@@ -239,7 +283,9 @@ function showHelp(): void {
   console.log('║    [d] - Stop server and exit                                  ║');
   console.log('║                                                                ║');
   console.log('╚════════════════════════════════════════════════════════════════╝');
-  console.log('\n💡 Press any key to start...\n');
+  console.log('\n💡 Press any key to start...');
+  
+  displayLogTail(20); // Help view is ~20 lines
 }
 
 function showStatus(): void {
@@ -260,7 +306,9 @@ function showStatus(): void {
   console.log(`║  HTTP Port:      ${PORT}                                         `);
   console.log(`║  Public Dir:     ${path.basename(PUBLIC_DIR)}                               `);
   console.log('╚════════════════════════════════════════════════════════════════╝');
-  console.log('\nPress [q] to return to help, [d] to stop server...\n');
+  console.log('\nPress [q] to return to help, [d] to stop server...');
+  
+  displayLogTail(13); // Status view is ~13 lines
 }
 
 function showClients(): void {
@@ -269,8 +317,11 @@ function showClients(): void {
   console.log('║                  👥 Connected Clients                          ║');
   console.log('╠════════════════════════════════════════════════════════════════╣');
   
+  let viewLines = 5; // Header + footer
+  
   if (clientSessions.size === 0) {
     console.log('║  No clients connected yet                                      ║');
+    viewLines += 1;
   } else {
     const sessions = Array.from(clientSessions.values());
     sessions.forEach((session, index) => {
@@ -279,11 +330,14 @@ function showClients(): void {
       console.log(`║    Requests: ${session.requestCount}                                          `);
       console.log(`║    Last: ${session.lastRequest.toLocaleTimeString()}                             `);
       console.log('║                                                                ║');
+      viewLines += 5;
     });
   }
   
   console.log('╚════════════════════════════════════════════════════════════════╝');
-  console.log('\nPress [q] to return to help, [d] to stop server...\n');
+  console.log('\nPress [q] to return to help, [d] to stop server...');
+  
+  displayLogTail(viewLines);
 }
 
 /**
@@ -296,14 +350,26 @@ function setupTUI(): void {
     process.stdin.setRawMode(true);
   }
 
-  let requestLog: string[] = [];
-  let logMode = false;
+  let currentView: 'help' | 'status' | 'clients' | 'live' = 'help';
+  let liveLogInterval: NodeJS.Timeout | null = null;
+
+  // Auto-refresh current view every 2 seconds
+  setInterval(() => {
+    if (currentView === 'help') {
+      showHelp();
+    } else if (currentView === 'status') {
+      showStatus();
+    } else if (currentView === 'clients') {
+      showClients();
+    }
+  }, 2000);
 
   process.stdin.on('keypress', (str, key) => {
     if (!key) return;
 
     // Handle Ctrl+C
     if (key.ctrl && key.name === 'c') {
+      if (liveLogInterval) clearInterval(liveLogInterval);
       console.log('\n\n🛑 Shutting down server (Ctrl+C)...');
       process.exit(0);
     }
@@ -311,6 +377,7 @@ function setupTUI(): void {
     // Handle commands
     switch (key.name) {
       case 'd':
+        if (liveLogInterval) clearInterval(liveLogInterval);
         console.log('\n\n🛑 Shutting down server (pressed [d])...');
         process.exit(0);
         break;
@@ -318,36 +385,66 @@ function setupTUI(): void {
       case 'h':
       case '?':
       case 'q':
-        logMode = false;
+        if (liveLogInterval) {
+          clearInterval(liveLogInterval);
+          liveLogInterval = null;
+        }
+        currentView = 'help';
         showHelp();
         break;
 
       case 's':
-        logMode = false;
+        if (liveLogInterval) {
+          clearInterval(liveLogInterval);
+          liveLogInterval = null;
+        }
+        currentView = 'status';
         showStatus();
         break;
 
       case 'c':
-        logMode = false;
+        if (liveLogInterval) {
+          clearInterval(liveLogInterval);
+          liveLogInterval = null;
+        }
+        currentView = 'clients';
         showClients();
         break;
 
       case 'l':
-        logMode = !logMode;
-        if (logMode) {
+        if (liveLogInterval) {
+          clearInterval(liveLogInterval);
+          liveLogInterval = null;
+          currentView = 'help';
+          showHelp();
+        } else {
+          currentView = 'live';
           clearScreen();
           console.log('📡 Live Request Log (press [q] to exit)...\n');
-        } else {
-          showHelp();
+          
+          // Start live log updates
+          liveLogInterval = setInterval(() => {
+            clearScreen();
+            console.log('📡 Live Request Log (press [q] to exit)...');
+            const terminalHeight = process.stdout.rows || 24;
+            const logLines = terminalHeight - 4;
+            const recentLogs = serverLogs.slice(-logLines);
+            recentLogs.forEach(log => console.log(log));
+          }, 500); // Update every 500ms
         }
         break;
 
       case 'r':
-        logMode = false;
+        if (liveLogInterval) {
+          clearInterval(liveLogInterval);
+          liveLogInterval = null;
+        }
         clearScreen();
-        console.log('📜 Recent Requests:\n');
-        requestLog.slice(-20).forEach(log => console.log(log));
-        console.log('\nPress [q] to return to help...\n');
+        console.log('📜 Recent Requests (last 50):\n');
+        const terminalHeight = process.stdout.rows || 24;
+        const displayLines = Math.min(50, terminalHeight - 5);
+        serverLogs.slice(-displayLines).forEach(log => console.log(log));
+        console.log('\nPress [q] to return to help...');
         break;
 
       default:
@@ -358,23 +455,13 @@ function setupTUI(): void {
     }
   });
 
-  // Log requests in live mode
-  const originalTrack = global.trackClient;
-  // Intercept tracking to show live logs
-  setInterval(() => {
-    if (logMode && totalRequests > 0) {
-      const lastSession = Array.from(clientSessions.values()).pop();
-      if (lastSession) {
-        const logEntry = `[${new Date().toLocaleTimeString()}] ${lastSession.ip} - Request #${lastSession.requestCount}`;
-        requestLog.push(logEntry);
-        if (requestLog.length > 100) requestLog.shift();
-        console.log(logEntry);
-      }
-    }
-  }, 1000);
-
   // Show initial help
   showHelp();
+  
+  // Log server start
+  addLog('🚀 Server started');
+  addLog(`📡 HTTPS: https://localhost:${HTTPS_PORT}`);
+  addLog(`🔄 HTTP redirect: http://localhost:${PORT}`);
 }
 
 /**
