@@ -268,29 +268,11 @@ function clearScreen(): void {
 }
 
 /**
- * Calculate visible string length (without ANSI codes, accounting for wide emojis)
+ * Calculate visible string length (without ANSI codes)
  */
 function visibleLength(str: string): number {
   // Remove ANSI escape codes
-  const cleaned = str.replace(/\x1b\[[0-9;]*m/g, '');
-  
-  // Count character width (emojis and some Unicode chars are 2-wide)
-  let width = 0;
-  for (const char of cleaned) {
-    const code = char.codePointAt(0) || 0;
-    // Most emojis are in these ranges and render as 2 characters wide
-    if (
-      (code >= 0x1F300 && code <= 0x1F9FF) || // Misc Symbols and Pictographs, Emoticons, etc
-      (code >= 0x2600 && code <= 0x26FF) ||   // Misc symbols
-      (code >= 0x2700 && code <= 0x27BF) ||   // Dingbats
-      code === 0xFE0F                          // Variation Selector-16 (emoji presentation)
-    ) {
-      width += 2;
-    } else {
-      width += 1;
-    }
-  }
-  return width;
+  return str.replace(/\x1b\[[0-9;]*m/g, '').length;
 }
 
 /**
@@ -357,7 +339,7 @@ function showHelp(): void {
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.green}Requests:${colors.reset} ${colors.brightYellow}${totalRequests}${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.green}Sessions:${colors.reset} ${colors.brightYellow}${clientSessions.size}${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth('', boxWidth)}${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`  ${colors.brightCyan}⌨️  Keyboard Commands${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}  ${colors.brightCyan}⌨️  Keyboard Commands${colors.reset}                                        ${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth('', boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[h]${colors.reset} or ${colors.brightGreen}[?]${colors.reset} - Show this help screen`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[s]${colors.reset} - Show server status`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
