@@ -343,7 +343,7 @@ export class PlayerNotification extends LitElement {
           if (data.players && Array.isArray(data.players)) {
             this.players = data.players.map((p: any) => ({
               ...p,
-              avatarUrl: `https://thispersondoesnotexist.com/?${Date.now()}-${p.playerId}`
+              avatarUrl: this.generateUniqueAvatar(p.playerId)
             }));
             
             // Show dock if there are other players
@@ -374,10 +374,22 @@ export class PlayerNotification extends LitElement {
     };
   }
 
+  private generateUniqueAvatar(playerId: string): string {
+    // Use DiceBear API to generate unique, fun avatars based on player ID
+    // Available styles: adventurer, avataaars, big-ears, bottts, fun-emoji, lorelei, micah, personas
+    const styles = ['adventurer', 'avataaars', 'big-ears', 'bottts', 'fun-emoji', 'lorelei', 'micah', 'personas'];
+    
+    // Pick a style based on player ID for variety
+    const styleIndex = playerId.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    const style = styles[styleIndex % styles.length];
+    
+    // Use player ID as seed to ensure same player always gets same avatar
+    return `https://api.dicebear.com/7.x/${style}/svg?seed=${encodeURIComponent(playerId)}`;
+  }
+
   private handlePlayerJoined(data: { playerId: string; playerIp: string; timestamp: number }) {
-    // Generate a random avatar from thispersondoesnotexist.com
-    // Add timestamp to prevent caching
-    const avatarUrl = `https://thispersondoesnotexist.com/?${Date.now()}-${data.playerId}`;
+    // Generate a unique avatar based on player ID
+    const avatarUrl = this.generateUniqueAvatar(data.playerId);
     
     // Add to players list
     const player: Player = {
