@@ -913,6 +913,7 @@ export class GameBoard extends LitElement {
     document.addEventListener('keydown', (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
       
+      // Start/Stop game
       if (key === 'u') {
         if (!this.isGameActive) {
           e.preventDefault();
@@ -926,6 +927,20 @@ export class GameBoard extends LitElement {
           e.preventDefault();
           this._stopGame();
           this._showKeyboardHint('🛑 Game Down! Stopping...');
+        }
+      }
+      
+      // Arrow keys for gameplay (only when game is active and not disabled)
+      if (this.isGameActive && !this.game.gameOver) {
+        if (key === 'arrowup') {
+          e.preventDefault();
+          this._handleGuess({detail: {guess: 'up'}});
+        } else if (key === 'arrowdown') {
+          e.preventDefault();
+          this._handleGuess({detail: {guess: 'down'}});
+        } else if (key === 'arrowleft' || key === 'arrowright') {
+          e.preventDefault();
+          this._handleGuess({detail: {guess: 'equal'}});
         }
       }
     });

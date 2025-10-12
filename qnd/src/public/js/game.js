@@ -186,6 +186,20 @@ class GameUI {
           this.showKeyboardHint('🛑 Game Down! Stopping...');
         }
       }
+      
+      // Arrow keys for gameplay (only when game is active and not game over)
+      if (this.isGameActive && !this.game.gameOver) {
+        if (key === 'arrowup') {
+          e.preventDefault();
+          this.makeGuess('up');
+        } else if (key === 'arrowdown') {
+          e.preventDefault();
+          this.makeGuess('down');
+        } else if (key === 'arrowleft' || key === 'arrowright') {
+          e.preventDefault();
+          this.makeGuess('equal');
+        }
+      }
     });
   }
 
