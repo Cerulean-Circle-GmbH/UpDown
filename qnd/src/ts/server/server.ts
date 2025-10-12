@@ -347,6 +347,7 @@ function showHelp(): void {
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[c]${colors.reset} - Show connected clients`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[e]${colors.reset} - Show recent requests`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[l]${colors.reset} - Show live request log`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightCyan}[p]${colors.reset} - ${colors.cyan}Open browser (play game)${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightYellow}[r]${colors.reset} - ${colors.yellow}Rebuild client and restart${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[q]${colors.reset} - Return to this help screen`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightRed}[d]${colors.reset} - ${colors.red}Stop server and exit${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
@@ -547,6 +548,43 @@ function setupTUI(): void {
           console.log(coloredLog);
         });
         console.log(`\n${colors.dim}Press ${colors.brightGreen}[q]${colors.reset}${colors.dim} to return to help...${colors.reset}`);
+        break;
+
+      case 'p':
+        if (liveLogInterval) {
+          clearInterval(liveLogInterval);
+          liveLogInterval = null;
+        }
+        clearScreen();
+        console.log(`${colors.brightCyan}🌐 Opening browser...${colors.reset}\n`);
+        
+        try {
+          const url = `https://localhost:${HTTPS_PORT}/ts`;
+          let openCommand = '';
+          
+          if (process.platform === 'darwin') {
+            openCommand = `open "${url}"`;
+          } else if (process.platform === 'linux') {
+            openCommand = `xdg-open "${url}" || sensible-browser "${url}"`;
+          } else if (process.platform === 'win32') {
+            openCommand = `start "${url}"`;
+          }
+          
+          if (openCommand) {
+            await execAsync(openCommand);
+            console.log(`${colors.brightGreen}✅ Browser opened: ${colors.brightBlue}${url}${colors.reset}\n`);
+            addLog(`🌐 Browser opened: ${url}`);
+          } else {
+            console.log(`${colors.brightYellow}⚠️  Platform not supported for auto-open${colors.reset}\n`);
+            console.log(`${colors.dim}Manually open: ${colors.brightBlue}${url}${colors.reset}\n`);
+          }
+          
+          console.log(`${colors.dim}Press ${colors.brightGreen}[q]${colors.reset}${colors.dim} to return to help...${colors.reset}\n`);
+        } catch (error: any) {
+          console.log(`${colors.brightRed}❌ Failed to open browser${colors.reset}\n`);
+          console.log(`${colors.dim}Manually open: ${colors.brightBlue}https://localhost:${HTTPS_PORT}/ts${colors.reset}\n`);
+          console.log(`${colors.dim}Press ${colors.brightGreen}[q]${colors.reset}${colors.dim} to return to help...${colors.reset}\n`);
+        }
         break;
 
       case 'r':
