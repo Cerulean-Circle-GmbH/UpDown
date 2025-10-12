@@ -436,7 +436,7 @@ function setupTUI(): void {
     }
   }, 2000);
 
-  process.stdin.on('keypress', (str, key) => {
+  process.stdin.on('keypress', async (str, key) => {
     if (!key) return;
 
     // Handle Ctrl+C
