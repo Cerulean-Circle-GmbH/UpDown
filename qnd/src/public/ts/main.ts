@@ -1,8 +1,8 @@
 /**
- * Main entry point - TypeScript ESM version
+ * Main entry point - TypeScript ESM version with Lit web components
  */
 
-import { GameUI } from './GameUI.ts';
+import './components/game-board.ts';
 
 // PWA Install Prompt Handler
 let deferredInstallPrompt: any = null;
@@ -102,11 +102,9 @@ if ('serviceWorker' in navigator) {
 // Initialize game when DOM is loaded
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    new GameUI();
-    console.log('🎴 TypeScript ESM version initialized');
+    console.log('🎴 TypeScript Lit web components version initialized');
   });
 } else {
-  new GameUI();
-  console.log('🎴 TypeScript ESM version initialized');
+  console.log('🎴 TypeScript Lit web components version initialized');
 }
 
