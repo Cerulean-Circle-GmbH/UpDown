@@ -399,12 +399,16 @@ function setupTUI(): void {
  * Main entry point
  */
 async function main(): Promise<void> {
-  console.log('🚀 Starting UpDown Game Server (TypeScript ESM)...\n');
-  
+  // Generate certificates silently
   const hasSSL = await generateCertificate();
+  
+  // Start servers silently
   await startServers(!hasSSL);
   
-  // Setup TUI after servers start
+  // Wait a brief moment for servers to be ready
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  // Setup TUI - this takes over the terminal completely
   setupTUI();
 }
 
