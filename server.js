@@ -100,10 +100,9 @@ function startServers(httpOnly = false) {
   // HTTP server (redirects to HTTPS if available)
   const httpServer = http.createServer((req, res) => {
     if (!httpOnly) {
-      // Redirect to HTTPS using the request's Host header
-      const host = req.headers.host ? req.headers.host.replace(/:\d+$/, '') : 'localhost';
+      // Redirect to HTTPS
       res.writeHead(301, { 
-        'Location': `https://${host}:${HTTPS_PORT}${req.url}` 
+        'Location': `https://localhost:${HTTPS_PORT}${req.url}` 
       });
       res.end();
     } else {
