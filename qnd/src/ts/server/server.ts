@@ -23,7 +23,7 @@ const __dirname = path.dirname(__filename);
 // Configuration
 const PORT = 3000;
 const HTTPS_PORT = 3443;
-const PUBLIC_DIR = path.join(__dirname, 'public');
+const PUBLIC_DIR = path.join(__dirname, '../../public');
 const CERT_DIR = path.join(__dirname, '.certs');
 const CERT_FILE = path.join(CERT_DIR, 'cert.pem');
 const KEY_FILE = path.join(CERT_DIR, 'key.pem');

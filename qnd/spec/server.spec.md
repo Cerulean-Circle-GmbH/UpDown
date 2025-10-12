@@ -179,41 +179,40 @@ npm run stop
 ### File Structure
 
 ```
-UpDown.fast/
-├── server.ts              # ✅ Modern TypeScript ESM HTTPS server
-├── server.spec.md         # 📄 Server documentation
-├── ux.spec.md             # 📄 UX requirements tracking
-├── updown.sh              # 🚀 Launch script (npm start)
-├── stop.sh                # 🛑 Stop script (npm run stop)
-├── generate-icons.sh      # 🎨 Icon generator
-├── package.json           # 📦 Dependencies & scripts
-├── tsconfig.json          # ⚙️ TypeScript configuration
-├── .gitignore             # 🚫 Ignore certs, node_modules
+qnd/
+├── spec/                   # 📄 Documentation & Specifications
+│   ├── README.md           # Project documentation
+│   ├── server.spec.md      # Server documentation (this file)
+│   └── ux.spec.md          # UX requirements tracking
 │
-├── .certs/                # 🔐 SSL certificates (auto-generated, gitignored)
-│   ├── cert.pem          # Self-signed certificate
-│   └── key.pem           # Private key
+├── src/                    # 💻 Source Code
+│   ├── ts/                 # TypeScript
+│   │   └── server/         # ✅ HTTPS Server
+│   │       ├── server.ts   # Main server file
+│   │       └── .certs/     # 🔐 SSL certificates (auto-generated, gitignored)
+│   │           ├── cert.pem
+│   │           └── key.pem
+│   │
+│   ├── public/             # 🎮 Frontend (served static via HTTPS)
+│   │   ├── index.html      # Main HTML
+│   │   ├── game.js         # Game logic (plain JS)
+│   │   ├── styles.css      # Responsive styles
+│   │   ├── manifest.json   # PWA manifest
+│   │   ├── sw.js           # Service worker
+│   │   ├── icon.svg        # Source icon
+│   │   ├── icon-192.png    # App icon 192x192
+│   │   └── icon-512.png    # App icon 512x512
+│   │
+│   ├── sh/                 # 🚀 Shell Scripts
+│   │   ├── updown.sh       # Start script (npm start)
+│   │   ├── stop.sh         # Stop script (npm run stop)
+│   │   └── generate-icons.sh  # Icon generator
+│   │
+│   └── js/                 # JavaScript (reserved for future use)
 │
-├── public/                # 🎮 Game frontend (served via HTTPS)
-│   ├── index.html         # Main HTML
-│   ├── game.js            # Game logic (plain JS)
-│   ├── styles.css         # Responsive styles
-│   ├── manifest.json      # PWA manifest
-│   ├── sw.js              # Service worker
-│   ├── icon.svg           # Source icon
-│   ├── icon-192.png       # App icon 192x192
-│   └── icon-512.png       # App icon 512x512
-│
-├── src/shared/            # ♠️ Shared game models (TypeScript)
-│   ├── Card.ts            # Card class & deck logic
-│   ├── GameModel.ts       # Game state & logic
-│   ├── Player.ts          # Player class
-│   ├── Lobby.ts           # Multiplayer lobby
-│   └── Scenario.ts        # Game scenarios
-│
-├── docs/                  # 📚 Documentation
-├── devops/                # 🐳 DevOps scripts
-└── sprints/               # 📋 Sprint planning
+├── package.json            # 📦 Dependencies & scripts
+├── tsconfig.json           # ⚙️ TypeScript configuration
+└── .gitignore              # 🚫 Ignore certs, node_modules
 ```
 
 ---

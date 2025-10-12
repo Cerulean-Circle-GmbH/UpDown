@@ -20,27 +20,35 @@ npm run stop
 
 ```
 qnd/
-├── server.ts              # ✅ TypeScript ESM HTTPS server
-├── server.spec.md         # 📄 Server documentation
-├── ux.spec.md             # 📄 UX requirements tracking
-├── updown.sh              # 🚀 Launch script
-├── stop.sh                # 🛑 Stop script
-├── generate-icons.sh      # 🎨 Icon generator
-├── package.json           # 📦 Dependencies & scripts
-├── tsconfig.json          # ⚙️ TypeScript config
-├── .gitignore             # 🚫 Ignored files
+├── spec/                   # 📄 Documentation & Specifications
+│   ├── README.md           # This file
+│   ├── server.spec.md      # Server documentation
+│   └── ux.spec.md          # UX requirements tracking
 │
-├── .certs/                # 🔐 SSL certificates (auto-generated)
-│   ├── cert.pem
-│   └── key.pem
+├── src/                    # 💻 Source Code
+│   ├── ts/                 # TypeScript
+│   │   └── server/         # HTTPS Server
+│   │       ├── server.ts   # Main server file
+│   │       └── .certs/     # SSL certificates (auto-generated)
+│   │
+│   ├── public/             # 🎮 Frontend (served static)
+│   │   ├── index.html
+│   │   ├── game.js         # Game logic
+│   │   ├── styles.css
+│   │   ├── manifest.json   # PWA manifest
+│   │   ├── sw.js           # Service worker
+│   │   └── icons/
+│   │
+│   ├── sh/                 # Shell Scripts
+│   │   ├── updown.sh       # Start script
+│   │   ├── stop.sh         # Stop script
+│   │   └── generate-icons.sh
+│   │
+│   └── js/                 # JavaScript (reserved for future use)
 │
-└── public/                # 🎮 Game frontend
-    ├── index.html
-    ├── game.js
-    ├── styles.css
-    ├── manifest.json      # PWA manifest
-    ├── sw.js              # Service worker
-    └── icons/
+├── package.json            # Dependencies & scripts
+├── tsconfig.json           # TypeScript configuration
+└── .gitignore              # Ignored files
 ```
 
 ## 🎮 Features
@@ -57,6 +65,7 @@ qnd/
 - Self-signed SSL certificate (auto-generated on first run)
 - HTTPS on port 3443, HTTP redirect on port 3000
 - Accept certificate warning in browser on first visit
+- Certificates stored in `src/ts/server/.certs/`
 
 ## 📱 Mobile
 
@@ -67,8 +76,8 @@ qnd/
 
 ## 📚 Documentation
 
-- **Server**: See `server.spec.md`
-- **UX**: See `ux.spec.md`
+- **Server**: See `spec/server.spec.md`
+- **UX**: See `spec/ux.spec.md`
 
 ## 🛠️ Tech Stack
 
@@ -77,6 +86,20 @@ qnd/
 - **Server**: HTTPS with self-signed cert
 - **PWA**: Service Worker + Manifest
 - **Execution**: tsx (TypeScript runner)
+
+## 🔧 Development
+
+**Watch mode** (auto-reload on changes):
+```bash
+npm run dev
+```
+
+## 📝 File Paths
+
+- **Server**: `src/ts/server/server.ts`
+- **Frontend**: `src/public/`
+- **Scripts**: `src/sh/`
+- **Specs**: `spec/`
 
 ---
 

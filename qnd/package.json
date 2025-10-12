@@ -1,26 +1,14 @@
 {
-  "name": "updown",
-  "version": "0.1.0",
+  "name": "updown-qnd",
+  "version": "0.3.0",
+  "description": "UpDown Card Game - Quick & Dirty Prototype",
   "type": "module",
-  "main": "src/server/index.ts",
   "scripts": {
-    "start": "bash ./updown.sh",
-    "stop": "bash ./stop.sh",
-    "start:server": "bun src/server/index.ts",
-    "start:client": "bun src/client/index.ts",
-    "build": "tsc",
-    "docker:build": "bash ./devops/docker-build.sh",
-    "docker:check": "bash ./devops/docker-check.sh",
-    "docker:run": "bash ./devops/docker-run.sh",
-    "docker:status": "bash ./devops/docker-status.sh",
-    "docker:stop": "bash ./devops/docker-stop.sh",
-    "docker:clean": "bash ./devops/docker-clean.sh",
-    "docker:allcheck": "bash ./devops/docker-allcheck.sh"
+    "start": "bash ./src/sh/updown.sh",
+    "stop": "bash ./src/sh/stop.sh",
+    "dev": "tsx watch src/ts/server/server.ts"
   },
-  "devDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "bun-types": "^1.0.0"
-  }
+  "keywords": ["card-game", "pwa", "https"],
+  "author": "Web4Games",
+  "license": "MIT"
 }

@@ -15,8 +15,8 @@ lsof -ti:$PORT | xargs kill -9 2>/dev/null
 lsof -ti:$HTTP_PORT | xargs kill -9 2>/dev/null
 
 # Start the TypeScript ESM HTTPS server in the background
-cd "$(dirname "$0")"
-npx -y tsx server.ts > /dev/null 2>&1 &
+cd "$(dirname "$0")/../.."
+npx -y tsx src/ts/server/server.ts > /dev/null 2>&1 &
 SERVER_PID=$!
 
 # Wait a moment for server to start
