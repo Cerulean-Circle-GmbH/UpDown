@@ -4,10 +4,10 @@
 
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { GameModel, PlayerGuess } from '../GameModel.ts';
-import './game-card.ts';
-import './game-stats.ts';
-import './game-controls.ts';
+import { GameModel, PlayerGuess } from '../GameModel.js';
+import './game-card.js';
+import './game-stats.js';
+import './game-controls.js';
 
 @customElement('game-board')
 export class GameBoard extends LitElement {
@@ -247,7 +247,7 @@ export class GameBoard extends LitElement {
             .round=${this.game.round}
             .score=${this.game.score}
             .streak=${this.game.streak}
-            .cardsLeft=${this.game.deck.length}
+            .cardsLeft=${this.game.cardsLeft}
           ></game-stats>
         </header>
 

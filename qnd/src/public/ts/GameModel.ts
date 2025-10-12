@@ -2,7 +2,7 @@
  * GameModel - Core game logic and state management
  */
 
-import { Card } from './Card.ts';
+import { Card } from './Card.js';
 
 export type GamePhase = 'ready' | 'playing' | 'game_over';
 export type PlayerGuess = 'up' | 'down' | 'equal';
@@ -23,6 +23,13 @@ export class GameModel {
   public phase: GamePhase = 'ready';
   public gameOver: boolean = false;
   public lastResult: boolean | null = null;
+
+  /**
+   * Get number of cards remaining in deck
+   */
+  get cardsLeft(): number {
+    return this.deck.length;
+  }
 
   /**
    * Start a new game

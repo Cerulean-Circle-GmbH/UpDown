@@ -4,7 +4,9 @@
   "description": "UpDown Card Game - Quick & Dirty Prototype",
   "type": "module",
   "scripts": {
-    "start": "bash ./src/sh/updown.sh",
+    "build": "tsc --project tsconfig.client.json",
+    "build:watch": "tsc --project tsconfig.client.json --watch",
+    "start": "npm run build && bash ./src/sh/updown.sh",
     "stop": "bash ./src/sh/stop.sh",
     "dev": "tsx watch src/ts/server/server.ts"
   },
@@ -15,6 +17,7 @@
     "lit": "^3.1.0"
   },
   "devDependencies": {
-    "tsx": "^4.19.2"
+    "tsx": "^4.19.2",
+    "typescript": "^5.3.3"
   }
 }

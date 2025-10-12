@@ -2,7 +2,7 @@
  * Main entry point - TypeScript ESM version with Lit web components
  */
 
-import './components/game-board.ts';
+import './components/game-board.js';
 
 // PWA Install Prompt Handler
 let deferredInstallPrompt: any = null;

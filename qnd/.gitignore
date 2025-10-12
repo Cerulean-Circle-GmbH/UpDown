@@ -4,6 +4,7 @@ package-lock.json
 
 # Build output
 dist/
+src/public/ts-build/
 *.js.map
 
 # SSL Certificates

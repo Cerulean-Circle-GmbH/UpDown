@@ -4,7 +4,7 @@
 
 import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { Card as CardModel, Suit } from '../Card.ts';
+import { Card as CardModel, Suit } from '../Card.js';
 
 @customElement('game-card')
 export class GameCard extends LitElement {
