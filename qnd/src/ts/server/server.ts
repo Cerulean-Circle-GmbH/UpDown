@@ -250,8 +250,11 @@ function setupWebSocketServer(server: https.Server): void {
     const connectedAt = Date.now();
     
     // Generate a unique avatar URL for this player session
-    // Each call to thispersondoesnotexist.com generates a new image
-    const avatarUrl = `https://thispersondoesnotexist.com/?${clientId}`;
+    // Use DiceBear API with clientId as seed for truly unique avatars
+    const styles = ['adventurer', 'avataaars', 'big-ears', 'bottts', 'fun-emoji', 'lorelei', 'micah', 'personas'];
+    const styleIndex = clientId.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    const style = styles[styleIndex % styles.length];
+    const avatarUrl = `https://api.dicebear.com/7.x/${style}/svg?seed=${encodeURIComponent(clientId)}`;
     
     const client: WebSocketClient = { ws, id: clientId, ip, connectedAt, avatarUrl };
     wsClients.add(client);
