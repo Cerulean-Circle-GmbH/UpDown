@@ -26,9 +26,8 @@ export class GameStats extends LitElement {
 
     .stats {
       display: flex;
-      gap: 1.5rem;
-      justify-content: center;
-      align-items: center;
+      justify-content: space-around;
+      gap: 5px;
       flex-wrap: wrap;
     }
 
@@ -36,70 +35,37 @@ export class GameStats extends LitElement {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.25rem;
-      padding: 0.5rem 1rem;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      backdrop-filter: blur(10px);
-      min-width: 80px;
+      min-width: 60px;
     }
 
     .stat-label {
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.7);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: 500;
+      font-size: 0.65rem;
+      opacity: 0.9;
+      margin-bottom: 2px;
     }
 
     .stat-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: white;
-      line-height: 1;
-    }
-
-    .stat.highlight {
-      background: rgba(255, 255, 255, 0.2);
-      animation: pulse 0.5s ease;
-    }
-
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
+      font-size: 1rem;
+      font-weight: bold;
     }
 
     @media (max-width: 768px) {
-      .stats {
-        gap: 1rem;
-      }
-
-      .stat {
-        min-width: 70px;
-        padding: 0.4rem 0.8rem;
-      }
-
       .stat-label {
-        font-size: 0.65rem;
+        font-size: 0.7rem;
       }
 
       .stat-value {
-        font-size: 1.25rem;
+        font-size: 1.2rem;
       }
     }
 
     @media (max-width: 480px) {
       .stats {
-        gap: 0.5rem;
+        gap: 3px;
       }
 
       .stat {
-        min-width: 60px;
-        padding: 0.3rem 0.6rem;
+        min-width: 50px;
       }
 
       .stat-label {
@@ -107,7 +73,43 @@ export class GameStats extends LitElement {
       }
 
       .stat-value {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (orientation: landscape) {
+      .stats {
+        gap: 8px;
+      }
+
+      .stat {
+        min-width: 70px;
+      }
+
+      .stat-label {
+        font-size: 0.65rem;
+      }
+
+      .stat-value {
         font-size: 1rem;
+      }
+    }
+
+    @media (orientation: landscape) and (max-height: 500px) {
+      .stats {
+        gap: 5px;
+      }
+
+      .stat {
+        min-width: 55px;
+      }
+
+      .stat-label {
+        font-size: 0.55rem;
+      }
+
+      .stat-value {
+        font-size: 0.85rem;
       }
     }
   `;

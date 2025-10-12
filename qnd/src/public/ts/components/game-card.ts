@@ -19,79 +19,72 @@ export class GameCard extends LitElement {
       display: block;
     }
 
-    .card {
+    .card-slot {
       width: 120px;
       height: 168px;
-      background: white;
       border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 4rem;
-      font-weight: bold;
-      position: relative;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
-    }
-
-    .card:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-    }
-
-    .card-back {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
       font-size: 3rem;
+      font-weight: bold;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .card-slot.empty {
+      background: #f0f0f0;
+      border: 3px dashed #ccc;
+    }
+
+    .card-slot.card {
+      background: white;
+      border: 3px solid #333;
+    }
+
+    .card-slot.red {
+      color: #e74c3c;
+    }
+
+    .card-slot.black {
+      color: #2c3e50;
     }
 
     .card-value {
       font-size: 3rem;
-      line-height: 1;
     }
 
     .card-suit {
       font-size: 2rem;
-      margin-top: 0.5rem;
+      margin-top: -8px;
     }
 
-    .hearts, .diamonds {
-      color: #e53e3e;
+    .card-back {
+      font-size: 4rem;
+      color: #999;
     }
 
-    .spades, .clubs {
-      color: #2d3748;
+    .card-slot.flip-in {
+      animation: flipIn 0.5s ease;
     }
 
-    .card.empty {
-      background: rgba(255, 255, 255, 0.1);
-      border: 2px dashed rgba(255, 255, 255, 0.3);
-      box-shadow: none;
-    }
-
-    @media (max-width: 768px) {
-      .card {
-        width: 100px;
-        height: 140px;
-        font-size: 3rem;
+    @keyframes flipIn {
+      0% {
+        transform: rotateY(90deg) scale(0.8);
+        opacity: 0;
       }
-
-      .card-value {
-        font-size: 2.5rem;
-      }
-
-      .card-suit {
-        font-size: 1.5rem;
+      100% {
+        transform: rotateY(0) scale(1);
+        opacity: 1;
       }
     }
 
     @media (max-width: 480px) {
-      .card {
+      .card-slot {
         width: 70px;
         height: 98px;
-        font-size: 2rem;
       }
 
       .card-value {
@@ -101,32 +94,73 @@ export class GameCard extends LitElement {
       .card-suit {
         font-size: 1.2rem;
       }
+
+      .card-back {
+        font-size: 2.2rem;
+      }
+    }
+
+    @media (orientation: landscape) {
+      .card-slot {
+        width: 90px;
+        height: 126px;
+      }
+
+      .card-value {
+        font-size: 2.5rem;
+      }
+
+      .card-suit {
+        font-size: 1.6rem;
+      }
+
+      .card-back {
+        font-size: 3rem;
+      }
+    }
+
+    @media (orientation: landscape) and (max-height: 500px) {
+      .card-slot {
+        width: 70px;
+        height: 98px;
+      }
+
+      .card-value {
+        font-size: 2rem;
+      }
+
+      .card-suit {
+        font-size: 1.3rem;
+      }
+
+      .card-back {
+        font-size: 2.5rem;
+      }
     }
   `;
 
   render() {
     if (!this.card) {
-      return html`<div class="card empty"></div>`;
+      return html`<div class="card-slot empty"></div>`;
     }
 
     if (this.faceDown) {
-      return html`<div class="card card-back">?</div>`;
+      return html`
+        <div class="card-slot empty">
+          <div class="card-back">?</div>
+        </div>
+      `;
     }
 
-    const suitClass = this.getSuitClass(this.card.suit);
+    const colorClass = this.card.getColor();
     const displayValue = this.card.getDisplayValue();
 
     return html`
-      <div class="card ${suitClass}">
+      <div class="card-slot card ${colorClass} flip-in">
         <div class="card-value">${displayValue}</div>
         <div class="card-suit">${this.card.suit}</div>
       </div>
     `;
-  }
-
-  private getSuitClass(suit: Suit): string {
-    if (suit === '♥' || suit === '♦') return 'hearts';
-    return 'spades';
   }
 }
 

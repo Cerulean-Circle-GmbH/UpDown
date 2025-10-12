@@ -38,23 +38,20 @@ export class GameControls extends LitElement {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.5rem;
-      padding: 1.5rem 2rem;
-      font-size: 1rem;
-      font-weight: 600;
+      padding: 15px 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
       border: none;
-      border-radius: 16px;
+      border-radius: 12px;
       cursor: pointer;
       transition: all 0.3s ease;
-      background: rgba(255, 255, 255, 0.95);
-      color: #2d3748;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      min-width: 120px;
+      min-width: 90px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
 
     .choice-btn:hover:not(:disabled) {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     }
 
     .choice-btn:active:not(:disabled) {
@@ -66,100 +63,152 @@ export class GameControls extends LitElement {
       cursor: not-allowed;
     }
 
-    .choice-btn.up-btn {
-      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-      color: white;
-    }
-
-    .choice-btn.down-btn {
-      background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
-      color: white;
-    }
-
-    .choice-btn.equal-btn {
-      background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
-      color: white;
-    }
-
     .choice-icon {
       font-size: 2rem;
-      line-height: 1;
+      margin-bottom: 5px;
     }
 
     .choice-label {
-      font-size: 1rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      font-size: 0.9rem;
+    }
+
+    .down-btn {
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+    }
+
+    .equal-btn {
+      background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+      color: white;
+    }
+
+    .up-btn {
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: white;
     }
 
     .start-btn {
-      padding: 1rem 2.5rem;
-      font-size: 1.25rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
       color: white;
       border: none;
-      border-radius: 16px;
+      border-radius: 30px;
       cursor: pointer;
-      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
       transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
 
     .start-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
 
     .keyboard-shortcuts {
+      margin-top: 8px;
+      color: #666;
+      font-size: 0.75rem;
       text-align: center;
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 0.875rem;
-      margin-top: 0.5rem;
     }
 
     kbd {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
+      background: #f4f4f4;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      padding: 2px 6px;
       font-family: monospace;
-      font-weight: 600;
-    }
-
-    @media (max-width: 768px) {
-      .choice-btn {
-        padding: 1.25rem 1.5rem;
-        min-width: 100px;
-      }
-
-      .choice-icon {
-        font-size: 1.75rem;
-      }
-
-      .choice-label {
-        font-size: 0.9rem;
-      }
-
-      .start-btn {
-        padding: 0.875rem 2rem;
-        font-size: 1.1rem;
-      }
+      font-weight: bold;
+      font-size: 0.75rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     @media (max-width: 480px) {
       .choices {
-        gap: 0.75rem;
+        gap: 4px;
       }
 
       .choice-btn {
-        padding: 1rem 1.25rem;
+        min-width: 65px;
+        padding: 8px 10px;
+        font-size: 0.65rem;
+      }
+
+      .choice-icon {
+        font-size: 1.3rem;
+        margin-bottom: 2px;
+      }
+
+      .choice-label {
+        font-size: 0.65rem;
+      }
+
+      .start-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+
+      .keyboard-shortcuts {
+        font-size: 0.55rem;
+        margin-top: 5px;
+      }
+
+      kbd {
+        font-size: 0.55rem;
+        padding: 1px 3px;
+      }
+    }
+
+    @media (orientation: landscape) {
+      .choices {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      /* Reverse button order in landscape: Higher at top, Lower at bottom */
+      .choices .up-btn {
+        order: 1;
+      }
+
+      .choices .equal-btn {
+        order: 2;
+      }
+
+      .choices .down-btn {
+        order: 3;
+      }
+
+      .choice-btn {
+        min-width: 100px;
+        padding: 12px 18px;
+      }
+
+      .start-btn {
+        padding: 10px 25px;
+        font-size: 1rem;
+      }
+
+      .keyboard-shortcuts {
+        font-size: 0.65rem;
+        margin-top: 5px;
+      }
+
+      kbd {
+        font-size: 0.65rem;
+        padding: 1px 4px;
+      }
+    }
+
+    @media (orientation: landscape) and (max-height: 500px) {
+      .choice-btn {
         min-width: 80px;
+        padding: 8px 12px;
+        font-size: 0.75rem;
       }
 
       .choice-icon {
         font-size: 1.5rem;
+        margin-bottom: 3px;
       }
 
       .choice-label {
@@ -167,33 +216,18 @@ export class GameControls extends LitElement {
       }
 
       .start-btn {
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
-      }
-    }
-
-    @media (orientation: landscape) and (max-height: 600px) {
-      .choices {
-        flex-direction: column;
-        gap: 0.5rem;
+        padding: 8px 20px;
+        font-size: 0.85rem;
       }
 
-      .choice-btn {
-        flex-direction: row;
-        padding: 0.75rem 1.5rem;
-        min-width: 200px;
+      .keyboard-shortcuts {
+        font-size: 0.55rem;
+        margin-top: 3px;
       }
 
-      .up-btn {
-        order: 1;
-      }
-
-      .equal-btn {
-        order: 2;
-      }
-
-      .down-btn {
-        order: 3;
+      kbd {
+        font-size: 0.55rem;
+        padding: 1px 3px;
       }
     }
   `;
