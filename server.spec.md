@@ -25,13 +25,18 @@
 ### Server Stack
 
 #### Core Components
-- **Runtime**: Node.js (built-in modules only, no external dependencies)
+- **Runtime**: Node.js (built-in modules only)
+- **Language**: TypeScript with ES Modules (ESM)
 - **Protocol**: HTTPS with TLS 1.2+
 - **Ports**: 3443 (HTTPS), 3000 (HTTP redirect)
 - **Certificate**: Self-signed (OpenSSL)
+- **Execution**: tsx (TypeScript executor)
 
 #### Server Features
-1. **HTTPS Server** (`server.js`)
+1. **HTTPS Server** (`server.ts`)
+   - Modern TypeScript with ES Modules (ESM)
+   - Async/await throughout
+   - Full type safety
    - Self-signed SSL certificate generation
    - Automatic HTTP → HTTPS redirect
    - Static file serving from `public/` directory
@@ -65,17 +70,19 @@
 
 ### HTTPS Configuration
 
-```javascript
+```typescript
 // Self-signed certificate with OpenSSL
 openssl req -x509 -newkey rsa:2048 -nodes -sha256 -days 365 \
   -keyout .certs/key.pem -out .certs/cert.pem \
   -subj "/CN=localhost"
 
-// Node.js HTTPS server
-const options = {
-  key: fs.readFileSync('.certs/key.pem'),
-  cert: fs.readFileSync('.certs/cert.pem')
-};
+// TypeScript ESM HTTPS server
+const [key, cert] = await Promise.all([
+  fs.readFile(KEY_FILE, 'utf-8'),
+  fs.readFile(CERT_FILE, 'utf-8')
+]);
+
+const options: https.ServerOptions = { key, cert };
 https.createServer(options, handleRequest).listen(3443);
 ```
 
@@ -173,7 +180,7 @@ npm run stop
 
 ```
 UpDown.fast/
-├── server.js              # Node.js HTTPS server
+├── server.ts              # TypeScript ESM HTTPS server
 ├── updown.sh              # Launch script
 ├── stop.sh                # Stop script
 ├── generate-icons.sh      # Icon generator
@@ -305,6 +312,7 @@ window.matchMedia('(display-mode: standalone)').matches
 | Date | Version | Changes | Commit |
 |------|---------|---------|--------|
 | 2025-10-12 | 0.2.0 | Initial HTTPS server with PWA support | `846ab48` |
+| 2025-10-12 | 0.3.0 | Migrated to TypeScript ESM with modern Node.js features | TBD |
 
 ---
 
