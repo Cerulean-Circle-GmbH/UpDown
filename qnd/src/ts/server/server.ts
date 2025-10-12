@@ -225,11 +225,46 @@ async function startServers(httpOnly: boolean = false): Promise<void> {
 }
 
 /**
+ * ANSI Color Codes
+ */
+const colors = {
+  reset: '\x1b[0m',
+  bright: '\x1b[1m',
+  dim: '\x1b[2m',
+  
+  // Foreground colors
+  black: '\x1b[30m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
+  white: '\x1b[37m',
+  
+  // Bright foreground colors
+  brightBlack: '\x1b[90m',
+  brightRed: '\x1b[91m',
+  brightGreen: '\x1b[92m',
+  brightYellow: '\x1b[93m',
+  brightBlue: '\x1b[94m',
+  brightMagenta: '\x1b[95m',
+  brightCyan: '\x1b[96m',
+  brightWhite: '\x1b[97m',
+  
+  // Background colors
+  bgBlack: '\x1b[40m',
+  bgBlue: '\x1b[44m',
+  bgMagenta: '\x1b[45m',
+  bgCyan: '\x1b[46m'
+};
+
+/**
  * Terminal UI (TUI) functions
  */
 function clearScreen(): void {
   console.clear();
-  process.stdout.write('\x1b[H'); // Move cursor to home
+  process.stdout.write('\x1b[H\x1b[2J'); // Clear screen and move to home
 }
 
 /**
@@ -248,11 +283,26 @@ function displayLogTail(viewLines: number): void {
   const logLines = getAvailableLogLines(viewLines);
   const recentLogs = serverLogs.slice(-logLines);
   
-  console.log('\n─────────────────────── Server Log ────────────────────────');
+  console.log(`\n${colors.cyan}${colors.bright}─────────────────────── Server Log ────────────────────────${colors.reset}`);
   if (recentLogs.length === 0) {
-    console.log('No activity yet...');
+    console.log(`${colors.dim}No activity yet...${colors.reset}`);
   } else {
-    recentLogs.forEach(log => console.log(log));
+    recentLogs.forEach(log => {
+      // Colorize log entries
+      let coloredLog = log;
+      if (log.includes('New client')) {
+        coloredLog = log.replace('New client:', `${colors.brightGreen}New client:${colors.reset}`);
+      } else if (log.includes('GET')) {
+        coloredLog = log.replace('GET', `${colors.brightBlue}GET${colors.reset}`);
+      } else if (log.includes('POST')) {
+        coloredLog = log.replace('POST', `${colors.brightYellow}POST${colors.reset}`);
+      } else if (log.includes('🚀')) {
+        coloredLog = `${colors.brightMagenta}${log}${colors.reset}`;
+      } else if (log.includes('📡') || log.includes('🔄')) {
+        coloredLog = `${colors.brightCyan}${log}${colors.reset}`;
+      }
+      console.log(`${colors.dim}${coloredLog}${colors.reset}`);
+    });
   }
 }
 
@@ -260,32 +310,31 @@ function showHelp(): void {
   clearScreen();
   const uptime = Math.floor((Date.now() - serverStartTime.getTime()) / 1000);
   
-  console.log('╔════════════════════════════════════════════════════════════════╗');
-  console.log('║             🎴 UpDown Server - Terminal UI                    ║');
-  console.log('╠════════════════════════════════════════════════════════════════╣');
-  console.log('║                                                                ║');
-  console.log('║  📊 Server Status                                              ║');
-  console.log(`║    HTTPS: https://localhost:${HTTPS_PORT}                                  ║`);
-  console.log(`║    HTTP:  http://localhost:${PORT} → HTTPS                           ║`);
-  console.log(`║    Uptime: ${uptime}s                                              ║`);
-  console.log(`║    Requests: ${totalRequests}                                             ║`);
-  console.log(`║    Sessions: ${clientSessions.size}                                              ║`);
-  console.log('║                                                                ║');
-  console.log('║  ⌨️  Keyboard Commands                                          ║');
-  console.log('║                                                                ║');
-  console.log('║    [h] or [?] - Show this help screen                          ║');
-  console.log('║    [s] - Show server status                                    ║');
-  console.log('║    [c] - Show connected clients                                ║');
-  console.log('║    [r] - Show recent requests                                  ║');
-  console.log('║    [l] - Show live request log                                 ║');
-  console.log('║    [clear] - Clear screen                                      ║');
-  console.log('║    [q] - Return to this help screen                            ║');
-  console.log('║    [d] - Stop server and exit                                  ║');
-  console.log('║                                                                ║');
-  console.log('╚════════════════════════════════════════════════════════════════╝');
-  console.log('\n💡 Press any key to start...');
+  console.log(`${colors.brightMagenta}╔════════════════════════════════════════════════════════════════╗${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}             ${colors.bright}🎴 UpDown Server - Terminal UI${colors.reset}                    ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}╠════════════════════════════════════════════════════════════════╣${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}                                                                ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}  ${colors.brightCyan}📊 Server Status${colors.reset}                                              ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.green}HTTPS:${colors.reset} ${colors.brightBlue}https://localhost:${HTTPS_PORT}${colors.reset}                                  ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.green}HTTP:${colors.reset}  ${colors.brightBlue}http://localhost:${PORT}${colors.reset} → HTTPS                           ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.green}Uptime:${colors.reset} ${colors.brightYellow}${uptime}s${colors.reset}                                              ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.green}Requests:${colors.reset} ${colors.brightYellow}${totalRequests}${colors.reset}                                             ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.green}Sessions:${colors.reset} ${colors.brightYellow}${clientSessions.size}${colors.reset}                                              ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}                                                                ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}  ${colors.brightCyan}⌨️  Keyboard Commands${colors.reset}                                          ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}                                                                ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.brightGreen}[h]${colors.reset} or ${colors.brightGreen}[?]${colors.reset} - Show this help screen                          ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.brightGreen}[s]${colors.reset} - Show server status                                    ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.brightGreen}[c]${colors.reset} - Show connected clients                                ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.brightGreen}[r]${colors.reset} - Show recent requests                                  ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.brightGreen}[l]${colors.reset} - Show live request log                                 ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.brightGreen}[q]${colors.reset} - Return to this help screen                            ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.brightRed}[d]${colors.reset} - ${colors.red}Stop server and exit${colors.reset}                                  ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}                                                                ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}╚════════════════════════════════════════════════════════════════╝${colors.reset}`);
+  console.log(`\n${colors.brightYellow}💡 Press any key for commands...${colors.reset}`);
   
-  displayLogTail(20); // Help view is ~20 lines
+  displayLogTail(22); // Help view is ~22 lines
 }
 
 function showStatus(): void {
@@ -295,47 +344,47 @@ function showStatus(): void {
   const minutes = Math.floor((uptime % 3600) / 60);
   const seconds = uptime % 60;
   
-  console.log('╔════════════════════════════════════════════════════════════════╗');
-  console.log('║                    📊 Server Status                            ║');
-  console.log('╠════════════════════════════════════════════════════════════════╣');
-  console.log(`║  Started:        ${serverStartTime.toLocaleString()}          `);
-  console.log(`║  Uptime:         ${hours}h ${minutes}m ${seconds}s                            `);
-  console.log(`║  Total Requests: ${totalRequests}                                       `);
-  console.log(`║  Active Sessions: ${clientSessions.size}                                     `);
-  console.log(`║  HTTPS Port:     ${HTTPS_PORT}                                        `);
-  console.log(`║  HTTP Port:      ${PORT}                                         `);
-  console.log(`║  Public Dir:     ${path.basename(PUBLIC_DIR)}                               `);
-  console.log('╚════════════════════════════════════════════════════════════════╝');
-  console.log('\nPress [q] to return to help, [d] to stop server...');
+  console.log(`${colors.brightCyan}╔════════════════════════════════════════════════════════════════╗${colors.reset}`);
+  console.log(`${colors.brightCyan}║${colors.reset}                    ${colors.bright}📊 Server Status${colors.reset}                            ${colors.brightCyan}║${colors.reset}`);
+  console.log(`${colors.brightCyan}╠════════════════════════════════════════════════════════════════╣${colors.reset}`);
+  console.log(`${colors.brightCyan}║${colors.reset}  ${colors.green}Started:${colors.reset}        ${colors.white}${serverStartTime.toLocaleString()}${colors.reset}          ${colors.brightCyan}║${colors.reset}`);
+  console.log(`${colors.brightCyan}║${colors.reset}  ${colors.green}Uptime:${colors.reset}         ${colors.brightYellow}${hours}h ${minutes}m ${seconds}s${colors.reset}                            ${colors.brightCyan}║${colors.reset}`);
+  console.log(`${colors.brightCyan}║${colors.reset}  ${colors.green}Total Requests:${colors.reset} ${colors.brightMagenta}${totalRequests}${colors.reset}                                       ${colors.brightCyan}║${colors.reset}`);
+  console.log(`${colors.brightCyan}║${colors.reset}  ${colors.green}Active Sessions:${colors.reset} ${colors.brightGreen}${clientSessions.size}${colors.reset}                                     ${colors.brightCyan}║${colors.reset}`);
+  console.log(`${colors.brightCyan}║${colors.reset}  ${colors.green}HTTPS Port:${colors.reset}     ${colors.brightBlue}${HTTPS_PORT}${colors.reset}                                        ${colors.brightCyan}║${colors.reset}`);
+  console.log(`${colors.brightCyan}║${colors.reset}  ${colors.green}HTTP Port:${colors.reset}      ${colors.brightBlue}${PORT}${colors.reset}                                         ${colors.brightCyan}║${colors.reset}`);
+  console.log(`${colors.brightCyan}║${colors.reset}  ${colors.green}Public Dir:${colors.reset}     ${colors.white}${path.basename(PUBLIC_DIR)}${colors.reset}                               ${colors.brightCyan}║${colors.reset}`);
+  console.log(`${colors.brightCyan}╚════════════════════════════════════════════════════════════════╝${colors.reset}`);
+  console.log(`\n${colors.dim}Press ${colors.brightGreen}[q]${colors.reset}${colors.dim} to return to help, ${colors.brightRed}[d]${colors.reset}${colors.dim} to stop server...${colors.reset}`);
   
   displayLogTail(13); // Status view is ~13 lines
 }
 
 function showClients(): void {
   clearScreen();
-  console.log('╔════════════════════════════════════════════════════════════════╗');
-  console.log('║                  👥 Connected Clients                          ║');
-  console.log('╠════════════════════════════════════════════════════════════════╣');
+  console.log(`${colors.brightGreen}╔════════════════════════════════════════════════════════════════╗${colors.reset}`);
+  console.log(`${colors.brightGreen}║${colors.reset}                  ${colors.bright}👥 Connected Clients${colors.reset}                          ${colors.brightGreen}║${colors.reset}`);
+  console.log(`${colors.brightGreen}╠════════════════════════════════════════════════════════════════╣${colors.reset}`);
   
   let viewLines = 5; // Header + footer
   
   if (clientSessions.size === 0) {
-    console.log('║  No clients connected yet                                      ║');
+    console.log(`${colors.brightGreen}║${colors.reset}  ${colors.dim}No clients connected yet${colors.reset}                                      ${colors.brightGreen}║${colors.reset}`);
     viewLines += 1;
   } else {
     const sessions = Array.from(clientSessions.values());
     sessions.forEach((session, index) => {
-      console.log(`║  Client ${index + 1}:                                                    `);
-      console.log(`║    IP: ${session.ip.padEnd(40)}   `);
-      console.log(`║    Requests: ${session.requestCount}                                          `);
-      console.log(`║    Last: ${session.lastRequest.toLocaleTimeString()}                             `);
-      console.log('║                                                                ║');
+      console.log(`${colors.brightGreen}║${colors.reset}  ${colors.brightYellow}Client ${index + 1}:${colors.reset}                                                    ${colors.brightGreen}║${colors.reset}`);
+      console.log(`${colors.brightGreen}║${colors.reset}    ${colors.green}IP:${colors.reset} ${colors.brightCyan}${session.ip.padEnd(40)}${colors.reset}   ${colors.brightGreen}║${colors.reset}`);
+      console.log(`${colors.brightGreen}║${colors.reset}    ${colors.green}Requests:${colors.reset} ${colors.brightMagenta}${session.requestCount}${colors.reset}                                          ${colors.brightGreen}║${colors.reset}`);
+      console.log(`${colors.brightGreen}║${colors.reset}    ${colors.green}Last:${colors.reset} ${colors.white}${session.lastRequest.toLocaleTimeString()}${colors.reset}                             ${colors.brightGreen}║${colors.reset}`);
+      console.log(`${colors.brightGreen}║${colors.reset}                                                                ${colors.brightGreen}║${colors.reset}`);
       viewLines += 5;
     });
   }
   
-  console.log('╚════════════════════════════════════════════════════════════════╝');
-  console.log('\nPress [q] to return to help, [d] to stop server...');
+  console.log(`${colors.brightGreen}╚════════════════════════════════════════════════════════════════╝${colors.reset}`);
+  console.log(`\n${colors.dim}Press ${colors.brightGreen}[q]${colors.reset}${colors.dim} to return to help, ${colors.brightRed}[d]${colors.reset}${colors.dim} to stop server...${colors.reset}`);
   
   displayLogTail(viewLines);
 }
@@ -420,16 +469,31 @@ function setupTUI(): void {
         } else {
           currentView = 'live';
           clearScreen();
-          console.log('📡 Live Request Log (press [q] to exit)...\n');
+          console.log(`${colors.brightMagenta}📡 Live Request Log${colors.reset} ${colors.dim}(press ${colors.brightGreen}[q]${colors.reset}${colors.dim} to exit)...${colors.reset}\n`);
           
           // Start live log updates
           liveLogInterval = setInterval(() => {
             clearScreen();
-            console.log('📡 Live Request Log (press [q] to exit)...');
+            console.log(`${colors.brightMagenta}📡 Live Request Log${colors.reset} ${colors.dim}(press ${colors.brightGreen}[q]${colors.reset}${colors.dim} to exit)...${colors.reset}\n`);
             const terminalHeight = process.stdout.rows || 24;
             const logLines = terminalHeight - 4;
             const recentLogs = serverLogs.slice(-logLines);
-            recentLogs.forEach(log => console.log(log));
+            recentLogs.forEach(log => {
+              // Colorize log entries
+              let coloredLog = log;
+              if (log.includes('New client')) {
+                coloredLog = log.replace('New client:', `${colors.brightGreen}New client:${colors.reset}`);
+              } else if (log.includes('GET')) {
+                coloredLog = log.replace('GET', `${colors.brightBlue}GET${colors.reset}`);
+              } else if (log.includes('POST')) {
+                coloredLog = log.replace('POST', `${colors.brightYellow}POST${colors.reset}`);
+              } else if (log.includes('🚀')) {
+                coloredLog = `${colors.brightMagenta}${log}${colors.reset}`;
+              } else if (log.includes('📡') || log.includes('🔄')) {
+                coloredLog = `${colors.brightCyan}${log}${colors.reset}`;
+              }
+              console.log(coloredLog);
+            });
           }, 500); // Update every 500ms
         }
         break;
@@ -440,11 +504,26 @@ function setupTUI(): void {
           liveLogInterval = null;
         }
         clearScreen();
-        console.log('📜 Recent Requests (last 50):\n');
+        console.log(`${colors.brightYellow}📜 Recent Requests${colors.reset} ${colors.dim}(last 50)${colors.reset}:\n`);
         const terminalHeight = process.stdout.rows || 24;
         const displayLines = Math.min(50, terminalHeight - 5);
-        serverLogs.slice(-displayLines).forEach(log => console.log(log));
-        console.log('\nPress [q] to return to help...');
+        serverLogs.slice(-displayLines).forEach(log => {
+          // Colorize log entries
+          let coloredLog = log;
+          if (log.includes('New client')) {
+            coloredLog = log.replace('New client:', `${colors.brightGreen}New client:${colors.reset}`);
+          } else if (log.includes('GET')) {
+            coloredLog = log.replace('GET', `${colors.brightBlue}GET${colors.reset}`);
+          } else if (log.includes('POST')) {
+            coloredLog = log.replace('POST', `${colors.brightYellow}POST${colors.reset}`);
+          } else if (log.includes('🚀')) {
+            coloredLog = `${colors.brightMagenta}${log}${colors.reset}`;
+          } else if (log.includes('📡') || log.includes('🔄')) {
+            coloredLog = `${colors.brightCyan}${log}${colors.reset}`;
+          }
+          console.log(coloredLog);
+        });
+        console.log(`\n${colors.dim}Press ${colors.brightGreen}[q]${colors.reset}${colors.dim} to return to help...${colors.reset}`);
         break;
 
       default:
