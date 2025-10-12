@@ -106,4 +106,4 @@ The game client has a login and then the player is in the main overview menu. Fr
 ## Anti cheat system
 The multiplayer mode needs a dedicated anti cheat system. The focus is to protect lobbies from cheaters. Every cheater will be banned for life. It is important, that the player will never have access to information about the next card played or is in any way able to manipulate the game to his advantage.
 It is important, that no bots or bot systems can run the game. Bot behaviour and auto click systems need to be detected and banned.
-Currently we have not decided on an anti cheat system or a method yet. Needs further discussion and your input is welcome.
+Currently we have not decided on an anti cheat system or a method yet. Needs further discussion and your input is welcome.# Test rebuild
