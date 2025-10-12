@@ -8,6 +8,7 @@ import { GameModel, PlayerGuess } from '../GameModel.js';
 import './game-card.js';
 import './game-stats.js';
 import './game-controls.js';
+import './keyboard-shortcuts.js';
 
 @customElement('game-board')
 export class GameBoard extends LitElement {
@@ -232,23 +233,6 @@ export class GameBoard extends LitElement {
       display: none;
     }
 
-    .keyboard-shortcuts {
-      margin-top: 8px;
-      color: #666;
-      font-size: 0.75rem;
-    }
-
-    .keyboard-shortcuts kbd {
-      background: #f4f4f4;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      padding: 2px 6px;
-      font-family: monospace;
-      font-weight: bold;
-      font-size: 0.75rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
     .result-message {
       text-align: center;
       min-height: 30px;
@@ -442,16 +426,6 @@ export class GameBoard extends LitElement {
         font-size: 0.9rem;
       }
 
-      .keyboard-shortcuts {
-        font-size: 0.55rem;
-        margin-top: 5px;
-      }
-
-      .keyboard-shortcuts kbd {
-        font-size: 0.55rem;
-        padding: 1px 3px;
-      }
-
       .game-over-content {
         padding: 15px;
         max-width: 260px;
@@ -553,16 +527,6 @@ export class GameBoard extends LitElement {
         font-size: 1rem;
       }
 
-      .keyboard-shortcuts {
-        font-size: 0.65rem;
-        margin-top: 5px;
-      }
-
-      .keyboard-shortcuts kbd {
-        font-size: 0.65rem;
-        padding: 1px 4px;
-      }
-
       /* Previous card darker */
       .previous-card-section {
         opacity: 0.7;
@@ -627,16 +591,6 @@ export class GameBoard extends LitElement {
       .start-btn {
         padding: 8px 20px;
         font-size: 0.85rem;
-      }
-
-      .keyboard-shortcuts {
-        font-size: 0.55rem;
-        margin-top: 3px;
-      }
-
-      .keyboard-shortcuts kbd {
-        font-size: 0.55rem;
-        padding: 1px 3px;
       }
 
       .game-over-content {
@@ -845,9 +799,7 @@ export class GameBoard extends LitElement {
           <!-- Start/Game controls (always in DOM, like JS version) -->
           <div class="game-controls">
             <button class="start-btn" ?hidden=${this.isGameActive} @click=${this._handleStart}>Start Game</button>
-            <div class="keyboard-shortcuts">
-              <small>Keyboard: <kbd>U</kbd> = Start • <kbd>D</kbd> = Stop</small>
-            </div>
+            <keyboard-shortcuts .gameActive=${this.isGameActive}></keyboard-shortcuts>
           </div>
         </main>
 
