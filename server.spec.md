@@ -7,7 +7,7 @@
 **Status**: ✅ REALIZED  
 **Implementation**: Node.js HTTPS server with PWA support (service worker, manifest, offline capability)  
 **Files**: `server.js`, `public/manifest.json`, `public/sw.js`, `updown.sh`  
-**Commit**: TBD
+**Commit**: `846ab48`
 
 ---
 
@@ -15,8 +15,8 @@
 
 | # | User Quote | Status | Implementation | Files | Code Reference | Commit SHA |
 |---|------------|--------|----------------|-------|----------------|------------|
-| 1 | "make it https" | ✅ REALIZED | Node.js HTTPS server with self-signed SSL certificates | `server.js`<br>`updown.sh`<br>`.gitignore` | HTTPS server: `server.js:102-121`<br>Certificate generation: `server.js:68-88`<br>Launch script: `updown.sh:17-20` | TBD |
-| 2 | "make it a pwa" | ✅ REALIZED | PWA manifest, service worker, offline support, app icons | `public/manifest.json`<br>`public/sw.js`<br>`public/index.html`<br>`public/game.js`<br>`generate-icons.sh` | Manifest: `manifest.json:1-30`<br>Service Worker: `sw.js:1-120`<br>SW Registration: `game.js:479-498`<br>Manifest link: `index.html:14` | TBD |
+| 1 | "make it https" | ✅ REALIZED | Node.js HTTPS server with self-signed SSL certificates | `server.js`<br>`updown.sh`<br>`.gitignore` | HTTPS server: `server.js:102-121`<br>Certificate generation: `server.js:68-88`<br>Launch script: `updown.sh:17-20` | `846ab48` |
+| 2 | "make it a pwa" | ✅ REALIZED | PWA manifest, service worker, offline support, app icons | `public/manifest.json`<br>`public/sw.js`<br>`public/index.html`<br>`public/game.js`<br>`generate-icons.sh` | Manifest: `manifest.json:1-30`<br>Service Worker: `sw.js:1-120`<br>SW Registration: `game.js:479-498`<br>Manifest link: `index.html:14` | `846ab48` |
 
 ---
 
@@ -304,7 +304,7 @@ window.matchMedia('(display-mode: standalone)').matches
 
 | Date | Version | Changes | Commit |
 |------|---------|---------|--------|
-| 2025-10-12 | 0.2.0 | Initial HTTPS server with PWA support | TBD |
+| 2025-10-12 | 0.2.0 | Initial HTTPS server with PWA support | `846ab48` |
 
 ---
 
