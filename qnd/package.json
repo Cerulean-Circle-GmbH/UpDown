@@ -4,8 +4,8 @@
   "description": "UpDown Card Game - Quick & Dirty Prototype",
   "type": "module",
   "scripts": {
-    "build": "node build.js",
-    "build:watch": "node build.js --watch",
+    "build": "tsx build.ts",
+    "build:watch": "tsx build.ts --watch",
     "start": "npm run build && bash ./src/sh/updown.sh",
     "stop": "bash ./src/sh/stop.sh",
     "dev": "tsx watch src/ts/server/server.ts"

@@ -5,7 +5,7 @@
 
 PORT=3443
 HTTP_PORT=3000
-URL="https://localhost:$PORT"
+URL="https://localhost:$PORT/ts"
 
 echo "🎴 Starting UpDown game with TUI..."
 echo "🌐 Opening browser in 2 seconds..."
