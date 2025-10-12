@@ -180,23 +180,40 @@ npm run stop
 
 ```
 UpDown.fast/
-├── server.ts              # TypeScript ESM HTTPS server
-├── updown.sh              # Launch script
-├── stop.sh                # Stop script
-├── generate-icons.sh      # Icon generator
-├── .gitignore             # Ignore certs, node_modules
-├── .certs/                # SSL certificates (gitignored)
+├── server.ts              # ✅ Modern TypeScript ESM HTTPS server
+├── server.spec.md         # 📄 Server documentation
+├── ux.spec.md             # 📄 UX requirements tracking
+├── updown.sh              # 🚀 Launch script (npm start)
+├── stop.sh                # 🛑 Stop script (npm run stop)
+├── generate-icons.sh      # 🎨 Icon generator
+├── package.json           # 📦 Dependencies & scripts
+├── tsconfig.json          # ⚙️ TypeScript configuration
+├── .gitignore             # 🚫 Ignore certs, node_modules
+│
+├── .certs/                # 🔐 SSL certificates (auto-generated, gitignored)
 │   ├── cert.pem          # Self-signed certificate
 │   └── key.pem           # Private key
-└── public/                # Static assets
-    ├── index.html         # Main app
-    ├── game.js            # Game logic + SW registration
-    ├── styles.css         # Styles
-    ├── manifest.json      # PWA manifest
-    ├── sw.js              # Service worker
-    ├── icon.svg           # Source icon
-    ├── icon-192.png       # App icon 192x192
-    └── icon-512.png       # App icon 512x512
+│
+├── public/                # 🎮 Game frontend (served via HTTPS)
+│   ├── index.html         # Main HTML
+│   ├── game.js            # Game logic (plain JS)
+│   ├── styles.css         # Responsive styles
+│   ├── manifest.json      # PWA manifest
+│   ├── sw.js              # Service worker
+│   ├── icon.svg           # Source icon
+│   ├── icon-192.png       # App icon 192x192
+│   └── icon-512.png       # App icon 512x512
+│
+├── src/shared/            # ♠️ Shared game models (TypeScript)
+│   ├── Card.ts            # Card class & deck logic
+│   ├── GameModel.ts       # Game state & logic
+│   ├── Player.ts          # Player class
+│   ├── Lobby.ts           # Multiplayer lobby
+│   └── Scenario.ts        # Game scenarios
+│
+├── docs/                  # 📚 Documentation
+├── devops/                # 🐳 DevOps scripts
+└── sprints/               # 📋 Sprint planning
 ```
 
 ---
@@ -216,14 +233,46 @@ UpDown.fast/
 
 ### PWA Install Prompt
 
-| Platform | Support |
-|----------|---------|
-| Chrome Desktop | ✅ Native prompt |
-| Chrome Android | ✅ Native prompt |
-| Safari iOS | ✅ "Add to Home Screen" |
-| Safari macOS | ✅ "Add to Dock" |
-| Edge Desktop | ✅ Native prompt |
-| Firefox Android | ✅ Manual install |
+| Platform | Support | How to Install |
+|----------|---------|----------------|
+| Chrome Desktop | ✅ Native prompt | Click install icon (⊕) in address bar |
+| Chrome Android | ✅ Native prompt | Tap "Add to Home screen" in menu |
+| Safari iOS | ✅ "Add to Home Screen" | Share button → "Add to Home Screen" |
+| Safari macOS | ✅ "Add to Dock" | Click install icon in address bar or File → "Add to Dock" |
+| Edge Desktop | ✅ Native prompt | Click install icon (⊕) in address bar |
+| Firefox Android | ✅ Manual install | Menu → "Install" |
+
+### Browser Install Icon
+
+The PWA install prompt appears automatically in supported browsers:
+
+**Desktop (Chrome/Edge/Safari):**
+```
+https://localhost:3443  [🔒] [⊕ Install]
+                               ↑
+                    Click this icon to install
+```
+
+**Criteria for Install Prompt:**
+- ✅ Served over HTTPS
+- ✅ Has valid `manifest.json`
+- ✅ Has registered Service Worker
+- ✅ Service Worker has `fetch` event handler
+- ✅ Manifest includes `name`, `short_name`, `icons`, `start_url`, `display`
+
+**Install Dialog:**
+```
+┌─────────────────────────────────────┐
+│ Install UpDown?                     │
+│                                     │
+│ This site can be installed as an   │
+│ app. It will open in its own       │
+│ window and integrate with your     │
+│ system.                             │
+│                                     │
+│     [Cancel]        [Install]      │
+└─────────────────────────────────────┘
+```
 
 ---
 
