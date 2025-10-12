@@ -77,27 +77,8 @@ function showInstallHint(): void {
   }, 10000);
 }
 
-// Register Service Worker for PWA support
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then((registration) => {
-      console.log('✅ Service Worker registered:', registration.scope);
-
-      registration.addEventListener('updatefound', () => {
-        const newWorker = registration.installing;
-        if (newWorker) {
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              console.log('🔄 New version available! Reload to update.');
-            }
-          });
-        }
-      });
-    })
-    .catch((error) => {
-      console.error('❌ Service Worker registration failed:', error);
-    });
-}
+// Service Worker disabled for now (not essential for Lit components)
+// TODO: Re-enable PWA features later if needed
 
 // Initialize game when DOM is loaded
 if (document.readyState === 'loading') {
