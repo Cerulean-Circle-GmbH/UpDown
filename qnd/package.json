@@ -4,8 +4,8 @@
   "description": "UpDown Card Game - Quick & Dirty Prototype",
   "type": "module",
   "scripts": {
-    "build": "tsx build.ts",
-    "build:watch": "tsx build.ts --watch",
+    "build": "esbuild src/public/ts/main.ts --bundle --format=esm --target=es2020 --outfile=src/public/dist/main.js --sourcemap --minify --tsconfig-raw='{\"compilerOptions\":{\"experimentalDecorators\":true,\"useDefineForClassFields\":false}}'",
+    "build:watch": "esbuild src/public/ts/main.ts --bundle --format=esm --target=es2020 --outfile=src/public/dist/main.js --sourcemap --watch",
     "start": "npm run build && bash ./src/sh/updown.sh",
     "stop": "bash ./src/sh/stop.sh",
     "dev": "tsx watch src/ts/server/server.ts"
