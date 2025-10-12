@@ -7,22 +7,31 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile browsers */
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 5px;
+  align-items: stretch;
+  padding: 0;
   margin: 0;
   overflow: hidden;
+  /* Safe area for notch/island on iPhone */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 .game-container {
   width: 100%;
   max-width: 800px;
+  height: 100%;
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .game-header {
@@ -30,6 +39,56 @@ body {
   color: white;
   padding: 10px;
   text-align: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  /* Extra padding for notch in standalone mode */
+  padding-top: max(10px, env(safe-area-inset-top));
+}
+
+.game-header::before {
+  content: '⟲';
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.5;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  z-index: 10;
+  /* Larger touch target for mobile */
+  padding: 10px;
+  margin: -10px;
+}
+
+.game-header::before:hover,
+.game-header::before:active {
+  opacity: 1;
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.game-header::after {
+  content: '⛶';
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.5;
+  font-size: 1.2rem;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+}
+
+.game-header:hover::after {
+  opacity: 1;
+}
+
+.game-header:active {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4290 100%);
 }
 
 .game-header h1 {
@@ -64,10 +123,15 @@ body {
 }
 
 .game-board {
-  padding: 8px;
+  padding: 15px 8px;
   position: relative;
-  max-height: calc(100vh - 100px);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
   overflow: hidden;
+  min-height: 0;
+  transition: all 0.3s ease;
 }
 
 .previous-card-container,
@@ -75,27 +139,28 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 8px;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
 }
 
 .card-label {
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   color: #666;
-  margin-bottom: 3px;
+  margin-bottom: 5px;
   font-weight: 500;
 }
 
 .card-slot {
-  width: 80px;
-  height: 112px;
-  border-radius: 8px;
+  width: 120px;
+  height: 168px;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: bold;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
   position: relative;
 }
@@ -119,16 +184,16 @@ body {
 }
 
 .card-value {
-  font-size: 2rem;
+  font-size: 3rem;
 }
 
 .card-suit {
-  font-size: 1.3rem;
-  margin-top: -5px;
+  font-size: 2rem;
+  margin-top: -8px;
 }
 
 .card-back {
-  font-size: 2.5rem;
+  font-size: 4rem;
   color: #999;
 }
 
@@ -149,10 +214,13 @@ body {
 
 .result-message {
   text-align: center;
-  margin: 5px 0;
-  min-height: 25px;
-  font-size: 0.9rem;
+  min-height: 30px;
+  font-size: 1rem;
   font-weight: bold;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .result-message.correct {
@@ -197,24 +265,25 @@ body {
 .choices {
   display: flex;
   justify-content: center;
-  gap: 5px;
-  margin: 8px 0;
+  gap: 10px;
   flex-wrap: nowrap;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
 }
 
 .choice-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8px 12px;
-  font-size: 0.7rem;
+  padding: 15px 20px;
+  font-size: 0.9rem;
   font-weight: bold;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 70px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  min-width: 90px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .choice-btn:hover:not(:disabled) {
@@ -232,12 +301,12 @@ body {
 }
 
 .choice-icon {
-  font-size: 1.5rem;
-  margin-bottom: 2px;
+  font-size: 2rem;
+  margin-bottom: 5px;
 }
 
 .choice-label {
-  font-size: 0.7rem;
+  font-size: 0.9rem;
 }
 
 .down-btn {
@@ -257,37 +326,37 @@ body {
 
 .game-controls {
   text-align: center;
-  margin-top: 8px;
+  flex-shrink: 0;
 }
 
 .keyboard-shortcuts {
-  margin-top: 5px;
+  margin-top: 8px;
   color: #666;
-  font-size: 0.6rem;
+  font-size: 0.75rem;
 }
 
 .keyboard-shortcuts kbd {
   background: #f4f4f4;
   border: 1px solid #ccc;
-  border-radius: 2px;
-  padding: 1px 4px;
+  border-radius: 3px;
+  padding: 2px 6px;
   font-family: monospace;
   font-weight: bold;
-  font-size: 0.6rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  font-size: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .start-btn,
 .restart-btn {
-  padding: 10px 25px;
-  font-size: 0.9rem;
+  padding: 12px 30px;
+  font-size: 1.1rem;
   font-weight: bold;
   background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
   color: white;
   border: none;
-  border-radius: 25px;
+  border-radius: 30px;
   cursor: pointer;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 }
 
@@ -343,8 +412,38 @@ body {
   display: none;
 }
 
-/* iPhone 4 and small screens (320px) */
-@media (max-width: 480px) {
+/* Fullscreen styles */
+:fullscreen .game-container,
+:-webkit-full-screen .game-container,
+:-moz-full-screen .game-container,
+:-ms-fullscreen .game-container {
+  border-radius: 0;
+  max-width: 100%;
+}
+
+:fullscreen body,
+:-webkit-full-screen body,
+:-moz-full-screen body,
+:-ms-fullscreen body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Standalone mode (PWA) - iOS notch support */
+@media (display-mode: standalone) {
+  body {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .game-header {
+    padding-top: max(10px, env(safe-area-inset-top));
+  }
+}
+
+/* Mobile devices - Full height optimization */
+@media (max-width: 768px) {
   body {
     padding: 0;
   }
@@ -353,9 +452,35 @@ body {
     max-width: 100%;
     border-radius: 0;
     height: 100vh;
-    overflow: hidden;
+    height: 100dvh;
   }
   
+  .game-header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+  }
+  
+  .game-header::before {
+    left: 10px;
+    font-size: 1rem;
+  }
+  
+  .game-header::after {
+    right: 10px;
+    font-size: 1rem;
+  }
+  
+  .stat-label {
+    font-size: 0.7rem;
+  }
+  
+  .stat-value {
+    font-size: 1.2rem;
+  }
+}
+
+/* iPhone 4 and very small screens (320px) */
+@media (max-width: 480px) {
   .game-header {
     padding: 8px;
   }
@@ -382,8 +507,7 @@ body {
   }
   
   .game-board {
-    padding: 5px;
-    max-height: calc(100vh - 85px);
+    padding: 8px 5px;
   }
   
   .card-label {
@@ -408,49 +532,39 @@ body {
     font-size: 2.2rem;
   }
   
-  .previous-card-container,
-  .current-card-container {
-    margin-bottom: 5px;
-  }
-  
   .result-message {
-    margin: 3px 0;
     min-height: 20px;
     font-size: 0.8rem;
   }
   
   .choices {
     gap: 4px;
-    margin: 5px 0;
   }
   
   .choice-btn {
     min-width: 65px;
-    padding: 6px 10px;
+    padding: 8px 10px;
     font-size: 0.65rem;
   }
   
   .choice-icon {
     font-size: 1.3rem;
+    margin-bottom: 2px;
   }
   
   .choice-label {
     font-size: 0.65rem;
   }
   
-  .game-controls {
-    margin-top: 5px;
-  }
-  
   .start-btn,
   .restart-btn {
-    padding: 8px 20px;
-    font-size: 0.85rem;
+    padding: 10px 20px;
+    font-size: 0.9rem;
   }
   
   .keyboard-shortcuts {
     font-size: 0.55rem;
-    margin-top: 3px;
+    margin-top: 5px;
   }
   
   .keyboard-shortcuts kbd {
@@ -485,6 +599,258 @@ body {
   }
 }
 
+/* Landscape Mode - Horizontal Layout */
+@media (orientation: landscape) {
+  .game-header h1 {
+    font-size: 1.3rem;
+    margin-bottom: 5px;
+  }
+  
+  .game-header::before {
+    font-size: 1rem;
+    left: 10px;
+  }
+  
+  .game-header::after {
+    font-size: 1rem;
+    right: 10px;
+  }
+  
+  .stats {
+    gap: 8px;
+  }
+  
+  .stat {
+    min-width: 70px;
+  }
+  
+  .stat-label {
+    font-size: 0.65rem;
+  }
+  
+  .stat-value {
+    font-size: 1rem;
+  }
+  
+  .game-board {
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: auto 1fr auto auto;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .previous-card-container {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: center;
+  }
+  
+  .current-card-container {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: center;
+  }
+  
+  .result-message {
+    grid-column: 1 / 4;
+    grid-row: 1;
+    min-height: 25px;
+    font-size: 0.9rem;
+  }
+  
+  .choices {
+    grid-column: 3;
+    grid-row: 2;
+    flex-direction: column;
+    gap: 8px;
+    justify-self: center;
+  }
+  
+  /* Reverse button order in landscape: Higher at top, Lower at bottom */
+  .choices .up-btn {
+    order: 1;
+  }
+  
+  .choices .equal-btn {
+    order: 2;
+  }
+  
+  .choices .down-btn {
+    order: 3;
+  }
+  
+  .choice-btn {
+    min-width: 100px;
+    padding: 12px 18px;
+  }
+  
+  .game-controls {
+    grid-column: 1 / 4;
+    grid-row: 4;
+  }
+  
+  .card-slot {
+    width: 90px;
+    height: 126px;
+  }
+  
+  .card-value {
+    font-size: 2.5rem;
+  }
+  
+  .card-suit {
+    font-size: 1.6rem;
+  }
+  
+  .card-back {
+    font-size: 3rem;
+  }
+  
+  .card-label {
+    font-size: 0.7rem;
+    margin-bottom: 3px;
+  }
+  
+  .start-btn,
+  .restart-btn {
+    padding: 10px 25px;
+    font-size: 1rem;
+  }
+  
+  .keyboard-shortcuts {
+    font-size: 0.65rem;
+    margin-top: 5px;
+  }
+  
+  .keyboard-shortcuts kbd {
+    font-size: 0.65rem;
+    padding: 1px 4px;
+  }
+}
+
+/* Landscape on small screens (iPhone, etc.) */
+@media (orientation: landscape) and (max-height: 500px) {
+  .game-header {
+    padding: 5px;
+  }
+  
+  .game-header h1 {
+    font-size: 1.1rem;
+    margin-bottom: 3px;
+  }
+  
+  .game-header::before {
+    font-size: 0.85rem;
+    left: 8px;
+  }
+  
+  .game-header::after {
+    font-size: 0.85rem;
+    right: 8px;
+  }
+  
+  .stats {
+    gap: 5px;
+  }
+  
+  .stat {
+    min-width: 55px;
+  }
+  
+  .stat-label {
+    font-size: 0.55rem;
+  }
+  
+  .stat-value {
+    font-size: 0.85rem;
+  }
+  
+  .game-board {
+    padding: 5px;
+    gap: 5px;
+  }
+  
+  .card-slot {
+    width: 70px;
+    height: 98px;
+  }
+  
+  .card-value {
+    font-size: 2rem;
+  }
+  
+  .card-suit {
+    font-size: 1.3rem;
+  }
+  
+  .card-back {
+    font-size: 2.5rem;
+  }
+  
+  .card-label {
+    font-size: 0.6rem;
+    margin-bottom: 2px;
+  }
+  
+  .choice-btn {
+    min-width: 80px;
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+  
+  .choice-icon {
+    font-size: 1.5rem;
+    margin-bottom: 3px;
+  }
+  
+  .choice-label {
+    font-size: 0.75rem;
+  }
+  
+  .result-message {
+    min-height: 20px;
+    font-size: 0.75rem;
+  }
+  
+  .start-btn,
+  .restart-btn {
+    padding: 8px 20px;
+    font-size: 0.85rem;
+  }
+  
+  .keyboard-shortcuts {
+    font-size: 0.55rem;
+    margin-top: 3px;
+  }
+  
+  .keyboard-shortcuts kbd {
+    font-size: 0.55rem;
+    padding: 1px 3px;
+  }
+  
+  .game-over-content {
+    padding: 12px;
+    max-width: 240px;
+  }
+  
+  .game-over-content h2 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+  
+  .final-stats {
+    font-size: 0.7rem;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  
+  .final-stats strong {
+    font-size: 0.9rem;
+  }
+}
+
 /* Keyboard hints */
 .keyboard-hint {
   position: fixed;
@@ -515,6 +881,132 @@ body {
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@media (orientation: landscape) {
+  .keyboard-hint {
+    font-size: 0.9rem;
+    padding: 10px 15px;
+    top: 10px;
+    right: 10px;
+  }
+}
+
+/* Orientation change hint */
+.orientation-hint {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(102, 126, 234, 0.95);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  z-index: 10000;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  animation: bounceIn 0.5s ease;
+  pointer-events: none;
+}
+
+.orientation-hint.fade-out {
+  opacity: 0;
+  transform: translateX(-50%) translateY(20px);
+  transition: all 0.5s ease;
+}
+
+/* iOS Fullscreen Instructions Overlay */
+.ios-fullscreen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 20000;
+  animation: fadeIn 0.3s ease;
+  padding: 20px;
+}
+
+.ios-fullscreen-overlay.fade-out {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.ios-fullscreen-content {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 400px;
+  text-align: left;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.ios-fullscreen-content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #667eea;
+  text-align: center;
+}
+
+.ios-fullscreen-content p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.ios-fullscreen-content ol {
+  margin: 15px 0;
+  padding-left: 25px;
+  color: #333;
+}
+
+.ios-fullscreen-content ol li {
+  margin: 10px 0;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.ios-fullscreen-content strong {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.ios-fullscreen-content small {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.ios-close-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.ios-close-btn:active {
+  transform: scale(0.95);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 

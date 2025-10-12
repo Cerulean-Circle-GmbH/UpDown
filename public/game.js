@@ -128,6 +128,7 @@ class GameUI {
   constructor() {
     this.game = new GameModel();
     this.isGameActive = false;
+    this.lastTapTime = 0;
     
     // Get all DOM elements
     this.elements = {
@@ -148,10 +149,12 @@ class GameUI {
       btnUp: document.getElementById('btn-up'),
       btnDown: document.getElementById('btn-down'),
       btnEqual: document.getElementById('btn-equal'),
+      header: document.querySelector('.game-header'),
     };
 
     this.setupEventListeners();
     this.setupKeyboardControls();
+    this.setupFullscreenToggle();
   }
 
   setupEventListeners() {
@@ -196,6 +199,157 @@ class GameUI {
       hint.classList.add('fade-out');
       setTimeout(() => hint.remove(), 300);
     }, 1500);
+  }
+
+  setupFullscreenToggle() {
+    // Handle reload button (left side) and fullscreen toggle (double-click)
+    const handleTap = (e) => {
+      const rect = this.elements.header.getBoundingClientRect();
+      
+      // Get X position from either mouse or touch event
+      let clickX;
+      if (e.type === 'touchstart' || e.type === 'touchend') {
+        const touch = e.changedTouches[0];
+        clickX = touch.clientX - rect.left;
+      } else {
+        clickX = e.clientX - rect.left;
+      }
+      
+      // Check if tap/click is on the left side (reload button area - first 60px)
+      if (clickX < 60) {
+        e.preventDefault();
+        this.reloadGame();
+        return;
+      }
+      
+      // Handle double-click/tap for fullscreen (rest of header)
+      const currentTime = new Date().getTime();
+      const tapGap = currentTime - this.lastTapTime;
+      
+      // Detect double tap (within 300ms)
+      if (tapGap < 300 && tapGap > 0) {
+        e.preventDefault();
+        this.toggleFullscreen();
+      }
+      
+      this.lastTapTime = currentTime;
+    };
+    
+    // Add both click and touch listeners
+    this.elements.header.addEventListener('click', handleTap);
+    this.elements.header.addEventListener('touchend', handleTap);
+    
+    // Also support native double-click on desktop
+    this.elements.header.addEventListener('dblclick', (e) => {
+      const rect = this.elements.header.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      
+      // Don't trigger fullscreen if clicking reload area
+      if (clickX < 60) return;
+      
+      e.preventDefault();
+      this.toggleFullscreen();
+    });
+  }
+
+  reloadGame() {
+    // Confirm reload if game is active
+    if (this.isGameActive) {
+      if (confirm('Reload game? Your current progress will be lost.')) {
+        window.location.reload();
+      }
+    } else {
+      window.location.reload();
+    }
+  }
+
+  toggleFullscreen() {
+    const elem = document.documentElement;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    
+    // iOS Safari doesn't support Fullscreen API for regular web content
+    if (isIOS) {
+      // Check if already in standalone mode (added to home screen)
+      if (window.navigator.standalone) {
+        this.showKeyboardHint('📱 Already in App Mode');
+        return;
+      }
+      
+      // Show instructions to add to home screen for true fullscreen
+      this.showIOSFullscreenInstructions();
+      return;
+    }
+    
+    // Standard fullscreen for other browsers
+    if (!document.fullscreenElement && 
+        !document.webkitFullscreenElement && 
+        !document.mozFullScreenElement &&
+        !document.msFullscreenElement) {
+      // Enter fullscreen
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) { // Safari desktop
+        elem.webkitRequestFullscreen();
+      } else if (elem.mozRequestFullScreen) { // Firefox
+        elem.mozRequestFullScreen();
+      } else if (elem.msRequestFullscreen) { // IE/Edge
+        elem.msRequestFullscreen();
+      }
+      
+      this.showKeyboardHint('📱 Fullscreen Mode');
+    } else {
+      // Exit fullscreen
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+      
+      this.showKeyboardHint('🖥️ Exited Fullscreen');
+    }
+  }
+
+  showIOSFullscreenInstructions() {
+    // Create a more prominent instruction overlay for iOS
+    const overlay = document.createElement('div');
+    overlay.className = 'ios-fullscreen-overlay';
+    overlay.innerHTML = `
+      <div class="ios-fullscreen-content">
+        <h3>📱 iOS Fullscreen Mode</h3>
+        <p>For the best fullscreen experience on iPhone:</p>
+        <ol>
+          <li>Tap the <strong>Share</strong> button <span style="font-size: 1.5rem;">⎙</span></li>
+          <li>Scroll down and tap <strong>"Add to Home Screen"</strong></li>
+          <li>Open the app from your home screen</li>
+        </ol>
+        <p><small>Or scroll down in Safari to auto-hide the browser bars</small></p>
+        <button class="ios-close-btn">Got it!</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    
+    // Close button handler
+    overlay.querySelector('.ios-close-btn').addEventListener('click', () => {
+      overlay.classList.add('fade-out');
+      setTimeout(() => overlay.remove(), 300);
+    });
+    
+    // Close on overlay click
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.classList.add('fade-out');
+        setTimeout(() => overlay.remove(), 300);
+      }
+    });
+    
+    // Auto-scroll to hide Safari UI as a workaround
+    setTimeout(() => {
+      window.scrollTo(0, 1);
+    }, 100);
   }
 
   startGame() {
@@ -296,6 +450,31 @@ class GameUI {
     this.elements.gameOver.classList.remove('hidden');
   }
 }
+
+// Handle orientation changes - smooth without flickering
+let orientationTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(orientationTimeout);
+  // No forced reflow - let CSS media queries handle it naturally
+  orientationTimeout = setTimeout(() => {
+    // Optional: trigger any needed updates
+  }, 200);
+});
+
+// Show orientation hint on first load
+window.addEventListener('load', () => {
+  if (window.matchMedia('(orientation: portrait)').matches && window.innerWidth < 768) {
+    const hint = document.createElement('div');
+    hint.className = 'orientation-hint';
+    hint.innerHTML = '📱 Rotate for landscape mode!';
+    document.body.appendChild(hint);
+    
+    setTimeout(() => {
+      hint.classList.add('fade-out');
+      setTimeout(() => hint.remove(), 500);
+    }, 3000);
+  }
+});
 
 // Initialize game when DOM is loaded
 if (document.readyState === 'loading') {
