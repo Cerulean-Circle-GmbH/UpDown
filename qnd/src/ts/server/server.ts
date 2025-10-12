@@ -13,6 +13,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
+import readline from 'node:readline';
 
 const execAsync = promisify(exec);
 
@@ -47,10 +48,53 @@ interface RequestHandler {
   (req: http.IncomingMessage, res: http.ServerResponse): void;
 }
 
+interface ClientSession {
+  id: string;
+  ip: string;
+  userAgent: string;
+  connectedAt: Date;
+  requestCount: number;
+  lastRequest: Date;
+}
+
+// Global state for TUI
+const clientSessions = new Map<string, ClientSession>();
+let totalRequests = 0;
+let serverStartTime = new Date();
+
+/**
+ * Track client session
+ */
+function trackClient(req: http.IncomingMessage): void {
+  const ip = req.socket.remoteAddress || 'unknown';
+  const userAgent = req.headers['user-agent'] || 'unknown';
+  const sessionId = `${ip}-${userAgent}`;
+  
+  totalRequests++;
+  
+  if (!clientSessions.has(sessionId)) {
+    clientSessions.set(sessionId, {
+      id: sessionId,
+      ip,
+      userAgent,
+      connectedAt: new Date(),
+      requestCount: 1,
+      lastRequest: new Date()
+    });
+  } else {
+    const session = clientSessions.get(sessionId)!;
+    session.requestCount++;
+    session.lastRequest = new Date();
+  }
+}
+
 /**
  * Handle incoming HTTP requests
  */
 async function handleRequest(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+  // Track client
+  trackClient(req);
+  
   try {
     let filepath = req.url || '/';
     
@@ -179,6 +223,179 @@ async function startServers(httpOnly: boolean = false): Promise<void> {
 }
 
 /**
+ * Terminal UI (TUI) functions
+ */
+function clearScreen(): void {
+  console.clear();
+  process.stdout.write('\x1b[H'); // Move cursor to home
+}
+
+function showHelp(): void {
+  clearScreen();
+  const uptime = Math.floor((Date.now() - serverStartTime.getTime()) / 1000);
+  
+  console.log('╔════════════════════════════════════════════════════════════════╗');
+  console.log('║             🎴 UpDown Server - Terminal UI                    ║');
+  console.log('╠════════════════════════════════════════════════════════════════╣');
+  console.log('║                                                                ║');
+  console.log('║  📊 Server Status                                              ║');
+  console.log(`║    HTTPS: https://localhost:${HTTPS_PORT}                                  ║`);
+  console.log(`║    HTTP:  http://localhost:${PORT} → HTTPS                           ║`);
+  console.log(`║    Uptime: ${uptime}s                                              ║`);
+  console.log(`║    Requests: ${totalRequests}                                             ║`);
+  console.log(`║    Sessions: ${clientSessions.size}                                              ║`);
+  console.log('║                                                                ║');
+  console.log('║  ⌨️  Keyboard Commands                                          ║');
+  console.log('║                                                                ║');
+  console.log('║    [h] or [?] - Show this help screen                          ║');
+  console.log('║    [s] - Show server status                                    ║');
+  console.log('║    [c] - Show connected clients                                ║');
+  console.log('║    [r] - Show recent requests                                  ║');
+  console.log('║    [l] - Show live request log                                 ║');
+  console.log('║    [clear] - Clear screen                                      ║');
+  console.log('║    [q] - Return to this help screen                            ║');
+  console.log('║    [d] - Stop server and exit                                  ║');
+  console.log('║                                                                ║');
+  console.log('╚════════════════════════════════════════════════════════════════╝');
+  console.log('\n💡 Press any key to start...\n');
+}
+
+function showStatus(): void {
+  clearScreen();
+  const uptime = Math.floor((Date.now() - serverStartTime.getTime()) / 1000);
+  const hours = Math.floor(uptime / 3600);
+  const minutes = Math.floor((uptime % 3600) / 60);
+  const seconds = uptime % 60;
+  
+  console.log('╔════════════════════════════════════════════════════════════════╗');
+  console.log('║                    📊 Server Status                            ║');
+  console.log('╠════════════════════════════════════════════════════════════════╣');
+  console.log(`║  Started:        ${serverStartTime.toLocaleString()}          `);
+  console.log(`║  Uptime:         ${hours}h ${minutes}m ${seconds}s                            `);
+  console.log(`║  Total Requests: ${totalRequests}                                       `);
+  console.log(`║  Active Sessions: ${clientSessions.size}                                     `);
+  console.log(`║  HTTPS Port:     ${HTTPS_PORT}                                        `);
+  console.log(`║  HTTP Port:      ${PORT}                                         `);
+  console.log(`║  Public Dir:     ${path.basename(PUBLIC_DIR)}                               `);
+  console.log('╚════════════════════════════════════════════════════════════════╝');
+  console.log('\nPress [q] to return to help, [d] to stop server...\n');
+}
+
+function showClients(): void {
+  clearScreen();
+  console.log('╔════════════════════════════════════════════════════════════════╗');
+  console.log('║                  👥 Connected Clients                          ║');
+  console.log('╠════════════════════════════════════════════════════════════════╣');
+  
+  if (clientSessions.size === 0) {
+    console.log('║  No clients connected yet                                      ║');
+  } else {
+    const sessions = Array.from(clientSessions.values());
+    sessions.forEach((session, index) => {
+      console.log(`║  Client ${index + 1}:                                                    `);
+      console.log(`║    IP: ${session.ip.padEnd(40)}   `);
+      console.log(`║    Requests: ${session.requestCount}                                          `);
+      console.log(`║    Last: ${session.lastRequest.toLocaleTimeString()}                             `);
+      console.log('║                                                                ║');
+    });
+  }
+  
+  console.log('╚════════════════════════════════════════════════════════════════╝');
+  console.log('\nPress [q] to return to help, [d] to stop server...\n');
+}
+
+/**
+ * Setup Terminal UI
+ */
+function setupTUI(): void {
+  // Set up raw mode for immediate key capture
+  if (process.stdin.isTTY) {
+    readline.emitKeypressEvents(process.stdin);
+    process.stdin.setRawMode(true);
+  }
+
+  let requestLog: string[] = [];
+  let logMode = false;
+
+  process.stdin.on('keypress', (str, key) => {
+    if (!key) return;
+
+    // Handle Ctrl+C
+    if (key.ctrl && key.name === 'c') {
+      console.log('\n\n🛑 Shutting down server (Ctrl+C)...');
+      process.exit(0);
+    }
+
+    // Handle commands
+    switch (key.name) {
+      case 'd':
+        console.log('\n\n🛑 Shutting down server (pressed [d])...');
+        process.exit(0);
+        break;
+
+      case 'h':
+      case '?':
+      case 'q':
+        logMode = false;
+        showHelp();
+        break;
+
+      case 's':
+        logMode = false;
+        showStatus();
+        break;
+
+      case 'c':
+        logMode = false;
+        showClients();
+        break;
+
+      case 'l':
+        logMode = !logMode;
+        if (logMode) {
+          clearScreen();
+          console.log('📡 Live Request Log (press [q] to exit)...\n');
+        } else {
+          showHelp();
+        }
+        break;
+
+      case 'r':
+        logMode = false;
+        clearScreen();
+        console.log('📜 Recent Requests:\n');
+        requestLog.slice(-20).forEach(log => console.log(log));
+        console.log('\nPress [q] to return to help...\n');
+        break;
+
+      default:
+        if (key.name === 'return' && str === 'clear') {
+          clearScreen();
+        }
+        break;
+    }
+  });
+
+  // Log requests in live mode
+  const originalTrack = global.trackClient;
+  // Intercept tracking to show live logs
+  setInterval(() => {
+    if (logMode && totalRequests > 0) {
+      const lastSession = Array.from(clientSessions.values()).pop();
+      if (lastSession) {
+        const logEntry = `[${new Date().toLocaleTimeString()}] ${lastSession.ip} - Request #${lastSession.requestCount}`;
+        requestLog.push(logEntry);
+        if (requestLog.length > 100) requestLog.shift();
+        console.log(logEntry);
+      }
+    }
+  }, 1000);
+
+  // Show initial help
+  showHelp();
+}
+
+/**
  * Main entry point
  */
 async function main(): Promise<void> {
@@ -186,6 +403,9 @@ async function main(): Promise<void> {
   
   const hasSSL = await generateCertificate();
   await startServers(!hasSSL);
+  
+  // Setup TUI after servers start
+  setupTUI();
 }
 
 // Handle uncaught errors
@@ -201,11 +421,17 @@ process.on('unhandledRejection', (reason, promise) => {
 
 // Graceful shutdown
 process.on('SIGINT', () => {
+  if (process.stdin.isTTY) {
+    process.stdin.setRawMode(false);
+  }
   console.log('\n\n🛑 Shutting down server...');
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
+  if (process.stdin.isTTY) {
+    process.stdin.setRawMode(false);
+  }
   console.log('\n\n🛑 Shutting down server...');
   process.exit(0);
 });
