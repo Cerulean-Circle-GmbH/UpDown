@@ -268,6 +268,23 @@ function clearScreen(): void {
 }
 
 /**
+ * Calculate visible string length (without ANSI codes)
+ */
+function visibleLength(str: string): number {
+  // Remove ANSI escape codes
+  return str.replace(/\x1b\[[0-9;]*m/g, '').length;
+}
+
+/**
+ * Pad string to specific width accounting for ANSI codes
+ */
+function padToWidth(str: string, width: number): string {
+  const visible = visibleLength(str);
+  const padding = width - visible;
+  return str + ' '.repeat(Math.max(0, padding));
+}
+
+/**
  * Get available lines for logs based on terminal height and current view
  */
 function getAvailableLogLines(viewLines: number): number {
@@ -309,28 +326,29 @@ function displayLogTail(viewLines: number): void {
 function showHelp(): void {
   clearScreen();
   const uptime = Math.floor((Date.now() - serverStartTime.getTime()) / 1000);
+  const boxWidth = 64;
   
   console.log(`${colors.brightMagenta}╔════════════════════════════════════════════════════════════════╗${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}             ${colors.bright}🎴 UpDown Server - Terminal UI${colors.reset}                    ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`             ${colors.bright}🎴 UpDown Server - Terminal UI${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}╠════════════════════════════════════════════════════════════════╣${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}                                                                ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}  ${colors.brightCyan}📊 Server Status${colors.reset}                                              ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.green}HTTPS:${colors.reset} ${colors.brightBlue}https://localhost:${HTTPS_PORT}${colors.reset}                                  ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.green}HTTP:${colors.reset}  ${colors.brightBlue}http://localhost:${PORT}${colors.reset} → HTTPS                           ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.green}Uptime:${colors.reset} ${colors.brightYellow}${uptime}s${colors.reset}                                              ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.green}Requests:${colors.reset} ${colors.brightYellow}${totalRequests}${colors.reset}                                             ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.green}Sessions:${colors.reset} ${colors.brightYellow}${clientSessions.size}${colors.reset}                                              ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}                                                                ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}  ${colors.brightCyan}⌨️  Keyboard Commands${colors.reset}                                          ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}                                                                ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.brightGreen}[h]${colors.reset} or ${colors.brightGreen}[?]${colors.reset} - Show this help screen                          ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.brightGreen}[s]${colors.reset} - Show server status                                    ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.brightGreen}[c]${colors.reset} - Show connected clients                                ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.brightGreen}[r]${colors.reset} - Show recent requests                                  ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.brightGreen}[l]${colors.reset} - Show live request log                                 ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.brightGreen}[q]${colors.reset} - Return to this help screen                            ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}    ${colors.brightRed}[d]${colors.reset} - ${colors.red}Stop server and exit${colors.reset}                                  ${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}                                                                ${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth('', boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`  ${colors.brightCyan}📊 Server Status${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.green}HTTPS:${colors.reset} ${colors.brightBlue}https://localhost:${HTTPS_PORT}${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.green}HTTP:${colors.reset}  ${colors.brightBlue}http://localhost:${PORT}${colors.reset} → HTTPS`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.green}Uptime:${colors.reset} ${colors.brightYellow}${uptime}s${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.green}Requests:${colors.reset} ${colors.brightYellow}${totalRequests}${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.green}Sessions:${colors.reset} ${colors.brightYellow}${clientSessions.size}${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth('', boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`  ${colors.brightCyan}⌨️  Keyboard Commands${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth('', boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[h]${colors.reset} or ${colors.brightGreen}[?]${colors.reset} - Show this help screen`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[s]${colors.reset} - Show server status`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[c]${colors.reset} - Show connected clients`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[r]${colors.reset} - Show recent requests`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[l]${colors.reset} - Show live request log`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[q]${colors.reset} - Return to this help screen`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightRed}[d]${colors.reset} - ${colors.red}Stop server and exit${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth('', boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}╚════════════════════════════════════════════════════════════════╝${colors.reset}`);
   console.log(`\n${colors.brightYellow}💡 Press any key for commands...${colors.reset}`);
   
@@ -343,17 +361,18 @@ function showStatus(): void {
   const hours = Math.floor(uptime / 3600);
   const minutes = Math.floor((uptime % 3600) / 60);
   const seconds = uptime % 60;
+  const boxWidth = 64;
   
   console.log(`${colors.brightCyan}╔════════════════════════════════════════════════════════════════╗${colors.reset}`);
-  console.log(`${colors.brightCyan}║${colors.reset}                    ${colors.bright}📊 Server Status${colors.reset}                            ${colors.brightCyan}║${colors.reset}`);
+  console.log(`${colors.brightCyan}║${colors.reset}${padToWidth(`                    ${colors.bright}📊 Server Status${colors.reset}`, boxWidth)}${colors.brightCyan}║${colors.reset}`);
   console.log(`${colors.brightCyan}╠════════════════════════════════════════════════════════════════╣${colors.reset}`);
-  console.log(`${colors.brightCyan}║${colors.reset}  ${colors.green}Started:${colors.reset}        ${colors.white}${serverStartTime.toLocaleString()}${colors.reset}          ${colors.brightCyan}║${colors.reset}`);
-  console.log(`${colors.brightCyan}║${colors.reset}  ${colors.green}Uptime:${colors.reset}         ${colors.brightYellow}${hours}h ${minutes}m ${seconds}s${colors.reset}                            ${colors.brightCyan}║${colors.reset}`);
-  console.log(`${colors.brightCyan}║${colors.reset}  ${colors.green}Total Requests:${colors.reset} ${colors.brightMagenta}${totalRequests}${colors.reset}                                       ${colors.brightCyan}║${colors.reset}`);
-  console.log(`${colors.brightCyan}║${colors.reset}  ${colors.green}Active Sessions:${colors.reset} ${colors.brightGreen}${clientSessions.size}${colors.reset}                                     ${colors.brightCyan}║${colors.reset}`);
-  console.log(`${colors.brightCyan}║${colors.reset}  ${colors.green}HTTPS Port:${colors.reset}     ${colors.brightBlue}${HTTPS_PORT}${colors.reset}                                        ${colors.brightCyan}║${colors.reset}`);
-  console.log(`${colors.brightCyan}║${colors.reset}  ${colors.green}HTTP Port:${colors.reset}      ${colors.brightBlue}${PORT}${colors.reset}                                         ${colors.brightCyan}║${colors.reset}`);
-  console.log(`${colors.brightCyan}║${colors.reset}  ${colors.green}Public Dir:${colors.reset}     ${colors.white}${path.basename(PUBLIC_DIR)}${colors.reset}                               ${colors.brightCyan}║${colors.reset}`);
+  console.log(`${colors.brightCyan}║${colors.reset}${padToWidth(`  ${colors.green}Started:${colors.reset}        ${colors.white}${serverStartTime.toLocaleString()}${colors.reset}`, boxWidth)}${colors.brightCyan}║${colors.reset}`);
+  console.log(`${colors.brightCyan}║${colors.reset}${padToWidth(`  ${colors.green}Uptime:${colors.reset}         ${colors.brightYellow}${hours}h ${minutes}m ${seconds}s${colors.reset}`, boxWidth)}${colors.brightCyan}║${colors.reset}`);
+  console.log(`${colors.brightCyan}║${colors.reset}${padToWidth(`  ${colors.green}Total Requests:${colors.reset} ${colors.brightMagenta}${totalRequests}${colors.reset}`, boxWidth)}${colors.brightCyan}║${colors.reset}`);
+  console.log(`${colors.brightCyan}║${colors.reset}${padToWidth(`  ${colors.green}Active Sessions:${colors.reset} ${colors.brightGreen}${clientSessions.size}${colors.reset}`, boxWidth)}${colors.brightCyan}║${colors.reset}`);
+  console.log(`${colors.brightCyan}║${colors.reset}${padToWidth(`  ${colors.green}HTTPS Port:${colors.reset}     ${colors.brightBlue}${HTTPS_PORT}${colors.reset}`, boxWidth)}${colors.brightCyan}║${colors.reset}`);
+  console.log(`${colors.brightCyan}║${colors.reset}${padToWidth(`  ${colors.green}HTTP Port:${colors.reset}      ${colors.brightBlue}${PORT}${colors.reset}`, boxWidth)}${colors.brightCyan}║${colors.reset}`);
+  console.log(`${colors.brightCyan}║${colors.reset}${padToWidth(`  ${colors.green}Public Dir:${colors.reset}     ${colors.white}${path.basename(PUBLIC_DIR)}${colors.reset}`, boxWidth)}${colors.brightCyan}║${colors.reset}`);
   console.log(`${colors.brightCyan}╚════════════════════════════════════════════════════════════════╝${colors.reset}`);
   console.log(`\n${colors.dim}Press ${colors.brightGreen}[q]${colors.reset}${colors.dim} to return to help, ${colors.brightRed}[d]${colors.reset}${colors.dim} to stop server...${colors.reset}`);
   
@@ -362,23 +381,25 @@ function showStatus(): void {
 
 function showClients(): void {
   clearScreen();
+  const boxWidth = 64;
+  
   console.log(`${colors.brightGreen}╔════════════════════════════════════════════════════════════════╗${colors.reset}`);
-  console.log(`${colors.brightGreen}║${colors.reset}                  ${colors.bright}👥 Connected Clients${colors.reset}                          ${colors.brightGreen}║${colors.reset}`);
+  console.log(`${colors.brightGreen}║${colors.reset}${padToWidth(`                  ${colors.bright}👥 Connected Clients${colors.reset}`, boxWidth)}${colors.brightGreen}║${colors.reset}`);
   console.log(`${colors.brightGreen}╠════════════════════════════════════════════════════════════════╣${colors.reset}`);
   
   let viewLines = 5; // Header + footer
   
   if (clientSessions.size === 0) {
-    console.log(`${colors.brightGreen}║${colors.reset}  ${colors.dim}No clients connected yet${colors.reset}                                      ${colors.brightGreen}║${colors.reset}`);
+    console.log(`${colors.brightGreen}║${colors.reset}${padToWidth(`  ${colors.dim}No clients connected yet${colors.reset}`, boxWidth)}${colors.brightGreen}║${colors.reset}`);
     viewLines += 1;
   } else {
     const sessions = Array.from(clientSessions.values());
     sessions.forEach((session, index) => {
-      console.log(`${colors.brightGreen}║${colors.reset}  ${colors.brightYellow}Client ${index + 1}:${colors.reset}                                                    ${colors.brightGreen}║${colors.reset}`);
-      console.log(`${colors.brightGreen}║${colors.reset}    ${colors.green}IP:${colors.reset} ${colors.brightCyan}${session.ip.padEnd(40)}${colors.reset}   ${colors.brightGreen}║${colors.reset}`);
-      console.log(`${colors.brightGreen}║${colors.reset}    ${colors.green}Requests:${colors.reset} ${colors.brightMagenta}${session.requestCount}${colors.reset}                                          ${colors.brightGreen}║${colors.reset}`);
-      console.log(`${colors.brightGreen}║${colors.reset}    ${colors.green}Last:${colors.reset} ${colors.white}${session.lastRequest.toLocaleTimeString()}${colors.reset}                             ${colors.brightGreen}║${colors.reset}`);
-      console.log(`${colors.brightGreen}║${colors.reset}                                                                ${colors.brightGreen}║${colors.reset}`);
+      console.log(`${colors.brightGreen}║${colors.reset}${padToWidth(`  ${colors.brightYellow}Client ${index + 1}:${colors.reset}`, boxWidth)}${colors.brightGreen}║${colors.reset}`);
+      console.log(`${colors.brightGreen}║${colors.reset}${padToWidth(`    ${colors.green}IP:${colors.reset} ${colors.brightCyan}${session.ip}${colors.reset}`, boxWidth)}${colors.brightGreen}║${colors.reset}`);
+      console.log(`${colors.brightGreen}║${colors.reset}${padToWidth(`    ${colors.green}Requests:${colors.reset} ${colors.brightMagenta}${session.requestCount}${colors.reset}`, boxWidth)}${colors.brightGreen}║${colors.reset}`);
+      console.log(`${colors.brightGreen}║${colors.reset}${padToWidth(`    ${colors.green}Last:${colors.reset} ${colors.white}${session.lastRequest.toLocaleTimeString()}${colors.reset}`, boxWidth)}${colors.brightGreen}║${colors.reset}`);
+      console.log(`${colors.brightGreen}║${colors.reset}${padToWidth('', boxWidth)}${colors.brightGreen}║${colors.reset}`);
       viewLines += 5;
     });
   }
