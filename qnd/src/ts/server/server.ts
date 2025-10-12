@@ -52,10 +52,19 @@ interface RequestHandler {
  */
 async function handleRequest(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
   try {
-    let filepath = req.url === '/' ? '/index.html' : req.url || '/';
+    let filepath = req.url || '/';
     
     // Remove query string
     filepath = filepath.split('?')[0];
+
+    // Route handling
+    if (filepath === '/') {
+      filepath = '/index.html';
+    } else if (filepath === '/js') {
+      filepath = '/index-js.html';
+    } else if (filepath === '/ts') {
+      filepath = '/index-ts.html';
+    }
     
     const fullPath = path.join(PUBLIC_DIR, filepath);
     const ext = path.extname(fullPath);
