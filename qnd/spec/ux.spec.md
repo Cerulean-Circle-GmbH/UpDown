@@ -11,6 +11,28 @@
 
 ---
 
+## Architecture Migration
+
+> **Quote**: "i wanted a bigger migration. in want the ts client to completly use lit webcomponents!"
+
+**Status**: 🚧 PLANNED  
+**Implementation**: Migrate TypeScript client (`/ts` route) to Lit web components architecture  
+**Target Files**: 
+- `qnd/src/public/ts/components/` (new directory)
+- `qnd/package.json` (add Lit dependency)
+- Convert: `Card.ts`, `GameModel.ts`, `GameUI.ts` → Lit components
+
+**Architecture**:
+- `<game-card>` - Card display component
+- `<game-board>` - Main game board
+- `<game-controls>` - Button controls (Up/Down)
+- `<game-stats>` - Score/Streak display
+- Reactive state management with Lit's `@state` decorator
+
+**Commit**: TBD
+
+---
+
 ## Chapter 1: UX Requirements Tracking
 
 | # | User Quote | Status | Implementation | Files | Code Reference | Commit SHA |
