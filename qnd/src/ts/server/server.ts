@@ -15,6 +15,7 @@ import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import readline from 'node:readline';
 import { WebSocketServer, WebSocket } from 'ws';
+import fetch from 'node-fetch';
 
 const execAsync = promisify(exec);
 
@@ -70,6 +71,7 @@ interface WebSocketClient {
 // Global state for TUI
 const clientSessions = new Map<string, ClientSession>();
 const wsClients = new Set<WebSocketClient>();
+const avatarCache = new Map<string, string>(); // clientId -> data URL
 let totalRequests = 0;
 let serverStartTime = new Date();
 const serverLogs: string[] = [];
@@ -239,22 +241,36 @@ async function startServers(httpOnly: boolean = false): Promise<void> {
 }
 
 /**
+ * Fetch a unique avatar from thispersondoesnotexist.com
+ */
+async function fetchUniqueAvatar(): Promise<string> {
+  try {
+    const response = await fetch('https://thispersondoesnotexist.com/');
+    const buffer = await response.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString('base64');
+    return `data:image/jpeg;base64,${base64}`;
+  } catch (error) {
+    console.error('Failed to fetch avatar:', error);
+    // Fallback to app icon
+    return '/icon-192.png';
+  }
+}
+
+/**
  * Setup WebSocket server for real-time player notifications
  */
 function setupWebSocketServer(server: https.Server): void {
   const wss = new WebSocketServer({ server });
   
-  wss.on('connection', (ws: WebSocket, req: http.IncomingMessage) => {
+  wss.on('connection', async (ws: WebSocket, req: http.IncomingMessage) => {
     const ip = req.socket.remoteAddress || 'unknown';
     const clientId = `${ip}-${Date.now()}`;
     const connectedAt = Date.now();
     
-    // Generate a unique avatar URL for this player session
-    // Use DiceBear API with clientId as seed for truly unique avatars
-    const styles = ['adventurer', 'avataaars', 'big-ears', 'bottts', 'fun-emoji', 'lorelei', 'micah', 'personas'];
-    const styleIndex = clientId.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
-    const style = styles[styleIndex % styles.length];
-    const avatarUrl = `https://api.dicebear.com/7.x/${style}/svg?seed=${encodeURIComponent(clientId)}`;
+    // Fetch a unique avatar from thispersondoesnotexist.com
+    // Each call generates a NEW image
+    const avatarUrl = await fetchUniqueAvatar();
+    avatarCache.set(clientId, avatarUrl);
     
     const client: WebSocketClient = { ws, id: clientId, ip, connectedAt, avatarUrl };
     wsClients.add(client);
@@ -274,6 +290,7 @@ function setupWebSocketServer(server: https.Server): void {
     
     ws.on('close', () => {
       wsClients.delete(client);
+      avatarCache.delete(clientId);
       addLog(`👋 WebSocket disconnected: ${ip} (${wsClients.size} online)`);
       
       // Broadcast player left to all remaining clients
@@ -283,6 +300,7 @@ function setupWebSocketServer(server: https.Server): void {
     ws.on('error', (error) => {
       console.error('WebSocket error:', error);
       wsClients.delete(client);
+      avatarCache.delete(clientId);
     });
   });
 }
