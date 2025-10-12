@@ -10,6 +10,14 @@ npm start
 
 This starts the HTTPS server and opens your browser automatically at https://localhost:3443
 
+### Choose Your Version
+
+The game is available in **two versions**:
+
+- **`/`** - Version selector (choose JS or TS)
+- **`/js`** - JavaScript version (classic, stable)
+- **`/ts`** - TypeScript ESM version (modern, modular)
+
 ## 🛑 Stop Server
 
 ```bash
@@ -78,6 +86,8 @@ qnd/
 
 - **Server**: See `spec/server.spec.md`
 - **UX**: See `spec/ux.spec.md`
+- **Routes**: See `spec/ROUTES.md` (dual JS/TS versions)
+- **Structure**: See `STRUCTURE.md`
 
 ## 🛠️ Tech Stack
 
