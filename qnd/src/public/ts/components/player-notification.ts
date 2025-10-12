@@ -9,10 +9,20 @@ interface PlayerNotification {
   timestamp: number;
 }
 
+interface Player {
+  playerId: string;
+  playerIp: string;
+  avatarUrl: string;
+  connectedAt: number;
+}
+
 @customElement('player-notification')
 export class PlayerNotification extends LitElement {
   @state()
   private notifications: PlayerNotification[] = [];
+
+  @state()
+  private players: Player[] = [];
 
   @state()
   private ws: WebSocket | null = null;
@@ -20,14 +30,161 @@ export class PlayerNotification extends LitElement {
   @state()
   private onlineCount: number = 1;
 
+  @state()
+  private dockVisible: boolean = false;
+
   static styles = css`
     :host {
+      display: block;
+    }
+
+    .notifications-container {
       position: fixed;
       top: 60px;
       right: 0;
       z-index: 10000;
       pointer-events: none;
-      display: block;
+    }
+
+    .player-dock {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 80px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 2px 0 20px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      transform: translateX(-100%);
+      transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      pointer-events: auto;
+    }
+
+    .player-dock.visible {
+      transform: translateX(0);
+    }
+
+    .player-dock::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .player-dock::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .player-dock::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 2px;
+    }
+
+    .dock-player {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: 3px solid rgba(102, 126, 234, 0.3);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      flex-shrink: 0;
+      animation: dockSlideIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    @keyframes dockSlideIn {
+      from {
+        transform: translateX(-100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .dock-player:hover {
+      transform: scale(1.15) translateY(-5px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .dock-player img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .dock-player-status {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 10px;
+      height: 10px;
+      background: #4ade80;
+      border: 2px solid white;
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .dock-toggle {
+      position: fixed;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 0 12px 12px 0;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 9998;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      pointer-events: auto;
+      font-size: 1.2rem;
+    }
+
+    .dock-toggle:hover {
+      width: 32px;
+      background: rgba(102, 126, 234, 0.9);
+      color: white;
+    }
+
+    .dock-toggle.hidden {
+      transform: translateY(-50%) translateX(-100%);
+    }
+
+    .dock-player-tooltip {
+      position: absolute;
+      left: 70px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 10001;
+    }
+
+    .dock-player:hover .dock-player-tooltip {
+      opacity: 1;
     }
 
     .notification {
@@ -181,8 +338,25 @@ export class PlayerNotification extends LitElement {
         if (data.type === 'welcome') {
           this.onlineCount = data.onlineCount || 1;
           console.log(`Welcome! ${this.onlineCount} player(s) online`);
+          
+          // Initialize players list
+          if (data.players && Array.isArray(data.players)) {
+            this.players = data.players.map((p: any) => ({
+              ...p,
+              avatarUrl: `https://thispersondoesnotexist.com/?${Date.now()}-${p.playerId}`
+            }));
+            
+            // Show dock if there are other players
+            if (this.players.length > 1) {
+              setTimeout(() => {
+                this.dockVisible = true;
+              }, 500);
+            }
+          }
         } else if (data.type === 'player-joined') {
           this.handlePlayerJoined(data);
+        } else if (data.type === 'player-left') {
+          this.handlePlayerLeft(data);
         }
       } catch (error) {
         console.error('WebSocket message error:', error);
@@ -203,8 +377,26 @@ export class PlayerNotification extends LitElement {
   private handlePlayerJoined(data: { playerId: string; playerIp: string; timestamp: number }) {
     // Generate a random avatar from thispersondoesnotexist.com
     // Add timestamp to prevent caching
-    const avatarUrl = `https://thispersondoesnotexist.com/?${Date.now()}`;
+    const avatarUrl = `https://thispersondoesnotexist.com/?${Date.now()}-${data.playerId}`;
     
+    // Add to players list
+    const player: Player = {
+      playerId: data.playerId,
+      playerIp: data.playerIp,
+      avatarUrl,
+      connectedAt: data.timestamp
+    };
+    
+    this.players = [...this.players, player];
+    
+    // Show dock if there are multiple players
+    if (this.players.length > 1 && !this.dockVisible) {
+      setTimeout(() => {
+        this.dockVisible = true;
+      }, 500);
+    }
+    
+    // Show notification
     const notification: PlayerNotification = {
       id: `notif-${Date.now()}`,
       playerId: data.playerId,
@@ -216,10 +408,21 @@ export class PlayerNotification extends LitElement {
     this.notifications = [...this.notifications, notification];
     this.onlineCount++;
 
-    // Auto-remove after 5 seconds
+    // Auto-remove notification after 5 seconds
     setTimeout(() => {
       this.removeNotification(notification.id);
     }, 5000);
+  }
+
+  private handlePlayerLeft(data: { playerId: string; timestamp: number }) {
+    // Remove from players list
+    this.players = this.players.filter(p => p.playerId !== data.playerId);
+    this.onlineCount--;
+    
+    // Hide dock if only one player left (yourself)
+    if (this.players.length <= 1) {
+      this.dockVisible = false;
+    }
   }
 
   private removeNotification(id: string) {
@@ -246,23 +449,54 @@ export class PlayerNotification extends LitElement {
     return `${adj} ${noun}`;
   }
 
+  private toggleDock() {
+    this.dockVisible = !this.dockVisible;
+  }
+
   render() {
     return html`
-      ${this.notifications.map(notif => html`
-        <div class="notification" data-id="${notif.id}">
-          <img class="avatar" src="${notif.avatarUrl}" alt="Player avatar" @error=${(e: Event) => {
-            // Fallback to a placeholder if image fails to load
-            (e.target as HTMLImageElement).src = '/icon-192.png';
-          }} />
-          <div class="info">
-            <div class="player-name">${this.getPlayerName(notif.playerIp)}</div>
-            <div class="player-status">
-              <span class="status-dot"></span>
-              joined the game
+      <!-- macOS Dock-style player sidebar -->
+      <div class="player-dock ${this.dockVisible ? 'visible' : ''}">
+        ${this.players.map(player => html`
+          <div class="dock-player" title="${this.getPlayerName(player.playerIp)}">
+            <img 
+              src="${player.avatarUrl}" 
+              alt="${this.getPlayerName(player.playerIp)}"
+              @error=${(e: Event) => {
+                (e.target as HTMLImageElement).src = '/icon-192.png';
+              }}
+            />
+            <span class="dock-player-status"></span>
+            <div class="dock-player-tooltip">${this.getPlayerName(player.playerIp)}</div>
+          </div>
+        `)}
+      </div>
+
+      <!-- Dock toggle button -->
+      ${this.players.length > 1 ? html`
+        <div class="dock-toggle ${this.dockVisible ? 'hidden' : ''}" @click=${this.toggleDock}>
+          👥
+        </div>
+      ` : ''}
+
+      <!-- Notifications (slide in from right) -->
+      <div class="notifications-container">
+        ${this.notifications.map(notif => html`
+          <div class="notification" data-id="${notif.id}">
+            <img class="avatar" src="${notif.avatarUrl}" alt="Player avatar" @error=${(e: Event) => {
+              // Fallback to a placeholder if image fails to load
+              (e.target as HTMLImageElement).src = '/icon-192.png';
+            }} />
+            <div class="info">
+              <div class="player-name">${this.getPlayerName(notif.playerIp)}</div>
+              <div class="player-status">
+                <span class="status-dot"></span>
+                joined the game
+              </div>
             </div>
           </div>
-        </div>
-      `)}
+        `)}
+      </div>
     `;
   }
 }

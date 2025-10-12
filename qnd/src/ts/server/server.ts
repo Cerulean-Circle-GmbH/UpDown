@@ -63,6 +63,7 @@ interface WebSocketClient {
   ws: WebSocket;
   id: string;
   ip: string;
+  connectedAt: number;
 }
 
 // Global state for TUI
@@ -245,17 +246,19 @@ function setupWebSocketServer(server: https.Server): void {
   wss.on('connection', (ws: WebSocket, req: http.IncomingMessage) => {
     const ip = req.socket.remoteAddress || 'unknown';
     const clientId = `${ip}-${Date.now()}`;
+    const connectedAt = Date.now();
     
-    const client: WebSocketClient = { ws, id: clientId, ip };
+    const client: WebSocketClient = { ws, id: clientId, ip, connectedAt };
     wsClients.add(client);
     
     addLog(`🎮 WebSocket connected: ${ip} (${wsClients.size} online)`);
     
-    // Send welcome message
+    // Send welcome message with full player list
     ws.send(JSON.stringify({
       type: 'welcome',
       clientId,
-      onlineCount: wsClients.size
+      onlineCount: wsClients.size,
+      players: getAllPlayers()
     }));
     
     // Broadcast new player to all other clients
@@ -264,12 +267,43 @@ function setupWebSocketServer(server: https.Server): void {
     ws.on('close', () => {
       wsClients.delete(client);
       addLog(`👋 WebSocket disconnected: ${ip} (${wsClients.size} online)`);
+      
+      // Broadcast player left to all remaining clients
+      broadcastPlayerLeft(client);
     });
     
     ws.on('error', (error) => {
       console.error('WebSocket error:', error);
       wsClients.delete(client);
     });
+  });
+}
+
+/**
+ * Get all connected players
+ */
+function getAllPlayers() {
+  return Array.from(wsClients).map(client => ({
+    playerId: client.id,
+    playerIp: client.ip.replace(/^::ffff:/, ''),
+    connectedAt: client.connectedAt
+  }));
+}
+
+/**
+ * Broadcast player left to all clients
+ */
+function broadcastPlayerLeft(leftClient: WebSocketClient): void {
+  const message = JSON.stringify({
+    type: 'player-left',
+    playerId: leftClient.id,
+    timestamp: Date.now()
+  });
+  
+  wsClients.forEach(client => {
+    if (client.ws.readyState === WebSocket.OPEN) {
+      client.ws.send(message);
+    }
   });
 }
 
