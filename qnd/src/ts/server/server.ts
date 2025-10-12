@@ -14,6 +14,7 @@ import { fileURLToPath } from 'node:url';
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import readline from 'node:readline';
+import { WebSocketServer, WebSocket } from 'ws';
 
 const execAsync = promisify(exec);
 
@@ -58,8 +59,15 @@ interface ClientSession {
   lastRequest: Date;
 }
 
+interface WebSocketClient {
+  ws: WebSocket;
+  id: string;
+  ip: string;
+}
+
 // Global state for TUI
 const clientSessions = new Map<string, ClientSession>();
+const wsClients = new Set<WebSocketClient>();
 let totalRequests = 0;
 let serverStartTime = new Date();
 const serverLogs: string[] = [];
@@ -218,11 +226,69 @@ async function startServers(httpOnly: boolean = false): Promise<void> {
       });
 
       httpsServer.listen(HTTPS_PORT);
+      
+      // Setup WebSocket server
+      setupWebSocketServer(httpsServer);
     } catch (error) {
       // Silently fall back to HTTP only
       await startServers(true);
     }
   }
+}
+
+/**
+ * Setup WebSocket server for real-time player notifications
+ */
+function setupWebSocketServer(server: https.Server): void {
+  const wss = new WebSocketServer({ server });
+  
+  wss.on('connection', (ws: WebSocket, req: http.IncomingMessage) => {
+    const ip = req.socket.remoteAddress || 'unknown';
+    const clientId = `${ip}-${Date.now()}`;
+    
+    const client: WebSocketClient = { ws, id: clientId, ip };
+    wsClients.add(client);
+    
+    addLog(`🎮 WebSocket connected: ${ip} (${wsClients.size} online)`);
+    
+    // Send welcome message
+    ws.send(JSON.stringify({
+      type: 'welcome',
+      clientId,
+      onlineCount: wsClients.size
+    }));
+    
+    // Broadcast new player to all other clients
+    broadcastNewPlayer(client);
+    
+    ws.on('close', () => {
+      wsClients.delete(client);
+      addLog(`👋 WebSocket disconnected: ${ip} (${wsClients.size} online)`);
+    });
+    
+    ws.on('error', (error) => {
+      console.error('WebSocket error:', error);
+      wsClients.delete(client);
+    });
+  });
+}
+
+/**
+ * Broadcast new player connection to all clients except the new one
+ */
+function broadcastNewPlayer(newClient: WebSocketClient): void {
+  const message = JSON.stringify({
+    type: 'player-joined',
+    playerId: newClient.id,
+    playerIp: newClient.ip.replace(/^::ffff:/, ''), // Clean IPv6 prefix
+    timestamp: Date.now()
+  });
+  
+  wsClients.forEach(client => {
+    if (client.id !== newClient.id && client.ws.readyState === WebSocket.OPEN) {
+      client.ws.send(message);
+    }
+  });
 }
 
 /**

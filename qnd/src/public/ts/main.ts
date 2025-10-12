@@ -3,6 +3,7 @@
  */
 
 import './components/game-board.js';
+import './components/player-notification.js';
 
 // PWA Install Prompt Handler
 let deferredInstallPrompt: any = null;
