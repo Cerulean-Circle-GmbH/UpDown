@@ -51,17 +51,26 @@
 - Lit imports: `import { LitElement, html, css } from 'lit'` in all components
 
 **Build System**:
-- Added TypeScript compiler as dev dependency
-- Created `tsconfig.client.json` for client-side compilation
-- Added `npm run build` script to compile TS → JS
-- Build output: `src/public/ts-build/` (gitignored)
-- `npm start` now runs build before starting server
+- **Bundler**: esbuild for fast TypeScript → JavaScript bundling
+- **Configuration**: `build.js` with decorator support
+- **Output**: `src/public/dist/main.js` (39KB bundled, includes Lit library)
+- **Scripts**: 
+  - `npm run build` - Bundle TypeScript with all dependencies
+  - `npm run build:watch` - Watch mode for development
+  - `npm start` - Build and start server
+- **Features**:
+  - Bundles all Lit dependencies from node_modules
+  - Supports experimental decorators
+  - Generates source maps for debugging
+  - Minification in production
 
 **Commits**: 
 - `8ed824b` - Fix TS version: Change imports to .ts and add TS MIME type
 - `e634c26` - Add Lit web components: game-card, game-stats, game-controls, game-board
 - `169a226` - Migrate TS version to use Lit web components
 - `2bd85d9` - Add TypeScript build step for browser compatibility (fixes MIME type error)
+- `453a080` - Switch from TypeScript compiler to esbuild bundler (fixes module resolution)
+- `ee910bf` - Remove accidentally committed ts-build directory
 
 ---
 
