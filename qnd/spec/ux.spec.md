@@ -15,21 +15,45 @@
 
 > **Quote**: "i wanted a bigger migration. in want the ts client to completly use lit webcomponents!"
 
-**Status**: 🚧 PLANNED  
-**Implementation**: Migrate TypeScript client (`/ts` route) to Lit web components architecture  
-**Target Files**: 
-- `qnd/src/public/ts/components/` (new directory)
-- `qnd/package.json` (add Lit dependency)
-- Convert: `Card.ts`, `GameModel.ts`, `GameUI.ts` → Lit components
+**Status**: ✅ REALIZED  
+**Implementation**: Complete migration of TypeScript client to Lit web components architecture  
+**Route**: `/ts` - Now serves Lit-based version
 
-**Architecture**:
-- `<game-card>` - Card display component
-- `<game-board>` - Main game board
-- `<game-controls>` - Button controls (Up/Down)
-- `<game-stats>` - Score/Streak display
-- Reactive state management with Lit's `@state` decorator
+**Component Architecture**:
+- `<game-card>` - Card display with animations and responsive sizing
+- `<game-stats>` - Statistics display (round, score, streak, cards left)
+- `<game-controls>` - Button controls (Up/Down/Equal) with keyboard support
+- `<game-board>` - Main orchestrator with reactive state management
 
-**Commit**: TBD
+**Files Created**:
+- `qnd/src/public/ts/components/game-card.ts` (131 lines)
+- `qnd/src/public/ts/components/game-stats.ts` (148 lines)
+- `qnd/src/public/ts/components/game-controls.ts` (268 lines)
+- `qnd/src/public/ts/components/game-board.ts` (396 lines)
+
+**Files Modified**:
+- `qnd/src/public/ts/main.ts` - Now imports Lit components
+- `qnd/src/public/index-ts.html` - Simplified to `<game-board>` tag
+- `qnd/package.json` - Added Lit 3.1.0 dependency
+- `qnd/src/ts/server/server.ts` - Added `.ts` MIME type support
+
+**Key Features**:
+- Reactive state updates with `@state` decorator
+- Custom events for component communication
+- Shadow DOM encapsulation
+- Scoped CSS with responsive breakpoints
+- Event bubbling for game actions
+
+**Code References**:
+- Component registration: `@customElement('game-board')` in `game-board.ts:11`
+- State management: `@state() private game: GameModel` in `game-board.ts:14-17`
+- Event handling: `@game-guess=${this._handleGuess}` in `game-board.ts:264`
+- Lit imports: `import { LitElement, html, css } from 'lit'` in all components
+
+**Commits**: 
+- `8ed824b` - Fix TS version: Change imports to .ts and add TS MIME type
+- `e634c26` - Add Lit web components: game-card, game-stats, game-controls, game-board
+- `169a226` - Migrate TS version to use Lit web components
 
 ---
 
