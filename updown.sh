@@ -16,7 +16,7 @@ lsof -ti:$HTTP_PORT | xargs kill -9 2>/dev/null
 
 # Start the Node.js HTTPS server in the background
 cd "$(dirname "$0")"
-node server.js > /dev/null 2>&1 &
+node server.cjs > /dev/null 2>&1 &
 SERVER_PID=$!
 
 # Wait a moment for server to start
