@@ -2,7 +2,7 @@
  * Main entry point - TypeScript ESM version
  */
 
-import { GameUI } from './GameUI.js';
+import { GameUI } from './GameUI.ts';
 
 // PWA Install Prompt Handler
 let deferredInstallPrompt: any = null;

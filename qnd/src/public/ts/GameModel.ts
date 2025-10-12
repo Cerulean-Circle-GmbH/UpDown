@@ -2,7 +2,7 @@
  * GameModel - Core game logic and state management
  */
 
-import { Card } from './Card.js';
+import { Card } from './Card.ts';
 
 export type GamePhase = 'ready' | 'playing' | 'game_over';
 export type PlayerGuess = 'up' | 'down' | 'equal';

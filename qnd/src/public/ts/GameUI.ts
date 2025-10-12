@@ -2,8 +2,8 @@
  * GameUI - User interface and DOM manipulation
  */
 
-import { GameModel, PlayerGuess } from './GameModel.js';
-import { Card } from './Card.js';
+import { GameModel, PlayerGuess } from './GameModel.ts';
+import { Card } from './Card.ts';
 
 export class GameUI {
   private game: GameModel;

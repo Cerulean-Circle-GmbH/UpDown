@@ -34,6 +34,7 @@ const MIME_TYPES: Record<string, string> = {
   '.html': 'text/html',
   '.css': 'text/css',
   '.js': 'application/javascript',
+  '.ts': 'application/javascript', // Serve TypeScript as JavaScript for browser
   '.json': 'application/json',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
