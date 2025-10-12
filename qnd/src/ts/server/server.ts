@@ -339,7 +339,7 @@ function showHelp(): void {
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.green}Requests:${colors.reset} ${colors.brightYellow}${totalRequests}${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.green}Sessions:${colors.reset} ${colors.brightYellow}${clientSessions.size}${colors.reset}`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth('', boxWidth)}${colors.brightMagenta}║${colors.reset}`);
-  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`  ${colors.brightCyan}⌨️  Keyboard Commands${colors.reset} `, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
+  console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`  ${colors.brightCyan}⌨️  Keyboard Commands${colors.reset}  `, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth('', boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[h]${colors.reset} or ${colors.brightGreen}[?]${colors.reset} - Show this help screen`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
   console.log(`${colors.brightMagenta}║${colors.reset}${padToWidth(`    ${colors.brightGreen}[s]${colors.reset} - Show server status`, boxWidth)}${colors.brightMagenta}║${colors.reset}`);
