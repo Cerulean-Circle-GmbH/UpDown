@@ -274,6 +274,38 @@ https://localhost:3443  [🔒] [⊕ Install]
 └─────────────────────────────────────┘
 ```
 
+### Custom Install Prompt
+
+In addition to the browser's native install icon, UpDown includes a **custom install hint** that appears automatically:
+
+**Visual Design:**
+```
+┌────────────────────────────────────────────┐
+│  📱  Install UpDown as an app  [Install] ✕ │
+└────────────────────────────────────────────┘
+         ↑ Slides up from bottom
+```
+
+**Features:**
+- 🎯 Appears 3-5 seconds after page load (browser-dependent)
+- 📱 Beautiful gradient banner matching game theme
+- 🔘 One-click install button
+- ✕ Dismissible with close button
+- ⏱️ Auto-hides after 10 seconds
+- 📊 Only shows if PWA is installable
+- 🚫 Doesn't show if already installed
+
+**Implementation:**
+- Listens for `beforeinstallprompt` event
+- Defers browser's default prompt
+- Shows custom UI with better UX
+- Triggers native install on button click
+- Handles `appinstalled` event
+
+**Code Location:**
+- JavaScript: `public/game.js:479-562`
+- CSS: `public/styles.css:993-1110`
+
 ---
 
 ## Chapter 7: Testing & Verification
