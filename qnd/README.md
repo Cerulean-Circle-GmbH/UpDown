@@ -1,6 +1,8 @@
-# UpDown - Quick & Dirty Prototype 🎴
+# UpDown QND Prototype 🎴
 
-**Fast, functional, playable card game prototype.**
+**Quick & Dirty** playable card game prototype with dual JavaScript/TypeScript implementations.
+
+---
 
 ## 🚀 Quick Start
 
@@ -8,15 +10,36 @@
 npm start
 ```
 
-This starts the HTTPS server and opens your browser automatically at https://localhost:3443
+Opens your browser at **https://localhost:3443**
 
-### Choose Your Version
+⚠️ Accept the self-signed certificate warning on first visit.
 
-The game is available in **two versions**:
+---
 
-- **`/`** - Version selector (choose JS or TS)
-- **`/js`** - JavaScript version (classic, stable)
-- **`/ts`** - TypeScript ESM version (modern, modular)
+## 🎮 Three Ways to Play
+
+| Route | Version | Tech Stack | Best For |
+|-------|---------|------------|----------|
+| **`/`** | **Selector** | HTML + CSS | Choosing your version |
+| **`/js`** | **JavaScript** | Vanilla JS | Maximum compatibility |
+| **`/ts`** | **TypeScript** | TS ESM modules | Modern development |
+
+### `/` - Version Selector
+Beautiful landing page with interactive cards to choose between versions.
+
+### `/js` - JavaScript Version
+- Single-file implementation
+- Plain JavaScript (no compilation)
+- Works on all browsers
+- Badge: **STABLE**
+
+### `/ts` - TypeScript Version
+- Modular ESM architecture
+- Full type safety
+- Modern TypeScript 5.x
+- Badge: **MODERN**
+
+---
 
 ## 🛑 Stop Server
 
@@ -24,95 +47,258 @@ The game is available in **two versions**:
 npm run stop
 ```
 
-## 📁 Structure
+---
+
+## 📁 Project Structure
 
 ```
 qnd/
-├── spec/                   # 📄 Documentation & Specifications
-│   ├── README.md           # This file
-│   ├── server.spec.md      # Server documentation
-│   └── ux.spec.md          # UX requirements tracking
 │
-├── src/                    # 💻 Source Code
-│   ├── ts/                 # TypeScript
-│   │   └── server/         # HTTPS Server
-│   │       ├── server.ts   # Main server file
-│   │       └── .certs/     # SSL certificates (auto-generated)
-│   │
-│   ├── public/             # 🎮 Frontend (served static)
-│   │   ├── index.html
-│   │   ├── game.js         # Game logic
-│   │   ├── styles.css
-│   │   ├── manifest.json   # PWA manifest
-│   │   ├── sw.js           # Service worker
-│   │   └── icons/
-│   │
-│   ├── sh/                 # Shell Scripts
-│   │   ├── updown.sh       # Start script
-│   │   ├── stop.sh         # Stop script
-│   │   └── generate-icons.sh
-│   │
-│   └── js/                 # JavaScript (reserved for future use)
+├── 📄 Configuration
+│   ├── package.json            # Dependencies & scripts
+│   ├── tsconfig.json           # TypeScript config
+│   └── .gitignore
 │
-├── package.json            # Dependencies & scripts
-├── tsconfig.json           # TypeScript configuration
-└── .gitignore              # Ignored files
+├── 📖 Documentation (spec/)
+│   ├── README.md               # This file (moved to root)
+│   ├── server.spec.md          # Server architecture
+│   ├── ux.spec.md              # UX requirements
+│   └── ROUTES.md               # Routing documentation
+│
+└── 💻 Source Code (src/)
+    │
+    ├── ts/server/              # Backend (TypeScript HTTPS Server)
+    │   ├── server.ts           # Main server
+    │   └── .certs/             # SSL certificates
+    │
+    ├── public/                 # Frontend (Static Assets)
+    │   ├── index.html          # Version selector
+    │   ├── index-js.html       # JS version HTML
+    │   ├── index-ts.html       # TS version HTML
+    │   ├── styles.css          # Shared styles
+    │   ├── manifest.json       # PWA manifest
+    │   ├── sw.js               # Service worker
+    │   │
+    │   ├── js/                 # JavaScript Version
+    │   │   └── game.js         # All-in-one file (594 lines)
+    │   │
+    │   └── ts/                 # TypeScript Version (Modular)
+    │       ├── Card.ts         # Card class + types
+    │       ├── GameModel.ts    # Game logic
+    │       ├── GameUI.ts       # UI handling
+    │       └── main.ts         # Entry point
+    │
+    └── sh/                     # Shell Scripts
+        ├── updown.sh           # Start script
+        ├── stop.sh             # Stop script
+        └── generate-icons.sh   # Icon generation
 ```
 
-## 🎮 Features
+---
 
-- ✅ **Card Game**: Higher/Lower guessing game with full deck
-- ✅ **HTTPS Server**: Modern TypeScript ESM with self-signed SSL
-- ✅ **PWA Support**: Installable, works offline
-- ✅ **Responsive**: Works on desktop, tablet, and mobile
-- ✅ **Keyboard Shortcuts**: U = Start, D = Stop
-- ✅ **Full Screen**: Double-tap header for borderless mode
+## 🎯 Game Features
 
-## 🔐 Security
+- ✅ **Card Game**: Higher/Lower guessing with 52-card deck
+- ✅ **Scoring**: Points + streak system
+- ✅ **PWA**: Installable as app, works offline
+- ✅ **Responsive**: iPhone 4 to iPhone 15+, desktop, tablet
+- ✅ **HTTPS**: Self-signed SSL with automatic redirect
+- ✅ **Fullscreen**: Double-tap header for borderless mode
+- ✅ **Keyboard**: `U` = Start, `D` = Stop
+- ✅ **Touch**: Optimized for mobile with install prompt
 
-- Self-signed SSL certificate (auto-generated on first run)
-- HTTPS on port 3443, HTTP redirect on port 3000
-- Accept certificate warning in browser on first visit
-- Certificates stored in `src/ts/server/.certs/`
-
-## 📱 Mobile
-
-- Responsive design (iPhone 4 to iPhone 15+)
-- Portrait and landscape support
-- PWA install prompt
-- Touch-optimized controls
-
-## 📚 Documentation
-
-- **Server**: See `spec/server.spec.md`
-- **UX**: See `spec/ux.spec.md`
-- **Routes**: See `spec/ROUTES.md` (dual JS/TS versions)
-- **Structure**: See `STRUCTURE.md`
-
-## 🛠️ Tech Stack
-
-- **Backend**: Node.js + TypeScript ESM
-- **Frontend**: Vanilla JS + CSS
-- **Server**: HTTPS with self-signed cert
-- **PWA**: Service Worker + Manifest
-- **Execution**: tsx (TypeScript runner)
+---
 
 ## 🔧 Development
 
-**Watch mode** (auto-reload on changes):
+### JavaScript Version
+
+```bash
+# Edit the single file
+nano src/public/js/game.js
+
+# No compilation needed, just reload browser
+```
+
+### TypeScript Version
+
+```bash
+# Edit modules
+nano src/public/ts/Card.ts
+nano src/public/ts/GameModel.ts
+nano src/public/ts/GameUI.ts
+nano src/public/ts/main.ts
+
+# tsx runs TypeScript directly, no build step
+```
+
+### Watch Mode (Auto-reload)
+
 ```bash
 npm run dev
 ```
 
-## 📝 File Paths
+---
 
-- **Server**: `src/ts/server/server.ts`
-- **Frontend**: `src/public/`
-- **Scripts**: `src/sh/`
-- **Specs**: `spec/`
+## 📊 Version Comparison
+
+| Feature | JavaScript (`/js`) | TypeScript (`/ts`) |
+|---------|-------------------|--------------------|
+| **Type Safety** | ❌ None | ✅ Full |
+| **Modules** | ❌ Single file | ✅ ES modules |
+| **Maintainability** | ⚠️ Good | ✅ Excellent |
+| **Browser Support** | ✅ All browsers | ✅ Modern browsers |
+| **Learning Curve** | ✅ Easy | ⚠️ Moderate |
+| **IDE Support** | ⚠️ Basic | ✅ Advanced |
+| **Compilation** | ❌ None | ✅ Runtime (tsx) |
+| **File Size** | 594 lines (1 file) | ~400 lines (4 modules) |
 
 ---
 
-**This is the "quick & dirty" prototype.**  
-For the full project structure with sprints, docs, and devops, see the parent directory.
+## 🌐 URLs & Routes
 
+```bash
+# Version selector
+https://localhost:3443/
+
+# JavaScript version
+https://localhost:3443/js
+
+# TypeScript version
+https://localhost:3443/ts
+
+# Auto-redirect shortcuts
+https://localhost:3443/?v=js
+https://localhost:3443/?v=ts
+```
+
+---
+
+## 🔐 Security
+
+- **HTTPS Only**: TLS 1.2+ with RSA 2048-bit keys
+- **Self-Signed Cert**: Auto-generated on first run
+- **Location**: `src/ts/server/.certs/`
+- **Ports**: 3443 (HTTPS), 3000 (HTTP redirect)
+- **Production**: Ready for Let's Encrypt certificate
+
+---
+
+## 📱 PWA Features
+
+- ✅ **Installable**: Browser install prompt
+- ✅ **Offline**: Service Worker caching
+- ✅ **Home Screen**: "Add to Home Screen" on mobile
+- ✅ **Standalone**: Fullscreen app mode
+- ✅ **Icons**: 192x192 and 512x512 PNG
+- ✅ **Manifest**: Complete PWA configuration
+
+---
+
+## 🎨 UI/UX Highlights
+
+- **Responsive Design**: Mobile-first approach
+- **Portrait & Landscape**: Auto-switching layouts
+- **Animations**: Smooth card transitions
+- **Gradient Theme**: Purple/blue gradient (#667eea → #764ba2)
+- **Touch Optimized**: Large tap targets
+- **Accessibility**: Keyboard navigation support
+- **Dark Mode Ready**: CSS variables for theming
+
+---
+
+## 🛠️ Tech Stack
+
+### Backend
+- **Runtime**: Node.js v24+
+- **Language**: TypeScript ESM
+- **Server**: Native HTTPS module
+- **Execution**: tsx (no build step)
+- **SSL**: OpenSSL (self-signed)
+
+### Frontend
+- **Languages**: JavaScript + TypeScript
+- **Styling**: Vanilla CSS (no frameworks)
+- **PWA**: Service Worker + Manifest
+- **Icons**: SVG + PNG
+- **Modules**: ES6 imports/exports
+
+### DevOps
+- **Scripts**: Bash (sh/)
+- **Package Manager**: npm
+- **Version Control**: Git
+- **Development**: Watch mode with tsx
+
+---
+
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| `spec/server.spec.md` | Server architecture, HTTPS setup, PWA config |
+| `spec/ux.spec.md` | UX requirements tracking with commit SHAs |
+| `spec/ROUTES.md` | Dual routing system documentation |
+| `STRUCTURE.md` | Visual project organization |
+
+---
+
+## 🚀 Deployment
+
+This prototype is development-ready with:
+- Self-signed certificates (replace with Let's Encrypt for production)
+- Static file serving (can use nginx/caddy in production)
+- PWA support (works with any HTTPS server)
+
+---
+
+## 🎓 Learning Path
+
+### Beginner
+Start with **`/js`** version:
+- Single file to understand
+- Plain JavaScript
+- No compilation complexity
+
+### Intermediate
+Move to **`/ts`** version:
+- Learn TypeScript syntax
+- Understand ES modules
+- See separation of concerns
+
+### Advanced
+Explore the server:
+- TypeScript backend (`src/ts/server/`)
+- HTTPS implementation
+- Routing logic
+
+---
+
+## 🔗 Quick Links
+
+- **Play Now**: https://localhost:3443/
+- **GitHub**: See parent directory for full project
+- **Branch**: `dev/qnd2`
+
+---
+
+## ⚡ Quick Commands
+
+```bash
+# Start everything
+npm start
+
+# Stop everything
+npm run stop
+
+# Development mode (watch)
+npm run dev
+
+# Direct script access
+./src/sh/updown.sh
+./src/sh/stop.sh
+```
+
+---
+
+**Made with ❤️ for rapid prototyping**  
+This is the QND (Quick & Dirty) prototype. For the full project with sprints, documentation, and DevOps, see the parent directory.
