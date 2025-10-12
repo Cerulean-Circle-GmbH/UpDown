@@ -15,8 +15,9 @@
 
 | # | User Quote | Status | Implementation | Files | Code Reference | Commit SHA |
 |---|------------|--------|----------------|-------|----------------|------------|
-| 1 | "make it https" | ✅ REALIZED | Node.js HTTPS server with self-signed SSL certificates | `server.js`<br>`updown.sh`<br>`.gitignore` | HTTPS server: `server.js:102-121`<br>Certificate generation: `server.js:68-88`<br>Launch script: `updown.sh:17-20` | `846ab48` |
+| 1 | "make it https" | ✅ REALIZED | Node.js HTTPS server with self-signed SSL certificates | `server.ts`<br>`updown.sh`<br>`.gitignore` | HTTPS server: `server.ts:176-199`<br>Certificate generation: `server.ts:145-174`<br>Launch script: `updown.sh:17-20` | `846ab48` |
 | 2 | "make it a pwa" | ✅ REALIZED | PWA manifest, service worker, offline support, app icons | `public/manifest.json`<br>`public/sw.js`<br>`public/index.html`<br>`public/game.js`<br>`generate-icons.sh` | Manifest: `manifest.json:1-30`<br>Service Worker: `sw.js:1-120`<br>SW Registration: `game.js:479-498`<br>Manifest link: `index.html:14` | `846ab48` |
+| 3 | "give the server a TUI (terminal ui) and listen to keyboard inputs" | ✅ REALIZED | Interactive terminal UI with keyboard shortcuts, client session tracking, live request logging | `server.ts` | TUI setup: `server.ts:310-396`<br>Help screen: `server.ts:233-261`<br>Client tracking: `server.ts:68-89`<br>Keyboard handler: `server.ts:320-377` | `965b23a` |
 
 ---
 
@@ -44,7 +45,16 @@
    - Cache control headers
    - Fallback to HTTP if SSL fails
 
-2. **PWA Support**
+2. **Interactive Terminal UI (TUI)**
+   - Real-time keyboard input handling (raw mode)
+   - Client session tracking with IP and user agent
+   - Live request logging
+   - Beautiful boxed UI with Unicode borders
+   - Multiple views: help, status, clients, logs
+   - Graceful shutdown with [d] key
+   - Behaves like `less` with [q] to return to help
+
+3. **PWA Support**
    - **Manifest** (`manifest.json`)
      - App name, icons, theme colors
      - Standalone display mode
@@ -157,19 +167,80 @@ https.createServer(options, handleRequest).listen(3443);
 
 ## Chapter 5: Deployment & Operations
 
+### Terminal UI (TUI) Commands
+
+When the server starts, it displays an interactive Terminal UI with the following keyboard controls:
+
+| Key | Command | Description |
+|-----|---------|-------------|
+| `h` or `?` | Help | Show the help screen with all commands |
+| `s` | Status | Show server status (uptime, requests, sessions) |
+| `c` | Clients | Show list of connected client sessions |
+| `r` | Recent | Show recent request log (last 20) |
+| `l` | Live Log | Toggle live request logging (real-time) |
+| `q` | Quit to Help | Return to help screen (like `less`) |
+| `d` | Down/Stop | Gracefully stop the server and exit |
+| `Ctrl+C` | Force Stop | Force shutdown |
+
+#### TUI Views
+
+**Help Screen** (default)
+```
+╔════════════════════════════════════════════════════════════════╗
+║             🎴 UpDown Server - Terminal UI                    ║
+╠════════════════════════════════════════════════════════════════╣
+║  📊 Server Status                                              ║
+║    HTTPS: https://localhost:3443                              ║
+║    HTTP:  http://localhost:3000 → HTTPS                       ║
+║    Uptime: 42s                                                 ║
+║    Requests: 15                                                ║
+║    Sessions: 2                                                 ║
+╚════════════════════════════════════════════════════════════════╝
+```
+
+**Status View** (`s` key)
+- Server start time
+- Uptime (hours, minutes, seconds)
+- Total request count
+- Active client sessions
+- Port configuration
+- Public directory
+
+**Clients View** (`c` key)
+- List of all connected clients
+- IP addresses
+- Request counts per client
+- Last request timestamp
+- Auto-tracked by user agent + IP
+
+**Live Log** (`l` key)
+- Real-time request stream
+- Timestamped entries
+- Client IP and request number
+- Toggle on/off with `l`
+- Press `q` to return to help
+
 ### Development Setup
 
 ```bash
-# Start HTTPS server
+# Start HTTPS server with TUI
 npm start
 
 # Generates certificates, starts server, opens browser
 # URL: https://localhost:3443
 # HTTP redirect: http://localhost:3000 → https://localhost:3443
+# Interactive TUI appears in terminal
 ```
 
 ### Stop Server
 
+**Method 1: Using TUI**
+```bash
+# Press [d] key in the running server terminal
+# Graceful shutdown with cleanup
+```
+
+**Method 2: Using npm script**
 ```bash
 npm run stop
 
