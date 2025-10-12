@@ -50,10 +50,18 @@
 - Event handling: `@game-guess=${this._handleGuess}` in `game-board.ts:264`
 - Lit imports: `import { LitElement, html, css } from 'lit'` in all components
 
+**Build System**:
+- Added TypeScript compiler as dev dependency
+- Created `tsconfig.client.json` for client-side compilation
+- Added `npm run build` script to compile TS → JS
+- Build output: `src/public/ts-build/` (gitignored)
+- `npm start` now runs build before starting server
+
 **Commits**: 
 - `8ed824b` - Fix TS version: Change imports to .ts and add TS MIME type
 - `e634c26` - Add Lit web components: game-card, game-stats, game-controls, game-board
 - `169a226` - Migrate TS version to use Lit web components
+- `2bd85d9` - Add TypeScript build step for browser compatibility (fixes MIME type error)
 
 ---
 
