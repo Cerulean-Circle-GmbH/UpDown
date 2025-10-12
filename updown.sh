@@ -14,9 +14,9 @@ echo "🎴 Starting UpDown game..."
 lsof -ti:$PORT | xargs kill -9 2>/dev/null
 lsof -ti:$HTTP_PORT | xargs kill -9 2>/dev/null
 
-# Start the Node.js HTTPS server in the background
+# Start the TypeScript ESM HTTPS server in the background
 cd "$(dirname "$0")"
-node server.cjs > /dev/null 2>&1 &
+npx -y tsx server.ts > /dev/null 2>&1 &
 SERVER_PID=$!
 
 # Wait a moment for server to start
