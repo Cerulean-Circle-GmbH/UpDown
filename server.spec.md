@@ -312,7 +312,7 @@ window.matchMedia('(display-mode: standalone)').matches
 | Date | Version | Changes | Commit |
 |------|---------|---------|--------|
 | 2025-10-12 | 0.2.0 | Initial HTTPS server with PWA support | `846ab48` |
-| 2025-10-12 | 0.3.0 | Migrated to TypeScript ESM with modern Node.js features | TBD |
+| 2025-10-12 | 0.3.0 | Migrated to TypeScript ESM with modern Node.js features | `f704298` + `e0ce029` |
 
 ---
 
