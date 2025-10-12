@@ -476,6 +476,27 @@ window.addEventListener('load', () => {
   }
 });
 
+// Register Service Worker for PWA support
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then((registration) => {
+      console.log('✅ Service Worker registered:', registration.scope);
+      
+      // Check for updates
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            console.log('🔄 New version available! Reload to update.');
+          }
+        });
+      });
+    })
+    .catch((error) => {
+      console.error('❌ Service Worker registration failed:', error);
+    });
+}
+
 // Initialize game when DOM is loaded
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {

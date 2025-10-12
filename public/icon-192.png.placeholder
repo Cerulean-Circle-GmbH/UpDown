@@ -1,0 +1,3 @@
+<!-- This is a placeholder. Generate proper icons with:
+convert -size 192x192 -background "#667eea" -fill white -gravity center -font "Helvetica-Bold" -pointsize 120 label:"🎴" icon-192.png
+-->

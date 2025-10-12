@@ -3,17 +3,20 @@
 # UpDown Game Launcher
 # Starts the server and opens the browser
 
-PORT=3000
-URL="http://localhost:$PORT"
+PORT=3443
+HTTP_PORT=3000
+URL="https://localhost:$PORT"
+HTTP_URL="http://localhost:$HTTP_PORT"
 
 echo "🎴 Starting UpDown game..."
 
-# Kill any existing server on the port
+# Kill any existing server on the ports
 lsof -ti:$PORT | xargs kill -9 2>/dev/null
+lsof -ti:$HTTP_PORT | xargs kill -9 2>/dev/null
 
-# Start the server in the background
-cd "$(dirname "$0")/public"
-python3 -m http.server $PORT > /dev/null 2>&1 &
+# Start the Node.js HTTPS server in the background
+cd "$(dirname "$0")"
+node server.js > /dev/null 2>&1 &
 SERVER_PID=$!
 
 # Wait a moment for server to start
@@ -25,12 +28,15 @@ if ! ps -p $SERVER_PID > /dev/null; then
     exit 1
 fi
 
-echo "✅ Server started on $URL (PID: $SERVER_PID)"
+echo "✅ HTTPS server started on $URL (PID: $SERVER_PID)"
+echo "✅ HTTP redirect on $HTTP_URL"
 
 # Open browser based on OS
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # macOS
     echo "🌐 Opening browser..."
+    echo "⚠️  Accept the self-signed certificate warning"
+    sleep 2
     open "$URL"
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     # Linux
