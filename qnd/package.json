@@ -1,0 +1,26 @@
+{
+  "name": "updown",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/server/index.ts",
+  "scripts": {
+    "start": "bash ./updown.sh",
+    "stop": "bash ./stop.sh",
+    "start:server": "bun src/server/index.ts",
+    "start:client": "bun src/client/index.ts",
+    "build": "tsc",
+    "docker:build": "bash ./devops/docker-build.sh",
+    "docker:check": "bash ./devops/docker-check.sh",
+    "docker:run": "bash ./devops/docker-run.sh",
+    "docker:status": "bash ./devops/docker-status.sh",
+    "docker:stop": "bash ./devops/docker-stop.sh",
+    "docker:clean": "bash ./devops/docker-clean.sh",
+    "docker:allcheck": "bash ./devops/docker-allcheck.sh"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "bun-types": "^1.0.0"
+  }
+}

@@ -1,23 +1,33 @@
 # UpDown
 Web4Games vibecoding web2
 
-## 🎮 Quick Play
+## 🎮 Quick Play (QND Prototype)
 
-**Start the game now:**
+The playable prototype is in the `qnd/` directory:
+
 ```bash
+cd qnd/
 npm start
 ```
 
-This launches the server and opens your browser automatically!
+Or from the root:
+```bash
+./start-qnd.sh
+```
+
+This launches the HTTPS server and opens your browser at https://localhost:3443
 
 **Stop the server:**
 ```bash
+cd qnd/
 npm run stop
 ```
 
 **Keyboard Shortcuts:**
 - `U` = Game Up (Start)
 - `D` = Game Down (Stop)
+
+See `qnd/README.md` for full prototype documentation.
 
 ## Creating a Multiplayer online first game with P2P nodes
 
