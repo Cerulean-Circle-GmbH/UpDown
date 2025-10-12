@@ -144,11 +144,8 @@ async function handleRequest(req: http.IncomingMessage, res: http.ServerResponse
  */
 async function generateCertificate(): Promise<boolean> {
   if (fsSync.existsSync(CERT_FILE) && fsSync.existsSync(KEY_FILE)) {
-    console.log('✅ SSL certificates found');
     return true;
   }
-
-  console.log('🔐 Generating self-signed SSL certificate...');
   
   try {
     // Create .certs directory
@@ -156,14 +153,12 @@ async function generateCertificate(): Promise<boolean> {
 
     const cmd = `openssl req -x509 -newkey rsa:2048 -nodes -sha256 -days 365 \
       -keyout "${KEY_FILE}" -out "${CERT_FILE}" \
-      -subj "/CN=localhost"`;
+      -subj "/CN=localhost" 2>/dev/null`;
 
     await execAsync(cmd);
-    console.log('✅ SSL certificate generated');
     return true;
   } catch (error) {
-    console.error('❌ Failed to generate certificate:', error);
-    console.log('📝 Falling back to HTTP only...');
+    // Silently fall back to HTTP only
     return false;
   }
 }
