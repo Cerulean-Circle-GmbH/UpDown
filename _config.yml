@@ -1,0 +1,44 @@
+# Jekyll Configuration for UpDown Game
+name: UpDown
+title: UpDown - Card Guessing Game
+description: Web4Games vibecoding web2
+
+# Disable Jekyll processing for certain directories
+include:
+  - qnd/src/public
+  - .nojekyll
+
+# Exclude files from processing
+exclude:
+  - node_modules
+  - package.json
+  - package-lock.json
+  - tsconfig.json
+  - src/server
+  - src/client
+  - src/shared
+  - devops
+  - docs
+  - po
+  - sprints
+  - scrum-master
+  - user.specs
+  - qnd/node_modules
+  - qnd/package.json
+  - qnd/src/ts
+  - qnd/src/sh
+  - qnd/spec
+  - "*.sh"
+  - "*.md"
+  - LICENSE
+  - README.md
+  - DEPLOYMENT.md
+  - QUICKSTART.md
+  - PLAY.md
+  - CONTROLS.md
+
+# Disable automatic directory indexes
+permalink: pretty
+
+# Use no theme
+theme: null

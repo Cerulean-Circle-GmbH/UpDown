@@ -1,4 +1,4 @@
-# Deploy UpDown game to GitHub Pages
+# Deploy UpDown game to GitHub Pages with Jekyll
 name: Deploy to GitHub Pages
 
 on:
@@ -47,14 +47,26 @@ jobs:
         working-directory: ./qnd
         run: npm run build
       
+      - name: Copy game files to root for Jekyll
+        run: |
+          # Copy game files to root directory
+          cp -r qnd/src/public/* .
+          # Ensure index.html is at root
+          ls -la index.html
+          ls -la js/
+          ls -la ts/
+      
       - name: Setup Pages
         uses: actions/configure-pages@v4
       
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload the qnd/src/public directory which contains all static assets and built JS
-          path: './qnd/src/public'
       
       - name: Deploy to GitHub Pages
         id: deployment
