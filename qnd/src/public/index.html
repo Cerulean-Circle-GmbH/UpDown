@@ -2,10 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- Dynamic base path for GitHub Pages vs localhost -->
+  <script>
+    // Detect environment and set base path
+    const isGitHubPages = window.location.hostname.includes('github.io');
+    const basePath = isGitHubPages ? '/UpDown/' : '/';
+    document.write('<base href="' + basePath + '">');
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#667eea">
   <title>UpDown - Choose Version</title>
-  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <style>
     * {
       margin: 0;
@@ -155,7 +162,7 @@
     <p class="subtitle">Choose Your Version</p>
 
     <div class="version-cards">
-      <a href="/UpDown/js/" class="version-card">
+      <a href="js/" class="version-card">
         <div class="version-icon">📜</div>
         <div class="version-name">JavaScript</div>
         <div class="version-desc">
@@ -165,7 +172,7 @@
         <span class="version-badge">STABLE</span>
       </a>
 
-      <a href="/UpDown/ts/" class="version-card">
+      <a href="ts/" class="version-card">
         <div class="version-icon">⚡</div>
         <div class="version-name">TypeScript</div>
         <div class="version-desc">
@@ -195,9 +202,9 @@
     const version = params.get('v');
     
     if (version === 'js') {
-      window.location.href = '/UpDown/js/';
+      window.location.href = 'js/';
     } else if (version === 'ts') {
-      window.location.href = '/UpDown/ts/';
+      window.location.href = 'ts/';
     }
   </script>
 </body>

@@ -2,6 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- Dynamic base path for GitHub Pages vs localhost -->
+  <script>
+    // Detect environment and set base path
+    const isGitHubPages = window.location.hostname.includes('github.io');
+    const basePath = isGitHubPages ? '/UpDown/' : '/';
+    document.write('<base href="' + basePath + '">');
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -11,12 +18,12 @@
   <title>UpDown - Card Guessing Game (TypeScript)</title>
   
   <!-- PWA Manifest -->
-  <link rel="manifest" href="/UpDown/manifest.json">
+  <link rel="manifest" href="manifest.json">
   
   <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="192x192" href="/UpDown/icon-192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="/UpDown/icon-512.png">
-  <link rel="apple-touch-icon" href="/UpDown/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
   
   <style>
     * {
@@ -50,7 +57,7 @@
   <game-board></game-board>
   <player-notification></player-notification>
 
-  <script type="module" src="/UpDown/dist/main.js"></script>
+  <script type="module" src="dist/main.js"></script>
 </body>
 </html>
 

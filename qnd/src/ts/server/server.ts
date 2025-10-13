@@ -134,13 +134,13 @@ async function handleRequest(req: http.IncomingMessage, res: http.ServerResponse
     // Remove query string
     filepath = filepath.split('?')[0];
 
-    // Route handling
-    if (filepath === '/') {
+    // Route handling (supports both / and /js/ patterns)
+    if (filepath === '/' || filepath === '/index.html') {
       filepath = '/index.html';
-    } else if (filepath === '/js') {
-      filepath = '/index-js.html';
-    } else if (filepath === '/ts') {
-      filepath = '/index-ts.html';
+    } else if (filepath === '/js' || filepath === '/js/') {
+      filepath = '/js/index.html';
+    } else if (filepath === '/ts' || filepath === '/ts/') {
+      filepath = '/ts/index.html';
     }
     
     const fullPath = path.join(PUBLIC_DIR, filepath);
