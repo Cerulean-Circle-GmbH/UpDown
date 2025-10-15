@@ -25,6 +25,10 @@ export interface ProjectStatusManager {
   feedback(feedback: string): Promise<this>;
   override(actionId: string, reason: string): Promise<this>;
   tronQaFeedback(): Promise<this>;
+  md(): Promise<this>;
+  stop(): Promise<this>;
+  refine(currentApproach: string): Promise<this>;
+  commit(): Promise<this>;
   autonomousStatus(): Promise<this>;
   process(data: string): Promise<this>;
   info(): Promise<this>;
