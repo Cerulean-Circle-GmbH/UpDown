@@ -15,6 +15,7 @@
 - **[Initial Implementation](./UPDOWN-WEB4-IMPLEMENTATION.md)** - UpDown.Cards + UpDown.Core
 - **[Demo Implementation](../components/UpDown.Demo/0.1.0.0/docs/UPDOWN-WEB4-DEMO-IMPLEMENTATION.md)** - UpDown.Demo
 - **[Learning from Iteration 1](./LEARNING-FROM-ITERATION-1.md)** - Naming convention lessons learned
+- **[Component Migration Achievement](./COMPONENT-MIGRATION-ACHIEVEMENT.md)** - Major achievement in solving naming issues
 
 ### Project Specifications
 - **[Tech Stack](./tech-stack.md)** - Technology choices
@@ -22,6 +23,10 @@
 
 ### Documentation Maintenance
 - **[Documentation Maintenance Guide](./DOCUMENTATION-MAINTENANCE.md)** - How to maintain this documentation system
+
+### Project Planning
+- **[Component Migration Achievement](./COMPONENT-MIGRATION-ACHIEVEMENT.md)** - Major achievement in solving naming issues
+- **[Continuation Plan](./CONTINUATION-PLAN.md)** - Next steps and development roadmap
 
 ## 📚 Documentation History
 
