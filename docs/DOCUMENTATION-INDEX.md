@@ -14,6 +14,7 @@
 ### Implementation History
 - **[Initial Implementation](./UPDOWN-WEB4-IMPLEMENTATION.md)** - UpDown.Cards + UpDown.Core
 - **[Demo Implementation](../components/UpDown.Demo/0.1.0.0/docs/UPDOWN-WEB4-DEMO-IMPLEMENTATION.md)** - UpDown.Demo
+- **[Learning from Iteration 1](./LEARNING-FROM-ITERATION-1.md)** - Naming convention lessons learned
 
 ### Project Specifications
 - **[Tech Stack](./tech-stack.md)** - Technology choices

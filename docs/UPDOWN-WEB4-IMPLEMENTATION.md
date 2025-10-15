@@ -222,5 +222,6 @@ The system is ready for the next phase of development, with clear pathways to ad
 ---
 
 **Next Document:** [UPDOWN-WEB4-DEMO-IMPLEMENTATION.md](./UPDOWN-WEB4-DEMO-IMPLEMENTATION.md) - UpDown.Demo component implementation  
+**Learning Document:** [LEARNING-FROM-ITERATION-1.md](./LEARNING-FROM-ITERATION-1.md) - Naming convention lessons learned  
 **Documentation History:** This document is part of a comprehensive implementation history tracking the evolution of the UpDown game system.  
 **Main Index:** [DOCUMENTATION-INDEX.md](./DOCUMENTATION-INDEX.md)
