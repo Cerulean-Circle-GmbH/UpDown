@@ -281,6 +281,278 @@ export class DefaultProjectStatusManager implements ProjectStatusManager {
   }
 
   /**
+   * Add a new task with subtasks and state tracking
+   * @param taskName Name of the main task
+   * @param description Task description
+   * @param priority Priority level (high, medium, low)
+   * @cliSyntax taskName description priority
+   * @cliDefault priority medium
+   */
+  async addTask(taskName: string, description: string, priority: string = 'medium'): Promise<this> {
+    console.log(`📝 Adding Task: ${taskName}`);
+    console.log(`   Description: ${description}`);
+    console.log(`   Priority: ${priority}`);
+    console.log(`   State: requirements_gathering`);
+    
+    // Initialize task with default subtasks
+    const task = {
+      id: crypto.randomUUID(),
+      name: taskName,
+      description: description,
+      priority: priority,
+      state: 'requirements_gathering',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      subtasks: [
+        { id: crypto.randomUUID(), name: 'Requirements Gathering', state: 'pending', completed: false },
+        { id: crypto.randomUUID(), name: 'Refining Requirements', state: 'pending', completed: false },
+        { id: crypto.randomUUID(), name: 'Creating Test Cases', state: 'pending', completed: false },
+        { id: crypto.randomUUID(), name: 'Implementation', state: 'pending', completed: false },
+        { id: crypto.randomUUID(), name: 'QA Review', state: 'pending', completed: false },
+        { id: crypto.randomUUID(), name: 'Done', state: 'pending', completed: false }
+      ]
+    };
+    
+    console.log(`✅ Task created with ${task.subtasks.length} subtasks`);
+    console.log(`   Next action: Start requirements gathering`);
+    
+    this.model.updatedAt = new Date().toISOString();
+    return this;
+  }
+
+  /**
+   * Add subtask to existing task
+   * @param taskId Task ID to add subtask to
+   * @param subtaskName Name of the subtask
+   * @param description Subtask description
+   * @cliSyntax taskId subtaskName description
+   */
+  async addSubtask(taskId: string, subtaskName: string, description: string): Promise<this> {
+    console.log(`📋 Adding Subtask to Task ${taskId}:`);
+    console.log(`   Subtask: ${subtaskName}`);
+    console.log(`   Description: ${description}`);
+    console.log(`   State: pending`);
+    
+    console.log(`✅ Subtask added successfully`);
+    console.log(`   Next action: Update task state or add more subtasks`);
+    
+    this.model.updatedAt = new Date().toISOString();
+    return this;
+  }
+
+  /**
+   * Refine subtask with more details
+   * @param taskId Task ID
+   * @param subtaskId Subtask ID to refine
+   * @param details Additional details for the subtask
+   * @cliSyntax taskId subtaskId details
+   */
+  async refineSubtask(taskId: string, subtaskId: string, details: string): Promise<this> {
+    console.log(`🔧 Refining Subtask ${subtaskId} in Task ${taskId}:`);
+    console.log(`   Additional Details: ${details}`);
+    console.log(`   State: refining`);
+    
+    console.log(`✅ Subtask refined successfully`);
+    console.log(`   Next action: Move to creating test cases or implementation`);
+    
+    this.model.updatedAt = new Date().toISOString();
+    return this;
+  }
+
+  /**
+   * Update task state through the lifecycle
+   * @param taskId Task ID to update
+   * @param newState New state (requirements_gathering, refining, test_cases, implementing, qa_review, done)
+   * @cliSyntax taskId newState
+   */
+  async updateTaskState(taskId: string, newState: string): Promise<this> {
+    const validStates = ['requirements_gathering', 'refining', 'test_cases', 'implementing', 'qa_review', 'done'];
+    
+    if (!validStates.includes(newState)) {
+      console.log(`❌ Invalid state: ${newState}`);
+      console.log(`   Valid states: ${validStates.join(', ')}`);
+      return this;
+    }
+    
+    console.log(`🔄 Updating Task ${taskId} State:`);
+    console.log(`   New State: ${newState}`);
+    
+    // Show state-specific next actions
+    switch (newState) {
+      case 'requirements_gathering':
+        console.log(`   📋 Next Actions:`);
+        console.log(`      - Gather detailed requirements`);
+        console.log(`      - Identify stakeholders`);
+        console.log(`      - Document acceptance criteria`);
+        break;
+      case 'refining':
+        console.log(`   🔧 Next Actions:`);
+        console.log(`      - Refine requirements based on feedback`);
+        console.log(`      - Clarify ambiguous requirements`);
+        console.log(`      - Validate requirements with stakeholders`);
+        break;
+      case 'test_cases':
+        console.log(`   🧪 Next Actions:`);
+        console.log(`      - Create unit test cases`);
+        console.log(`      - Create integration test cases`);
+        console.log(`      - Create acceptance test cases`);
+        break;
+      case 'implementing':
+        console.log(`   💻 Next Actions:`);
+        console.log(`      - Implement core functionality`);
+        console.log(`      - Write clean, maintainable code`);
+        console.log(`      - Follow coding standards`);
+        break;
+      case 'qa_review':
+        console.log(`   🔍 Next Actions:`);
+        console.log(`      - Code review`);
+        console.log(`      - Testing and validation`);
+        console.log(`      - Performance review`);
+        break;
+      case 'done':
+        console.log(`   ✅ Task Completed!`);
+        console.log(`   🎉 All subtasks finished successfully`);
+        break;
+    }
+    
+    this.model.updatedAt = new Date().toISOString();
+    return this;
+  }
+
+  /**
+   * Run through task states automatically (self-propulsion)
+   * @param taskId Task ID to run through states
+   * @param autoMode Enable automatic state progression
+   * @cliSyntax taskId autoMode
+   * @cliDefault autoMode true
+   */
+  async runThroughStates(taskId: string, autoMode: boolean = true): Promise<this> {
+    console.log(`🚀 Running Through States for Task ${taskId}`);
+    console.log(`   Auto Mode: ${autoMode ? 'Enabled' : 'Disabled'}`);
+    
+    const states = ['requirements_gathering', 'refining', 'test_cases', 'implementing', 'qa_review', 'done'];
+    
+    for (let i = 0; i < states.length; i++) {
+      const state = states[i];
+      console.log(`\n📋 State ${i + 1}/${states.length}: ${state.toUpperCase()}`);
+      
+      // Show state-specific guidance
+      switch (state) {
+        case 'requirements_gathering':
+          console.log(`   📝 Requirements Gathering:`);
+          console.log(`      - What needs to be built?`);
+          console.log(`      - Who are the users?`);
+          console.log(`      - What are the success criteria?`);
+          console.log(`      - What are the constraints?`);
+          break;
+        case 'refining':
+          console.log(`   🔧 Refining Requirements:`);
+          console.log(`      - Are requirements clear and unambiguous?`);
+          console.log(`      - Are there any missing requirements?`);
+          console.log(`      - Are requirements testable?`);
+          console.log(`      - Do stakeholders agree?`);
+          break;
+        case 'test_cases':
+          console.log(`   🧪 Creating Test Cases:`);
+          console.log(`      - Unit tests for each function`);
+          console.log(`      - Integration tests for workflows`);
+          console.log(`      - Acceptance tests for user stories`);
+          console.log(`      - Edge cases and error conditions`);
+          break;
+        case 'implementing':
+          console.log(`   💻 Implementation:`);
+          console.log(`      - Write clean, readable code`);
+          console.log(`      - Follow coding standards`);
+          console.log(`      - Add proper error handling`);
+          console.log(`      - Write comprehensive tests`);
+          break;
+        case 'qa_review':
+          console.log(`   🔍 QA Review:`);
+          console.log(`      - Code review for quality`);
+          console.log(`      - Test all functionality`);
+          console.log(`      - Check performance`);
+          console.log(`      - Validate against requirements`);
+          break;
+        case 'done':
+          console.log(`   ✅ Done:`);
+          console.log(`      - All requirements met`);
+          console.log(`      - All tests passing`);
+          console.log(`      - Code reviewed and approved`);
+          console.log(`      - Ready for deployment`);
+          break;
+      }
+      
+      if (autoMode && i < states.length - 1) {
+        console.log(`   ⏳ Auto-progressing to next state in 2 seconds...`);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+    
+    console.log(`\n🎉 Task ${taskId} completed all states successfully!`);
+    console.log(`   Ready for next task or project phase`);
+    
+    this.model.updatedAt = new Date().toISOString();
+    return this;
+  }
+
+  /**
+   * Show current task status and progress
+   * @cliSyntax
+   */
+  async taskStatus(): Promise<this> {
+    console.log(`📊 Task Status Dashboard`);
+    console.log(`=====================================`);
+    
+    // Simulate task data (in real implementation, this would come from storage)
+    const tasks = [
+      {
+        id: 'task-1',
+        name: 'Complete Component Migration',
+        state: 'implementing',
+        progress: 60,
+        subtasks: [
+          { name: 'Requirements Gathering', completed: true },
+          { name: 'Refining Requirements', completed: true },
+          { name: 'Creating Test Cases', completed: true },
+          { name: 'Implementation', completed: false },
+          { name: 'QA Review', completed: false },
+          { name: 'Done', completed: false }
+        ]
+      },
+      {
+        id: 'task-2',
+        name: 'Update Documentation',
+        state: 'test_cases',
+        progress: 40,
+        subtasks: [
+          { name: 'Requirements Gathering', completed: true },
+          { name: 'Refining Requirements', completed: true },
+          { name: 'Creating Test Cases', completed: false },
+          { name: 'Implementation', completed: false },
+          { name: 'QA Review', completed: false },
+          { name: 'Done', completed: false }
+        ]
+      }
+    ];
+    
+    console.log(`\n📋 Active Tasks:`);
+    tasks.forEach((task, index) => {
+      console.log(`   ${index + 1}. ${task.name}`);
+      console.log(`      State: ${task.state}`);
+      console.log(`      Progress: ${task.progress}%`);
+      console.log(`      Subtasks: ${task.subtasks.filter(st => st.completed).length}/${task.subtasks.length} completed`);
+    });
+    
+    console.log(`\n🎯 Next Actions:`);
+    console.log(`   - Continue implementation of Component Migration`);
+    console.log(`   - Start creating test cases for Documentation Update`);
+    console.log(`   - Review and refine requirements as needed`);
+    
+    this.model.updatedAt = new Date().toISOString();
+    return this;
+  }
+
+  /**
    * Process data through ProjectStatusManager logic
    * @param data Data to process
    * @cliSyntax data

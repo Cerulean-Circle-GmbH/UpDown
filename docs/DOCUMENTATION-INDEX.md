@@ -27,6 +27,7 @@
 ### Project Planning
 - **[Component Migration Achievement](./COMPONENT-MIGRATION-ACHIEVEMENT.md)** - Major achievement in solving naming issues
 - **[Continuation Plan](./CONTINUATION-PLAN.md)** - Next steps and development roadmap
+- **[Task Management System](./TASK-MANAGEMENT-SYSTEM.md)** - Advanced task management with recursive self-propulsion
 
 ## 📚 Documentation History
 

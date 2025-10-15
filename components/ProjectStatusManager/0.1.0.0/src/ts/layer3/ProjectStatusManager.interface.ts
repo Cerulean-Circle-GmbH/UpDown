@@ -13,6 +13,12 @@ export interface ProjectStatusManager {
   nextActions(): Promise<this>;
   progress(): Promise<this>;
   timeline(): Promise<this>;
+  addTask(taskName: string, description: string, priority?: string): Promise<this>;
+  addSubtask(taskId: string, subtaskName: string, description: string): Promise<this>;
+  refineSubtask(taskId: string, subtaskId: string, details: string): Promise<this>;
+  updateTaskState(taskId: string, newState: string): Promise<this>;
+  runThroughStates(taskId: string, autoMode?: boolean): Promise<this>;
+  taskStatus(): Promise<this>;
   process(data: string): Promise<this>;
   info(): Promise<this>;
   test(): Promise<this>;
