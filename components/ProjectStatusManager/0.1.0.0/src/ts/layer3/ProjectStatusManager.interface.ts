@@ -19,6 +19,12 @@ export interface ProjectStatusManager {
   updateTaskState(taskId: string, newState: string): Promise<this>;
   runThroughStates(taskId: string, autoMode?: boolean): Promise<this>;
   taskStatus(): Promise<this>;
+  autonomousMode(): Promise<this>;
+  intervene(reason: string): Promise<this>;
+  confirmAction(actionId: string): Promise<this>;
+  feedback(feedback: string): Promise<this>;
+  override(actionId: string, reason: string): Promise<this>;
+  autonomousStatus(): Promise<this>;
   process(data: string): Promise<this>;
   info(): Promise<this>;
   test(): Promise<this>;
