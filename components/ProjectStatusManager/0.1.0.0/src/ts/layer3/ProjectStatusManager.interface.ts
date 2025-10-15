@@ -20,10 +20,11 @@ export interface ProjectStatusManager {
   runThroughStates(taskId: string, autoMode?: boolean): Promise<this>;
   taskStatus(): Promise<this>;
   autonomousMode(): Promise<this>;
-  intervene(reason: string): Promise<this>;
+  intervene(tronFeedback: string): Promise<this>;
   confirmAction(actionId: string): Promise<this>;
   feedback(feedback: string): Promise<this>;
   override(actionId: string, reason: string): Promise<this>;
+  tronQaFeedback(): Promise<this>;
   autonomousStatus(): Promise<this>;
   process(data: string): Promise<this>;
   info(): Promise<this>;
