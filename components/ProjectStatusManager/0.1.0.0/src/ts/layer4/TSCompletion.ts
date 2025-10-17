@@ -44,12 +44,15 @@ export class TSCompletion implements Completion {
     return '';
   }
   static getProjectSourceFiles(): string[] {
+    // When called from compiled JS, we need to scan the source TS files
+    // The compiled JS is in dist/ts/layer4/, so source is at ../../../src/ts/
     const __dirname = path.dirname(new URL(import.meta.url).pathname);
+    const sourceDir = path.resolve(__dirname, '../../../src/ts');
     const dirs = [
-      path.resolve(__dirname, '../layer1'),
-      path.resolve(__dirname, '../layer2'),
-      path.resolve(__dirname, '../layer3'),
-      path.resolve(__dirname, '../layer5'),  // Scan CLI layer for component-specific completion methods
+      path.resolve(sourceDir, 'layer1'),
+      path.resolve(sourceDir, 'layer2'),
+      path.resolve(sourceDir, 'layer3'),
+      path.resolve(sourceDir, 'layer5'),  // Scan CLI layer for component-specific completion methods
     ];
     let files: string[] = [];
     for (const dir of dirs) {

@@ -36,7 +36,13 @@ export class ProjectStatusManagerCLI extends DefaultCLI {
    * ProjectStatusManager-specific usage display using DefaultCLI dynamic generation
    */
   showUsage(): void {
-    console.log(this.generateStructuredUsage());
+    // Use DefaultCLI's auto-discovery which respects @cliHide annotations
+    if (typeof super.generateStructuredUsage === 'function') {
+      console.log(super.generateStructuredUsage());
+    } else {
+      // Implement showUsage directly since it's abstract
+      console.log('ProjectStatusManager CLI - Run without arguments to see all available methods');
+    }
   }
 
   /**

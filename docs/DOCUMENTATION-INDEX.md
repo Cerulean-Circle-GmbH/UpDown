@@ -29,6 +29,9 @@
 - **[Continuation Plan](./CONTINUATION-PLAN.md)** - Next steps and development roadmap
 - **[Task Management System](./TASK-MANAGEMENT-SYSTEM.md)** - Advanced task management with recursive self-propulsion
 - **[Autonomous Development Mode](./AUTONOMOUS-DEVELOPMENT-MODE.md)** - ProjectStatusManager-driven development with QA intervention
+- **[Project Status Manager Architecture](./PROJECT-STATUS-MANAGER-ARCHITECTURE.md)** - How ProjectStatusManager works and file dependencies
+- **[TSCompletion Analysis and Learning](./TSCOMPLETION-ANALYSIS-AND-LEARNING.md)** - Detailed analysis of TSCompletion investigation and Web4 pattern understanding
+- **[Component CLI Pattern Analysis](./COMPONENT-CLI-PATTERN-ANALYSIS.md)** - Analysis of all components for CLI pattern consistency and fix tasks
 
 ## 📚 Documentation History
 
