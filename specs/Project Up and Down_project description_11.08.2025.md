@@ -15,7 +15,6 @@ converted_at: auto
   - [Character](#character)
   - [Movement and animations](#movement-and-animations)
   - [Special cards](#special-cards)
-  - [Gm.](#gm)
   - [Chat \& report feature](#chat--report-feature)
   - [Friendlist and player profile](#friendlist-and-player-profile)
   - [Lobbies](#lobbies)
@@ -153,21 +152,13 @@ can choose from:
 
 
 
-1) Up-Card: If the Up-Card is played, the player guesses, that the next card played
+1) Up-Card: If the Up-Card is played, the player guesses, that the next card played by the GM will be of higher value than the current card.
 
-by the GM will be of higher value than the current card.
+2) Down-Card: If the Down-Card is played, the player guesses, that the next card played by the GM will be of lower value than the current card.
 
-2) Down-Card: If the Down-Card is played, the player guesses, that the next card
+3) Even-Card: If the Even-Card is played, the player guesses, that the next card played by the GM will be of the same value than the current card.
 
-played by the GM will be of lower value than the current card.
-
-3) Even-Card: If the Even-Card is played, the player guesses, that the next card
-
-played by the GM will be of the same value than the current card.
-
-4) Special Effect Card: The special effect cards do contain special effects, which
-influence the round of the player. More Details about those cards in the special
-effects card section.
+4) Special Effect Card: The special effect cards do contain special effects, which influence the round of the player. More Details about those cards in the special effects card section.
 
 The player now places his card of choice. If the countdown of 10 Seconds has run down
 to zero seconds or every player has played a card, the game phase ends and the new
@@ -218,9 +209,9 @@ decision making times.
 
 ### Multiplatform & Cross platform
 
-The game needs to run on Android and IOS. The game needs to be cross platform
+The game needs to run on Android **and** IOS. The game needs to be cross platform
 compatible from the very beginning. This means, that adroid players need to be able to
-join IOS lobbies and IOS players need to be able to join Android lobbies. It is preferred to
+join IOS lobbies **and** IOS players need to be able to join Android lobbies. It is preferred to
 code the game in Unreal engine, but other engines or coding bases are possible. Please
 make a proposal in your offer, which platform you would choose and why.
 
@@ -268,10 +259,7 @@ First 5 Maps:
 1) Beach
 2) Pirate ship
 3) Moon (can be unlocked by purchasing in the store)
-4) Circus (can be unlocked with the achievement of hitting 13 in a row, see
-
-Achievement list for more details)
-
+4) Circus (can be unlocked with the achievement of hitting 13 in a row, see Achievement list for more details)
 5) VIP Room/Lounge (only accessible for VIPs)
 
 ### Character
@@ -284,16 +272,8 @@ modify his own player character as much as he want.
 In the first version of the game the player can choose from 3 different characters:
 
 1) Female character
-
-
-
-
-
-
 2) Male character
-3) Skeleton character (can be purchased in shop or achieved if a player hits 51 in a
-
-row)
+3) Skeleton character (can be purchased in shop or achieved if a player hits 51 in a row)
 
 Accessorise for every character like hats, bracelets/chains, boots, cloths, etc. can be
 bought at the store, if a player wants to give his character a unique style. This addition
@@ -306,9 +286,7 @@ the player just sits on his chair at the table.
 
 There are a few core animations:
 
-1) Entry animations: An entry animation is a add on which can be bought in the
-
-ingame store or earned through achievements. An entry animation plays every
+1) Entry animations: An entry animation is a add on which can be bought in the game store or earned through achievements. An entry animation plays every
 time a player with an entry animation enters the room. Player can only enter a
 room during the exchange phase.
 
@@ -346,91 +324,43 @@ A will die due to the priority of the One for the team card over the Sacrifice c
 
 Level 1: Special effects, which do not have much of an impact on the game and do not
 last longer than one round.
-
 Level 2: Special effects can be put on other players as well as the player owning/playing
 it. The effect lasts for one round.
-
 Level 3: Special effects which can affect one or more player for more than one round.
 
 Level 1:
-
-- Mass intelligence: If more than 50% of the player on the table are right, the player
-
-who played the special effect card will survive.
-
-- Protective Shell: The player survives this round no matter the card played by the
-
-### Gm.
-
+- Mass intelligence: If more than 50% of the player on the table are right, the player who played the special effect card will survive.
+- Protective Shell: The player survives this round no matter the card played by the Gm.
 - Seeker: See 3 out of 7 cards from the GM before he plays his next card.
-- The secret of the past: Check all cards which have been played by the GM up to
-
-this point. Only available until Round 45.
-
+- The secret of the past: Check all cards which have been played by the GM up to this point. Only available until Round 45.
 - Equalizer: If another player plays the Even card and you play a Up or Down card
 and the outcome of the next card drawn by the GM is an even result (for example
 last round he draws a 6 of Heart and this round a 6 of Spades, its even) you will
 survive this round too.
-
 - Early bird: This card can only be played at the very first round of an active game. If
 the player achieves a streak of 10 in a row, he will be protected in the 11th round
 for one round.
 
 Level 2:
-
-- All for all: If more than 50% of the player on the table are right, every player
-
-survives the round.
-
-- Rewind time. Change the outcome of one players result but not your own after
-
-the GM played his next card. This card can only be received once per active round
+- All for all: If more than 50% of the player on the table are right, every player survives the round.
+- Rewind time. Change the outcome of one players result but not your own after the GM played his next card. This card can only be received once per active round
 and player. No limitations on playing it out to all other players.
-
-- Protective Shelter: All players survive the next round. This card can only be played
-
-once per round over all players. (once per game).
-
-- Sharing is caring: Let all players see 3 out of 7 cards from the GMs hand. This card
-
-can only be played once per active round and table.
-
-
-
-
-
+- Protective Shelter: All players survive the next round. This card can only be played once per round over all players. (once per game).
+- Sharing is caring: Let all players see 3 out of 7 cards from the GMs hand. This card can only be played once per active round and table.
 - Sacrifice: you can sacrifice your own round to protect another player on the table
 for one round. A player can only receive one sacrifice per active game and table.
 The player who plays the sacrifice card will be eliminated in the round he played
 the card, no matter the outcome of his own card played.
-
-- 2 & 7: If the next card is a 2 or a 7, the player will survive the next 2 rounds no
-
-matter the outcome of the rounds.
-
-- Protective Ace: If the next card drawn by the GM is an Ace, all players will survive
-
-the round no matter of the outcome of their hand.
+- 2 & 7: If the next card is a 2 or a 7, the player will survive the next 2 rounds no matter the outcome of the rounds.
+- Protective Ace: If the next card drawn by the GM is an Ace, all players will survive the round no matter of the outcome of their hand.
 
 Level 3:
 
-- No secrets: Let all players see all 7 cards from the GMs hand. This card can only
-be played once per active round and table. Can only be played until round 40.
-- Protective Fireplace: The player survives 3 rounds no matter which card the GM
-
-plays.
-
-- Great prophet: See all 7 cards of the GM before the next card will be played by the
-
-GM. Can only be played until round 40.
-
-- Lucky 7: If the next card played by the GM is a 7 the player will be protected by the
-
-next 3 rounds. Can only be activated until round 40.
-
-- One for the team: The player who played this card will not survive the round. But
-every other player will, no matter the outcome of a the round. This card can only
-be played once per table.
+- No secrets: Let all players see all 7 cards from the GMs hand. This card can only be played once per active round and table. Can only be played until round 40.
+- Protective Fireplace: The player survives 3 rounds no matter which card the GM plays.
+- Great prophet: See all 7 cards of the GM before the next card will be played by the GM. Can only be played until round 40.
+- Lucky 7: If the next card played by the GM is a 7 the player will be protected by the next 3 rounds. Can only be activated until round 40.
+- One for the team: The player who played this card will not survive the round. But every other player will, no matter the outcome of a the round. This card can only be played once per table.
 
 ### Chat & report feature
 
@@ -464,14 +394,8 @@ Bigo,…), and also which VIP player he likes to follow.
 Every table is a game lobby. Players can
 
 1) create a lobby
-2) enter an existing lobby (if they met the lobby criteria, set by the lobby
-
-owner/creator)
-
-3) delete their created lobby (all player get kicked from the lobby, not possible to
-
-delete the lobby if the game has started)
-
+2) enter an existing lobby (if they met the lobby criteria, set by the lobby owner/creator)
+3) delete their created lobby (all player get kicked from the lobby, not possible to delete the lobby if the game has started)
 4) leave a lobby.
 
 Depending on the demand for lobbies, the lobbies can be split into regions, where every
@@ -522,18 +446,6 @@ Most points Ranking by the end of period:
 | 3rd place       | 200 D   | 2'000 D | 20'000 D | 200'000 D  |
 | 2nd place       | 300 D   | 3'000 D | 30'000 D | 300'000 D  |
 | 1st place       | 1'000 D | 10'000 D| 100'000 D| 1'000'000 D|
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -854,19 +766,10 @@ that, he will have to bet more or less.
 
 Last but not least
 
-1) The final product needs to be uploaded on the different stores (Apple App Store,
-
-Android Market, Steam, etc.)
-
-2) The source code and any graphics and IP needs to be handed over to us. We will
-
-always be in control of all rights regarding every aspect of the game.
-
+1) The final product needs to be uploaded on the different stores (Apple App Store, Android Market, Steam, etc.)
+2) The source code and any graphics and IP needs to be handed over to us. We will always be in control of all rights regarding every aspect of the game.
 3) All rights will be reserved by us.
-4) The product can be used commercially. All used assets need to fulfil this
-
-standard, and all the copyrights need to be transferred to us.
-
+4) The product can be used commercially. All used assets need to fulfil this standard, and all the copyrights need to be transferred to us.
 5) If you want to splitt the project into milestones with separate pay rates per
 milestone, we would gladly accept this as well. Please provide a detailed
 milestone list in your offer then.
