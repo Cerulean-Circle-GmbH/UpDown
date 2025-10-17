@@ -21,14 +21,9 @@ converted_at: auto
   - [Lobbies](#lobbies)
   - [Ranking and High scores](#ranking-and-high-scores)
   - [Rewards and Achievements](#rewards-and-achievements)
-  - [I Am Luck](#i-am-luck)
-  - [Vip](#vip)
-  - [The Vip](#the-vip)
-  - [The One](#the-one)
   - [Jackpot (in the free to play version)](#jackpot-in-the-free-to-play-version)
   - [VIP Players](#vip-players)
   - [Game shop and microtransactions](#game-shop-and-microtransactions)
-  - [Special cards](#special-cards-1)
   - [Start menu \& menu screens](#start-menu--menu-screens)
 
 ## Sections
