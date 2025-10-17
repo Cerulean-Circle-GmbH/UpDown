@@ -5,31 +5,55 @@ converted_at: auto
 ---
 
 ## Table of Contents
-- [Table of Contents](#table-of-contents)
-- [Sections](#sections)
-  - [Game concept (general)](#game-concept-general)
-  - [Game mode rapid](#game-mode-rapid)
-  - [Multiplatform \& Cross platform](#multiplatform--cross-platform)
-  - [General game style](#general-game-style)
-  - [Map](#map)
-  - [Character](#character)
-  - [Movement and animations](#movement-and-animations)
-  - [Special cards](#special-cards)
-  - [Gm.](#gm)
-  - [Chat \& report feature](#chat--report-feature)
-  - [Friendlist and player profile](#friendlist-and-player-profile)
-  - [Lobbies](#lobbies)
-  - [Ranking and High scores](#ranking-and-high-scores)
-  - [Rewards and Achievements](#rewards-and-achievements)
-  - [I Am Luck](#i-am-luck)
-  - [Vip](#vip)
-  - [The Vip](#the-vip)
-  - [The One](#the-one)
-  - [Jackpot (in the free to play version)](#jackpot-in-the-free-to-play-version)
-  - [VIP Players](#vip-players)
-  - [Game shop and microtransactions](#game-shop-and-microtransactions)
-  - [Special cards](#special-cards-1)
-  - [Start menu \& menu screens](#start-menu--menu-screens)
+- [Game concept (general)](#game-concept-general)
+- [Game mode rapid](#game-mode-rapid)
+- [Multiplatform & Cross platform](#multiplatform-cross-platform)
+- [General game style](#general-game-style)
+- [Map](#map)
+- [Character](#character)
+- [Movement and animations](#movement-and-animations)
+- [Special cards](#special-cards)
+- [Gm.](#gm)
+- [Chat & report feature](#chat-report-feature)
+- [Friendlist and player profile](#friendlist-and-player-profile)
+- [Lobbies](#lobbies)
+- [Ranking and High scores](#ranking-and-high-scores)
+- [Rewards and Achievements](#rewards-and-achievements)
+- [100 D](#100-d)
+- [200 D](#200-d)
+- [300 D](#300-d)
+- [1’000 D](#1000-d)
+- [10’000 D](#10000-d)
+- [20’000 D](#20000-d)
+- [30’000 D](#30000-d)
+- [100’000 D](#100000-d)
+- [10 D](#10-d)
+- [150 D](#150-d)
+- [500 D](#500-d)
+- [1’000 D](#1000-d)
+- [50 D](#50-d)
+- [30 D](#30-d)
+- [10 D](#10-d)
+- [20 D](#20-d)
+- [2’000 D](#2000-d)
+- [20’000 D](#20000-d)
+- [50 D](#50-d)
+- [500 D](#500-d)
+- [10’000 D](#10000-d)
+- [50 D](#50-d)
+- [100 D](#100-d)
+- [1’000 D](#1000-d)
+- [I Am Luck](#i-am-luck)
+- [Vip](#vip)
+- [The Vip](#the-vip)
+- [The One](#the-one)
+- [Jackpot (in the free to play version)](#jackpot-in-the-free-to-play-version)
+- [VIP Players](#vip-players)
+- [Game shop and microtransactions](#game-shop-and-microtransactions)
+- [Special cards](#special-cards)
+- [- Vip 1: Vip](#--vip-1-vip)
+- [5'000 D](#5000-d)
+- [Start menu & menu screens](#start-menu-menu-screens)
 
 ## Sections
 - [Gameplay](./gameplay.md)
@@ -520,12 +544,49 @@ game. Following the Rewards and rankings, that can be obtained
 
 Most points Ranking by the end of period:
 
-| Ranking Position | Daily | Weekly | Monthly | Yearly |
-|-----------------|---------|---------|----------|------------|
-| 10th-4th place  | 100 D   | 1'000 D | 10'000 D | 100'000 D  |
-| 3rd place       | 200 D   | 2'000 D | 20'000 D | 200'000 D  |
-| 2nd place       | 300 D   | 3'000 D | 30'000 D | 300'000 D  |
-| 1st place       | 1'000 D | 10'000 D| 100'000 D| 1'000'000 D|
+10th -4th place
+Daily
+Weekly
+Monthly
+Yearly
+
+3rd place
+Daily
+Weekly
+Monthly
+Yearly
+
+2nd place
+Daily
+Weekly
+Monthly
+Yearly
+
+1st place
+Daily
+Weekly
+Monthly
+Yearly
+
+### 100 D
+1’000 D
+10’000 D
+100’000 D
+
+### 200 D
+2’000 D
+20’000 D
+200’000 D
+
+### 300 D
+3’000 D
+30’000 D
+300’000 D
+
+### 1’000 D
+10’000 D
+100’000 D
+1’000’000 D
 
 
 
@@ -541,31 +602,85 @@ Most points Ranking by the end of period:
 
 
 
-**Highest streak per end of Period**
+Highest streak per end of Period
 
-| Ranking Position | Monthly | Yearly |
-|-----------------|----------|------------|
-| 10th-4th place  | 10'000 D | 100'000 D  |
-| 3rd place       | 20'000 D | 200'000 D  |
-| 2nd place       | 30'000 D | 300'000 D  |
-| 1st place       | 100'000 D| 1'000'000 D|
+10th -4th place
+Monthly
+Yearly
 
-**Achievements to unlock by progress** (only obtainable once):
+3rd place
+Monthly
+Yearly
 
-| Achievement | Reward |
-|-------------|--------|
-| Winning your first game | 10 D |
-| Getting a streak of 5 within one active game round | 50 D |
-| Getting a streak of 10 within one active game round | 1 random Level 1 Special Effect card |
-| Getting a streak of 15 within one active game round | 150 D |
-| Getting a streak of 20 within one active game round | 1 random Level 2 Special Effect card |
-| Getting a streak of 25 within one active game round | 500 D |
-| Getting a streak of 30 within one active game round | 1 random Level 3 Special Effect card |
-| Getting a streak of 35 within one active game round | 1 random Level 3 Special Effect card + 1'000 D |
-| Getting a streak of 40 within one active game round | 2 random Level 3 Special Effect cards + 2'000 D |
-| Getting a streak of 45 within one active game round | 5 random Level 3 Special Effect cards + 5'000 D |
-| Getting a streak of 50 within one active game round | 1'000 D |
-| Getting a streak of 52 within one active game round and complete the game | Jackpot win plus every available card once. Highest VIP Level forever |
+2nd place
+Monthly
+Yearly
+
+1st place
+Monthly
+Yearly
+
+### 10’000 D
+100’000 D
+
+### 20’000 D
+200’000 D
+
+### 30’000 D
+300’000 D
+
+### 100’000 D
+1’000’000 D
+
+Achievements to unlock by progress (only obtainable once):
+
+Winning your first game
+Getting a streak of 5 within one active
+game round
+Getting a streak of 10 within one active
+game round
+Getting a streak of 15 within one active
+game round
+Getting a streak of 20 within one active
+game round
+Getting a streak of 25 within one active
+game round
+Getting a streak of 30 within one active
+game round
+Getting a streak of 35 within one active
+game round
+Getting a streak of 40 within one active
+game round
+Getting a streak of 45 within one active
+game round
+Getting a streak of 50 within one active
+game round
+Getting a streak of 52 within one active
+game round and complete the game.
+
+### 10 D
+50 D
+
+1 random Level 1 Special Effect card
+
+### 150 D
+
+1 random Level 2 Special Effect card
+
+### 500 D
+
+1 random Level 3 Special Effect card
+
+### 1’000 D
+
+1 random Level 3 Special Effect card +
+1’000 D
+2 random Level 3 Special Effect card +
+2’000 D
+5 random Level 3 Special Effect cards +
+5’000 D
+Jackpot win plus every available card
+once. Highest VIP Level forever
 
 
 
@@ -582,48 +697,69 @@ Most points Ranking by the end of period:
 
 
 
-**Social/Multiplayer Achievements:**
+Playing a game with other players on the
+table
+Play 3 games with a friend of yours
 
-| Achievement | Reward |
-|-------------|--------|
-| Playing a game with other players on the table | 50 D |
-| Play 3 games with a friend of yours | 30 D |
+### 50 D
 
-**Gift Sending Achievements:**
+### 30 D
 
-| Achievement | Reward |
-|-------------|--------|
-| Send a gift to another player | 10 D |
-| Send a total of 10 gifts to another player | 100 D |
-| Send a total of 100 gifts to another player | 1'000 D |
-| Send a total of 1'000 gifts to another player | 10'000 D |
+Send a gift to another player
+Send a total of 10 gifts to another player
+Send a total of 100 gifts to another player
+Send a total of 1’000 gifts to another
+player
 
-**Gift Receiving Achievements:**
+Receive a gift from another player
+Receive a total of 10 gifts from other
+players
+Receive a total of 100 gifts from other
+players
+Receive a total of 1’000 gifts from other
+players
 
-| Achievement | Reward |
-|-------------|--------|
-| Receive a gift from another player | 20 D |
-| Receive a total of 10 gifts from other players | 200 D |
-| Receive a total of 100 gifts from other players | 2'000 D |
-| Receive a total of 1'000 gifts from other players | 20'000 D |
+### 10 D
+100 D
+1’000 D
+10’000 D
 
-**Special Effect Card - Playing Achievements:**
+### 20 D
+200 D
 
-| Achievement | Reward |
-|-------------|--------|
-| Play your first Special Effect card | 50 D |
-| Play a total of 5 Special Effect cards | 100 D |
-| Play a total of 5 Special Effect cards in one active game round | 200 D |
-| Play more than 10 Special Effect cards in total | 500 D |
-| Play more than 100 Special Effect cards in total | 10'000 D |
+### 2’000 D
 
-**Special Effect Card - Receiving Achievements:**
+### 20’000 D
 
-| Achievement | Reward |
-|-------------|--------|
-| Receive an effect of a Special Effect card five times | 50 D |
-| Receive an effect of a Special Effect card 10 times | 100 D |
-| Receive an effect of a Special Effect card 100 times | 1'000 D |
+Play your first Special Effect card
+Play a total of 5 Special Effect cards
+Play a total of 5 Special Effect cards in
+one active game round
+Play more than 10 Special Effect cards in
+total
+Play more than 100 Special Effect cards in
+total
+
+### 50 D
+100 D
+200 D
+
+### 500 D
+
+### 10’000 D
+
+Receive an effect of a Special Effect card
+five times
+Receive an effect of a Special Effect card
+10 times
+Receive an effect of a Special Effect card
+100 times
+
+### 50 D
+
+### 100 D
+
+### 1’000 D
 
 Title rewards
 
@@ -1002,16 +1138,38 @@ Coupons
 
 Gifts
 
-- Moon map for 5'000 D (VIP exclusive)
+- Moon map for
 
-**VIP Levels:**
+### - Vip 1: Vip
 
-| VIP Level | Benefits | Weekly Cost | Initial Cost |
-|-----------|----------|-------------|--------------|
-| VIP 1: Vip | Badge next to name | 100 D/Week | 5'000 D |
-| VIP 2: VIP | Badge and Golden Letters name | 200 D/Week | - |
-| VIP 3: All | All rewards from Lvl 2 + Custom Entry animation | 300 D/Week | - |
-| VIP 4: All | All rewards from VIP 3 + VIP Map access | 500 D/Week | - |
+### 5'000 D
+
+Badge next to
+name for 100
+D/Week
+- VIP 2: VIP
+
+Badge and
+Golden
+Letters name
+for
+200D/Week
+
+- VIP 3: All
+
+rewards from
+Lvl 2 +
+Custom Entry
+animation for
+300 D/Week
+
+- VIP 4: all
+
+rewards from
+VIP 3 + VIP
+Map access
+for 500
+D/Week
 
 - Several gifts
 to send to
