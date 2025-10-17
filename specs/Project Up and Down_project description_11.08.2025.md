@@ -743,9 +743,47 @@ major payment methods.
 
 Following items will be in the shop:
 
-| Daily Bonuses and rewards | Diamonds pack | Special cards | Characters and Assecoires | Maps | VIP Levels | Coupons | Gifts |
-|---------------------------|---------------|---------------|---------------------------|------|------------|---------|-------|
-| • Daily bonus for playing the game. Random low lever reward | • 100 Diamonds for $1 • 1'100 D for $10 • 2'500 D for $20 • 6'500 D for $50 • 10'000 D for $85 • 15'000 D for $100 • 200'000 D for $1'000 | • Special cards level 1 for 100 D per card • Special cards level 2 for 250 D per card • Special cards level 3 for 1'000 D per card | • Skeleton character for 1'400 D • Further Assecoires will be added to the shop. | • Moon map for 5'000 D | • VIP 1: Vip - Badge next to name for 100 D/Week • VIP 2: VIP - Badge and Golden Letters name for 200 D/Week • VIP 3: All - All rewards from Lvl 2 + Custom Entry animation for 300 D/Week • VIP 4: all - All rewards from VIP 3 + VIP Map access for 500 D/Week | • Players can exchange Diamonds for Coupons. Like Amazon, Paysafe or any other coupon there is. • The coupon vallue will always be 90% of the Diamonds Value. For example a $10 Amazon coupon will cost 2'200 D (highest D/USD convertion rate + 10%) • Coupons allow to "Cash out" any price money which is distributed or earned by rewards. | • Several gifts to send to other players on the same table. For example a "Rose". A "Rose" costs 10 D and the receiving party gets 1 D added to their D count. • This feature can be added later on • Every gift has a small animation. |
+**Daily Bonuses and rewards:**
+- Daily bonus for playing the game
+- 100 Diamonds
+- Random low lever reward
+
+**Diamonds pack:**
+- 100 Diamonds for $1
+- 1'100 D for $10
+- 2'500 D for $20
+- 6'500 D for $50
+- 10'000 D for $85
+- 15'000 D for $100
+- 200'000 D for $1'000
+
+**Special cards:**
+- Special cards level 1 for 100 D per card
+- Special cards level 2 for 250 D per card
+- Special cards level 3 for 1'000 D per card
+
+**Characters and Assecoires:**
+- Skeleton character for 1'400 D
+- Further Assecoires will be added to the shop
+
+**Maps:**
+- Moon map for 5'000 D
+
+**VIP Levels:**
+- VIP 1: Vip - Badge next to name for 100 D/Week
+- VIP 2: VIP - Badge and Golden Letters name for 200 D/Week
+- VIP 3: All - All rewards from Lvl 2 + Custom Entry animation for 300 D/Week
+- VIP 4: all - All rewards from VIP 3 + VIP Map access for 500 D/Week
+
+**Coupons:**
+- Players can exchange Diamonds for Coupons. Like Amazon, Paysafe or any other coupon there is
+- The coupon vallue will always be 90% of the Diamonds Value. For example a $10 Amazon coupon will cost 2'200 D (highest D/USD convertion rate + 10%)
+- Coupons allow to "Cash out" any price money which is distributed or earned by rewards
+
+**Gifts:**
+- Several gifts to send to other players on the same table. For example a "Rose". A "Rose" costs 10 D and the receiving party gets 1 D added to their D count
+- This feature can be added later on
+- Every gift has a small animation
 
 **VIP Levels:**
 
