@@ -562,9 +562,9 @@ Most points Ranking by the end of period:
 | Getting a streak of 25 within one active game round | 500 D |
 | Getting a streak of 30 within one active game round | 1 random Level 3 Special Effect card |
 | Getting a streak of 35 within one active game round | 1'000 D |
-| Getting a streak of 40 within one active game round | 2 random Level 3 Special Effect cards + 2'000 D |
-| Getting a streak of 45 within one active game round | 5 random Level 3 Special Effect cards + 5'000 D |
-| Getting a streak of 50 within one active game round | 1'000 D |
+| Getting a streak of 40 within one active game round | 1 random Level 3 Special Effect card + 1'000 D |
+| Getting a streak of 45 within one active game round | 2 random Level 3 Special Effect card + 2'000 D |
+| Getting a streak of 50 within one active game round | 5 random Level 3 Special Effect cards + 5'000 D |
 | Getting a streak of 52 within one active game round and complete the game | Jackpot win plus every available card once. Highest VIP Level forever |
 
 
