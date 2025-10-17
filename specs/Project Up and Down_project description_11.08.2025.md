@@ -625,7 +625,7 @@ Most points Ranking by the end of period:
 | Receive an effect of a Special Effect card 10 times | 100 D |
 | Receive an effect of a Special Effect card 100 times | 1'000 D |
 
-Title rewards
+**Title rewards**
 
 Title rewards can only be obtained by fulfilling specific conditions. A player can display
 one of his earned titles bellow his name. All titles are stored in his profile. There are
@@ -645,235 +645,55 @@ all chatrooms. The old title holder will get a notification in his notification 
 
 
 
-
-
-
-
-
-The first
-
-Patient Zero
-
-Winner Winner Chicken Dinner
-
-Millionaire
-Billionaire
-Kind heart
-Protector
-
-Great protector
-
-THE Protector
-
-Unlucky Fellow
-
-Black cat
-
-Jinx
-
-Luck is everything
-
-Luck is not everything
-
-### I Am Luck
-
-Gifter
-Your presence is a gift itself
-
-The first player to win a game in the
-history of Up and Down
-The first player to loose a game in the
-history of Up and Down
-Maintaining a minimum of 5 streak per
-active game round over 10 consecutive
-rounds
-Spend over 1’000’000 Diamonds
-Spend over 1’000’000’000 Diamonds
-Gift over 100 gifts to other players
-Safe more than 100 player from
-elimination
-Safe more than 1’000 player from
-elimination
-Titel only granted the one player with the
-highest number of saved players. This title
-can only be obtained by one player at any
-time and is lost if another player
-overtakes the current holder in the
-numbers of saved players ranking.
-Lose more than 10 active rounds in a row
-with your first card.
-Lose more than 100 active rounds in a
-row with your first card.
-Titel only granted the one player with the
-highest number of lost games in a row by
-the first card. This title can only be
-obtained by one player at any time and is
-lost if another player overtakes the
-current holder in the numbers of lost
-games in a row by the first card ranking.
-Win more than 10 first rounds in active
-rounds in a row.
-Win more than 100 first rounds in active
-rounds in a row.
-Titel only granted the one player with the
-highest number of consecutive first round
-wins in active rounds. This title can only
-be obtained by one player at any time and
-is lost if another player overtakes the
-current holder in the numbers of
-consecutive first round wins in active
-rounds ranking.
-Gift more than 10 gifts to other players
-Gift more than 100 gifts to other players
-
-
-
-Santa Claus
-
-Gifted
-
-Popular
-
-Idol
-
-### Vip
-
-Dedicated VIP
-
-### The Vip
-
-Special Effect rookie
-Special Effect Master
-Magician
-
-Shop user
-Shop owner
-Business mogul
-
-Titel only granted the one player with the
-highest number of gifts sent to other
-players. This title can only be obtained by
-one player at any time and is lost if
-another player overtakes the current
-holder in the numbers of gifts sent to
-other players ranking.
-Receive more than 10 gifts from other
-players
-Receive more than 100 gifts from other
-players
-Titel only granted the one player with the
-highest number of gifts received from
-other players. This title can only be
-obtained by one player at any time and is
-lost if another player overtakes the
-current holder in the numbers of gifts
-received from other players ranking.
-Purchase a VIP of the highest level for one
-week.
-Contain the VIP status of the highest VIP
-level for more than 5 Weeks
-Titel only granted the one player with the
-highest number of consecutive weeks
-with the highest VIP level activated. This
-title can only be obtained by one player at
-any time and is lost if another player
-overtakes the current holder in the
-consecutive weeks with the highest VIP
-level activated. ranking.
-Play more than 10 Special Effect cards
-Play more than 100 Special Effect cards
-Titel only granted the one player with the
-highest number of Special Effect cards
-played. This title can only be obtained by
-one player at any time and is lost if
-another player overtakes the current
-holder in the numbers of Special Effect
-cards played ranking.
-Buy more than 10 things from the shop
-Buy more than 100 things from the shop
-Titel only granted the one player with the
-highest number of bought things from the
-shop. This title can only be obtained by
-one player at any time and is lost if
-another player overtakes the current
-holder in the numbers of bought things
-from the shop ranking.
-
-
-Daily topshot
-Daily master
-Daily King
-
-Weekly topshot
-Weekly master
-Weekly King
-
-Monthly topshot
-Monthly master
-Monthly King
-
-Yearly champion
-Yearly King
-
-Among the tops
-
-Generation 42
-Champion
-
-The first complete beeing
-
-Complete beeing
-
-### The One
-
-Win more than 5 daily top rankings
-Win more than 10 daily top rankings
-Titel only granted the one player with the
-highest number of daily top ranking wins.
-This title can only be obtained by one
-player at any time and is lost if another
-player overtakes the current holder in the
-numbers of daily top ranking wins.
-Win more than 5 weekly top rankings
-Win more than 10 weekly top rankings
-Titel only granted the one player with the
-highest number of weekly top ranking
-wins. This title can only be obtained by
-one player at any time and is lost if
-another player overtakes the current
-holder in the numbers of weekly top
-ranking wins.
-Win more than 5 monthly top rankings
-Win more than 10 monthly top rankings
-Titel only granted the one player with the
-highest number of Monthly top ranking
-wins. This title can only be obtained by
-one player at any time and is lost if
-another player overtakes the current
-holder in the numbers of Monthly top
-ranking wins.
-Win one or more yearly top rankings
-Titel only granted the one player with the
-highest number of daily top ranking wins.
-This title can only be obtained by one
-player at any time and is lost if another
-player overtakes the current holder in the
-numbers of daily top ranking wins.
-Place within the top 10 of the yearly
-rankings by the end of the ranking
-duration time.
-Reach round 42 to receive this title
-Granted to every player who is able to
-complete the game.
-Granted to the first player who can
-achieve all titles
-Granted to every player who can achieve
-all titles
-Granted to the player who achieves all
-title at the same time. This title can only
-be hold by one player at a time. If the title
-condition is not active anymore, the title
-will remain unusable by any player.
+| Title | How to Obtain |
+|-------|---------------|
+| The first | The first player to win a game in the history of Up and Down |
+| Patient Zero | The first player to loose a game in the history of Up and Down |
+| Winner Winner Chicken Dinner | Maintaining a minimum of 5 streak per active game round over 10 consecutive rounds |
+| Millionaire | Spend over 1'000'000 Diamonds |
+| Billionaire | Spend over 1'000'000'000 Diamonds |
+| Kind heart | Gift over 100 gifts to other players |
+| Protector | Safe more than 100 player from elimination |
+| Great protector | Safe more than 1'000 player from elimination |
+| THE Protector | Titel only granted the one player with the highest number of saved players. This title can only be obtained by one player at any time and is lost if another player overtakes the current holder in the numbers of saved players ranking. |
+| Unlucky Fellow | Lose more than 10 active rounds in a row with your first card. |
+| Black cat | Lose more than 100 active rounds in a row with your first card. |
+| Jinx | Titel only granted the one player with the highest number of lost games in a row by the first card. This title can only be obtained by one player at any time and is lost if another player overtakes the current holder in the numbers of lost games in a row by the first card ranking. |
+| Luck is everything | Win more than 10 first rounds in active rounds in a row. |
+| Luck is not everything | Win more than 100 first rounds in active rounds in a row. |
+| I AM LUCK | Titel only granted the one player with the highest number of consecutive first round wins in active rounds. This title can only be obtained by one player at any time and is lost if another player overtakes the current holder in the numbers of consecutive first round wins in active rounds ranking. |
+| Gifter | Gift more than 10 gifts to other players |
+| Your presence is a gift itself | Gift more than 100 gifts to other players |
+| Santa Claus | Titel only granted the one player with the highest number of gifts sent to other players. This title can only be obtained by one player at any time and is lost if another player overtakes the current holder in the numbers of gifts sent to other players ranking. |
+| Gifted | Receive more than 10 gifts from other players |
+| Popular | Receive more than 100 gifts from other players |
+| Idol | Titel only granted the one player with the highest number of gifts received from other players. This title can only be obtained by one player at any time and is lost if another player overtakes the current holder in the numbers of gifts received from other players ranking. |
+| VIP | Purchase a VIP of the highest level for one week. |
+| Dedicated VIP | Contain the VIP status of the highest VIP level for more than 5 Weeks |
+| THE VIP | Titel only granted the one player with the highest number of consecutive weeks with the highest VIP level activated. This title can only be obtained by one player at any time and is lost if another player overtakes the current holder in the consecutive weeks with the highest VIP level activated. ranking. |
+| Special Effect rookie | Play more than 10 Special Effect cards |
+| Special Effect Master | Play more than 100 Special Effect cards |
+| Magician | Titel only granted the one player with the highest number of Special Effect cards played. This title can only be obtained by one player at any time and is lost if another player overtakes the current holder in the numbers of Special Effect cards played ranking. |
+| Shop user | Buy more than 10 things from the shop |
+| Shop owner | Buy more than 100 things from the shop |
+| Business mogul | Titel only granted the one player with the highest number of bought things from the shop. This title can only be obtained by one player at any time and is lost if another player overtakes the current holder in the numbers of bought things from the shop ranking. |
+| Daily topshot | Win more than 5 daily top rankings |
+| Daily master | Win more than 10 daily top rankings |
+| Daily King | Titel only granted the one player with the highest number of daily top ranking wins. This title can only be obtained by one player at any time and is lost if another player overtakes the current holder in the numbers of daily top ranking wins. |
+| Weekly topshot | Win more than 5 weekly top rankings |
+| Weekly master | Win more than 10 weekly top rankings |
+| Weekly King | Titel only granted the one player with the highest number of weekly top ranking wins. This title can only be obtained by one player at any time and is lost if another player overtakes the current holder in the numbers of weekly top ranking wins. |
+| Monthly topshot | Win more than 5 monthly top rankings |
+| Monthly master | Win more than 10 monthly top rankings |
+| Monthly King | Titel only granted the one player with the highest number of Monthly top ranking wins. This title can only be obtained by one player at any time and is lost if another player overtakes the current holder in the numbers of Monthly top ranking wins. |
+| Yearly champion | Win one or more yearly top rankings |
+| Yearly King | Titel only granted the one player with the highest number of daily top ranking wins. This title can only be obtained by one player at any time and is lost if another player overtakes the current holder in the numbers of daily top ranking wins. |
+| Among the tops | Place within the top 10 of the yearly rankings by the end of the ranking duration time. |
+| Generation 42 | Reach round 42 to receive this title |
+| Champion | Granted to every player who is able to complete the game. |
+| The first complete beeing | Granted to the first player who can achieve all titles |
+| Complete beeing | Granted to every player who can achieve all titles |
+| THE ONE | Granted to the player who achieves all title at the same time. This title can only be hold by one player at a time. If the title condition is not active anymore, the title will remain unusable by any player. |
 
 
 ### Jackpot (in the free to play version)
