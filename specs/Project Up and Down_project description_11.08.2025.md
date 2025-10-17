@@ -24,6 +24,7 @@ converted_at: auto
   - [Jackpot (in the free to play version)](#jackpot-in-the-free-to-play-version)
   - [VIP Players](#vip-players)
   - [Game shop and microtransactions](#game-shop-and-microtransactions)
+    - [Shop Items](#shop-items)
   - [Start menu \& menu screens](#start-menu--menu-screens)
 
 ## Sections
@@ -741,7 +742,7 @@ The shop needs to be easy to access through the main menu (before lobby menu) an
 while playing in a lobby (shop button on map/table). Also, it should be able to accept all
 major payment methods.
 
-Following items will be in the shop:
+#### Shop Items
 
 **Daily Bonuses and rewards:**
 - Daily bonus for playing the game
@@ -784,15 +785,6 @@ Following items will be in the shop:
 - Several gifts to send to other players on the same table. For example a "Rose". A "Rose" costs 10 D and the receiving party gets 1 D added to their D count
 - This feature can be added later on
 - Every gift has a small animation
-
-**VIP Levels:**
-
-| VIP Level | Benefits | Weekly Cost | Initial Cost |
-|-----------|----------|-------------|--------------|
-| VIP 1: Vip | Badge next to name | 100 D/Week | 5'000 D |
-| VIP 2: VIP | Badge and Golden Letters name | 200 D/Week | - |
-| VIP 3: All | All rewards from Lvl 2 + Custom Entry animation | 300 D/Week | - |
-| VIP 4: All | All rewards from VIP 3 + VIP Map access | 500 D/Week | - |
 
 ### Start menu & menu screens
 
