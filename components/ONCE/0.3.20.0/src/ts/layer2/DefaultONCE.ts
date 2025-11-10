@@ -542,6 +542,148 @@ export class DefaultONCE implements ONCE {
   }
 
   /**
+   * Demo command - Start interactive ONCE demo with browser auto-opening
+   * ✅ TRUE Radical OOP: All state in model, method chaining, no functional helpers
+   * @param mode Demo mode: 'interactive' (default), 'headless', or 'browser-only'
+   * @cliSyntax mode
+   * @cliDefault mode interactive
+   * @cliValues interactive headless browser-only
+   * @pdca 2025-11-10-UTC-1900.add-demo-command.pdca.md - Port demo from 0.2.0.0 CLI
+   */
+  async demo(mode: string = 'interactive'): Promise<this> {
+    console.log('🎭 ONCE v0.3.20.0 Demo Starting...');
+    console.log('');
+    
+    // ✅ RADICAL OOP: Store demo mode in model
+    if (!this.model.serverModel) {
+      this.model.serverModel = {} as any;
+    }
+    (this.model.serverModel as any).demoMode = mode;
+    
+    // Show enhanced v0.3.20.0 info
+    console.log('🏠 Project root:', this.model.projectRoot || process.cwd());
+    console.log('🚫 No environment variables required');
+    console.log('🌐 Server hierarchy: Port 42777 → 8080+ (enhanced v0.2.0.0)');
+    console.log('🎯 TRUE Radical OOP architecture (v0.3.20.0)');
+    console.log('');
+    
+    // Initialize and start server
+    if (!this.model.initialized) {
+      console.log('🔧 Initializing ONCE kernel...');
+      const startTime = Date.now();
+      this.model.initialized = true;
+      this.model.initializationTime = Date.now() - startTime;
+      console.log(`✅ Initialized in ${this.model.initializationTime}ms`);
+    }
+    
+    // Start server
+    console.log('🚀 Starting ONCE server...');
+    await this.startServer();
+    
+    const serverModel = this.serverHierarchyManager.getServerModel();
+    const httpCapability = serverModel.capabilities.find(c => c.capability === 'httpPort');
+    
+    if (httpCapability) {
+      const port = httpCapability.port;
+      const url = `http://localhost:${port}`;
+      
+      console.log('');
+      console.log('✅ ONCE Server Running:');
+      console.log(`   🌐 URL: ${url}`);
+      console.log(`   🏠 Domain: ${serverModel.domain}`);
+      console.log(`   📋 UUID: ${serverModel.uuid}`);
+      console.log(`   ⚡ Type: ${serverModel.isPrimaryServer ? '🟢 Primary Server (42777)' : '🔵 Client Server'}`);
+      console.log('');
+      
+      if (serverModel.isPrimaryServer) {
+        console.log('🎯 This is the PRIMARY server - other instances will register with this one');
+      } else {
+        console.log('🔗 This server registered with the primary server on port 42777');
+      }
+      console.log('');
+      
+      // Open browser if not headless
+      if (mode !== 'headless') {
+        console.log('🌐 Opening browser...');
+        await this.openBrowser(url);
+        console.log('');
+      }
+      
+      // Show available endpoints
+      console.log('📡 Available Endpoints:');
+      console.log(`   Root:    ${url}/`);
+      console.log(`   Health:  ${url}/health`);
+      console.log(`   Client:  ${url}/once`);
+      if (serverModel.isPrimaryServer) {
+        console.log(`   Servers: ${url}/servers`);
+      }
+      console.log('');
+      
+      // Show controls
+      if (mode === 'interactive') {
+        console.log('ℹ️  Interactive Demo Mode:');
+        console.log('   • Server is running and browser is open');
+        console.log('   • Visit the URL above to see ONCE in action');
+        console.log('   • Press Ctrl+C to stop the server');
+      } else if (mode === 'headless') {
+        console.log('🤖 Headless Mode:');
+        console.log('   • Server is running without browser');
+        console.log('   • Press Ctrl+C to stop the server');
+      } else if (mode === 'browser-only') {
+        console.log('🌐 Browser opened, server running');
+        console.log('   • Press Ctrl+C to stop');
+      }
+      console.log('');
+      console.log('🛑 Press Ctrl+C to stop the server');
+      console.log('');
+      
+      // Setup graceful shutdown
+      process.on('SIGINT', async () => {
+        console.log('\n');
+        console.log('🛑 Stopping ONCE server...');
+        await this.stopServer();
+        console.log('✅ Server stopped gracefully');
+        process.exit(0);
+      });
+      
+      // Keep process alive
+      await new Promise(() => {}); // Never resolves, keeps process running
+    }
+    
+    return this;
+  }
+
+  /**
+   * Open browser to URL (cross-platform)
+   * ✅ TRUE Radical OOP: Uses child_process dynamically, no static imports
+   * @cliHide
+   */
+  private async openBrowser(url: string): Promise<void> {
+    const { exec } = await import('child_process');
+    const { promisify } = await import('util');
+    const execAsync = promisify(exec);
+    
+    try {
+      const platform = process.platform;
+      let command: string;
+      
+      if (platform === 'darwin') {
+        command = `open "${url}"`;
+      } else if (platform === 'win32') {
+        command = `start "${url}"`;
+      } else {
+        // Linux and others
+        command = `xdg-open "${url}" || sensible-browser "${url}" || x-www-browser "${url}"`;
+      }
+      
+      await execAsync(command);
+      console.log(`✅ Browser opened: ${url}`);
+    } catch (error) {
+      console.warn(`⚠️  Could not auto-open browser. Please visit: ${url}`);
+    }
+  }
+
+  /**
    * Detect hostname without environment variables (domain logic from 0.2.0.0)
    * @cliHide
    */
