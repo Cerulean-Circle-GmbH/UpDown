@@ -1,0 +1,74 @@
+/**
+ * GameLogicEngineModel - GameLogicEngine Component Model Interface
+ * Web4 pattern: Component model following auto-discovery patterns
+ */
+
+import { Model } from './Model.interface.js';
+
+export interface Card {
+  suit: string;
+  value: number;
+  displayName: string;
+}
+
+export interface Player {
+  id: string;
+  name: string;
+  score: number;
+  streak: number;
+  maxStreak: number;
+  isActive: boolean;
+  hand: {
+    upCard: number;
+    downCard: number;
+    evenCard: number;
+    specialCards: any[];
+  };
+}
+
+export interface GameState {
+  phase: 'ready' | 'playing' | 'game_over';
+  round: number;
+  currentCard: Card | null;
+  previousCard: Card | null;
+  players: Player[];
+  gameMode: 'rapid' | 'multiplayer';
+  deck: Card[];
+  gameMaster: {
+    hand: Card[];
+    deck: Card[];
+  };
+  currentGuesses?: Map<string, 'up' | 'down' | 'even'>;
+}
+
+export interface GameLogicEngineModel extends Model {
+  uuid: string;
+  name: string;
+  origin: string;
+  definition: string;
+  createdAt: string;
+  updatedAt: string;
+  component?: string;             // Component name for CLI display
+  version?: string;               // Component version for CLI display and test promotion
+  // @pdca 2025-11-10-UTC-1010.pdca.md - Path Authority fields for delegation
+  componentRoot?: string;         // THIS component's root directory
+  projectRoot?: string;           // Project root directory (for delegation)
+  targetDirectory?: string;       // Target directory for operations (Path Authority from CLI)
+  targetComponentRoot?: string;   // Target component's root (for tree/links delegation)
+  context?: any;                  // Context for "on" delegation mode (holds delegated component instance)
+  
+  // 🎯 Radical OOP Properties - Store ONCE, Never Recalculate
+  // @pdca 2025-11-10-UTC-1400.eliminate-functional-helpers-make-model-driven.pdca.md
+  isTestIsolation?: boolean;      // Flag for test isolation mode
+  testDataDirectory?: string;     // Test data directory path (when isTestIsolation = true)
+  displayName?: string;           // Component name to show (this OR context)
+  displayVersion?: string;        // Version to show (this OR context)
+  isDelegation?: boolean;         // true if this.model.context exists
+  delegationInfo?: string;        // e.g., "via Web4TSComponent v0.3.19.0"
+  testIsolationContext?: string;  // e.g., "Web4TSComponent v0.3.19.0" or null
+  componentsDirectory?: string;   // Pre-calculated components directory
+  
+  // 🎮 Domain Properties - Game Logic State
+  // @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
+  gameState?: GameState;          // Current game state
+}

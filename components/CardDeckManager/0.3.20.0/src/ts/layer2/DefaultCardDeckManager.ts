@@ -1,0 +1,607 @@
+/**
+ * DefaultCardDeckManager - CardDeckManager Component Implementation
+ * Web4 pattern: Empty constructor + scenario initialization + component functionality
+ */
+
+import { CardDeckManager } from '../layer3/CardDeckManager.interface.js';
+import { Scenario } from '../layer3/Scenario.interface.js';
+import { CardDeckManagerModel, Card } from '../layer3/CardDeckManagerModel.interface.js';
+import { User } from '../layer3/User.interface.js';
+import { MethodSignature } from '../layer3/MethodSignature.interface.js';
+import { existsSync, lstatSync, readlinkSync, readdirSync, statSync } from 'fs';
+import { join, dirname } from 'path';
+
+export class DefaultCardDeckManager implements CardDeckManager {
+  // @pdca 2025-11-03-1105-component-template-bugs.pdca.md - Changed to public for Component interface compliance
+  model: CardDeckManagerModel;
+  private web4ts?: any; // Lazy-initialized Web4TSComponent for delegation (dynamic import, no static dependency)
+  private user?: User; // Optional User service (lazy initialization) - @pdca 2025-11-03-1135.pdca.md
+  private methods: Map<string, MethodSignature> = new Map(); // @pdca 2025-11-05-UTC-2301 - Match Web4TSComponent type
+
+  constructor() {
+    // Empty constructor - Web4 pattern
+    // @pdca 2025-11-03-1105-component-template-bugs.pdca.md - Initialize with component name for CLI display
+    this.model = {
+      uuid: crypto.randomUUID(),
+      name: '',
+      origin: '',
+      definition: '',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      component: 'CardDeckManager',  // For CLI display
+      version: '0.3.19.0'             // Component version
+    };
+  }
+
+  /**
+   * Check if method exists (Component interface)
+   * @pdca 2025-11-05-UTC-2301.dry-shell-libraries.pdca.md - Method discovery for tab completion
+   * @cliHide
+   */
+  hasMethod(name: string): boolean {
+    return this.methods.has(name);
+  }
+  
+  /**
+   * Get method signature (Component interface)
+   * @pdca 2025-11-05-UTC-2301.dry-shell-libraries.pdca.md - Method discovery for tab completion
+   * @cliHide
+   */
+  getMethodSignature(name: string): MethodSignature | null {
+    return this.methods.get(name) || null;
+  }
+  
+  /**
+   * List all method names (Component interface)
+   * @pdca 2025-11-05-UTC-2301.dry-shell-libraries.pdca.md - Method discovery for tab completion
+   * @cliHide
+   */
+  listMethods(): string[] {
+    return Array.from(this.methods.keys());
+  }
+
+  /**
+   * Discover public methods for CLI completion
+   * @pdca 2025-11-05-UTC-2301.dry-shell-libraries.pdca.md - Method discovery for tab completion
+   * @cliHide
+   */
+  private discoverMethods(): void {
+    const prototype = Object.getPrototypeOf(this);
+    const methodNames = Object.getOwnPropertyNames(prototype)
+      .filter((name) => typeof prototype[name] === "function")
+      .filter((name) => !name.startsWith("_") && name !== "constructor")
+      .filter((name) => !["init", "toScenario", "hasMethod", "getMethodSignature", "listMethods", "discoverMethods"].includes(name));
+
+    for (const methodName of methodNames) {
+      const method = prototype[methodName];
+      this.methods.set(methodName, {
+        name: methodName,
+        paramCount: method.length,
+        isAsync: method.constructor.name === "AsyncFunction",
+      });
+    }
+  }
+
+  /**
+   * Lazy initialization of User service for owner data generation
+   * NOT a build dependency - warns if unavailable, continues with fallback
+   * @pdca 2025-11-03-1135.pdca.md - User service integration pattern
+   * @cliHide
+   */
+  private async getUser(): Promise<User> {
+    if (this.user) return this.user;
+    
+    try {
+      // Dynamic ESM import - fails gracefully if User not available
+      // @ts-ignore - Optional dependency, path resolved at runtime
+      const userModule = await import('../../User/latest/dist/ts/layer2/DefaultUser.js');
+      const { DefaultUser } = userModule;
+      
+      // Initialize User with empty constructor (uses system/localhost defaults)
+      this.user = new DefaultUser();
+      
+      return this.user!; // Non-null assertion: we just assigned it
+    } catch (error) {
+      // User service not available - throw for caller to handle fallback
+      throw new Error('User service not available');
+    }
+  }
+
+  /**
+   * Lazy initialization of Web4TSComponent for delegation (DRY principle)
+   * Dynamic imports resolve paths at runtime, enabling location-independent operation
+   * @cliHide
+   */
+  private async getWeb4TSComponent(): Promise<any> {
+    if (this.web4ts) return this.web4ts;
+
+    const path = await import('path');
+    const url = new URL(import.meta.url);
+    const __filename = url.pathname;
+    const componentRoot = path.resolve(path.dirname(__filename), '../../..');
+
+    // @pdca 2025-11-10-UTC-1230.test-isolation-path-pollution-analysis.pdca.md
+    // Web4 Principle: Detect project root correctly for test isolation
+    // Component path: .../test/data/components/ComponentName/0.1.0.0
+    // OR: .../components/ComponentName/0.1.0.0
+    // Project root is 2 levels up from component directory
+    // (ComponentName/ and components/)
+    const componentsDir = path.dirname(path.dirname(componentRoot)); // Go up 2: version → component → components
+    const projectRoot = path.dirname(componentsDir); // Go up 1 more: components → project root
+    
+    // @pdca 2025-11-10-UTC-1230.test-isolation-path-pollution-analysis.pdca.md
+    // Web4 Principle: Detect test isolation from model paths, NOT environment variables
+    // Test isolation: projectRoot contains '/test/data'
+    const isTestIsolation = projectRoot.includes('/test/data');
+    
+    // @pdca 2025-11-10-UTC-1010.pdca.md - Set THIS component's paths for delegation
+    // When Web4TSComponent reads context, it needs to know THIS component's paths
+    this.model.componentRoot = componentRoot;
+    this.model.projectRoot = projectRoot;
+    this.model.targetDirectory = projectRoot;
+    this.model.targetComponentRoot = componentRoot;
+    this.model.isTestIsolation = isTestIsolation;
+
+    // Import Web4TSComponent and SemanticVersion dynamically
+    const web4tscomponentModule = await import(
+      `${projectRoot}/components/Web4TSComponent/latest/dist/ts/layer2/DefaultWeb4TSComponent.js`
+    );
+    const semanticVersionModule = await import(
+      `${projectRoot}/components/Web4TSComponent/latest/dist/ts/layer2/SemanticVersion.js`
+    );
+    const { DefaultWeb4TSComponent } = web4tscomponentModule;
+    const { SemanticVersion } = semanticVersionModule;
+
+    // ✅ CRITICAL: Initialize Web4TSComponent for delegation
+    // @pdca 2025-11-03-UTC-1237.pdca.md - Full delegation initialization
+    // @pdca 2025-11-04-UTC-1630.pdca.md - Added projectRoot for version display fix
+    // @pdca 2025-11-10-UTC-1010.pdca.md - DO NOT override component identity!
+    // Web4TSComponent must retain its own identity ('Web4TSComponent')
+    // The delegating component's identity will be set via context in delegateToWeb4TS()
+    this.web4ts = new DefaultWeb4TSComponent().init({
+      model: {
+        // DO NOT set 'component' here - let Web4TSComponent keep its own identity
+        version: await SemanticVersion.fromString(this.model.version || '0.0.0.0'), // THIS component's version
+        componentRoot: componentRoot,              // THIS component's root directory
+        projectRoot: projectRoot,                  // Project root for Path Authority (version display needs this)
+        targetDirectory: projectRoot               // Project root for path authority
+      }
+    });
+
+    return this.web4ts;
+  }
+
+  /**
+   * DRY helper for delegating methods to Web4TSComponent with correct context
+   * Sets context ONCE so Web4TSComponent operates on THIS component's data
+   * @pdca 2025-11-03-UTC-1200.pdca.md - DRY OOP pattern for context delegation
+   * @pdca 2025-11-10-UTC-1400.eliminate-functional-helpers-make-model-driven.pdca.md - Set display properties (Radical OOP)
+   * @cliHide
+   */
+  private async delegateToWeb4TS<T extends (...args: any[]) => any>(
+    method: string,
+    ...args: Parameters<T>
+  ): Promise<this> {
+    const web4ts = await this.getWeb4TSComponent();
+    web4ts.model.context = this;  // ← Set context ONCE in ONE place
+    
+    // ✅ RADICAL OOP: Set display properties in Web4TSComponent's model (NO functional calculation!)
+    // @pdca 2025-11-10-UTC-1400.eliminate-functional-helpers-make-model-driven.pdca.md
+    // Web4TSComponent will just READ these properties (model-driven display)
+    web4ts.model.displayName = this.model.component;  // Show THIS component's name
+    web4ts.model.displayVersion = this.model.version || '0.0.0.0';  // Show THIS component's version
+    web4ts.model.isDelegation = true;  // We ARE delegating
+    web4ts.model.delegationInfo = `via Web4TSComponent v${web4ts.model.version.toString()}`;  // Show infrastructure
+    
+    // Test isolation context (if applicable)
+    if (this.model.isTestIsolation && this.model.projectRoot) {
+      const match = this.model.projectRoot.match(/components\/([^/]+)\/([^/]+)\/test\/data/);
+      if (match) {
+        web4ts.model.testIsolationContext = `${match[1]} v${match[2]}`;
+      } else {
+        web4ts.model.testIsolationContext = 'test/data environment';
+      }
+    }
+    
+    await (web4ts as any)[method](...args);
+    return this;
+  }
+
+  /**
+   * 🎯 TRUE Radical OOP (0.3.19.0) - DRY Excellence
+   * Returns the target component instance for operations (this OR context)
+   * Eliminates repeated `this.model.context || this` everywhere!
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from Web4TSComponent/0.3.19.0
+   * @cliHide
+   */
+  protected getTarget(): DefaultCardDeckManager {
+    return (this.model.context as DefaultCardDeckManager) || this;
+  }
+
+  /**
+   * 🎯 TRUE Radical OOP (0.3.19.0) - Calculate & Store ONCE
+   * Calculates all model paths and display properties ONCE at init
+   * Methods just READ from model - NO recalculation!
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from Web4TSComponent/0.3.19.0
+   * @cliHide
+   */
+  private updateModelPaths(): void {
+    // If context exists, inherit component/version from context
+    if (this.model.context) {
+      this.model.component = this.model.context.model.component;
+      this.model.version = this.model.context.model.version;
+    }
+    
+    // Calculate projectRoot if not already set AND componentRoot is available
+    if (!this.model.projectRoot && this.model.componentRoot) {
+      this.model.projectRoot = dirname(dirname(dirname(this.model.componentRoot)));
+    }
+    
+    // Set targetDirectory to projectRoot if not set
+    if (!this.model.targetDirectory && this.model.projectRoot) {
+      this.model.targetDirectory = this.model.projectRoot;
+    }
+    
+    // Set display properties (component name/version to show)
+    if (!this.model.displayName) {
+      this.model.displayName = this.model.component;
+      this.model.displayVersion = this.model.version?.toString();
+    }
+  }
+
+  /**
+   * @cliHide
+   * @pdca 2025-11-05-UTC-2301.dry-shell-libraries.pdca.md - Added method discovery
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Call updateModelPaths() for TRUE Radical OOP
+   */
+  init(scenario?: Scenario<CardDeckManagerModel>): this {
+    if (scenario?.model) {
+      this.model = { ...this.model, ...scenario.model };
+    }
+    
+    // Discover methods for CLI completion
+    this.discoverMethods();
+    
+    // 🎯 TRUE Radical OOP: Calculate & store all paths ONCE
+    // @pdca 2025-11-10-UTC-1730.pdca.md
+    this.updateModelPaths();
+    
+    return this;
+  }
+
+  /**
+   * @cliHide
+   * @pdca 2025-11-03-1135.pdca.md - Use User service with fallback pattern
+   */
+  async toScenario(name?: string): Promise<Scenario<CardDeckManagerModel>> {
+    // ✅ RADICAL OOP: Generate owner data using User.toScenario() (Web4 component interface)
+    let ownerData: string;
+    try {
+      // Try to use User service if available (NOT a build dependency)
+      const user = await this.getUser();
+      
+      // ✅ Use User component's toScenario() - universal Web4 interface
+      const userScenario = await user.toScenario();
+      
+      // ✅ Owner data IS the entire User scenario serialized
+      const ownerJson = JSON.stringify(userScenario);
+      
+      ownerData = Buffer.from(ownerJson).toString('base64');
+    } catch (error) {
+      // ✅ Fallback: Generate minimal User-like scenario without User service
+      const fallbackJson = JSON.stringify({
+        ior: {
+          uuid: this.model.uuid,
+          component: 'User',
+          version: '0.0.0.0',
+          timestamp: new Date().toISOString()
+        },
+        owner: '',  // No nested owner in fallback
+        model: {
+          user: process.env.USER || 'system',
+          hostname: process.env.HOSTNAME || 'localhost',
+          uuid: this.model.uuid,
+          component: 'CardDeckManager',
+          version: '0.3.19.0'
+        }
+      });
+      ownerData = Buffer.from(fallbackJson).toString('base64');
+    }
+
+    return {
+      ior: {
+        uuid: this.model.uuid,
+        component: 'CardDeckManager',
+        version: '0.3.19.0'
+      },
+      owner: ownerData,
+      model: this.model
+    };
+  }
+
+  /**
+   * Create a new French-suited card deck (52 cards)
+   * @param shuffle Whether to shuffle the deck after creation
+   * @cliSyntax shuffle
+   * @cliDefault shuffle true
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from 0.2.0.0
+   */
+  async createDeck(shuffle: string = 'true'): Promise<this> {
+    console.log(`🃏 Creating French-suited card deck...`);
+    
+    const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
+    const ranks = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'];
+    const deck: Card[] = [];
+    
+    for (const suit of suits) {
+      for (const rank of ranks) {
+        deck.push({
+          suit,
+          rank,
+          value: this.getCardValue(rank),
+          id: `${rank}_${suit}`,
+          displayName: `${rank} of ${suit}`
+        });
+      }
+    }
+    
+    if (shuffle === 'true') {
+      this.shuffleDeckArray(deck);
+    }
+    
+    this.model.deck = deck;
+    this.model.updatedAt = new Date().toISOString();
+    console.log(`✅ Created ${deck.length} card deck${shuffle === 'true' ? ' (shuffled)' : ''}`);
+    return this;
+  }
+
+  /**
+   * Shuffle the current deck using Fisher-Yates algorithm
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from 0.2.0.0
+   */
+  async shuffleDeck(): Promise<this> {
+    if (!this.model.deck) {
+      console.log(`⚠️  No deck to shuffle. Create a deck first.`);
+      return this;
+    }
+    
+    this.shuffleDeckArray(this.model.deck);
+    this.model.updatedAt = new Date().toISOString();
+    console.log(`🔀 Deck shuffled`);
+    return this;
+  }
+
+  /**
+   * Deal a card from the deck
+   * @param count Number of cards to deal
+   * @cliSyntax count
+   * @cliDefault count 1
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from 0.2.0.0
+   */
+  async dealCard(count: string = '1'): Promise<this> {
+    const cardCount = parseInt(count);
+    if (!this.model.deck || this.model.deck.length === 0) {
+      console.log(`⚠️  No cards in deck. Create a deck first.`);
+      return this;
+    }
+    
+    if (cardCount > this.model.deck.length) {
+      console.log(`⚠️  Not enough cards in deck. Only ${this.model.deck.length} cards remaining.`);
+      return this;
+    }
+    
+    const dealtCards: Card[] = [];
+    for (let i = 0; i < cardCount; i++) {
+      const card = this.model.deck.pop()!;
+      dealtCards.push(card);
+    }
+    
+    this.model.dealtCards = [...(this.model.dealtCards || []), ...dealtCards];
+    this.model.updatedAt = new Date().toISOString();
+    
+    console.log(`🎴 Dealt ${dealtCards.length} card(s):`);
+    dealtCards.forEach(card => {
+      console.log(`   ${card.displayName} (value: ${card.value})`);
+    });
+    console.log(`📊 Cards remaining: ${this.model.deck.length}`);
+    
+    return this;
+  }
+
+  /**
+   * Show current deck status
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from 0.2.0.0
+   */
+  async showDeck(): Promise<this> {
+    if (!this.model.deck) {
+      console.log(`📋 No deck created yet. Use 'createDeck' first.`);
+      return this;
+    }
+    
+    console.log(`📋 Deck Status:`);
+    console.log(`   Cards in deck: ${this.model.deck.length}`);
+    console.log(`   Cards dealt: ${this.model.dealtCards?.length || 0}`);
+    
+    if (this.model.deck.length > 0) {
+      console.log(`   Top card: ${this.model.deck[this.model.deck.length - 1].displayName}`);
+    }
+    
+    if (this.model.dealtCards && this.model.dealtCards.length > 0) {
+      console.log(`   Last dealt: ${this.model.dealtCards[this.model.dealtCards.length - 1].displayName}`);
+    }
+    
+    return this;
+  }
+
+  /**
+   * Process data through CardDeckManager logic
+   * @param data Data to process
+   * @cliSyntax data
+   */
+  async process(data: string): Promise<this> {
+    console.log(`🔧 Processing: ${data}`);
+    this.model.updatedAt = new Date().toISOString();
+    return this;
+  }
+
+  /**
+   * Show information about current CardDeckManager state
+   * Delegates to Web4TSComponent for DRY architecture and consistent model display
+   * @param topic Optional topic to show (e.g., 'standard', 'guidelines', 'model')
+   * @cliSyntax topic
+   * @cliDefault topic model
+   */
+  async info(topic: string = 'model'): Promise<this> {
+    return this.delegateToWeb4TS('info', topic);
+  }
+
+  /**
+   * Run component tests with hierarchical selection or full suite with auto-promotion
+   * 
+   * DRY PRINCIPLE: Delegates ALL testing to Web4TSComponent to avoid code duplication.
+   * Web4TSComponent handles:
+   * - Hierarchical testing (file/describe/itCase)
+   * - Full suite execution with vitest
+   * - Auto-promotion workflow (dev → test → prod)
+   * - Test result verification
+   * - Recursion detection
+   * 
+   * Context delegation ensures Web4TSComponent operates on THIS component's data.
+   * 
+   * @param scope Test scope: 'all' (full suite with promotion) or 'file'/'describe'/'itCase' (selective, no promotion)
+   * @param references Test references for selective testing (e.g., file number, describe reference, itCase token)
+   * @cliSyntax scope references
+   * @cliDefault scope all
+   * @cliValues file describe itCase
+   * @cliExample {{COMPONENT_LOWER}} test
+   * @cliExample {{COMPONENT_LOWER}} test file
+   * @cliExample {{COMPONENT_LOWER}} test file 1
+   * @cliExample {{COMPONENT_LOWER}} test describe 3b
+   * @cliExample {{COMPONENT_LOWER}} test itCase 1a1
+   * @pdca 2025-11-03-UTC-1200.pdca.md - Replaced 178-line implementation with 1-line delegation
+   * @pdca 2025-11-06-UTC-0150.delegated-parameter-completion-broken.pdca.md - Added @cliValues for parameter completion
+   */
+  async test(scope: string = 'all', ...references: string[]): Promise<this> {
+    return this.delegateToWeb4TS('test', scope, ...references);
+  }
+
+  /**
+   * Build component (TypeScript compilation)
+   * Delegates to Web4TSComponent for DRY architecture
+   * @cliHide
+   */
+  async build(): Promise<this> {
+    return this.delegateToWeb4TS('build');
+  }
+
+  /**
+   * Clean component build artifacts
+   * Delegates to Web4TSComponent for DRY architecture
+   * @cliHide
+   */
+  async clean(): Promise<this> {
+    return this.delegateToWeb4TS('clean');
+  }
+
+  /**
+   * Show component directory tree structure
+   * Delegates to Web4TSComponent for DRY architecture
+   * @param depth Maximum depth to show (default: 4)
+   * @param showHidden Whether to show hidden files (default: false)
+   * @cliHide
+   */
+  async tree(depth: string = '4', showHidden: string = 'false'): Promise<this> {
+    return this.delegateToWeb4TS('tree', depth, showHidden);
+  }
+
+  /**
+   * Show semantic version links (dev, test, prod, latest)
+   * Delegates to Web4TSComponent for DRY architecture
+   * @param action Optional action (e.g., 'repair' to fix broken links)
+   * @cliHide
+   */
+  async links(action: string = ''): Promise<this> {
+    return this.delegateToWeb4TS('links', action);
+  }
+
+  /**
+   * Test and discover tab completions for debugging and development
+   * @param what Type of completion to test: "method" or "parameter"
+   * @param filter Optional prefix to filter results (e.g., "v" shows only validate*, verify*, etc.)
+   * @cliSyntax what filter
+   * @cliDefault filter ""
+   */
+  async completion(what: string, filter?: string): Promise<this> {
+    const context = this.getComponentContext();
+    
+    // OOP: Instantiate own CLI and call completeParameter directly (no shell!)
+    const { CardDeckManagerCLI } = await import('../layer5/CardDeckManagerCLI.js');
+    const cli = new CardDeckManagerCLI();
+    
+    if (!context) {
+      // No context - test completions on CardDeckManager itself
+      console.log(`🔍 Discovering ${what === 'method' ? 'methods' : 'parameter completions'} on CardDeckManager${filter ? ` (filter: ${filter})` : ''}`);
+      console.log(`---`);
+      
+      // Call completeParameter directly via OOP (completeParameter is on DefaultCLI)
+      await cli.completeParameter('completionNameParameterCompletion', 'completion', what, filter || '');
+    } else {
+      // Context loaded - delegate to web4tscomponent for target component discovery
+      const web4ts = await this.getWeb4TSComponent();
+      await web4ts.completion(what, filter);
+    }
+    
+    return this;
+  }
+
+  /**
+   * @cliHide
+   */
+  protected getComponentContext(): { component: string; version: string; path: string } | null {
+    const context = this.model as any;
+    if (context.contextComponent && context.contextVersion && context.contextPath) {
+      return {
+        component: context.contextComponent,
+        version: context.contextVersion,
+        path: context.contextPath
+      };
+    }
+    return null;
+  }
+
+  /**
+   * Get numeric value for a card rank
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from 0.2.0.0
+   * @cliHide
+   */
+  private getCardValue(rank: string): number {
+    switch (rank) {
+      case 'Ace': return 1;
+      case '2': return 2;
+      case '3': return 3;
+      case '4': return 4;
+      case '5': return 5;
+      case '6': return 6;
+      case '7': return 7;
+      case '8': return 8;
+      case '9': return 9;
+      case '10': return 10;
+      case 'Jack': return 11;
+      case 'Queen': return 12;
+      case 'King': return 13;
+      default: return 0;
+    }
+  }
+
+  /**
+   * Shuffle deck array in place using Fisher-Yates algorithm
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from 0.2.0.0
+   * @cliHide
+   */
+  private shuffleDeckArray(deck: Card[]): void {
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+  }
+}
