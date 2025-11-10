@@ -320,21 +320,21 @@ describe('GameDemoSystem - Integration Test', () => {
   });
 
   it('should complete full demo workflow without errors', async () => {
-    await expect(async () => {
-      await demo.showScenarios();
-      await demo.runDemo('cards');
-      await demo.runDemo('core');
-      await demo.runDemo('full');
-      await demo.runDemo('all');
-    }).resolves.not.toThrow();
+    await demo.showScenarios();
+    await demo.runDemo('cards');
+    await demo.runDemo('core');
+    await demo.runDemo('full');
+    await demo.runDemo('all');
+    // If we get here without throwing, test passes
+    expect(true).toBe(true);
   }, 10000);
 
   it('should handle rapid successive demo calls', async () => {
-    await expect(async () => {
-      await demo.runCardsDemo();
-      await demo.runCardsDemo();
-      await demo.runCardsDemo();
-    }).resolves.not.toThrow();
+    await demo.runCardsDemo();
+    await demo.runCardsDemo();
+    await demo.runCardsDemo();
+    // If we get here without throwing, test passes
+    expect(true).toBe(true);
   }, 5000);
 });
 
