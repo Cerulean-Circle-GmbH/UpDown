@@ -878,6 +878,32 @@ export class DefaultONCE implements ONCE {
   }
 
   /**
+   * Parameter completion for mode parameter (used by demo command)
+   * ✅ TRUE Radical OOP: Parameterless, model-driven completion
+   * Returns possible values for the demo mode parameter
+   * @cliHide
+   */
+  async modeParameterCompletion(): Promise<string[]> {
+    return ['interactive', 'headless', 'browser-only'];
+  }
+
+  /**
+   * Parameter completion for sequence parameter (used by testInput command)
+   * ✅ TRUE Radical OOP: Parameterless, model-driven completion
+   * Returns example test sequences
+   * @cliHide
+   */
+  async sequenceParameterCompletion(): Promise<string[]> {
+    return [
+      's2mq',           // Simple: start, wait, metrics, quit
+      's1c1dq',         // With client: start, client, discover, quit
+      's3bc2q',         // With browser: start, wait, browser, client, wait, quit
+      's1bc1k1q',       // Full: start, browser, client, discover, kill, quit
+      's2b2c1d1e1q'     // Complex: start, browser, client, discover, exchange, quit
+    ];
+  }
+
+  /**
    * Detect hostname without environment variables (domain logic from 0.2.0.0)
    * @cliHide
    */
