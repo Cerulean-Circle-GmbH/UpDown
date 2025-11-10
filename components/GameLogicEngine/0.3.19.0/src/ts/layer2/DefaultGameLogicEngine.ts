@@ -5,7 +5,7 @@
 
 import { GameLogicEngine } from '../layer3/GameLogicEngine.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
-import { GameLogicEngineModel } from '../layer3/GameLogicEngineModel.interface.js';
+import { GameLogicEngineModel, Card, Player, GameState } from '../layer3/GameLogicEngineModel.interface.js';
 import { User } from '../layer3/User.interface.js';
 import { MethodSignature } from '../layer3/MethodSignature.interface.js';
 import { existsSync, lstatSync, readlinkSync, readdirSync, statSync } from 'fs';
@@ -208,8 +208,51 @@ export class DefaultGameLogicEngine implements GameLogicEngine {
   }
 
   /**
+   * 🎯 TRUE Radical OOP (0.3.19.0) - DRY Excellence
+   * Returns the target component instance for operations (this OR context)
+   * Eliminates repeated `this.model.context || this` everywhere!
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from Web4TSComponent/0.3.19.0
+   * @cliHide
+   */
+  protected getTarget(): DefaultGameLogicEngine {
+    return (this.model.context as DefaultGameLogicEngine) || this;
+  }
+
+  /**
+   * 🎯 TRUE Radical OOP (0.3.19.0) - Calculate & Store ONCE
+   * Calculates all model paths and display properties ONCE at init
+   * Methods just READ from model - NO recalculation!
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from Web4TSComponent/0.3.19.0
+   * @cliHide
+   */
+  private updateModelPaths(): void {
+    // If context exists, inherit component/version from context
+    if (this.model.context) {
+      this.model.component = this.model.context.model.component;
+      this.model.version = this.model.context.model.version;
+    }
+    
+    // Calculate projectRoot if not already set
+    if (!this.model.projectRoot) {
+      this.model.projectRoot = dirname(dirname(dirname(this.model.componentRoot!)));
+    }
+    
+    // Set targetDirectory to projectRoot if not set
+    if (!this.model.targetDirectory) {
+      this.model.targetDirectory = this.model.projectRoot;
+    }
+    
+    // Set display properties (component name/version to show)
+    if (!this.model.displayName) {
+      this.model.displayName = this.model.component;
+      this.model.displayVersion = this.model.version?.toString();
+    }
+  }
+
+  /**
    * @cliHide
    * @pdca 2025-11-05-UTC-2301.dry-shell-libraries.pdca.md - Added method discovery
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Call updateModelPaths() for TRUE Radical OOP
    */
   init(scenario?: Scenario<GameLogicEngineModel>): this {
     if (scenario?.model) {
@@ -218,6 +261,10 @@ export class DefaultGameLogicEngine implements GameLogicEngine {
     
     // Discover methods for CLI completion
     this.discoverMethods();
+    
+    // 🎯 TRUE Radical OOP: Calculate & store all paths ONCE
+    // @pdca 2025-11-10-UTC-1745.pdca.md
+    this.updateModelPaths();
     
     return this;
   }
@@ -273,17 +320,173 @@ export class DefaultGameLogicEngine implements GameLogicEngine {
   }
 
   /**
-   * Create example operation for GameLogicEngine
-   * @param input Input data to process
-   * @param format Output format (json, text, xml)
-   * @cliSyntax input format
-   * @cliDefault format json
+   * Start a new UpDown game session
+   * @param playerCount Number of players (1-10)
+   * @param gameMode Game mode: 'rapid' or 'multiplayer'
+   * @cliSyntax playerCount gameMode
+   * @cliDefault gameMode rapid
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
    */
-  async create(input: string, format: string = 'json'): Promise<this> {
-    console.log(`🚀 Creating ${input} in ${format} format`);
-    this.model.name = input;
+  async startGame(playerCount: string = '1', gameMode: string = 'rapid'): Promise<this> {
+    const players = parseInt(playerCount);
+    if (players < 1 || players > 10) {
+      console.log(`⚠️  Player count must be between 1 and 10`);
+      return this;
+    }
+
+    console.log(`🎮 Starting UpDown game...`);
+    console.log(`   Mode: ${gameMode}`);
+    console.log(`   Players: ${players}`);
+    
+    this.model.gameState = {
+      phase: 'ready',
+      round: 0,
+      currentCard: null,
+      previousCard: null,
+      players: [],
+      gameMode: gameMode as 'rapid' | 'multiplayer',
+      deck: [],
+      gameMaster: {
+        hand: [],
+        deck: []
+      }
+    };
+
+    // Initialize players
+    for (let i = 0; i < players; i++) {
+      this.model.gameState.players.push({
+        id: `player_${i + 1}`,
+        name: `Player ${i + 1}`,
+        score: 0,
+        streak: 0,
+        maxStreak: 0,
+        isActive: true,
+        hand: {
+          upCard: 1,
+          downCard: 1,
+          evenCard: 1,
+          specialCards: []
+        }
+      });
+    }
+
     this.model.updatedAt = new Date().toISOString();
-    console.log(`✅ GameLogicEngine operation completed`);
+    console.log(`✅ Game initialized with ${players} players`);
+    return this;
+  }
+
+  /**
+   * Make a guess in the current game
+   * @param playerId Player making the guess
+   * @param guess Type of guess: 'up', 'down', or 'even'
+   * @cliSyntax playerId guess
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
+   */
+  async makeGuess(playerId: string, guess: string): Promise<this> {
+    if (!this.model.gameState) {
+      console.log(`⚠️  No active game. Start a game first.`);
+      return this;
+    }
+
+    const validGuesses = ['up', 'down', 'even'];
+    if (!validGuesses.includes(guess)) {
+      console.log(`⚠️  Invalid guess. Must be: up, down, or even`);
+      return this;
+    }
+
+    const player = this.model.gameState.players.find(p => p.id === playerId);
+    if (!player) {
+      console.log(`⚠️  Player ${playerId} not found`);
+      return this;
+    }
+
+    if (!player.isActive) {
+      console.log(`⚠️  Player ${playerId} is not active`);
+      return this;
+    }
+
+    console.log(`🎯 Player ${playerId} guesses: ${guess}`);
+    
+    // Store the guess
+    if (!this.model.gameState.currentGuesses) {
+      this.model.gameState.currentGuesses = new Map();
+    }
+    this.model.gameState.currentGuesses.set(playerId, guess as 'up' | 'down' | 'even');
+    
+    this.model.updatedAt = new Date().toISOString();
+    console.log(`✅ Guess recorded`);
+    return this;
+  }
+
+  /**
+   * Deal the next card and evaluate guesses
+   * @param cardValue Optional card value for testing (1-13)
+   * @cliSyntax cardValue
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
+   */
+  async dealNextCard(cardValue: string = ''): Promise<this> {
+    if (!this.model.gameState) {
+      console.log(`⚠️  No active game. Start a game first.`);
+      return this;
+    }
+
+    // Generate or use provided card value
+    const value = cardValue ? parseInt(cardValue) : Math.floor(Math.random() * 13) + 1;
+    const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
+    const suit = suits[Math.floor(Math.random() * 4)];
+    
+    const newCard = {
+      suit,
+      value,
+      displayName: this.getCardDisplayName(value, suit)
+    };
+
+    console.log(`🎴 Dealing card: ${newCard.displayName}`);
+
+    // Move previous card
+    if (this.model.gameState.currentCard) {
+      this.model.gameState.previousCard = this.model.gameState.currentCard;
+    }
+    this.model.gameState.currentCard = newCard;
+    this.model.gameState.round++;
+
+    // Evaluate guesses
+    if (this.model.gameState.previousCard && this.model.gameState.currentGuesses) {
+      this.evaluateGuesses();
+    }
+
+    this.model.updatedAt = new Date().toISOString();
+    console.log(`✅ Card dealt. Round ${this.model.gameState.round}`);
+    return this;
+  }
+
+  /**
+   * Show current game status
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
+   */
+  async showGameStatus(): Promise<this> {
+    if (!this.model.gameState) {
+      console.log(`📋 No active game. Start a game first.`);
+      return this;
+    }
+
+    console.log(`📋 Game Status:`);
+    console.log(`   Mode: ${this.model.gameState.gameMode}`);
+    console.log(`   Round: ${this.model.gameState.round}`);
+    console.log(`   Phase: ${this.model.gameState.phase}`);
+    
+    if (this.model.gameState.currentCard) {
+      console.log(`   Current Card: ${this.model.gameState.currentCard.displayName}`);
+    }
+    if (this.model.gameState.previousCard) {
+      console.log(`   Previous Card: ${this.model.gameState.previousCard.displayName}`);
+    }
+
+    console.log(`\n👥 Players:`);
+    this.model.gameState.players.forEach(player => {
+      console.log(`   ${player.name} (${player.id}): Score ${player.score}, Streak ${player.streak}${player.isActive ? '' : ' [ELIMINATED]'}`);
+    });
+
     return this;
   }
 
@@ -421,5 +624,69 @@ export class DefaultGameLogicEngine implements GameLogicEngine {
       };
     }
     return null;
+  }
+
+  /**
+   * Evaluate guesses after card is dealt
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
+   * @cliHide
+   */
+  private evaluateGuesses(): void {
+    if (!this.model.gameState || !this.model.gameState.previousCard || !this.model.gameState.currentCard || !this.model.gameState.currentGuesses) {
+      return;
+    }
+
+    const previousValue = this.model.gameState.previousCard.value;
+    const currentValue = this.model.gameState.currentCard.value;
+    
+    console.log(`\n🔍 Evaluating guesses...`);
+    console.log(`   Previous: ${this.model.gameState.previousCard.displayName} (${previousValue})`);
+    console.log(`   Current: ${this.model.gameState.currentCard.displayName} (${currentValue})`);
+
+    this.model.gameState.currentGuesses.forEach((guess, playerId) => {
+      const player = this.model.gameState!.players.find(p => p.id === playerId);
+      if (!player || !player.isActive) return;
+
+      let isCorrect = false;
+      if (guess === 'up' && currentValue > previousValue) {
+        isCorrect = true;
+      } else if (guess === 'down' && currentValue < previousValue) {
+        isCorrect = true;
+      } else if (guess === 'even' && currentValue === previousValue) {
+        isCorrect = true;
+      }
+
+      if (isCorrect) {
+        player.score += 10;
+        player.streak++;
+        player.maxStreak = Math.max(player.maxStreak, player.streak);
+        console.log(`   ✅ ${player.name}: Correct! +10 points (streak: ${player.streak})`);
+      } else {
+        player.streak = 0;
+        player.isActive = false;
+        console.log(`   ❌ ${player.name}: Wrong! Eliminated`);
+      }
+    });
+
+    // Clear guesses for next round
+    this.model.gameState.currentGuesses.clear();
+
+    // Check if game should end
+    const activePlayers = this.model.gameState.players.filter(p => p.isActive);
+    if (activePlayers.length <= 1) {
+      this.model.gameState.phase = 'game_over';
+      console.log(`\n🏁 Game Over! Winner: ${activePlayers[0]?.name || 'No one'}`);
+    }
+  }
+
+  /**
+   * Get display name for a card
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
+   * @cliHide
+   */
+  private getCardDisplayName(value: number, suit: string): string {
+    const rankNames = ['', 'Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'];
+    const rank = rankNames[value] || value.toString();
+    return `${rank} of ${suit}`;
   }
 }

@@ -5,6 +5,42 @@
 
 import { Model } from './Model.interface.js';
 
+export interface Card {
+  suit: string;
+  value: number;
+  displayName: string;
+}
+
+export interface Player {
+  id: string;
+  name: string;
+  score: number;
+  streak: number;
+  maxStreak: number;
+  isActive: boolean;
+  hand: {
+    upCard: number;
+    downCard: number;
+    evenCard: number;
+    specialCards: any[];
+  };
+}
+
+export interface GameState {
+  phase: 'ready' | 'playing' | 'game_over';
+  round: number;
+  currentCard: Card | null;
+  previousCard: Card | null;
+  players: Player[];
+  gameMode: 'rapid' | 'multiplayer';
+  deck: Card[];
+  gameMaster: {
+    hand: Card[];
+    deck: Card[];
+  };
+  currentGuesses?: Map<string, 'up' | 'down' | 'even'>;
+}
+
 export interface GameLogicEngineModel extends Model {
   uuid: string;
   name: string;
@@ -31,4 +67,8 @@ export interface GameLogicEngineModel extends Model {
   delegationInfo?: string;        // e.g., "via Web4TSComponent v0.3.19.0"
   testIsolationContext?: string;  // e.g., "Web4TSComponent v0.3.19.0" or null
   componentsDirectory?: string;   // Pre-calculated components directory
+  
+  // 🎮 Domain Properties - Game Logic State
+  // @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
+  gameState?: GameState;          // Current game state
 }
