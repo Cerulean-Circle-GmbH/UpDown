@@ -4,7 +4,7 @@
  * @pdca 2025-11-10-UTC-1745.pdca.md - TRUE Radical OOP migration
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { DefaultGameDemoSystem } from '../src/ts/layer2/DefaultGameDemoSystem.js';
 
 describe('GameDemoSystem - Radical OOP Architecture', () => {
