@@ -5,6 +5,13 @@
 
 import { Model } from './Model.interface.js';
 
+export interface DemoScenario {
+  name: string;
+  description: string;
+  steps: string[];
+  expectedOutcome: string;
+}
+
 export interface GameDemoSystemModel extends Model {
   uuid: string;
   name: string;
@@ -31,4 +38,9 @@ export interface GameDemoSystemModel extends Model {
   delegationInfo?: string;        // e.g., "via Web4TSComponent v0.3.19.0"
   testIsolationContext?: string;  // e.g., "Web4TSComponent v0.3.19.0" or null
   componentsDirectory?: string;   // Pre-calculated components directory
+  
+  // 🎮 Domain Properties - Demo System State
+  // @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
+  currentScenario?: DemoScenario; // Current demo scenario being run
+  demoHistory?: DemoScenario[];   // History of demo scenarios run
 }

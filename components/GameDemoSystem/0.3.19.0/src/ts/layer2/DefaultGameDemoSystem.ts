@@ -5,7 +5,7 @@
 
 import { GameDemoSystem } from '../layer3/GameDemoSystem.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
-import { GameDemoSystemModel } from '../layer3/GameDemoSystemModel.interface.js';
+import { GameDemoSystemModel, DemoScenario } from '../layer3/GameDemoSystemModel.interface.js';
 import { User } from '../layer3/User.interface.js';
 import { MethodSignature } from '../layer3/MethodSignature.interface.js';
 import { existsSync, lstatSync, readlinkSync, readdirSync, statSync } from 'fs';
