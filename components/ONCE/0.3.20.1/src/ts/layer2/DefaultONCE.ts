@@ -16,6 +16,8 @@ import { ScenarioManager } from './ScenarioManager.js';
 import { ONCEModel } from '../layer3/ONCEModel.interface.js';
 import { User } from '../layer3/User.interface.js';
 import { MethodSignature } from '../layer3/MethodSignature.interface.js';
+import * as path from 'path';  // For version extraction from directory path
+import * as crypto from 'crypto';  // For UUID generation
 
 /**
  * DefaultONCE v0.3.20.0 - TRUE Radical OOP with 0.2.0.0 domain logic
@@ -39,8 +41,17 @@ export class DefaultONCE implements ONCE {
   /**
    * ✅ TRUE Radical OOP: Empty constructor - Web4 pattern
    * @pdca 2025-11-10-UTC-1830.migrate-once-to-0.3.20.0.pdca.md - CLI infrastructure from 0.3.20.0
+   * @pdca 2025-11-10-UTC-2045.fix-version-from-directory.pdca.md - Version from path (DRY)
    */
   constructor() {
+    // ✅ Discover component's own version from directory path (single source of truth)
+    // Web4 pattern: Version directory name is the ONLY source of truth
+    const currentFileUrl = new URL(import.meta.url);
+    const currentVersionDir = path.resolve(path.dirname(currentFileUrl.pathname), '..', '..', '..');
+    const componentDirName = path.basename(currentVersionDir);
+    const isVersionDir = /^\d+\.\d+\.\d+\.\d+$/.test(componentDirName);
+    const versionString = isVersionDir ? componentDirName : '0.0.0.0';
+    
     // Empty constructor - Web4 pattern
     this.model = {
       uuid: crypto.randomUUID(),
@@ -50,7 +61,7 @@ export class DefaultONCE implements ONCE {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       component: 'ONCE',        // For CLI display
-      version: '0.3.20.1',      // Component version
+      version: versionString,   // ✅ Extracted from directory path (DRY!)
       initialized: false,       // ONCE kernel not initialized yet
       initializationTime: 0,    // Will be set after init()
       eventHandlers: new Map()  // Lifecycle event handlers
