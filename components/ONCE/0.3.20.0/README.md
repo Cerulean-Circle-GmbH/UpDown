@@ -23,11 +23,92 @@ ONCE is a Web4TSComponent that follows the standard component architecture:
 # components/ONCE/0.3.20.0/
 
 # Access via symlink:
-once --help
+once
 
 # Or via full path:
-./components/ONCE/0.3.20.0/once --help
+./components/ONCE/0.3.20.0/once
+
+# Tab completion (interactive discovery):
+once <Tab>
 ```
+
+## 🔍 Discovering Commands (The Web4 Way)
+
+### Why There's No `--help` Flag
+
+**ONCE follows Web4 CLI standards: no flags at all.** No `--help`, no `--version`, no `-v`.
+
+**Instead, just run the command:**
+
+```bash
+once
+```
+
+This shows **ALL available commands** with:
+- ✅ Full method signatures
+- ✅ Parameter types and defaults
+- ✅ Command descriptions
+- ✅ Usage examples
+- ✅ Parameter completion status
+
+### Understanding Parameter Syntax
+
+Web4 uses a **visual notation** for parameters:
+
+| Notation | Meaning | Example |
+|----------|---------|---------|
+| `<param>` | **Required** parameter | `<sequence>` |
+| `<?param>` | **Optional** parameter | `<?mode>` |
+| `<?param:'value'>` | Optional with **default** | `<?mode:'interactive'>` |
+| `!<param>` | **No tab completion** available | `!<scenario>` |
+
+**The `!` prefix** means the parameter completion method isn't implemented. You'll need to provide the value manually.
+
+### Interactive Discovery with Tab Completion
+
+**The BEST way to learn:** Use tab completion!
+
+```bash
+# Press Tab to see all commands
+once <Tab>
+
+# Type partial name + Tab
+once start<Tab>
+# Completes to: startServer
+
+# Tab completion for parameter values
+once demo <Tab>
+# Shows: interactive, headless, browser-only
+
+once testInput <Tab>
+# Shows: s2mq, s1c1dq, s3bc2q, s1bc1k1q, s2b2c1d1e1q
+```
+
+### Method-Specific Help
+
+Want details about a specific command?
+
+```bash
+# Just run once (no args) and search the output
+once | grep -A 3 "demo"
+
+# Or check the parameter documentation
+once | grep -A 5 "mode"
+```
+
+### The Web4 Philosophy
+
+**"Code is documentation. Let the component tell you what it can do."**
+
+- **No flags** → Simplicity
+- **Auto-discovery** → Always current
+- **Tab completion** → Interactive learning
+- **Natural language** → Readable commands
+- **Method chaining** → Fluent API
+
+**This is Radical OOP applied to CLI design.** The component's methods ARE the commands.
+
+---
 
 ## 🚀 Quick Start
 
@@ -380,44 +461,63 @@ once testInput "s1ccc1d1k1q"
 
 ## 🎯 Use Cases
 
-### 1. Development Server
+### 1. "How do I start a demo?"
 
-Start a development server with automatic browser opening:
-
+**Discovery approach:**
 ```bash
-once demo
+# Run without args to see all commands
+once | grep demo
+
+# Shows:
+#   once demo <?mode:'interactive'>
+#     Demo command - Start interactive ONCE demo with browser auto-opening
 ```
 
-### 2. Production Server
-
-Run headless server for production:
-
+**Usage:**
 ```bash
-once demo headless
+once demo                  # Interactive with browser
+once demo headless         # Server only
+once demo browser-only     # Browser only
 ```
 
-### 3. Distributed System
+### 2. "What test sequences are available?"
 
-Create a server hierarchy with multiple instances:
-
+**Use tab completion:**
 ```bash
-# Terminal 1: Primary server
+once testInput <Tab>
+# Shows: s2mq  s1c1dq  s3bc2q  s1bc1k1q  s2b2c1d1e1q
+```
+
+**Or check the help:**
+```bash
+once | grep -A 5 "testInput"
+```
+
+### 3. "How do I create a distributed system?"
+
+**Natural discovery:**
+```bash
+# See server management commands
+once | grep -i server
+
+# Start primary
 once startServer
 
-# Terminal 2-N: Client servers (auto-register)
-once startServer
-once startServer
-once startServer
+# Start clients (auto-register)
+once startServer  # Terminal 2
+once startServer  # Terminal 3
 
-# Check registered servers on primary
+# Check registered servers
 once getRegisteredServers
 ```
 
-### 4. Automated Testing
+### 4. "How do I run automated tests?"
 
-Use test sequences for CI/CD pipelines:
-
+**Tab completion shows examples:**
 ```bash
+once testInput <Tab>
+# Pick a preset: s2mq, s1c1dq, s3bc2q
+
 # Quick smoke test
 once testInput "s1mq"
 
@@ -425,19 +525,18 @@ once testInput "s1mq"
 once testInput "s1c1d1k1q"
 ```
 
-### 5. P2P Communication
+### 5. "What commands are available?"
 
-Connect multiple ONCE instances for scenario exchange:
-
+**Just run once:**
 ```bash
-# Instance 1
-once startServer
+once
+# Shows ALL commands with signatures and descriptions
+```
 
-# Instance 2
-once startServer  # Auto-registers with primary
-
-# Exchange scenarios (via WebSocket)
-once testInput "s1c1e1q"
+**Or use tab completion:**
+```bash
+once <Tab>
+# Lists all available commands interactively
 ```
 
 ## 📚 API Reference
@@ -513,11 +612,31 @@ ONCE 0.3.20.0 maintains 100% feature parity with 0.2.0.0 while adding TRUE Radic
 
 ONCE follows Web4 component development practices:
 
-1. All changes should maintain TRUE Radical OOP principles
-2. New methods are automatically discovered as CLI commands
-3. Use PDCA documents for tracking changes
-4. Follow CMM3 commit protocols (commit after each change)
-5. Update README for new features
+1. **All changes maintain TRUE Radical OOP principles**
+   - Model-driven state (`this.model.*`)
+   - Method chaining (`return this`)
+   - No CLI flags, only positional arguments
+
+2. **New methods are automatically discovered as CLI commands**
+   - Add method to `DefaultONCE.ts`
+   - Document with TSDoc comments
+   - Use `@cliSyntax` and `@cliExample` annotations
+   - Add `*ParameterCompletion()` methods for tab completion
+
+3. **Use PDCA documents for tracking changes**
+   - One PDCA per logical change
+   - Follow CMM3 template format
+   - Store in `session/` directory
+
+4. **Follow CMM3 commit protocols**
+   - Commit after each change
+   - Use PDCA filename as commit message
+   - Update PDCA with commit SHA
+
+5. **No manual documentation updates**
+   - Help is auto-generated from code
+   - TSDoc comments are the source of truth
+   - README only covers architecture and philosophy
 
 ## 📝 Version History
 
