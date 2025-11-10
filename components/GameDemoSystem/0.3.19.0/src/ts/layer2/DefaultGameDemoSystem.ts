@@ -232,13 +232,13 @@ export class DefaultGameDemoSystem implements GameDemoSystem {
       this.model.version = this.model.context.model.version;
     }
     
-    // Calculate projectRoot if not already set
-    if (!this.model.projectRoot) {
-      this.model.projectRoot = dirname(dirname(dirname(this.model.componentRoot!)));
+    // Calculate projectRoot if not already set AND componentRoot is available
+    if (!this.model.projectRoot && this.model.componentRoot) {
+      this.model.projectRoot = dirname(dirname(dirname(this.model.componentRoot)));
     }
     
     // Set targetDirectory to projectRoot if not set
-    if (!this.model.targetDirectory) {
+    if (!this.model.targetDirectory && this.model.projectRoot) {
       this.model.targetDirectory = this.model.projectRoot;
     }
     
