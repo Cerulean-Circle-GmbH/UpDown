@@ -9,7 +9,10 @@ import { CardDeckManagerModel } from './CardDeckManagerModel.interface.js';
 export interface CardDeckManager {
   init(scenario: Scenario<CardDeckManagerModel>): this;
   toScenario(name?: string): Promise<Scenario<CardDeckManagerModel>>;
-  create(input: string, format?: string): Promise<this>;
+  createDeck(shuffle?: string): Promise<this>;
+  shuffleDeck(): Promise<this>;
+  dealCard(count?: string): Promise<this>;
+  showDeck(): Promise<this>;
   process(data: string): Promise<this>;
   info(): Promise<this>;
   test(): Promise<this>;

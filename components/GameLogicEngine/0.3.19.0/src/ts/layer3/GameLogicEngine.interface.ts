@@ -9,7 +9,10 @@ import { GameLogicEngineModel } from './GameLogicEngineModel.interface.js';
 export interface GameLogicEngine {
   init(scenario: Scenario<GameLogicEngineModel>): this;
   toScenario(name?: string): Promise<Scenario<GameLogicEngineModel>>;
-  create(input: string, format?: string): Promise<this>;
+  startGame(playerCount?: string, gameMode?: string): Promise<this>;
+  makeGuess(playerId: string, guess: string): Promise<this>;
+  dealNextCard(cardValue?: string): Promise<this>;
+  showGameStatus(): Promise<this>;
   process(data: string): Promise<this>;
   info(): Promise<this>;
   test(): Promise<this>;
