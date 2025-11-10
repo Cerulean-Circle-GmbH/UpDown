@@ -5,7 +5,7 @@
 
 import { CardDeckManager } from '../layer3/CardDeckManager.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
-import { CardDeckManagerModel } from '../layer3/CardDeckManagerModel.interface.js';
+import { CardDeckManagerModel, Card } from '../layer3/CardDeckManagerModel.interface.js';
 import { User } from '../layer3/User.interface.js';
 import { MethodSignature } from '../layer3/MethodSignature.interface.js';
 import { existsSync, lstatSync, readlinkSync, readdirSync, statSync } from 'fs';
@@ -208,8 +208,51 @@ export class DefaultCardDeckManager implements CardDeckManager {
   }
 
   /**
+   * 🎯 TRUE Radical OOP (0.3.19.0) - DRY Excellence
+   * Returns the target component instance for operations (this OR context)
+   * Eliminates repeated `this.model.context || this` everywhere!
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from Web4TSComponent/0.3.19.0
+   * @cliHide
+   */
+  protected getTarget(): DefaultCardDeckManager {
+    return (this.model.context as DefaultCardDeckManager) || this;
+  }
+
+  /**
+   * 🎯 TRUE Radical OOP (0.3.19.0) - Calculate & Store ONCE
+   * Calculates all model paths and display properties ONCE at init
+   * Methods just READ from model - NO recalculation!
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from Web4TSComponent/0.3.19.0
+   * @cliHide
+   */
+  private updateModelPaths(): void {
+    // If context exists, inherit component/version from context
+    if (this.model.context) {
+      this.model.component = this.model.context.model.component;
+      this.model.version = this.model.context.model.version;
+    }
+    
+    // Calculate projectRoot if not already set
+    if (!this.model.projectRoot) {
+      this.model.projectRoot = dirname(dirname(dirname(this.model.componentRoot!)));
+    }
+    
+    // Set targetDirectory to projectRoot if not set
+    if (!this.model.targetDirectory) {
+      this.model.targetDirectory = this.model.projectRoot;
+    }
+    
+    // Set display properties (component name/version to show)
+    if (!this.model.displayName) {
+      this.model.displayName = this.model.component;
+      this.model.displayVersion = this.model.version?.toString();
+    }
+  }
+
+  /**
    * @cliHide
    * @pdca 2025-11-05-UTC-2301.dry-shell-libraries.pdca.md - Added method discovery
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Call updateModelPaths() for TRUE Radical OOP
    */
   init(scenario?: Scenario<CardDeckManagerModel>): this {
     if (scenario?.model) {
@@ -218,6 +261,10 @@ export class DefaultCardDeckManager implements CardDeckManager {
     
     // Discover methods for CLI completion
     this.discoverMethods();
+    
+    // 🎯 TRUE Radical OOP: Calculate & store all paths ONCE
+    // @pdca 2025-11-10-UTC-1730.pdca.md
+    this.updateModelPaths();
     
     return this;
   }
@@ -273,17 +320,116 @@ export class DefaultCardDeckManager implements CardDeckManager {
   }
 
   /**
-   * Create example operation for CardDeckManager
-   * @param input Input data to process
-   * @param format Output format (json, text, xml)
-   * @cliSyntax input format
-   * @cliDefault format json
+   * Create a new French-suited card deck (52 cards)
+   * @param shuffle Whether to shuffle the deck after creation
+   * @cliSyntax shuffle
+   * @cliDefault shuffle true
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from 0.2.0.0
    */
-  async create(input: string, format: string = 'json'): Promise<this> {
-    console.log(`🚀 Creating ${input} in ${format} format`);
-    this.model.name = input;
+  async createDeck(shuffle: string = 'true'): Promise<this> {
+    console.log(`🃏 Creating French-suited card deck...`);
+    
+    const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
+    const ranks = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'];
+    const deck: Card[] = [];
+    
+    for (const suit of suits) {
+      for (const rank of ranks) {
+        deck.push({
+          suit,
+          rank,
+          value: this.getCardValue(rank),
+          id: `${rank}_${suit}`,
+          displayName: `${rank} of ${suit}`
+        });
+      }
+    }
+    
+    if (shuffle === 'true') {
+      this.shuffleDeckArray(deck);
+    }
+    
+    this.model.deck = deck;
     this.model.updatedAt = new Date().toISOString();
-    console.log(`✅ CardDeckManager operation completed`);
+    console.log(`✅ Created ${deck.length} card deck${shuffle === 'true' ? ' (shuffled)' : ''}`);
+    return this;
+  }
+
+  /**
+   * Shuffle the current deck using Fisher-Yates algorithm
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from 0.2.0.0
+   */
+  async shuffleDeck(): Promise<this> {
+    if (!this.model.deck) {
+      console.log(`⚠️  No deck to shuffle. Create a deck first.`);
+      return this;
+    }
+    
+    this.shuffleDeckArray(this.model.deck);
+    this.model.updatedAt = new Date().toISOString();
+    console.log(`🔀 Deck shuffled`);
+    return this;
+  }
+
+  /**
+   * Deal a card from the deck
+   * @param count Number of cards to deal
+   * @cliSyntax count
+   * @cliDefault count 1
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from 0.2.0.0
+   */
+  async dealCard(count: string = '1'): Promise<this> {
+    const cardCount = parseInt(count);
+    if (!this.model.deck || this.model.deck.length === 0) {
+      console.log(`⚠️  No cards in deck. Create a deck first.`);
+      return this;
+    }
+    
+    if (cardCount > this.model.deck.length) {
+      console.log(`⚠️  Not enough cards in deck. Only ${this.model.deck.length} cards remaining.`);
+      return this;
+    }
+    
+    const dealtCards: Card[] = [];
+    for (let i = 0; i < cardCount; i++) {
+      const card = this.model.deck.pop()!;
+      dealtCards.push(card);
+    }
+    
+    this.model.dealtCards = [...(this.model.dealtCards || []), ...dealtCards];
+    this.model.updatedAt = new Date().toISOString();
+    
+    console.log(`🎴 Dealt ${dealtCards.length} card(s):`);
+    dealtCards.forEach(card => {
+      console.log(`   ${card.displayName} (value: ${card.value})`);
+    });
+    console.log(`📊 Cards remaining: ${this.model.deck.length}`);
+    
+    return this;
+  }
+
+  /**
+   * Show current deck status
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from 0.2.0.0
+   */
+  async showDeck(): Promise<this> {
+    if (!this.model.deck) {
+      console.log(`📋 No deck created yet. Use 'createDeck' first.`);
+      return this;
+    }
+    
+    console.log(`📋 Deck Status:`);
+    console.log(`   Cards in deck: ${this.model.deck.length}`);
+    console.log(`   Cards dealt: ${this.model.dealtCards?.length || 0}`);
+    
+    if (this.model.deck.length > 0) {
+      console.log(`   Top card: ${this.model.deck[this.model.deck.length - 1].displayName}`);
+    }
+    
+    if (this.model.dealtCards && this.model.dealtCards.length > 0) {
+      console.log(`   Last dealt: ${this.model.dealtCards[this.model.dealtCards.length - 1].displayName}`);
+    }
+    
     return this;
   }
 
@@ -421,5 +567,41 @@ export class DefaultCardDeckManager implements CardDeckManager {
       };
     }
     return null;
+  }
+
+  /**
+   * Get numeric value for a card rank
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from 0.2.0.0
+   * @cliHide
+   */
+  private getCardValue(rank: string): number {
+    switch (rank) {
+      case 'Ace': return 1;
+      case '2': return 2;
+      case '3': return 3;
+      case '4': return 4;
+      case '5': return 5;
+      case '6': return 6;
+      case '7': return 7;
+      case '8': return 8;
+      case '9': return 9;
+      case '10': return 10;
+      case 'Jack': return 11;
+      case 'Queen': return 12;
+      case 'King': return 13;
+      default: return 0;
+    }
+  }
+
+  /**
+   * Shuffle deck array in place using Fisher-Yates algorithm
+   * @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from 0.2.0.0
+   * @cliHide
+   */
+  private shuffleDeckArray(deck: Card[]): void {
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
   }
 }

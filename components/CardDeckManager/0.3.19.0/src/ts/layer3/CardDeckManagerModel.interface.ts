@@ -5,6 +5,14 @@
 
 import { Model } from './Model.interface.js';
 
+export interface Card {
+  suit: string;
+  rank: string;
+  value: number;
+  id: string;
+  displayName: string;
+}
+
 export interface CardDeckManagerModel extends Model {
   uuid: string;
   name: string;
@@ -31,4 +39,9 @@ export interface CardDeckManagerModel extends Model {
   delegationInfo?: string;        // e.g., "via Web4TSComponent v0.3.19.0"
   testIsolationContext?: string;  // e.g., "Web4TSComponent v0.3.19.0" or null
   componentsDirectory?: string;   // Pre-calculated components directory
+  
+  // 🎴 Domain Properties - Card Deck Manager State
+  // @pdca 2025-11-10-UTC-1730.pdca.md - Copy & Upgrade from 0.2.0.0
+  deck?: Card[];                  // Current card deck
+  dealtCards?: Card[];            // Cards that have been dealt
 }
