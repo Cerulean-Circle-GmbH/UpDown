@@ -50,7 +50,7 @@ export class DefaultONCE implements ONCE {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       component: 'ONCE',        // For CLI display
-      version: '0.3.20.0',      // Component version
+      version: '0.3.20.1',      // Component version
       initialized: false,       // ONCE kernel not initialized yet
       initializationTime: 0,    // Will be set after init()
       eventHandlers: new Map()  // Lifecycle event handlers
