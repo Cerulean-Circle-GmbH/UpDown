@@ -1361,9 +1361,15 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
     // Print quick header AFTER model reflects correct context
     this.printQuickHeader();
     
+    // 🎯 TRUE Radical OOP: Use getTarget() to determine which component to upgrade
+    // @pdca 2025-11-10-UTC-2000.fix-upgrade-delegation-bug.pdca.md
+    // BUG FIX: Was using this.model.component (always "Web4TSComponent")
+    // NOW: Uses target.model.component (context OR this - works for both delegation and direct mode)
+    const target = this.getTarget();
+    
     // @pdca 2025-11-07-UTC-0000.eliminate-path-duplication-all-cases.pdca.md - DRY: Use SemanticVersion.promote()
-    const nextVersion = await SemanticVersion.promote(this.model.version.toString(), versionPromotion);
-    console.log(`🔧 Upgrading ${this.model.component}: ${this.model.version.toString()} → ${nextVersion}`);
+    const nextVersion = await SemanticVersion.promote(target.model.version.toString(), versionPromotion);
+    console.log(`🔧 Upgrading ${target.model.component}: ${target.model.version.toString()} → ${nextVersion}`);
     
     // @pdca 2025-11-07-UTC-0000.eliminate-path-duplication-all-cases.pdca.md - Set target version in model (no functional parameters)
     this.model.toVersion = nextVersion;
@@ -1374,13 +1380,13 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
     // Update symlinks to maintain proper script accessibility
     await this.updateSymlinks();
     
-    console.log(`✅ ${this.model.component} ${nextVersion} created successfully`);
-    console.log(`   Location: components/${this.model.component}/${nextVersion}`);
+    console.log(`✅ ${target.model.component} ${nextVersion} created successfully`);
+    console.log(`   Location: components/${target.model.component}/${nextVersion}`);
     
     // ✅ RADICAL OOP: Update context INSTANCE for further chaining
     if (this.model.context) {
       this.model.context.model.version = SemanticVersion.fromString(nextVersion);
-      this.model.context.model.origin = `components/${this.model.component}/${nextVersion}`;
+      this.model.context.model.origin = `components/${target.model.component}/${nextVersion}`;
     }
     
     return this;
