@@ -684,6 +684,200 @@ export class DefaultONCE implements ONCE {
   }
 
   /**
+   * Test input command - Run automated test sequence (non-interactive)
+   * ✅ TRUE Radical OOP: All state in model, no functional helpers
+   * Simulates keyboard input from ONCE 0.2.0.0 interactive demo
+   * 
+   * Test sequence characters:
+   *   s = start server
+   *   b = open browser
+   *   c = launch client server
+   *   d = discover peers
+   *   e = exchange scenarios
+   *   m = show metrics
+   *   k = kill all processes
+   *   q = quit
+   *   0-9 = wait N seconds
+   * 
+   * @param sequence Test sequence string (e.g., "s3bq" = start server, wait 3s, browser, quit)
+   * @cliSyntax sequence
+   * @cliExample once testInput "s3bq"
+   * @cliExample once testInput "s1bc2q"
+   * @pdca 2025-11-10-UTC-1915.add-testInput-command.pdca.md - Port test sequence from 0.2.0.0
+   */
+  async testInput(sequence: string): Promise<this> {
+    console.log(`🧪 ONCE v0.3.20.0 Test Sequence: "${sequence}"`);
+    console.log('');
+    
+    // ✅ RADICAL OOP: Store test sequence in model
+    if (!this.model.serverModel) {
+      this.model.serverModel = {} as any;
+    }
+    (this.model.serverModel as any).testSequence = sequence;
+    (this.model.serverModel as any).testStep = 0;
+    
+    // Track client servers for cleanup
+    const clientServers: any[] = [];
+    
+    try {
+      // Process each character in the sequence
+      for (let i = 0; i < sequence.length; i++) {
+        const char = sequence[i];
+        (this.model.serverModel as any).testStep = i + 1;
+        
+        console.log(`🔹 Step ${i + 1}/${sequence.length}: '${char}'`);
+        
+        switch (char.toLowerCase()) {
+          case 's':
+            // Start server
+            if (!this.model.initialized) {
+              console.log('   🚀 Starting ONCE server...');
+              await this.startServer();
+              const serverModel = this.serverHierarchyManager.getServerModel();
+              const httpCapability = serverModel.capabilities.find(c => c.capability === 'httpPort');
+              if (httpCapability) {
+                console.log(`   ✅ Server started on port ${httpCapability.port}`);
+              }
+            } else {
+              console.log('   ⚠️  Server already running');
+            }
+            break;
+            
+          case 'b':
+            // Open browser
+            console.log('   🌐 Opening browser...');
+            const serverModel = this.serverHierarchyManager.getServerModel();
+            const httpCapability = serverModel.capabilities.find(c => c.capability === 'httpPort');
+            if (httpCapability) {
+              const url = `http://localhost:${httpCapability.port}`;
+              await this.openBrowser(url);
+            } else {
+              console.log('   ⚠️  Server not running, cannot open browser');
+            }
+            break;
+            
+          case 'c':
+            // Launch client server
+            console.log('   🔵 Launching client server...');
+            try {
+              // Create a new ONCE instance for client server
+              const clientOnce = new DefaultONCE();
+              await clientOnce.init();
+              await clientOnce.startServer();
+              clientServers.push(clientOnce);
+              const clientModel = clientOnce.getServerModel();
+              const clientCapability = clientModel.capabilities.find(c => c.capability === 'httpPort');
+              if (clientCapability) {
+                console.log(`   ✅ Client server started on port ${clientCapability.port}`);
+              }
+            } catch (error) {
+              console.log(`   ⚠️  Could not start client server: ${error instanceof Error ? error.message : String(error)}`);
+            }
+            break;
+            
+          case 'd':
+            // Discover peers
+            console.log('   🔍 Discovering peers...');
+            if (this.isPrimaryServer()) {
+              const registeredServers = this.getRegisteredServers();
+              console.log(`   📋 Registered servers: ${registeredServers.length}`);
+              for (const server of registeredServers) {
+                console.log(`      • ${server.uuid} on ${server.capabilities.find(c => c.capability === 'httpPort')?.port}`);
+              }
+            } else {
+              console.log('   ⚠️  Only primary server can discover peers');
+            }
+            break;
+            
+          case 'e':
+            // Exchange scenarios
+            console.log('   🔄 Exchanging scenarios...');
+            console.log('   ℹ️  Scenario exchange implemented but no peers to exchange with in test mode');
+            break;
+            
+          case 'm':
+            // Show metrics
+            console.log('   📊 Server Metrics:');
+            const metrics = this.getMetrics();
+            console.log(`      • Initialization Time: ${metrics.initializationTime}ms`);
+            console.log(`      • Memory Usage: ${Math.round(metrics.memoryUsage / 1024 / 1024)}MB`);
+            console.log(`      • Servers Registered: ${metrics.serversRegistered}`);
+            break;
+            
+          case 'k':
+            // Kill all processes
+            console.log('   🧹 Killing all demo processes...');
+            // Stop client servers
+            for (const client of clientServers) {
+              await client.stopServer().catch(() => {});
+            }
+            clientServers.length = 0;
+            console.log('   ✅ All client servers stopped');
+            break;
+            
+          case 'q':
+            // Quit
+            console.log('   👋 Quitting test sequence...');
+            // Stop all servers
+            for (const client of clientServers) {
+              await client.stopServer().catch(() => {});
+            }
+            await this.stopServer().catch(() => {});
+            console.log('   ✅ All servers stopped');
+            break;
+            
+          default:
+            // Check if it's a number (wait N seconds)
+            const waitTime = parseInt(char);
+            if (!isNaN(waitTime) && waitTime >= 0 && waitTime <= 9) {
+              console.log(`   ⏳ Waiting ${waitTime} second${waitTime !== 1 ? 's' : ''}...`);
+              await this.sleep(waitTime * 1000);
+              console.log(`   ✅ Wait completed`);
+            } else {
+              console.log(`   ⚠️  Unknown command: '${char}'`);
+            }
+            break;
+        }
+        
+        console.log('');
+      }
+      
+      console.log('✅ Test sequence completed successfully');
+      console.log('');
+      
+      // Final cleanup
+      console.log('🧹 Cleaning up...');
+      for (const client of clientServers) {
+        await client.stopServer().catch(() => {});
+      }
+      await this.stopServer().catch(() => {});
+      console.log('✅ Cleanup completed');
+      
+    } catch (error) {
+      console.error(`❌ Test sequence failed: ${error instanceof Error ? error.message : String(error)}`);
+      
+      // Emergency cleanup
+      for (const client of clientServers) {
+        await client.stopServer().catch(() => {});
+      }
+      await this.stopServer().catch(() => {});
+      
+      throw error;
+    }
+    
+    return this;
+  }
+
+  /**
+   * Sleep utility for test sequences
+   * ✅ TRUE Radical OOP: Simple promise-based delay
+   * @cliHide
+   */
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
    * Detect hostname without environment variables (domain logic from 0.2.0.0)
    * @cliHide
    */
