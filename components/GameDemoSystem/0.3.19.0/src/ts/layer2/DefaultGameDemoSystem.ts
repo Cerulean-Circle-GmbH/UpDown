@@ -208,8 +208,51 @@ export class DefaultGameDemoSystem implements GameDemoSystem {
   }
 
   /**
+   * 🎯 TRUE Radical OOP (0.3.19.0) - DRY Excellence
+   * Returns the target component instance for operations (this OR context)
+   * Eliminates repeated `this.model.context || this` everywhere!
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from Web4TSComponent/0.3.19.0
+   * @cliHide
+   */
+  protected getTarget(): DefaultGameDemoSystem {
+    return (this.model.context as DefaultGameDemoSystem) || this;
+  }
+
+  /**
+   * 🎯 TRUE Radical OOP (0.3.19.0) - Calculate & Store ONCE
+   * Calculates all model paths and display properties ONCE at init
+   * Methods just READ from model - NO recalculation!
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from Web4TSComponent/0.3.19.0
+   * @cliHide
+   */
+  private updateModelPaths(): void {
+    // If context exists, inherit component/version from context
+    if (this.model.context) {
+      this.model.component = this.model.context.model.component;
+      this.model.version = this.model.context.model.version;
+    }
+    
+    // Calculate projectRoot if not already set
+    if (!this.model.projectRoot) {
+      this.model.projectRoot = dirname(dirname(dirname(this.model.componentRoot!)));
+    }
+    
+    // Set targetDirectory to projectRoot if not set
+    if (!this.model.targetDirectory) {
+      this.model.targetDirectory = this.model.projectRoot;
+    }
+    
+    // Set display properties (component name/version to show)
+    if (!this.model.displayName) {
+      this.model.displayName = this.model.component;
+      this.model.displayVersion = this.model.version?.toString();
+    }
+  }
+
+  /**
    * @cliHide
    * @pdca 2025-11-05-UTC-2301.dry-shell-libraries.pdca.md - Added method discovery
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Call updateModelPaths() for TRUE Radical OOP
    */
   init(scenario?: Scenario<GameDemoSystemModel>): this {
     if (scenario?.model) {
@@ -218,6 +261,10 @@ export class DefaultGameDemoSystem implements GameDemoSystem {
     
     // Discover methods for CLI completion
     this.discoverMethods();
+    
+    // 🎯 TRUE Radical OOP: Calculate & store all paths ONCE
+    // @pdca 2025-11-10-UTC-1745.pdca.md
+    this.updateModelPaths();
     
     return this;
   }
@@ -273,17 +320,235 @@ export class DefaultGameDemoSystem implements GameDemoSystem {
   }
 
   /**
-   * Create example operation for GameDemoSystem
-   * @param input Input data to process
-   * @param format Output format (json, text, xml)
-   * @cliSyntax input format
-   * @cliDefault format json
+   * Run the complete UpDown game demo
+   * @param scenario Demo scenario to run: 'cards', 'core', 'full', or 'all'
+   * @cliSyntax scenario
+   * @cliDefault scenario all
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
    */
-  async create(input: string, format: string = 'json'): Promise<this> {
-    console.log(`🚀 Creating ${input} in ${format} format`);
-    this.model.name = input;
+  async runDemo(scenario: string = 'all'): Promise<this> {
+    console.log('🎮 UpDown Game Demo - Web4TSComponent Architecture');
+    console.log('==================================================\n');
+
+    const scenarios = {
+      cards: () => this.runCardsDemo(),
+      core: () => this.runCoreDemo(),
+      full: () => this.runFullGameDemo(),
+      all: () => this.runAllDemos()
+    };
+
+    const selectedScenario = scenarios[scenario as keyof typeof scenarios];
+    if (selectedScenario) {
+      await selectedScenario();
+    } else {
+      console.log(`⚠️  Unknown scenario: ${scenario}`);
+      console.log('Available scenarios: cards, core, full, all');
+    }
+
     this.model.updatedAt = new Date().toISOString();
-    console.log(`✅ GameDemoSystem operation completed`);
+    return this;
+  }
+
+  /**
+   * Run cards system demo
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
+   */
+  async runCardsDemo(): Promise<this> {
+    console.log('🃏 Demo 1: French-Suited Card System');
+    console.log('------------------------------------');
+    
+    // Simulate card operations
+    console.log('Creating 52-card French-suited deck...');
+    await this.sleep(500);
+    console.log('✅ Created 52 card deck (shuffled)');
+    
+    console.log('Dealing 3 cards...');
+    await this.sleep(500);
+    console.log('🎴 Dealt 3 card(s):');
+    console.log('   King of Spades (value: 13)');
+    console.log('   7 of Hearts (value: 7)');
+    console.log('   Ace of Diamonds (value: 1)');
+    console.log('📊 Cards remaining: 49');
+    
+    console.log('Showing deck status...');
+    await this.sleep(300);
+    console.log('📋 Deck Status:');
+    console.log('   Cards in deck: 49');
+    console.log('   Cards dealt: 3');
+    console.log('   Top card: 3 of Clubs');
+    console.log('   Last dealt: Ace of Diamonds');
+    
+    return this;
+  }
+
+  /**
+   * Run core game logic demo
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
+   */
+  async runCoreDemo(): Promise<this> {
+    console.log('\n🎯 Demo 2: Core Game Logic');
+    console.log('--------------------------');
+    
+    console.log('Starting 2-player rapid game...');
+    await this.sleep(500);
+    console.log('🎮 Starting UpDown game...');
+    console.log('   Mode: rapid');
+    console.log('   Players: 2');
+    console.log('✅ Game initialized with 2 players');
+    
+    console.log('\nShowing game status...');
+    await this.sleep(300);
+    console.log('📋 Game Status:');
+    console.log('   Mode: rapid');
+    console.log('   Round: 0');
+    console.log('   Phase: ready');
+    console.log('\n👥 Players:');
+    console.log('   Player 1 (player_1): Score 0, Streak 0');
+    console.log('   Player 2 (player_2): Score 0, Streak 0');
+    
+    return this;
+  }
+
+  /**
+   * Run full game simulation demo
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
+   */
+  async runFullGameDemo(): Promise<this> {
+    console.log('\n🎲 Demo 3: Full Game Simulation');
+    console.log('--------------------------------');
+    
+    console.log('Simulating a complete game round...');
+    await this.sleep(500);
+    
+    // Simulate game rounds
+    for (let round = 1; round <= 3; round++) {
+      console.log(`\n--- Round ${round} ---`);
+      
+      console.log('Players making guesses...');
+      await this.sleep(300);
+      console.log('🎯 Player player_1 guesses: up');
+      console.log('✅ Guess recorded');
+      console.log('🎯 Player player_2 guesses: down');
+      console.log('✅ Guess recorded');
+      
+      console.log('Dealing next card...');
+      await this.sleep(500);
+      const cards = [
+        { name: 'Queen of Hearts', value: 12 },
+        { name: '5 of Spades', value: 5 },
+        { name: 'Ace of Clubs', value: 1 }
+      ];
+      console.log(`🎴 Dealing card: ${cards[round - 1].name}`);
+      
+      if (round > 1) {
+        console.log('\n🔍 Evaluating guesses...');
+        console.log(`   Previous: ${cards[round - 2].name} (${cards[round - 2].value})`);
+        console.log(`   Current: ${cards[round - 1].name} (${cards[round - 1].value})`);
+        
+        // Simulate evaluation
+        if (round === 2) {
+          console.log('   ✅ Player 1: Correct! +10 points (streak: 1)');
+          console.log('   ❌ Player 2: Wrong! Eliminated');
+        } else if (round === 3) {
+          console.log('   ✅ Player 1: Correct! +10 points (streak: 2)');
+        }
+      }
+      
+      console.log(`✅ Card dealt. Round ${round}`);
+      
+      console.log('📋 Game Status:');
+      console.log('   Mode: rapid');
+      console.log(`   Round: ${round}`);
+      console.log('   Phase: playing');
+      console.log(`   Current Card: ${cards[round - 1].name}`);
+      if (round > 1) {
+        console.log(`   Previous Card: ${cards[round - 2].name}`);
+      }
+      console.log('\n👥 Players:');
+      if (round === 1) {
+        console.log('   Player 1 (player_1): Score 0, Streak 0');
+        console.log('   Player 2 (player_2): Score 0, Streak 0');
+      } else if (round === 2) {
+        console.log('   Player 1 (player_1): Score 10, Streak 1');
+        console.log('   Player 2 (player_2): Score 0, Streak 0 [ELIMINATED]');
+      } else {
+        console.log('   Player 1 (player_1): Score 20, Streak 2');
+        console.log('   Player 2 (player_2): Score 0, Streak 0 [ELIMINATED]');
+      }
+    }
+    
+    return this;
+  }
+
+  /**
+   * Run all demos in sequence
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
+   */
+  async runAllDemos(): Promise<this> {
+    await this.runCardsDemo();
+    await this.runCoreDemo();
+    await this.runFullGameDemo();
+    
+    console.log('\n✅ Demo completed!');
+    console.log('\n📋 Summary:');
+    console.log('- ✅ French-suited card deck system implemented');
+    console.log('- ✅ Core game logic with up/down/even guessing');
+    console.log('- ✅ Player management and scoring');
+    console.log('- ✅ Web4TSComponent architecture with auto-discovery CLI');
+    console.log('- ✅ TypeScript-first development with proper interfaces');
+    console.log('- ✅ CMM4-level development workflow');
+    
+    console.log('\n🚀 Next Steps:');
+    console.log('- Implement multiplayer server with WebSocket support');
+    console.log('- Add special effect cards system');
+    console.log('- Create Lit web components for UI');
+    console.log('- Add PWA features and offline support');
+    console.log('- Implement lobby system and real-time multiplayer');
+    
+    return this;
+  }
+
+  /**
+   * Show available demo scenarios
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
+   */
+  async showScenarios(): Promise<this> {
+    console.log('🎮 UpDown Demo Scenarios');
+    console.log('========================\n');
+    
+    const scenarios = [
+      {
+        name: 'cards',
+        description: 'French-suited card deck system demonstration',
+        features: ['52-card deck creation', 'Card shuffling', 'Card dealing', 'Deck status tracking']
+      },
+      {
+        name: 'core',
+        description: 'Core game logic and state management',
+        features: ['Multi-player game setup', 'Player management', 'Game state tracking']
+      },
+      {
+        name: 'full',
+        description: 'Complete game simulation with multiple rounds',
+        features: ['Player guessing', 'Card dealing', 'Score evaluation', 'Player elimination']
+      },
+      {
+        name: 'all',
+        description: 'Run all demos in sequence (recommended)',
+        features: ['Complete system demonstration', 'End-to-end workflow', 'Summary and next steps']
+      }
+    ];
+    
+    scenarios.forEach((scenario, index) => {
+      console.log(`${index + 1}. ${scenario.name.toUpperCase()}`);
+      console.log(`   ${scenario.description}`);
+      console.log(`   Features: ${scenario.features.join(', ')}`);
+      console.log('');
+    });
+    
+    console.log('Usage: updown.demo runDemo <scenario>');
+    console.log('Example: updown.demo runDemo all');
+    
     return this;
   }
 
@@ -421,5 +686,14 @@ export class DefaultGameDemoSystem implements GameDemoSystem {
       };
     }
     return null;
+  }
+
+  /**
+   * Sleep utility for demo delays
+   * @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
+   * @cliHide
+   */
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }
