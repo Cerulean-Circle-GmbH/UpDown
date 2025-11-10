@@ -1,6 +1,6 @@
 {
   "name": "@web4x/gamelogicengine",
-  "version": "0.2.0.0",
+  "version": "0.3.19.0",
   "type": "module",
   "description": "GameLogicEngine Component - Base Entry Point",
   "scripts": {
