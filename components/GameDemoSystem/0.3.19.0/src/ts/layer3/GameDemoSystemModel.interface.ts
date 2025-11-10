@@ -43,4 +43,5 @@ export interface GameDemoSystemModel extends Model {
   // @pdca 2025-11-10-UTC-1745.pdca.md - Copy & Upgrade from 0.2.0.0
   currentScenario?: DemoScenario; // Current demo scenario being run
   demoHistory?: DemoScenario[];   // History of demo scenarios run
+  testMode?: boolean;              // Skip sleep() delays for fast testing
 }

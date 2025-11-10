@@ -694,6 +694,10 @@ export class DefaultGameDemoSystem implements GameDemoSystem {
    * @cliHide
    */
   private sleep(ms: number): Promise<void> {
+    // Skip delays in test mode for fast execution
+    if (this.model.testMode) {
+      return Promise.resolve();
+    }
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 }

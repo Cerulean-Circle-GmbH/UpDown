@@ -12,7 +12,7 @@ describe('GameDemoSystem - Radical OOP Architecture', () => {
 
   beforeEach(() => {
     demo = new DefaultGameDemoSystem();
-    demo.init({});
+    demo.init({ model: { testMode: true } }); // Enable test mode for fast execution
   });
 
   it('should have empty constructor (Radical OOP principle)', () => {
@@ -36,7 +36,7 @@ describe('GameDemoSystem - Domain Methods: runDemo', () => {
 
   beforeEach(() => {
     demo = new DefaultGameDemoSystem();
-    demo.init({});
+    demo.init({ model: { testMode: true } });
   });
 
   it('should run all demos by default', async () => {
@@ -83,7 +83,7 @@ describe('GameDemoSystem - Demo Methods: Individual Demos', () => {
 
   beforeEach(() => {
     demo = new DefaultGameDemoSystem();
-    demo.init({});
+    demo.init({ model: { testMode: true } });
   });
 
   it('should execute runCardsDemo', async () => {
@@ -117,7 +117,7 @@ describe('GameDemoSystem - Demo Orchestration', () => {
 
   beforeEach(() => {
     demo = new DefaultGameDemoSystem();
-    demo.init({});
+    demo.init({ model: { testMode: false } }); // Keep delays for timing tests
   });
 
   it('should run cards demo in reasonable time', async () => {
@@ -168,7 +168,7 @@ describe('GameDemoSystem - Demo Content Verification', () => {
 
   beforeEach(() => {
     demo = new DefaultGameDemoSystem();
-    demo.init({});
+    demo.init({ model: { testMode: true } });
     consoleLogs = [];
     console.log = (...args: any[]) => {
       consoleLogs.push(args.join(' '));
@@ -222,7 +222,7 @@ describe('GameDemoSystem - Method Chaining (Radical OOP)', () => {
 
   beforeEach(() => {
     demo = new DefaultGameDemoSystem();
-    demo.init({});
+    demo.init({ model: { testMode: true } });
   });
 
   it('should support method chaining', async () => {
@@ -249,7 +249,7 @@ describe('GameDemoSystem - Model-Driven State (Radical OOP)', () => {
 
   beforeEach(async () => {
     demo = new DefaultGameDemoSystem();
-    demo.init({});
+    demo.init({ model: { testMode: true } });
   });
 
   it('should maintain model state across demo runs', async () => {
@@ -280,7 +280,7 @@ describe('GameDemoSystem - Scenario Selection Logic', () => {
 
   beforeEach(() => {
     demo = new DefaultGameDemoSystem();
-    demo.init({});
+    demo.init({ model: { testMode: true } });
   });
 
   it('should map scenario names to methods', async () => {
@@ -316,7 +316,7 @@ describe('GameDemoSystem - Integration Test', () => {
 
   beforeEach(() => {
     demo = new DefaultGameDemoSystem();
-    demo.init({});
+    demo.init({ model: { testMode: true } });
   });
 
   it('should complete full demo workflow without errors', async () => {
