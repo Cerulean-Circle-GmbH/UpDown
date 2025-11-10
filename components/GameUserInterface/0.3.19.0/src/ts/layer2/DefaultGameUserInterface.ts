@@ -208,8 +208,51 @@ export class DefaultGameUserInterface implements GameUserInterface {
   }
 
   /**
+   * 🎯 TRUE Radical OOP (0.3.19.0) - DRY Excellence
+   * Returns the target component instance for operations (this OR context)
+   * Eliminates repeated `this.model.context || this` everywhere!
+   * @pdca 2025-11-10-UTC-1800.pdca.md - TRUE Radical OOP
+   * @cliHide
+   */
+  protected getTarget(): DefaultGameUserInterface {
+    return (this.model.context as DefaultGameUserInterface) || this;
+  }
+
+  /**
+   * 🎯 TRUE Radical OOP (0.3.19.0) - Calculate & Store ONCE
+   * Calculates all model paths and display properties ONCE at init
+   * Methods just READ from model - NO recalculation!
+   * @pdca 2025-11-10-UTC-1800.pdca.md - TRUE Radical OOP
+   * @cliHide
+   */
+  private updateModelPaths(): void {
+    // If context exists, inherit component/version from context
+    if (this.model.context) {
+      this.model.component = this.model.context.model.component;
+      this.model.version = this.model.context.model.version;
+    }
+    
+    // Calculate projectRoot if not already set
+    if (!this.model.projectRoot) {
+      this.model.projectRoot = dirname(dirname(dirname(this.model.componentRoot!)));
+    }
+    
+    // Set targetDirectory to projectRoot if not set
+    if (!this.model.targetDirectory) {
+      this.model.targetDirectory = this.model.projectRoot;
+    }
+    
+    // Set display properties (component name/version to show)
+    if (!this.model.displayName) {
+      this.model.displayName = this.model.component;
+      this.model.displayVersion = this.model.version?.toString();
+    }
+  }
+
+  /**
    * @cliHide
    * @pdca 2025-11-05-UTC-2301.dry-shell-libraries.pdca.md - Added method discovery
+   * @pdca 2025-11-10-UTC-1800.pdca.md - Call updateModelPaths() for TRUE Radical OOP
    */
   init(scenario?: Scenario<GameUserInterfaceModel>): this {
     if (scenario?.model) {
@@ -218,6 +261,10 @@ export class DefaultGameUserInterface implements GameUserInterface {
     
     // Discover methods for CLI completion
     this.discoverMethods();
+    
+    // 🎯 TRUE Radical OOP: Calculate & store all paths ONCE
+    // @pdca 2025-11-10-UTC-1800.pdca.md
+    this.updateModelPaths();
     
     return this;
   }

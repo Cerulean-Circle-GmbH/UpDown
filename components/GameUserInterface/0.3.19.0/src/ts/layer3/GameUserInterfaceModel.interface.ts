@@ -22,7 +22,7 @@ export interface GameUserInterfaceModel extends Model {
   context?: any;                  // Context for "on" delegation mode (holds delegated component instance)
   
   // 🎯 Radical OOP Properties - Store ONCE, Never Recalculate
-  // @pdca 2025-11-10-UTC-1400.eliminate-functional-helpers-make-model-driven.pdca.md
+  // @pdca 2025-11-10-UTC-1800.pdca.md - TRUE Radical OOP
   isTestIsolation?: boolean;      // Flag for test isolation mode
   testDataDirectory?: string;     // Test data directory path (when isTestIsolation = true)
   displayName?: string;           // Component name to show (this OR context)
