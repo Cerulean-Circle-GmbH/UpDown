@@ -559,14 +559,21 @@ export class DefaultONCE implements ONCE {
   /**
    * Demo command - Start interactive ONCE demo with browser auto-opening
    * ✅ TRUE Radical OOP: All state in model, method chaining, no functional helpers
-   * @param mode Demo mode: 'interactive' (default), 'headless', or 'browser-only'
+   * @param mode Demo mode: 'interactive' (default), 'headless', 'browser-only', or clientCount for auto-messages (e.g., '3')
    * @cliSyntax mode
    * @cliDefault mode interactive
    * @cliValues interactive headless browser-only
    * @pdca 2025-11-10-UTC-1900.add-demo-command.pdca.md - Port demo from 0.2.0.0 CLI
    * @pdca 2025-11-10-UTC-2030.add-interactive-keyboard-controller.pdca.md - Add 0.2.0.0 UX
+   * @pdca 2025-11-11-UTC-2322.pdca.md - Extend with automated message exchange
    */
   async demo(mode: string = 'interactive'): Promise<this> {
+    // If mode is a number, delegate to demoMessages for automated message exchange
+    const clientCount = parseInt(mode, 10);
+    if (!isNaN(clientCount) && clientCount > 0) {
+      return await this.demoMessages(mode);
+    }
+    
     console.log('🎭 ONCE v0.3.20.1 Demo Starting...');
     console.log('');
     
