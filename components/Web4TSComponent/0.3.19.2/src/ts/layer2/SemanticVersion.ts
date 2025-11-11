@@ -300,10 +300,11 @@ export class SemanticVersion implements Version {
       return currentVersion.toString();
     }
     
-    // If already a valid version number, return as-is
-    if (currentVersion.isValid(versionString)) {
-      return versionString;
-    }
+  // If already a valid version number, return as-is
+  const versionPattern = /^\d+\.\d+\.\d+\.\d+$/;
+  if (versionPattern.test(versionString)) {
+    return versionString;
+  }
     
     // Resolve semantic link (latest/dev/test/prod)
     if (SemanticVersion.isSemanticLink(versionString)) {
