@@ -343,12 +343,38 @@ export class ServerHierarchyManager {
                 break;
             case 'scenario-message':
                 // @pdca 2025-11-11-UTC-2322.pdca.md - Handle incoming scenario messages
-                await this.handleScenarioMessage(message.scenario);
+                // If broadcast type and we're primary, broadcast to all clients
+                if (message.scenario.state.type === 'broadcast' && this.serverModel.isPrimaryServer) {
+                    this.broadcastScenario(message.scenario);
+                } else {
+                    await this.handleScenarioMessage(message.scenario);
+                }
                 break;
             case 'scenario-relay':
                 // @pdca 2025-11-11-UTC-2322.pdca.md - Relay message to target
                 if (this.serverModel.isPrimaryServer) {
                     this.relayScenario(message.scenario, message.targetUUID);
+                } else {
+                    // Client forwards to primary for relay
+                    if (this.primaryServerConnection && this.primaryServerConnection.readyState === WebSocket.OPEN) {
+                        this.primaryServerConnection.send(JSON.stringify(message));
+                    }
+                }
+                break;
+            case 'scenario-p2p':
+                // @pdca 2025-11-11-UTC-2322.pdca.md - P2P direct message
+                // Find a peer and send directly
+                if (this.serverModel.isPrimaryServer && this.serverRegistry.size > 0) {
+                    // Primary can help route P2P
+                    const firstClient = Array.from(this.serverRegistry.values())[0];
+                    const port = firstClient.model.capabilities.find(c => c.capability === 'httpPort')?.port;
+                    if (port) {
+                        this.sendScenarioToPeer(message.scenario, port);
+                    }
+                } else {
+                    // Send to any peer we know
+                    const peerPort = message.peerPort || 8080;
+                    this.sendScenarioToPeer(message.scenario, peerPort);
                 }
                 break;
             default:

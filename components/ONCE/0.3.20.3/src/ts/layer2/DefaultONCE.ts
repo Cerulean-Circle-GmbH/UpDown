@@ -1557,6 +1557,9 @@ export class DefaultONCE implements ONCE {
       console.log(`   Client ${i + 1}: http://localhost:${port}/once`);
     }
     console.log('');
+    console.log('🌐 Opening demo hub...');
+    await this.openBrowser(`http://localhost:42777/demo`);
+    console.log('');
 
     // Setup cleanup
     const cleanup = async () => {
@@ -1578,11 +1581,14 @@ export class DefaultONCE implements ONCE {
       process.stdin.resume();
       process.stdin.setEncoding('utf8');
       
-      process.stdin.on('data', async (key: string) => {
+      const keyHandler = async (key: string) => {
         if (key === 'q' || key === 'Q' || key === '\u0003') { // 'q', 'Q', or Ctrl+C
+          process.stdin.removeListener('data', keyHandler);
           await cleanup();
         }
-      });
+      };
+      
+      process.stdin.on('data', keyHandler);
     }
 
     process.on('SIGINT', cleanup);
