@@ -348,30 +348,41 @@ export class ServerHierarchyManager {
      * @pdca 2025-11-11-UTC-2322.pdca.md - Process and track received scenarios
      */
     private async handleScenarioMessage(scenario: ONCEScenarioMessage): Promise<void> {
-        console.log(`📥 Received scenario ${scenario.uuid} from ${scenario.data.from.uuid}`);
-        console.log(`   Type: ${scenario.data.type}`);
-        console.log(`   Content: ${scenario.data.content}`);
-        console.log(`   Sequence: ${scenario.data.sequence}`);
+        console.log(`📥 Received scenario ${scenario.uuid} from ${scenario.state.from.uuid}`);
+        console.log(`   Type: ${scenario.state.type}`);
+        console.log(`   Content: ${scenario.state.content}`);
+        console.log(`   Sequence: ${scenario.state.sequence}`);
         
-        // Send acknowledgment
+        // Do NOT ACK an ACK (prevents infinite loop)
+        if (scenario.state.content.startsWith('ACK:')) {
+            return;
+        }
+        
+        // Send acknowledgment as proper Scenario
         const ackScenario: ONCEScenarioMessage = {
             uuid: uuidv4(),
-            component: 'ONCE',
+            objectType: 'ONCEMessage',
             version: '0.3.20.3',
-            data: {
-                type: scenario.data.type,
+            state: {
+                type: scenario.state.type,
                 from: { uuid: this.serverModel.uuid, port: this.getHttpPort() },
-                to: scenario.data.from,
+                to: scenario.state.from,
                 content: `ACK: ${scenario.uuid}`,
                 timestamp: new Date().toISOString(),
                 sequence: 0
+            },
+            metadata: {
+                created: new Date().toISOString(),
+                modified: new Date().toISOString(),
+                creator: 'ONCE-auto-ack',
+                description: `Acknowledgment for ${scenario.uuid}`
             }
         };
 
         // Send ack back to sender
-        if (scenario.data.from.port) {
+        if (scenario.state.from.port) {
             try {
-                const ackConnection = new WebSocket(`ws://localhost:${scenario.data.from.port}`);
+                const ackConnection = new WebSocket(`ws://localhost:${scenario.state.from.port}`);
                 ackConnection.on('open', () => {
                     ackConnection.send(JSON.stringify({
                         type: 'scenario-message',
@@ -380,7 +391,7 @@ export class ServerHierarchyManager {
                     ackConnection.close();
                 });
             } catch (error) {
-                console.log(`⚠️  Failed to send acknowledgment to ${scenario.data.from.port}`);
+                console.log(`⚠️  Failed to send acknowledgment to ${scenario.state.from.port}`);
             }
         }
     }

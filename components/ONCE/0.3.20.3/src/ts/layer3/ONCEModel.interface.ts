@@ -11,12 +11,14 @@ import { ONCEServerModel } from './ONCEServerModel.js';
 /**
  * Web4 Scenario Message - TRUE Radical OOP Message Format
  * @pdca 2025-11-11-UTC-2322.pdca.md - Automated multi-server demo
+ * MUST BE a Scenario (not just look like one)
  */
-export interface ONCEScenarioMessage {
-  uuid: string;
-  component: 'ONCE';
-  version: '0.3.20.3';
-  data: {
+export interface ONCEScenarioMessage extends Scenario {
+  // Override objectType to be specific
+  objectType: 'ONCEMessage';
+  
+  // Message-specific state structure
+  state: {
     type: 'broadcast' | 'relay' | 'p2p';
     from: { uuid: string; port: number };
     to: { uuid: string; port: number } | 'all';

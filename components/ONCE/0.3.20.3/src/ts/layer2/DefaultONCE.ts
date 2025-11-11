@@ -1410,17 +1410,23 @@ export class DefaultONCE implements ONCE {
     // Pattern 1: Broadcast (Primary → All Clients)
     console.log('📡 Pattern 1: Broadcast (Primary → All Clients)');
     const { v4: uuidv4 } = await import('uuid');
-    const broadcastScenario = {
+    const broadcastScenario: any = {
       uuid: uuidv4(),
-      component: 'ONCE' as const,
-      version: '0.3.20.3' as const,
-      data: {
-        type: 'broadcast' as const,
+      objectType: 'ONCEMessage',
+      version: '0.3.20.3',
+      state: {
+        type: 'broadcast',
         from: { uuid: primaryModel.uuid, port: 42777 },
-        to: 'all' as const,
+        to: 'all',
         content: 'Broadcast message from primary to all clients',
         timestamp: new Date().toISOString(),
         sequence: 1
+      },
+      metadata: {
+        created: new Date().toISOString(),
+        modified: new Date().toISOString(),
+        creator: 'ONCE-demoMessages',
+        description: 'Broadcast pattern demo message'
       }
     };
     this.serverHierarchyManager.broadcastScenario(broadcastScenario);
@@ -1436,17 +1442,23 @@ export class DefaultONCE implements ONCE {
       console.log('🔄 Pattern 2: Relay (Client → Primary → Client)');
       const client1Model = clients[0].getServerModel();
       const client2Model = clients[1].getServerModel();
-      const relayScenario = {
+      const relayScenario: any = {
         uuid: uuidv4(),
-        component: 'ONCE' as const,
-        version: '0.3.20.3' as const,
-        data: {
-          type: 'relay' as const,
+        objectType: 'ONCEMessage',
+        version: '0.3.20.3',
+        state: {
+          type: 'relay',
           from: { uuid: client1Model.uuid, port: client1Model.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0 },
           to: { uuid: client2Model.uuid, port: client2Model.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0 },
           content: `Relay message from client 1 to client 2 via primary`,
           timestamp: new Date().toISOString(),
           sequence: 2
+        },
+        metadata: {
+          created: new Date().toISOString(),
+          modified: new Date().toISOString(),
+          creator: 'ONCE-demoMessages',
+          description: 'Relay pattern demo message'
         }
       };
       clients[0].serverHierarchyManager.relayScenario(relayScenario, client2Model.uuid);
@@ -1465,17 +1477,23 @@ export class DefaultONCE implements ONCE {
       const client1Model = clients[0].getServerModel();
       const client2Model = clients[1].getServerModel();
       const p2pPort = client2Model.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0;
-      const p2pScenario = {
+      const p2pScenario: any = {
         uuid: uuidv4(),
-        component: 'ONCE' as const,
-        version: '0.3.20.3' as const,
-        data: {
-          type: 'p2p' as const,
+        objectType: 'ONCEMessage',
+        version: '0.3.20.3',
+        state: {
+          type: 'p2p',
           from: { uuid: client1Model.uuid, port: client1Model.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0 },
           to: { uuid: client2Model.uuid, port: p2pPort },
           content: `Direct P2P message from client 1 to client 2`,
           timestamp: new Date().toISOString(),
           sequence: 3
+        },
+        metadata: {
+          created: new Date().toISOString(),
+          modified: new Date().toISOString(),
+          creator: 'ONCE-demoMessages',
+          description: 'P2P pattern demo message'
         }
       };
       clients[0].serverHierarchyManager.sendScenarioToPeer(p2pScenario, p2pPort);
