@@ -935,6 +935,113 @@ export class DefaultONCE implements ONCE {
   }
 
   /**
+   * Parameter completion for topic parameter (used by info command)
+   * ✅ TRUE Radical OOP: Parameterless, model-driven completion
+   * Returns possible info topics
+   * @cliHide
+   */
+  async topicParameterCompletion(): Promise<string[]> {
+    return ['model', 'standard', 'guidelines'];
+  }
+
+  /**
+   * Parameter completion for scenario parameter (used by startServer, loadScenario, etc.)
+   * ✅ TRUE Radical OOP: Parameterless, model-driven completion
+   * Returns empty array as scenarios are file paths (user types them)
+   * @cliHide
+   */
+  async scenarioParameterCompletion(): Promise<string[]> {
+    // Scenarios are file paths - no predefined completions
+    // Could potentially list .scenario.json files from scenarios/ directory
+    return [];
+  }
+
+  /**
+   * Parameter completion for componentIOR parameter (used by startComponent)
+   * ✅ TRUE Radical OOP: Parameterless, model-driven completion
+   * Returns empty array as IORs are dynamic references
+   * @cliHide
+   */
+  async componentIORParameterCompletion(): Promise<string[]> {
+    // IORs are dynamic component references - no predefined completions
+    return [];
+  }
+
+  /**
+   * Parameter completion for ior parameter (used by registerComponent)
+   * ✅ TRUE Radical OOP: Parameterless, model-driven completion
+   * Returns empty array as IORs are dynamic references
+   * @cliHide
+   */
+  async iorParameterCompletion(): Promise<string[]> {
+    // IORs are dynamic component references - no predefined completions
+    return [];
+  }
+
+  /**
+   * Parameter completion for query parameter (used by discoverComponents)
+   * ✅ TRUE Radical OOP: Parameterless, model-driven completion
+   * Returns empty array as queries are free-form search strings
+   * @cliHide
+   */
+  async queryParameterCompletion(): Promise<string[]> {
+    // Queries are free-form search strings - no predefined completions
+    return [];
+  }
+
+  /**
+   * Parameter completion for peerIOR parameter (used by connectPeer, exchangeScenario)
+   * ✅ TRUE Radical OOP: Parameterless, model-driven completion
+   * Returns empty array as peer IORs are dynamic references
+   * @cliHide
+   */
+  async peerIORParameterCompletion(): Promise<string[]> {
+    // Peer IORs are dynamic references - no predefined completions
+    return [];
+  }
+
+  /**
+   * Parameter completion for eventType parameter (used by on, off)
+   * ✅ TRUE Radical OOP: Parameterless, model-driven completion
+   * Returns lifecycle event types
+   * @cliHide
+   */
+  async eventTypeParameterCompletion(): Promise<string[]> {
+    return [
+      'BEFORE_INIT',
+      'AFTER_INIT',
+      'BEFORE_START',
+      'AFTER_START',
+      'BEFORE_STOP',
+      'AFTER_STOP',
+      'SERVER_REGISTRATION',
+      'CLIENT_CONNECTED'
+    ];
+  }
+
+  /**
+   * Parameter completion for handler parameter (used by on, off)
+   * ✅ TRUE Radical OOP: Parameterless, model-driven completion
+   * Returns empty array as handlers are function references
+   * @cliHide
+   */
+  async handlerParameterCompletion(): Promise<string[]> {
+    // Handlers are function references - no predefined completions
+    return [];
+  }
+
+  /**
+   * Parameter completion for hooks parameter (used by registerLifecycleHooks)
+   * ✅ TRUE Radical OOP: Parameterless, model-driven completion
+   * Returns empty array as hooks are complex objects
+   * @cliHide
+   */
+  async hooksParameterCompletion(): Promise<string[]> {
+    // Hooks are complex objects - no predefined completions
+    return [];
+  }
+
+  /**
    * Detect hostname without environment variables (domain logic from 0.2.0.0)
    * @cliHide
    */
