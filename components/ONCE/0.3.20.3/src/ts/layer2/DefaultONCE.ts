@@ -879,9 +879,24 @@ export class DefaultONCE implements ONCE {
       
       console.log('✅ Test sequence completed successfully');
       console.log('');
+      console.log('🔒 Server running. Press Ctrl+C to stop.');
+      console.log('');
       
-      // DON'T cleanup - leave server running for verification
-      // Cleanup only happens on 'q' command or error
+      // Setup Ctrl+C handler for cleanup
+      const cleanup = async () => {
+        console.log('\n🛑 Shutting down...');
+        for (const client of clientServers) {
+          await client.stopServer().catch(() => {});
+        }
+        await this.stopServer().catch(() => {});
+        process.exit(0);
+      };
+      
+      process.on('SIGINT', cleanup);
+      process.on('SIGTERM', cleanup);
+      
+      // Keep process alive - wait indefinitely
+      await new Promise(() => {}); // Never resolves
       
     } catch (error) {
       console.error(`❌ Test sequence failed: ${error instanceof Error ? error.message : String(error)}`);

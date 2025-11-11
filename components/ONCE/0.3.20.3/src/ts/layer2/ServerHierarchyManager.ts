@@ -251,7 +251,9 @@ export class ServerHierarchyManager {
         const dirname = path.dirname(fileURLToPath(import.meta.url));
         const fullPath = path.join(dirname, '../../../src/view/html', templatePath);
         const template = fs.readFileSync(fullPath, 'utf-8');
-        return new Function('return `' + template + '`;').call(this);
+        // Escape backticks in template to prevent breaking the Function constructor
+        const escapedTemplate = template.replace(/`/g, '\\`');
+        return new Function('return `' + escapedTemplate + '`;').call(this);
     }
 
     /**
@@ -284,7 +286,10 @@ export class ServerHierarchyManager {
      * Get simple ONCE client HTML (for /once endpoint)
      */
     private getSimpleONCEClientHTML(): string {
-        return this.renderTemplate('once-client.html');
+        // Client HTML contains JavaScript - serve as static file, don't render with this context
+        const dirname = path.dirname(fileURLToPath(import.meta.url));
+        const fullPath = path.join(dirname, '../../../src/view/html/once-client.html');
+        return fs.readFileSync(fullPath, 'utf-8');
     }
 
     /**
