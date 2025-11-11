@@ -8,8 +8,8 @@
 import { join } from 'node:path';
 import { DefaultCLI } from '../layer2/DefaultCLI.js';
 import { DefaultWeb4TSComponent } from '../layer2/DefaultWeb4TSComponent.js';
-import { Reference } from '../layer3/Reference.interface.js';
-import { MethodSignature } from '../layer3/MethodSignature.interface.js';
+import type { Reference } from '../layer3/Reference.interface.js';
+import type { MethodSignature } from '../layer3/MethodSignature.interface.js';
 import { TSCompletion } from '../layer4/TSCompletion.js';
 
 export class Web4TSComponentCLI extends DefaultCLI {
@@ -330,5 +330,5 @@ export class Web4TSComponentCLI extends DefaultCLI {
 
 // Static entry point for shell execution - Web4 radical OOP pattern
 if (import.meta.url === `file://${process.argv[1]}`) {
-  Web4TSComponentCLI.start(process.argv.slice(2));
+  void Web4TSComponentCLI.start(process.argv.slice(2));
 }

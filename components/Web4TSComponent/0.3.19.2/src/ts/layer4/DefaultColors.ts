@@ -3,7 +3,7 @@
  * Web4 pattern: Single source of truth for all color definitions (DRY principle)
  */
 
-import { Colors } from '../layer3/Colors.interface.js';
+import type { Colors } from '../layer3/Colors.interface.js';
 
 export class DefaultColors implements Colors {
   // Basic colors

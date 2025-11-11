@@ -4,15 +4,15 @@
  * Purpose: Foundation CLI class with auto-discovery, common utilities and Web4 radical OOP patterns
  */
 
-import { CLI } from "../layer3/CLI.interface.js";
-import { CLIModel } from "../layer3/CLIModel.interface.js";
-import { Scenario } from "../layer3/Scenario.interface.js";
-import { MethodInfo } from "../layer3/MethodInfo.interface.js";
-import { MethodSignature } from "../layer3/MethodSignature.interface.js";
-import { Component } from "../layer3/Component.interface.js";
-import { Reference } from "../layer3/Reference.interface.js";
-import { Colors } from "../layer3/Colors.interface.js";
-import { User } from "../layer3/User.interface.js";
+import type { CLI } from "../layer3/CLI.interface.js";
+import type { CLIModel } from "../layer3/CLIModel.interface.js";
+import type { Scenario } from "../layer3/Scenario.interface.js";
+import type { MethodInfo } from "../layer3/MethodInfo.interface.js";
+import type { MethodSignature } from "../layer3/MethodSignature.interface.js";
+import type { Component } from "../layer3/Component.interface.js";
+import type { Reference } from "../layer3/Reference.interface.js";
+import type { Colors } from "../layer3/Colors.interface.js";
+import type { User } from "../layer3/User.interface.js";
 // @pdca 2025-11-03-1105-component-template-bugs.pdca.md - Removed DefaultWeb4TSComponent import for true generic base class
 import { TSCompletion } from "../layer4/TSCompletion.js";
 import { DefaultColors } from "../layer4/DefaultColors.js";
@@ -21,11 +21,8 @@ import {
   readFileSync,
   existsSync,
   readdirSync,
-  writeFileSync,
-  appendFileSync,
   lstatSync,
   readlinkSync,
-  mkdirSync,
 } from "fs";
 import { join, basename } from "path";
 import * as ts from "typescript";
@@ -92,7 +89,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
         definition: "CLI model",
         
         // ✅ Path Authority fields (calculated ONCE, inherited by ALL CLIs)
-        projectRoot: projectRoot,
+        projectRoot,
         componentsDir: join(projectRoot, 'components'),
         scriptsDir: join(projectRoot, 'scripts'),
         scriptsVersionDir: join(projectRoot, 'scripts', 'versions'),
@@ -375,7 +372,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
    * @test test/ts/layer2/UserScenarioPattern.test.ts - Scenario pattern verification
    * @returns Scenario representation of current CLI state
    */
-  async toScenario(name?: string): Promise<Scenario<CLIModel>> {
+  async toScenario(): Promise<Scenario<CLIModel>> {
     const componentName = (this.component?.model as any)?.component || 'CLI';
     const componentVersion = (this.component?.model as any)?.version?.toString() || '0.0.0.0';
     
@@ -528,7 +525,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
           let signature = `${methodColor}${methodName}${RESET}`;
           if (parameters && parameters.length > 0) {
             const paramList = parameters
-              .map((p: any) => this.generateParameterSyntax(p, methodName))
+              .map((p: any) => this.generateParameterSyntax(p))
               .join(" ");
             signature = `${methodColor}${methodName}${RESET} ${BRIGHT_YELLOW}${paramList}${RESET}`;
           }
@@ -572,7 +569,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
 
         if (parameters && parameters.length > 0) {
           const paramList = parameters
-            .map((p: any) => this.generateParameterSyntax(p, methodName))
+            .map((p: any) => this.generateParameterSyntax(p))
             .join(" ");
           return `${BRIGHT_CYAN}${index + 1}:${RESET} ${displayName} ${BRIGHT_YELLOW}${paramList}${RESET}`;
         }
@@ -635,9 +632,6 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
         const methodExists = typeof (this.component as any)[this.model.completionCommand!] === 'function';
         
         if (methodExists) {
-          
-          // Get Web4TSComponent instance (like delegateToWeb4TS does)
-          const web4ts = await (this.component as any).getWeb4TSComponent();
           
           // DELEGATION WORKAROUND: Call Web4TSComponent's parameter completion method directly
           // @pdca 2025-11-06-UTC-0150.delegated-parameter-completion-broken.pdca.md
@@ -995,7 +989,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
       const method = prototype[name];
       if (typeof method === "function") {
         methods.push({
-          name: name,
+          name,
           parameters: this.extractParameterInfoFromTSCompletion(name),
           description: this.extractMethodDescriptionFromTSDoc(name),
           examples: this.extractExamplesFromTSDoc(name),
@@ -1254,7 +1248,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
             required: param.required !== false,
             description:
               param.description ||
-              this.generateParameterDescription(methodName, paramName, index),
+              this.generateParameterDescription(methodName, paramName),
             examples: this.generateParameterExamples(paramName),
             validation: [],
             default: param.default, // ✅ FIX: Pass through default value for yellow coloring
@@ -1291,8 +1285,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
         required: this.isParameterRequired(methodName, i),
         description: this.generateParameterDescription(
           methodName,
-          paramName,
-          i
+          paramName
         ),
         examples: this.generateParameterExamples(paramName),
         validation: [],
@@ -1314,8 +1307,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
       const paramName = this.generateIntelligentParameterName(methodName, i);
       const paramDesc = this.generateParameterDescription(
         methodName,
-        paramName,
-        i
+        paramName
       );
 
       params.push({
@@ -1366,8 +1358,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
    */
   private generateParameterDescription(
     methodName: string,
-    paramName: string,
-    index: number
+    paramName: string
   ): string {
     // ✅ ZERO MAPPING: Extract directly from TSDoc via TSCompletion
     try {
@@ -1580,7 +1571,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
     // Generate documentation for unique parameter syntax types only
     for (const [syntaxType, param] of parameterGroups) {
       // ✅ ENHANCED: Use enhanced optional formatting
-      const syntax = this.generateParameterSyntax(param, "linkInto"); // Use a method name for annotation access
+      const syntax = this.generateParameterSyntax(param); // Use method for annotation access
 
       // Line 1: Parameter syntax
       output += `  ${colors.parameters}${syntax}${colors.reset}\n`;
@@ -1698,13 +1689,13 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
     // ✅ ZERO CONFIG: Group parameters by their @cliSyntax annotations
     for (const [paramName, param] of allParams) {
       // Get CLI syntax from @cliSyntax annotation or derive from conventions
-      let syntaxType = this.getParameterSyntaxType(param, paramName);
+      const syntaxType = this.getParameterSyntaxType(param, paramName);
 
       // Only add first occurrence of each syntax type
       if (!syntaxGroups.has(syntaxType)) {
         syntaxGroups.set(syntaxType, {
           ...param,
-          syntaxType: syntaxType,
+          syntaxType,
         });
       }
     }
@@ -1852,9 +1843,9 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
    * Web4 pattern: Clear optional parameter syntax with default values
    * Notation: <?param:'defaultValue'> for optional parameters
    */
-  private generateParameterSyntax(param: any, methodName?: string): string {
+  private generateParameterSyntax(param: any): string {
     // Get base syntax from @cliSyntax annotation or conventions
-    let baseSyntax = this.getBaseSyntax(param, methodName);
+    const baseSyntax = this.getBaseSyntax(param);
 
     // ✅ ENHANCED: Apply Web4 notation for optional parameters first
     let finalSyntax: string;
@@ -1862,7 +1853,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
       finalSyntax = `<${baseSyntax}>`;
     } else {
       // Check for default value in TypeScript or TSDoc
-      const defaultValue = this.extractDefaultValue(param, methodName);
+      const defaultValue = this.extractDefaultValue(param);
 
       // ✅ NOTE: Syntax shows ONLY the default value, not all union values
       // "Possible Values" documentation will show all values with default highlighted
@@ -1947,7 +1938,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
    * User expectation: "showHidden" parameter should show as "<?showHidden:'false'>"
    * NOT as "<?file:'false'>" just because description mentions "files"!
    */
-  private getBaseSyntax(param: any, methodName?: string): string {
+  private getBaseSyntax(param: any): string {
     // ALWAYS return actual TypeScript parameter name - NOTHING ELSE!
     // This is what the user types in the command: web4tscomponent tree 4 false
     // The parameter names ARE: depth, showHidden (not depth, file!)
@@ -1958,7 +1949,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
    * Extract default value from TypeScript parameter or TSDoc
    * Web4 pattern: Default value detection for enhanced optional syntax
    */
-  private extractDefaultValue(param: any, methodName?: string): string | null {
+  private extractDefaultValue(param: any): string | null {
     // ✅ PRIORITY 1: Check TypeScript signature default (already extracted by TSCompletion)
     // This is the ONLY source for explicit defaults - TypeScript native syntax
     if (param.default !== undefined && param.default !== null) {
@@ -2066,9 +2057,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
     for (const method of methods) {
       // ✅ ZERO CONFIG: Generate parameter syntax with @cliSyntax annotation support
       const paramList = method.parameters
-        .map((p: any) => {
-          return this.generateParameterSyntax(p, method.name);
-        })
+        .map((p: any) => this.generateParameterSyntax(p))
         .join(" ");
 
       // Line 1: Command with parameters (enhanced with union type syntax)
@@ -2733,8 +2722,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
    * @cliHide
    */
   async completeParameter(
-    callbackName: string,
-    ...contextArgs: string[]
+    callbackName: string
   ): Promise<void> {
     // Check if callback method exists on this instance
     if (typeof (this as any)[callbackName] === "function") {
@@ -2938,7 +2926,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
     }
 
     // Parse component path: .../components/ComponentName/version
-    const relative = cwd.replace(componentsDir + "/", "");
+    const relative = cwd.replace(`${componentsDir  }/`, "");
     const parts = relative.split("/");
 
     if (parts.length < 2) {
@@ -3047,7 +3035,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
 
     // Use model-driven project root (CLI calculated it already!)
     const projectRoot = this.model.projectRoot;
-    const { readdirSync, existsSync } = await import("fs");
+    const { readdirSync } = await import("fs");
     const { join } = await import("path");
 
     try {

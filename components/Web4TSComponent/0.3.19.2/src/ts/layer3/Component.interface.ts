@@ -9,9 +9,9 @@
  * as they're specific to TypeScript component development, not universal
  */
 
-import { Scenario } from './Scenario.interface.js';
-import { Model } from './Model.interface.js';
-import { MethodSignature } from './MethodSignature.interface.js';
+import type { Scenario } from './Scenario.interface.js';
+import type { Model } from './Model.interface.js';
+import type { MethodSignature } from './MethodSignature.interface.js';
 
 /**
  * Base interface for all Web4 components

@@ -7,7 +7,7 @@
  * @pdca 2025-10-31-UTC-1045.template-sync-path-authority.pdca.md - Removed OwnerParams (obsolete after User service migration)
  */
 
-import { Scenario } from './Scenario.interface.js';
+import type { Scenario } from './Scenario.interface.js';
 
 export interface User {
   /**

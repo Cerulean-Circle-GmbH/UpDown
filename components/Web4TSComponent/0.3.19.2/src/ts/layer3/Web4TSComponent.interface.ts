@@ -5,9 +5,8 @@
  * Extends Component with development methods (test, build, clean, tree, links)
  */
 
-import { Component } from './Component.interface.js';
-import { Scenario } from './Scenario.interface.js';
-import { Web4TSComponentModel } from './Web4TSComponentModel.interface.js';
+import type { Component } from './Component.interface.js';
+import type { Web4TSComponentModel } from './Web4TSComponentModel.interface.js';
 
 export interface Web4TSComponent extends Component<Web4TSComponentModel> {
   // ========================================

@@ -171,8 +171,8 @@ export class TSCompletion implements Completion {
     
     const files = TSCompletion.getProjectSourceFiles();
     let params: string[] = [];
-    let defaultValues: Record<string, string> = {};
-    let paramMap: Record<string, string> = {};
+    const defaultValues: Record<string, string> = {};
+    const paramMap: Record<string, string> = {};
     for (const file of files) {
       const src = readFileSync(file, 'utf8');
       const sourceFile = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true);
@@ -628,9 +628,6 @@ export class TSCompletion implements Completion {
                 
                 // Extract JSDoc description and annotations for parameter
                 const description = TSCompletion.extractParamJsDoc(m, paramName);
-                // ✅ FIX: Use full JSDoc text extraction to get @cliDefault annotations
-                const jsDoc = TSCompletion.extractEnhancedJsDocText(m);
-                const cliAnnotations = TSCompletion.parseCliAnnotations(jsDoc, paramName);
                 
                 // Detect if parameter has default value (e.g., action: string = '')
                 const hasInitializer = param.initializer !== undefined;

@@ -5,10 +5,10 @@
  * @test test/ts/layer2/SemanticVersion.test.ts
  */
 
-import { Version } from '../layer3/Version.interface.js';
-import { VersionModel } from '../layer3/VersionModel.interface.js';
-import { Scenario } from '../layer3/Scenario.interface.js';
-import { MethodSignature } from '../layer3/MethodSignature.interface.js';
+import type { Version } from '../layer3/Version.interface.js';
+import type { VersionModel } from '../layer3/VersionModel.interface.js';
+import type { Scenario } from '../layer3/Scenario.interface.js';
+import type { MethodSignature } from '../layer3/MethodSignature.interface.js';
 import { randomUUID } from 'crypto';
 
 export class SemanticVersion implements Version {
@@ -39,14 +39,14 @@ export class SemanticVersion implements Version {
   /**
    * Check if version has a method (always false - no discoverable methods)
    */
-  hasMethod(name: string): boolean {
+  hasMethod(): boolean {
     return false;
   }
   
   /**
    * Get method signature (always null - no discoverable methods)
    */
-  getMethodSignature(name: string): MethodSignature | null {
+  getMethodSignature(): MethodSignature | null {
     return null;
   }
   
@@ -326,7 +326,7 @@ export class SemanticVersion implements Version {
    * Convert component state to scenario for persistence
    * @pdca 2025-10-28-UTC-2015.user-scenario-antipattern.pdca.md - Owner data as scenario structure
    */
-  async toScenario(name?: string): Promise<Scenario<VersionModel>> {
+  async toScenario(): Promise<Scenario<VersionModel>> {
     // ✅ Owner data as minimal User-like scenario (consistent with Web4 pattern)
     const ownerScenario = {
       ior: {
