@@ -1361,6 +1361,191 @@ export class DefaultONCE implements ONCE {
   }
 
   /**
+   * Automated multi-server demo with Web4 scenario message exchange
+   * @pdca 2025-11-11-UTC-2322.pdca.md - Automated demo with all patterns
+   * @param clientCount Number of client servers to spawn (default: 3)
+   * @cliSyntax clientCount
+   * @cliDefault clientCount 3
+   */
+  async demoMessages(clientCount: string = '3'): Promise<this> {
+    const count = parseInt(clientCount, 10);
+    console.log(`\n🎭 ONCE Automated Message Demo`);
+    console.log(`📊 Configuration: ${count} client servers + 1 primary`);
+    console.log('');
+
+    // Initialize message tracker in model
+    if (!this.model.messageTracker) {
+      this.model.messageTracker = {
+        sent: [],
+        received: [],
+        acknowledged: [],
+        patterns: { broadcast: 0, relay: 0, p2p: 0 }
+      };
+    }
+
+    // Start primary server
+    console.log('🟢 Starting primary server (42777)...');
+    await this.init();
+    await this.startServer();
+    const primaryModel = this.serverHierarchyManager.getServerModel();
+    console.log(`   ✅ Primary: ${primaryModel.uuid}`);
+    console.log('');
+
+    // Spawn client servers
+    const clients: any[] = [];
+    console.log(`🔵 Spawning ${count} client servers...`);
+    for (let i = 0; i < count; i++) {
+      const client = new DefaultONCE();
+      await client.init();
+      await client.startServer();
+      clients.push(client);
+      const clientModel = client.getServerModel();
+      const port = clientModel.capabilities.find(c => c.capability === 'httpPort')?.port;
+      console.log(`   ✅ Client ${i + 1}: ${clientModel.uuid} on port ${port}`);
+    }
+    console.log('');
+
+    await this.sleep(2000); // Let clients register
+
+    // Pattern 1: Broadcast (Primary → All Clients)
+    console.log('📡 Pattern 1: Broadcast (Primary → All Clients)');
+    const { v4: uuidv4 } = await import('uuid');
+    const broadcastScenario = {
+      uuid: uuidv4(),
+      component: 'ONCE' as const,
+      version: '0.3.20.3' as const,
+      data: {
+        type: 'broadcast' as const,
+        from: { uuid: primaryModel.uuid, port: 42777 },
+        to: 'all' as const,
+        content: 'Broadcast message from primary to all clients',
+        timestamp: new Date().toISOString(),
+        sequence: 1
+      }
+    };
+    this.serverHierarchyManager.broadcastScenario(broadcastScenario);
+    this.model.messageTracker.sent.push(broadcastScenario);
+    this.model.messageTracker.patterns.broadcast++;
+    console.log(`   📤 Sent broadcast: ${broadcastScenario.uuid}`);
+    console.log('');
+
+    await this.sleep(1000);
+
+    // Pattern 2: Relay (Client → Primary → Client)
+    if (clients.length >= 2) {
+      console.log('🔄 Pattern 2: Relay (Client → Primary → Client)');
+      const client1Model = clients[0].getServerModel();
+      const client2Model = clients[1].getServerModel();
+      const relayScenario = {
+        uuid: uuidv4(),
+        component: 'ONCE' as const,
+        version: '0.3.20.3' as const,
+        data: {
+          type: 'relay' as const,
+          from: { uuid: client1Model.uuid, port: client1Model.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0 },
+          to: { uuid: client2Model.uuid, port: client2Model.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0 },
+          content: `Relay message from client 1 to client 2 via primary`,
+          timestamp: new Date().toISOString(),
+          sequence: 2
+        }
+      };
+      clients[0].serverHierarchyManager.relayScenario(relayScenario, client2Model.uuid);
+      this.model.messageTracker.sent.push(relayScenario);
+      this.model.messageTracker.patterns.relay++;
+      console.log(`   🔄 Sent relay: ${relayScenario.uuid}`);
+      console.log(`   📍 Route: ${client1Model.uuid} → Primary → ${client2Model.uuid}`);
+      console.log('');
+    }
+
+    await this.sleep(1000);
+
+    // Pattern 3: P2P (Client → Client Direct)
+    if (clients.length >= 2) {
+      console.log('🔗 Pattern 3: P2P (Client → Client Direct)');
+      const client1Model = clients[0].getServerModel();
+      const client2Model = clients[1].getServerModel();
+      const p2pPort = client2Model.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0;
+      const p2pScenario = {
+        uuid: uuidv4(),
+        component: 'ONCE' as const,
+        version: '0.3.20.3' as const,
+        data: {
+          type: 'p2p' as const,
+          from: { uuid: client1Model.uuid, port: client1Model.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0 },
+          to: { uuid: client2Model.uuid, port: p2pPort },
+          content: `Direct P2P message from client 1 to client 2`,
+          timestamp: new Date().toISOString(),
+          sequence: 3
+        }
+      };
+      clients[0].serverHierarchyManager.sendScenarioToPeer(p2pScenario, p2pPort);
+      this.model.messageTracker.sent.push(p2pScenario);
+      this.model.messageTracker.patterns.p2p++;
+      console.log(`   🔗 Sent P2P: ${p2pScenario.uuid}`);
+      console.log(`   📍 Direct: ${client1Model.uuid} → ${client2Model.uuid}`);
+      console.log('');
+    }
+
+    await this.sleep(2000);
+
+    // Summary
+    console.log('📊 Message Exchange Summary:');
+    console.log(`   📤 Messages sent: ${this.model.messageTracker.sent.length}`);
+    console.log(`   📡 Broadcasts: ${this.model.messageTracker.patterns.broadcast}`);
+    console.log(`   🔄 Relays: ${this.model.messageTracker.patterns.relay}`);
+    console.log(`   🔗 P2P: ${this.model.messageTracker.patterns.p2p}`);
+    console.log('');
+
+    // Export JSON report
+    const report = {
+      timestamp: new Date().toISOString(),
+      configuration: {
+        primary: { uuid: primaryModel.uuid, port: 42777 },
+        clients: clients.map(c => {
+          const m = c.getServerModel();
+          return { uuid: m.uuid, port: m.capabilities.find((cap: any) => cap.capability === 'httpPort')?.port };
+        })
+      },
+      messages: this.model.messageTracker.sent,
+      patterns: this.model.messageTracker.patterns
+    };
+
+    const fs = await import('fs');
+    const path = await import('path');
+    const { fileURLToPath } = await import('url');
+    const dirname = path.dirname(fileURLToPath(import.meta.url));
+    const reportPath = path.join(dirname, '../../../scenarios/message-exchange-report.json');
+    const reportDir = path.dirname(reportPath);
+    if (!fs.existsSync(reportDir)) {
+      fs.mkdirSync(reportDir, { recursive: true });
+    }
+    fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
+    console.log(`💾 JSON report saved: ${reportPath}`);
+    console.log('');
+
+    console.log('🔒 Demo running. Press Ctrl+C to stop.');
+    console.log('');
+
+    // Setup cleanup
+    const cleanup = async () => {
+      console.log('\n🛑 Shutting down...');
+      for (const client of clients) {
+        await client.stopServer().catch(() => {});
+      }
+      await this.stopServer().catch(() => {});
+      process.exit(0);
+    };
+
+    process.on('SIGINT', cleanup);
+    process.on('SIGTERM', cleanup);
+
+    // Keep alive
+    await new Promise(() => {});
+
+    return this;
+  }
+
+  /**
    * Build component (TypeScript compilation)
    * Delegates to Web4TSComponent for DRY architecture
    * @cliHide
