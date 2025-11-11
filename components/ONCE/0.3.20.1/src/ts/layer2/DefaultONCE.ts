@@ -215,6 +215,10 @@ export class DefaultONCE implements ONCE {
     web4ts.model.isDelegation = true;
     web4ts.model.delegationInfo = `via Web4TSComponent v${web4ts.model.version.toString()}`;
     
+    // ✅ CRITICAL: Set component name for infrastructure methods (e.g., setCICDVersion)
+    // These methods use this.model.component to determine target component
+    web4ts.model.component = this.model.component;
+    
     // Test isolation context (if applicable)
     if (this.model.isTestIsolation && this.model.projectRoot) {
       const match = this.model.projectRoot.match(/components\/([^/]+)\/([^/]+)\/test\/data/);
@@ -1383,5 +1387,18 @@ export class DefaultONCE implements ONCE {
    */
   async links(action: string = ''): Promise<this> {
     return this.delegateToWeb4TS('links', action);
+  }
+
+  /**
+   * Set CI/CD semantic links for a component version
+   * Delegates to Web4TSComponent for DRY architecture
+   * @param targetVersion Semantic link to set: 'dev', 'latest', 'prod', 'test'
+   * @param version Version to point to (default: 'current')
+   * @cliSyntax targetVersion version
+   * @cliDefault version current
+   * @cliValues targetVersion dev latest prod test
+   */
+  async setCICDVersion(targetVersion: string, version: string = 'current'): Promise<this> {
+    return this.delegateToWeb4TS('setCICDVersion', targetVersion, version);
   }
 }
