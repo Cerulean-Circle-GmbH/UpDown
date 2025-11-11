@@ -4,9 +4,9 @@
  * Purpose: Component model following Web4 architecture patterns
  */
 
-import type { Model } from './Model.interface.js';
-import type { ComponentDependency } from './ComponentDependency.interface.js';
-import type { SemanticVersion } from '../layer2/SemanticVersion.js';
+import { Model } from './Model.interface.js';
+import { ComponentDependency } from './ComponentDependency.interface.js';
+import { SemanticVersion } from '../layer2/SemanticVersion.js';
 
 export interface Web4TSComponentModel extends Model {
   // uuid inherited from Model - don't redeclare

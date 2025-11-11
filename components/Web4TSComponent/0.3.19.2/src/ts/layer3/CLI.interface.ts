@@ -4,8 +4,8 @@
  * Purpose: Foundation interface for all CLI implementations with Scenario pattern
  */
 
-import type { Scenario } from './Scenario.interface.js';
-import type { CLIModel } from './CLIModel.interface.js';
+import { Scenario } from './Scenario.interface.js';
+import { CLIModel } from './CLIModel.interface.js';
 
 export interface CLI {
   // Note: Static methods cannot be in TypeScript interfaces

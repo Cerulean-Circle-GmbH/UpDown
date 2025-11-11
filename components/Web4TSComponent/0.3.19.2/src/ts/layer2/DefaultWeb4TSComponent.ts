@@ -3,21 +3,21 @@
  * Web4 pattern: Empty constructor + scenario initialization + component functionality
  */
 
-import type { Web4TSComponent } from '../layer3/Web4TSComponent.interface.js';
-import type { Scenario } from '../layer3/Scenario.interface.js';
-import type { Web4TSComponentModel } from '../layer3/Web4TSComponentModel.interface.js';
-import type { ComponentDependency } from '../layer3/ComponentDependency.interface.js';
-import type { CLI } from '../layer3/CLI.interface.js';
-import type { Colors } from '../layer3/Colors.interface.js';
+import { Web4TSComponent } from '../layer3/Web4TSComponent.interface.js';
+import { Scenario } from '../layer3/Scenario.interface.js';
+import { Web4TSComponentModel } from '../layer3/Web4TSComponentModel.interface.js';
+import { ComponentDependency } from '../layer3/ComponentDependency.interface.js';
+import { CLI } from '../layer3/CLI.interface.js';
+import { Colors } from '../layer3/Colors.interface.js';
 import { DefaultColors } from '../layer4/DefaultColors.js';
 import { SemanticVersion } from './SemanticVersion.js';
-import type { MethodSignature } from '../layer3/MethodSignature.interface.js';
+import { MethodSignature } from '../layer3/MethodSignature.interface.js';
 import * as fs from 'fs/promises';
-import { existsSync, readdirSync, statSync, lstatSync } from 'fs';
+import { existsSync, readdirSync, statSync, lstatSync, readlinkSync } from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 import { randomUUID } from 'crypto';
-import type { User } from '../layer3/User.interface.js';
+import { User } from '../layer3/User.interface.js';
 
 export class DefaultWeb4TSComponent implements Web4TSComponent {
   public model!: Web4TSComponentModel; // Definite assignment - initialized in init() - public for CLI/external access
@@ -464,7 +464,7 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
    * @pdca 2025-10-28-UTC-2015.user-scenario-antipattern.pdca.md - Use User.toScenario()
    * @cliHide
    */
-  async toScenario(): Promise<Scenario<Web4TSComponentModel>> {
+  async toScenario(name?: string): Promise<Scenario<Web4TSComponentModel>> {
     // ✅ RADICAL OOP: Generate owner data using User.toScenario() (Web4 component interface)
     let ownerData: string;
     try {
@@ -768,7 +768,7 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
     
     const basePackageJson = {
       "name": `@web4x/${componentName.toLowerCase()}`,
-      version,
+      "version": version,
       "type": "module",
       "description": `${componentName} Component - Base Entry Point`,
       "scripts": {
@@ -779,7 +779,7 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
       "private": true
     };
     
-    await fs.writeFile(basePackageJsonPath, `${JSON.stringify(basePackageJson, null, 2)  }\n`);
+    await fs.writeFile(basePackageJsonPath, JSON.stringify(basePackageJson, null, 2) + '\n');
   }
 
   /**
@@ -859,7 +859,7 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
     const packageJsonPath = path.join(componentPath, 'package.json');
     const tsConfigPath = path.join(componentPath, 'tsconfig.json');
     
-    const metadata: any = {
+    let metadata: any = {
       name: path.basename(path.dirname(componentPath)),
       version: path.basename(componentPath),
       hasLocationResilientCLI: false,
@@ -2398,7 +2398,7 @@ Standards:
     const hasForce = flags.includes('force');
     
     // Build direct shell script command with flags (bypass npm to avoid shell issues)
-    const buildArgs = [];
+    let buildArgs = [];
     if (hasVerbose) buildArgs.push('verbose');
     if (hasSilent) buildArgs.push('silent');
     if (hasForce) buildArgs.push('force');
@@ -3306,7 +3306,7 @@ Standards:
         allEntries.add(file);
       }
       for (const dir of analysis.directories) {
-        allEntries.add(`${dir  }/`);
+        allEntries.add(dir + '/');
       }
     }
     
@@ -3315,7 +3315,7 @@ Standards:
     for (const entry of sortedEntries) {
       
       // Generate dual link for the entry
-      const dualLink = this.generateDualLinkForEntry(entry);
+      const dualLink = this.generateDualLinkForEntry(entry, componentSpecs, analyses);
       let row = `| ${dualLink}`;
       
       let presentCount = 0;
@@ -3346,10 +3346,12 @@ Standards:
   /**
    * Generate dual link for file entry (local path only, relative to version folder)
    * @param entry File or directory entry name
+   * @param componentSpecs Array of components being compared (unused, for interface consistency)
+   * @param analyses Array of analysis results (unused, for interface consistency)
    * @returns Entry name as local relative path
    * @cliHide
    */
-  private generateDualLinkForEntry(entry: string): string {
+  private generateDualLinkForEntry(entry: string, componentSpecs: Array<{name: string, version: string}>, analyses: any[]): string {
     // Simply return the entry as a local relative path
     return entry;
   }
@@ -3585,7 +3587,7 @@ Standards:
         allEntries.add(file);
       }
       for (const dir of analysis.directories) {
-        allEntries.add(`${dir  }/`);
+        allEntries.add(dir + '/');
       }
     }
     
@@ -3977,6 +3979,7 @@ Standards:
       const packages = fileContents.map(content => JSON.parse(content));
       
       // Check if they have similar structure
+      const firstKeys = Object.keys(packages[0]).sort();
       const allHaveSimilarStructure = packages.every(pkg => {
         const keys = Object.keys(pkg).sort();
         // Allow some variation in keys but require core structure
@@ -4082,10 +4085,12 @@ Standards:
           const isSymlink = lstats.isSymbolicLink();
           const isDirectory = isSymlink ? statSync(itemPath).isDirectory() : lstats.isDirectory();
           
+          let displayName = item;
           let coloredName = item;
           
           // Apply colors based on item type
           if (isDirectory) {
+            displayName += '/';
             coloredName = `${this.colors.cyan}${this.colors.bold}${item}/${this.colors.reset}`;
           } else {
             // Protected files (orange warning - do not modify)
@@ -4113,6 +4118,7 @@ Standards:
           // Special handling for node_modules symlink - show on one line
           if (item === 'node_modules' && isSymlink) {
             const linkTarget = await fs.readlink(itemPath).catch(() => 'broken');
+            displayName += ` → ${linkTarget}`;
             coloredName = `${this.colors.magenta}${item}/ → ${linkTarget}${this.colors.reset}`;
             console.log(prefix + connector + coloredName);
             continue; // Don't recurse into node_modules symlink
@@ -4120,6 +4126,7 @@ Standards:
           
           // Special handling for dist directory - mark as generated, don't expand
           if (item === 'dist' && isDirectory) {
+            displayName += ' [generated]';
             coloredName = `${this.colors.cyan}${this.colors.bold}${item}/${this.colors.reset} ${this.colors.dim}[generated]${this.colors.reset}`;
             console.log(prefix + connector + coloredName);
             continue; // Don't recurse into dist
@@ -4128,6 +4135,7 @@ Standards:
           // Show symlink target for other symlinks
           if (isSymlink) {
             const linkTarget = await fs.readlink(itemPath).catch(() => 'broken');
+            displayName += ` → ${linkTarget}`;
             if (isDirectory) {
               coloredName = `${this.colors.magenta}${item}/ → ${linkTarget}${this.colors.reset}`;
             } else {
@@ -4143,11 +4151,11 @@ Standards:
           }
         } catch (error) {
           // Handle permission errors or broken symlinks
-          console.log(`${prefix + connector + item  } ${this.colors.red}[access denied]${this.colors.reset}`);
+          console.log(prefix + connector + item + ` ${this.colors.red}[access denied]${this.colors.reset}`);
         }
       }
     } catch (error) {
-      console.log(`${prefix  }${this.colors.red}[error reading directory]${this.colors.reset}`);
+      console.log(prefix + `${this.colors.red}[error reading directory]${this.colors.reset}`);
     }
   }
 
@@ -4291,6 +4299,9 @@ Standards:
         console.log(`   📁 Created empty test/data directory structure`);
         continue;
       }
+      
+      const sourcePath2 = path.join(source, entry.name);
+      const targetPath2 = path.join(target, entry.name);
       
       if (entry.isDirectory()) {
         await this.copyDirectory(sourcePath, targetPath, componentRoot);
@@ -4671,9 +4682,10 @@ ${'='.repeat(80)}
     const versionsDir = path.join(scriptsDir, 'versions');
     const componentLower = this.model.component.toLowerCase();
     
-    // Calculate versions internally
+    // Calculate versions and highestVersion internally
     const componentDir = path.join(this.model.componentsDirectory, this.model.component);
     const versions = this.getAvailableVersions(componentDir);
+    const highestVersion = this.getHighestVersion(versions);
     
     // Ensure scripts and versions directories exist (FIX, don't just report errors!)
     try {
@@ -4803,6 +4815,7 @@ ${'='.repeat(80)}
         // Check if it's a semantic symlink
         const semanticMatch = entry.match(semanticPattern);
         if (semanticMatch) {
+          const semantic = semanticMatch[1]; // dev, test, or prod
           
           if (!stats.isSymbolicLink()) {
             // Should be a symlink but isn't - remove it

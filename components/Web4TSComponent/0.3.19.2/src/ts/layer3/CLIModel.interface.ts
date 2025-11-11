@@ -7,7 +7,7 @@
  * Pattern: components/Web4TSComponent/0.3.14.4/spec/completion-architecture-oop.md:19-59
  */
 
-import type { Model } from './Model.interface.js';
+import { Model } from './Model.interface.js';
 
 export interface CLIModel extends Model {
   // uuid, name, origin, definition inherited from Model
