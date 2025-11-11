@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONCE v0.3.20.3 Demo Hub</title>
+    <style>
+        body { 
+            font-family: 'Courier New', monospace; 
+            background: #1a1a1a; 
+            color: #0f0; 
+            margin: 0;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .demo-header { 
+            border: 2px solid #0f0; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            text-align: center;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        h1 { margin: 0 0 10px 0; }
+        h2 { color: #ff0; margin-top: 30px; }
+        
+        .server-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .server-card {
+            border: 2px solid #0f0;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .server-card:hover {
+            background: rgba(0, 255, 0, 0.15);
+            border-color: #ff0;
+        }
+        
+        .server-card h3 {
+            margin: 0 0 10px 0;
+            color: #ff0;
+        }
+        
+        .server-link {
+            display: block;
+            background: #0f0;
+            color: #000;
+            text-decoration: none;
+            padding: 10px;
+            margin: 5px 0;
+            text-align: center;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .server-link:hover {
+            background: #ff0;
+        }
+        
+        .instructions {
+            border: 1px solid #0f0;
+            padding: 15px;
+            margin: 20px 0;
+            background: rgba(0, 255, 0, 0.02);
+        }
+        
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin: 5px 0;
+        }
+        
+        .open-all-btn {
+            background: #ff0;
+            color: #000;
+            border: 2px solid #ff0;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            margin: 20px auto;
+            display: block;
+        }
+        
+        .open-all-btn:hover {
+            background: #0f0;
+            border-color: #0f0;
+        }
+        
+        .pattern-section {
+            border: 1px solid #0f0;
+            padding: 15px;
+            margin: 15px 0;
+            background: rgba(0, 255, 0, 0.02);
+        }
+        
+        code {
+            background: #000;
+            padding: 2px 5px;
+            color: #ff0;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-header">
+        <h1>🎭 ONCE v0.3.20.3 Demo Hub</h1>
+        <p>Multi-Server Interactive Message Exchange Demo</p>
+        <p style="color: #ff0;">All servers must be running before opening clients!</p>
+    </div>
+    
+    <div class="instructions">
+        <h2>📋 Quick Start Instructions:</h2>
+        <ol>
+            <li>Run demo: <code>./once demo 3</code> (or any number of clients)</li>
+            <li>Wait for all servers to start (you'll see "Demo complete!")</li>
+            <li>Click <strong>"Open All Clients"</strong> button below</li>
+            <li>Use the buttons in each client to send <strong>real inter-server messages</strong></li>
+            <li>Watch messages flow between servers in real-time!</li>
+            <li>Press <code>q</code> in terminal to stop all servers</li>
+        </ol>
+    </div>
+    
+    <button class="open-all-btn" onclick="openAllClients()">🚀 Open All Clients</button>
+    
+    <h2>📡 Active Servers:</h2>
+    <div class="server-grid" id="serverGrid">
+        <!-- Will be populated dynamically -->
+    </div>
+    
+    <div class="pattern-section">
+        <h2>🔄 Message Patterns Available in Each Client:</h2>
+        <ul>
+            <li><strong>Broadcast:</strong> Primary server sends message to ALL clients</li>
+            <li><strong>Relay:</strong> Client sends message to another client VIA primary server</li>
+            <li><strong>P2P Direct:</strong> Client sends message DIRECTLY to another client (no relay)</li>
+            <li><strong>ACK:</strong> Automatic acknowledgment on message receipt</li>
+        </ul>
+        <p style="color: #ff0;">💡 All buttons send REAL messages over WebSocket connections!</p>
+    </div>
+    
+    <script>
+        // Detect server configuration from URL or default
+        const primaryPort = 42777;
+        const clientPorts = [8080, 8081, 8082, 8083, 8084, 8085]; // Support up to 6 clients
+        
+        function createServerCard(serverInfo) {
+            return `
+                <div class="server-card">
+                    <h3>${serverInfo.name}</h3>
+                    <p>Port: ${serverInfo.port}</p>
+                    <a href="${serverInfo.url}" target="_blank" class="server-link">
+                        🌐 Open Client
+                    </a>
+                </div>
+            `;
+        }
+        
+        function populateServerGrid() {
+            const grid = document.getElementById('serverGrid');
+            let html = '';
+            
+            // Primary server
+            html += createServerCard({
+                name: '🟢 Primary Server',
+                port: primaryPort,
+                url: `http://localhost:${primaryPort}/once`
+            });
+            
+            // Check which client servers are running by trying to create cards for all
+            clientPorts.forEach((port, index) => {
+                html += createServerCard({
+                    name: `🔵 Client Server ${index + 1}`,
+                    port: port,
+                    url: `http://localhost:${port}/once`
+                });
+            });
+            
+            grid.innerHTML = html;
+        }
+        
+        function openAllClients() {
+            // Open primary
+            window.open(`http://localhost:${primaryPort}/once`, '_blank');
+            
+            // Open all potential clients (user will see errors for non-running servers)
+            clientPorts.forEach(port => {
+                window.open(`http://localhost:${port}/once`, '_blank');
+            });
+        }
+        
+        // Populate on load
+        populateServerGrid();
+        
+        // Auto-refresh server list every 5 seconds
+        setInterval(() => {
+            console.log('Refreshing server list...');
+            // Could add actual server availability check via fetch
+        }, 5000);
+    </script>
+</body>
+</html>
+

@@ -178,6 +178,10 @@ export class ServerHierarchyManager {
             // Simple browser client endpoint - just ONCE import and heading
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end(this.getSimpleONCEClientHTML());
+        } else if (url.pathname === '/demo' || url.pathname === '/demo/') {
+            // Demo hub - landing page with all server links
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(this.getDemoHubHTML());
         } else if (url.pathname === '/servers' && this.serverModel.isPrimaryServer) {
             // Only primary server can list all servers
             res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -290,6 +294,15 @@ export class ServerHierarchyManager {
         // Client HTML contains JavaScript - serve as static file, don't render with this context
         const dirname = path.dirname(fileURLToPath(import.meta.url));
         const fullPath = path.join(dirname, '../../../src/view/html/once-client.html');
+        return fs.readFileSync(fullPath, 'utf-8');
+    }
+
+    /**
+     * Get demo hub HTML (for /demo endpoint)
+     */
+    private getDemoHubHTML(): string {
+        const dirname = path.dirname(fileURLToPath(import.meta.url));
+        const fullPath = path.join(dirname, '../../../src/view/html/demo-hub.html');
         return fs.readFileSync(fullPath, 'utf-8');
     }
 

@@ -96,8 +96,9 @@
     </div>
     
     <div class="controls">
-        <button onclick="sendTestMessage()">Send Test Message</button>
-        <button onclick="sendAcknowledgment()">Send Acknowledgment</button>
+        <button onclick="sendBroadcastMessage()">📡 Broadcast to All</button>
+        <button onclick="sendRelayMessage()">🔄 Relay via Primary</button>
+        <button onclick="sendP2PMessage()">🔗 P2P Direct</button>
         <button onclick="clearLog()">Clear Log</button>
     </div>
     
@@ -226,42 +227,108 @@
             }
         }
         
-        // Control Functions
-        function sendTestMessage() {
+        // Control Functions - All messages are Scenarios
+        function sendBroadcastMessage() {
             if (ws && ws.readyState === WebSocket.OPEN) {
-                const testMsg = {
-                    type: 'test-message',
-                    data: {
-                        content: 'Test message from ONCE v0.3.20.3 browser client',
-                        timestamp: new Date().toISOString()
+                const scenario = {
+                    type: 'scenario-message',
+                    scenario: {
+                        uuid: crypto.randomUUID(),
+                        objectType: 'ONCEMessage',
+                        version: '0.3.20.3',
+                        state: {
+                            type: 'broadcast',
+                            from: { uuid: 'browser-' + Date.now(), port: parseInt(serverHost.split(':')[1] || '8080') },
+                            to: 'all',
+                            content: '📡 Broadcast from browser: ' + new Date().toLocaleTimeString(),
+                            timestamp: new Date().toISOString(),
+                            sequence: stats.messagesSent + 1
+                        },
+                        metadata: {
+                            created: new Date().toISOString(),
+                            modified: new Date().toISOString(),
+                            creator: 'browser-client',
+                            description: 'Browser-triggered broadcast'
+                        }
                     }
                 };
                 
-                ws.send(JSON.stringify(testMsg));
+                ws.send(JSON.stringify(scenario));
                 stats.messagesSent++;
                 updateStats();
-                addMessage('message', '📤 Sent test message');
+                addMessage('message', '📡 Broadcast scenario sent to all servers');
             } else {
-                addMessage('error', '❌ Not connected to server');
+                addMessage('error', '❌ Not connected');
             }
         }
         
-        function sendAcknowledgment() {
+        function sendRelayMessage() {
             if (ws && ws.readyState === WebSocket.OPEN) {
-                const ackMsg = {
-                    type: 'acknowledgment',
-                    data: {
-                        content: 'Manual acknowledgment from browser',
-                        timestamp: new Date().toISOString()
-                    }
+                const scenario = {
+                    type: 'scenario-relay',
+                    scenario: {
+                        uuid: crypto.randomUUID(),
+                        objectType: 'ONCEMessage',
+                        version: '0.3.20.3',
+                        state: {
+                            type: 'relay',
+                            from: { uuid: 'browser-' + Date.now(), port: parseInt(serverHost.split(':')[1] || '8080') },
+                            to: { uuid: 'next-client', port: 0 },
+                            content: '🔄 Relay from browser via primary: ' + new Date().toLocaleTimeString(),
+                            timestamp: new Date().toISOString(),
+                            sequence: stats.messagesSent + 1
+                        },
+                        metadata: {
+                            created: new Date().toISOString(),
+                            modified: new Date().toISOString(),
+                            creator: 'browser-client',
+                            description: 'Browser-triggered relay'
+                        }
+                    },
+                    targetUUID: 'next-client'
                 };
                 
-                ws.send(JSON.stringify(ackMsg));
-                stats.acknowledgmentsSent++;
+                ws.send(JSON.stringify(scenario));
+                stats.messagesSent++;
                 updateStats();
-                addMessage('acknowledgment', '📨 Sent manual acknowledgment');
+                addMessage('message', '🔄 Relay scenario sent via primary');
             } else {
-                addMessage('error', '❌ Not connected to server');
+                addMessage('error', '❌ Not connected');
+            }
+        }
+        
+        function sendP2PMessage() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                const scenario = {
+                    type: 'scenario-p2p',
+                    scenario: {
+                        uuid: crypto.randomUUID(),
+                        objectType: 'ONCEMessage',
+                        version: '0.3.20.3',
+                        state: {
+                            type: 'p2p',
+                            from: { uuid: 'browser-' + Date.now(), port: parseInt(serverHost.split(':')[1] || '8080') },
+                            to: { uuid: 'peer', port: 0 },
+                            content: '🔗 P2P from browser: ' + new Date().toLocaleTimeString(),
+                            timestamp: new Date().toISOString(),
+                            sequence: stats.messagesSent + 1
+                        },
+                        metadata: {
+                            created: new Date().toISOString(),
+                            modified: new Date().toISOString(),
+                            creator: 'browser-client',
+                            description: 'Browser-triggered P2P'
+                        }
+                    },
+                    peerPort: 0
+                };
+                
+                ws.send(JSON.stringify(scenario));
+                stats.messagesSent++;
+                updateStats();
+                addMessage('message', '🔗 P2P scenario sent directly');
+            } else {
+                addMessage('error', '❌ Not connected');
             }
         }
         
