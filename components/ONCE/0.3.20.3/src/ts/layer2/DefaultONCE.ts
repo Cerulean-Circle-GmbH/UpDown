@@ -1548,12 +1548,23 @@ export class DefaultONCE implements ONCE {
     console.log(`💾 JSON report saved: ${reportPath}`);
     console.log('');
 
-    console.log('🔒 Demo running. Press Ctrl+C to stop.');
+    console.log('🔒 Demo complete! Servers running. Press [q] or Ctrl+C to stop.');
+    console.log('💡 Open browsers to see live message logs:');
+    console.log(`   Primary: http://localhost:42777/once`);
+    for (let i = 0; i < clients.length; i++) {
+      const clientModel = clients[i].getServerModel();
+      const port = clientModel.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0;
+      console.log(`   Client ${i + 1}: http://localhost:${port}/once`);
+    }
     console.log('');
 
     // Setup cleanup
     const cleanup = async () => {
       console.log('\n🛑 Shutting down...');
+      // Restore stdin
+      if (process.stdin.isTTY && process.stdin.setRawMode) {
+        process.stdin.setRawMode(false);
+      }
       for (const client of clients) {
         await client.stopServer().catch(() => {});
       }
@@ -1561,13 +1572,29 @@ export class DefaultONCE implements ONCE {
       process.exit(0);
     };
 
+    // Setup 'q' key handler
+    if (process.stdin.isTTY) {
+      process.stdin.setRawMode(true);
+      process.stdin.resume();
+      process.stdin.setEncoding('utf8');
+      
+      process.stdin.on('data', async (key: string) => {
+        if (key === 'q' || key === 'Q' || key === '\u0003') { // 'q', 'Q', or Ctrl+C
+          await cleanup();
+        }
+      });
+    }
+
     process.on('SIGINT', cleanup);
     process.on('SIGTERM', cleanup);
 
-    // Keep alive
-    await new Promise(() => {});
-
-    return this;
+    // Keep alive - but allow process to exit naturally if stdin closes
+    return new Promise((resolve) => {
+      // Resolve on stdin end (e.g., piped input or CI environment)
+      process.stdin.on('end', () => {
+        cleanup().then(() => resolve(this));
+      });
+    });
   }
 
   /**
