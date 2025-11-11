@@ -183,7 +183,62 @@ export class ServerHierarchyManager {
             res.end(JSON.stringify({
                 servers: Array.from(this.serverRegistry.values()).map(entry => entry.model)
             }));
+        } else if (url.pathname.startsWith('/dist/') || url.pathname.startsWith('/src/')) {
+            // Serve static files from component directory
+            this.serveStaticFile(url.pathname, res);
         } else {
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('Not Found');
+        }
+    }
+
+    /**
+     * Serve static files from component directory
+     */
+    private serveStaticFile(pathname: string, res: any): void {
+        try {
+            const dirname = path.dirname(fileURLToPath(import.meta.url));
+            const componentRoot = path.join(dirname, '../../..');
+            const filePath = path.join(componentRoot, pathname);
+            
+            console.log('Static file request:', pathname);
+            console.log('Resolved to:', filePath);
+            console.log('Component root:', componentRoot);
+            console.log('Starts with check:', filePath.startsWith(componentRoot));
+            
+            // Security: prevent directory traversal
+            if (!filePath.startsWith(componentRoot)) {
+                console.log('FORBIDDEN: Path outside component root');
+                res.writeHead(403, { 'Content-Type': 'text/plain' });
+                res.end('Forbidden');
+                return;
+            }
+            
+            if (!fs.existsSync(filePath)) {
+                console.log('NOT FOUND: File does not exist');
+                res.writeHead(404, { 'Content-Type': 'text/plain' });
+                res.end('Not Found');
+                return;
+            }
+            
+            const content = fs.readFileSync(filePath);
+            const ext = path.extname(filePath);
+            const contentTypes: { [key: string]: string } = {
+                '.js': 'application/javascript',
+                '.mjs': 'application/javascript',
+                '.json': 'application/json',
+                '.css': 'text/css',
+                '.html': 'text/html',
+                '.png': 'image/png',
+                '.jpg': 'image/jpeg',
+                '.svg': 'image/svg+xml'
+            };
+            
+            console.log('SERVING:', filePath, 'as', contentTypes[ext]);
+            res.writeHead(200, { 'Content-Type': contentTypes[ext] || 'application/octet-stream' });
+            res.end(content);
+        } catch (error) {
+            console.log('ERROR serving static file:', error);
             res.writeHead(404, { 'Content-Type': 'text/plain' });
             res.end('Not Found');
         }

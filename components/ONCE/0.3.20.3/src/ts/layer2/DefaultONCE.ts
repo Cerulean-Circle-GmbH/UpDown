@@ -880,13 +880,8 @@ export class DefaultONCE implements ONCE {
       console.log('✅ Test sequence completed successfully');
       console.log('');
       
-      // Final cleanup
-      console.log('🧹 Cleaning up...');
-      for (const client of clientServers) {
-        await client.stopServer().catch(() => {});
-      }
-      await this.stopServer().catch(() => {});
-      console.log('✅ Cleanup completed');
+      // DON'T cleanup - leave server running for verification
+      // Cleanup only happens on 'q' command or error
       
     } catch (error) {
       console.error(`❌ Test sequence failed: ${error instanceof Error ? error.message : String(error)}`);
