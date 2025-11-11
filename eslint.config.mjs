@@ -45,6 +45,10 @@ export default [
           selector: 'MemberExpression[object.name="exports"]',
           message: '🚫 CommonJS exports is PROHIBITED. Use ES module export instead.',
         },
+        {
+          selector: 'Identifier[name=/^_/]',
+          message: '🚫 Underscore prefix (_) is PROHIBITED. Unused variables must be removed, not prefixed. TRUE Radical OOP: If it exists, it must be used.',
+        },
       ],
 
       // ═══════════════════════════════════════════════════════════════════
