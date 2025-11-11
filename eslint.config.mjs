@@ -46,8 +46,8 @@ export default [
           message: '🚫 CommonJS exports is PROHIBITED. Use ES module export instead.',
         },
         {
-          selector: 'Identifier[name=/^_/]',
-          message: '🚫 Underscore prefix (_) is PROHIBITED. Unused variables must be removed, not prefixed. TRUE Radical OOP: If it exists, it must be used.',
+          selector: 'Identifier[name=/_/]',
+          message: '🚫 Underscore in ANY identifier is PROHIBITED. Web4 naming: camelCase/PascalCase only. No snake_case, no _prefix, no suffix_. TRUE Radical OOP: Clean naming reflects clear thinking.',
         },
       ],
 
@@ -64,6 +64,27 @@ export default [
         {
           name: '__filename',
           message: '🚫 __filename is PROHIBITED. Use import.meta.url instead.',
+        },
+      ],
+
+      // ═══════════════════════════════════════════════════════════════════
+      // 🎯 Tech Stack: BANNED Frameworks
+      // @pdca 2025-11-11-UTC-1007.pdca.md
+      // Jest is BANNED - Use Vitest (ESM-native, TypeScript-first)
+      // ═══════════════════════════════════════════════════════════════════
+      'no-restricted-imports': [
+        'error',
+        {
+          name: 'jest',
+          message: '🚫 Jest is BANNED. Use Vitest instead: import { describe, it, expect } from "vitest". Reason: Poor ESM support, legacy CJS patterns.',
+        },
+        {
+          name: '@jest/globals',
+          message: '🚫 Jest is BANNED. Use Vitest instead: import { describe, it, expect } from "vitest". Reason: Poor ESM support, legacy CJS patterns.',
+        },
+        {
+          name: 'ts-jest',
+          message: '🚫 ts-jest is BANNED. Use Vitest with native TypeScript support. Reason: Legacy CJS patterns, slow migration.',
         },
       ],
 
