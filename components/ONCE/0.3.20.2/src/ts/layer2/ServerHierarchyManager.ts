@@ -42,9 +42,9 @@ export class ServerHierarchyManager {
             uuid: uuidv4(),
             pid: process.pid,
             state: LifecycleState.CREATED,
-            platform: { platform: 'node', version: process.version, capabilities: [], isOnline: true },  // Will be updated in startServer
+            platform: this.detectEnvironment(),
             domain: ONCE_DEFAULT_CONFIG.DEFAULT_DOMAIN,
-            host: 'localhost',  // Will be updated in startServer
+            host: this.detectHostname(),
             ip: ONCE_DEFAULT_CONFIG.DEFAULT_IP,
             capabilities: [],
             isPrimaryServer: false
@@ -56,10 +56,6 @@ export class ServerHierarchyManager {
      */
     async startServer(): Promise<void> {
         this.serverModel.state = LifecycleState.STARTING;
-        
-        // ✅ Update environment and hostname asynchronously
-        this.serverModel.platform = await this.detectEnvironment();
-        this.serverModel.host = await this.detectHostname();
 
         try {
             // Get next available port (42777 or 8080+)
@@ -686,28 +682,24 @@ export class ServerHierarchyManager {
 
     /**
      * Detect current environment
-     * ✅ TRUE Radical OOP: Async for hostname detection
-     * @pdca 2025-11-10-UTC-2115.migrate-commonjs-to-esm.pdca.md
      */
-    private async detectEnvironment(): Promise<any> {
+    private detectEnvironment(): any {
         return {
             platform: 'node',
             version: process.version,
             capabilities: ['server', 'websocket', 'p2p'],
             isOnline: true,
-            hostname: await this.detectHostname(),
+            hostname: this.detectHostname(),
             ip: ONCE_DEFAULT_CONFIG.DEFAULT_IP
         };
     }
 
     /**
-     * Detect hostname without environment variables
-     * ✅ TRUE Radical OOP: Modern ES modules with dynamic import
-     * @pdca 2025-11-10-UTC-2115.migrate-commonjs-to-esm.pdca.md
+     * Detect hostname
      */
-    private async detectHostname(): Promise<string> {
+    private detectHostname(): string {
         try {
-            const os = await import('os');
+            const os = require('os');
             return os.hostname();
         } catch {
             return 'localhost';

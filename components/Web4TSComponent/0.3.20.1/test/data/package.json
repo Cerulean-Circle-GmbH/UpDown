@@ -1,0 +1,6 @@
+{
+  "name": "web4-test-isolation",
+  "version": "0.3.19.1",
+  "type": "module",
+  "description": "Test isolation environment - NOT production!"
+}

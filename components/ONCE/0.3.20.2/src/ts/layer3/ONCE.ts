@@ -44,10 +44,8 @@ export interface ONCE {
     /**
      * Get current environment information
      * Detects: Browser, Node.js, Worker, ServiceWorker, PWA, iframe
-     * ✅ TRUE Radical OOP: Async for hostname detection
-     * @pdca 2025-11-10-UTC-2115.migrate-commonjs-to-esm.pdca.md
      */
-    getEnvironment(): Promise<EnvironmentInfo>;
+    getEnvironment(): EnvironmentInfo;
 
     /**
      * Register component for discovery
