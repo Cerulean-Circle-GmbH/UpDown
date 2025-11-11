@@ -1886,12 +1886,24 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
   /**
    * Check if a parameter has a completion method
    * Web4 pattern: Parameters with completion methods get intelligent tab completion
+   * ✅ FIXED: Check both CLI and component for completion methods
+   * @pdca 2025-11-10-UTC-2100.fix-parameter-completion-detection.pdca.md
    */
   private hasParameterCompletion(parameterName: string): boolean {
     const completionMethodName = `${parameterName}ParameterCompletion`;
 
-    // Check if the completion method exists on this class instance
-    return typeof (this as any)[completionMethodName] === "function";
+    // Check if the completion method exists on this CLI instance
+    if (typeof (this as any)[completionMethodName] === "function") {
+      return true;
+    }
+    
+    // ✅ ALSO check if the completion method exists on the component
+    // Component-level completion methods are valid (e.g., modeParameterCompletion on DefaultONCE)
+    if (this.component && typeof (this.component as any)[completionMethodName] === "function") {
+      return true;
+    }
+    
+    return false;
   }
 
   /**
