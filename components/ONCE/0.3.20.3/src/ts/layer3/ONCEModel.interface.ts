@@ -8,6 +8,39 @@ import { Scenario } from './Scenario.js';
 import { LifecycleEventType, LifecycleEventHandler } from './LifecycleEvents.js';
 import { ONCEServerModel } from './ONCEServerModel.js';
 
+/**
+ * Web4 Scenario Message - TRUE Radical OOP Message Format
+ * @pdca 2025-11-11-UTC-2322.pdca.md - Automated multi-server demo
+ */
+export interface ONCEScenarioMessage {
+  uuid: string;
+  component: 'ONCE';
+  version: '0.3.20.3';
+  data: {
+    type: 'broadcast' | 'relay' | 'p2p';
+    from: { uuid: string; port: number };
+    to: { uuid: string; port: number } | 'all';
+    content: string;
+    timestamp: string;
+    sequence: number;
+  };
+}
+
+/**
+ * Message Tracker - Model-driven message tracking (TRUE Radical OOP)
+ * @pdca 2025-11-11-UTC-2322.pdca.md - No private state, all in model
+ */
+export interface ONCEMessageTracker {
+  sent: ONCEScenarioMessage[];
+  received: ONCEScenarioMessage[];
+  acknowledged: string[]; // UUIDs of acknowledged messages
+  patterns: {
+    broadcast: number;
+    relay: number;
+    p2p: number;
+  };
+}
+
 export interface ONCEModel extends Model {
   uuid: string;
   name: string;
@@ -42,4 +75,8 @@ export interface ONCEModel extends Model {
   scenario?: Scenario;                             // Current ONCE scenario
   serverModel?: ONCEServerModel;                   // Server model for hierarchy
   eventHandlers?: Map<LifecycleEventType, LifecycleEventHandler[]>; // Lifecycle event handlers
+  
+  // 📨 Message Exchange Properties - TRUE Radical OOP
+  // @pdca 2025-11-11-UTC-2322.pdca.md - Model-driven message tracking
+  messageTracker?: ONCEMessageTracker;             // All message tracking in model
 }

@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import { ONCEScenarioMessage } from '../layer3/ONCEModel.interface.js';
 
 /**
  * Server registry entry for primary server
@@ -327,9 +328,69 @@ export class ServerHierarchyManager {
                     await this.handleServerDiscovery(ws, message.query);
                 }
                 break;
+            case 'scenario-message':
+                // @pdca 2025-11-11-UTC-2322.pdca.md - Handle incoming scenario messages
+                await this.handleScenarioMessage(message.scenario);
+                break;
+            case 'scenario-relay':
+                // @pdca 2025-11-11-UTC-2322.pdca.md - Relay message to target
+                if (this.serverModel.isPrimaryServer) {
+                    this.relayScenario(message.scenario, message.targetUUID);
+                }
+                break;
             default:
                 console.log('🔄 Unknown WebSocket message type:', message.type);
         }
+    }
+
+    /**
+     * Handle incoming scenario message
+     * @pdca 2025-11-11-UTC-2322.pdca.md - Process and track received scenarios
+     */
+    private async handleScenarioMessage(scenario: ONCEScenarioMessage): Promise<void> {
+        console.log(`📥 Received scenario ${scenario.uuid} from ${scenario.data.from.uuid}`);
+        console.log(`   Type: ${scenario.data.type}`);
+        console.log(`   Content: ${scenario.data.content}`);
+        console.log(`   Sequence: ${scenario.data.sequence}`);
+        
+        // Send acknowledgment
+        const ackScenario: ONCEScenarioMessage = {
+            uuid: uuidv4(),
+            component: 'ONCE',
+            version: '0.3.20.3',
+            data: {
+                type: scenario.data.type,
+                from: { uuid: this.serverModel.uuid, port: this.getHttpPort() },
+                to: scenario.data.from,
+                content: `ACK: ${scenario.uuid}`,
+                timestamp: new Date().toISOString(),
+                sequence: 0
+            }
+        };
+
+        // Send ack back to sender
+        if (scenario.data.from.port) {
+            try {
+                const ackConnection = new WebSocket(`ws://localhost:${scenario.data.from.port}`);
+                ackConnection.on('open', () => {
+                    ackConnection.send(JSON.stringify({
+                        type: 'scenario-message',
+                        scenario: ackScenario
+                    }));
+                    ackConnection.close();
+                });
+            } catch (error) {
+                console.log(`⚠️  Failed to send acknowledgment to ${scenario.data.from.port}`);
+            }
+        }
+    }
+
+    /**
+     * Get HTTP port from server model
+     */
+    private getHttpPort(): number {
+        const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
+        return httpCapability?.port || 0;
     }
 
     /**
@@ -564,6 +625,85 @@ export class ServerHierarchyManager {
             return [];
         }
         return Array.from(this.serverRegistry.values()).map(entry => entry.model);
+    }
+
+    /**
+     * Broadcast scenario message to all registered clients
+     * @pdca 2025-11-11-UTC-2322.pdca.md - Automated multi-server demo
+     */
+    broadcastScenario(scenario: ONCEScenarioMessage): void {
+        if (!this.serverModel.isPrimaryServer) {
+            console.log('⚠️  Only primary server can broadcast');
+            return;
+        }
+
+        console.log(`📡 Broadcasting scenario ${scenario.uuid} to ${this.serverRegistry.size} clients`);
+        
+        for (const [uuid, entry] of this.serverRegistry.entries()) {
+            if (entry.websocket && entry.websocket.readyState === WebSocket.OPEN) {
+                entry.websocket.send(JSON.stringify({
+                    type: 'scenario-message',
+                    scenario: scenario
+                }));
+            }
+        }
+    }
+
+    /**
+     * Relay scenario message from one client through primary to another client
+     * @pdca 2025-11-11-UTC-2322.pdca.md - Hub-and-spoke pattern
+     */
+    relayScenario(scenario: ONCEScenarioMessage, targetUUID: string): void {
+        if (!this.serverModel.isPrimaryServer) {
+            // Client sends to primary for relay
+            if (this.primaryServerConnection && this.primaryServerConnection.readyState === WebSocket.OPEN) {
+                console.log(`🔄 Relaying scenario ${scenario.uuid} via primary to ${targetUUID}`);
+                this.primaryServerConnection.send(JSON.stringify({
+                    type: 'scenario-relay',
+                    scenario: scenario,
+                    targetUUID: targetUUID
+                }));
+            }
+            return;
+        }
+
+        // Primary relays to target
+        const target = this.serverRegistry.get(targetUUID);
+        if (target && target.websocket && target.websocket.readyState === WebSocket.OPEN) {
+            console.log(`🔄 Primary relaying scenario ${scenario.uuid} to ${targetUUID}`);
+            target.websocket.send(JSON.stringify({
+                type: 'scenario-message',
+                scenario: scenario
+            }));
+        } else {
+            console.log(`⚠️  Target ${targetUUID} not found or not connected`);
+        }
+    }
+
+    /**
+     * Send scenario directly to peer (P2P)
+     * @pdca 2025-11-11-UTC-2322.pdca.md - Direct peer-to-peer
+     */
+    sendScenarioToPeer(scenario: ONCEScenarioMessage, peerPort: number): void {
+        try {
+            const wsUrl = `ws://localhost:${peerPort}`;
+            const peerConnection = new WebSocket(wsUrl);
+
+            peerConnection.on('open', () => {
+                console.log(`🔗 P2P connection established to port ${peerPort}`);
+                peerConnection.send(JSON.stringify({
+                    type: 'scenario-message',
+                    scenario: scenario
+                }));
+                peerConnection.close();
+            });
+
+            peerConnection.on('error', (error) => {
+                console.log(`⚠️  P2P connection to ${peerPort} failed:`, error.message);
+            });
+        } catch (error) {
+            console.log(`⚠️  Failed to create P2P connection to ${peerPort}`);
+        }
     }
 
     /**
