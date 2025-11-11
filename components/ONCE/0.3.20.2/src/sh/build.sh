@@ -4,11 +4,19 @@
 # Usage: ./build.sh [verbose|silent] [force] [nolint]
 #        ./build.sh force [verbose|silent]
 #        ./build.sh nolint
+# Note: Linting only runs on explicit builds (when arguments are provided)
 
 # Parse flags (support any order)
 VERBOSE=false
 FORCE=false
 NOLINT=false
+EXPLICIT_BUILD=false
+
+# Check if any arguments were provided (explicit build)
+if [ $# -gt 0 ]; then
+    EXPLICIT_BUILD=true
+fi
+
 for arg in "$@"; do
     case "$arg" in
         verbose) VERBOSE=true ;;
@@ -20,7 +28,7 @@ done
 
 if [ "$FORCE" = "true" ]; then
     if [ "$VERBOSE" = "true" ]; then
-        echo "🔧 Force building {{COMPONENT_NAME}}..."
+        echo "🔧 Force building ONCE..."
     fi
     # Clean everything
     ./src/sh/clean.sh
@@ -31,11 +39,11 @@ if [ "$FORCE" = "true" ]; then
         echo "🔨 Building TypeScript..."
     fi
     npx tsc --traceResolution --extendedDiagnostics
-elif [ ! -f "dist/ts/layer5/{{COMPONENT_NAME}}CLI.js" ] || find src -name "*.ts" -newer "dist/ts/layer5/{{COMPONENT_NAME}}CLI.js" 2>/dev/null | grep -q .; then
+elif [ ! -f "dist/ts/layer5/ONCECLI.js" ] || find src -name "*.ts" -newer "dist/ts/layer5/ONCECLI.js" 2>/dev/null | grep -q .; then
     if [ "$VERBOSE" = "true" ]; then
-        echo "🔧 Smart building {{COMPONENT_NAME}} (changes detected)..."
+        echo "🔧 Smart building ONCE (changes detected)..."
     else
-        echo "✅ Building {{COMPONENT_NAME}}..." >&2
+        echo "✅ Building ONCE..." >&2
     fi
     
     # Clean local artifacts only
@@ -52,7 +60,8 @@ elif [ ! -f "dist/ts/layer5/{{COMPONENT_NAME}}CLI.js" ] || find src -name "*.ts"
     
     # Run ESLint before building (Radical OOP enforcement)
     # @pdca 2025-11-11-UTC-0806.implement-radical-oop-eslint.pdca.md
-    if [ "$NOLINT" = "false" ]; then
+    # Only run linting on explicit builds (not on auto-rebuild)
+    if [ "$EXPLICIT_BUILD" = "true" ] && [ "$NOLINT" = "false" ]; then
         if [ "$VERBOSE" = "true" ]; then
             echo "🔍 Running ESLint to enforce TRUE Radical OOP..."
             npx eslint 'src/**/*.ts' --max-warnings 0
@@ -73,10 +82,12 @@ elif [ ! -f "dist/ts/layer5/{{COMPONENT_NAME}}CLI.js" ] || find src -name "*.ts"
         if [ "$VERBOSE" = "true" ]; then
             echo "✅ ESLint passed - TRUE Radical OOP compliance verified"
         fi
-    else
+    elif [ "$EXPLICIT_BUILD" = "true" ] && [ "$NOLINT" = "true" ]; then
         if [ "$VERBOSE" = "true" ]; then
             echo "⏭️  Skipping ESLint (nolint flag set)"
         fi
+    elif [ "$EXPLICIT_BUILD" = "false" ] && [ "$VERBOSE" = "true" ]; then
+        echo "⏭️  Skipping ESLint (auto-rebuild, not explicit build)"
     fi
     
     # Build TypeScript
@@ -88,6 +99,6 @@ elif [ ! -f "dist/ts/layer5/{{COMPONENT_NAME}}CLI.js" ] || find src -name "*.ts"
     fi
 else
     if [ "$VERBOSE" = "true" ]; then
-        echo "✅ {{COMPONENT_NAME}} is up to date, no build needed"
+        echo "✅ ONCE is up to date, no build needed"
     fi
 fi
