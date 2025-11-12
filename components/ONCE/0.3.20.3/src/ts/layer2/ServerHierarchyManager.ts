@@ -36,6 +36,7 @@ export class ServerHierarchyManager {
     private portManager: PortManager;
     private serverRegistry: Map<string, ServerRegistryEntry> = new Map();
     private primaryServerConnection?: WebSocket;
+    component?: any; // Backward link to DefaultONCE for path authority
 
     constructor() {
         this.portManager = PortManager.getInstance();
@@ -373,11 +374,15 @@ export class ServerHierarchyManager {
     }
 
     private get projectRoot(): string {
-        // Path authority: derive project root from component path
-        // Component is at: projectRoot/components/ONCE/{version}/...
+        // Path authority: Use backward link to component instance if available
+        if (this.component?.model?.projectRoot) {
+            return this.component.model.projectRoot;
+        }
+        
+        // Fallback: derive from component path
+        // From dist/ts/layer2/, go up 7 levels: layer2 -> ts -> dist -> 0.3.20.3 -> ONCE -> components -> UpDown
         const dirname = path.dirname(fileURLToPath(import.meta.url));
-        const match = dirname.match(/(.+)\/components\/ONCE\/\d+\.\d+\.\d+\.\d+/);
-        return match ? match[1] : process.cwd();
+        return path.resolve(dirname, '../../../../../../');
     }
 
     /**

@@ -8,11 +8,18 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 describe('Server Lifecycle Management', () => {
-    // Scenarios are stored in project root, not component root
-    const projectRoot = path.resolve(__dirname, '../../../..');
-    const scenarioBaseDir = path.join(projectRoot, 'scenarios/local.once/ONCE/0.3.20.3');
+    // Scenarios are stored in project root - use path authority from DefaultONCE instance
+    let testProjectRoot: string;
+    let scenarioBaseDir: string;
     
-    beforeEach(() => {
+    beforeEach(async () => {
+        // Get project root from DefaultONCE path authority (TRUE Radical OOP)
+        const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+        const tempInstance = new DefaultONCE();
+        await tempInstance.init();
+        testProjectRoot = tempInstance.model.projectRoot;
+        scenarioBaseDir = path.join(testProjectRoot, 'scenarios/local.once/ONCE/0.3.20.3');
+        
         // Clean up any existing test scenarios
         if (fs.existsSync(scenarioBaseDir)) {
             fs.rmSync(scenarioBaseDir, { recursive: true, force: true });

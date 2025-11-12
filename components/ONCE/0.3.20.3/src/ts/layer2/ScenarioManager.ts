@@ -6,7 +6,7 @@
 import { Scenario } from '../layer3/Scenario.js';
 import { ONCEServerModel } from '../layer3/ONCEServerModel.js';
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
-import { join, dirname } from 'path';
+import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
 /**
@@ -15,6 +15,7 @@ import { fileURLToPath } from 'url';
  */
 export class ScenarioManager {
     private _projectRoot: string | undefined;
+    component?: any; // Backward link to DefaultONCE for path authority
 
     constructor(projectRoot?: string) {
         // Allow explicit projectRoot override, otherwise derive from component path
@@ -25,15 +26,21 @@ export class ScenarioManager {
      * Get project root - derive from component path if not explicitly set
      */
     private get projectRoot(): string {
+        // Explicit override takes precedence
         if (this._projectRoot) {
             return this._projectRoot;
         }
         
-        // Path authority: derive project root from component path
-        // Component is at: projectRoot/components/ONCE/{version}/...
+        // Path authority: Use backward link to component instance if available
+        if (this.component?.model?.projectRoot) {
+            return this.component.model.projectRoot;
+        }
+        
+        // Fallback: derive from component path
+        // From dist/ts/layer2/, go up 7 levels: layer2 -> ts -> dist -> 0.3.20.3 -> ONCE -> components -> UpDown
         const currentFile = fileURLToPath(import.meta.url);
-        const match = currentFile.match(/(.+)\/components\/ONCE\/\d+\.\d+\.\d+\.\d+/);
-        return match ? match[1] : process.cwd();
+        const currentDir = dirname(currentFile);
+        return resolve(currentDir, '../../../../../../');
     }
 
     /**

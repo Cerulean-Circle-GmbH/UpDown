@@ -69,7 +69,9 @@ export class DefaultONCE implements ONCE {
     
     // Initialize managers (domain logic from 0.2.0.0)
     this.serverHierarchyManager = new ServerHierarchyManager();
-    this.scenarioManager = new ScenarioManager(); // Will use projectRoot from model after init
+    this.serverHierarchyManager.component = this; // Backward link for path authority
+    this.scenarioManager = new ScenarioManager();
+    this.scenarioManager.component = this; // Backward link for path authority
     
     // Discover methods for CLI (must be called in constructor for CLI to work)
     this.discoverMethods();
