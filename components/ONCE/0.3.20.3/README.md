@@ -1,680 +1,540 @@
-# ONCE v0.3.20.0
+# ONCE v0.3.20.3 - Component Documentation
 
-**Object Network Communication Engine**
+## Overview
 
-A sophisticated Web4 component for P2P communication, server hierarchy management, and scenario-based configuration with TRUE Radical OOP architecture.
+ONCE (Open Network Communication Engine) is a TRUE Radical OOP Web4 component implementing a hierarchical server architecture with automatic discovery, graceful lifecycle management, and real-time message exchange capabilities.
 
-## 🎯 Overview
+## Architecture
 
-ONCE (Object Network Communication Engine) is an enhanced Web4 component that provides:
+### Core Principles
 
-- **Server Hierarchy** - Automatic primary (port 42777) and client (8080+) server management
-- **Scenario-Based Configuration** - Zero environment variables, pure scenario-driven setup
-- **Lifecycle Events** - Complete event-driven component lifecycle management
-- **P2P Communication** - WebSocket-based server-to-server communication
-- **TRUE Radical OOP** - Model-driven state, method chaining, auto-discovered CLI
+1. **TRUE Radical OOP**: All state is model-driven, no private properties, method chaining
+2. **Scenario-Based State**: All server state persists as Web4 scenarios on filesystem
+3. **Hierarchical Servers**: Primary server (port 42777) + client servers (ports 8080+)
+4. **Automatic Discovery**: Primary server discovers and manages all client servers
+5. **Graceful Lifecycle**: Servers update scenarios before shutdown for housekeeping
 
-## 📦 Installation
+## Component Structure
 
-ONCE is a Web4TSComponent that follows the standard component architecture:
-
-```bash
-# Component is already installed at:
-# components/ONCE/0.3.20.0/
-
-# Access via symlink:
-once
-
-# Or via full path:
-./components/ONCE/0.3.20.0/once
-
-# Tab completion (interactive discovery):
-once <Tab>
+```
+ONCE/0.3.20.3/
+├── src/
+│   ├── ts/
+│   │   ├── layer2/
+│   │   │   ├── DefaultONCE.ts           # Main component + CLI commands
+│   │   │   ├── ServerHierarchyManager.ts # HTTP/WS servers, registration, routing
+│   │   │   ├── PortManager.ts           # Port allocation (42777, 8080+)
+│   │   │   └── ScenarioManager.ts       # Scenario persistence
+│   │   ├── layer3/
+│   │   │   ├── ONCE.ts                  # Base class
+│   │   │   ├── ONCEServerModel.ts       # Server state model
+│   │   │   └── LifecycleEvents.ts       # State enum (STARTING, RUNNING, SHUTDOWN, etc.)
+│   │   └── layer5/
+│   │       └── ONCECLI.ts               # CLI entry point
+│   ├── view/html/
+│   │   ├── demo-hub.html                # Live server status dashboard
+│   │   ├── server-status.html           # Simple server info page
+│   │   └── once-client.html             # Interactive WebSocket client
+│   └── sh/
+│       └── build.sh                     # Build script
+├── test/
+│   ├── browser-broadcast.test.ts        # End-to-end broadcast tests
+│   └── lifecycle-management.test.ts     # Housekeeping + shutdown tests
+└── scenarios/                           # Persisted server state (gitignored in production)
 ```
 
-## 🔍 Discovering Commands (The Web4 Way)
+## Server Lifecycle
 
-### Why There's No `--help` Flag
+### 1. Server Startup (`DefaultONCE.startServer()`)
 
-**ONCE follows Web4 CLI standards: no flags at all.** No `--help`, no `--version`, no `-v`.
-
-**Instead, just run the command:**
-
-```bash
-once
+**Flow:**
+```
+DefaultONCE.startServer()
+  → ServerHierarchyManager.startServer()
+    → PortManager.getNextAvailablePort()
+      → Returns { port: 42777, isPrimary: true } OR { port: 8080+, isPrimary: false }
+    → startHttpServer(port)
+    → startWebSocketServer()
+    → IF isPrimary:
+        → performHousekeeping()  # ← PRIMARY ONLY
+    → ELSE:
+        → registerWithPrimaryServer()
+    → loadOrCreateScenario()
 ```
 
-This shows **ALL available commands** with:
-- ✅ Full method signatures
-- ✅ Parameter types and defaults
-- ✅ Command descriptions
-- ✅ Usage examples
-- ✅ Parameter completion status
+**Key Files:**
+- `DefaultONCE.ts:startServer()` - Entry point
+- `ServerHierarchyManager.ts:startServer()` - Server creation
+- `ServerHierarchyManager.ts:performHousekeeping()` - Cleanup on primary startup
 
-### Understanding Parameter Syntax
+### 2. Primary Server Housekeeping (`performHousekeeping()`)
 
-Web4 uses a **visual notation** for parameters:
+**Triggered:** On primary server startup only
 
-| Notation | Meaning | Example |
-|----------|---------|---------|
-| `<param>` | **Required** parameter | `<sequence>` |
-| `<?param>` | **Optional** parameter | `<?mode>` |
-| `<?param:'value'>` | Optional with **default** | `<?mode:'interactive'>` |
-| `!<param>` | **No tab completion** available | `!<scenario>` |
+**What it does:**
+1. Scans `scenarios/local.once/ONCE/0.2.0.0/**/*.scenario.json`
+2. For each scenario:
+   - If `state.state === 'shutdown'` → **DELETE** scenario
+   - If `state.state === 'running'` → Try HTTP health check to port
+     - If reachable → Log "discovered"
+     - If unreachable → **DELETE** scenario (stale)
 
-**The `!` prefix** means the parameter completion method isn't implemented. You'll need to provide the value manually.
+**Why:** Cleans up shutdown servers and crashed servers on restart
 
-### Interactive Discovery with Tab Completion
+**Location:** `ServerHierarchyManager.ts:performHousekeeping()`
 
-**The BEST way to learn:** Use tab completion!
+### 3. Client Registration (`registerWithPrimaryServer()`)
 
-```bash
-# Press Tab to see all commands
-once <Tab>
-
-# Type partial name + Tab
-once start<Tab>
-# Completes to: startServer
-
-# Tab completion for parameter values
-once demo <Tab>
-# Shows: interactive, headless, browser-only
-
-once testInput <Tab>
-# Shows: s2mq, s1c1dq, s3bc2q, s1bc1k1q, s2b2c1d1e1q
+**Flow:**
+```
+Client: registerWithPrimaryServer()
+  → WebSocket.connect('ws://localhost:42777')
+  → Send { type: 'register', model: ONCEServerModel }
+  
+Primary: handleWebSocketMessage({ type: 'register', ... })
+  → serverRegistry.set(uuid, { model, websocket })
+  → Send { type: 'registration-confirmed', primaryServerModel }
+  
+Client: Receives confirmation
+  → Update model.primaryServerIOR
+  → Set state to REGISTERED
 ```
 
-### Method-Specific Help
+**Key Methods:**
+- `ServerHierarchyManager.ts:registerWithPrimaryServer()` - Client side
+- `ServerHierarchyManager.ts:handleWebSocketMessage()` - Primary side (case 'register')
 
-Want details about a specific command?
+### 4. HTTP Server Routes (`handleHttpRequest()`)
 
-```bash
-# Just run once (no args) and search the output
-once | grep -A 3 "demo"
+**Primary Server Routes:**
 
-# Or check the parameter documentation
-once | grep -A 5 "mode"
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/` | GET | Server status page (uses `server-status.html` template) |
+| `/once` | GET | Interactive client (uses `once-client.html` template) |
+| `/demo` | GET | Live server dashboard (uses `demo-hub.html` template) |
+| `/servers` | GET | JSON list of registered clients |
+| `/start-server` | POST | Spawn new client server via `exec()` |
+| `/health` | GET | JSON health check |
+| `/dist/*` | GET | Static files from `dist/` |
+| `/src/*` | GET | Static files from `src/` |
+
+**Client Server Routes:**
+- Same as primary, but `/servers` only returns empty list
+- `/demo` shows primary + all clients with auto-refresh
+
+**Template Rendering:**
+- Uses `new Function('return \`...\`').call(this)` pattern
+- Native JS template literals `${this.property}` with Radical OOP `this` context
+- Templates loaded synchronously from `src/view/html/`
+
+**Location:** `ServerHierarchyManager.ts:handleHttpRequest()`
+
+### 5. WebSocket Message Routing (`handleWebSocketMessage()`)
+
+**Message Types:**
+
+#### `register` (Client → Primary)
+```typescript
+{ type: 'register', model: ONCEServerModel }
 ```
+→ Primary adds to `serverRegistry`
+→ Responds with `registration-confirmed`
 
-### The Web4 Philosophy
-
-**"Code is documentation. Let the component tell you what it can do."**
-
-- **No flags** → Simplicity
-- **Auto-discovery** → Always current
-- **Tab completion** → Interactive learning
-- **Natural language** → Readable commands
-- **Method chaining** → Fluent API
-
-**This is Radical OOP applied to CLI design.** The component's methods ARE the commands.
-
----
-
-## 🚀 Quick Start
-
-### Interactive Demo
-
-Launch the full interactive demo with browser auto-opening:
-
-```bash
-once demo
-```
-
-This will:
-- Start the ONCE server (primary on port 42777 or client on 8080+)
-- Open your browser to http://localhost:42777
-- Show all available endpoints
-- Wait for Ctrl+C to stop
-
-### Headless Server
-
-Run the server without browser interaction:
-
-```bash
-once demo headless
-```
-
-### Automated Testing
-
-Run automated test sequences (non-interactive):
-
-```bash
-# Simple test: start, wait 2s, show metrics, quit
-once testInput "s2mq"
-
-# With client server: start, wait, launch client, discover, quit
-once testInput "s1c1dq"
-
-# Complex: start, wait, browser, client, wait, quit
-once testInput "s3bc2q"
-```
-
-## 📖 Core Concepts
-
-### Server Hierarchy
-
-ONCE implements a sophisticated server hierarchy:
-
-- **Primary Server (Port 42777)**: Acts as name server/registry
-  - First instance to start becomes primary
-  - Maintains registry of all client servers
-  - Provides `/servers` endpoint to list all instances
-
-- **Client Servers (Port 8080+)**: Automatically register with primary
-  - Subsequent instances become clients
-  - Automatic port conflict resolution (8080, 8081, 8082...)
-  - WebSocket connection to primary for registration
-
-```bash
-# Terminal 1: Start primary server
-once startServer
-# 🟢 Started as PRIMARY SERVER on port 42777
-
-# Terminal 2: Start client server
-once startServer
-# 🔵 Started as CLIENT SERVER on port 8080
-# ✅ Registration confirmed with primary server
-```
-
-### Scenario-Based Configuration
-
-ONCE uses scenarios for configuration (no environment variables):
-
-```bash
-# Start with scenario file
-once startServer production.scenario.json
-
-# Scenario format:
+#### `scenario-message` (Broadcast)
+```typescript
 {
-  "uuid": "unique-id",
-  "objectType": "ONCE",
-  "version": "0.2.0.0",
-  "state": { /* server configuration */ },
-  "metadata": {
-    "domain": "local.once",
-    "host": "localhost",
-    "isPrimaryServer": true
-  }
+  type: 'scenario-message',
+  scenario: ONCEScenarioMessage,
+  fromPrimary?: boolean  // ← CRITICAL FLAG
 }
 ```
 
-Scenarios are automatically saved to organized directories:
-```
-scenarios/
-  local.once/
-    ONCE/
-      0.2.0.0/
-        capability/
-          httpPort/
-            42777/
-              {uuid}.scenario.json
-```
+**Broadcast Flow:**
+1. **Browser → Client Server:**
+   - Browser sends broadcast via WebSocket
+   - Client receives, sees `fromPrimary` is undefined/false
+   - Client forwards to primary via `primaryServerConnection.send()`
 
-### Lifecycle Events
+2. **Primary → All Clients:**
+   - Primary receives from client
+   - Primary calls `broadcastScenario(scenario)`
+   - Sends to ALL registered clients with `fromPrimary: true`
 
-Subscribe to server lifecycle events:
+3. **Client → Browser:**
+   - Client receives message with `fromPrimary: true`
+   - Client calls `broadcastToBrowserClients(scenario)`
+   - Sends to ALL browser WebSocket clients on this server
 
+**Key Methods:**
+- `ServerHierarchyManager.ts:handleWebSocketMessage()` - Router
+- `ServerHierarchyManager.ts:broadcastScenario()` - Primary → Clients
+- `ServerHierarchyManager.ts:broadcastToBrowserClients()` - Client → Browsers
+
+#### `scenario-relay` (Primary relays to specific client)
 ```typescript
-import { DefaultONCE } from './components/ONCE/0.3.20.0/dist/ts/layer2/DefaultONCE.js';
-import { LifecycleEventType } from './components/ONCE/0.3.20.0/dist/ts/layer3/LifecycleEvents.js';
+{
+  type: 'scenario-relay',
+  scenario: ONCEScenarioMessage,
+  targetUuid: string
+}
+```
+→ Primary finds client by UUID, forwards message
 
-const once = new DefaultONCE();
-await once.init();
+#### `scenario-p2p` (Direct peer-to-peer)
+```typescript
+{
+  type: 'scenario-p2p',
+  scenario: ONCEScenarioMessage,
+  targetPort: number
+}
+```
+→ Sender creates direct WebSocket to target port
+→ Sends message directly (no primary relay)
 
-// Register event handlers
-once.on(LifecycleEventType.AFTER_START, (event) => {
-  console.log('Server started:', event.data);
-});
+**Location:** `ServerHierarchyManager.ts:handleWebSocketMessage()`
 
-once.on(LifecycleEventType.SERVER_REGISTRATION, (event) => {
-  console.log('Client registered:', event.data);
-});
+### 6. Graceful Shutdown (`stopServer()`)
 
-await once.startServer();
+**Flow:**
+```
+DefaultONCE.stopServer()
+  → ServerHierarchyManager.stopServer()
+    → Set state to STOPPING
+    → updateScenarioState(STOPPING)  # ← Updates filesystem
+    → Close primaryServerConnection (if client)
+    → Close wsServer
+    → Close httpServer
+      → On close callback:
+        → Set state to SHUTDOWN
+        → updateScenarioState(SHUTDOWN)  # ← Updates filesystem
 ```
 
-## 🎮 Commands
+**Why Two Updates?**
+1. `STOPPING` → Marks server as "shutting down" (in progress)
+2. `SHUTDOWN` → Marks server as "fully stopped" (ready for cleanup)
 
-### Server Management
+Primary server housekeeping deletes scenarios with `state === 'shutdown'`
+
+**Location:** `ServerHierarchyManager.ts:stopServer()`, `updateScenarioState()`
+
+## Testing
+
+### Running Tests
 
 ```bash
-# Start server (automatic port management)
-once startServer
+# All tests
+npm test
 
-# Stop server gracefully
-once stopServer
-
-# Check if primary server
-once isPrimaryServer
-
-# Get all registered servers (primary only)
-once getRegisteredServers
-
-# Get current server model
-once getServerModel
+# Specific test suite
+npx vitest run browser-broadcast.test.ts
+npx vitest run lifecycle-management.test.ts
 ```
 
-### Demo & Testing
+### Test Suites
+
+#### 1. Browser Broadcast Test (`browser-broadcast.test.ts`)
+
+**What it tests:**
+- End-to-end broadcast flow from browser client through server hierarchy
+- Browser on client 8080 sends broadcast
+- Browser on client 8081 receives broadcast
+
+**How it works:**
+1. Starts primary (42777) + 2 clients (8080, 8081)
+2. Connects 2 WebSocket clients (simulating browsers)
+3. Browser1 sends broadcast message
+4. Asserts Browser2 receives the message
+
+**Key Assertion:**
+```typescript
+expect(broadcastReceived).toBeDefined();
+expect(broadcastReceived.scenario.state.type).toBe('broadcast');
+```
+
+#### 2. Lifecycle Management Test (`lifecycle-management.test.ts`)
+
+**Test Cases:**
+
+##### a) Delete Shutdown Scenarios
+- Creates a shutdown scenario manually
+- Starts primary server
+- Asserts scenario was deleted by housekeeping
+
+##### b) Discover Running Client Scenarios
+- Starts client first, then stops it
+- Manually sets scenario back to "running"
+- Starts primary server
+- Asserts stale scenario was deleted (health check failed)
+
+##### c) Graceful Shutdown State Updates
+- Starts server, gets scenario path
+- Stops server
+- Asserts scenario shows `state: 'shutdown'`
+
+##### d) Dynamic Server Addition
+- Starts primary, verifies 0 clients
+- Starts client 1, verifies 1 client registered
+- Starts client 2, verifies 2 clients registered
+
+##### e) Client Disconnect Cleanup
+- Starts primary + client
+- Stops client gracefully
+- Asserts scenario shows `state: 'shutdown'`
+
+##### f) Scenario Persistence Across Restarts
+- Starts server1, stops it (creates shutdown scenario)
+- Starts server2
+- Asserts original shutdown scenario was cleaned up
+
+**All 6 tests pass**
+
+## Common Issues & Fixes
+
+### Issue: Browser doesn't receive broadcasts from other clients
+
+**Symptom:** Client 8080 sends message, but client 8081's browser doesn't receive it
+
+**Root Cause:** `fromPrimary` flag not set correctly, or client not forwarding to browsers
+
+**Fix Location:** `ServerHierarchyManager.ts:handleWebSocketMessage()`
+
+**What to check:**
+1. Client forwards browser messages to primary: `if (!fromPrimary) { send to primary }`
+2. Primary marks messages: `broadcastScenario()` sets `fromPrimary: true`
+3. Client forwards to browsers: `if (fromPrimary) { broadcastToBrowserClients() }`
+
+### Issue: Servers hang on shutdown
+
+**Symptom:** `stopServer()` never completes, process hangs
+
+**Root Cause:** WebSocket connections not closed, or `httpServer.close()` callback never fires
+
+**Fix Location:** `ServerHierarchyManager.ts:stopServer()`
+
+**What to check:**
+1. Close WebSockets BEFORE HTTP server
+2. Use `httpServer.close(callback)` pattern
+3. Ensure callback updates scenario state
+
+### Issue: Port already in use
+
+**Symptom:** "EADDRINUSE" error on startup
+
+**Root Cause:** Previous server didn't shut down cleanly
+
+**Fix:**
+```bash
+# Kill all ONCE servers
+pkill -9 -f ONCECLI
+
+# Or manually
+lsof -ti:42777 | xargs kill -9
+lsof -ti:8080 | xargs kill -9
+```
+
+### Issue: Housekeeping deletes running servers
+
+**Symptom:** Scenarios disappear for active servers
+
+**Root Cause:** Housekeeping health check timing, or HTTP server not responding to `/health`
+
+**Fix Location:** `ServerHierarchyManager.ts:performHousekeeping()`
+
+**What to check:**
+1. Health check timeout (currently 1000ms) might be too short
+2. Ensure `/health` route returns 200 status
+3. Check network connectivity (localhost resolution)
+
+### Issue: Client server doesn't register with primary
+
+**Symptom:** Client starts but doesn't appear in primary's registry
+
+**Root Cause:** WebSocket connection failed, or registration message not sent
+
+**Fix Location:** `ServerHierarchyManager.ts:registerWithPrimaryServer()`
+
+**What to check:**
+1. Primary server is running FIRST
+2. WebSocket connects to correct port (42777)
+3. Registration message includes full `ONCEServerModel`
+4. Primary's WebSocket server is accepting connections
+
+### Issue: Demo hub shows wrong server count
+
+**Symptom:** `/demo` page shows 0 servers or stale data
+
+**Root Cause:** `/servers` endpoint not returning data, or CORS blocking request
+
+**Fix Location:** `ServerHierarchyManager.ts:handleHttpRequest()`
+
+**What to check:**
+1. `/servers` route has CORS headers: `Access-Control-Allow-Origin: *`
+2. Primary server's `serverRegistry` is populated
+3. Browser console shows no CORS errors
+4. Demo hub polls every 3 seconds
+
+## CLI Commands
 
 ```bash
-# Interactive demo (opens browser)
-once demo
+# Start interactive demo (keyboard controls)
+./once demo
 
-# Headless mode (server only)
-once demo headless
+# Start demo with N client servers (automated messages)
+./once demo 2
 
-# Browser-only mode
-once demo browser-only
+# Start single server
+./once startServer
 
-# Automated test sequences
-once testInput "s2mq"          # Start, wait, metrics, quit
-once testInput "s1c1dq"        # Start, client, discover, quit
-once testInput "s3bc2q"        # Start, browser, client, quit
-once testInput "s1bc1k1q"      # Full: start, browser, client, discover, kill, quit
+# Test input (non-interactive)
+./once testInput demo
+
+# Get parameter completions
+./once demo <TAB>
 ```
 
-#### Test Sequence Commands
+## Model-Driven State
 
-| Key | Action | Description |
-|-----|--------|-------------|
-| `s` | Start Server | Starts primary/client server |
-| `b` | Open Browser | Opens browser to server URL |
-| `c` | Launch Client | Starts a client server instance |
-| `d` | Discover Peers | Lists registered servers (primary only) |
-| `e` | Exchange Scenarios | Scenario exchange (placeholder) |
-| `m` | Show Metrics | Displays server metrics |
-| `k` | Kill Processes | Stops all client servers |
-| `q` | Quit | Stops all servers and exits |
-| `0-9` | Wait | Waits N seconds |
-
-### Infrastructure (Delegated to Web4TSComponent)
-
-```bash
-# Component information
-once info
-
-# Run tests
-once test
-
-# Build component
-once build
-
-# Show directory structure
-once tree
-
-# Show version symlinks
-once links
-```
-
-## 🌐 Available Endpoints
-
-When the server is running, these HTTP endpoints are available:
-
-| Endpoint | Description |
-|----------|-------------|
-| `http://localhost:42777/` | Server status page (beautiful UI) |
-| `http://localhost:42777/health` | JSON health check |
-| `http://localhost:42777/once` | Simple ONCE browser client |
-| `http://localhost:42777/servers` | List all servers (primary only) |
-| `ws://localhost:42777/` | WebSocket endpoint for P2P |
-
-## 🏗️ Architecture
-
-### TRUE Radical OOP Pattern
-
-ONCE follows TRUE Radical OOP principles from Web4TSComponent 0.3.20.0:
+All component state lives in `ONCEModel`:
 
 ```typescript
-// ✅ Empty constructor (no initialization)
-constructor() {
-  this.model = { uuid: crypto.randomUUID(), ... };
-  this.serverHierarchyManager = new ServerHierarchyManager();
-  this.scenarioManager = new ScenarioManager();
-  this.discoverMethods(); // For CLI auto-discovery
-}
-
-// ✅ Model-driven state (no private state variables)
-async startServer(): Promise<this> {
-  await this.serverHierarchyManager.startServer();
-  this.model.serverModel = this.serverHierarchyManager.getServerModel();
-  return this; // Method chaining
-}
-
-// ✅ Auto-discovered CLI methods
-async demo(mode: string = 'interactive'): Promise<this> {
-  // Automatically becomes: once demo [mode]
-  return this;
+interface ONCEModel extends Model {
+  initialized: boolean;
+  serverModel?: ONCEServerModel;  // Current server state
+  messageTracker?: {              // Message exchange stats
+    sent: ONCEScenarioMessage[];
+    received: ONCEScenarioMessage[];
+    acknowledged: ONCEScenarioMessage[];
+    patternCounts: {
+      broadcast: number;
+      relay: number;
+      p2p: number;
+    };
+  };
 }
 ```
 
-### Component Delegation
+**NO private properties.** Everything is in the model.
 
-ONCE delegates CLI infrastructure to Web4TSComponent:
-
-```typescript
-// Infrastructure methods delegated (DRY principle)
-async info(topic: string = 'model'): Promise<this> {
-  return this.delegateToWeb4TS('info', topic);
-}
-
-async test(scope: string = 'all', ...references: string[]): Promise<this> {
-  return this.delegateToWeb4TS('test', scope, ...references);
-}
-```
-
-### Layer Architecture
-
-```
-layer5/  - CLI (ONCECLI.ts)
-layer4/  - Utilities (Colors, Completion, TestFileParser)
-layer3/  - Interfaces (ONCE, ONCEServerModel, Scenario, LifecycleEvents, IOR)
-layer2/  - Implementation (DefaultONCE, ServerHierarchyManager, ScenarioManager, PortManager)
-```
-
-## 🔧 Configuration
-
-### Dependencies
-
-ONCE requires these packages (installed at project root for DRY):
+## Scenario Format
 
 ```json
 {
-  "dependencies": {
-    "uuid": "^11.1.0",
-    "ws": "^8.14.2",
-    "@types/uuid": "^10.0.0",
-    "@types/ws": "^8.5.8"
+  "uuid": "de540b72-3fe8-4b8c-9286-8a9be3e6e13e",
+  "objectType": "ONCE",
+  "version": "0.2.0.0",
+  "state": {
+    "pid": 12345,
+    "state": "running",  // ← CRITICAL for housekeeping
+    "platform": { "os": "darwin", "arch": "x64", "hostname": "..." },
+    "domain": "local.once",
+    "host": "...",
+    "ip": "127.0.0.1",
+    "capabilities": [
+      { "capability": "httpPort", "port": 42777 },
+      { "capability": "wsPort", "port": 42777 }
+    ],
+    "uuid": "de540b72-3fe8-4b8c-9286-8a9be3e6e13e",
+    "isPrimaryServer": true
+  },
+  "metadata": {
+    "created": "2025-11-12T10:30:00.000Z",
+    "modified": "2025-11-12T10:30:00.000Z"
   }
 }
 ```
 
-### Server Configuration
+**Stored at:** `scenarios/local.once/ONCE/0.2.0.0/capability/httpPort/{port}/{uuid}.scenario.json`
 
-Default configuration (no environment variables required):
+## Key State Transitions
 
-```typescript
-const ONCE_DEFAULT_CONFIG = {
-  PRIMARY_PORT: 42777,           // Primary server port
-  FALLBACK_PORT_START: 8080,     // Client server port start
-  DEFAULT_DOMAIN: 'local.once',  // Reverse domain
-  DEFAULT_IP: '127.0.0.1',       // Fallback IP
-  MAX_PORT_SCAN: 100             // Max ports to scan
-};
+```
+CREATED
+  → INITIALIZING (init())
+    → INITIALIZED
+      → STARTING (startServer())
+        → PRIMARY_SERVER (if port 42777)
+          → Housekeeping
+        → CLIENT_SERVER (if port 8080+)
+          → Register with primary
+        → RUNNING
+          → STOPPING (stopServer())
+            → SHUTDOWN (final state)
 ```
 
-## 📊 Server Model
+## WebSocket Architecture
 
-The `ONCEServerModel` contains all server state:
+### Primary Server
+- **1 WebSocket Server** (attached to HTTP server)
+- **N client connections** (stored in `serverRegistry`)
+- Broadcasts to all clients via `for (const [uuid, entry] of serverRegistry)`
 
-```typescript
-interface ONCEServerModel {
-  pid: number;                          // Process ID
-  state: LifecycleState;                // Current lifecycle state
-  platform: EnvironmentInfo;            // Platform/environment info
-  domain: string;                       // Reverse domain (e.g., "local.once")
-  host: string;                         // Hostname
-  ip: string;                           // IP address
-  capabilities: ServerCapability[];     // Server capabilities with ports
-  uuid: string;                         // Unique server ID
-  isPrimaryServer: boolean;             // Primary vs client flag
-  primaryServerIOR?: string;            // Primary server reference (clients only)
-}
-```
+### Client Server
+- **1 WebSocket Server** (attached to HTTP server) - for browser clients
+- **1 WebSocket Client** (`primaryServerConnection`) - to primary server
+- **N browser connections** (via `wsServer.clients`)
+- Forwards browser messages to primary
+- Forwards primary broadcasts to browsers
 
-## 🧪 Testing
+### Browser Client
+- **1 WebSocket Client** - to parent server (primary or client)
+- Sends `scenario-message`, `scenario-relay`, `scenario-p2p`
+- Receives broadcasts, relays, direct messages
 
-### Regression Tests
+## File Responsibility Map
 
-Run the component test suite:
+| Task | File | Method |
+|------|------|--------|
+| Start server | `DefaultONCE.ts` | `startServer()` |
+| Create HTTP/WS servers | `ServerHierarchyManager.ts` | `startHttpServer()`, `startWebSocketServer()` |
+| Allocate ports | `PortManager.ts` | `getNextAvailablePort()` |
+| Register client | `ServerHierarchyManager.ts` | `registerWithPrimaryServer()` |
+| Handle WS messages | `ServerHierarchyManager.ts` | `handleWebSocketMessage()` |
+| Broadcast to clients | `ServerHierarchyManager.ts` | `broadcastScenario()` |
+| Broadcast to browsers | `ServerHierarchyManager.ts` | `broadcastToBrowserClients()` |
+| Route HTTP requests | `ServerHierarchyManager.ts` | `handleHttpRequest()` |
+| Render templates | `ServerHierarchyManager.ts` | `getServerStatusHTML()`, `getSimpleONCEClientHTML()`, `getDemoHubHTML()` |
+| Save scenarios | `ScenarioManager.ts` | `saveScenario()` |
+| Load scenarios | `ScenarioManager.ts` | `loadScenario()` |
+| Housekeeping | `ServerHierarchyManager.ts` | `performHousekeeping()` |
+| Graceful shutdown | `ServerHierarchyManager.ts` | `stopServer()`, `updateScenarioState()` |
+| Demo commands | `DefaultONCE.ts` | `demo()`, `demoMessages()` |
+| Test input | `DefaultONCE.ts` | `testInput()` |
+
+## Build & Deploy
 
 ```bash
-# Run all tests
-once test
+# Build
+./src/sh/build.sh
 
-# Run specific test file
-once test file 1
+# Build without linting
+./src/sh/build.sh nolint
 
-# Run specific describe block
-once test describe 1a
+# Lint only
+npm run lint
 
-# Run specific test case
-once test itCase 1a1
+# Run CLI
+./once --help
 ```
 
-### Test Scenarios
+## TODOs / Known Issues
 
-The `testInput` command provides comprehensive integration testing:
+1. **Start Next Server button** - Currently spawns via `exec()`, should use programmatic approach
+2. **P2P connections** - Created but never reused, should maintain connection pool
+3. **Server discovery** - Health checks on every housekeeping, should cache reachability
+4. **WebSocket reconnection** - Clients don't reconnect if primary restarts
+5. **Scenario cleanup** - Only on primary startup, should have periodic cleanup
+6. **Browser client list** - Fetches all ports 8080-8085, should query primary for actual list
 
-```bash
-# Test server startup and metrics
-once testInput "s2mq"
+## Summary
 
-# Test client server registration
-once testInput "s1c1dq"
+ONCE implements a **hierarchical server architecture** where:
+1. **Primary server (42777)** manages registry of all clients
+2. **Client servers (8080+)** register with primary, relay browser messages
+3. **Browser clients** connect to any server, send/receive messages
+4. **Scenarios** persist all state to filesystem
+5. **Housekeeping** cleans up shutdown/stale servers on primary startup
+6. **Graceful shutdown** updates scenario state before stopping
+7. **Tests** verify broadcast flow and lifecycle management
 
-# Test browser opening
-once testInput "s3bq"
-
-# Stress test with multiple clients
-once testInput "s1ccc1d1k1q"
-```
-
-## 🎯 Use Cases
-
-### 1. "How do I start a demo?"
-
-**Discovery approach:**
-```bash
-# Run without args to see all commands
-once | grep demo
-
-# Shows:
-#   once demo <?mode:'interactive'>
-#     Demo command - Start interactive ONCE demo with browser auto-opening
-```
-
-**Usage:**
-```bash
-once demo                  # Interactive with browser
-once demo headless         # Server only
-once demo browser-only     # Browser only
-```
-
-### 2. "What test sequences are available?"
-
-**Use tab completion:**
-```bash
-once testInput <Tab>
-# Shows: s2mq  s1c1dq  s3bc2q  s1bc1k1q  s2b2c1d1e1q
-```
-
-**Or check the help:**
-```bash
-once | grep -A 5 "testInput"
-```
-
-### 3. "How do I create a distributed system?"
-
-**Natural discovery:**
-```bash
-# See server management commands
-once | grep -i server
-
-# Start primary
-once startServer
-
-# Start clients (auto-register)
-once startServer  # Terminal 2
-once startServer  # Terminal 3
-
-# Check registered servers
-once getRegisteredServers
-```
-
-### 4. "How do I run automated tests?"
-
-**Tab completion shows examples:**
-```bash
-once testInput <Tab>
-# Pick a preset: s2mq, s1c1dq, s3bc2q
-
-# Quick smoke test
-once testInput "s1mq"
-
-# Full integration test
-once testInput "s1c1d1k1q"
-```
-
-### 5. "What commands are available?"
-
-**Just run once:**
-```bash
-once
-# Shows ALL commands with signatures and descriptions
-```
-
-**Or use tab completion:**
-```bash
-once <Tab>
-# Lists all available commands interactively
-```
-
-## 📚 API Reference
-
-### ONCE Interface
-
-```typescript
-interface ONCE {
-  // Initialization
-  init(scenario?: Scenario): Promise<ONCE>;
-  
-  // Server Management
-  startServer(scenario?: Scenario): Promise<void>;
-  stopServer(): Promise<void>;
-  isPrimaryServer(): boolean;
-  getServerModel(): ONCEServerModel;
-  getRegisteredServers(): ONCEServerModel[];
-  
-  // Lifecycle Events
-  on(eventType: LifecycleEventType, handler: LifecycleEventHandler): void;
-  off(eventType: LifecycleEventType, handler: LifecycleEventHandler): void;
-  
-  // Component Management
-  startComponent(componentIOR: IOR, scenario?: Scenario): Promise<Component>;
-  stopComponent(component: Component): Promise<void>;
-  pauseComponent(component: Component): Promise<void>;
-  resumeComponent(component: Component): Promise<void>;
-  
-  // Scenario Management
-  toScenario(): Scenario;
-  loadScenario(scenario: Scenario): Promise<Component>;
-  saveAsScenario(component: Component): Promise<Scenario>;
-  
-  // Environment & Metrics
-  getEnvironment(): EnvironmentInfo;
-  getMetrics(): PerformanceMetrics;
-  getVersion(): string;
-  isInitialized(): boolean;
-  
-  // Demo Commands (CLI-specific)
-  demo(mode?: string): Promise<this>;
-  testInput(sequence: string): Promise<this>;
-}
-```
-
-## 🔄 Migration from 0.2.0.0
-
-ONCE 0.3.20.0 maintains 100% feature parity with 0.2.0.0 while adding TRUE Radical OOP:
-
-### What's Preserved
-
-✅ All server hierarchy logic (primary/client, port management)  
-✅ All scenario management functionality  
-✅ All lifecycle events and hooks  
-✅ WebSocket communication  
-✅ Server registry and discovery  
-
-### What's Enhanced
-
-✨ TRUE Radical OOP architecture (model-driven state)  
-✨ CLI auto-discovery (methods become commands automatically)  
-✨ `demo` command (interactive/headless modes)  
-✨ `testInput` command (automated test sequences)  
-✨ Parameter completion methods  
-✨ Cross-platform browser opening  
-✨ Delegated infrastructure methods (info, test, build, tree, links)  
-
-### Breaking Changes
-
-**None!** 0.3.20.0 is a drop-in replacement for 0.2.0.0.
-
-## 🤝 Contributing
-
-ONCE follows Web4 component development practices:
-
-1. **All changes maintain TRUE Radical OOP principles**
-   - Model-driven state (`this.model.*`)
-   - Method chaining (`return this`)
-   - No CLI flags, only positional arguments
-
-2. **New methods are automatically discovered as CLI commands**
-   - Add method to `DefaultONCE.ts`
-   - Document with TSDoc comments
-   - Use `@cliSyntax` and `@cliExample` annotations
-   - Add `*ParameterCompletion()` methods for tab completion
-
-3. **Use PDCA documents for tracking changes**
-   - One PDCA per logical change
-   - Follow CMM3 template format
-   - Store in `session/` directory
-
-4. **Follow CMM3 commit protocols**
-   - Commit after each change
-   - Use PDCA filename as commit message
-   - Update PDCA with commit SHA
-
-5. **No manual documentation updates**
-   - Help is auto-generated from code
-   - TSDoc comments are the source of truth
-   - README only covers architecture and philosophy
-
-## 📝 Version History
-
-### 0.3.20.0 (2025-11-10)
-
-- ✅ Migrated to TRUE Radical OOP from Web4TSComponent 0.3.20.0
-- ✅ Added `demo()` command with interactive/headless modes
-- ✅ Added `testInput()` command for automated test sequences
-- ✅ Added parameter completion methods
-- ✅ Preserved all 0.2.0.0 domain logic
-- ✅ Delegated CLI infrastructure to Web4TSComponent
-
-### 0.2.0.0 (Previous)
-
-- Server hierarchy (primary/client architecture)
-- Scenario-based configuration
-- Lifecycle events
-- WebSocket communication
-- Port conflict resolution
-
-## 🔗 Related Components
-
-- **Web4TSComponent** - Base component infrastructure (CLI, testing, building)
-- **User** - User service for scenario owner data
-- **Message** - P2P messaging (future integration)
-
-## 📄 License
-
-MIT
-
-## 🏢 Organization
-
-**Cerulean Circle GmbH**
-
-For more information, visit: https://github.com/Cerulean-Circle-GmbH/Web4Articles
-
----
-
-**ONCE v0.3.20.0** - Object Network Communication Engine  
-*TRUE Radical OOP • Auto-Discovered CLI • Server Hierarchy • Zero Configuration*
-
+All communication flows through WebSockets. All state is model-driven. All lifecycle events are tracked in scenarios.
