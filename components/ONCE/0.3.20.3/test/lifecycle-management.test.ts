@@ -17,6 +17,10 @@ describe('Server Lifecycle Management', () => {
         const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
         const tempInstance = new DefaultONCE();
         await tempInstance.init();
+        
+        // Trigger web4ts initialization to populate model.projectRoot
+        await (tempInstance as any).getWeb4TSComponent();
+        
         testProjectRoot = tempInstance.model.projectRoot;
         scenarioBaseDir = path.join(testProjectRoot, 'scenarios/local.once/ONCE/0.3.20.3');
         
