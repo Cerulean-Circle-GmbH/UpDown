@@ -36,6 +36,7 @@ export class ServerHierarchyManager {
     private portManager: PortManager;
     private serverRegistry: Map<string, ServerRegistryEntry> = new Map();
     private primaryServerConnection?: WebSocket;
+    private browserClients: Set<WebSocket> = new Set(); // Track browser WebSocket connections
     component?: any; // Backward link to DefaultONCE for path authority
 
     constructor() {
@@ -409,6 +410,9 @@ export class ServerHierarchyManager {
      */
     private handleWebSocketConnection(ws: WebSocket, request: any): void {
         console.log('📡 WebSocket connection established');
+        
+        // Initially treat as browser client (server registrations will be tracked separately)
+        this.browserClients.add(ws);
 
     ws.on('message', async (data: any) => {
       try {
@@ -421,6 +425,8 @@ export class ServerHierarchyManager {
 
         ws.on('close', () => {
             console.log('📡 WebSocket connection closed');
+            // Remove from browser clients set
+            this.browserClients.delete(ws);
         });
     }
 
@@ -443,9 +449,12 @@ export class ServerHierarchyManager {
                 // @pdca 2025-11-11-UTC-2322.pdca.md - Handle incoming scenario messages
                 if (message.scenario.state.type === 'broadcast') {
                     if (this.serverModel.isPrimaryServer) {
-                        // Primary received broadcast (from browser or client) - broadcast to all registered clients
+                        // Primary received broadcast (from browser or client) - broadcast to all
                         console.log(`📡 Primary broadcasting scenario ${message.scenario.uuid}`);
+                        // Broadcast to all registered client servers
                         this.broadcastScenario(message.scenario);
+                        // Also broadcast to primary's own browser clients
+                        this.broadcastToBrowserClients(message.scenario);
                     } else {
                         // Client server received broadcast
                         // Check if it's from our own browser client or from primary server
@@ -574,6 +583,9 @@ export class ServerHierarchyManager {
      */
     private async handleServerRegistration(ws: WebSocket, clientServerModel: ONCEServerModel): Promise<void> {
         console.log(`📋 Registering client server: ${clientServerModel.uuid}`);
+        
+        // Remove from browser clients - this is a server connection
+        this.browserClients.delete(ws);
         
         this.serverRegistry.set(clientServerModel.uuid, {
             model: clientServerModel,
@@ -834,14 +846,15 @@ export class ServerHierarchyManager {
      * @pdca 2025-11-11-UTC-2322.pdca.md - Client server forwards primary broadcasts to browsers
      */
     private broadcastToBrowserClients(scenario: ONCEScenarioMessage): void {
-        console.log(`📡 Broadcasting scenario ${scenario.uuid} to browser clients`);
+        const clientCount = this.browserClients.size;
+        console.log(`📡 Broadcasting scenario ${scenario.uuid} to ${clientCount} browser client(s)`);
         
-        if (!this.wsServer) {
-            console.log('⚠️  No WebSocket server available');
+        if (clientCount === 0) {
+            console.log('ℹ️  No browser clients connected');
             return;
         }
         
-        this.wsServer.clients.forEach((client: WebSocket) => {
+        this.browserClients.forEach((client: WebSocket) => {
             if (client.readyState === WebSocket.OPEN) {
                 client.send(JSON.stringify({
                     type: 'scenario-message',
