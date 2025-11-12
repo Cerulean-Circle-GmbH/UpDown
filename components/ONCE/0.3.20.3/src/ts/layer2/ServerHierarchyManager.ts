@@ -231,6 +231,18 @@ export class ServerHierarchyManager {
                             type: 'shutdown-command'
                         }));
                         
+                        // Wait for the scenario to be updated to SHUTDOWN state
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        
+                        // Delete the client's scenario file
+                        const scenarioDir = `scenarios/local.once/ONCE/0.2.0.0/capability/httpPort/${port}`;
+                        const scenarioPath = `${scenarioDir}/${uuid}.scenario.json`;
+                        
+                        if (fs.existsSync(scenarioPath)) {
+                            fs.unlinkSync(scenarioPath);
+                            console.log(`🗑️  Deleted client scenario: ${uuid} (port ${port})`);
+                        }
+                        
                         // Remove from registry
                         this.serverRegistry.delete(uuid);
                         
@@ -1014,6 +1026,11 @@ export class ServerHierarchyManager {
                     await this.updateScenarioState(LifecycleState.SHUTDOWN);
                     
                     resolve();
+                    
+                    // Exit process after cleanup (for client servers)
+                    if (!this.serverModel.isPrimaryServer) {
+                        setTimeout(() => process.exit(0), 100);
+                    }
                 });
             });
         }
