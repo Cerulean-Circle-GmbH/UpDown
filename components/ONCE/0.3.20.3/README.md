@@ -482,6 +482,141 @@ expect(broadcastReceived.scenario.state.type).toBe('broadcast');
 
 **All 6 tests pass**
 
+#### 3. End-to-End Browser UI Test (`e2e-browser-ui.test.ts`)
+
+**What it tests:**
+- Real browser interaction using Playwright
+- Actual DOM element clicks, text input, navigation
+- Visual verification of UI state changes
+- Complete user workflow from browser to server to browser
+
+**Technology:**
+- **Playwright** - Browser automation framework
+- **Chromium** - Real browser engine (not headless by default)
+- **Vitest** - Test runner with assertions
+
+**Test Cases:**
+
+##### a) Demo Hub Navigation
+```typescript
+await page.goto('http://localhost:42777/demo');
+const totalServers = await page.locator('#totalServers').textContent();
+expect(parseInt(totalServers)).toBeGreaterThanOrEqual(3);
+```
+- Opens demo hub in real browser
+- Reads server count from DOM
+- Verifies all servers displayed
+
+##### b) Client Page Connection Status
+```typescript
+await page1.goto('http://localhost:8080/once');
+const status = await page1.locator('.connection-status').textContent();
+expect(status).toContain('Connected');
+```
+- Opens two client pages simultaneously
+- Verifies WebSocket connection status shown in UI
+
+##### c) Broadcast Message Flow (UI Interaction)
+```typescript
+await page1.click('button:has-text("Broadcast to All")');
+await new Promise(resolve => setTimeout(resolve, 2000));
+const sent = await page1.locator('#messagesSent').textContent();
+const received = await page2.locator('#messagesReceived').textContent();
+expect(parseInt(sent)).toBeGreaterThan(0);
+expect(parseInt(received)).toBeGreaterThan(0);
+```
+- Clicks actual "Broadcast to All" button
+- Waits for message propagation
+- Reads message counters from both pages
+- Verifies message sent and received
+
+##### d) Clear Log Button
+```typescript
+await page1.click('button:has-text("Clear Log")');
+const logAfterClear = await page1.locator('#messageLog').textContent();
+expect(logAfterClear.length).toBeLessThan(logBeforeClear.length);
+```
+- Clicks "Clear Log" button
+- Verifies log content reduced
+
+##### e) Server List on Demo Hub
+- Counts `.server-card` elements
+- Verifies primary badge present
+- Verifies client badges present
+- All dynamic content loaded from `/servers` API
+
+##### f) Server Status Page Routes
+- Opens `http://localhost:42777/`
+- Verifies all route links present (`/health`, `/once`, `/demo`, `/servers`)
+- Checks page title contains version
+
+##### g) Cross-Page Navigation
+- Navigates between `/`, `/demo`, `/once`
+- Verifies page titles change correctly
+- Tests SPA-style navigation
+
+##### h) Connected Servers Count Display
+- Opens browser client
+- Waits for `/servers` API call
+- Reads "Connected Servers" display
+- Verifies count matches actual running servers
+
+**Running E2E Tests:**
+```bash
+# Run E2E tests (opens visible browser)
+npx vitest run e2e-browser-ui.test.ts
+
+# Watch mode for development
+npx vitest watch e2e-browser-ui.test.ts
+```
+
+**Key Features:**
+- **Non-Headless Mode**: Browsers visible during test (set `headless: false`)
+- **Slow Motion**: Actions slowed to 100ms for visual verification
+- **Real DOM**: Actual HTML elements, not mocks
+- **Full Stack**: Primary + 2 client servers running
+- **Graceful Cleanup**: Closes browsers, stops servers, deletes scenarios
+
+**Test Results:**
+```
+Test Files  1 passed (1)
+Tests       8 passed (8)
+Duration    ~33s
+```
+
+**What Makes This Different:**
+
+| Feature | Unit Tests | WebSocket Tests | E2E Browser Tests |
+|---------|-----------|-----------------|-------------------|
+| Real Browser | ❌ | ❌ | ✅ |
+| DOM Interaction | ❌ | ❌ | ✅ |
+| Button Clicks | ❌ | ❌ | ✅ |
+| Visual Verification | ❌ | ❌ | ✅ |
+| WebSocket Messages | ❌ | ✅ | ✅ |
+| Server Lifecycle | ❌ | ✅ | ✅ |
+| User Workflow | ❌ | ❌ | ✅ |
+
+**When to Use Each:**
+- **Unit Tests**: Fast feedback on logic changes
+- **WebSocket Tests**: Verify message routing without UI
+- **E2E Browser Tests**: Verify complete user experience
+
+**Dependencies:**
+```json
+{
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "playwright": "^1.56.1"
+  }
+}
+```
+
+**First-Time Setup:**
+```bash
+# Install Playwright browsers
+npx playwright install chromium
+```
+
 ## Common Issues & Fixes
 
 ### Issue: Browser doesn't receive broadcasts from other clients
