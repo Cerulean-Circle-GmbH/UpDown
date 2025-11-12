@@ -1,90 +1,94 @@
 {
-  "timestamp": "2025-11-11T23:10:53.504Z",
+  "timestamp": "2025-11-12T08:56:27.190Z",
   "configuration": {
     "primary": {
-      "uuid": "8ae7f394-2b61-4b4e-8120-796e05273647",
+      "uuid": "96bdcfb4-feda-4d51-801b-95e5e40e7795",
       "port": 42777
     },
     "clients": [
       {
-        "uuid": "3d36a471-d8c3-4dc0-bdc2-3fd20fc3cb1c",
-        "port": 8080
+        "uuid": "337e2e50-a405-421c-94c5-f9c8fd1e018a",
+        "port": 8083
       },
       {
-        "uuid": "cc812f91-766e-47b5-8a2c-5efd393a7896",
-        "port": 8081
+        "uuid": "2d7650fa-87ff-43c1-9e5d-1f1d9bfbc66e",
+        "port": 8084
+      },
+      {
+        "uuid": "5b74a783-8309-4b1f-8901-f10700702676",
+        "port": 8085
       }
     ]
   },
   "messages": [
     {
-      "uuid": "44487b01-6333-4731-a53a-6e79354651da",
+      "uuid": "6fe60433-5264-467d-9d07-d4f2feca4479",
       "objectType": "ONCEMessage",
       "version": "0.3.20.3",
       "state": {
         "type": "broadcast",
         "from": {
-          "uuid": "8ae7f394-2b61-4b4e-8120-796e05273647",
+          "uuid": "96bdcfb4-feda-4d51-801b-95e5e40e7795",
           "port": 42777
         },
         "to": "all",
         "content": "Broadcast message from primary to all clients",
-        "timestamp": "2025-11-11T23:10:49.499Z",
+        "timestamp": "2025-11-12T08:56:23.172Z",
         "sequence": 1
       },
       "metadata": {
-        "created": "2025-11-11T23:10:49.499Z",
-        "modified": "2025-11-11T23:10:49.499Z",
+        "created": "2025-11-12T08:56:23.172Z",
+        "modified": "2025-11-12T08:56:23.172Z",
         "creator": "ONCE-demoMessages",
         "description": "Broadcast pattern demo message"
       }
     },
     {
-      "uuid": "df4ad24c-72a0-47f7-9d7a-3fba3b0f136b",
+      "uuid": "7c816da4-fd93-44b5-8c19-f83e544fa6ff",
       "objectType": "ONCEMessage",
       "version": "0.3.20.3",
       "state": {
         "type": "relay",
         "from": {
-          "uuid": "3d36a471-d8c3-4dc0-bdc2-3fd20fc3cb1c",
-          "port": 8080
+          "uuid": "337e2e50-a405-421c-94c5-f9c8fd1e018a",
+          "port": 8083
         },
         "to": {
-          "uuid": "cc812f91-766e-47b5-8a2c-5efd393a7896",
-          "port": 8081
+          "uuid": "2d7650fa-87ff-43c1-9e5d-1f1d9bfbc66e",
+          "port": 8084
         },
         "content": "Relay message from client 1 to client 2 via primary",
-        "timestamp": "2025-11-11T23:10:50.500Z",
+        "timestamp": "2025-11-12T08:56:24.173Z",
         "sequence": 2
       },
       "metadata": {
-        "created": "2025-11-11T23:10:50.500Z",
-        "modified": "2025-11-11T23:10:50.500Z",
+        "created": "2025-11-12T08:56:24.173Z",
+        "modified": "2025-11-12T08:56:24.173Z",
         "creator": "ONCE-demoMessages",
         "description": "Relay pattern demo message"
       }
     },
     {
-      "uuid": "3e532cd5-2a76-40ae-83e0-37d5716dbf3f",
+      "uuid": "6b1cb3d8-148b-451f-b408-8876bc06b0b1",
       "objectType": "ONCEMessage",
       "version": "0.3.20.3",
       "state": {
         "type": "p2p",
         "from": {
-          "uuid": "3d36a471-d8c3-4dc0-bdc2-3fd20fc3cb1c",
-          "port": 8080
+          "uuid": "337e2e50-a405-421c-94c5-f9c8fd1e018a",
+          "port": 8083
         },
         "to": {
-          "uuid": "cc812f91-766e-47b5-8a2c-5efd393a7896",
-          "port": 8081
+          "uuid": "2d7650fa-87ff-43c1-9e5d-1f1d9bfbc66e",
+          "port": 8084
         },
         "content": "Direct P2P message from client 1 to client 2",
-        "timestamp": "2025-11-11T23:10:51.502Z",
+        "timestamp": "2025-11-12T08:56:25.174Z",
         "sequence": 3
       },
       "metadata": {
-        "created": "2025-11-11T23:10:51.502Z",
-        "modified": "2025-11-11T23:10:51.502Z",
+        "created": "2025-11-12T08:56:25.174Z",
+        "modified": "2025-11-12T08:56:25.174Z",
         "creator": "ONCE-demoMessages",
         "description": "P2P pattern demo message"
       }

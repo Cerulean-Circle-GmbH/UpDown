@@ -1113,12 +1113,11 @@ export class DefaultONCE implements ONCE {
     console.log(`${gray}─────────────────────${reset}`);
     console.log(`  ${blue}[h]${reset} Show this help menu`);
     console.log(`  ${blue}[s]${reset} Start/Stop ONCE server (port 42777 → 8080+)`);
-    console.log(`  ${blue}[b]${reset} Launch Browser Client`);
     console.log(`  ${blue}[c]${reset} Launch Node.js Client Server`);
-    console.log(`  ${blue}[d]${reset} Discover peers (from all servers)`);
+    console.log(`  ${blue}[d]${reset} Open Demo Hub (in browser)`);
+    console.log(`  ${blue}[b]${reset} Launch Browser Client`);
     console.log(`  ${blue}[e]${reset} Exchange scenarios`);
     console.log(`  ${blue}[m]${reset} Show metrics and status`);
-    console.log(`  ${blue}[backspace]${reset} Clear screen`);
     console.log(`  ${blue}[k]${reset} Kill all client processes`);
     console.log(`  ${blue}[q]${reset} Quit demo (with cleanup)`);
     console.log('');
@@ -1223,17 +1222,19 @@ export class DefaultONCE implements ONCE {
           break;
           
         case 'd':
-          // Discover peers
-          console.log('🔍 Discovering peers...');
-          if (this.isPrimaryServer()) {
-            const registeredServers = this.getRegisteredServers();
-            console.log(`📋 Registered servers: ${registeredServers.length}`);
-            for (const server of registeredServers) {
-              const port = server.capabilities.find(c => c.capability === 'httpPort')?.port;
-              console.log(`   • ${server.uuid} on port ${port}`);
+          // Open Demo Hub
+          console.log('🌐 Opening demo hub...');
+          if (this.model.serverModel) {
+            const sm = this.serverHierarchyManager.getServerModel();
+            const port = sm.isPrimaryServer ? 42777 : sm.capabilities.find(c => c.capability === 'httpPort')?.port;
+            if (port) {
+              await this.openBrowser(`http://localhost:${port}/demo`);
+              console.log(`✅ Demo hub opened: http://localhost:${port}/demo`);
+            } else {
+              console.log('⚠️  Server not running - start server first with [s]');
             }
           } else {
-            console.log('⚠️  Only primary server can discover peers');
+            console.log('⚠️  Server not running - start server first with [s]');
           }
           break;
           
