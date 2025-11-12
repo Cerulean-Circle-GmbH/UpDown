@@ -187,23 +187,38 @@
             <h3><span class="emoji">📡</span> Available Endpoints</h3>
             
             <div class="endpoint">
+                <strong>Server Status:</strong> 
+                <code><a href="/" target="_blank">/</a></code>
+                <p>This page - server status and information</p>
+            </div>
+            
+            <div class="endpoint">
                 <strong>Health Check:</strong> 
-                <code><a href="/health">/health</a></code>
+                <code><a href="/health" target="_blank">/health</a></code>
                 <p>JSON server health and status information</p>
             </div>
             
             <div class="endpoint">
                 <strong>Server Registry:</strong> 
-                <code><a href="/servers">/servers</a></code>
-                <p>${this.serverModel.isPrimaryServer ? 'List all registered servers in hierarchy' : 'Only available on primary server'}</p>
+                <code><a href="/servers" target="_blank">/servers</a></code>
+                <p>${this.serverModel.isPrimaryServer ? 'JSON list of all registered servers in hierarchy' : 'Only available on primary server'}</p>
             </div>
             
             <div class="endpoint">
-                <strong>Browser Client:</strong> 
-                <code><a href="/once">/once</a></code>
-                <p>Simple ONCE browser client interface</p>
+                <strong>Interactive Client:</strong> 
+                <code><a href="/once" target="_blank">/once</a></code>
+                <p>Interactive WebSocket browser client with message exchange</p>
+            </div>
+            
+            <div class="endpoint">
+                <strong>Demo Hub:</strong> 
+                <code><a href="/demo" target="_blank">/demo</a></code>
+                <p>Live server management dashboard with auto-refresh and status monitoring</p>
             </div>
         </div>
+        
+        ${this.serverModel.isPrimaryServer ? '<div class="endpoints"><h3><span class="emoji">🔧</span> Primary Server APIs</h3><div class="endpoint"><strong>Start Server API:</strong> <code>/start-server</code> (POST)<p>Dynamically spawn a new client server (primary only)</p></div></div>' : ''}
+
 
         <div class="endpoints">
             <h3><span class="emoji">🔌</span> WebSocket Connection</h3>
