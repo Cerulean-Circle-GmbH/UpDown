@@ -160,7 +160,7 @@ export class ServerHierarchyManager {
     /**
      * Handle HTTP requests
      */
-    private handleHttpRequest(req: any, res: any): void {
+    private async handleHttpRequest(req: any, res: any): Promise<void> {
         const url = new URL(req.url, `http://${req.headers.host}`);
         
         if (url.pathname === '/') {
@@ -217,6 +217,48 @@ export class ServerHierarchyManager {
             });
             
             res.end(JSON.stringify({ success: true, message: 'Server starting...' }));
+        } else if (url.pathname === '/discover-servers' && req.method === 'POST' && this.serverModel.isPrimaryServer) {
+            // Trigger housekeeping/discovery manually
+            res.writeHead(200, { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            
+            console.log('🔍 Manual discovery triggered from demo hub');
+            const result = await this.performHousekeeping();
+            res.end(JSON.stringify({ 
+                success: true, 
+                message: 'Discovery complete',
+                deleted: result?.deleted || 0,
+                discovered: result?.discovered || 0
+            }));
+        } else if (url.pathname === '/shutdown-all' && req.method === 'POST' && this.serverModel.isPrimaryServer) {
+            // Gracefully shutdown all servers
+            res.writeHead(200, { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            res.end(JSON.stringify({ success: true, message: 'Shutting down all servers...' }));
+            
+            console.log('🛑 Graceful shutdown of all servers initiated');
+            
+            // Shutdown all client servers first
+            for (const [uuid, entry] of this.serverRegistry.entries()) {
+                if (entry.websocket && entry.websocket.readyState === WebSocket.OPEN) {
+                    console.log(`🛑 Sending shutdown to client: ${uuid}`);
+                    entry.websocket.send(JSON.stringify({ type: 'shutdown-command' }));
+                }
+            }
+            
+            // Wait for clients to shutdown
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Shutdown primary server
+            console.log('🛑 Shutting down primary server');
+            await this.stopServer();
+            
+            // Exit process
+            process.exit(0);
         } else if (url.pathname === '/stop-server' && req.method === 'POST' && this.serverModel.isPrimaryServer) {
             // Stop a client server dynamically
             let body = '';
@@ -927,7 +969,7 @@ export class ServerHierarchyManager {
      * - Delete scenarios with state=shutdown
      * - Discover and re-register running client servers
      */
-    private async performHousekeeping(): Promise<void> {
+    private async performHousekeeping(): Promise<{ deleted: number; discovered: number }> {
         console.log('🧹 Performing primary server housekeeping...');
         
         try {
@@ -935,7 +977,7 @@ export class ServerHierarchyManager {
             
             if (!fs.existsSync(scenarioBaseDir)) {
                 console.log('📂 No existing scenarios found');
-                return;
+                return { deleted: 0, discovered: 0 };
             }
             
             // Find all scenario files
@@ -1020,8 +1062,11 @@ export class ServerHierarchyManager {
             
             console.log(`✅ Housekeeping complete: ${deletedCount} deleted, ${discoveredCount} discovered`);
             
+            return { deleted: deletedCount, discovered: discoveredCount };
+            
         } catch (error) {
             console.error('❌ Housekeeping error:', error);
+            return { deleted: 0, discovered: 0 };
         }
     }
 

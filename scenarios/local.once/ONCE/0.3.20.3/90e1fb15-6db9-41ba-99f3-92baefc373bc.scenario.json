@@ -1,25 +1,25 @@
 {
-  "uuid": "c10eb907-2fba-4030-93f1-a0fc4a8b14c8",
+  "uuid": "90e1fb15-6db9-41ba-99f3-92baefc373bc",
   "objectType": "ONCE",
   "version": "0.3.20.3",
   "state": {
-    "pid": 28053,
+    "pid": 49196,
     "state": "running",
     "domain": "local.once",
-    "host": "McDonges-3.fritz.box",
+    "host": "localhost",
     "ip": "127.0.0.1",
     "capabilities": [
       {
         "capability": "httpPort",
-        "port": 8080
+        "port": 8081
       },
       {
         "capability": "wsPort",
-        "port": 8080
+        "port": 8081
       }
     ],
     "isPrimaryServer": false,
-    "uuid": "c10eb907-2fba-4030-93f1-a0fc4a8b14c8",
+    "uuid": "90e1fb15-6db9-41ba-99f3-92baefc373bc",
     "platform": {
       "platform": "node",
       "version": "v22.20.0",
@@ -29,14 +29,14 @@
         "p2p"
       ],
       "isOnline": true,
-      "hostname": "McDonges-3.fritz.box",
+      "hostname": "localhost",
       "ip": "127.0.0.1"
     },
-    "primaryServerIOR": "web4://McDonges-3.fritz.box:42777/once?uuid=b750128e-e272-4960-9128-38505a1c6c1b&type=ONCE&version=0.2.0.0"
+    "primaryServerIOR": "web4://localhost:42777/once?uuid=6ec75148-2e11-41c8-b649-faa14ba44f94&type=ONCE&version=0.2.0.0"
   },
   "metadata": {
-    "created": "2025-11-12T12:10:28.030Z",
-    "modified": "2025-11-12T12:10:28.030Z",
+    "created": "2025-11-12T13:17:33.967Z",
+    "modified": "2025-11-12T13:17:33.967Z",
     "creator": "ONCE-v0.3.20.3",
     "description": "ONCE server Client server instance",
     "tags": [
@@ -45,8 +45,8 @@
       "client"
     ],
     "domain": "local.once",
-    "host": "McDonges-3.fritz.box",
-    "port": 8080,
+    "host": "localhost",
+    "port": 8081,
     "isPrimaryServer": false
   }
 }
