@@ -5,6 +5,7 @@
 
 import { createServer, Server } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
+import { exec } from 'child_process';
 import { PortManager } from './PortManager.js';
 import { ONCEServerModel, ONCE_DEFAULT_CONFIG, createDefaultServerModel } from '../layer3/ONCEServerModel.js';
 import { LifecycleState } from '../layer3/LifecycleEvents.js';
@@ -205,7 +206,6 @@ export class ServerHierarchyManager {
             });
             
             // Spawn new server process
-            const { exec } = await import('child_process');
             const componentDir = process.cwd();
             
             exec(`cd ${componentDir} && ./once startServer &`, (error) => {
