@@ -352,17 +352,21 @@ export class ServerHierarchyManager {
                 if (message.scenario.state.type === 'broadcast') {
                     if (this.serverModel.isPrimaryServer) {
                         // Primary received broadcast (from browser or client) - broadcast to all registered clients
+                        console.log(`📡 Primary broadcasting scenario ${message.scenario.uuid}`);
                         this.broadcastScenario(message.scenario);
                     } else {
                         // Client server received broadcast
                         // Check if it's from our own browser client or from primary server
-                        const fromPrimary = message.fromPrimary !== undefined ? message.fromPrimary : false;
+                        const fromPrimary = message.fromPrimary === true;
+                        console.log(`📡 Client received broadcast, fromPrimary=${fromPrimary}, message.fromPrimary=${message.fromPrimary}`);
                         
                         if (fromPrimary) {
                             // Received from primary - broadcast to our browser clients
+                            console.log(`📡 Forwarding to browser clients (wsServer has ${this.wsServer?.clients.size || 0} clients)`);
                             this.broadcastToBrowserClients(message.scenario);
                         } else {
                             // Received from our browser client - forward to primary
+                            console.log(`📡 Forwarding to primary server`);
                             if (this.primaryServerConnection && this.primaryServerConnection.readyState === WebSocket.OPEN) {
                                 this.primaryServerConnection.send(JSON.stringify({
                                     ...message,
@@ -529,7 +533,7 @@ export class ServerHierarchyManager {
                     }));
                 });
 
-        this.primaryServerConnection.on('message', (data: any) => {
+        this.primaryServerConnection.on('message', async (data: any) => {
           try {
             const message = JSON.parse(data.toString());
             if (message.type === 'registration-confirmed') {
@@ -537,6 +541,9 @@ export class ServerHierarchyManager {
               this.serverModel.primaryServerIOR = this.createPrimaryServerIOR(message.primaryServerModel);
               this.serverModel.state = LifecycleState.REGISTERED;
               resolve();
+            } else {
+              // Handle all other messages (broadcasts, relays, etc.) from primary
+              await this.handleWebSocketMessage(this.primaryServerConnection!, message);
             }
           } catch (error) {
             console.error('❌ Primary server message error:', error);
