@@ -387,7 +387,9 @@ No external tools required - pure TypeScript and native JavaScript template lite
 
 **Location:** `ServerHierarchyManager.ts:handleWebSocketMessage()`
 
-### 6. Graceful Shutdown (`stopServer()`)
+### 6. Graceful Shutdown
+
+#### Local Shutdown (`stopServer()`)
 
 **Flow:**
 ```
@@ -401,6 +403,7 @@ DefaultONCE.stopServer()
       → On close callback:
         → Set state to SHUTDOWN
         → updateScenarioState(SHUTDOWN)  # ← Updates filesystem
+        → process.exit(0)  # ← Client servers only
 ```
 
 **Why Two Updates?**
@@ -410,6 +413,89 @@ DefaultONCE.stopServer()
 Primary server housekeeping deletes scenarios with `state === 'shutdown'`
 
 **Location:** `ServerHierarchyManager.ts:stopServer()`, `updateScenarioState()`
+
+#### Remote Shutdown (via Demo Hub UI)
+
+**Complete Flow:**
+
+1. **User clicks "🛑 Stop Server" button** on demo hub
+   - JavaScript: `stopServer(port, uuid)`
+   - POST to `http://localhost:42777/stop-server`
+   - Body: `{ port: 8080, uuid: "3d3cdf4b..." }`
+
+2. **Primary server receives stop request**
+   - Route: `/stop-server` in `handleHttpRequest()`
+   - Finds server in `serverRegistry.get(uuid)`
+   - Validates WebSocket connection exists
+
+3. **Primary sends shutdown command**
+   - WebSocket message: `{ type: 'shutdown-command' }`
+   - Waits 1000ms for client to update scenario
+
+4. **Client receives shutdown command**
+   - Handler: `case 'shutdown-command'` in `handleWebSocketMessage()`
+   - Triggers `stopServer()` method
+   - Updates scenario: `STOPPING` → `SHUTDOWN`
+   - Closes WebSocket, HTTP connections
+   - **Process exits** after 100ms (`process.exit(0)`)
+
+5. **Primary cleans up** (after 1000ms wait)
+   - Deletes scenario file: `scenarios/.../httpPort/8080/{uuid}.scenario.json`
+   - Removes from registry: `serverRegistry.delete(uuid)`
+   - Returns HTTP response: `{ success: true, message: 'Server stopped' }`
+
+6. **UI auto-updates**
+   - Demo hub polls `/servers` every 3 seconds
+   - Server card disappears from grid
+   - Status bar counts update (Running, Clients, Stopped)
+
+**Shutdown States:**
+- `STOPPING` - Server is shutting down (connections closing)
+- `SHUTDOWN` - Server has stopped (scenario ready for cleanup)
+
+**Primary Housekeeping on Restart:**
+- Loads existing scenarios from `scenarios/local.once/ONCE/0.2.0.0/`
+- Deletes any `SHUTDOWN` or `STOPPED` scenarios
+- Health-checks `RUNNING` scenarios (HTTP request to port)
+- Removes stale scenarios if health check fails
+
+**Key Files:**
+- `ServerHierarchyManager.ts:stopServer()` - Graceful shutdown logic
+- `ServerHierarchyManager.ts:updateScenarioState()` - Scenario file updates
+- `ServerHierarchyManager.ts:handleHttpRequest()` - `/stop-server` endpoint
+- `ServerHierarchyManager.ts:handleWebSocketMessage()` - `shutdown-command` handler
+- `ServerHierarchyManager.ts:performHousekeeping()` - Startup cleanup
+- `demo-hub.html:stopServer()` - UI button action
+
+**Process Termination:**
+- **Client servers:** `process.exit(0)` after 100ms delay (ensures scenario update completes)
+- **Primary server:** No exit (remains running for demo hub and other clients)
+
+**Scenario File Location:**
+```
+scenarios/local.once/ONCE/0.2.0.0/
+├── {uuid}.scenario.json  # Root-level scenario
+└── capability/
+    └── httpPort/
+        ├── 42777/{uuid}.scenario.json  # Primary server
+        ├── 8080/{uuid}.scenario.json   # Client 1
+        ├── 8081/{uuid}.scenario.json   # Client 2
+        └── 8082/{uuid}.scenario.json   # Client 3
+```
+
+Each scenario file contains:
+```json
+{
+  "uuid": "3d3cdf4b-5470-4a4a-8027-2476852baf7a",
+  "state": {
+    "state": "shutdown",  // ← Updated during stopServer()
+    "capabilities": [{ "capability": "httpPort", "port": 8080 }]
+  },
+  "metadata": {
+    "modified": "2025-11-12T10:45:30.123Z"  // ← Updated on state change
+  }
+}
+```
 
 ## Testing
 

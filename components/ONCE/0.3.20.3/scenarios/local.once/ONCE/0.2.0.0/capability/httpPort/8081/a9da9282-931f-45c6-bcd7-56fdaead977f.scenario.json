@@ -1,25 +1,25 @@
 {
-  "uuid": "3d3cdf4b-5470-4a4a-8027-2476852baf7a",
+  "uuid": "a9da9282-931f-45c6-bcd7-56fdaead977f",
   "objectType": "ONCE",
   "version": "0.2.0.0",
   "state": {
-    "pid": 47028,
-    "state": "shutdown",
+    "pid": 72144,
+    "state": "running",
     "domain": "local.once",
     "host": "localhost",
     "ip": "127.0.0.1",
     "capabilities": [
       {
         "capability": "httpPort",
-        "port": 8080
+        "port": 8081
       },
       {
         "capability": "wsPort",
-        "port": 8080
+        "port": 8081
       }
     ],
     "isPrimaryServer": false,
-    "uuid": "3d3cdf4b-5470-4a4a-8027-2476852baf7a",
+    "uuid": "a9da9282-931f-45c6-bcd7-56fdaead977f",
     "platform": {
       "platform": "node",
       "version": "v22.20.0",
@@ -32,26 +32,26 @@
       "hostname": "localhost",
       "ip": "127.0.0.1"
     },
-    "primaryServerIOR": "web4://localhost:42777/once?uuid=6ea1b422-ddbd-49f4-a565-038d6838f561&type=ONCE&version=0.2.0.0",
-    "created": "2025-11-12T10:32:16.345Z"
+    "primaryServerIOR": "web4://localhost:42777/once?uuid=873082c8-c33d-4f50-93f3-867b2d3be7bd&type=ONCE&version=0.2.0.0",
+    "created": "2025-11-12T10:50:01.493Z"
   },
   "metadata": {
-    "created": "2025-11-12T10:32:16.345Z",
-    "modified": "2025-11-12T10:39:41.299Z",
+    "created": "2025-11-12T10:50:01.493Z",
+    "modified": "2025-11-12T10:50:01.493Z",
     "creator": "ONCE-v0.2.0.0",
     "description": "ONCE server scenario - Client server",
     "domain": "local.once",
     "host": "localhost",
-    "port": 8080,
+    "port": 8081,
     "isPrimaryServer": false,
     "capabilities": [
       {
         "capability": "httpPort",
-        "port": 8080
+        "port": 8081
       },
       {
         "capability": "wsPort",
-        "port": 8080
+        "port": 8081
       }
     ]
   }
