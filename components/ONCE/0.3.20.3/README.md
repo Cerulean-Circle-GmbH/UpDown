@@ -130,7 +130,200 @@ Client: Receives confirmation
 
 **Location:** `ServerHierarchyManager.ts:handleHttpRequest()`
 
-### 5. WebSocket Message Routing (`handleWebSocketMessage()`)
+## HTML Template Rendering
+
+### Overview
+
+ONCE uses a **TRUE Radical OOP template rendering system** that leverages native JavaScript template literals with dynamic `this` context binding. This approach eliminates the need for external template engines while maintaining strict separation of concerns.
+
+### Rendering Architecture
+
+#### 1. Template Files
+
+All HTML templates are stored in `src/view/html/`:
+
+```
+src/view/html/
+├── server-status.html    # Rendered with this context (dynamic)
+├── demo-hub.html         # Served as static file
+└── once-client.html      # Served as static file
+```
+
+#### 2. Rendering Methods
+
+**Rendered Templates (Dynamic):**
+- **`server-status.html`** - Uses `renderTemplate()` with full `this` context
+- Accessed via: `http://localhost:{port}/`
+
+**Static Templates (No Rendering):**
+- **`demo-hub.html`** - Served as-is, no variable substitution
+- **`once-client.html`** - Served as-is, contains client-side JavaScript
+- Accessed via: `http://localhost:{port}/demo` and `http://localhost:{port}/once`
+
+### The renderTemplate() Method
+
+**Location:** `ServerHierarchyManager.ts:renderTemplate()`
+
+```typescript
+private renderTemplate(templatePath: string): string {
+    const dirname = path.dirname(fileURLToPath(import.meta.url));
+    const fullPath = path.join(dirname, '../../../src/view/html', templatePath);
+    const template = fs.readFileSync(fullPath, 'utf-8');
+    
+    // Escape backticks in template to prevent breaking the Function constructor
+    const escapedTemplate = template.replace(/`/g, '\\`');
+    
+    // Create function with template as return value, call with this context
+    return new Function('return `' + escapedTemplate + '`;').call(this);
+}
+```
+
+**How it works:**
+1. Loads HTML template from filesystem
+2. Escapes backticks to prevent syntax errors
+3. Wraps template in `` `...` `` (template literal)
+4. Creates new Function that returns the template
+5. Calls function with `.call(this)` - binding ServerHierarchyManager instance
+6. All `${this.property}` expressions are evaluated in that context
+
+### Available Template Variables
+
+When a template is rendered, it has access to all `private get` properties of `ServerHierarchyManager`:
+
+| Variable | Type | Description | Example |
+|----------|------|-------------|---------|
+| `${this.version}` | string | Component version from path | `0.3.20.3` |
+| `${this.httpPort}` | string | HTTP server port | `42777` or `8080` |
+| `${this.wsPort}` | string | WebSocket server port | `42777` or `8080` |
+| `${this.serverModel.uuid}` | string | Server unique ID | `e14f88d0-...` |
+| `${this.serverModel.isPrimaryServer}` | boolean | Primary vs client | `true` / `false` |
+| `${this.serverModel.domain}` | string | Server domain | `local.once` |
+| `${this.serverModel.state}` | string | Lifecycle state | `running` |
+| `${this.capabilitiesHTML}` | string | Rendered capabilities | HTML string |
+
+### Template Syntax
+
+#### Basic Variable Substitution
+
+```html
+<title>ONCE Server v${this.version}</title>
+<p>Server UUID: ${this.serverModel.uuid}</p>
+<p>Port: ${this.httpPort}</p>
+```
+
+#### Conditional Rendering
+
+```html
+<span class="${this.serverModel.isPrimaryServer ? 'primary-badge' : 'client-badge'}">
+    ${this.serverModel.isPrimaryServer ? '🟢 Primary Server' : '🔵 Client Server'}
+</span>
+```
+
+#### Complex Expressions
+
+```html
+${this.serverModel.isPrimaryServer ? 
+    '<div class="primary-info">...</div>' : 
+    ''}
+```
+
+**⚠️ Important:** Avoid nested template literals inside conditionals. Use single quotes for HTML strings:
+
+```html
+<!-- ❌ BAD - Nested backticks break rendering -->
+${condition ? `<div>...</div>` : ''}
+
+<!-- ✅ GOOD - Single quotes -->
+${condition ? '<div>...</div>' : ''}
+```
+
+### Path Authority for Version
+
+The `version` getter demonstrates **path authority** principle:
+
+```typescript
+private get version(): string {
+    // Derive version from component directory path
+    const dirname = path.dirname(fileURLToPath(import.meta.url));
+    const match = dirname.match(/ONCE\/(\d+\.\d+\.\d+\.\d+)/);
+    return match ? match[1] : '0.3.20.3';
+}
+```
+
+**Why:** Version is extracted from the file system path (`/ONCE/0.3.20.3/`) rather than hardcoded. If component is copied to a new version directory, the version automatically updates.
+
+### Adding New Template Variables
+
+To add a new variable accessible in templates:
+
+1. **Add getter in ServerHierarchyManager:**
+```typescript
+private get myNewProperty(): string {
+    return this.serverModel.someValue || 'default';
+}
+```
+
+2. **Use in template:**
+```html
+<p>My Property: ${this.myNewProperty}</p>
+```
+
+3. **Rebuild** - Templates are loaded at runtime from `src/`, so changes take effect immediately after restart.
+
+### Static File Serving
+
+For HTML files that contain client-side JavaScript (like `once-client.html`), we serve them as **static files** instead of rendering:
+
+```typescript
+private getSimpleONCEClientHTML(): string {
+    // Serve as static - no rendering with this context
+    const dirname = path.dirname(fileURLToPath(import.meta.url));
+    const fullPath = path.join(dirname, '../../../src/view/html/once-client.html');
+    return fs.readFileSync(fullPath, 'utf-8');
+}
+```
+
+**Why:** These files contain browser-executable JavaScript with their own template literals. Rendering them with `this` context would break the client-side code.
+
+### Template Development Workflow
+
+1. **Edit template** in `src/view/html/server-status.html`
+2. **Add variable** in `ServerHierarchyManager.ts` as `private get`
+3. **Reference variable** in template as `${this.variableName}`
+4. **Rebuild** with `./src/sh/build.sh`
+5. **Restart server** with `./once demo`
+6. **View changes** at `http://localhost:42777/`
+
+No external tools required - pure TypeScript and native JavaScript template literals.
+
+### Benefits of This Approach
+
+1. **Zero Dependencies** - No template engine libraries needed
+2. **Type Safety** - TypeScript checks all property access
+3. **Radical OOP** - Templates use actual instance properties
+4. **Hot Reload** - Templates loaded from source at runtime
+5. **Path Authority** - Version derived from filesystem, not config
+6. **Separation of Concerns** - HTML in `src/view/html/`, logic in `.ts`
+
+### Common Pitfalls
+
+#### 1. Forgetting to Escape Backticks
+**Problem:** Template contains backticks `` ` `` that break Function constructor
+**Solution:** `renderTemplate()` automatically escapes them: `.replace(/\`/g, '\\`')`
+
+#### 2. Nested Template Literals
+**Problem:** Using `` `...` `` inside `${}` expressions
+**Solution:** Use single quotes `'...'` for HTML strings in conditionals
+
+#### 3. Async Operations in Getters
+**Problem:** Trying to use `async get version()` - not allowed
+**Solution:** All template data must be synchronous (Radical OOP Layer 2/3)
+
+#### 4. Missing Property
+**Problem:** Template uses `${this.missingProp}` → renders "undefined"
+**Solution:** Add getter or provide default: `${this.prop || 'default'}`
+
+ 5. WebSocket Message Routing (`handleWebSocketMessage()`)
 
 **Message Types:**
 
