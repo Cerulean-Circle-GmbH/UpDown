@@ -317,6 +317,13 @@ export class ServerHierarchyManager {
         ).join('');
     }
 
+    private get version(): string {
+        // Path authority: derive version from component directory path
+        const dirname = path.dirname(fileURLToPath(import.meta.url));
+        const match = dirname.match(/ONCE\/(\d+\.\d+\.\d+\.\d+)/);
+        return match ? match[1] : '0.3.20.3';
+    }
+
     /**
      * Get simple ONCE client HTML (for /once endpoint)
      */

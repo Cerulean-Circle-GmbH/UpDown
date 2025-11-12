@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ONCE Server v0.2.0.0 - Object Network Communication Engine</title>
+    <title>ONCE Server v${this.version} - Object Network Communication Engine</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -150,7 +150,7 @@
             </svg>
             <h1><span class="emoji">🚀</span> ONCE Server</h1>
             <h2>Object Network Communication Engine</h2>
-            <p>Enhanced v0.2.0.0 with Server Hierarchy & Dynamic Port Management</p>
+            <p>Enhanced v${this.version} with Server Hierarchy & Dynamic Port Management</p>
             <p class="cerulean-branding">Powered by <strong>Cerulean Circle GmbH</strong></p>
             <span class="hierarchy-badge ${this.serverModel.isPrimaryServer ? 'primary-badge' : 'client-badge'}">
                 ${this.serverModel.isPrimaryServer ? '🟢 Primary Server' : '🔵 Client Server'}
@@ -159,7 +159,7 @@
         
         <div class="status">
             <h3><span class="emoji">✅</span> Server Status: Running</h3>
-            <p>ONCE kernel v0.2.0.0 initialized and ready for enhanced P2P communication</p>
+            <p>ONCE kernel v${this.version} initialized and ready for enhanced P2P communication</p>
         </div>
 
         <div class="server-info">
@@ -223,13 +223,13 @@
         <div class="endpoints">
             <h3><span class="emoji">🔌</span> WebSocket Connection</h3>
             <p>WebSocket endpoint available at: <code>ws://localhost:${this.httpPort}/</code></p>
-            <p>Use this endpoint for real-time P2P communication with ONCE v0.2.0.0 kernel</p>
-            <p><strong>New in v0.2.0.0:</strong> Enhanced server hierarchy, dynamic port management, scenario-based configuration</p>
+            <p>Use this endpoint for real-time P2P communication with ONCE v${this.version} kernel</p>
+            <p><strong>New in v${this.version}:</strong> Enhanced server hierarchy, dynamic port management, scenario-based configuration</p>
         </div>
     </div>
 
     <script>
-        console.log('🚀 ONCE Server v0.2.0.0 Interface Loaded');
+        console.log('🚀 ONCE Server v${this.version} Interface Loaded');
         console.log('Server UUID:', '${this.serverModel.uuid}');
         console.log('Server Type:', '${this.serverModel.isPrimaryServer ? 'Primary' : 'Client'}');
         console.log('HTTP Port:', '${this.httpPort}');
