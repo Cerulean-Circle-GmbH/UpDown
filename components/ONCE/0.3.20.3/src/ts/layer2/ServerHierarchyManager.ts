@@ -214,10 +214,46 @@ export class ServerHierarchyManager {
                 }
             });
             
-            res.end(JSON.stringify({
-                success: true,
-                message: 'Server starting...'
-            }));
+            res.end(JSON.stringify({ success: true, message: 'Server starting...' }));
+        } else if (url.pathname === '/stop-server' && req.method === 'POST' && this.serverModel.isPrimaryServer) {
+            // Stop a client server dynamically
+            let body = '';
+            req.on('data', (chunk: any) => { body += chunk.toString(); });
+            req.on('end', async () => {
+                try {
+                    const { port, uuid } = JSON.parse(body);
+                    
+                    // Find the registered server
+                    const registryEntry = this.serverRegistry.get(uuid);
+                    if (registryEntry && registryEntry.websocket) {
+                        // Send shutdown command via WebSocket
+                        registryEntry.websocket.send(JSON.stringify({
+                            type: 'shutdown-command'
+                        }));
+                        
+                        // Remove from registry
+                        this.serverRegistry.delete(uuid);
+                        
+                        res.writeHead(200, { 
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*'
+                        });
+                        res.end(JSON.stringify({ success: true, message: 'Server stopped' }));
+                    } else {
+                        res.writeHead(404, { 
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*'
+                        });
+                        res.end(JSON.stringify({ success: false, message: 'Server not found' }));
+                    }
+                } catch (error) {
+                    res.writeHead(500, { 
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    });
+                    res.end(JSON.stringify({ success: false, message: 'Failed to stop server' }));
+                }
+            });
         } else if (url.pathname.startsWith('/dist/') || url.pathname.startsWith('/src/')) {
             // Serve static files from component directory
             this.serveStaticFile(url.pathname, res);
@@ -436,6 +472,11 @@ export class ServerHierarchyManager {
                     const peerPort = message.peerPort || 8080;
                     this.sendScenarioToPeer(message.scenario, peerPort);
                 }
+                break;
+            case 'shutdown-command':
+                // Remote shutdown command from primary
+                console.log('🛑 Received shutdown command from primary server');
+                void this.stopServer();
                 break;
             default:
                 console.log('🔄 Unknown WebSocket message type:', message.type);

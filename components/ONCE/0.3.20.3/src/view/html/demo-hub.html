@@ -185,15 +185,16 @@
         function createServerCard(server) {
             const isRunning = server.status === 'running';
             const statusClass = isRunning ? 'running' : 'stopped';
-            const statusText = isRunning ? '🟢 Running' : '⚪ Stopped';
+            const statusText = isRunning ? 'Running' : 'Stopped';
             const statusColor = isRunning ? 'status-running' : 'status-stopped';
+            const isPrimary = server.port === primaryPort;
             
             return `
                 <div class="server-card ${statusClass}">
                     <h3>${server.name}</h3>
                     <p class="server-status">Port: ${server.port}</p>
                     <p class="server-status ${statusColor}">Status: ${statusText}</p>
-                    ${server.uuid ? `<p class="server-status" style="font-size: 0.8em;">UUID: ${server.uuid.substring(0, 8)}...</p>` : ''}
+                    ${server.uuid && server.uuid !== 'primary' ? `<p class="server-status" style="font-size: 0.8em;">UUID: ${server.uuid.substring(0, 8)}...</p>` : ''}
                     ${isRunning ? `
                         <a href="http://localhost:${server.port}/once" target="_blank" class="server-link">
                             🌐 Open Client
@@ -201,6 +202,11 @@
                         <button class="action-btn" onclick="openHealth(${server.port})">
                             💚 Health Check
                         </button>
+                        ${!isPrimary ? `
+                        <button class="action-btn" onclick="stopServer(${server.port}, '${server.uuid}')" style="background: #f00;">
+                            🛑 Stop Server
+                        </button>
+                        ` : ''}
                     ` : `
                         <button class="action-btn" disabled>
                             ⚪ Not Running
@@ -276,14 +282,32 @@
                 });
                 
                 if (response.ok) {
-                    const data = await response.json();
-                    alert(`✅ Server started on port ${data.port}`);
-                    await fetchServerStatus();
+                    console.log('✅ Server starting...');
+                    setTimeout(fetchServerStatus, 2000);
                 } else {
-                    alert('❌ Failed to start server');
+                    console.error('❌ Failed to start server');
                 }
             } catch (error) {
-                alert('❌ Failed to start server: ' + error.message);
+                console.error('❌ Failed to start server:', error);
+            }
+        }
+        
+        async function stopServer(port, uuid) {
+            try {
+                const response = await fetch(`http://localhost:${primaryPort}/stop-server`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ port, uuid })
+                });
+                
+                if (response.ok) {
+                    console.log(`✅ Server ${uuid} stopped`);
+                    setTimeout(fetchServerStatus, 1000);
+                } else {
+                    console.error('❌ Failed to stop server');
+                }
+            } catch (error) {
+                console.error('❌ Failed to stop server:', error);
             }
         }
         
