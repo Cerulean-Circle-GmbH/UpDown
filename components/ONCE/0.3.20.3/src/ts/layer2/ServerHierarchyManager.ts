@@ -349,9 +349,28 @@ export class ServerHierarchyManager {
                 break;
             case 'scenario-message':
                 // @pdca 2025-11-11-UTC-2322.pdca.md - Handle incoming scenario messages
-                // If broadcast type and we're primary, broadcast to all clients
-                if (message.scenario.state.type === 'broadcast' && this.serverModel.isPrimaryServer) {
-                    this.broadcastScenario(message.scenario);
+                if (message.scenario.state.type === 'broadcast') {
+                    if (this.serverModel.isPrimaryServer) {
+                        // Primary received broadcast (from browser or client) - broadcast to all registered clients
+                        this.broadcastScenario(message.scenario);
+                    } else {
+                        // Client server received broadcast
+                        // Check if it's from our own browser client or from primary server
+                        const fromPrimary = message.fromPrimary !== undefined ? message.fromPrimary : false;
+                        
+                        if (fromPrimary) {
+                            // Received from primary - broadcast to our browser clients
+                            this.broadcastToBrowserClients(message.scenario);
+                        } else {
+                            // Received from our browser client - forward to primary
+                            if (this.primaryServerConnection && this.primaryServerConnection.readyState === WebSocket.OPEN) {
+                                this.primaryServerConnection.send(JSON.stringify({
+                                    ...message,
+                                    fromPrimary: false
+                                }));
+                            }
+                        }
+                    }
                 } else {
                     await this.handleScenarioMessage(message.scenario);
                 }
@@ -699,10 +718,33 @@ export class ServerHierarchyManager {
             if (entry.websocket && entry.websocket.readyState === WebSocket.OPEN) {
                 entry.websocket.send(JSON.stringify({
                     type: 'scenario-message',
-                    scenario: scenario
+                    scenario: scenario,
+                    fromPrimary: true
                 }));
             }
         }
+    }
+
+    /**
+     * Broadcast scenario message to all connected browser clients (on this server)
+     * @pdca 2025-11-11-UTC-2322.pdca.md - Client server forwards primary broadcasts to browsers
+     */
+    private broadcastToBrowserClients(scenario: ONCEScenarioMessage): void {
+        console.log(`📡 Broadcasting scenario ${scenario.uuid} to browser clients`);
+        
+        if (!this.wsServer) {
+            console.log('⚠️  No WebSocket server available');
+            return;
+        }
+        
+        this.wsServer.clients.forEach((client: WebSocket) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({
+                    type: 'scenario-message',
+                    scenario: scenario
+                }));
+            }
+        });
     }
 
     /**
