@@ -163,7 +163,10 @@ export class ServerHierarchyManager {
             res.end(this.getServerStatusHTML());
         } else if (url.pathname === '/health') {
             // Health endpoint - JSON status
-            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.writeHead(200, { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
             res.end(JSON.stringify({
                 status: 'running',
                 uuid: this.serverModel.uuid,
@@ -184,7 +187,10 @@ export class ServerHierarchyManager {
             res.end(this.getDemoHubHTML());
         } else if (url.pathname === '/servers' && this.serverModel.isPrimaryServer) {
             // Only primary server can list all servers
-            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.writeHead(200, { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
             res.end(JSON.stringify({
                 servers: Array.from(this.serverRegistry.values()).map(entry => entry.model)
             }));

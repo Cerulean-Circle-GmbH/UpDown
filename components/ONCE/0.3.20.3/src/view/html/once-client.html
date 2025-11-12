@@ -93,6 +93,9 @@
         <div class="stat-box">
             <strong>Connection Time:</strong> <span id="connectionTime">--:--:--</span>
         </div>
+        <div class="stat-box" style="grid-column: 1 / -1;">
+            <strong>Connected Servers:</strong> <span id="connectedServers">Loading...</span>
+        </div>
     </div>
     
     <div class="controls">
@@ -136,6 +139,9 @@
                     stats.connectionTime = new Date();
                     updateConnectionStatus('🟢 Connected to ' + serverHost);
                     addMessage('connection', '✅ Connected to ONCE v0.3.20.3 server');
+                    
+                    // Fetch connected servers from primary
+                    fetchConnectedServers();
                     
                     // Send connection message
                     const connectionMsg = {
@@ -335,6 +341,27 @@
         function clearLog() {
             document.getElementById('messageLog').innerHTML = '';
             addMessage('connection', '🧹 Log cleared');
+        }
+        
+        // Fetch connected servers from primary server
+        async function fetchConnectedServers() {
+            try {
+                const response = await fetch('http://localhost:42777/servers');
+                const data = await response.json();
+                const serverCount = data.servers ? data.servers.length : 0;
+                const serverList = data.servers ? data.servers.map(s => {
+                    const port = s.capabilities.find(c => c.capability === 'httpPort')?.port;
+                    return port;
+                }).filter(Boolean).join(', ') : 'None';
+                
+                document.getElementById('connectedServers').textContent = 
+                    `${serverCount} servers (ports: ${serverList})`;
+                
+                addMessage('connection', `📊 ${serverCount} servers connected via primary`);
+            } catch (error) {
+                document.getElementById('connectedServers').textContent = 'Error fetching';
+                console.error('Failed to fetch servers:', error);
+            }
         }
         
         // Update stats periodically
