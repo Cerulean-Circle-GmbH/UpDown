@@ -8,7 +8,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 describe('Server Lifecycle Management', () => {
-    const scenarioBaseDir = 'scenarios/local.once/ONCE/0.3.20.3';
+    // Scenarios are stored in project root, not component root
+    const projectRoot = path.resolve(__dirname, '../../../..');
+    const scenarioBaseDir = path.join(projectRoot, 'scenarios/local.once/ONCE/0.3.20.3');
     
     beforeEach(() => {
         // Clean up any existing test scenarios
@@ -35,7 +37,7 @@ describe('Server Lifecycle Management', () => {
             const shutdownScenario = {
                 uuid: 'test-shutdown-server',
                 objectType: 'ONCE',
-                version: '0.2.0.0',
+                version: '0.3.20.3',
                 state: {
                     state: 'shutdown',
                     capabilities: [{ capability: 'httpPort', port: 8080 }]

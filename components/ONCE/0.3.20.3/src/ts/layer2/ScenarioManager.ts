@@ -1,5 +1,5 @@
 /**
- * Scenario Manager v0.2.0.0 - Handles scenario-based configuration and storage
+ * Scenario Manager v0.3.20.3 - Handles scenario-based configuration and storage
  * Implements requirements 9b768111-7a06-4266-9d71-0ef72e90c62b and 6707a628-bf3b-4dd4-a750-562f9f0c5fa4
  */
 
@@ -7,17 +7,33 @@ import { Scenario } from '../layer3/Scenario.js';
 import { ONCEServerModel } from '../layer3/ONCEServerModel.js';
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 /**
- * Scenario Manager - handles ONCE v0.2.0.0 scenario storage and loading
+ * Scenario Manager - handles ONCE v0.3.20.3 scenario storage and loading
  * Implements organized directory structure: /scenarios/domain/component/version/uuid.json
  */
 export class ScenarioManager {
-    private projectRoot: string;
+    private _projectRoot: string | undefined;
 
     constructor(projectRoot?: string) {
-        // No environment variables - use current working directory by default
-        this.projectRoot = projectRoot || process.cwd();
+        // Allow explicit projectRoot override, otherwise derive from component path
+        this._projectRoot = projectRoot;
+    }
+
+    /**
+     * Get project root - derive from component path if not explicitly set
+     */
+    private get projectRoot(): string {
+        if (this._projectRoot) {
+            return this._projectRoot;
+        }
+        
+        // Path authority: derive project root from component path
+        // Component is at: projectRoot/components/ONCE/{version}/...
+        const currentFile = fileURLToPath(import.meta.url);
+        const match = currentFile.match(/(.+)\/components\/ONCE\/\d+\.\d+\.\d+\.\d+/);
+        return match ? match[1] : process.cwd();
     }
 
     /**
@@ -78,7 +94,7 @@ export class ScenarioManager {
         uuid: string, 
         domain: string = 'local.once', 
         component: string = 'ONCE', 
-        version: string = '0.2.0.0'
+        version: string = '0.3.20.3'
     ): Promise<Scenario> {
         const scenarioPath = join(
             this.projectRoot,
@@ -99,7 +115,7 @@ export class ScenarioManager {
         return {
             uuid: serverModel.uuid,
             objectType: 'ONCE',
-            version: '0.2.0.0',
+            version: '0.3.20.3',
             state: {
                 ...serverModel,
                 // Remove circular references and non-serializable data
@@ -111,7 +127,7 @@ export class ScenarioManager {
             metadata: {
                 created: new Date().toISOString(),
                 modified: new Date().toISOString(),
-                creator: 'ONCE-v0.2.0.0',
+                creator: 'ONCE-v0.3.20.3',
                 description: `ONCE server ${serverModel.isPrimaryServer ? 'Primary' : 'Client'} server instance`,
                 tags: ['server', 'once', serverModel.isPrimaryServer ? 'primary' : 'client'],
                 domain: serverModel.domain,
@@ -162,7 +178,7 @@ export class ScenarioManager {
      * Set project root
      */
     setProjectRoot(projectRoot: string): void {
-        this.projectRoot = projectRoot;
+        this._projectRoot = projectRoot;
     }
 }
 

@@ -235,8 +235,8 @@ export class ServerHierarchyManager {
                         await new Promise(resolve => setTimeout(resolve, 1000));
                         
                         // Delete the client's scenario file
-                        const scenarioDir = `scenarios/local.once/ONCE/${this.version}/capability/httpPort/${port}`;
-                        const scenarioPath = `${scenarioDir}/${uuid}.scenario.json`;
+                        const scenarioDir = path.join(this.projectRoot, `scenarios/local.once/ONCE/${this.version}/capability/httpPort/${port}`);
+                        const scenarioPath = path.join(scenarioDir, `${uuid}.scenario.json`);
                         
                         if (fs.existsSync(scenarioPath)) {
                             fs.unlinkSync(scenarioPath);
@@ -370,6 +370,14 @@ export class ServerHierarchyManager {
         const dirname = path.dirname(fileURLToPath(import.meta.url));
         const match = dirname.match(/ONCE\/(\d+\.\d+\.\d+\.\d+)/);
         return match ? match[1] : '0.3.20.3';
+    }
+
+    private get projectRoot(): string {
+        // Path authority: derive project root from component path
+        // Component is at: projectRoot/components/ONCE/{version}/...
+        const dirname = path.dirname(fileURLToPath(import.meta.url));
+        const match = dirname.match(/(.+)\/components\/ONCE\/\d+\.\d+\.\d+\.\d+/);
+        return match ? match[1] : process.cwd();
     }
 
     /**
@@ -676,8 +684,8 @@ export class ServerHierarchyManager {
         if (!httpCapability) return;
 
         // Use organized folder structure: scenarios/local.once/ONCE/{version}/capability/httpPort/{port}/uuid.scenario.json
-        const scenarioDir = `scenarios/local.once/ONCE/${this.version}/capability/httpPort/${httpCapability.port}`;
-        const scenarioPath = `${scenarioDir}/${this.serverModel.uuid}.scenario.json`;
+        const scenarioDir = path.join(this.projectRoot, `scenarios/local.once/ONCE/${this.version}/capability/httpPort/${httpCapability.port}`);
+        const scenarioPath = path.join(scenarioDir, `${this.serverModel.uuid}.scenario.json`);
         
         try {
             // Try to load existing scenario first
@@ -905,7 +913,7 @@ export class ServerHierarchyManager {
         console.log('🧹 Performing primary server housekeeping...');
         
         try {
-            const scenarioBaseDir = `scenarios/local.once/ONCE/${this.version}`;
+            const scenarioBaseDir = path.join(this.projectRoot, `scenarios/local.once/ONCE/${this.version}`);
             
             if (!fs.existsSync(scenarioBaseDir)) {
                 console.log('📂 No existing scenarios found');
@@ -1044,8 +1052,8 @@ export class ServerHierarchyManager {
             const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
             if (!httpCapability) return;
             
-            const scenarioDir = `scenarios/local.once/ONCE/${this.version}/capability/httpPort/${httpCapability.port}`;
-            const scenarioPath = `${scenarioDir}/${this.serverModel.uuid}.scenario.json`;
+            const scenarioDir = path.join(this.projectRoot, `scenarios/local.once/ONCE/${this.version}/capability/httpPort/${httpCapability.port}`);
+            const scenarioPath = path.join(scenarioDir, `${this.serverModel.uuid}.scenario.json`);
             
             if (fs.existsSync(scenarioPath)) {
                 const scenarioData = JSON.parse(fs.readFileSync(scenarioPath, 'utf8'));
