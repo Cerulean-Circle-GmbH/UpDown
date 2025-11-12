@@ -739,12 +739,15 @@ npx playwright install chromium
 
 **Fix:**
 ```bash
-# Kill all ONCE servers
-pkill -9 -f ONCECLI
+# Use graceful shutdown (Ctrl+C or 'q' in interactive mode)
+# Servers will clean up properly
 
-# Or manually
-lsof -ti:42777 | xargs kill -9
-lsof -ti:8080 | xargs kill -9
+# If absolutely necessary, check for orphan processes:
+lsof -ti:42777
+lsof -ti:8080
+
+# Then stop gracefully via HTTP API:
+curl -X POST http://localhost:42777/stop-server
 ```
 
 ### Issue: Housekeeping deletes running servers

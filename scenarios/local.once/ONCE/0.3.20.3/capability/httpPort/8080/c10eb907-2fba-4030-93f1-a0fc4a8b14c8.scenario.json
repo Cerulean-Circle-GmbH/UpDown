@@ -1,9 +1,9 @@
 {
-  "uuid": "089d0c24-a876-40bd-a4dd-683d500bd2c4",
+  "uuid": "c10eb907-2fba-4030-93f1-a0fc4a8b14c8",
   "objectType": "ONCE",
   "version": "0.2.0.0",
   "state": {
-    "pid": 24853,
+    "pid": 28053,
     "state": "running",
     "domain": "local.once",
     "host": "McDonges-3.fritz.box",
@@ -19,7 +19,7 @@
       }
     ],
     "isPrimaryServer": false,
-    "uuid": "089d0c24-a876-40bd-a4dd-683d500bd2c4",
+    "uuid": "c10eb907-2fba-4030-93f1-a0fc4a8b14c8",
     "platform": {
       "platform": "node",
       "version": "v22.20.0",
@@ -32,12 +32,12 @@
       "hostname": "McDonges-3.fritz.box",
       "ip": "127.0.0.1"
     },
-    "primaryServerIOR": "web4://McDonges-3.fritz.box:42777/once?uuid=3afa5d42-c919-4d4f-8d85-ce79f501cd9a&type=ONCE&version=0.2.0.0",
-    "created": "2025-11-12T12:01:36.199Z"
+    "primaryServerIOR": "web4://McDonges-3.fritz.box:42777/once?uuid=b750128e-e272-4960-9128-38505a1c6c1b&type=ONCE&version=0.2.0.0",
+    "created": "2025-11-12T12:10:28.030Z"
   },
   "metadata": {
-    "created": "2025-11-12T12:01:36.199Z",
-    "modified": "2025-11-12T12:01:36.199Z",
+    "created": "2025-11-12T12:10:28.030Z",
+    "modified": "2025-11-12T12:10:28.030Z",
     "creator": "ONCE-v0.2.0.0",
     "description": "ONCE server scenario - Client server",
     "domain": "local.once",

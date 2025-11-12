@@ -24,8 +24,8 @@ describe('ONCE Multi-Server Message Exchange', () => {
   });
 
   afterAll(async () => {
-    // Kill any orphan processes
-    await execAsync('pkill -f "ONCECLI" 2>/dev/null || true');
+    // Graceful cleanup - no kill commands
+    console.log('ℹ️  Test cleanup - servers should have stopped gracefully');
   });
 
   it('should spawn primary and 3 client servers', async () => {
@@ -38,7 +38,7 @@ curl -s http://localhost:42777/health | grep -q "running" && \\
 curl -s http://localhost:8080/health | grep -q "running" && \\
 curl -s http://localhost:8081/health | grep -q "running" && \\
 curl -s http://localhost:8082/health | grep -q "running" && \\
-kill $DEMO_PID 2>/dev/null || true && \\
+wait $DEMO_PID || true && \\
 echo "SUCCESS"
     `;
 
@@ -54,7 +54,7 @@ DEMO_PID=$! && \\
 sleep 5 && \\
 grep -q "Broadcasting scenario" /tmp/test-broadcast.log && \\
 grep -q "to 3 clients" /tmp/test-broadcast.log && \\
-kill $DEMO_PID 2>/dev/null || true && \\
+wait $DEMO_PID || true && \\
 echo "BROADCAST_OK"
     `;
 
@@ -70,7 +70,7 @@ DEMO_PID=$! && \\
 sleep 6 && \\
 grep -q "Relaying scenario" /tmp/test-relay.log && \\
 grep -q "Primary relaying scenario" /tmp/test-relay.log && \\
-kill $DEMO_PID 2>/dev/null || true && \\
+wait $DEMO_PID || true && \\
 echo "RELAY_OK"
     `;
 
@@ -86,7 +86,7 @@ DEMO_PID=$! && \\
 sleep 7 && \\
 grep -q "P2P connection established" /tmp/test-p2p.log && \\
 grep -q "Direct P2P message" /tmp/test-p2p.log && \\
-kill $DEMO_PID 2>/dev/null || true && \\
+wait $DEMO_PID || true && \\
 echo "P2P_OK"
     `;
 
@@ -100,7 +100,7 @@ cd ${componentRoot} && \\
 timeout 15 ./once demoMessages 3 > /tmp/test-json.log 2>&1 & \\
 DEMO_PID=$! && \\
 sleep 8 && \\
-kill $DEMO_PID 2>/dev/null || true && \\
+wait $DEMO_PID || true && \\
 test -f scenarios/message-exchange-report.json && \\
 cat scenarios/message-exchange-report.json
     `;
@@ -155,7 +155,7 @@ cd ${componentRoot} && \\
 timeout 15 ./once demoMessages 3 > /tmp/test-ack.log 2>&1 & \\
 DEMO_PID=$! && \\
 sleep 8 && \\
-kill $DEMO_PID 2>/dev/null || true && \\
+wait $DEMO_PID || true && \\
 grep -c "Content: ACK:" /tmp/test-ack.log
     `;
 
@@ -195,7 +195,7 @@ cd ${componentRoot} && \\
 timeout 15 ./once demoMessages 3 > /tmp/test-format.log 2>&1 & \\
 DEMO_PID=$! && \\
 sleep 8 && \\
-kill $DEMO_PID 2>/dev/null || true && \\
+wait $DEMO_PID || true && \\
 cat scenarios/message-exchange-report.json
     `;
 
