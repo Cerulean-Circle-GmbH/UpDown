@@ -8,7 +8,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 describe('Server Lifecycle Management', () => {
-    const scenarioBaseDir = 'scenarios/local.once/ONCE/0.2.0.0';
+    const scenarioBaseDir = 'scenarios/local.once/ONCE/0.3.20.3';
     
     beforeEach(() => {
         // Clean up any existing test scenarios
