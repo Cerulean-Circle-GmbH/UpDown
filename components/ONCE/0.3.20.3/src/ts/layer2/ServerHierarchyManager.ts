@@ -197,6 +197,27 @@ export class ServerHierarchyManager {
             res.end(JSON.stringify({
                 servers: Array.from(this.serverRegistry.values()).map(entry => entry.model)
             }));
+        } else if (url.pathname === '/start-server' && req.method === 'POST' && this.serverModel.isPrimaryServer) {
+            // Start a new client server dynamically
+            res.writeHead(200, { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            
+            // Spawn new server process
+            const { exec } = await import('child_process');
+            const componentDir = process.cwd();
+            
+            exec(`cd ${componentDir} && ./once startServer &`, (error) => {
+                if (error) {
+                    console.error('Failed to start server:', error);
+                }
+            });
+            
+            res.end(JSON.stringify({
+                success: true,
+                message: 'Server starting...'
+            }));
         } else if (url.pathname.startsWith('/dist/') || url.pathname.startsWith('/src/')) {
             // Serve static files from component directory
             this.serveStaticFile(url.pathname, res);
