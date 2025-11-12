@@ -84,6 +84,9 @@ export class ServerHierarchyManager {
                 console.log(`📋 Server UUID: ${this.serverModel.uuid}`);
                 console.log(`🏠 Domain: ${this.serverModel.domain}`);
                 this.serverModel.state = LifecycleState.PRIMARY_SERVER;
+                
+                // Perform housekeeping: discover existing servers, cleanup shutdown scenarios
+                await this.performHousekeeping();
             } else {
                 console.log(`🔵 Started as CLIENT SERVER on port ${portResult.port}`);
                 console.log(`📋 Server UUID: ${this.serverModel.uuid}`);
@@ -812,10 +815,117 @@ export class ServerHierarchyManager {
     }
 
     /**
+     * Perform housekeeping at primary server startup
+     * - Load existing scenarios from filesystem
+     * - Delete scenarios with state=shutdown
+     * - Discover and re-register running client servers
+     */
+    private async performHousekeeping(): Promise<void> {
+        console.log('🧹 Performing primary server housekeeping...');
+        
+        try {
+            const scenarioBaseDir = 'scenarios/local.once/ONCE/0.2.0.0';
+            
+            if (!fs.existsSync(scenarioBaseDir)) {
+                console.log('📂 No existing scenarios found');
+                return;
+            }
+            
+            // Find all scenario files
+            const findScenarios = (dir: string): string[] => {
+                const results: string[] = [];
+                const items = fs.readdirSync(dir);
+                
+                for (const item of items) {
+                    const fullPath = path.join(dir, item);
+                    const stat = fs.statSync(fullPath);
+                    
+                    if (stat.isDirectory()) {
+                        results.push(...findScenarios(fullPath));
+                    } else if (item.endsWith('.scenario.json')) {
+                        results.push(fullPath);
+                    }
+                }
+                
+                return results;
+            };
+            
+            const scenarioFiles = findScenarios(scenarioBaseDir);
+            console.log(`📂 Found ${scenarioFiles.length} existing scenario(s)`);
+            
+            let deletedCount = 0;
+            let discoveredCount = 0;
+            
+            for (const scenarioPath of scenarioFiles) {
+                try {
+                    const scenarioData = JSON.parse(fs.readFileSync(scenarioPath, 'utf8'));
+                    const state = scenarioData.state?.state;
+                    const uuid = scenarioData.uuid;
+                    const port = scenarioData.state?.capabilities?.find((c: any) => c.capability === 'httpPort')?.port;
+                    
+                    if (state === LifecycleState.SHUTDOWN || state === LifecycleState.STOPPED) {
+                        // Delete shutdown/stopped server scenarios
+                        fs.unlinkSync(scenarioPath);
+                        deletedCount++;
+                        console.log(`🗑️  Deleted shutdown server scenario: ${uuid} (port ${port})`);
+                    } else if (state === LifecycleState.RUNNING || state === LifecycleState.CLIENT_SERVER) {
+                        // Discover running client server
+                        if (port && port !== 42777) {
+                            // Try to connect to the server
+                            try {
+                                const http = await import('http');
+                                await new Promise<void>((resolve, reject) => {
+                                    const req = http.request({
+                                        hostname: 'localhost',
+                                        port: port,
+                                        path: '/health',
+                                        method: 'GET',
+                                        timeout: 1000
+                                    }, (res) => {
+                                        if (res.statusCode === 200) {
+                                            discoveredCount++;
+                                            console.log(`🔍 Discovered running client server: ${uuid} on port ${port}`);
+                                            resolve();
+                                        } else {
+                                            reject(new Error('Server not healthy'));
+                                        }
+                                    });
+                                    
+                                    req.on('error', reject);
+                                    req.on('timeout', () => {
+                                        req.destroy();
+                                        reject(new Error('Timeout'));
+                                    });
+                                    req.end();
+                                });
+                            } catch (error) {
+                                // Server not reachable, delete stale scenario
+                                fs.unlinkSync(scenarioPath);
+                                deletedCount++;
+                                console.log(`🗑️  Deleted stale server scenario: ${uuid} (port ${port} not reachable)`);
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error(`⚠️  Error processing scenario ${scenarioPath}:`, error);
+                }
+            }
+            
+            console.log(`✅ Housekeeping complete: ${deletedCount} deleted, ${discoveredCount} discovered`);
+            
+        } catch (error) {
+            console.error('❌ Housekeeping error:', error);
+        }
+    }
+
+    /**
      * Stop server gracefully
      */
     async stopServer(): Promise<void> {
         this.serverModel.state = LifecycleState.STOPPING;
+        
+        // Update scenario to reflect stopping state
+        await this.updateScenarioState(LifecycleState.STOPPING);
 
         if (this.primaryServerConnection) {
             this.primaryServerConnection.close();
@@ -827,12 +937,40 @@ export class ServerHierarchyManager {
 
         if (this.httpServer) {
             return new Promise((resolve) => {
-                this.httpServer!.close(() => {
+                this.httpServer!.close(async () => {
                     console.log('🛑 Server stopped');
-                    this.serverModel.state = LifecycleState.STOPPED;
+                    this.serverModel.state = LifecycleState.SHUTDOWN;
+                    
+                    // Update scenario to SHUTDOWN state for housekeeping
+                    await this.updateScenarioState(LifecycleState.SHUTDOWN);
+                    
                     resolve();
                 });
             });
+        }
+    }
+    
+    /**
+     * Update scenario state for graceful shutdown tracking
+     */
+    private async updateScenarioState(state: LifecycleState): Promise<void> {
+        try {
+            const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
+            if (!httpCapability) return;
+            
+            const scenarioDir = `scenarios/local.once/ONCE/0.2.0.0/capability/httpPort/${httpCapability.port}`;
+            const scenarioPath = `${scenarioDir}/${this.serverModel.uuid}.scenario.json`;
+            
+            if (fs.existsSync(scenarioPath)) {
+                const scenarioData = JSON.parse(fs.readFileSync(scenarioPath, 'utf8'));
+                scenarioData.state.state = state;
+                scenarioData.metadata.modified = new Date().toISOString();
+                
+                fs.writeFileSync(scenarioPath, JSON.stringify(scenarioData, null, 2));
+                console.log(`💾 Updated scenario state to: ${state}`);
+            }
+        } catch (error) {
+            console.error('⚠️  Failed to update scenario state:', error);
         }
     }
 }
