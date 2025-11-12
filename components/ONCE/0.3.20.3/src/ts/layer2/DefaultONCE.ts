@@ -1175,6 +1175,14 @@ export class DefaultONCE implements ONCE {
           // Toggle server
           if (!this.model.initialized || !this.model.serverModel) {
             console.log('🚀 Starting ONCE server...');
+            // ✅ RADICAL OOP: Ensure clientServers array exists
+            if (!this.model.serverModel) {
+              this.model.serverModel = {} as any;
+            }
+            if (!((this.model.serverModel as any).clientServers)) {
+              ((this.model.serverModel as any).clientServers as any[]) = [];
+            }
+            
             await this.startServer();
             const serverModel = this.serverHierarchyManager.getServerModel();
             const httpCapability = serverModel.capabilities.find(c => c.capability === 'httpPort');
@@ -1206,6 +1214,14 @@ export class DefaultONCE implements ONCE {
           // Launch client server
           console.log('🔵 Launching client server...');
           try {
+            // ✅ RADICAL OOP: Ensure clientServers array exists
+            if (!this.model.serverModel) {
+              this.model.serverModel = {} as any;
+            }
+            if (!((this.model.serverModel as any).clientServers)) {
+              ((this.model.serverModel as any).clientServers as any[]) = [];
+            }
+            
             const clientOnce = new DefaultONCE();
             await clientOnce.init();
             await clientOnce.startServer();
