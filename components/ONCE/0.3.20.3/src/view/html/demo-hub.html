@@ -88,8 +88,8 @@
         
         .server-link, .action-btn {
             display: block;
-            background: #0f0;
-            color: #000;
+            background: #666;
+            color: #fff;
             text-decoration: none;
             padding: 10px;
             margin: 5px 0;
@@ -103,7 +103,7 @@
         }
         
         .server-link:hover, .action-btn:hover {
-            background: #ff0;
+            background: #888;
         }
         
         .action-btn:disabled {
@@ -112,9 +112,9 @@
         }
         
         .open-all-btn, .start-next-btn {
-            background: #ff0;
-            color: #000;
-            border: 2px solid #ff0;
+            background: #666;
+            color: #fff;
+            border: 2px solid #666;
             padding: 15px 30px;
             font-size: 1.2em;
             cursor: pointer;
@@ -124,8 +124,8 @@
         }
         
         .open-all-btn:hover, .start-next-btn:hover {
-            background: #0f0;
-            border-color: #0f0;
+            background: #888;
+            border-color: #888;
         }
         
         .button-bar {
@@ -188,10 +188,12 @@
             const statusText = isRunning ? 'Running' : 'Stopped';
             const statusColor = isRunning ? 'status-running' : 'status-stopped';
             const isPrimary = server.port === primaryPort;
+            const statusDot = isRunning ? '🟢' : '⚪';
+            const serverType = isPrimary ? 'Primary Server' : `Client Server ${server.name.match(/\d+/)?.[0] || ''}`;
             
             return `
                 <div class="server-card ${statusClass}">
-                    <h3>${server.name}</h3>
+                    <h3>${statusDot} ${serverType}</h3>
                     <p class="server-status">Port: ${server.port}</p>
                     <p class="server-status ${statusColor}">Status: ${statusText}</p>
                     ${server.uuid && server.uuid !== 'primary' ? `<p class="server-status" style="font-size: 0.8em;">UUID: ${server.uuid.substring(0, 8)}...</p>` : ''}
@@ -223,7 +225,7 @@
                 
                 // Add primary server
                 const primary = {
-                    name: '🟢 Primary Server',
+                    name: 'Primary Server',
                     port: primaryPort,
                     status: 'running',
                     uuid: 'primary'
@@ -233,7 +235,7 @@
                 const clients = data.servers.map((s, idx) => {
                     const port = s.capabilities.find(c => c.capability === 'httpPort')?.port;
                     return {
-                        name: `🔵 Client Server ${idx + 1}`,
+                        name: `Client Server ${idx + 1}`,
                         port: port,
                         status: 'running',
                         uuid: s.uuid
