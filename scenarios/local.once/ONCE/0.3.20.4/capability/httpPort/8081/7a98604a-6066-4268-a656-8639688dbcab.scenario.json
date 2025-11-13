@@ -1,0 +1,58 @@
+{
+  "uuid": "7a98604a-6066-4268-a656-8639688dbcab",
+  "objectType": "ONCE",
+  "version": "0.2.0.0",
+  "state": {
+    "pid": 65301,
+    "state": "shutdown",
+    "domain": "local.once",
+    "host": "McDonges-3.local",
+    "ip": "127.0.0.1",
+    "capabilities": [
+      {
+        "capability": "httpPort",
+        "port": 8081
+      },
+      {
+        "capability": "wsPort",
+        "port": 8081
+      }
+    ],
+    "isPrimaryServer": false,
+    "uuid": "7a98604a-6066-4268-a656-8639688dbcab",
+    "platform": {
+      "platform": "node",
+      "version": "v22.20.0",
+      "capabilities": [
+        "server",
+        "websocket",
+        "p2p"
+      ],
+      "isOnline": true,
+      "hostname": "McDonges-3.local",
+      "ip": "127.0.0.1"
+    },
+    "primaryServerIOR": "web4://localhost:42777/once?uuid=373a65e5-a500-4056-a4c5-929b7395850f&type=ONCE&version=0.2.0.0",
+    "created": "2025-11-13T16:49:20.846Z"
+  },
+  "metadata": {
+    "created": "2025-11-13T16:49:20.846Z",
+    "modified": "2025-11-13T16:49:22.866Z",
+    "creator": "ONCE-v0.2.0.0",
+    "description": "ONCE server scenario - Client server",
+    "domain": "local.once",
+    "host": "McDonges-3.local",
+    "port": 8081,
+    "isPrimaryServer": false,
+    "capabilities": [
+      {
+        "capability": "httpPort",
+        "port": 8081
+      },
+      {
+        "capability": "wsPort",
+        "port": 8081
+      }
+    ]
+  }
+}
