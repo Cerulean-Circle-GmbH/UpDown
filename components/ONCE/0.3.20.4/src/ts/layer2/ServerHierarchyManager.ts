@@ -441,21 +441,28 @@ export class ServerHierarchyManager {
 
     /**
      * Get simple ONCE client HTML (for /once endpoint)
+     * ✅ TRUE Radical OOP: Dynamically inject version instead of hardcoding
      */
     private getSimpleONCEClientHTML(): string {
-        // Client HTML contains JavaScript - serve as static file, don't render with this context
         const dirname = path.dirname(fileURLToPath(import.meta.url));
         const fullPath = path.join(dirname, '../../../src/view/html/once-client.html');
-        return fs.readFileSync(fullPath, 'utf-8');
+        const html = fs.readFileSync(fullPath, 'utf-8');
+        
+        // Replace all hardcoded version strings with dynamic version
+        return html.replace(/0\.3\.20\.[0-9]/g, this.version);
     }
 
     /**
      * Get demo hub HTML (for /demo endpoint)
+     * ✅ TRUE Radical OOP: Dynamically inject version instead of hardcoding
      */
     private getDemoHubHTML(): string {
         const dirname = path.dirname(fileURLToPath(import.meta.url));
         const fullPath = path.join(dirname, '../../../src/view/html/demo-hub.html');
-        return fs.readFileSync(fullPath, 'utf-8');
+        const html = fs.readFileSync(fullPath, 'utf-8');
+        
+        // Replace all hardcoded version strings with dynamic version
+        return html.replace(/0\.3\.20\.[0-9]/g, this.version);
     }
 
     /**
