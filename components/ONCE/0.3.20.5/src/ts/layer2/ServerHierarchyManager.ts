@@ -180,8 +180,8 @@ export class ServerHierarchyManager {
                 state: this.serverModel.state,
                 capabilities: this.serverModel.capabilities,
                 domain: this.serverModel.domain,
-                version: '0.2.0.0',
-                message: 'ONCE v0.2.0.0 Server - Enhanced Hierarchy'
+                version: this.version,
+                message: `ONCE v${this.version} Server - Enhanced Hierarchy`
             }));
         } else if (url.pathname === '/once' || url.pathname === '/once/') {
             // Simple browser client endpoint - just ONCE import and heading
@@ -826,7 +826,7 @@ export class ServerHierarchyManager {
             path: '/once',
             uuid: primaryServerModel.uuid,
             objectType: 'ONCE',
-            version: '0.2.0.0'
+            version: this.version
         };
 
         return iorToUrl(ior);
@@ -882,7 +882,7 @@ export class ServerHierarchyManager {
             const scenario = {
                 uuid: this.serverModel.uuid,
                 objectType: 'ONCE',
-                version: '0.2.0.0',
+                version: this.version,
                 state: {
                     ...this.serverModel,
                     created: new Date().toISOString()
@@ -890,7 +890,7 @@ export class ServerHierarchyManager {
                 metadata: {
                     created: new Date().toISOString(),
                     modified: new Date().toISOString(),
-                    creator: 'ONCE-v0.2.0.0',
+                    creator: `ONCE-v${this.version}`,
                     description: `ONCE server scenario - ${this.serverModel.isPrimaryServer ? 'Primary' : 'Client'} server`,
                     domain: this.serverModel.domain,
                     host: this.serverModel.host,
