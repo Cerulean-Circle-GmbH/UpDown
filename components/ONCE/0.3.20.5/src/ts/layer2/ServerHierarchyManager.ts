@@ -1213,14 +1213,35 @@ export class ServerHierarchyManager {
             
             for (const scenarioPath of scenarioFiles) {
                 try {
+                    // Skip symlinks - we only process main files (symlinks will be cleaned up separately)
+                    const stats = fs.lstatSync(scenarioPath);
+                    if (stats.isSymbolicLink()) {
+                        // Check if symlink target exists
+                        if (!fs.existsSync(scenarioPath)) {
+                            // Broken symlink - delete it
+                            fs.unlinkSync(scenarioPath);
+                            console.log(`🗑️  Deleted broken symlink: ${path.basename(scenarioPath)}`);
+                        }
+                        continue;
+                    }
+                    
                     const scenarioData = JSON.parse(fs.readFileSync(scenarioPath, 'utf8'));
                     const state = scenarioData.state?.state;
                     const uuid = scenarioData.uuid;
                     const port = scenarioData.state?.capabilities?.find((c: any) => c.capability === 'httpPort')?.port;
                     
                     if (state === LifecycleState.SHUTDOWN || state === LifecycleState.STOPPED) {
-                        // Delete shutdown/stopped server scenarios
+                        // Delete shutdown/stopped server scenarios (both main file and symlink)
                         fs.unlinkSync(scenarioPath);
+                        
+                        // Delete corresponding symlink if it exists
+                        if (port) {
+                            const symlinkPath = path.join(scenarioBaseDir, `capability/httpPort/${port}/${uuid}.scenario.json`);
+                            if (fs.existsSync(symlinkPath)) {
+                                fs.unlinkSync(symlinkPath);
+                            }
+                        }
+                        
                         deletedCount++;
                         console.log(`🗑️  Deleted shutdown server scenario: ${uuid} (port ${port})`);
                     } else if (state === LifecycleState.RUNNING || state === LifecycleState.CLIENT_SERVER) {
@@ -1254,8 +1275,15 @@ export class ServerHierarchyManager {
                                     req.end();
                                 });
                             } catch (error) {
-                                // Server not reachable, delete stale scenario
+                                // Server not reachable, delete stale scenario (both main file and symlink)
                                 fs.unlinkSync(scenarioPath);
+                                
+                                // Delete corresponding symlink if it exists
+                                const symlinkPath = path.join(scenarioBaseDir, `capability/httpPort/${port}/${uuid}.scenario.json`);
+                                if (fs.existsSync(symlinkPath)) {
+                                    fs.unlinkSync(symlinkPath);
+                                }
+                                
                                 deletedCount++;
                                 console.log(`🗑️  Deleted stale server scenario: ${uuid} (port ${port} not reachable)`);
                             }
