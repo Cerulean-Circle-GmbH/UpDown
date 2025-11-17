@@ -839,22 +839,29 @@ export class ServerHierarchyManager {
         const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
         if (!httpCapability) return;
 
-        // Use organized folder structure: scenarios/local.once/ONCE/{version}/capability/httpPort/{port}/uuid.scenario.json
-        const scenarioDir = path.join(this.projectRoot, `scenarios/local.once/ONCE/${this.version}/capability/httpPort/${httpCapability.port}`);
-        const scenarioPath = path.join(scenarioDir, `${this.serverModel.uuid}.scenario.json`);
+        // Main scenario file location (flat structure)
+        const mainScenarioDir = path.join(this.projectRoot, `scenarios/local.once/ONCE/${this.version}`);
+        const mainScenarioPath = path.join(mainScenarioDir, `${this.serverModel.uuid}.scenario.json`);
+        
+        // Capability symlink location (for discovery by port)
+        const capabilityDir = path.join(this.projectRoot, `scenarios/local.once/ONCE/${this.version}/capability/httpPort/${httpCapability.port}`);
+        const capabilitySymlink = path.join(capabilityDir, `${this.serverModel.uuid}.scenario.json`);
         
         try {
             // Try to load existing scenario first
             const fs = await import('fs');
             const path = await import('path');
             
-            if (fs.existsSync(scenarioPath)) {
-                console.log(`📂 Loading existing scenario: ${scenarioPath}`);
-                const scenarioData = JSON.parse(fs.readFileSync(scenarioPath, 'utf8'));
+            if (fs.existsSync(mainScenarioPath)) {
+                console.log(`📂 Loading existing scenario: ${mainScenarioPath}`);
+                const scenarioData = JSON.parse(fs.readFileSync(mainScenarioPath, 'utf8'));
                 
                 // Restore configuration from scenario
                 if (scenarioData.state) {
-                    console.log(`✅ Scenario restored from ${scenarioPath}`);
+                    console.log(`✅ Scenario restored from ${mainScenarioPath}`);
+                    
+                    // Ensure capability symlink exists
+                    this.ensureCapabilitySymlink(capabilityDir, capabilitySymlink, mainScenarioPath);
                     return;
                 }
             }
@@ -863,19 +870,54 @@ export class ServerHierarchyManager {
         }
 
         // Create new scenario if none exists or loading failed
-        await this.saveScenario(scenarioDir, scenarioPath);
+        await this.saveScenario(mainScenarioDir, mainScenarioPath, capabilityDir, capabilitySymlink);
+    }
+
+    /**
+     * Ensure capability symlink exists pointing to main scenario file (DRY principle)
+     */
+    private async ensureCapabilitySymlink(capabilityDir: string, symlinkPath: string, targetPath: string): Promise<void> {
+        try {
+            const fs = await import('fs');
+            const path = await import('path');
+            
+            // Ensure capability directory exists
+            if (!fs.existsSync(capabilityDir)) {
+                fs.mkdirSync(capabilityDir, { recursive: true });
+            }
+            
+            // Remove existing file/symlink if it exists
+            if (fs.existsSync(symlinkPath)) {
+                const stats = fs.lstatSync(symlinkPath);
+                if (!stats.isSymbolicLink()) {
+                    // It's a regular file - remove it (we'll replace with symlink)
+                    fs.unlinkSync(symlinkPath);
+                    console.log(`🔄 Removed duplicate file, creating symlink: ${symlinkPath}`);
+                } else {
+                    // Already a symlink - no action needed
+                    return;
+                }
+            }
+            
+            // Create relative symlink from capability dir to main file
+            const relativePath = path.relative(capabilityDir, targetPath);
+            fs.symlinkSync(relativePath, symlinkPath);
+            console.log(`🔗 Created capability symlink: ${symlinkPath} -> ${relativePath}`);
+        } catch (error) {
+            console.error(`⚠️  Failed to create capability symlink: ${error instanceof Error ? error.message : String(error)}`);
+        }
     }
 
     /**
      * Save server scenario to organized directory structure
      */
-    private async saveScenario(scenarioDir: string, scenarioPath: string): Promise<void> {
+    private async saveScenario(mainScenarioDir: string, mainScenarioPath: string, capabilityDir: string, capabilitySymlink: string): Promise<void> {
         try {
             const fs = await import('fs');
             const path = await import('path');
             
-            // Ensure directory exists
-            fs.mkdirSync(scenarioDir, { recursive: true });
+            // Ensure main directory exists
+            fs.mkdirSync(mainScenarioDir, { recursive: true });
             
             const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
             
@@ -900,8 +942,12 @@ export class ServerHierarchyManager {
                 }
             };
 
-            fs.writeFileSync(scenarioPath, JSON.stringify(scenario, null, 2));
-            console.log(`💾 Scenario saved to: ${scenarioPath}`);
+            // Save main scenario file
+            fs.writeFileSync(mainScenarioPath, JSON.stringify(scenario, null, 2));
+            console.log(`💾 Scenario saved to: ${mainScenarioPath}`);
+            
+            // Create capability symlink pointing to main file
+            this.ensureCapabilitySymlink(capabilityDir, capabilitySymlink, mainScenarioPath);
         } catch (error) {
             console.error(`❌ Failed to save scenario: ${error instanceof Error ? error.message : String(error)}`);
         }
@@ -1207,21 +1253,22 @@ export class ServerHierarchyManager {
     
     /**
      * Update scenario state for graceful shutdown tracking
+     * Updates main scenario file (symlinks will automatically reflect changes)
      */
     private async updateScenarioState(state: LifecycleState): Promise<void> {
         try {
             const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
             if (!httpCapability) return;
             
-            const scenarioDir = path.join(this.projectRoot, `scenarios/local.once/ONCE/${this.version}/capability/httpPort/${httpCapability.port}`);
-            const scenarioPath = path.join(scenarioDir, `${this.serverModel.uuid}.scenario.json`);
+            // Update main scenario file (not the symlink)
+            const mainScenarioPath = path.join(this.projectRoot, `scenarios/local.once/ONCE/${this.version}`, `${this.serverModel.uuid}.scenario.json`);
             
-            if (fs.existsSync(scenarioPath)) {
-                const scenarioData = JSON.parse(fs.readFileSync(scenarioPath, 'utf8'));
+            if (fs.existsSync(mainScenarioPath)) {
+                const scenarioData = JSON.parse(fs.readFileSync(mainScenarioPath, 'utf8'));
                 scenarioData.state.state = state;
                 scenarioData.metadata.modified = new Date().toISOString();
                 
-                fs.writeFileSync(scenarioPath, JSON.stringify(scenarioData, null, 2));
+                fs.writeFileSync(mainScenarioPath, JSON.stringify(scenarioData, null, 2));
                 console.log(`💾 Updated scenario state to: ${state}`);
             }
         } catch (error) {
