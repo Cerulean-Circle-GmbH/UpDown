@@ -50,9 +50,9 @@ export class ServerHierarchyManager {
             pid: process.pid,
             state: LifecycleState.CREATED,
             platform: this.detectEnvironment(),
-            domain: ONCE_DEFAULT_CONFIG.DEFAULT_DOMAIN,
-            host: this.detectHostname(),
-            ip: ONCE_DEFAULT_CONFIG.DEFAULT_IP,
+            domain: this.detectDomain(), // ✅ Dynamic domain discovery
+            host: this.detectHostname(), // ✅ Dynamic hostname discovery
+            ip: this.detectIPAddress(), // ✅ Dynamic IP discovery
             capabilities: [],
             isPrimaryServer: false
         } as ONCEServerModel;
@@ -343,8 +343,9 @@ export class ServerHierarchyManager {
                         // Wait for the scenario to be updated to SHUTDOWN state
                         await new Promise(resolve => setTimeout(resolve, 1000));
                         
-                        // Delete the client's scenario file
-                        const scenarioDir = path.join(this.projectRoot, `scenarios/local.once/ONCE/${this.version}/capability/httpPort/${port}`);
+                        // Delete the client's scenario file (use detected domain)
+                        const domain = this.serverModel.domain || ONCE_DEFAULT_CONFIG.DEFAULT_DOMAIN;
+                        const scenarioDir = path.join(this.projectRoot, `scenarios/${domain}/ONCE/${this.version}/capability/httpPort/${port}`);
                         const scenarioPath = path.join(scenarioDir, `${uuid}.scenario.json`);
                         
                         if (fs.existsSync(scenarioPath)) {
@@ -839,12 +840,15 @@ export class ServerHierarchyManager {
         const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
         if (!httpCapability) return;
 
+        // Use detected domain for scenario path
+        const domain = this.serverModel.domain || ONCE_DEFAULT_CONFIG.DEFAULT_DOMAIN;
+        
         // Main scenario file location (flat structure)
-        const mainScenarioDir = path.join(this.projectRoot, `scenarios/local.once/ONCE/${this.version}`);
+        const mainScenarioDir = path.join(this.projectRoot, `scenarios/${domain}/ONCE/${this.version}`);
         const mainScenarioPath = path.join(mainScenarioDir, `${this.serverModel.uuid}.scenario.json`);
         
         // Capability symlink location (for discovery by port)
-        const capabilityDir = path.join(this.projectRoot, `scenarios/local.once/ONCE/${this.version}/capability/httpPort/${httpCapability.port}`);
+        const capabilityDir = path.join(this.projectRoot, `scenarios/${domain}/ONCE/${this.version}/capability/httpPort/${httpCapability.port}`);
         const capabilitySymlink = path.join(capabilityDir, `${this.serverModel.uuid}.scenario.json`);
         
         try {
@@ -957,18 +961,21 @@ export class ServerHierarchyManager {
      * Detect current environment
      */
     private detectEnvironment(): any {
+        const hostname = this.detectHostname();
+        const ip = this.detectIPAddress();
+        
         return {
             platform: 'node',
             version: process.version,
             capabilities: ['server', 'websocket', 'p2p'],
             isOnline: true,
-            hostname: this.detectHostname(),
-            ip: ONCE_DEFAULT_CONFIG.DEFAULT_IP
+            hostname,
+            ip
         };
     }
 
     /**
-     * Detect hostname
+     * Detect hostname (FQDN preferred, fallback to simple hostname)
      */
     private detectHostname(): string {
         try {
@@ -977,6 +984,61 @@ export class ServerHierarchyManager {
         } catch {
             return 'localhost';
         }
+    }
+
+    /**
+     * Detect actual IP address from network interfaces
+     * Prefers non-internal IPv4 addresses over localhost
+     */
+    private detectIPAddress(): string {
+        try {
+            const os = require('os');
+            const networkInterfaces = os.networkInterfaces();
+            
+            // Try to find first non-internal IPv4 address
+            for (const name of Object.keys(networkInterfaces)) {
+                const nets = networkInterfaces[name];
+                if (nets) {
+                    for (const net of nets) {
+                        // Skip internal (loopback) and non-IPv4 addresses
+                        if (net.family === 'IPv4' && !net.internal) {
+                            return net.address;
+                        }
+                    }
+                }
+            }
+            
+            // Fallback to localhost if no external interface found
+            return ONCE_DEFAULT_CONFIG.DEFAULT_IP;
+        } catch {
+            return ONCE_DEFAULT_CONFIG.DEFAULT_IP;
+        }
+    }
+
+    /**
+     * Detect or derive domain name from hostname
+     * Converts hostname to reverse domain notation
+     * Examples:
+     *   - "McDonges-3.fritz.box" -> "box.fritz.McDonges-3"
+     *   - "localhost" -> "local.once"
+     *   - "myserver" -> "local.myserver"
+     */
+    private detectDomain(): string {
+        const hostname = this.detectHostname();
+        
+        // If hostname has dots, assume it's FQDN and reverse it
+        if (hostname.includes('.')) {
+            const parts = hostname.split('.');
+            return parts.reverse().join('.');
+        }
+        
+        // If hostname is localhost, use default
+        if (hostname === 'localhost') {
+            return ONCE_DEFAULT_CONFIG.DEFAULT_DOMAIN;
+        }
+        
+        // Otherwise create a local domain
+        return `local.${hostname}`;
     }
 
     /**
@@ -1116,7 +1178,8 @@ export class ServerHierarchyManager {
         console.log('🧹 Performing primary server housekeeping...');
         
         try {
-            const scenarioBaseDir = path.join(this.projectRoot, `scenarios/local.once/ONCE/${this.version}`);
+            const domain = this.serverModel.domain || ONCE_DEFAULT_CONFIG.DEFAULT_DOMAIN;
+            const scenarioBaseDir = path.join(this.projectRoot, `scenarios/${domain}/ONCE/${this.version}`);
             
             if (!fs.existsSync(scenarioBaseDir)) {
                 console.log('📂 No existing scenarios found');
@@ -1260,8 +1323,10 @@ export class ServerHierarchyManager {
             const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
             if (!httpCapability) return;
             
+            const domain = this.serverModel.domain || ONCE_DEFAULT_CONFIG.DEFAULT_DOMAIN;
+            
             // Update main scenario file (not the symlink)
-            const mainScenarioPath = path.join(this.projectRoot, `scenarios/local.once/ONCE/${this.version}`, `${this.serverModel.uuid}.scenario.json`);
+            const mainScenarioPath = path.join(this.projectRoot, `scenarios/${domain}/ONCE/${this.version}`, `${this.serverModel.uuid}.scenario.json`);
             
             if (fs.existsSync(mainScenarioPath)) {
                 const scenarioData = JSON.parse(fs.readFileSync(mainScenarioPath, 'utf8'));
