@@ -1022,15 +1022,8 @@ export class ServerHierarchyManager {
      *   - "McDonges-3.fritz.box" -> "box.fritz.McDonges-3"
      *   - "localhost" -> "local.once"
      *   - "myserver" -> "local.myserver"
-     * 
-     * If ONCE_DOMAIN environment variable is set, uses that (for testing)
      */
     private detectDomain(): string {
-        // Check for test override
-        if (process.env.ONCE_DOMAIN) {
-            return process.env.ONCE_DOMAIN;
-        }
-        
         const hostname = this.detectHostname();
         
         // If hostname has dots, assume it's FQDN and reverse it

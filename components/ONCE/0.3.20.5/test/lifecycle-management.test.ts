@@ -13,21 +13,16 @@ import * as http from 'http';
  * Helper: Spawn a server as a separate process
  * Returns: ChildProcess, port, and UUID
  */
-async function spawnServer(isPrimary: boolean = false, domain?: string): Promise<{ process: ChildProcess; port: number; uuid: string }> {
+async function spawnServer(isPrimary: boolean = false): Promise<{ process: ChildProcess; port: number; uuid: string }> {
     return new Promise((resolve, reject) => {
         const serverType = isPrimary ? 'primary' : 'client';
         const scriptPath = path.resolve(__dirname, 'spawn-server.mjs');
-        
-        const env = { ...process.env, NODE_ENV: 'test' };
-        if (domain) {
-            env.ONCE_DOMAIN = domain; // Pass domain to spawned server
-        }
         
         // Spawn node process running the spawn script
         const serverProcess = spawn('node', [scriptPath, serverType], {
             cwd: path.resolve(__dirname, '..'),
             stdio: ['ignore', 'pipe', 'pipe'],
-            env
+            env: { ...process.env, NODE_ENV: 'test' }
         });
         
         let resolved = false;
@@ -444,7 +439,7 @@ describe('Server Lifecycle Management', () => {
             
             try {
                 console.log('🚀 Starting primary server as separate process...');
-                const primary = await spawnServer(true, detectedDomain);
+                const primary = await spawnServer(true);
                 spawnedProcesses.push(primary.process);
                 
                 // Wait for primary to be healthy
@@ -458,13 +453,13 @@ describe('Server Lifecycle Management', () => {
                 
                 // Start 2 client servers as separate processes
                 console.log('🚀 Starting client servers as separate processes...');
-                const client1 = await spawnServer(false, detectedDomain);
+                const client1 = await spawnServer(false);
                 spawnedProcesses.push(client1.process);
                 
                 // Small delay between spawns to avoid port conflicts
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
-                const client2 = await spawnServer(false, detectedDomain);
+                const client2 = await spawnServer(false);
                 spawnedProcesses.push(client2.process);
                 
                 // Wait for clients to be healthy
@@ -476,10 +471,14 @@ describe('Server Lifecycle Management', () => {
                 console.log(`✅ Client servers running on ports ${client1.port}, ${client2.port}`);
                 
                 // Verify client scenarios exist in filesystem
+                // Note: Spawned servers run as separate processes and detect their own domain
+                // They will use 'local.once' domain, not the test's detected domain
                 await new Promise(resolve => setTimeout(resolve, 1000));
-                const scenarioFiles = fs.readdirSync(scenarioBaseDir)
-                    .filter(f => f.endsWith('.scenario.json') && !f.includes('capability'));
-                console.log(`📂 Found ${scenarioFiles.length} scenario files`);
+                const spawnedScenarioDir = path.join(testProjectRoot, `scenarios/local.once/ONCE/${componentVersion}`);
+                const scenarioFiles = fs.existsSync(spawnedScenarioDir) 
+                    ? fs.readdirSync(spawnedScenarioDir).filter(f => f.endsWith('.scenario.json') && !f.includes('capability'))
+                    : [];
+                console.log(`📂 Found ${scenarioFiles.length} scenario files in ${spawnedScenarioDir}`);
                 expect(scenarioFiles.length).toBeGreaterThanOrEqual(2); // At least 2 clients
                 
                 // 💥 SIMULATE CRASH: Kill primary server process forcefully
@@ -518,9 +517,10 @@ describe('Server Lifecycle Management', () => {
                 // Wait for housekeeping to discover existing clients
                 await new Promise(resolve => setTimeout(resolve, 3000));
                 
-                // Verify client scenarios still exist
-                const scenarioFilesAfter = fs.readdirSync(scenarioBaseDir)
-                    .filter(f => f.endsWith('.scenario.json') && !f.includes('capability'));
+                // Verify client scenarios still exist (in spawned server's domain directory)
+                const scenarioFilesAfter = fs.existsSync(spawnedScenarioDir)
+                    ? fs.readdirSync(spawnedScenarioDir).filter(f => f.endsWith('.scenario.json') && !f.includes('capability'))
+                    : [];
                 expect(scenarioFilesAfter.length).toBeGreaterThanOrEqual(2);
                 console.log(`✅ Client scenarios persisted: ${scenarioFilesAfter.length} files`);
                 
