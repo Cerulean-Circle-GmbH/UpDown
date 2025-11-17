@@ -18,9 +18,15 @@ describe('Browser Broadcast Flow', () => {
     let primaryServer: any;
     let clientServer1: any;
     let clientServer2: any;
+    let componentVersion: string;
     
     beforeAll(async () => {
         const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+        
+        // Get component version
+        const tempInstance = new DefaultONCE();
+        await tempInstance.init();
+        componentVersion = tempInstance.model.version;
         
         // Start primary server (42777)
         primaryServer = new DefaultONCE();
@@ -114,7 +120,7 @@ describe('Browser Broadcast Flow', () => {
             scenario: {
                 uuid: randomUUID(),
                 objectType: 'ONCEMessage',
-                version: '0.3.20.3',
+                version: componentVersion,
                 state: {
                     type: 'broadcast',
                     from: { uuid: 'browser-test', port: 8080 },

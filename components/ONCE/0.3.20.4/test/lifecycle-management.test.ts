@@ -11,9 +11,10 @@ describe('Server Lifecycle Management', () => {
     // Scenarios are stored in project root - use path authority from DefaultONCE instance
     let testProjectRoot: string;
     let scenarioBaseDir: string;
+    let componentVersion: string;
     
     beforeEach(async () => {
-        // Get project root from DefaultONCE path authority (TRUE Radical OOP)
+        // Get project root and version from DefaultONCE path authority (TRUE Radical OOP)
         const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
         const tempInstance = new DefaultONCE();
         await tempInstance.init();
@@ -22,7 +23,8 @@ describe('Server Lifecycle Management', () => {
         await (tempInstance as any).getWeb4TSComponent();
         
         testProjectRoot = tempInstance.model.projectRoot;
-        scenarioBaseDir = path.join(testProjectRoot, 'scenarios/local.once/ONCE/0.3.20.3');
+        componentVersion = tempInstance.model.version;
+        scenarioBaseDir = path.join(testProjectRoot, `scenarios/local.once/ONCE/${componentVersion}`);
         
         // Clean up any existing test scenarios
         if (fs.existsSync(scenarioBaseDir)) {
@@ -48,7 +50,7 @@ describe('Server Lifecycle Management', () => {
             const shutdownScenario = {
                 uuid: 'test-shutdown-server',
                 objectType: 'ONCE',
-                version: '0.3.20.3',
+                version: componentVersion,
                 state: {
                     state: 'shutdown',
                     capabilities: [{ capability: 'httpPort', port: 8080 }]

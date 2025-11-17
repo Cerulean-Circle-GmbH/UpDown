@@ -11,16 +11,18 @@ describe('Primary Server Housekeeping', () => {
     let primaryServer: any;
     let scenarioBaseDir: string;
     let testProjectRoot: string;
+    let componentVersion: string;
     
     beforeEach(async () => {
         const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
         
-        // Get project root from DefaultONCE
+        // Get project root and version from DefaultONCE (Path Authority)
         const tempInstance = new DefaultONCE();
         await tempInstance.init();
         await (tempInstance as any).getWeb4TSComponent();
         testProjectRoot = tempInstance.model.projectRoot;
-        scenarioBaseDir = path.join(testProjectRoot, 'scenarios/local.once/ONCE/0.3.20.3');
+        componentVersion = tempInstance.model.version;
+        scenarioBaseDir = path.join(testProjectRoot, `scenarios/local.once/ONCE/${componentVersion}`);
         
         // Clean up scenarios
         if (fs.existsSync(scenarioBaseDir)) {
@@ -51,7 +53,7 @@ describe('Primary Server Housekeeping', () => {
         const shutdownScenario = {
             uuid: 'test-shutdown-uuid',
             objectType: 'ONCE',
-            version: '0.3.20.3',
+            version: componentVersion,
             state: {
                 state: 'shutdown',
                 capabilities: [{ capability: 'httpPort', port: 8080 }],
@@ -93,7 +95,7 @@ describe('Primary Server Housekeeping', () => {
         const staleScenario = {
             uuid: 'test-stale-uuid',
             objectType: 'ONCE',
-            version: '0.3.20.3',
+            version: componentVersion,
             state: {
                 state: 'running',
                 capabilities: [{ capability: 'httpPort', port: 9999 }],
@@ -254,7 +256,7 @@ describe('Primary Server Housekeeping', () => {
             const scenarioData = {
                 uuid: scenario.uuid,
                 objectType: 'ONCE',
-                version: '0.3.20.3',
+                version: componentVersion,
                 state: {
                     state: scenario.state,
                     capabilities: [{ capability: 'httpPort', port: scenario.port }],
@@ -329,7 +331,7 @@ describe('Primary Server Housekeeping', () => {
         const shutdownScenario = {
             uuid: 'log-test-shutdown',
             objectType: 'ONCE',
-            version: '0.3.20.3',
+            version: componentVersion,
             state: {
                 state: 'shutdown',
                 capabilities: [{ capability: 'httpPort', port: 7777 }],

@@ -681,7 +681,7 @@ export class DefaultONCE implements ONCE {
       this.showInteractiveHeader();
       this.showInteractiveHelp();
       
-      console.log('🏠 Project root detected:', this.model.projectRoot || process.cwd());
+      console.log('🏠 Project root detected:', this.model.projectRoot || '(not set)');
       console.log('🚫 No environment variables required');
       console.log('🌐 Server hierarchy: Port 42777 → 8080+ (enhanced v0.2.0.0)');
       console.log('');
@@ -695,7 +695,7 @@ export class DefaultONCE implements ONCE {
     }
     
     // Non-interactive modes (headless, browser-only, or no TTY)
-    console.log('🏠 Project root:', this.model.projectRoot || process.cwd());
+    console.log('🏠 Project root:', this.model.projectRoot || '(not set)');
     console.log('🚫 No environment variables required');
     console.log('🌐 Server hierarchy: Port 42777 → 8080+ (enhanced v0.2.0.0)');
     console.log('🎯 TRUE Radical OOP architecture (v0.3.20.1)');

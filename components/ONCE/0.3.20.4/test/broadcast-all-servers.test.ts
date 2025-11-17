@@ -11,9 +11,15 @@ describe('Broadcast to All Servers (Including Primary)', () => {
     let primaryServer: any;
     let clientServer1: any;
     let clientServer2: any;
+    let componentVersion: string;
     
     beforeAll(async () => {
         const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+        
+        // Get component version
+        const tempInstance = new DefaultONCE();
+        await tempInstance.init();
+        componentVersion = tempInstance.model.version;
         
         // Start primary server
         primaryServer = new DefaultONCE();
@@ -91,7 +97,7 @@ describe('Broadcast to All Servers (Including Primary)', () => {
             scenario: {
                 uuid: randomUUID(),
                 objectType: 'ONCEMessage',
-                version: '0.3.20.3',
+                version: componentVersion,
                 state: {
                     type: 'broadcast',
                     to: 'all',
@@ -193,7 +199,7 @@ describe('Broadcast to All Servers (Including Primary)', () => {
             scenario: {
                 uuid: randomUUID(),
                 objectType: 'ONCEMessage',
-                version: '0.3.20.3',
+                version: componentVersion,
                 state: {
                     type: 'broadcast',
                     to: 'all',
@@ -279,7 +285,7 @@ describe('Broadcast to All Servers (Including Primary)', () => {
             scenario: {
                 uuid: randomUUID(),
                 objectType: 'ONCEMessage',
-                version: '0.3.20.3',
+                version: componentVersion,
                 state: {
                     type: 'broadcast',
                     to: 'all',
@@ -299,7 +305,7 @@ describe('Broadcast to All Servers (Including Primary)', () => {
             scenario: {
                 uuid: randomUUID(),
                 objectType: 'ONCEMessage',
-                version: '0.3.20.3',
+                version: componentVersion,
                 state: {
                     type: 'broadcast',
                     to: 'all',
