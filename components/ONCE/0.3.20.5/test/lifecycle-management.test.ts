@@ -43,10 +43,7 @@ describe('Server Lifecycle Management', () => {
         it('should delete shutdown server scenarios on primary startup', async () => {
             const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
             
-            // Create a shutdown scenario
-            const shutdownScenarioDir = `${scenarioBaseDir}/capability/httpPort/8080`;
-            fs.mkdirSync(shutdownScenarioDir, { recursive: true });
-            
+            // Create a shutdown scenario (main location + symlink)
             const shutdownScenario = {
                 uuid: 'test-shutdown-server',
                 objectType: 'ONCE',
@@ -57,13 +54,19 @@ describe('Server Lifecycle Management', () => {
                 }
             };
             
-            fs.writeFileSync(
-                `${shutdownScenarioDir}/test-shutdown-server.scenario.json`,
-                JSON.stringify(shutdownScenario, null, 2)
-            );
+            // Write to main location
+            const mainPath = `${scenarioBaseDir}/test-shutdown-server.scenario.json`;
+            fs.writeFileSync(mainPath, JSON.stringify(shutdownScenario, null, 2));
             
-            // Verify scenario exists
-            expect(fs.existsSync(`${shutdownScenarioDir}/test-shutdown-server.scenario.json`)).toBe(true);
+            // Create symlink
+            const shutdownScenarioDir = `${scenarioBaseDir}/capability/httpPort/8080`;
+            fs.mkdirSync(shutdownScenarioDir, { recursive: true });
+            const symlinkPath = `${shutdownScenarioDir}/test-shutdown-server.scenario.json`;
+            fs.symlinkSync(path.relative(shutdownScenarioDir, mainPath), symlinkPath);
+            
+            // Verify both exist
+            expect(fs.existsSync(mainPath)).toBe(true);
+            expect(fs.lstatSync(symlinkPath).isSymbolicLink()).toBe(true);
             
             // Start primary server (triggers housekeeping)
             const primaryServer = new DefaultONCE();
@@ -73,8 +76,9 @@ describe('Server Lifecycle Management', () => {
             // Wait for housekeeping to complete
             await new Promise(resolve => setTimeout(resolve, 2000));
             
-            // Verify shutdown scenario was deleted
-            expect(fs.existsSync(`${shutdownScenarioDir}/test-shutdown-server.scenario.json`)).toBe(false);
+            // Verify shutdown scenario and symlink were deleted
+            expect(fs.existsSync(mainPath)).toBe(false);
+            expect(fs.existsSync(symlinkPath)).toBe(false);
             
             // Cleanup
             await primaryServer.stopServer();

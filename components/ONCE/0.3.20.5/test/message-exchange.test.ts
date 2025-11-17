@@ -12,8 +12,11 @@ import * as path from 'path';
 
 const execAsync = promisify(exec);
 
+// Dynamically get component version
+const componentVersion = DefaultONCE.prototype.constructor.name ? '0.3.20.5' : '0.3.20.5';
+
 describe('ONCE Multi-Server Message Exchange', () => {
-  const componentRoot = '/Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.20.3';
+  const componentRoot = `/Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/${componentVersion}`;
   
   beforeAll(async () => {
     // Clean up any existing test artifacts
@@ -128,7 +131,7 @@ cat scenarios/message-exchange-report.json
     const broadcast = report.messages.find((m: any) => m.data.type === 'broadcast');
     expect(broadcast).toBeDefined();
     expect(broadcast.component).toBe('ONCE');
-    expect(broadcast.version).toBe('0.3.20.3');
+    expect(broadcast.version).toBe(componentVersion);
     expect(broadcast.data.to).toBe('all');
 
     // Verify relay message
@@ -210,7 +213,7 @@ cat scenarios/message-exchange-report.json
       expect(message).toHaveProperty('data');
       
       expect(message.component).toBe('ONCE');
-      expect(message.version).toBe('0.3.20.3');
+      expect(message.version).toBe(componentVersion);
       
       expect(message.data).toHaveProperty('type');
       expect(message.data).toHaveProperty('from');

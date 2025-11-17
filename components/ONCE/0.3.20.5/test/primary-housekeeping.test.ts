@@ -105,10 +105,7 @@ describe('Primary Server Housekeeping', () => {
     it('should delete scenarios with state=shutdown on startup', async () => {
         const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
         
-        // Create shutdown scenario manually
-        const shutdownScenarioDir = path.join(scenarioBaseDir, 'capability/httpPort/8080');
-        fs.mkdirSync(shutdownScenarioDir, { recursive: true });
-        
+        // Create shutdown scenario manually (main location)
         const shutdownScenario = {
             uuid: 'test-shutdown-uuid',
             objectType: 'ONCE',
@@ -125,11 +122,19 @@ describe('Primary Server Housekeeping', () => {
             }
         };
         
-        const scenarioPath = path.join(shutdownScenarioDir, 'test-shutdown-uuid.scenario.json');
-        fs.writeFileSync(scenarioPath, JSON.stringify(shutdownScenario, null, 2));
+        // Write to main location
+        const mainScenarioPath = path.join(scenarioBaseDir, 'test-shutdown-uuid.scenario.json');
+        fs.writeFileSync(mainScenarioPath, JSON.stringify(shutdownScenario, null, 2));
         
-        console.log('✅ Created test shutdown scenario');
-        expect(fs.existsSync(scenarioPath)).toBe(true);
+        // Create symlink in capability dir (mimicking production behavior)
+        const capabilityDir = path.join(scenarioBaseDir, 'capability/httpPort/8080');
+        fs.mkdirSync(capabilityDir, { recursive: true });
+        const symlinkPath = path.join(capabilityDir, 'test-shutdown-uuid.scenario.json');
+        fs.symlinkSync(path.relative(capabilityDir, mainScenarioPath), symlinkPath);
+        
+        console.log('✅ Created test shutdown scenario with symlink');
+        expect(fs.existsSync(mainScenarioPath)).toBe(true);
+        expect(fs.lstatSync(symlinkPath).isSymbolicLink()).toBe(true);
         
         // Start primary server - should trigger housekeeping
         primaryServer = new DefaultONCE();
@@ -139,18 +144,16 @@ describe('Primary Server Housekeeping', () => {
         // Wait for housekeeping to complete
         await new Promise(resolve => setTimeout(resolve, 2000));
         
-        // Verify shutdown scenario was deleted
-        expect(fs.existsSync(scenarioPath)).toBe(false);
-        console.log('✅ Shutdown scenario successfully deleted by housekeeping');
+        // Verify shutdown scenario and symlink were deleted
+        expect(fs.existsSync(mainScenarioPath)).toBe(false);
+        expect(fs.existsSync(symlinkPath)).toBe(false);
+        console.log('✅ Shutdown scenario and symlink successfully deleted by housekeeping');
     }, 15000);
     
     it('should delete stale scenarios for unreachable servers', async () => {
         const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
         
-        // Create scenario for unreachable server
-        const staleScenarioDir = path.join(scenarioBaseDir, 'capability/httpPort/9999');
-        fs.mkdirSync(staleScenarioDir, { recursive: true });
-        
+        // Create scenario for unreachable server (main location)
         const staleScenario = {
             uuid: 'test-stale-uuid',
             objectType: 'ONCE',
@@ -167,11 +170,18 @@ describe('Primary Server Housekeeping', () => {
             }
         };
         
-        const scenarioPath = path.join(staleScenarioDir, 'test-stale-uuid.scenario.json');
-        fs.writeFileSync(scenarioPath, JSON.stringify(staleScenario, null, 2));
+        // Write to main location
+        const mainScenarioPath = path.join(scenarioBaseDir, 'test-stale-uuid.scenario.json');
+        fs.writeFileSync(mainScenarioPath, JSON.stringify(staleScenario, null, 2));
         
-        console.log('✅ Created test stale scenario (port 9999 - unreachable)');
-        expect(fs.existsSync(scenarioPath)).toBe(true);
+        // Create symlink in capability dir
+        const capabilityDir = path.join(scenarioBaseDir, 'capability/httpPort/9999');
+        fs.mkdirSync(capabilityDir, { recursive: true });
+        const symlinkPath = path.join(capabilityDir, 'test-stale-uuid.scenario.json');
+        fs.symlinkSync(path.relative(capabilityDir, mainScenarioPath), symlinkPath);
+        
+        console.log('✅ Created test stale scenario (port 9999 - unreachable) with symlink');
+        expect(fs.existsSync(mainScenarioPath)).toBe(true);
         
         // Start primary server - should detect port 9999 is not reachable
         primaryServer = new DefaultONCE();
@@ -181,9 +191,10 @@ describe('Primary Server Housekeeping', () => {
         // Wait for housekeeping health checks
         await new Promise(resolve => setTimeout(resolve, 3000));
         
-        // Verify stale scenario was deleted
-        expect(fs.existsSync(scenarioPath)).toBe(false);
-        console.log('✅ Stale scenario successfully deleted by housekeeping');
+        // Verify stale scenario and symlink were deleted
+        expect(fs.existsSync(mainScenarioPath)).toBe(false);
+        expect(fs.existsSync(symlinkPath)).toBe(false);
+        console.log('✅ Stale scenario and symlink successfully deleted by housekeeping');
     }, 15000);
     
     it('should keep scenarios for running and reachable servers', async () => {
@@ -300,7 +311,7 @@ describe('Primary Server Housekeeping', () => {
     it('should handle mixed scenarios: delete stale, keep running', async () => {
         const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
         
-        // Create multiple scenarios with different states
+        // Create multiple scenarios with different states (main location + symlinks)
         const scenarios = [
             { uuid: 'shutdown-1', port: 8888, state: 'shutdown' },
             { uuid: 'shutdown-2', port: 8889, state: 'shutdown' },
@@ -309,9 +320,6 @@ describe('Primary Server Housekeeping', () => {
         ];
         
         for (const scenario of scenarios) {
-            const scenarioDir = path.join(scenarioBaseDir, `capability/httpPort/${scenario.port}`);
-            fs.mkdirSync(scenarioDir, { recursive: true });
-            
             const scenarioData = {
                 uuid: scenario.uuid,
                 objectType: 'ONCE',
@@ -328,11 +336,18 @@ describe('Primary Server Housekeeping', () => {
                 }
             };
             
-            const scenarioPath = path.join(scenarioDir, `${scenario.uuid}.scenario.json`);
-            fs.writeFileSync(scenarioPath, JSON.stringify(scenarioData, null, 2));
+            // Write to main location
+            const mainPath = path.join(scenarioBaseDir, `${scenario.uuid}.scenario.json`);
+            fs.writeFileSync(mainPath, JSON.stringify(scenarioData, null, 2));
+            
+            // Create symlink in capability dir
+            const capabilityDir = path.join(scenarioBaseDir, `capability/httpPort/${scenario.port}`);
+            fs.mkdirSync(capabilityDir, { recursive: true });
+            const symlinkPath = path.join(capabilityDir, `${scenario.uuid}.scenario.json`);
+            fs.symlinkSync(path.relative(capabilityDir, mainPath), symlinkPath);
         }
         
-        console.log('✅ Created 4 test scenarios (2 shutdown, 2 stale)');
+        console.log('✅ Created 4 test scenarios with symlinks (2 shutdown, 2 stale)');
         
         // Start a real client server (will be kept)
         const clientServer = new DefaultONCE();
@@ -358,23 +373,27 @@ describe('Primary Server Housekeeping', () => {
         // Wait for housekeeping
         await new Promise(resolve => setTimeout(resolve, 4000));
         
-        // Verify results
+        // Verify results - check both main files and symlinks are deleted
         for (const scenario of scenarios) {
-            const scenarioPath = path.join(
+            const mainPath = path.join(scenarioBaseDir, `${scenario.uuid}.scenario.json`);
+            const symlinkPath = path.join(
                 scenarioBaseDir,
                 `capability/httpPort/${scenario.port}/${scenario.uuid}.scenario.json`
             );
-            expect(fs.existsSync(scenarioPath)).toBe(false);
-            console.log(`✅ ${scenario.state} scenario ${scenario.uuid} deleted`);
+            expect(fs.existsSync(mainPath)).toBe(false);
+            expect(fs.existsSync(symlinkPath)).toBe(false);
+            console.log(`✅ ${scenario.state} scenario ${scenario.uuid} and symlink deleted`);
         }
         
-        // Verify real client scenario still exists
-        const clientScenarioPath = path.join(
+        // Verify real client scenario still exists (should have both main and symlink)
+        const clientMainPath = path.join(scenarioBaseDir, `${clientUuid}.scenario.json`);
+        const clientSymlinkPath = path.join(
             scenarioBaseDir,
             `capability/httpPort/${clientPort}/${clientUuid}.scenario.json`
         );
-        expect(fs.existsSync(clientScenarioPath)).toBe(true);
-        console.log('✅ Running client scenario preserved');
+        expect(fs.existsSync(clientMainPath)).toBe(true);
+        expect(fs.existsSync(clientSymlinkPath)).toBe(true);
+        console.log('✅ Running client scenario (main + symlink) preserved');
         
         // Cleanup
         await clientServer.stopServer();
@@ -383,10 +402,7 @@ describe('Primary Server Housekeeping', () => {
     it('should log housekeeping summary with counts', async () => {
         const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
         
-        // Create test scenarios
-        const shutdownDir = path.join(scenarioBaseDir, 'capability/httpPort/7777');
-        fs.mkdirSync(shutdownDir, { recursive: true });
-        
+        // Create test scenarios (main location + symlinks)
         const shutdownScenario = {
             uuid: 'log-test-shutdown',
             objectType: 'ONCE',
@@ -403,10 +419,15 @@ describe('Primary Server Housekeeping', () => {
             }
         };
         
-        fs.writeFileSync(
-            path.join(shutdownDir, 'log-test-shutdown.scenario.json'),
-            JSON.stringify(shutdownScenario, null, 2)
-        );
+        // Write to main location
+        const mainPath = path.join(scenarioBaseDir, 'log-test-shutdown.scenario.json');
+        fs.writeFileSync(mainPath, JSON.stringify(shutdownScenario, null, 2));
+        
+        // Create symlink
+        const shutdownDir = path.join(scenarioBaseDir, 'capability/httpPort/7777');
+        fs.mkdirSync(shutdownDir, { recursive: true });
+        const symlinkPath = path.join(shutdownDir, 'log-test-shutdown.scenario.json');
+        fs.symlinkSync(path.relative(shutdownDir, mainPath), symlinkPath);
         
         console.log('✅ Created test shutdown scenario for logging test');
         

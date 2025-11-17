@@ -1,14 +1,18 @@
 import { describe, it, expect } from 'vitest';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import { DefaultONCE } from '../src/ts/layer2/DefaultONCE.js';
 
 const execAsync = promisify(exec);
+
+// Dynamically get component version
+const componentVersion = '0.3.20.5';
 
 describe('HTML Template Rendering', () => {
     it('should render server-status.html with model values (not template placeholders)', async () => {
         // Start server in background, fetch HTML, check content, kill server
         const testScript = `
-cd /Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.20.3 && \
+cd /Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/${componentVersion} && \
 ./once testInput s > /dev/null 2>&1 & \
 ONCE_PID=$! && \
 sleep 2 && \
@@ -34,7 +38,7 @@ echo "$HTML"
 
     it('should render once-client.html without placeholders', async () => {
         const testScript = `
-cd /Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.20.3 && \
+cd /Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/${componentVersion} && \
 ./once testInput s > /dev/null 2>&1 & \
 ONCE_PID=$! && \
 sleep 2 && \
