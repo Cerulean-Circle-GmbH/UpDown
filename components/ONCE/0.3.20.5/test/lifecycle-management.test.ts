@@ -128,6 +128,8 @@ describe('Server Lifecycle Management', () => {
     let scenarioBaseDir: string;
     let componentVersion: string;
     let detectedDomain: string; // ✅ Dynamic domain detection
+    let detectedHostname: string; // ✅ Dynamic hostname detection
+    let domainPath: string[]; // ✅ Domain as path components
     
     beforeEach(async () => {
         // Get project root and version from DefaultONCE path authority (TRUE Radical OOP)
@@ -141,14 +143,28 @@ describe('Server Lifecycle Management', () => {
         testProjectRoot = tempInstance.model.projectRoot;
         componentVersion = tempInstance.model.version;
         
-        // ✅ Get the actual domain being used by servers
+        // ✅ Get the actual domain/hostname being used by servers
         await tempInstance.startServer();
         const serverModel = (tempInstance as any).serverHierarchyManager.getServerModel();
         detectedDomain = serverModel.domain;
+        detectedHostname = serverModel.hostname;
+        
+        // Parse domain into path components
+        const fqdn = serverModel.host;
+        if (fqdn === 'localhost') {
+            domainPath = ['local', 'once'];
+        } else if (fqdn.includes('.')) {
+            const parts = fqdn.split('.');
+            const domain = parts.slice(1);
+            domainPath = domain.reverse();
+        } else {
+            domainPath = ['local', fqdn];
+        }
+        
         await tempInstance.stopServer();
         
-        scenarioBaseDir = path.join(testProjectRoot, `scenarios/${detectedDomain}/ONCE/${componentVersion}`);
-        console.log(`📂 Using scenario directory: scenarios/${detectedDomain}/ONCE/${componentVersion}`);
+        scenarioBaseDir = path.join(testProjectRoot, 'scenarios', ...domainPath, detectedHostname, 'ONCE', componentVersion);
+        console.log(`📂 Using scenario directory: scenarios/${domainPath.join('/')}/${detectedHostname}/ONCE/${componentVersion}`);
         
         // Ensure scenario directory exists for tests
         if (!fs.existsSync(scenarioBaseDir)) {
@@ -472,9 +488,9 @@ describe('Server Lifecycle Management', () => {
                 
                 // Verify client scenarios exist in filesystem
                 // Note: Spawned servers run as separate processes and detect their own domain
-                // They will use 'local.once' domain, not the test's detected domain
+                // They will use 'local.once' domain and 'localhost' hostname
                 await new Promise(resolve => setTimeout(resolve, 1000));
-                const spawnedScenarioDir = path.join(testProjectRoot, `scenarios/local.once/ONCE/${componentVersion}`);
+                const spawnedScenarioDir = path.join(testProjectRoot, 'scenarios', 'local', 'once', 'localhost', 'ONCE', componentVersion);
                 const scenarioFiles = fs.existsSync(spawnedScenarioDir) 
                     ? fs.readdirSync(spawnedScenarioDir).filter(f => f.endsWith('.scenario.json') && !f.includes('capability'))
                     : [];

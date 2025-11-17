@@ -50,8 +50,9 @@ export class ServerHierarchyManager {
             pid: process.pid,
             state: LifecycleState.CREATED,
             platform: this.detectEnvironment(),
-            domain: this.detectDomain(), // ✅ Dynamic domain discovery
-            host: this.detectHostname(), // ✅ Dynamic hostname discovery
+            domain: this.detectDomain(), // ✅ Dynamic domain discovery (e.g., "box.fritz")
+            hostname: this.extractHostname(), // ✅ Dynamic hostname extraction (e.g., "McDonges-3")
+            host: this.detectHostname(), // ✅ Dynamic FQDN discovery (e.g., "McDonges-3.fritz.box")
             ip: this.detectIPAddress(), // ✅ Dynamic IP discovery
             capabilities: [],
             isPrimaryServer: false
@@ -343,9 +344,20 @@ export class ServerHierarchyManager {
                         // Wait for the scenario to be updated to SHUTDOWN state
                         await new Promise(resolve => setTimeout(resolve, 1000));
                         
-                        // Delete the client's scenario file (use detected domain)
-                        const domain = this.serverModel.domain || ONCE_DEFAULT_CONFIG.DEFAULT_DOMAIN;
-                        const scenarioDir = path.join(this.projectRoot, `scenarios/${domain}/ONCE/${this.version}/capability/httpPort/${port}`);
+                        // Delete the client's scenario file (use new path structure)
+                        const domainPath = this.detectDomainPath();
+                        const hostname = this.serverModel.hostname || this.extractHostname();
+                        const scenarioDir = path.join(
+                            this.projectRoot,
+                            'scenarios',
+                            ...domainPath,
+                            hostname,
+                            'ONCE',
+                            this.version,
+                            'capability',
+                            'httpPort',
+                            port.toString()
+                        );
                         const scenarioPath = path.join(scenarioDir, `${uuid}.scenario.json`);
                         
                         if (fs.existsSync(scenarioPath)) {
@@ -840,15 +852,34 @@ export class ServerHierarchyManager {
         const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
         if (!httpCapability) return;
 
-        // Use detected domain for scenario path
-        const domain = this.serverModel.domain || ONCE_DEFAULT_CONFIG.DEFAULT_DOMAIN;
+        // Use detected domain/hostname for scenario path
+        // New structure: scenarios/{domain-parts}/{hostname}/ONCE/{version}
+        const domainPath = this.detectDomainPath(); // e.g., ['box', 'fritz']
+        const hostname = this.serverModel.hostname || this.extractHostname(); // e.g., "McDonges-3"
         
-        // Main scenario file location (flat structure)
-        const mainScenarioDir = path.join(this.projectRoot, `scenarios/${domain}/ONCE/${this.version}`);
+        // Main scenario file location
+        const mainScenarioDir = path.join(
+            this.projectRoot, 
+            'scenarios',
+            ...domainPath,      // Spread domain parts as separate directories
+            hostname,
+            'ONCE',
+            this.version
+        );
         const mainScenarioPath = path.join(mainScenarioDir, `${this.serverModel.uuid}.scenario.json`);
         
         // Capability symlink location (for discovery by port)
-        const capabilityDir = path.join(this.projectRoot, `scenarios/${domain}/ONCE/${this.version}/capability/httpPort/${httpCapability.port}`);
+        const capabilityDir = path.join(
+            this.projectRoot,
+            'scenarios',
+            ...domainPath,
+            hostname,
+            'ONCE',
+            this.version,
+            'capability',
+            'httpPort',
+            httpCapability.port.toString()
+        );
         const capabilitySymlink = path.join(capabilityDir, `${this.serverModel.uuid}.scenario.json`);
         
         try {
@@ -1016,29 +1047,59 @@ export class ServerHierarchyManager {
     }
 
     /**
-     * Detect or derive domain name from hostname
-     * Converts hostname to reverse domain notation
+     * Detect domain from FQDN (without hostname) as separate path components
      * Examples:
-     *   - "McDonges-3.fritz.box" -> "box.fritz.McDonges-3"
+     *   - "McDonges-3.fritz.box" -> domain path: ["box", "fritz"]
+     *   - "localhost" -> domain path: ["local", "once"]
+     *   - "myserver" -> domain path: ["local", "myserver"]
+     */
+    private detectDomainPath(): string[] {
+        const fqdn = this.detectHostname(); // Returns full FQDN from OS
+        
+        // Special case: localhost
+        if (fqdn === 'localhost') {
+            return ['local', 'once']; // Default domain path
+        }
+        
+        // If FQDN has dots, extract domain parts (all except first)
+        if (fqdn.includes('.')) {
+            const parts = fqdn.split('.');
+            const domainParts = parts.slice(1); // Skip hostname (first part)
+            return domainParts.reverse(); // Reverse for proper domain hierarchy
+        }
+        
+        // Simple hostname without domain
+        return ['local', fqdn];
+    }
+
+    /**
+     * Get domain as string (for model storage, backward compatibility)
+     * Examples:
+     *   - "McDonges-3.fritz.box" -> "box.fritz"
      *   - "localhost" -> "local.once"
      *   - "myserver" -> "local.myserver"
      */
     private detectDomain(): string {
-        const hostname = this.detectHostname();
+        return this.detectDomainPath().join('.');
+    }
+
+    /**
+     * Extract hostname from FQDN (first component only)
+     * Examples:
+     *   - "McDonges-3.fritz.box" -> hostname: "McDonges-3"
+     *   - "localhost" -> hostname: "localhost"
+     *   - "myserver" -> hostname: "myserver"
+     */
+    private extractHostname(): string {
+        const fqdn = this.detectHostname(); // Returns full FQDN from OS
         
-        // If hostname has dots, assume it's FQDN and reverse it
-        if (hostname.includes('.')) {
-            const parts = hostname.split('.');
-            return parts.reverse().join('.');
+        // If FQDN has dots, return only first part
+        if (fqdn.includes('.')) {
+            return fqdn.split('.')[0];
         }
         
-        // If hostname is localhost, use default
-        if (hostname === 'localhost') {
-            return ONCE_DEFAULT_CONFIG.DEFAULT_DOMAIN;
-        }
-        
-        // Otherwise create a local domain
-        return `local.${hostname}`;
+        // Otherwise return as-is
+        return fqdn;
     }
 
     /**
@@ -1178,8 +1239,16 @@ export class ServerHierarchyManager {
         console.log('🧹 Performing primary server housekeeping...');
         
         try {
-            const domain = this.serverModel.domain || ONCE_DEFAULT_CONFIG.DEFAULT_DOMAIN;
-            const scenarioBaseDir = path.join(this.projectRoot, `scenarios/${domain}/ONCE/${this.version}`);
+            const domainPath = this.detectDomainPath();
+            const hostname = this.serverModel.hostname || this.extractHostname();
+            const scenarioBaseDir = path.join(
+                this.projectRoot,
+                'scenarios',
+                ...domainPath,
+                hostname,
+                'ONCE',
+                this.version
+            );
             
             if (!fs.existsSync(scenarioBaseDir)) {
                 console.log('📂 No existing scenarios found');
@@ -1351,10 +1420,19 @@ export class ServerHierarchyManager {
             const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
             if (!httpCapability) return;
             
-            const domain = this.serverModel.domain || ONCE_DEFAULT_CONFIG.DEFAULT_DOMAIN;
+            const domainPath = this.detectDomainPath();
+            const hostname = this.serverModel.hostname || this.extractHostname();
             
             // Update main scenario file (not the symlink)
-            const mainScenarioPath = path.join(this.projectRoot, `scenarios/${domain}/ONCE/${this.version}`, `${this.serverModel.uuid}.scenario.json`);
+            const mainScenarioPath = path.join(
+                this.projectRoot,
+                'scenarios',
+                ...domainPath,
+                hostname,
+                'ONCE',
+                this.version,
+                `${this.serverModel.uuid}.scenario.json`
+            );
             
             if (fs.existsSync(mainScenarioPath)) {
                 const scenarioData = JSON.parse(fs.readFileSync(mainScenarioPath, 'utf8'));

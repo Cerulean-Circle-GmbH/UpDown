@@ -13,6 +13,8 @@ describe('Primary Server Housekeeping', () => {
     let testProjectRoot: string;
     let componentVersion: string;
     let detectedDomain: string;
+    let detectedHostname: string;
+    let domainPath: string[];
     const serverInstances: any[] = []; // Track all server instances for cleanup
     let domainDetected = false; // Cache domain detection across tests
     
@@ -26,16 +28,30 @@ describe('Primary Server Housekeeping', () => {
         testProjectRoot = tempInstance.model.projectRoot;
         componentVersion = tempInstance.model.version;
         
-        // Detect domain only once (first test run)
+        // Detect domain/hostname only once (first test run)
         if (!domainDetected) {
             await tempInstance.startServer();
             const serverModel = (tempInstance as any).serverHierarchyManager.getServerModel();
             detectedDomain = serverModel.domain;
+            detectedHostname = serverModel.hostname;
+            
+            // Parse domain into path components
+            const fqdn = serverModel.host;
+            if (fqdn === 'localhost') {
+                domainPath = ['local', 'once'];
+            } else if (fqdn.includes('.')) {
+                const parts = fqdn.split('.');
+                const domain = parts.slice(1);
+                domainPath = domain.reverse();
+            } else {
+                domainPath = ['local', fqdn];
+            }
+            
             await tempInstance.stopServer();
             domainDetected = true;
         }
         
-        scenarioBaseDir = path.join(testProjectRoot, `scenarios/${detectedDomain}/ONCE/${componentVersion}`);
+        scenarioBaseDir = path.join(testProjectRoot, 'scenarios', ...domainPath, detectedHostname, 'ONCE', componentVersion);
         
         // Ensure scenario directory exists for tests
         if (!fs.existsSync(scenarioBaseDir)) {
