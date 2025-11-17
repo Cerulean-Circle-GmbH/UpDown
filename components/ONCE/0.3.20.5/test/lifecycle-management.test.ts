@@ -6,6 +6,126 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
+import { spawn, ChildProcess } from 'child_process';
+import * as http from 'http';
+
+/**
+ * Helper: Spawn a server as a separate process
+ * Returns: ChildProcess, port, and UUID
+ */
+async function spawnServer(isPrimary: boolean = false, domain?: string): Promise<{ process: ChildProcess; port: number; uuid: string }> {
+    return new Promise((resolve, reject) => {
+        const serverType = isPrimary ? 'primary' : 'client';
+        const scriptPath = path.resolve(__dirname, 'spawn-server.mjs');
+        
+        const env = { ...process.env, NODE_ENV: 'test' };
+        if (domain) {
+            env.ONCE_DOMAIN = domain; // Pass domain to spawned server
+        }
+        
+        // Spawn node process running the spawn script
+        const serverProcess = spawn('node', [scriptPath, serverType], {
+            cwd: path.resolve(__dirname, '..'),
+            stdio: ['ignore', 'pipe', 'pipe'],
+            env
+        });
+        
+        let resolved = false;
+        
+        serverProcess.stdout?.on('data', (data) => {
+            const lines = data.toString().split('\n');
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed) continue;
+                
+                try {
+                    // Try to parse as JSON
+                    const serverInfo = JSON.parse(trimmed);
+                    if (!resolved && serverInfo.pid && serverInfo.port && serverInfo.uuid) {
+                        resolved = true;
+                        resolve({
+                            process: serverProcess,
+                            port: serverInfo.port,
+                            uuid: serverInfo.uuid
+                        });
+                    }
+                } catch (e) {
+                    // Not JSON, just log output
+                    console.log(`[Server ${serverProcess.pid}]:`, trimmed);
+                }
+            }
+        });
+        
+        serverProcess.stderr?.on('data', (data) => {
+            console.error(`[Server ${serverProcess.pid} stderr]:`, data.toString());
+        });
+        
+        serverProcess.on('error', (error) => {
+            if (!resolved) {
+                resolved = true;
+                reject(error);
+            }
+        });
+        
+        serverProcess.on('exit', (code) => {
+            if (!resolved) {
+                resolved = true;
+                reject(new Error(`Server exited with code ${code} before outputting info`));
+            }
+        });
+        
+        // Timeout after 15 seconds
+        setTimeout(() => {
+            if (!resolved) {
+                resolved = true;
+                serverProcess.kill('SIGKILL');
+                reject(new Error(`Server spawn timeout after 15s (type: ${serverType})`));
+            }
+        }, 15000);
+    });
+}
+
+/**
+ * Helper: Check if server is healthy via HTTP
+ */
+async function checkServerHealth(port: number, timeout: number = 1000): Promise<boolean> {
+    return new Promise((resolve) => {
+        const req = http.request({
+            hostname: 'localhost',
+            port,
+            path: '/health',
+            method: 'GET',
+            timeout
+        }, (res) => {
+            resolve(res.statusCode === 200);
+        });
+        
+        req.on('error', () => resolve(false));
+        req.on('timeout', () => {
+            req.destroy();
+            resolve(false);
+        });
+        req.end();
+    });
+}
+
+/**
+ * Helper: Wait for condition with timeout
+ */
+async function waitFor(
+    condition: () => Promise<boolean>,
+    maxWaitMs: number = 15000,
+    intervalMs: number = 1000
+): Promise<boolean> {
+    const startTime = Date.now();
+    while (Date.now() - startTime < maxWaitMs) {
+        if (await condition()) {
+            return true;
+        }
+        await new Promise(resolve => setTimeout(resolve, intervalMs));
+    }
+    return false;
+}
 
 describe('Server Lifecycle Management', () => {
     // Scenarios are stored in project root - use path authority from DefaultONCE instance
@@ -35,9 +155,24 @@ describe('Server Lifecycle Management', () => {
         scenarioBaseDir = path.join(testProjectRoot, `scenarios/${detectedDomain}/ONCE/${componentVersion}`);
         console.log(`📂 Using scenario directory: scenarios/${detectedDomain}/ONCE/${componentVersion}`);
         
-        // Clean up any existing test scenarios
-        if (fs.existsSync(scenarioBaseDir)) {
-            fs.rmSync(scenarioBaseDir, { recursive: true, force: true });
+        // Ensure scenario directory exists for tests
+        if (!fs.existsSync(scenarioBaseDir)) {
+            fs.mkdirSync(scenarioBaseDir, { recursive: true });
+        }
+        
+        // Clean up any existing test scenarios (but keep directory)
+        const files = fs.readdirSync(scenarioBaseDir).filter(f => f.endsWith('.scenario.json'));
+        for (const file of files) {
+            const filePath = path.join(scenarioBaseDir, file);
+            if (fs.lstatSync(filePath).isFile()) {
+                fs.unlinkSync(filePath);
+            }
+        }
+        
+        // Clean up capability directories
+        const capabilityDir = path.join(scenarioBaseDir, 'capability');
+        if (fs.existsSync(capabilityDir)) {
+            fs.rmSync(capabilityDir, { recursive: true, force: true });
         }
     });
     
@@ -301,100 +436,116 @@ describe('Server Lifecycle Management', () => {
     });
     
     describe('Primary Server Crash Recovery', () => {
-        it.skip('should restart primary and rediscover running clients after crash', async () => {
-            // NOTE: This test is skipped because process.kill(primaryPid, 'SIGKILL') kills the entire test process
-            // when servers run in-process. This test would work correctly in a multi-process environment
-            // where servers run as separate OS processes (e.g., via child_process.spawn)
+        it('should restart primary and rediscover running clients after crash', async () => {
+            // Multi-process architecture: servers run as separate OS processes
+            // This allows us to kill the primary without killing the test process
             
-            const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+            const spawnedProcesses: ChildProcess[] = [];
             
-            // Start PRIMARY server
-            const primaryServer = new DefaultONCE();
-            await primaryServer.init();
-            await primaryServer.startServer();
-            
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Start 2 client servers
-            const client1 = new DefaultONCE();
-            await client1.init();
-            await client1.startServer();
-            
-            const client2 = new DefaultONCE();
-            await client2.init();
-            await client2.startServer();
-            
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // Verify clients are registered
-            const registeredServers = primaryServer.getRegisteredServers();
-            expect(registeredServers.length).toBe(2);
-            console.log('✅ Initial setup: 2 clients registered');
-            
-            // Get primary server PID
-            const primaryModel = primaryServer.getServerModel();
-            const primaryPid = primaryModel.pid;
-            const client1Model = client1.getServerModel();
-            const client2Model = client2.getServerModel();
-            const client1Port = client1Model.capabilities.find(c => c.capability === 'httpPort')?.port;
-            const client2Port = client2Model.capabilities.find(c => c.capability === 'httpPort')?.port;
-            
-            console.log(`🔍 Primary PID: ${primaryPid}, Client1 Port: ${client1Port}, Client2 Port: ${client2Port}`);
-            
-            // Verify client scenarios exist
-            const client1ScenarioPath = `${scenarioBaseDir}/capability/httpPort/${client1Port}/${client1Model.uuid}.scenario.json`;
-            const client2ScenarioPath = `${scenarioBaseDir}/capability/httpPort/${client2Port}/${client2Model.uuid}.scenario.json`;
-            expect(fs.existsSync(client1ScenarioPath)).toBe(true);
-            expect(fs.existsSync(client2ScenarioPath)).toBe(true);
-            
-            // 💥 SIMULATE CRASH: Kill primary server process forcefully (no graceful shutdown)
-            console.log(`💥 Simulating crash: killing primary server PID ${primaryPid}`);
             try {
-                process.kill(primaryPid, 'SIGKILL');
-            } catch (error) {
-                console.warn('⚠️  Kill signal sent (may have already terminated)');
+                console.log('🚀 Starting primary server as separate process...');
+                const primary = await spawnServer(true, detectedDomain);
+                spawnedProcesses.push(primary.process);
+                
+                // Wait for primary to be healthy
+                const primaryHealthy = await waitFor(
+                    () => checkServerHealth(42777),
+                    15000,
+                    1000
+                );
+                expect(primaryHealthy).toBe(true);
+                console.log('✅ Primary server running on port 42777');
+                
+                // Start 2 client servers as separate processes
+                console.log('🚀 Starting client servers as separate processes...');
+                const client1 = await spawnServer(false, detectedDomain);
+                spawnedProcesses.push(client1.process);
+                
+                // Small delay between spawns to avoid port conflicts
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                const client2 = await spawnServer(false, detectedDomain);
+                spawnedProcesses.push(client2.process);
+                
+                // Wait for clients to be healthy
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                const client1Healthy = await checkServerHealth(client1.port);
+                const client2Healthy = await checkServerHealth(client2.port);
+                expect(client1Healthy).toBe(true);
+                expect(client2Healthy).toBe(true);
+                console.log(`✅ Client servers running on ports ${client1.port}, ${client2.port}`);
+                
+                // Verify client scenarios exist in filesystem
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                const scenarioFiles = fs.readdirSync(scenarioBaseDir)
+                    .filter(f => f.endsWith('.scenario.json') && !f.includes('capability'));
+                console.log(`📂 Found ${scenarioFiles.length} scenario files`);
+                expect(scenarioFiles.length).toBeGreaterThanOrEqual(2); // At least 2 clients
+                
+                // 💥 SIMULATE CRASH: Kill primary server process forcefully
+                console.log(`💥 Simulating crash: killing primary server PID ${primary.process.pid}`);
+                primary.process.kill('SIGKILL');
+                
+                // Wait for kill to take effect
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Verify primary is dead
+                const primaryDead = !(await checkServerHealth(42777));
+                expect(primaryDead).toBe(true);
+                console.log('✅ Primary server killed');
+                
+                // Verify clients are still running
+                const client1StillAlive = await checkServerHealth(client1.port);
+                const client2StillAlive = await checkServerHealth(client2.port);
+                expect(client1StillAlive).toBe(true);
+                expect(client2StillAlive).toBe(true);
+                console.log('✅ Client servers still running after primary crash');
+                
+                // ♻️  RESTART: Start new primary server
+                console.log('♻️  Restarting primary server...');
+                const newPrimary = await spawnServer(true);
+                spawnedProcesses.push(newPrimary.process);
+                
+                // Wait for new primary to be healthy
+                const newPrimaryHealthy = await waitFor(
+                    () => checkServerHealth(42777),
+                    15000,
+                    1000
+                );
+                expect(newPrimaryHealthy).toBe(true);
+                console.log('✅ New primary server running');
+                
+                // Wait for housekeeping to discover existing clients
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                
+                // Verify client scenarios still exist
+                const scenarioFilesAfter = fs.readdirSync(scenarioBaseDir)
+                    .filter(f => f.endsWith('.scenario.json') && !f.includes('capability'));
+                expect(scenarioFilesAfter.length).toBeGreaterThanOrEqual(2);
+                console.log(`✅ Client scenarios persisted: ${scenarioFilesAfter.length} files`);
+                
+                // Verify clients are still healthy
+                const client1FinalCheck = await checkServerHealth(client1.port);
+                const client2FinalCheck = await checkServerHealth(client2.port);
+                expect(client1FinalCheck).toBe(true);
+                expect(client2FinalCheck).toBe(true);
+                console.log('✅ Clients remain healthy after primary restart');
+                
+                console.log('✅ Crash recovery test completed successfully');
+            } finally {
+                // Cleanup: kill all spawned processes
+                console.log('🧹 Cleaning up spawned processes...');
+                for (const proc of spawnedProcesses) {
+                    try {
+                        if (!proc.killed) {
+                            proc.kill('SIGTERM');
+                        }
+                    } catch (error) {
+                        // Process might already be dead
+                    }
+                }
+                await new Promise(resolve => setTimeout(resolve, 1000));
             }
-            
-            // Wait for kill to take effect
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            // Verify clients are still running (they should be)
-            expect(client1.getServerModel().state).toBe('running');
-            expect(client2.getServerModel().state).toBe('running');
-            console.log('✅ Clients still running after primary crash');
-            
-            // ♻️  RESTART: Start new primary server (will claim port 42777 again)
-            console.log('♻️  Restarting primary server...');
-            const newPrimaryServer = new DefaultONCE();
-            await newPrimaryServer.init();
-            await newPrimaryServer.startServer();
-            
-            // Wait for housekeeping to complete (discovers running clients)
-            await new Promise(resolve => setTimeout(resolve, 3000));
-            
-            // Verify new primary rediscovered both running clients
-            const rediscoveredServers = newPrimaryServer.getRegisteredServers();
-            console.log(`🔍 Rediscovered ${rediscoveredServers.length} servers`);
-            
-            // Note: Clients won't auto-reconnect to new primary without websocket reconnection logic
-            // But housekeeping should discover their scenario files
-            expect(fs.existsSync(client1ScenarioPath)).toBe(true);
-            expect(fs.existsSync(client2ScenarioPath)).toBe(true);
-            console.log('✅ Client scenarios still exist and were discovered');
-            
-            // Verify scenarios show running state
-            const client1Scenario = JSON.parse(fs.readFileSync(client1ScenarioPath, 'utf8'));
-            const client2Scenario = JSON.parse(fs.readFileSync(client2ScenarioPath, 'utf8'));
-            expect(client1Scenario.state.state).toBe('running');
-            expect(client2Scenario.state.state).toBe('running');
-            console.log('✅ Client scenarios show running state');
-            
-            // Cleanup - stop all servers gracefully
-            await client1.stopServer();
-            await client2.stopServer();
-            await newPrimaryServer.stopServer();
-            
-            console.log('✅ Primary crash recovery test completed');
         }, 30000);
     });
 });

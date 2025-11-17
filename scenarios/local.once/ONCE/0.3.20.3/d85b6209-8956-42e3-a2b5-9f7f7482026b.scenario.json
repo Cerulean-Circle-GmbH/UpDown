@@ -1,0 +1,51 @@
+{
+  "uuid": "d85b6209-8956-42e3-a2b5-9f7f7482026b",
+  "objectType": "ONCE",
+  "version": "0.3.20.3",
+  "state": {
+    "pid": 81717,
+    "state": "running",
+    "domain": "local.once",
+    "host": "localhost",
+    "ip": "127.0.0.1",
+    "capabilities": [
+      {
+        "capability": "httpPort",
+        "port": 42777
+      },
+      {
+        "capability": "wsPort",
+        "port": 42777
+      }
+    ],
+    "isPrimaryServer": true,
+    "uuid": "d85b6209-8956-42e3-a2b5-9f7f7482026b",
+    "platform": {
+      "platform": "node",
+      "version": "v22.20.0",
+      "capabilities": [
+        "server",
+        "websocket",
+        "p2p"
+      ],
+      "isOnline": true,
+      "hostname": "localhost",
+      "ip": "127.0.0.1"
+    }
+  },
+  "metadata": {
+    "created": "2025-11-17T15:55:55.896Z",
+    "modified": "2025-11-17T15:55:55.896Z",
+    "creator": "ONCE-v0.3.20.3",
+    "description": "ONCE server Primary server instance",
+    "tags": [
+      "server",
+      "once",
+      "primary"
+    ],
+    "domain": "local.once",
+    "host": "localhost",
+    "port": 42777,
+    "isPrimaryServer": true
+  }
+}
