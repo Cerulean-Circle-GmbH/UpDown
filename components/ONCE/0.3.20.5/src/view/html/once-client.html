@@ -260,16 +260,36 @@
         
         // Control Functions - All messages are Scenarios
         function sendBroadcastMessage() {
-            if (ws && ws.readyState === WebSocket.OPEN) {
+            console.log('[sendBroadcastMessage] Called');
+            console.log('[sendBroadcastMessage] WebSocket state:', ws ? ws.readyState : 'null');
+            console.log('[sendBroadcastMessage] Server version:', serverVersion);
+            
+            if (!ws) {
+                addMessage('error', '❌ WebSocket not initialized');
+                console.error('[sendBroadcastMessage] WebSocket is null');
+                return;
+            }
+            
+            if (ws.readyState !== WebSocket.OPEN) {
+                addMessage('error', '❌ Not connected (WebSocket state: ' + ws.readyState + ')');
+                console.error('[sendBroadcastMessage] WebSocket not open:', ws.readyState);
+                return;
+            }
+            
+            try {
                 const scenario = {
                     type: 'scenario-message',
                     scenario: {
                         uuid: crypto.randomUUID(),
                         objectType: 'ONCEMessage',
-                        version: serverVersion,
+                        version: serverVersion || '0.3.20.5',
                         state: {
                             type: 'broadcast',
-                            from: { uuid: 'browser-' + Date.now(), port: parseInt(serverHost.split(':')[1] || '8080') },
+                            from: { 
+                                uuid: 'browser-' + Date.now(), 
+                                port: parseInt(serverHost.split(':')[1] || '8080'),
+                                host: serverHost.split(':')[0]
+                            },
                             to: 'all',
                             content: '📡 Broadcast from browser: ' + new Date().toLocaleTimeString(),
                             timestamp: new Date().toISOString(),
@@ -284,12 +304,15 @@
                     }
                 };
                 
+                console.log('[sendBroadcastMessage] Sending scenario:', JSON.stringify(scenario, null, 2));
                 ws.send(JSON.stringify(scenario));
                 stats.messagesSent++;
                 updateStats();
                 addMessage('message', '📡 Broadcast scenario sent to all servers');
-            } else {
-                addMessage('error', '❌ Not connected');
+                console.log('[sendBroadcastMessage] Broadcast sent successfully');
+            } catch (error) {
+                addMessage('error', '❌ Error sending broadcast: ' + error.message);
+                console.error('[sendBroadcastMessage] Error:', error);
             }
         }
         
