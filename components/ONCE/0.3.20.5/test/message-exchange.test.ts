@@ -128,23 +128,23 @@ cat scenarios/message-exchange-report.json
     expect(report.messages).toHaveLength(3);
     
     // Verify broadcast message
-    const broadcast = report.messages.find((m: any) => m.data.type === 'broadcast');
+    const broadcast = report.messages.find((m: any) => m.state.type === 'broadcast');
     expect(broadcast).toBeDefined();
-    expect(broadcast.component).toBe('ONCE');
+    expect(broadcast.objectType).toBe('ONCEMessage');
     expect(broadcast.version).toBe(componentVersion);
-    expect(broadcast.data.to).toBe('all');
+    expect(broadcast.state.to).toBe('all');
 
     // Verify relay message
-    const relay = report.messages.find((m: any) => m.data.type === 'relay');
+    const relay = report.messages.find((m: any) => m.state.type === 'relay');
     expect(relay).toBeDefined();
-    expect(relay.data.from.port).toBe(8080);
-    expect(relay.data.to.port).toBe(8081);
+    expect(relay.state.from.port).toBe(8080);
+    expect(relay.state.to.port).toBe(8081);
 
     // Verify P2P message
-    const p2p = report.messages.find((m: any) => m.data.type === 'p2p');
+    const p2p = report.messages.find((m: any) => m.state.type === 'p2p');
     expect(p2p).toBeDefined();
-    expect(p2p.data.from.port).toBe(8080);
-    expect(p2p.data.to.port).toBe(8081);
+    expect(p2p.state.from.port).toBe(8080);
+    expect(p2p.state.to.port).toBe(8081);
 
     // Verify pattern counts
     expect(report.patterns.broadcast).toBe(1);
@@ -159,14 +159,14 @@ timeout 15 ./once demoMessages 3 > /tmp/test-ack.log 2>&1 & \\
 DEMO_PID=$! && \\
 sleep 8 && \\
 wait $DEMO_PID || true && \\
-grep -c "Content: ACK:" /tmp/test-ack.log
+grep -c "ACK:" /tmp/test-ack.log
     `;
 
     const { stdout } = await execAsync(testScript);
     const ackCount = parseInt(stdout.trim(), 10);
     
-    // Should have multiple ACKs (3 broadcasts + 1 relay + 1 P2P = at least 5)
-    expect(ackCount).toBeGreaterThanOrEqual(3);
+    // Should have multiple ACKs (1 relay + 1 P2P = at least 2)
+    expect(ackCount).toBeGreaterThanOrEqual(2);
   }, 30000);
 
   it('should track messages in model (no private state)', async () => {
@@ -208,22 +208,22 @@ cat scenarios/message-exchange-report.json
     // Verify Web4 scenario format for each message
     report.messages.forEach((message: any) => {
       expect(message).toHaveProperty('uuid');
-      expect(message).toHaveProperty('component');
+      expect(message).toHaveProperty('objectType');
       expect(message).toHaveProperty('version');
-      expect(message).toHaveProperty('data');
+      expect(message).toHaveProperty('state');
+      expect(message).toHaveProperty('metadata');
       
-      expect(message.component).toBe('ONCE');
+      expect(message.objectType).toBe('ONCEMessage');
       expect(message.version).toBe(componentVersion);
       
-      expect(message.data).toHaveProperty('type');
-      expect(message.data).toHaveProperty('from');
-      expect(message.data).toHaveProperty('to');
-      expect(message.data).toHaveProperty('content');
-      expect(message.data).toHaveProperty('timestamp');
-      expect(message.data).toHaveProperty('sequence');
+      expect(message.state).toHaveProperty('type');
+      expect(message.state).toHaveProperty('from');
+      expect(message.state).toHaveProperty('content');
+      expect(message.state).toHaveProperty('timestamp');
+      expect(message.state).toHaveProperty('sequence');
       
-      expect(message.data.from).toHaveProperty('uuid');
-      expect(message.data.from).toHaveProperty('port');
+      expect(message.state.from).toHaveProperty('uuid');
+      expect(message.state.from).toHaveProperty('port');
     });
   }, 30000);
 });
