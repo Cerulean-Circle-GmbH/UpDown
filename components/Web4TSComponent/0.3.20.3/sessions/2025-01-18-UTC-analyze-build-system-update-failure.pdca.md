@@ -67,19 +67,21 @@ Analyze why `updateBuildSystem()` did not work for ONCE component, identify root
 - [x] Document root cause
 
 ### **Step 2: Design Auto-Update Mechanism**
-- [ ] Add detection logic for old-style `start.sh`
-- [ ] Implement auto-update in `lib-component-start.sh`
-- [ ] Ensure backward compatibility
+- [x] Add detection logic for old-style `start.sh` in template
+- [x] Implement auto-update detection at beginning of `start.sh`
+- [x] Auto-call `updateBuildSystem()` when old component detected
+- [x] Re-execute `start.sh` after update
 
 ### **Step 3: Enhance Dependency Verification**
-- [ ] Ensure `verify-deps.sh` runs before execution
-- [ ] Add automatic `npm install` if dependencies missing
-- [ ] Provide clear feedback
+- [x] `verify-deps.sh` already runs in `lib-component-start.sh`
+- [x] Automatic `npm install` if dependencies missing (in lib-component-start.sh)
+- [x] Clear feedback provided
 
 ### **Step 4: Test Seamless Start**
 - [ ] Test with old component (ONCE 0.3.20.5)
-- [ ] Verify auto-update works
-- [ ] Confirm component starts without errors
+- [ ] Verify auto-update works on first start
+- [ ] Confirm component starts without ERR_MODULE_NOT_FOUND errors
+- [ ] **NOTE:** Old `start.sh` files don't have detection code - need to test if manual updateBuildSystem is still required for first-time old components
 
 ---
 
@@ -129,8 +131,20 @@ Analyze why `updateBuildSystem()` did not work for ONCE component, identify root
 
 ## **📊 Status**
 
-**Current Phase:** PLAN → DO  
-**Next Action:** Implement auto-update detection in `lib-component-start.sh`
+**Current Phase:** DO → CHECK  
+**Implementation Complete:**
+- ✅ Added auto-update detection to `start.sh.template`
+- ✅ Detection checks for missing `lib-component-start.sh` or hardcoded `../../..` paths
+- ✅ Auto-calls `updateBuildSystem()` when old component detected
+- ✅ Re-executes `start.sh` after update
+
+**Next Action:** Test with ONCE 0.3.20.5 to verify seamless start works
+
+**Known Limitation:**
+- Old `start.sh` files (like ONCE 0.3.20.5) don't have detection code
+- First-time old components may still need manual `updateBuildSystem` call
+- After first update, future starts will use optimized scripts with detection
+- **Potential Enhancement:** Add detection to npm start script or create wrapper
 
 ---
 
