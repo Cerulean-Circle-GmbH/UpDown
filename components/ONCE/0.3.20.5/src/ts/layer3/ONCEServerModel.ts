@@ -31,6 +31,9 @@ export interface ONCEServerModel {
     /** Reverse internet domain (default: "local.once") */
     domain: string;
     
+    /** Extracted hostname (first part of FQDN, e.g., "McDonges-3") */
+    hostname: string;
+    
     /** Fully qualified hostname (e.g., "McDonges-3.fritz.box") */
     host: string;
     

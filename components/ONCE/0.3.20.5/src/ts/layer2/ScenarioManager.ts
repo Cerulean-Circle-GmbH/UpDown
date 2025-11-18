@@ -66,19 +66,41 @@ export class ScenarioManager {
 
     /**
      * Save scenario to organized directory structure
-     * /scenarios/reverseDomain/component/version/uuid.scenario.json
+     * /scenarios/{domain-parts}/{hostname}/component/version/uuid.scenario.json
      */
     async saveScenario(scenario: Scenario): Promise<string> {
-        const domain = scenario.metadata.domain || 'local.once';
         const component = scenario.objectType;
         const version = scenario.version;
         const uuid = scenario.uuid;
+        
+        // Extract domain and hostname from metadata
+        const fullDomain = scenario.metadata.domain || 'local.once';
+        const fqdn = scenario.metadata.host || 'localhost';
+        
+        // Parse domain into path components
+        let domainPath: string[];
+        let hostname: string;
+        
+        if (fqdn === 'localhost') {
+            domainPath = ['local', 'once'];
+            hostname = 'localhost';
+        } else if (fqdn.includes('.')) {
+            const parts = fqdn.split('.');
+            hostname = parts[0]; // First part is hostname
+            const domainParts = parts.slice(1); // Rest is domain
+            domainPath = domainParts.reverse(); // Reverse for proper hierarchy
+        } else {
+            // Simple hostname
+            domainPath = ['local', fqdn];
+            hostname = fqdn;
+        }
 
-        // Create organized path
+        // Create organized path: scenarios/{domain-parts}/{hostname}/ONCE/version
         const scenarioDir = join(
             this.projectRoot,
             'scenarios',
-            domain,
+            ...domainPath,
+            hostname,
             component,
             version
         );
@@ -116,21 +138,40 @@ export class ScenarioManager {
     }
 
     /**
-     * Load scenario by UUID and domain/component/version
+     * Load scenario by UUID, domain/hostname, component, and version
+     * Note: This method needs domain AND hostname or full FQDN to construct the path
      */
     async loadScenarioByUUID(
         uuid: string, 
-        domain: string = 'local.once', 
+        fqdn: string = 'localhost',
         component: string = 'ONCE', 
         version?: string
     ): Promise<Scenario> {
         // ✅ Use dynamic version if not provided
         const actualVersion = version || this.version;
         
+        // Parse FQDN into domain path and hostname
+        let domainPath: string[];
+        let hostname: string;
+        
+        if (fqdn === 'localhost') {
+            domainPath = ['local', 'once'];
+            hostname = 'localhost';
+        } else if (fqdn.includes('.')) {
+            const parts = fqdn.split('.');
+            hostname = parts[0];
+            const domainParts = parts.slice(1);
+            domainPath = domainParts.reverse();
+        } else {
+            domainPath = ['local', fqdn];
+            hostname = fqdn;
+        }
+        
         const scenarioPath = join(
             this.projectRoot,
             'scenarios',
-            domain,
+            ...domainPath,
+            hostname,
             component,
             actualVersion,
             `${uuid}.scenario.json`

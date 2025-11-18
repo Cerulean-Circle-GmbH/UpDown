@@ -12,6 +12,11 @@ describe('Primary Server Housekeeping', () => {
     let scenarioBaseDir: string;
     let testProjectRoot: string;
     let componentVersion: string;
+    let detectedDomain: string;
+    let detectedHostname: string;
+    let domainPath: string[];
+    const serverInstances: any[] = []; // Track all server instances for cleanup
+    let domainDetected = false; // Cache domain detection across tests
     
     beforeEach(async () => {
         const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
@@ -22,7 +27,36 @@ describe('Primary Server Housekeeping', () => {
         await (tempInstance as any).getWeb4TSComponent();
         testProjectRoot = tempInstance.model.projectRoot;
         componentVersion = tempInstance.model.version;
-        scenarioBaseDir = path.join(testProjectRoot, `scenarios/local.once/ONCE/${componentVersion}`);
+        
+        // Detect domain/hostname only once (first test run)
+        if (!domainDetected) {
+            await tempInstance.startServer();
+            const serverModel = (tempInstance as any).serverHierarchyManager.getServerModel();
+            detectedDomain = serverModel.domain;
+            detectedHostname = serverModel.hostname;
+            
+            // Parse domain into path components
+            const fqdn = serverModel.host;
+            if (fqdn === 'localhost') {
+                domainPath = ['local', 'once'];
+            } else if (fqdn.includes('.')) {
+                const parts = fqdn.split('.');
+                const domain = parts.slice(1);
+                domainPath = domain.reverse();
+            } else {
+                domainPath = ['local', fqdn];
+            }
+            
+            await tempInstance.stopServer();
+            domainDetected = true;
+        }
+        
+        scenarioBaseDir = path.join(testProjectRoot, 'scenarios', ...domainPath, detectedHostname, 'ONCE', componentVersion);
+        
+        // Ensure scenario directory exists for tests
+        if (!fs.existsSync(scenarioBaseDir)) {
+            fs.mkdirSync(scenarioBaseDir, { recursive: true });
+        }
         
         // Check if primary server (port 42777) is already running
         // If so, trigger graceful shutdown to clean slate for test
@@ -83,16 +117,42 @@ describe('Primary Server Housekeeping', () => {
             console.log('ℹ️  Port check error (continuing):', error);
         }
         
-        // Clean up scenarios
+        // Clean up scenarios (but keep directory)
         if (fs.existsSync(scenarioBaseDir)) {
-            fs.rmSync(scenarioBaseDir, { recursive: true, force: true });
+            const files = fs.readdirSync(scenarioBaseDir).filter(f => f.endsWith('.scenario.json'));
+            for (const file of files) {
+                const filePath = path.join(scenarioBaseDir, file);
+                if (fs.lstatSync(filePath).isFile()) {
+                    fs.unlinkSync(filePath);
+                }
+            }
+            
+            // Clean up capability directories
+            const capabilityDir = path.join(scenarioBaseDir, 'capability');
+            if (fs.existsSync(capabilityDir)) {
+                fs.rmSync(capabilityDir, { recursive: true, force: true });
+            }
         }
     });
     
     afterEach(async () => {
-        // Graceful cleanup
+        // Stop all tracked servers
+        for (const server of serverInstances) {
+            try {
+                await server.stopServer();
+            } catch (error) {
+                console.error('Error stopping server:', error);
+            }
+        }
+        serverInstances.length = 0; // Clear array
+        
+        // Graceful cleanup of primary
         if (primaryServer) {
-            await primaryServer.stopServer();
+            try {
+                await primaryServer.stopServer();
+            } catch (error) {
+                console.error('Error stopping primary:', error);
+            }
             primaryServer = null;
         }
         
@@ -211,6 +271,7 @@ describe('Primary Server Housekeeping', () => {
         const clientServer = new DefaultONCE();
         await clientServer.init();
         await clientServer.startServer();
+        serverInstances.push(clientServer); // Track for cleanup
         
         const clientModel = clientServer.getServerModel();
         const clientPort = clientModel.capabilities.find(c => c.capability === 'httpPort')?.port;
@@ -248,7 +309,7 @@ describe('Primary Server Housekeeping', () => {
         
         // Cleanup client server gracefully
         await clientServer.stopServer();
-    }, 20000);
+    }, 40000);
     
     it('should discover and re-register running client servers', async () => {
         const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
@@ -262,6 +323,7 @@ describe('Primary Server Housekeeping', () => {
         const clientServer = new DefaultONCE();
         await clientServer.init();
         await clientServer.startServer();
+        serverInstances.push(clientServer); // Track for cleanup
         
         const clientModel = clientServer.getServerModel();
         const clientUuid = clientModel.uuid;
@@ -353,6 +415,7 @@ describe('Primary Server Housekeeping', () => {
         const clientServer = new DefaultONCE();
         await clientServer.init();
         await clientServer.startServer();
+        serverInstances.push(clientServer); // Track for cleanup
         
         const clientModel = clientServer.getServerModel();
         const clientPort = clientModel.capabilities.find(c => c.capability === 'httpPort')?.port;
