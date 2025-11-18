@@ -1294,12 +1294,25 @@ export class ServerHierarchyManager {
                 
                 for (const item of items) {
                     const fullPath = path.join(dir, item);
-                    const stat = fs.statSync(fullPath);
                     
-                    if (stat.isDirectory()) {
-                        results.push(...findScenarios(fullPath));
-                    } else if (item.endsWith('.scenario.json')) {
-                        results.push(fullPath);
+                    try {
+                        // Use lstatSync to detect symlinks without following them
+                        const stat = fs.lstatSync(fullPath);
+                        
+                        if (stat.isDirectory()) {
+                            results.push(...findScenarios(fullPath));
+                        } else if (item.endsWith('.scenario.json')) {
+                            // Include all .scenario.json files (symlinks will be filtered later)
+                            results.push(fullPath);
+                        }
+                    } catch (err: any) {
+                        // Skip files we can't stat (broken symlinks, permission issues, etc.)
+                        if (err.code === 'ENOENT') {
+                            console.log(`⚠️ Skipping inaccessible file: ${fullPath}`);
+                        } else {
+                            console.warn(`⚠️ Error accessing ${fullPath}:`, err.message);
+                        }
+                        continue;
                     }
                 }
                 
