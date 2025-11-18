@@ -219,16 +219,20 @@
     </div>
     
     <script>
+        // ✅ Use actual hostname from URL instead of hardcoded localhost
+        const CURRENT_HOST = window.location.hostname;
         const primaryPort = 42777;
         let serverData = [];
         let ws = null;
         let reconnectAttempts = 0;
         const MAX_RECONNECT_ATTEMPTS = 5;
         
+        console.log(`🌐 Demo Hub running on: ${CURRENT_HOST}:${primaryPort}`);
+        
         // ✅ Establish WebSocket connection for real-time updates
         function connectWebSocket() {
             try {
-                ws = new WebSocket(`ws://localhost:${primaryPort}`);
+                ws = new WebSocket(`ws://${CURRENT_HOST}:${primaryPort}`);
                 
                 ws.onopen = () => {
                     console.log('✅ WebSocket connected to primary server');
@@ -403,7 +407,7 @@
         
         async function fetchServerStatus() {
             try {
-                const response = await fetch(`http://localhost:${primaryPort}/servers`);
+                const response = await fetch(`http://${CURRENT_HOST}:${primaryPort}/servers`);
                 const data = await response.json();
                 
                 // ✅ Add primary server with full model data
@@ -469,7 +473,7 @@
             startBtn.textContent = '⏳ Starting...';
             
             try {
-                const response = await fetch(`http://localhost:${primaryPort}/start-server`, {
+                const response = await fetch(`http://${CURRENT_HOST}:${primaryPort}/start-server`, {
                     method: 'POST'
                 });
                 
@@ -500,7 +504,7 @@
         async function discoverServers() {
             try {
                 console.log('🔍 Triggering server discovery and housekeeping...');
-                const response = await fetch(`http://localhost:${primaryPort}/discover-servers`, {
+                const response = await fetch(`http://${CURRENT_HOST}:${primaryPort}/discover-servers`, {
                     method: 'POST'
                 });
                 
@@ -526,7 +530,7 @@
             
             try {
                 console.log('🛑 Initiating graceful shutdown...');
-                const response = await fetch(`http://localhost:${primaryPort}/shutdown-all`, {
+                const response = await fetch(`http://${CURRENT_HOST}:${primaryPort}/shutdown-all`, {
                     method: 'POST'
                 });
                 
@@ -552,7 +556,7 @@
         
         async function stopServer(port, uuid) {
             try {
-                const response = await fetch(`http://localhost:${primaryPort}/stop-server`, {
+                const response = await fetch(`http://${CURRENT_HOST}:${primaryPort}/stop-server`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ port, uuid })
