@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ONCE v0.3.20.3 Browser Client - Interactive Demo</title>
+    <title>ONCE Browser Client - Interactive Demo</title>
     <style>
         body { 
             font-family: 'Courier New', monospace; 
@@ -75,9 +75,10 @@
 </head>
 <body>
     <div class="demo-header">
-        <h1>🎭 ONCE v0.3.20.3 Interactive Demo</h1>
+        <h1 id="pageTitle">🎭 ONCE Interactive Demo</h1>
         <p>Web4 P2P Communication - Radical OOP Architecture</p>
         <div class="connection-status" id="connectionStatus">🔴 Disconnected</div>
+        <div class="connection-status" id="primaryConnection" style="font-size: 0.9em; color: #0ff;"></div>
     </div>
     
     <div class="stats">
@@ -106,17 +107,18 @@
     </div>
     
     <div class="message-log" id="messageLog">
-        <div class="connection">📡 Initializing ONCE v0.3.20.3 Browser Client...</div>
+        <div class="connection">📡 Initializing ONCE Browser Client...</div>
     </div>
     
     <script>
-        // ONCE v0.3.20.3 Browser Client - Adapted for new architecture
+        // ONCE Browser Client - Dynamic version from server
         const urlParams = new URLSearchParams(window.location.search);
         const defaultHost = window.location.host || 'localhost:8080';
         const serverHost = urlParams.get('server') || defaultHost;
         const isDemoMode = urlParams.get('demo') === 'true' || window.location.pathname === '/once';
         
         let ws = null;
+        let serverVersion = 'unknown';
         let stats = {
             messagesSent: 0,
             messagesReceived: 0,
@@ -125,10 +127,10 @@
         };
         let connectedServers = []; // Store list of connected servers for relay
         
-        console.log('ONCE v0.3.20.3 Browser Client - Demo Mode:', isDemoMode);
+        console.log('ONCE Browser Client - Demo Mode:', isDemoMode);
         console.log('Connecting to server:', serverHost);
         
-        addMessage('connection', '🎭 ONCE v0.3.20.3 Browser Client started');
+        addMessage('connection', '🎭 ONCE Browser Client started');
         addMessage('connection', `📡 Attempting connection to: ${serverHost}`);
         
         // WebSocket connection
@@ -138,10 +140,10 @@
                 
                 ws.onopen = function() {
                     stats.connectionTime = new Date();
-                    updateConnectionStatus('🟢 Connected to ' + serverHost);
-                    addMessage('connection', '✅ Connected to ONCE v0.3.20.3 server');
+                    updateConnectionStatus('🟢 Browser → ' + serverHost);
+                    addMessage('connection', '✅ Connected to ONCE server');
                     
-                    // Fetch server UUID and update header
+                    // Fetch server UUID, version, and primary connection info
                     fetchServerInfo();
                     
                     // Fetch connected servers from primary
@@ -152,7 +154,6 @@
                         type: 'client-connected',
                         data: {
                             clientId: 'browser-' + Date.now(),
-                            version: '0.3.20.3',
                             timestamp: new Date().toISOString()
                         }
                     };
@@ -265,7 +266,7 @@
                     scenario: {
                         uuid: crypto.randomUUID(),
                         objectType: 'ONCEMessage',
-                        version: '0.3.20.3',
+                        version: serverVersion,
                         state: {
                             type: 'broadcast',
                             from: { uuid: 'browser-' + Date.now(), port: parseInt(serverHost.split(':')[1] || '8080') },
@@ -405,13 +406,33 @@
         // Fetch current server info (UUID)
         async function fetchServerInfo() {
             try {
+                const hostname = serverHost.split(':')[0];
                 const port = serverHost.split(':')[1] || '8080';
-                const response = await fetch(`http://localhost:${port}/health`);
+                const response = await fetch(`http://${hostname}:${port}/health`);
                 const data = await response.json();
                 
+                // Store server version globally
+                serverVersion = data.version || 'unknown';
+                
+                // Update page title with version
+                document.getElementById('pageTitle').textContent = `🎭 ONCE v${serverVersion} Interactive Demo`;
+                document.title = `ONCE v${serverVersion} Browser Client`;
+                
+                // Update connection status with server UUID
                 if (data.uuid) {
-                    // Update connection status with UUID
-                    updateConnectionStatus(`🟢 Connected to ${serverHost} (${data.uuid})`);
+                    const shortUuid = data.uuid.substring(0, 8);
+                    updateConnectionStatus(`🟢 Browser → ${hostname}:${port} [${shortUuid}]`);
+                }
+                
+                // Show primary server connection if this is a client server
+                if (data.primaryServer && data.primaryServer.connected) {
+                    const primaryHost = data.primaryServer.host;
+                    const primaryPort = data.primaryServer.port;
+                    document.getElementById('primaryConnection').textContent = 
+                        `🟢 Server → Primary: ${primaryHost}:${primaryPort}`;
+                } else if (data.isPrimaryServer) {
+                    document.getElementById('primaryConnection').textContent = 
+                        `🟢 This is the Primary Server`;
                 }
             } catch (error) {
                 console.error('Failed to fetch server info:', error);

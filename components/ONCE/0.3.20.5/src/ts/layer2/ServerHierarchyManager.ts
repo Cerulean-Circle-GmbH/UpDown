@@ -177,6 +177,15 @@ export class ServerHierarchyManager {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             });
+            
+            // Include primary server connection info for client servers
+            const primaryInfo = this.serverModel.isPrimaryServer ? null : {
+                host: this.serverModel.primaryServer?.host || 'localhost',
+                port: this.serverModel.primaryServer?.port || 42777,
+                connected: !!this.primaryWsClient,
+                domain: this.serverModel.domain
+            };
+            
             res.end(JSON.stringify({
                 status: 'running',
                 uuid: this.serverModel.uuid,
@@ -184,7 +193,9 @@ export class ServerHierarchyManager {
                 state: this.serverModel.state,
                 capabilities: this.serverModel.capabilities,
                 domain: this.serverModel.domain,
+                hostname: this.serverModel.hostname,
                 version: this.version,
+                primaryServer: primaryInfo,
                 message: `ONCE v${this.version} Server - Enhanced Hierarchy`
             }));
         } else if (url.pathname === '/once' || url.pathname === '/once/') {
