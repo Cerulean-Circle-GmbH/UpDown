@@ -199,6 +199,8 @@ export class ServerHierarchyManager {
                 'Access-Control-Allow-Origin': '*'
             });
             res.end(JSON.stringify({
+                primary: this.serverModel.isPrimaryServer,
+                primaryServer: this.serverModel, // ✅ Include full primary model for UI
                 servers: Array.from(this.serverRegistry.values()).map(entry => entry.model)
             }));
         } else if (url.pathname === '/start-server' && req.method === 'POST' && this.serverModel.isPrimaryServer) {
