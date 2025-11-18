@@ -595,6 +595,11 @@ export class ServerHierarchyManager {
                     await this.handleServerRegistration(ws, message.serverModel);
                 }
                 break;
+            case 'server-unregister':
+                if (this.serverModel.isPrimaryServer) {
+                    await this.handleServerUnregister(message.data);
+                }
+                break;
             case 'server-discovery':
                 if (this.serverModel.isPrimaryServer) {
                     await this.handleServerDiscovery(ws, message.query);
@@ -773,6 +778,20 @@ export class ServerHierarchyManager {
         
         // ✅ Broadcast server registration event to all browser clients
         this.broadcastServerEvent('server-registered', clientServerModel);
+    }
+
+    /**
+     * Handle server unregister (primary server only)
+     * @pdca 2025-11-18-UTC-1830.pdca.md - Remove client from registry on shutdown
+     */
+    private async handleServerUnregister(data: { uuid: string; port?: number }): Promise<void> {
+        console.log(`🗑️  [${shortUUID(this.serverModel.uuid)}] Client unregistered: ${shortUUID(data.uuid)} (port ${data.port})`);
+        
+        // Remove from registry
+        this.serverRegistry.delete(data.uuid);
+        
+        // ✅ Broadcast server stopped event to all browser clients
+        this.broadcastServerEvent('server-stopped', data);
     }
 
     /**
@@ -1440,6 +1459,25 @@ export class ServerHierarchyManager {
         
         // Update scenario to reflect stopping state
         await this.updateScenarioState(LifecycleState.STOPPING);
+
+        // ✅ NEW: Notify primary server to unregister this client
+        if (!this.serverModel.isPrimaryServer && this.primaryWsClient) {
+            try {
+                const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
+                const unregisterMsg = {
+                    type: 'server-unregister',
+                    data: {
+                        uuid: this.serverModel.uuid,
+                        port: httpCapability?.port
+                    }
+                };
+                this.primaryWsClient.send(JSON.stringify(unregisterMsg));
+                // Give primary time to process unregister message
+                await new Promise(resolve => setTimeout(resolve, 100));
+            } catch (error) {
+                console.warn('⚠️  Failed to notify primary of shutdown:', error);
+            }
+        }
 
         if (this.primaryServerConnection) {
             this.primaryServerConnection.close();
