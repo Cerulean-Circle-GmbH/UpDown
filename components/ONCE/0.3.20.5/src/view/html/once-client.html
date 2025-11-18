@@ -370,10 +370,14 @@
                     scenario: {
                         uuid: generateUUID(),
                         objectType: 'ONCEMessage',
-                        version: '0.3.20.3',
+                        version: serverVersion || '0.3.20.5',
                         state: {
                             type: 'relay',
-                            from: { uuid: 'browser-' + Date.now(), port: parseInt(serverHost.split(':')[1] || '8080') },
+                            from: { 
+                                uuid: 'browser-' + Date.now(), 
+                                host: serverHost.split(':')[0],
+                                port: parseInt(serverHost.split(':')[1] || '8080') 
+                            },
                             to: { uuid: targetServer.uuid, port: targetPort },
                             content: '🔄 Relay from browser via primary: ' + new Date().toLocaleTimeString(),
                             timestamp: new Date().toISOString(),
@@ -441,7 +445,28 @@
         // Fetch connected servers from primary server
         async function fetchConnectedServers() {
             try {
-                const response = await fetch('http://localhost:42777/servers');
+                // Step 1: Get primary server info from current server's /health
+                const hostname = serverHost.split(':')[0];
+                const port = serverHost.split(':')[1] || '8080';
+                const healthResponse = await fetch(`http://${hostname}:${port}/health`);
+                const healthData = await healthResponse.json();
+                
+                // Step 2: Determine primary server address
+                let primaryHost, primaryPort;
+                if (healthData.isPrimaryServer) {
+                    // We're on the primary
+                    primaryHost = hostname;
+                    primaryPort = port;
+                } else if (healthData.primaryServer) {
+                    // We're on a client, get primary from health data
+                    primaryHost = healthData.primaryServer.host || hostname;
+                    primaryPort = healthData.primaryServer.port || 42777;
+                } else {
+                    throw new Error('Cannot determine primary server address');
+                }
+                
+                // Step 3: Fetch connected servers from primary
+                const response = await fetch(`http://${primaryHost}:${primaryPort}/servers`);
                 const data = await response.json();
                 
                 // Store servers for relay functionality
@@ -456,7 +481,7 @@
                 document.getElementById('connectedServers').textContent = 
                     `${serverCount} servers (ports: ${serverList || 'None'})`;
                 
-                addMessage('connection', `📊 ${serverCount} servers connected via primary`);
+                addMessage('connection', `📊 ${serverCount} servers connected via primary (${primaryHost}:${primaryPort})`);
             } catch (error) {
                 document.getElementById('connectedServers').textContent = 'Error fetching';
                 console.error('Failed to fetch servers:', error);
