@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+**/node_modules/
 package-lock.json
 
 # Build output
@@ -34,3 +35,4 @@ npm-debug.log*
 
 # Test artifacts
 test/data/
+**/test/data/
