@@ -221,6 +221,125 @@
     <script>
         const primaryPort = 42777;
         let serverData = [];
+        let ws = null;
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT_ATTEMPTS = 5;
+        
+        // ✅ Establish WebSocket connection for real-time updates
+        function connectWebSocket() {
+            try {
+                ws = new WebSocket(`ws://localhost:${primaryPort}`);
+                
+                ws.onopen = () => {
+                    console.log('✅ WebSocket connected to primary server');
+                    reconnectAttempts = 0;
+                };
+                
+                ws.onmessage = (event) => {
+                    try {
+                        const message = JSON.parse(event.data);
+                        handleServerEvent(message);
+                    } catch (error) {
+                        console.error('❌ Failed to parse WebSocket message:', error);
+                    }
+                };
+                
+                ws.onerror = (error) => {
+                    console.error('❌ WebSocket error:', error);
+                };
+                
+                ws.onclose = () => {
+                    console.log('📡 WebSocket connection closed');
+                    ws = null;
+                    
+                    // Attempt to reconnect
+                    if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                        reconnectAttempts++;
+                        console.log(`🔄 Reconnecting... (attempt ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`);
+                        setTimeout(connectWebSocket, 2000 * reconnectAttempts);
+                    }
+                };
+            } catch (error) {
+                console.error('❌ Failed to connect WebSocket:', error);
+            }
+        }
+        
+        // ✅ Handle real-time server events
+        function handleServerEvent(message) {
+            console.log('📨 Received event:', message.type, message.data);
+            
+            switch (message.type) {
+                case 'server-registered':
+                    handleServerRegistered(message.data);
+                    break;
+                case 'server-stopped':
+                    handleServerStopped(message.data);
+                    break;
+                default:
+                    // Ignore other message types (scenario-message, etc.)
+                    break;
+            }
+        }
+        
+        // ✅ Handle server registration event
+        function handleServerRegistered(serverModel) {
+            console.log('🟢 Server registered:', serverModel.uuid);
+            
+            // Check if server already exists
+            const existingIndex = serverData.findIndex(s => s.uuid === serverModel.uuid);
+            
+            if (existingIndex === -1) {
+                // Add new server
+                const port = serverModel.capabilities.find(c => c.capability === 'httpPort')?.port;
+                const newServer = {
+                    name: `Client Server ${serverData.length}`,
+                    port: port,
+                    status: 'running',
+                    uuid: serverModel.uuid
+                };
+                serverData.push(newServer);
+            } else {
+                // Update existing server
+                serverData[existingIndex].status = 'running';
+            }
+            
+            updateUI();
+        }
+        
+        // ✅ Handle server stopped event
+        function handleServerStopped(data) {
+            console.log('🛑 Server stopped:', data.uuid);
+            
+            // Find server and mark as stopped
+            const server = serverData.find(s => s.uuid === data.uuid);
+            if (server) {
+                server.status = 'stopped';
+            }
+            
+            updateUI();
+        }
+        
+        // ✅ Update UI with current server data
+        function updateUI() {
+            // Count servers by status
+            const running = serverData.filter(s => s.status === 'running').length;
+            const stopped = serverData.filter(s => s.status === 'stopped').length;
+            const clients = serverData.filter(s => s.port !== primaryPort && s.status === 'running').length;
+            
+            // Update status bar
+            document.getElementById('totalServers').textContent = serverData.length;
+            document.getElementById('runningServers').textContent = running;
+            document.getElementById('clientServers').textContent = clients;
+            document.getElementById('stoppedServers').textContent = stopped;
+            
+            // Update server grid
+            const grid = document.getElementById('serverGrid');
+            grid.innerHTML = serverData.map(s => createServerCard(s)).join('');
+            
+            // Update timestamp
+            const now = new Date().toLocaleTimeString();
+            document.getElementById('lastUpdated').textContent = `Last updated: ${now}`;
+        }
         
         function createServerCard(server) {
             const isRunning = server.status === 'running';
@@ -284,30 +403,19 @@
                     return {
                         name: `Client Server ${idx + 1}`,
                         port: port,
-                        status: 'running',
+                        status: 'running', // Assume running since they're in registry
                         uuid: s.uuid
                     };
                 });
                 
                 serverData = [primary, ...clients];
                 
-                // Update status bar
-                document.getElementById('totalServers').textContent = serverData.length;
-                document.getElementById('runningServers').textContent = serverData.length;
-                document.getElementById('clientServers').textContent = clients.length;
-                document.getElementById('stoppedServers').textContent = 0;
+                // Update UI
+                updateUI();
                 
-                // Update server grid
-                const grid = document.getElementById('serverGrid');
-                grid.innerHTML = serverData.map(s => createServerCard(s)).join('');
-                
-                // Enable/disable start next button based on server addition state
+                // Enable start next button
                 const startBtn = document.getElementById('startNextBtn');
-                startBtn.disabled = false; // Enable once we've confirmed servers are loaded
-                
-                // Update timestamp
-                const now = new Date().toLocaleTimeString();
-                document.getElementById('lastUpdated').textContent = `Last updated: ${now}`;
+                startBtn.disabled = false;
                 
             } catch (error) {
                 console.error('Failed to fetch server status:', error);
@@ -438,11 +546,12 @@
             window.open(`http://localhost:${port}/health`, '_blank');
         }
         
-        // Initial load
+        // ✅ Initialize: Connect WebSocket and load initial server status
+        connectWebSocket();
         fetchServerStatus();
         
-        // Auto-refresh every 3 seconds
-        setInterval(fetchServerStatus, 3000);
+        // ✅ Auto-refresh every 10 seconds as fallback (WebSocket provides real-time updates)
+        setInterval(fetchServerStatus, 10000);
     </script>
 </body>
 </html>

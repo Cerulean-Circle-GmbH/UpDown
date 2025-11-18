@@ -368,6 +368,9 @@ export class ServerHierarchyManager {
                         // Remove from registry
                         this.serverRegistry.delete(uuid);
                         
+                        // ✅ Broadcast server stopped event to all browser clients
+                        this.broadcastServerEvent('server-stopped', { uuid, port });
+                        
                         res.writeHead(200, { 
                             'Content-Type': 'application/json',
                             'Access-Control-Allow-Origin': '*'
@@ -750,6 +753,9 @@ export class ServerHierarchyManager {
             type: 'registration-confirmed',
             primaryServerModel: this.serverModel
         }));
+        
+        // ✅ Broadcast server registration event to all browser clients
+        this.broadcastServerEvent('server-registered', clientServerModel);
     }
 
     /**
@@ -1167,6 +1173,30 @@ export class ServerHierarchyManager {
                 client.send(JSON.stringify({
                     type: 'scenario-message',
                     scenario: scenario
+                }));
+            }
+        });
+    }
+
+    /**
+     * Broadcast server lifecycle events to all connected browser clients
+     * Used for real-time updates in demo hub UI
+     */
+    private broadcastServerEvent(eventType: string, data: any): void {
+        const clientCount = this.browserClients.size;
+        console.log(`📡 Broadcasting ${eventType} to ${clientCount} browser client(s)`);
+        
+        if (clientCount === 0) {
+            console.log('ℹ️  No browser clients connected');
+            return;
+        }
+        
+        this.browserClients.forEach((client: WebSocket) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({
+                    type: eventType,
+                    data: data,
+                    timestamp: new Date().toISOString()
                 }));
             }
         });
