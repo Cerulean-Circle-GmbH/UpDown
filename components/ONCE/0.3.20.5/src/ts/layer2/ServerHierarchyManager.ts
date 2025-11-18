@@ -11,6 +11,7 @@ import { ONCEServerModel, ONCE_DEFAULT_CONFIG, createDefaultServerModel } from '
 import { LifecycleState } from '../layer3/LifecycleEvents.js';
 import { IOR, iorToUrl } from '../layer3/IOR.js';
 import { v4 as uuidv4 } from 'uuid';
+import os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
@@ -1019,7 +1020,6 @@ export class ServerHierarchyManager {
      */
     private detectHostname(): string {
         try {
-            const os = require('os');
             return os.hostname();
         } catch {
             return 'localhost';
@@ -1032,7 +1032,6 @@ export class ServerHierarchyManager {
      */
     private detectIPAddress(): string {
         try {
-            const os = require('os');
             const networkInterfaces = os.networkInterfaces();
             
             // Try to find first non-internal IPv4 address
