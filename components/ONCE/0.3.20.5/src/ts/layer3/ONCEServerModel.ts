@@ -49,6 +49,12 @@ export interface ONCEServerModel {
     /** Whether this server is the primary name server (port 42777) */
     isPrimaryServer: boolean;
     
+    /** Primary server connection info (for client servers) */
+    primaryServer?: {
+        host: string;
+        port: number;
+    };
+    
     /** If not primary, the IOR of the primary server this one registered with */
     primaryServerIOR?: string;
 }
