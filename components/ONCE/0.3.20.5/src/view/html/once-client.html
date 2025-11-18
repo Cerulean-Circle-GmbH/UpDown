@@ -173,18 +173,42 @@
                         // Enhanced logging with sender UUID and URL
                         let logMsg = `📥 Received: ${message.type || 'unknown'}`;
                         
-                        // Extract sender info from scenario if available
-                        if (message.scenario && message.scenario.uuid) {
+                        // Handle different message types
+                        if (message.type === 'server-registered' && message.data) {
+                            // Server registration notification
+                            const serverUUID = message.data.uuid ? message.data.uuid.substring(0, 8) : 'unknown';
+                            const serverHost = message.data.host || message.data.hostname || 'unknown';
+                            const serverPort = message.data.httpPort || 'unknown';
+                            logMsg = `📥 Server Registered: [${serverUUID}] ${serverHost}:${serverPort}`;
+                        } else if (message.scenario && message.scenario.uuid) {
+                            // Scenario message with full context
                             const scenarioUUID = message.scenario.uuid.substring(0, 8);
-                            logMsg = `📥 [${scenarioUUID}] Received: ${message.type || 'unknown'}`;
+                            const messageType = message.scenario.state?.type || message.type;
+                            logMsg = `📥 [${scenarioUUID}] ${messageType}`;
                             
                             // Add sender info if available
                             if (message.scenario.state && message.scenario.state.from) {
                                 const from = message.scenario.state.from;
-                                const senderUUID = from.uuid ? from.uuid.substring(0, 8) : 'unknown';
                                 const senderHost = from.host || 'localhost';
                                 const senderPort = from.port || 'unknown';
-                                logMsg += ` from [${senderUUID}] ${senderHost}:${senderPort}`;
+                                
+                                // Handle browser client UUIDs (format: "browser-timestamp")
+                                let senderIdentity;
+                                if (from.uuid && from.uuid.startsWith('browser-')) {
+                                    senderIdentity = `browser@${senderHost}:${senderPort}`;
+                                } else {
+                                    const senderUUID = from.uuid ? from.uuid.substring(0, 8) : 'unknown';
+                                    senderIdentity = `[${senderUUID}] ${senderHost}:${senderPort}`;
+                                }
+                                
+                                logMsg += ` from ${senderIdentity}`;
+                            }
+                            
+                            // Add content preview for broadcast messages
+                            if (message.scenario.state?.content) {
+                                const content = message.scenario.state.content;
+                                const preview = content.length > 50 ? content.substring(0, 50) + '...' : content;
+                                logMsg += ` - "${preview}"`;
                             }
                         }
                         
