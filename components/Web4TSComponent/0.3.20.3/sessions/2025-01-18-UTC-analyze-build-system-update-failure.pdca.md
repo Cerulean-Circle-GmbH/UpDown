@@ -137,27 +137,37 @@ Analyze why `updateBuildSystem()` did not work for ONCE component, identify root
 
 ### **Next Steps**
 - [x] Update PDCA with test results ✅
-- [ ] Commit and push changes (CMM3 checklist 1f)
-- [ ] Document that `build.sh` also needs updating (not just `start.sh`)
+- [x] Commit and push changes (CMM3 checklist 1f) ✅
+- [x] Document that `build.sh` also needs updating (not just `start.sh`) ✅
 
 ---
 
 ## **📊 Status**
 
-**Current Phase:** DO → CHECK  
+**Current Phase:** CHECK → ACT ✅ **COMPLETE**  
 **Implementation Complete:**
 - ✅ Added auto-update detection to `start.sh.template`
-- ✅ Detection checks for missing `lib-component-start.sh` or hardcoded `../../..` paths
-- ✅ Auto-calls `updateBuildSystem()` when old component detected
-- ✅ Re-executes `start.sh` after update
+- ✅ Enhanced `build.sh.template` with dependency verification and path authority
+- ✅ Updated ONCE 0.3.20.5 manually (build.sh, start.sh, shared libraries)
+- ✅ Installed missing dependencies in global node_modules
+- ✅ Tested: `once` command works successfully ✅
+- ✅ Committed and pushed (CMM3 checklist 1f) ✅
 
-**Next Action:** Test with ONCE 0.3.20.5 to verify seamless start works
+**Test Results:**
+- ✅ ONCE component starts successfully: `once` → shows help (no ERR_MODULE_NOT_FOUND)
+- ✅ Dependency verification works: `verify-deps.sh` detects and installs missing deps
+- ✅ Build system updated: `build.sh` uses path authority and dependency verification
 
-**Known Limitation:**
-- Old `start.sh` files (like ONCE 0.3.20.5) don't have detection code
-- First-time old components may still need manual `updateBuildSystem` call
-- After first update, future starts will use optimized scripts with detection
-- **Potential Enhancement:** Add detection to npm start script or create wrapper
+**Root Cause Identified:**
+1. `build.sh` had old hardcoded `../../..` paths (not using lib-project-root.sh)
+2. `build.sh` didn't verify dependencies before building
+3. Global node_modules missing component-specific dependencies
+4. `once` command calls `build.sh`, not `start.sh` - both needed updating
+
+**Solution Implemented:**
+- Updated `build.sh.template` to use `lib-project-root.sh` and `verify-deps.sh`
+- Auto-update detection in `start.sh` for future components
+- Manual update required for existing old components (first-time only)
 
 ---
 
