@@ -127,10 +127,26 @@ describe('Primary Server Housekeeping', () => {
                 }
             }
             
-            // Clean up capability directories
+            // Clean up capability symlinks (tests will recreate them)
             const capabilityDir = path.join(scenarioBaseDir, 'capability');
             if (fs.existsSync(capabilityDir)) {
-                fs.rmSync(capabilityDir, { recursive: true, force: true });
+                const httpPortDir = path.join(capabilityDir, 'httpPort');
+                if (fs.existsSync(httpPortDir)) {
+                    const ports = fs.readdirSync(httpPortDir);
+                    for (const port of ports) {
+                        const portDir = path.join(httpPortDir, port);
+                        if (fs.existsSync(portDir) && fs.lstatSync(portDir).isDirectory()) {
+                            const symlinks = fs.readdirSync(portDir);
+                            for (const symlink of symlinks) {
+                                fs.unlinkSync(path.join(portDir, symlink));
+                            }
+                            // Remove empty port directory
+                            if (fs.readdirSync(portDir).length === 0) {
+                                fs.rmdirSync(portDir);
+                            }
+                        }
+                    }
+                }
             }
         }
     });
@@ -156,9 +172,39 @@ describe('Primary Server Housekeeping', () => {
             primaryServer = null;
         }
         
-        // Clean up test scenarios
+        // Clean up test scenarios (ONLY delete files, NOT directories!)
+        // CRITICAL: Never delete scenario directories - other components may store data there
         if (fs.existsSync(scenarioBaseDir)) {
-            fs.rmSync(scenarioBaseDir, { recursive: true, force: true });
+            // Delete all .scenario.json files in main directory
+            const files = fs.readdirSync(scenarioBaseDir).filter(f => f.endsWith('.scenario.json'));
+            for (const file of files) {
+                const filePath = path.join(scenarioBaseDir, file);
+                if (fs.lstatSync(filePath).isFile()) {
+                    fs.unlinkSync(filePath);
+                }
+            }
+            
+            // Clean up capability symlinks
+            const capabilityDir = path.join(scenarioBaseDir, 'capability');
+            if (fs.existsSync(capabilityDir)) {
+                const httpPortDir = path.join(capabilityDir, 'httpPort');
+                if (fs.existsSync(httpPortDir)) {
+                    const ports = fs.readdirSync(httpPortDir);
+                    for (const port of ports) {
+                        const portDir = path.join(httpPortDir, port);
+                        if (fs.existsSync(portDir) && fs.lstatSync(portDir).isDirectory()) {
+                            const symlinks = fs.readdirSync(portDir);
+                            for (const symlink of symlinks) {
+                                fs.unlinkSync(path.join(portDir, symlink));
+                            }
+                            // Remove empty port directory
+                            if (fs.readdirSync(portDir).length === 0) {
+                                fs.rmdirSync(portDir);
+                            }
+                        }
+                    }
+                }
+            }
         }
     });
     
