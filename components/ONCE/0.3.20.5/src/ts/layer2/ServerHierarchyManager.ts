@@ -182,7 +182,7 @@ export class ServerHierarchyManager {
             const primaryInfo = this.serverModel.isPrimaryServer ? null : {
                 host: this.serverModel.primaryServer?.host || 'localhost',
                 port: this.serverModel.primaryServer?.port || 42777,
-                connected: !!this.primaryWsClient,
+                connected: !!this.primaryServerConnection,
                 domain: this.serverModel.domain
             };
             
@@ -1461,7 +1461,7 @@ export class ServerHierarchyManager {
         await this.updateScenarioState(LifecycleState.STOPPING);
 
         // ✅ NEW: Notify primary server to unregister this client
-        if (!this.serverModel.isPrimaryServer && this.primaryWsClient) {
+        if (!this.serverModel.isPrimaryServer && this.primaryServerConnection) {
             try {
                 const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
                 const unregisterMsg = {
@@ -1471,7 +1471,7 @@ export class ServerHierarchyManager {
                         port: httpCapability?.port
                     }
                 };
-                this.primaryWsClient.send(JSON.stringify(unregisterMsg));
+                this.primaryServerConnection.send(JSON.stringify(unregisterMsg));
                 // Give primary time to process unregister message
                 await new Promise(resolve => setTimeout(resolve, 100));
             } catch (error) {
