@@ -39,12 +39,24 @@ elif [ ! -f "dist/ts/layer5/ONCECLI.js" ] || find src -name "*.ts" -newer "dist/
     ./src/sh/clean-local.sh
     
     # Install dependencies if needed
-    if [ ! -L "node_modules" ] || [ ! -d "../../../node_modules" ]; then
+    # Path Authority: Use lib-project-root.sh for path discovery
+    SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
+    . "$SCRIPT_DIR/lib-project-root.sh"
+    
+    if [ ! -L "node_modules" ] || [ ! -d "$PROJECT_ROOT/node_modules" ]; then
         ./src/sh/install-deps.sh
     else
         if [ "$VERBOSE" = "true" ]; then
             echo "📦 Dependencies already installed"
         fi
+    fi
+    
+    # Verify dependencies are actually installed
+    if ! ./src/sh/verify-deps.sh; then
+        if [ "$VERBOSE" = "true" ]; then
+            echo "⚠️  Dependencies missing, installing..."
+        fi
+        ./src/sh/install-deps.sh
     fi
     
     # Build TypeScript
