@@ -169,16 +169,22 @@
                         stats.messagesReceived++;
                         updateStats();
                         
-                        // Enhanced logging with sender info
+                        // Enhanced logging with sender UUID and URL
                         let logMsg = `📥 Received: ${message.type || 'unknown'}`;
                         
                         // Extract sender info from scenario if available
-                        if (message.scenario && message.scenario.state && message.scenario.state.from) {
-                            const from = message.scenario.state.from;
-                            const senderUUID = from.uuid || 'unknown';
-                            const senderPort = from.port || 'unknown';
-                            const senderURL = `http://localhost:${senderPort}`;
-                            logMsg += ` from ${senderUUID} (${senderURL})`;
+                        if (message.scenario && message.scenario.uuid) {
+                            const scenarioUUID = message.scenario.uuid.substring(0, 8);
+                            logMsg = `📥 [${scenarioUUID}] Received: ${message.type || 'unknown'}`;
+                            
+                            // Add sender info if available
+                            if (message.scenario.state && message.scenario.state.from) {
+                                const from = message.scenario.state.from;
+                                const senderUUID = from.uuid ? from.uuid.substring(0, 8) : 'unknown';
+                                const senderHost = from.host || 'localhost';
+                                const senderPort = from.port || 'unknown';
+                                logMsg += ` from [${senderUUID}] ${senderHost}:${senderPort}`;
+                            }
                         }
                         
                         addMessage('message', logMsg);
@@ -196,7 +202,9 @@
                             ws.send(JSON.stringify(ackMsg));
                             stats.acknowledgmentsSent++;
                             updateStats();
-                            addMessage('acknowledgment', '📨 Sent acknowledgment');
+                            
+                            // Include acknowledged message type in log
+                            addMessage('acknowledgment', `📨 [browser] Acknowledged: ${message.type}`);
                         }
                     } catch (error) {
                         addMessage('error', `❌ Error parsing message: ${error.message}`);
