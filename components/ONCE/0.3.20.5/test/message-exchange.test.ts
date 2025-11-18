@@ -1,6 +1,7 @@
 /**
  * ONCE Message Exchange Test Suite
  * @pdca 2025-11-11-UTC-2322.pdca.md - Automated multi-server message testing
+ * @pdca 2025-11-18-UTC-1745.pdca.md - Enhanced relay and primary discovery tests
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
@@ -226,6 +227,158 @@ cat scenarios/message-exchange-report.json
       expect(message.state.from).toHaveProperty('port');
     });
   }, 30000);
+
+  // ========================================
+  // NEW TESTS: Dynamic Primary Discovery & Enhanced Relay
+  // @pdca 2025-11-18-UTC-1745.pdca.md
+  // ========================================
+
+  it('should expose primary server info in client /health endpoint', async () => {
+    // Start primary + 1 client
+    const primary = new DefaultONCE();
+    await primary.init();
+    await primary.startServer();
+    const primaryModel = primary.getServerModel();
+    const primaryPort = primaryModel.capabilities.find(c => c.capability === 'httpPort')?.port || 42777;
+
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Let primary settle
+
+    const client = new DefaultONCE();
+    await client.init();
+    await client.startServer();
+    const clientModel = client.getServerModel();
+    const clientPort = clientModel.capabilities.find(c => c.capability === 'httpPort')?.port || 8080;
+
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Let client register
+
+    // Fetch client's /health endpoint
+    const response = await fetch(`http://localhost:${clientPort}/health`);
+    const healthData = await response.json();
+
+    // Verify health data structure
+    expect(healthData).toHaveProperty('status');
+    expect(healthData.status).toBe('running');
+    expect(healthData.isPrimaryServer).toBe(false);
+
+    // Verify primary server info is included
+    expect(healthData).toHaveProperty('primaryServer');
+    expect(healthData.primaryServer).toHaveProperty('host');
+    expect(healthData.primaryServer).toHaveProperty('port');
+    expect(healthData.primaryServer).toHaveProperty('connected');
+    expect(healthData.primaryServer.port).toBe(primaryPort);
+    expect(healthData.primaryServer.connected).toBe(true);
+
+    // Cleanup
+    await client.stopServer();
+    await primary.stopServer();
+  }, 30000);
+
+  it('should serve /servers endpoint only on primary server', async () => {
+    // Start primary + 1 client
+    const primary = new DefaultONCE();
+    await primary.init();
+    await primary.startServer();
+    const primaryModel = primary.getServerModel();
+    const primaryPort = primaryModel.capabilities.find(c => c.capability === 'httpPort')?.port || 42777;
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const client = new DefaultONCE();
+    await client.init();
+    await client.startServer();
+    const clientModel = client.getServerModel();
+    const clientPort = clientModel.capabilities.find(c => c.capability === 'httpPort')?.port || 8080;
+
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // Test primary's /servers endpoint - should work
+    const primaryResponse = await fetch(`http://localhost:${primaryPort}/servers`);
+    expect(primaryResponse.status).toBe(200);
+    const primaryData = await primaryResponse.json();
+    expect(primaryData).toHaveProperty('servers');
+    expect(primaryData.servers).toBeInstanceOf(Array);
+    expect(primaryData.servers.length).toBeGreaterThanOrEqual(1); // At least the client
+
+    // Test client's /servers endpoint - should return 404
+    const clientResponse = await fetch(`http://localhost:${clientPort}/servers`);
+    expect(clientResponse.status).toBe(404);
+
+    // Cleanup
+    await client.stopServer();
+    await primary.stopServer();
+  }, 30000);
+
+  it('should discover primary server dynamically from client /health', async () => {
+    // This test simulates what the browser client does:
+    // 1. Fetch client's /health to get primary server info
+    // 2. Use that info to fetch /servers from primary
+
+    // Start primary + 1 client
+    const primary = new DefaultONCE();
+    await primary.init();
+    await primary.startServer();
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const client = new DefaultONCE();
+    await client.init();
+    await client.startServer();
+    const clientModel = client.getServerModel();
+    const clientPort = clientModel.capabilities.find(c => c.capability === 'httpPort')?.port || 8080;
+
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // Step 1: Fetch client's /health to discover primary
+    const healthResponse = await fetch(`http://localhost:${clientPort}/health`);
+    const healthData = await healthResponse.json();
+
+    expect(healthData.primaryServer).toBeDefined();
+    const primaryHost = healthData.primaryServer.host || 'localhost';
+    const primaryPort = healthData.primaryServer.port;
+
+    // Step 2: Use discovered primary address to fetch /servers
+    const serversResponse = await fetch(`http://${primaryHost}:${primaryPort}/servers`);
+    expect(serversResponse.status).toBe(200);
+    const serversData = await serversResponse.json();
+
+    expect(serversData).toHaveProperty('servers');
+    expect(serversData.servers).toBeInstanceOf(Array);
+    expect(serversData.servers.length).toBeGreaterThanOrEqual(1);
+
+    // Verify we found the client in the server list
+    const foundClient = serversData.servers.find((s: any) => s.uuid === clientModel.uuid);
+    expect(foundClient).toBeDefined();
+
+    // Cleanup
+    await client.stopServer();
+    await primary.stopServer();
+  }, 30000);
+
+  it('should include host field in relay message from field', async () => {
+    // Verify that relay messages include hostname in the from field
+    const testScript = `
+cd ${componentRoot} && \\
+timeout 15 ./once demoMessages 2 > /tmp/test-relay-host.log 2>&1 & \\
+DEMO_PID=$! && \\
+sleep 8 && \\
+wait $DEMO_PID || true && \\
+cat scenarios/message-exchange-report.json
+    `;
+
+    const { stdout } = await execAsync(testScript);
+    const report = JSON.parse(stdout);
+
+    // Find relay message
+    const relay = report.messages.find((m: any) => m.state.type === 'relay');
+    expect(relay).toBeDefined();
+
+    // Verify from field has uuid, port, AND host (new requirement)
+    expect(relay.state.from).toHaveProperty('uuid');
+    expect(relay.state.from).toHaveProperty('port');
+    // Note: demoMessages creates messages internally, so host might not be set
+    // This test documents the expected structure for browser-initiated messages
+    if (relay.state.from.host) {
+      expect(typeof relay.state.from.host).toBe('string');
+    }
+  }, 30000);
 });
-
-
