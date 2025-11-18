@@ -44,6 +44,7 @@ export class ServerHierarchyManager {
         
         // Initialize server model with defaults
         const defaultModel = createDefaultServerModel();
+        
         this.serverModel = {
             ...defaultModel,
             uuid: uuidv4(),
