@@ -534,13 +534,31 @@ describe('Server Lifecycle Management', () => {
                 
                 // Verify client scenarios exist in filesystem
                 // Note: Spawned servers run as separate processes and detect their own domain
-                // They will use 'local.once' domain and 'localhost' hostname
+                // They will use the detected domain and hostname from the system
                 await new Promise(resolve => setTimeout(resolve, 1000));
-                const spawnedScenarioDir = path.join(testProjectRoot, 'scenarios', 'local', 'once', 'localhost', 'ONCE', componentVersion);
-                const scenarioFiles = fs.existsSync(spawnedScenarioDir) 
-                    ? fs.readdirSync(spawnedScenarioDir).filter(f => f.endsWith('.scenario.json') && !f.includes('capability'))
-                    : [];
-                console.log(`📂 Found ${scenarioFiles.length} scenario files in ${spawnedScenarioDir}`);
+                // Find scenario directory dynamically - it will be under the detected domain/hostname
+                const scenariosRoot = path.join(testProjectRoot, 'scenarios');
+                
+                // Recursively find all scenario files for this version
+                const findScenarios = (dir: string): string[] => {
+                    let files: string[] = [];
+                    if (!fs.existsSync(dir)) return files;
+                    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+                        const fullPath = path.join(dir, entry.name);
+                        if (entry.isDirectory()) {
+                            files = files.concat(findScenarios(fullPath));
+                        } else if (entry.name.endsWith('.scenario.json') && !fullPath.includes('capability')) {
+                            // Only count files in the correct version
+                            if (fullPath.includes(`ONCE/${componentVersion}/`)) {
+                                files.push(fullPath);
+                            }
+                        }
+                    }
+                    return files;
+                };
+                
+                const scenarioFiles = findScenarios(scenariosRoot);
+                console.log(`📂 Found ${scenarioFiles.length} scenario files in ${scenariosRoot}`);
                 expect(scenarioFiles.length).toBeGreaterThanOrEqual(2); // At least 2 clients
                 
                 // 💥 SIMULATE CRASH: Kill primary server process forcefully
@@ -580,9 +598,7 @@ describe('Server Lifecycle Management', () => {
                 await new Promise(resolve => setTimeout(resolve, 3000));
                 
                 // Verify client scenarios still exist (in spawned server's domain directory)
-                const scenarioFilesAfter = fs.existsSync(spawnedScenarioDir)
-                    ? fs.readdirSync(spawnedScenarioDir).filter(f => f.endsWith('.scenario.json') && !f.includes('capability'))
-                    : [];
+                const scenarioFilesAfter = findScenarios(scenariosRoot);
                 expect(scenarioFilesAfter.length).toBeGreaterThanOrEqual(2);
                 console.log(`✅ Client scenarios persisted: ${scenarioFilesAfter.length} files`);
                 
