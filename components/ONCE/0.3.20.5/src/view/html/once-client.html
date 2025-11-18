@@ -117,6 +117,19 @@
         const serverHost = urlParams.get('server') || defaultHost;
         const isDemoMode = urlParams.get('demo') === 'true' || window.location.pathname === '/once';
         
+        // UUID generator fallback for browsers without crypto.randomUUID
+        function generateUUID() {
+            if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+                return crypto.randomUUID();
+            }
+            // Fallback: simple UUID v4 generator
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+        
         let ws = null;
         let serverVersion = 'unknown';
         let stats = {
@@ -304,7 +317,7 @@
                 const scenario = {
                     type: 'scenario-message',
                     scenario: {
-                        uuid: crypto.randomUUID(),
+                        uuid: generateUUID(),
                         objectType: 'ONCEMessage',
                         version: serverVersion || '0.3.20.5',
                         state: {
@@ -355,7 +368,7 @@
                 const scenario = {
                     type: 'scenario-relay',
                     scenario: {
-                        uuid: crypto.randomUUID(),
+                        uuid: generateUUID(),
                         objectType: 'ONCEMessage',
                         version: '0.3.20.3',
                         state: {
@@ -390,7 +403,7 @@
                 const scenario = {
                     type: 'scenario-p2p',
                     scenario: {
-                        uuid: crypto.randomUUID(),
+                        uuid: generateUUID(),
                         objectType: 'ONCEMessage',
                         version: '0.3.20.3',
                         state: {
