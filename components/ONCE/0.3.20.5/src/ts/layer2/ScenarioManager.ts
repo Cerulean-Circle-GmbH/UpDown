@@ -6,8 +6,9 @@
 import { Scenario } from '../layer3/Scenario.js';
 import { ONCEServerModel } from '../layer3/ONCEServerModel.js';
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
-import { join, dirname, resolve } from 'path';
+import { join, dirname, resolve, basename } from 'path';
 import { fileURLToPath } from 'url';
+import { logAction, serverIdentity } from '../layer1/LoggingUtils.js';
 
 /**
  * Scenario Manager - handles ONCE scenario storage and loading
@@ -118,7 +119,7 @@ export class ScenarioManager {
         // Save scenario
         writeFileSync(scenarioPath, JSON.stringify(scenario, null, 2));
         
-        console.log(`💾 Scenario saved: ${scenarioPath}`);
+        logAction('💾', scenario.uuid, 'Scenario saved', `${serverIdentity(scenario.state.hostname, scenario.state.httpPort)} → ${basename(scenarioPath)}`);
         return scenarioPath;
     }
 

@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 import os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
+import { logAction, logBroadcast, logRegistration, logConnection, logDisconnection, shortUUID, serverIdentity } from '../layer1/LoggingUtils.js';
 import { fileURLToPath } from 'url';
 import { ONCEScenarioMessage } from '../layer3/ONCEModel.interface.js';
 
@@ -552,7 +553,7 @@ export class ServerHierarchyManager {
      * Handle WebSocket connections
      */
     private handleWebSocketConnection(ws: WebSocket, request: any): void {
-        console.log('📡 WebSocket connection established');
+        // Remove generic log - will log specific events (browser/server connections)
         
         // Initially treat as browser client (server registrations will be tracked separately)
         this.browserClients.add(ws);
@@ -567,7 +568,7 @@ export class ServerHierarchyManager {
     });
 
         ws.on('close', () => {
-            console.log('📡 WebSocket connection closed');
+            // Remove generic log - connection close is normal and not useful without context
             // Remove from browser clients set
             this.browserClients.delete(ws);
         });
@@ -657,7 +658,7 @@ export class ServerHierarchyManager {
                 break;
             case 'client-connected':
                 // Browser client connected notification
-                console.log('🌐 Browser client connected:', message.data?.clientId || 'unknown');
+                logConnection(this.serverModel.uuid, 'Browser', message.data?.clientId || 'unknown');
                 // Optionally acknowledge or track browser clients
                 break;
             case 'acknowledgment':
@@ -741,7 +742,8 @@ export class ServerHierarchyManager {
      * Handle server registration (primary server only)
      */
     private async handleServerRegistration(ws: WebSocket, clientServerModel: ONCEServerModel): Promise<void> {
-        console.log(`📋 Registering client server: ${clientServerModel.uuid}`);
+        const httpPort = clientServerModel.capabilities.find(c => c.capability === 'httpPort')?.port || 0;
+        logRegistration(clientServerModel.uuid, clientServerModel.hostname, httpPort);
         
         // Remove from browser clients - this is a server connection
         this.browserClients.delete(ws);
@@ -989,7 +991,7 @@ export class ServerHierarchyManager {
 
             // Save main scenario file
             fs.writeFileSync(mainScenarioPath, JSON.stringify(scenario, null, 2));
-            console.log(`💾 Scenario saved to: ${mainScenarioPath}`);
+            // Logging done by ScenarioManager
             
             // Create capability symlink pointing to main file
             this.ensureCapabilitySymlink(capabilityDir, capabilitySymlink, mainScenarioPath);
@@ -1145,6 +1147,7 @@ export class ServerHierarchyManager {
         }
 
         console.log(`📡 Broadcasting scenario ${scenario.uuid} to ${this.serverRegistry.size} clients`);
+        logBroadcast(this.serverModel.uuid, this.serverRegistry.size, 'client servers', `scenario ${shortUUID(scenario.uuid)}`);
         
         for (const [uuid, entry] of this.serverRegistry.entries()) {
             if (entry.websocket && entry.websocket.readyState === WebSocket.OPEN) {
@@ -1163,7 +1166,7 @@ export class ServerHierarchyManager {
      */
     private broadcastToBrowserClients(scenario: ONCEScenarioMessage): void {
         const clientCount = this.browserClients.size;
-        console.log(`📡 Broadcasting scenario ${scenario.uuid} to ${clientCount} browser client(s)`);
+        logBroadcast(this.serverModel.uuid, clientCount, 'browsers', `scenario ${shortUUID(scenario.uuid)}`);
         
         if (clientCount === 0) {
             console.log('ℹ️  No browser clients connected');
@@ -1186,7 +1189,7 @@ export class ServerHierarchyManager {
      */
     private broadcastServerEvent(eventType: string, data: any): void {
         const clientCount = this.browserClients.size;
-        console.log(`📡 Broadcasting ${eventType} to ${clientCount} browser client(s)`);
+        logBroadcast(this.serverModel.uuid, clientCount, 'browsers', eventType);
         
         if (clientCount === 0) {
             console.log('ℹ️  No browser clients connected');

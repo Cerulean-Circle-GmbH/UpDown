@@ -375,7 +375,7 @@
                     <p class="server-status ${statusColor}">Status: ${statusText}</p>
                     <p class="server-status" style="font-size: 0.9em;">Host: ${server.hostname || 'localhost'}</p>
                     <p class="server-status" style="font-size: 0.8em;">IP: ${server.ip || '127.0.0.1'}</p>
-                    ${server.uuid && server.uuid !== 'primary' ? `<p class="server-status" style="font-size: 0.8em;">UUID: ${server.uuid.substring(0, 8)}...</p>` : ''}
+                    ${server.uuid && server.uuid !== 'primary' ? `<p class="server-status" style="font-size: 0.7em; font-family: 'Courier New', monospace; word-break: break-all;">UUID: ${server.uuid}</p>` : ''}
                     ${isLocalhost ? '<p style="color: #ff0; font-size: 0.8em;">⚠️ Localhost only</p>' : ''}
                     ${isRunning ? `
                         <a href="http://${serverHost}:${server.port}/once" target="_blank" class="server-link">
