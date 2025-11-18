@@ -1122,6 +1122,65 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
       }
     }
     
+    // @pdca 2025-01-XX-UTC-optimize-shell-scripts-eliminate-dry.pdca.md
+    // 🛡️ SELF-HEALING: Ensure .gitignore has required patterns for node_modules and test/data
+    const gitignorePath = path.join(projectRoot, '.gitignore');
+    const requiredPatterns = {
+      'node_modules': [
+        'node_modules',
+        'node_modules/',
+        '**/node_modules',
+        '**/node_modules/'
+      ],
+      'test/data': [
+        'test/data/',
+        '**/test/data/'
+      ]
+    };
+    
+    let gitignoreContent = '';
+    let gitignoreNeedsUpdate = false;
+    
+    if (existsSync(gitignorePath)) {
+      gitignoreContent = await fs.readFile(gitignorePath, 'utf-8');
+    }
+    
+    // Check and add missing patterns
+    for (const [category, patterns] of Object.entries(requiredPatterns)) {
+      const hasAnyPattern = patterns.some(pattern => {
+        // Check for exact pattern or pattern with comment
+        const regex = new RegExp(`^\\s*${pattern.replace(/\*/g, '\\*').replace(/\//g, '/')}\\s*(?:#.*)?$`, 'm');
+        return regex.test(gitignoreContent);
+      });
+      
+      if (!hasAnyPattern) {
+        gitignoreNeedsUpdate = true;
+        // Add section header if not present
+        const sectionHeader = `# ${category === 'node_modules' ? 'Dependencies' : 'Test artifacts'}`;
+        if (!gitignoreContent.includes(sectionHeader)) {
+          gitignoreContent += `\n${sectionHeader}\n`;
+        }
+        // Add all patterns for this category
+        patterns.forEach(pattern => {
+          if (!gitignoreContent.includes(pattern)) {
+            gitignoreContent += `${pattern}\n`;
+          }
+        });
+      }
+    }
+    
+    const gitignoreExisted = existsSync(gitignorePath);
+    if (gitignoreNeedsUpdate || !gitignoreExisted) {
+      // Ensure proper formatting
+      if (gitignoreContent && !gitignoreContent.endsWith('\n')) {
+        gitignoreContent += '\n';
+      }
+      await fs.writeFile(gitignorePath, gitignoreContent);
+      console.log(`   ✅ ${gitignoreExisted ? 'Updated' : 'Created'} .gitignore with required patterns`);
+    } else {
+      console.log(`   ℹ️  .gitignore already has required patterns`);
+    }
+    
     console.log(`\n✅ Project initialized successfully!`);
     console.log(`   Root configs: ${projectRoot}`);
     if (!isTestIsolation) {
