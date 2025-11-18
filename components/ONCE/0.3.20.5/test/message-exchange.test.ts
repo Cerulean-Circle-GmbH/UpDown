@@ -381,4 +381,78 @@ cat scenarios/message-exchange-report.json
       expect(typeof relay.state.from.host).toBe('string');
     }
   }, 30000);
+
+  it('should allow browser clients to fetch server list via health endpoint', async () => {
+    // This test verifies the fetchConnectedServers() flow:
+    // Browser → Client /health → get primary address → Primary /servers → get server list
+    
+    // Start primary + 2 clients
+    const primary = new DefaultONCE();
+    await primary.init();
+    await primary.startServer();
+    const primaryModel = primary.getServerModel();
+    const primaryPort = primaryModel.capabilities.find(c => c.capability === 'httpPort')?.port || 42777;
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const client1 = new DefaultONCE();
+    await client1.init();
+    await client1.startServer();
+    const client1Model = client1.getServerModel();
+    const client1Port = client1Model.capabilities.find(c => c.capability === 'httpPort')?.port || 8080;
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const client2 = new DefaultONCE();
+    await client2.init();
+    await client2.startServer();
+    const client2Model = client2.getServerModel();
+    const client2Port = client2Model.capabilities.find(c => c.capability === 'httpPort')?.port || 8081;
+
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Let both clients register
+
+    // Simulate browser connected to client1:
+    // Step 1: Fetch client1's /health to discover primary
+    const healthResponse = await fetch(`http://localhost:${client1Port}/health`);
+    expect(healthResponse.status).toBe(200);
+    const healthData = await healthResponse.json();
+    
+    expect(healthData.isPrimaryServer).toBe(false);
+    expect(healthData.primaryServer).toBeDefined();
+    expect(healthData.primaryServer.port).toBe(primaryPort);
+
+    // Step 2: Use discovered primary to fetch /servers
+    const primaryHost = healthData.primaryServer.host || 'localhost';
+    const discoveredPrimaryPort = healthData.primaryServer.port;
+    
+    const serversResponse = await fetch(`http://${primaryHost}:${discoveredPrimaryPort}/servers`);
+    expect(serversResponse.status).toBe(200);
+    const serversData = await serversResponse.json();
+
+    expect(serversData).toHaveProperty('servers');
+    expect(serversData.servers).toBeInstanceOf(Array);
+    expect(serversData.servers.length).toBeGreaterThanOrEqual(2); // At least client1 and client2
+
+    // Step 3: Verify we can find both clients in the list
+    const foundClient1 = serversData.servers.find((s: any) => s.uuid === client1Model.uuid);
+    const foundClient2 = serversData.servers.find((s: any) => s.uuid === client2Model.uuid);
+    
+    expect(foundClient1).toBeDefined();
+    expect(foundClient2).toBeDefined();
+
+    // Step 4: Verify relay target selection (exclude current server)
+    const currentPort = client1Port;
+    const otherClients = serversData.servers.filter((s: any) => {
+      const sPort = s.capabilities?.find((c: any) => c.capability === 'httpPort')?.port;
+      return sPort !== currentPort && sPort !== primaryPort;
+    });
+
+    expect(otherClients.length).toBeGreaterThanOrEqual(1); // Should have at least client2
+    expect(otherClients[0].uuid).toBe(client2Model.uuid);
+
+    // Cleanup
+    await client2.stopServer();
+    await client1.stopServer();
+    await primary.stopServer();
+  }, 30000);
 });
