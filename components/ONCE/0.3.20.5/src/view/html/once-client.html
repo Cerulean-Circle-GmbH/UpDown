@@ -355,11 +355,18 @@
         
         function sendRelayMessage() {
             if (ws && ws.readyState === WebSocket.OPEN) {
-                // Get first available client server (not primary)
-                const targetServer = connectedServers.find(s => !s.isPrimaryServer);
+                // Get current server's port to exclude it from relay targets
+                const currentPort = parseInt(serverHost.split(':')[1] || '8080');
+                
+                // Get first available client server (not primary, not current server)
+                const targetServer = connectedServers.find(s => {
+                    if (s.isPrimaryServer) return false; // Skip primary
+                    const sPort = s.capabilities?.find(c => c.capability === 'httpPort')?.port || s.port;
+                    return sPort !== currentPort; // Skip current server
+                });
                 
                 if (!targetServer) {
-                    addMessage('error', '❌ No client servers available for relay');
+                    addMessage('error', '❌ No other client servers available for relay');
                     return;
                 }
                 
@@ -448,8 +455,15 @@
                 // Step 1: Get primary server info from current server's /health
                 const hostname = serverHost.split(':')[0];
                 const port = serverHost.split(':')[1] || '8080';
+                console.log(`[fetchConnectedServers] Fetching from ${hostname}:${port}/health`);
                 const healthResponse = await fetch(`http://${hostname}:${port}/health`);
+                
+                if (!healthResponse.ok) {
+                    throw new Error(`Health check failed: ${healthResponse.status} ${healthResponse.statusText}`);
+                }
+                
                 const healthData = await healthResponse.json();
+                console.log(`[fetchConnectedServers] Health data:`, healthData);
                 
                 // Step 2: Determine primary server address
                 let primaryHost, primaryPort;
@@ -465,9 +479,17 @@
                     throw new Error('Cannot determine primary server address');
                 }
                 
+                console.log(`[fetchConnectedServers] Fetching from primary ${primaryHost}:${primaryPort}/servers`);
+                
                 // Step 3: Fetch connected servers from primary
                 const response = await fetch(`http://${primaryHost}:${primaryPort}/servers`);
+                
+                if (!response.ok) {
+                    throw new Error(`Servers fetch failed: ${response.status} ${response.statusText}`);
+                }
+                
                 const data = await response.json();
+                console.log(`[fetchConnectedServers] Servers data:`, data);
                 
                 // Store servers for relay functionality
                 connectedServers = data.servers || [];
@@ -483,8 +505,10 @@
                 
                 addMessage('connection', `📊 ${serverCount} servers connected via primary (${primaryHost}:${primaryPort})`);
             } catch (error) {
-                document.getElementById('connectedServers').textContent = 'Error fetching';
-                console.error('Failed to fetch servers:', error);
+                const errorMsg = error.message || 'Unknown error';
+                document.getElementById('connectedServers').textContent = `Error: ${errorMsg}`;
+                console.error('[fetchConnectedServers] Failed:', error);
+                addMessage('error', `❌ Failed to fetch servers: ${errorMsg}`);
             }
         }
         
