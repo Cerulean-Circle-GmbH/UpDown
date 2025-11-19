@@ -11,12 +11,13 @@ import { ONCEServerModel, ONCE_DEFAULT_CONFIG, createDefaultServerModel } from '
 import { LifecycleState } from '../layer3/LifecycleEvents.js';
 import { IOR, iorToUrl } from '../layer3/IOR.js';
 import { v4 as uuidv4 } from 'uuid';
-import os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
 import { logAction, logBroadcast, logRegistration, logConnection, logDisconnection, shortUUID, serverIdentity } from '../layer1/LoggingUtils.js';
 import { fileURLToPath } from 'url';
 import { ONCEScenarioMessage } from '../layer3/ONCEModel.interface.js';
+import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
+import { EnvironmentModel } from '../layer3/EnvironmentModel.interface.js';
 
 /**
  * Server registry entry for primary server
@@ -39,10 +40,12 @@ export class ServerHierarchyManager {
     private serverRegistry: Map<string, ServerRegistryEntry> = new Map();
     private primaryServerConnection?: WebSocket;
     private browserClients: Set<WebSocket> = new Set(); // Track browser WebSocket connections
+    private infrastructure: NodeOSInfrastructure; // ✅ Layer 1 infrastructure injection
     component?: any; // Backward link to DefaultONCE for path authority
 
     constructor() {
         this.portManager = PortManager.getInstance();
+        this.infrastructure = new NodeOSInfrastructure(); // ✅ Create infrastructure
         
         // Initialize server model with defaults
         const defaultModel = createDefaultServerModel();
@@ -53,13 +56,39 @@ export class ServerHierarchyManager {
             pid: process.pid,
             state: LifecycleState.CREATED,
             platform: this.detectEnvironment(),
-            domain: this.detectDomain(), // ✅ Dynamic domain discovery (e.g., "box.fritz")
-            hostname: this.extractHostname(), // ✅ Dynamic hostname extraction (e.g., "McDonges-3")
-            host: this.detectHostname(), // ✅ Dynamic FQDN discovery (e.g., "McDonges-3.fritz.box")
-            ip: this.detectIPAddress(), // ✅ Dynamic IP discovery
+            domain: 'local.once', // ✅ Temporary fallback, will be set by detectAndSetEnvironment()
+            hostname: 'localhost', // ✅ Temporary fallback, will be set by detectAndSetEnvironment()
+            host: 'localhost', // ✅ Temporary fallback, will be set by detectAndSetEnvironment()
+            ip: '127.0.0.1', // ✅ Temporary fallback, will be set by detectAndSetEnvironment()
             capabilities: [],
             isPrimaryServer: false
         } as ONCEServerModel;
+    }
+    
+    /**
+     * Detect and set environment using NodeOSInfrastructure (TRUE Radical OOP)
+     * Must be called after construction and before startServer()
+     */
+    public async detectAndSetEnvironment(): Promise<void> {
+        const env: EnvironmentModel = await this.infrastructure.detectEnvironment();
+        this.serverModel.hostname = env.getHostname();
+        this.serverModel.host = env.getFqdn();
+        this.serverModel.ip = env.getPrimaryIP();
+        this.serverModel.domain = env.getDomain();
+    }
+    
+    /**
+     * Setter for infrastructure (JavaBean pattern for testability)
+     */
+    public setInfrastructure(infrastructure: NodeOSInfrastructure): void {
+        this.infrastructure = infrastructure;
+    }
+    
+    /**
+     * Getter for infrastructure (JavaBean pattern)
+     */
+    public getInfrastructure(): NodeOSInfrastructure {
+        return this.infrastructure;
     }
 
     /**
@@ -361,8 +390,8 @@ export class ServerHierarchyManager {
                         await new Promise(resolve => setTimeout(resolve, 1000));
                         
                         // Delete the client's scenario file (use new path structure)
-                        const domainPath = this.detectDomainPath();
-                        const hostname = this.serverModel.hostname || this.extractHostname();
+                        const domainPath = this.getDetectDomainPath();
+                        const hostname = this.serverModel.hostname;
                         const scenarioDir = path.join(
                             this.projectRoot,
                             'scenarios',
@@ -904,8 +933,8 @@ export class ServerHierarchyManager {
 
         // Use detected domain/hostname for scenario path
         // New structure: scenarios/{domain-parts}/{hostname}/ONCE/{version}
-        const domainPath = this.detectDomainPath(); // e.g., ['box', 'fritz']
-        const hostname = this.serverModel.hostname || this.extractHostname(); // e.g., "McDonges-3"
+        const domainPath = this.getDetectDomainPath(); // e.g., ['box', 'fritz']
+        const hostname = this.serverModel.hostname; // e.g., "McDonges-3"
         
         // Main scenario file location
         const mainScenarioDir = path.join(
@@ -1042,8 +1071,8 @@ export class ServerHierarchyManager {
      * Detect current environment
      */
     private detectEnvironment(): any {
-        const hostname = this.detectHostname();
-        const ip = this.detectIPAddress();
+        const hostname = this.serverModel.host;
+        const ip = this.serverModel.ip;
         
         return {
             platform: 'node',
@@ -1056,98 +1085,17 @@ export class ServerHierarchyManager {
     }
 
     /**
-     * Detect hostname (FQDN preferred, fallback to simple hostname)
-     */
-    private detectHostname(): string {
-        try {
-            return os.hostname();
-        } catch {
-            return 'localhost';
-        }
-    }
-
-    /**
-     * Detect actual IP address from network interfaces
-     * Prefers non-internal IPv4 addresses over localhost
-     */
-    private detectIPAddress(): string {
-        try {
-            const networkInterfaces = os.networkInterfaces();
-            
-            // Try to find first non-internal IPv4 address
-            for (const name of Object.keys(networkInterfaces)) {
-                const nets = networkInterfaces[name];
-                if (nets) {
-                    for (const net of nets) {
-                        // Skip internal (loopback) and non-IPv4 addresses
-                        if (net.family === 'IPv4' && !net.internal) {
-                            return net.address;
-                        }
-                    }
-                }
-            }
-            
-            // Fallback to localhost if no external interface found
-            return ONCE_DEFAULT_CONFIG.DEFAULT_IP;
-        } catch {
-            return ONCE_DEFAULT_CONFIG.DEFAULT_IP;
-        }
-    }
-
-    /**
-     * Detect domain from FQDN (without hostname) as separate path components
+     * Get domain as path components (TRUE Radical OOP - uses infrastructure)
      * Examples:
-     *   - "McDonges-3.fritz.box" -> domain path: ["box", "fritz"]
-     *   - "localhost" -> domain path: ["local", "once"]
-     *   - "myserver" -> domain path: ["local", "myserver"]
+     *   - "McDonges-3.fritz.box" -> ["box", "fritz"]
+     *   - "localhost" -> ["local", "once"]
      */
-    private detectDomainPath(): string[] {
-        const fqdn = this.detectHostname(); // Returns full FQDN from OS
-        
-        // Special case: localhost
-        if (fqdn === 'localhost') {
-            return ['local', 'once']; // Default domain path
+    public getDetectDomainPath(): string[] {
+        const domain = this.serverModel.domain;
+        if (domain === 'local.once') {
+            return ['local', 'once'];
         }
-        
-        // If FQDN has dots, extract domain parts (all except first)
-        if (fqdn.includes('.')) {
-            const parts = fqdn.split('.');
-            const domainParts = parts.slice(1); // Skip hostname (first part)
-            return domainParts.reverse(); // Reverse for proper domain hierarchy
-        }
-        
-        // Simple hostname without domain
-        return ['local', fqdn];
-    }
-
-    /**
-     * Get domain as string (for model storage, backward compatibility)
-     * Examples:
-     *   - "McDonges-3.fritz.box" -> "box.fritz"
-     *   - "localhost" -> "local.once"
-     *   - "myserver" -> "local.myserver"
-     */
-    private detectDomain(): string {
-        return this.detectDomainPath().join('.');
-    }
-
-    /**
-     * Extract hostname from FQDN (first component only)
-     * Examples:
-     *   - "McDonges-3.fritz.box" -> hostname: "McDonges-3"
-     *   - "localhost" -> hostname: "localhost"
-     *   - "myserver" -> hostname: "myserver"
-     */
-    private extractHostname(): string {
-        const fqdn = this.detectHostname(); // Returns full FQDN from OS
-        
-        // If FQDN has dots, return only first part
-        if (fqdn.includes('.')) {
-            return fqdn.split('.')[0];
-        }
-        
-        // Otherwise return as-is
-        return fqdn;
+        return domain.split('.').filter(p => p.length > 0);
     }
 
     /**
@@ -1312,8 +1260,8 @@ export class ServerHierarchyManager {
         console.log('🧹 Performing primary server housekeeping...');
         
         try {
-            const domainPath = this.detectDomainPath();
-            const hostname = this.serverModel.hostname || this.extractHostname();
+            const domainPath = this.getDetectDomainPath();
+            const hostname = this.serverModel.hostname;
             const scenarioBaseDir = path.join(
                 this.projectRoot,
                 'scenarios',
@@ -1525,8 +1473,8 @@ export class ServerHierarchyManager {
             const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
             if (!httpCapability) return;
             
-            const domainPath = this.detectDomainPath();
-            const hostname = this.serverModel.hostname || this.extractHostname();
+            const domainPath = this.getDetectDomainPath();
+            const hostname = this.serverModel.hostname;
             
             // Update main scenario file (not the symlink)
             const mainScenarioPath = path.join(

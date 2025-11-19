@@ -374,6 +374,9 @@ export class DefaultONCE implements ONCE {
         await this.init(scenario ? { model: { scenario } } as any : undefined);
       }
 
+      // ✅ Detect environment using Layer 1 infrastructure (TRUE Radical OOP)
+      await this.serverHierarchyManager.detectAndSetEnvironment();
+      
       // Start server hierarchy
       await this.serverHierarchyManager.startServer();
       
