@@ -1,8 +1,30 @@
-# ONCE v0.3.20.3 - Component Documentation
+# ONCE v0.3.20.5 - Component Documentation
 
 ## Overview
 
-ONCE (Open Network Communication Engine) is a TRUE Radical OOP Web4 component implementing a hierarchical server architecture with automatic discovery, graceful lifecycle management, and real-time message exchange capabilities.
+ONCE (Open Network Communication Engine) is a TRUE Radical OOP Web4 component implementing a hierarchical server architecture with automatic discovery, graceful lifecycle management, real-time message exchange capabilities, and dynamic FQDN support.
+
+## Recent Updates (v0.3.20.5)
+
+### New Features
+1. **Dynamic FQDN Support** - Servers now detect and use actual hostnames (e.g., `McDonges-3.fritz.box`) instead of hardcoded localhost
+2. **Hierarchical Scenario Paths** - Scenarios stored in `scenarios/{domain-parts}/{hostname}/ONCE/{version}/` structure
+3. **Real-Time Server Registry Cleanup** - Clients notify primary on shutdown via `server-unregister` message
+4. **Enhanced Browser Client** - Dynamic version detection, UUID fallback generator, improved connection status display
+5. **Relay Button Fix** - Dynamic primary server discovery from `/health` endpoint, works on all servers
+6. **Improved Logging** - Standardized logging in Layer 1 with UUIDs, sender/target context
+
+### Bug Fixes
+1. **Fixed phantom server accumulation** - Demo hub now shows accurate server counts
+2. **Fixed relay target selection** - Excludes current server from relay targets
+3. **Fixed `crypto.randomUUID`** - Added fallback UUID generator for HTTP connections
+4. **Fixed housekeeping crashes** - Robust handling of broken symlinks with `fs.lstatSync()`
+5. **Fixed ESM imports** - Changed `require('os')` to `import os from 'os'`
+
+### Test Coverage
+- Added 5 new tests for relay functionality and primary discovery
+- All tests now pass with proper cleanup (no server accumulation)
+- Enhanced test coverage for `/health` and `/servers` endpoints
 
 ## Architecture
 
