@@ -130,7 +130,8 @@ export class DefaultUser implements User {
    */
   public static async create(
     username?: string,
-    infrastructure?: NodeOSInfrastructure
+    infrastructure?: NodeOSInfrastructure,
+    projectRoot?: string
   ): Promise<DefaultUser> {
     const user = new DefaultUser();
     if (infrastructure) {
@@ -140,7 +141,66 @@ export class DefaultUser implements User {
     user.model.username = username || process.env.USER || 'unknown';
     user.model.uuid = user.getUserUUID(user.model.username);
     await user.detectEnvironment();
+    
+    // ✅ Auto-save if projectRoot provided
+    // @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
+    if (projectRoot) {
+      await user.saveScenario(projectRoot);
+    }
+    
     return user;
+  }
+  
+  /**
+   * Get scenario save path using same logic as ONCE
+   * ✅ Dynamic based on detected domain/hostname
+   * @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
+   */
+  private async getScenarioPath(projectRoot: string): Promise<string> {
+    const path = await import('path');
+    
+    // Use infrastructure to calculate path components (DRY)
+    const { domainPath, hostname } = this.infrastructure.getScenarioPathComponents(this.model.hostname);
+    
+    // Same structure as ONCE: scenarios/{domain}/{hostname}/User/{version}
+    const scenarioDir = path.join(
+      projectRoot,
+      'scenarios',
+      ...domainPath,
+      hostname,
+      'User',
+      '0.3.21.1'
+    );
+    
+    return path.join(scenarioDir, `${this.model.uuid}.scenario.json`);
+  }
+  
+  /**
+   * Save User scenario to hierarchical path (like ONCE does)
+   * ✅ Uses same path logic as ServerHierarchyManager
+   * @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
+   */
+  public async saveScenario(projectRoot: string): Promise<string> {
+    const fs = await import('fs');
+    const path = await import('path');
+    
+    // Generate scenario data
+    const scenario = await this.toScenario();
+    
+    // Calculate dynamic path
+    const scenarioPath = await this.getScenarioPath(projectRoot);
+    const scenarioDir = path.dirname(scenarioPath);
+    
+    // Ensure directory exists
+    if (!fs.existsSync(scenarioDir)) {
+      fs.mkdirSync(scenarioDir, { recursive: true });
+    }
+    
+    // Save scenario
+    fs.writeFileSync(scenarioPath, JSON.stringify(scenario, null, 2));
+    console.log(`💾 User scenario saved: ${path.basename(scenarioPath)}`);
+    
+    return scenarioPath;
   }
   
   /**
