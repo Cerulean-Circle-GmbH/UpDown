@@ -1068,19 +1068,14 @@ export class ServerHierarchyManager {
     }
 
     /**
-     * Detect current environment
+     * Detect current environment (platform info only, no network data)
      */
     private detectEnvironment(): any {
-        const hostname = this.serverModel.host;
-        const ip = this.serverModel.ip;
-        
         return {
             platform: 'node',
             version: process.version,
             capabilities: ['server', 'websocket', 'p2p'],
-            isOnline: true,
-            hostname,
-            ip
+            isOnline: true
         };
     }
 
