@@ -91,5 +91,39 @@ export class NodeOSInfrastructure {
     }
     return '127.0.0.1';
   }
+  
+  /**
+   * Calculate hierarchical scenario path from FQDN
+   * ✅ Shared by ONCE and User (DRY principle)
+   * ✅ Returns path components for consistent directory structure
+   * 
+   * @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
+   * 
+   * @param fqdn Fully qualified domain name (e.g., "McDonges-3.fritz.box" or "localhost")
+   * @returns Object with domainPath array and hostname string
+   * 
+   * @example
+   * // Production FQDN
+   * getScenarioPathComponents("McDonges-3.fritz.box")
+   * // Returns: { domainPath: ["box", "fritz"], hostname: "McDonges-3" }
+   * 
+   * @example
+   * // Localhost
+   * getScenarioPathComponents("localhost")
+   * // Returns: { domainPath: ["local", "once"], hostname: "localhost" }
+   */
+  public getScenarioPathComponents(fqdn: string): { domainPath: string[], hostname: string } {
+    if (fqdn === 'localhost') {
+      return { domainPath: ['local', 'once'], hostname: 'localhost' };
+    } else if (fqdn.includes('.')) {
+      const parts: string[] = fqdn.split('.');
+      const hostname: string = parts[0]; // e.g., "McDonges-3"
+      const domainParts: string[] = parts.slice(1); // e.g., ["fritz", "box"]
+      return { domainPath: domainParts.reverse(), hostname }; // e.g., ["box", "fritz"]
+    } else {
+      // Simple hostname without domain
+      return { domainPath: ['local', fqdn], hostname: fqdn };
+    }
+  }
 }
 
