@@ -842,6 +842,14 @@ export class ServerHierarchyManager {
             if (message.type === 'registration-confirmed') {
               console.log('✅ Registration confirmed with primary server');
               this.serverModel.primaryServerIOR = this.createPrimaryServerIOR(message.primaryServerModel);
+              
+              // Store primary server connection info for browser clients
+              const primaryHttpPort = message.primaryServerModel.capabilities.find((c: any) => c.capability === 'httpPort')?.port;
+              this.serverModel.primaryServer = {
+                host: message.primaryServerModel.hostname || message.primaryServerModel.host || 'localhost',
+                port: primaryHttpPort || 42777
+              };
+              
               this.serverModel.state = LifecycleState.REGISTERED;
               resolve();
             } else {
