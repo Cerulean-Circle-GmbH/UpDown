@@ -4,6 +4,7 @@
  */
 
 import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
+import { Scenario } from './Scenario.interface.js';
 import { Component } from './Component.js';
 import { IOR } from './IOR.js';
 import { LifecycleEventType, LifecycleEventHandler, LifecycleHooks } from './LifecycleEvents.js';
@@ -30,9 +31,14 @@ export interface ONCE {
     /**
      * Save component state as scenario
      * @param component - Component to hibernate
-     * @returns LegacyONCEScenario containing complete component state
+     * @returns Web4 Standard format scenario
+     * 
+     * ⚠️ **ARCHITECTURAL DEBT**: Async in Layer 2 (Implementation)
+     * ⚠️ Web4 principle: "Only Layer 4 should be async"
+     * @see session/2025-11-19-UTC-1545.refactor-async-to-layer4.pdca.md - Future migration plan
+     * @pdca session/2025-11-19-UTC-1600.pragmatic-async-interface-fix.pdca.md
      */
-    saveAsScenario(component: Component): Promise<LegacyONCEScenario>;
+    saveAsScenario(component: Component): Promise<Scenario<LegacyONCEScenario>>;
 
     /**
      * Load component from scenario
@@ -75,9 +81,15 @@ export interface ONCE {
 
     /**
      * Hibernate ONCE kernel state
-     * @returns Complete kernel state as scenario
+     * @returns Complete kernel state as Web4 Standard scenario
+     * 
+     * ⚠️ **ARCHITECTURAL DEBT**: Async in Layer 2 (generates User scenario)
+     * ⚠️ Web4 principle: "Only Layer 4 should be async"
+     * ⚠️ Should be synchronous with pre-injected owner data
+     * @see session/2025-11-19-UTC-1545.refactor-async-to-layer4.pdca.md - Future migration plan
+     * @pdca session/2025-11-19-UTC-1600.pragmatic-async-interface-fix.pdca.md
      */
-    toScenario(): LegacyONCEScenario;
+    toScenario(): Promise<Scenario<LegacyONCEScenario>>;
 
     /**
      * Check if ONCE is initialized

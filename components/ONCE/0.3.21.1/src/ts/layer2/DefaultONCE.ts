@@ -287,7 +287,7 @@ export class DefaultONCE implements ONCE {
    * @pdca 2025-11-10-UTC-1830.migrate-once-to-0.3.20.0.pdca.md - Domain logic from 0.2.0.0
    * @cliHide
    */
-  async init(scenario?: Scenario): Promise<ONCE> {
+  async init(scenario?: Scenario<any> | LegacyONCEScenario): Promise<ONCE> {
     if (scenario && typeof scenario === 'object' && 'model' in scenario) {
       // Web4TSComponent-style scenario with model property
       const web4Scenario = scenario as any;
@@ -295,8 +295,8 @@ export class DefaultONCE implements ONCE {
         this.model = { ...this.model, ...web4Scenario.model };
       }
     } else if (scenario) {
-      // ONCE-style scenario from v0.2.0.0
-      this.model.scenario = scenario as Scenario;
+      // ONCE-style scenario from v0.2.0.0 (legacy format)
+      this.model.scenario = scenario as LegacyONCEScenario;
     }
     
     // Discover methods for CLI completion
@@ -312,7 +312,19 @@ export class DefaultONCE implements ONCE {
 
       try {
         console.log(`📂 Loading from scenario: ${this.model.scenario.uuid}`);
-        await this.loadFromScenario(this.model.scenario);
+        
+        // Wrap legacy scenario in Web4 format for loadFromScenario
+        const web4Scenario: Scenario<LegacyONCEScenario> = {
+          ior: {
+            uuid: this.model.scenario.uuid,
+            component: this.model.scenario.objectType,
+            version: this.model.scenario.version
+          },
+          owner: '', // Empty for legacy scenarios
+          model: this.model.scenario
+        };
+        
+        await this.loadFromScenario(web4Scenario);
 
         this.model.initialized = true;
         this.model.initializationTime = Date.now() - startTime;
@@ -418,7 +430,7 @@ export class DefaultONCE implements ONCE {
    * Start server with automatic port management (domain logic from 0.2.0.0)
    * @cliSyntax scenario
    */
-  async startServer(scenario?: Scenario): Promise<void> {
+  async startServer(scenario?: string | LegacyONCEScenario): Promise<void> {
     console.log('🚀 Starting ONCE server...');
     
     await this.emitEvent(LifecycleEventType.BEFORE_START);
@@ -512,15 +524,15 @@ export class DefaultONCE implements ONCE {
 
   // Placeholder implementations for ONCE interface methods (domain logic from 0.2.0.0)
 
-  async startComponent(componentIOR: IOR, scenario?: Scenario): Promise<Component> {
+  async startComponent(componentIOR: IOR, scenario?: LegacyONCEScenario): Promise<Component> {
     throw new Error('startComponent not implemented in v0.3.20.0');
   }
 
-  async saveAsScenario(component: Component): Promise<Scenario> {
+  async saveAsScenario(component: Component): Promise<Scenario<LegacyONCEScenario>> {
     throw new Error('saveAsScenario not implemented in v0.3.20.0');
   }
 
-  async loadScenario(scenario: Scenario): Promise<Component> {
+  async loadScenario(scenario: LegacyONCEScenario): Promise<Component> {
     throw new Error('loadScenario not implemented in v0.3.20.0');
   }
 
@@ -547,7 +559,7 @@ export class DefaultONCE implements ONCE {
     console.log(`🤝 Peer connection: ${peerIOR.uuid}`);
   }
 
-  async exchangeScenario(peerIOR: IOR, scenario: Scenario): Promise<void> {
+  async exchangeScenario(peerIOR: IOR, scenario: LegacyONCEScenario): Promise<void> {
     console.log(`🔄 Scenario exchange with ${peerIOR.uuid}`);
   }
 

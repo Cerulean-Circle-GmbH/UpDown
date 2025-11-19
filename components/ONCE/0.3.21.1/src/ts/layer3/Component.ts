@@ -4,6 +4,7 @@
  */
 
 import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
+import { Scenario } from './Scenario.interface.js';
 import { IOR } from './IOR.js';
 
 /**
@@ -32,8 +33,14 @@ export interface Component {
 
     /**
      * Convert component to scenario for hibernation
+     * @returns Web4 Standard format scenario
+     * 
+     * ⚠️ **ARCHITECTURAL DEBT**: Async in Layer 2 (Implementation)
+     * ⚠️ Web4 principle: "Only Layer 4 should be async"
+     * @see ../session/2025-11-19-UTC-1545.refactor-async-to-layer4.pdca.md
+     * @pdca ../session/2025-11-19-UTC-1600.pragmatic-async-interface-fix.pdca.md
      */
-    toScenario(): LegacyONCEScenario;
+    toScenario(): Promise<Scenario<LegacyONCEScenario>>;
 
     /**
      * Get component's Internet Object Reference
