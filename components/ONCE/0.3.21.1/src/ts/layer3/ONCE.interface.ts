@@ -4,7 +4,7 @@
  * @pdca 2025-11-10-UTC-1830.migrate-once-to-0.3.20.0.pdca.md - Updated for 0.3.20.0
  */
 
-import { Scenario } from './Scenario.js';
+import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
 import { ONCE as ONCEDomain } from './ONCE.js';
 
 /**

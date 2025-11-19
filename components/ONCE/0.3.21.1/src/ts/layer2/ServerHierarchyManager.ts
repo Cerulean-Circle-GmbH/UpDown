@@ -565,6 +565,14 @@ export class ServerHierarchyManager {
         const dirname = path.dirname(fileURLToPath(import.meta.url));
         return path.resolve(dirname, '../../../../../../');
     }
+    
+    /**
+     * Public accessor for projectRoot (needed by DefaultONCE)
+     * @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
+     */
+    public getProjectRoot(): string {
+        return this.projectRoot;
+    }
 
     /**
      * Get simple ONCE client HTML (for /once endpoint)

@@ -4,7 +4,7 @@
  */
 
 import { Component } from './Component.js';
-import { Scenario } from './Scenario.js';
+import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
 
 /**
  * Lifecycle event types - enhanced for server hierarchy
@@ -48,7 +48,7 @@ export interface LifecycleEvent {
     type: LifecycleEventType;
     timestamp: string;
     component?: Component;
-    scenario?: Scenario;
+    scenario?: LegacyONCEScenario;
     data?: any;
     error?: Error;
 }

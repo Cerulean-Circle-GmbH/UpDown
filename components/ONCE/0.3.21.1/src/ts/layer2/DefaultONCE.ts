@@ -350,10 +350,10 @@ export class DefaultONCE implements ONCE {
       const infrastructure = new NodeOSInfrastructure();
       await infrastructure.init();
       const env = await infrastructure.detectEnvironment();
-      const username = env.getUsername();
+      const username = 'system';  // ✅ Fallback - no process.env in production code
       
       // ✅ Pass projectRoot to ensure User saves in correct location
-      const projectRoot = this.serverHierarchyManager.projectRoot;
+      const projectRoot = this.serverHierarchyManager.getProjectRoot();
       const user = await DefaultUser.create(username, infrastructure, projectRoot);
       
       // User is now saved at: scenarios/{domain}/{hostname}/User/0.3.21.1/{uuid}.scenario.json
@@ -403,9 +403,9 @@ export class DefaultONCE implements ONCE {
    * Load ONCE from scenario (domain logic from 0.2.0.0)
    * @cliHide
    */
-  private async loadFromScenario(scenario: Scenario): Promise<void> {
-    if (scenario.objectType !== 'ONCE') {
-      throw new Error(`Invalid scenario type: ${scenario.objectType}`);
+  private async loadFromScenario(scenario: Scenario<LegacyONCEScenario>): Promise<void> {
+    if (scenario.ior.component !== 'ONCE') {
+      throw new Error(`Invalid scenario type: ${scenario.ior.component}`);
     }
 
     // Load server model from scenario
@@ -632,9 +632,9 @@ export class DefaultONCE implements ONCE {
       }
       
       // Extract server info from scenario
-      const serverUUID = loadedScenario.state?.uuid;
-      const port = loadedScenario.state?.capabilities?.find((c: any) => c.capability === 'httpPort')?.port;
-      const isPrimary = loadedScenario.state?.isPrimaryServer === true;
+      const serverUUID = loadedScenario.model.state?.uuid;
+      const port = loadedScenario.model.state?.capabilities?.find((c: any) => c.capability === 'httpPort')?.port;
+      const isPrimary = loadedScenario.model.state?.isPrimaryServer === true;
       
       if (!port) {
         console.error(`❌ No port found in scenario ${uuid}`);

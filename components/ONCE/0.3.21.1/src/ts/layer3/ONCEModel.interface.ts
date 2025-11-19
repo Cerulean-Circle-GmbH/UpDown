@@ -4,7 +4,7 @@
  */
 
 import { Model } from './Model.interface.js';
-import { Scenario } from './Scenario.js';
+import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
 import { LifecycleEventType, LifecycleEventHandler } from './LifecycleEvents.js';
 import { ONCEServerModel } from './ONCEServerModel.js';
 
@@ -13,9 +13,12 @@ import { ONCEServerModel } from './ONCEServerModel.js';
  * @pdca 2025-11-11-UTC-2322.pdca.md - Automated multi-server demo
  * MUST BE a Scenario (not just look like one)
  */
-export interface ONCEScenarioMessage extends Scenario {
+export interface ONCEScenarioMessage extends LegacyONCEScenario {
   // Override objectType to be specific
   objectType: 'ONCEMessage';
+  
+  // Override uuid to be specific (add uuid field explicitly)
+  uuid: string;
   
   // Message-specific state structure
   state: {
@@ -74,7 +77,7 @@ export interface ONCEModel extends Model {
   // @pdca 2025-11-10-UTC-1830.migrate-once-to-0.3.20.0.pdca.md
   initialized?: boolean;                           // ONCE kernel initialization flag
   initializationTime?: number;                     // Time taken for initialization (ms)
-  scenario?: Scenario;                             // Current ONCE scenario
+  scenario?: LegacyONCEScenario;                             // Current ONCE scenario
   serverModel?: ONCEServerModel;                   // Server model for hierarchy
   eventHandlers?: Map<LifecycleEventType, LifecycleEventHandler[]>; // Lifecycle event handlers
   

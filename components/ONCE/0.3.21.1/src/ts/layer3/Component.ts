@@ -3,7 +3,7 @@
  * Minimal interface for Web4 component pattern
  */
 
-import { Scenario } from './Scenario.js';
+import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
 import { IOR } from './IOR.js';
 
 /**
@@ -28,12 +28,12 @@ export interface Component {
     /**
      * Initialize component from scenario
      */
-    init(scenario?: Scenario): Promise<Component>;
+    init(scenario?: LegacyONCEScenario): Promise<Component>;
 
     /**
      * Convert component to scenario for hibernation
      */
-    toScenario(): Scenario;
+    toScenario(): LegacyONCEScenario;
 
     /**
      * Get component's Internet Object Reference

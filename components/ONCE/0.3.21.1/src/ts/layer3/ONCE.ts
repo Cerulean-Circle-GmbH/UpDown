@@ -3,7 +3,7 @@
  * Enhanced from 0.1.0.2 with server hierarchy and scenario-based configuration
  */
 
-import { Scenario } from './Scenario.js';
+import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
 import { Component } from './Component.js';
 import { IOR } from './IOR.js';
 import { LifecycleEventType, LifecycleEventHandler, LifecycleHooks } from './LifecycleEvents.js';
@@ -18,28 +18,28 @@ export interface ONCE {
      * Initialize ONCE kernel with scenario
      * Web4 pattern: Objects initialize from scenarios, not constructors
      */
-    init(scenario?: Scenario): Promise<ONCE>;
+    init(scenario?: LegacyONCEScenario): Promise<ONCE>;
 
     /**
      * Start a component by loading and initializing it
      * @param componentIOR - Internet Object Reference to component
      * @param scenario - Initial scenario for component
      */
-    startComponent(componentIOR: IOR, scenario?: Scenario): Promise<Component>;
+    startComponent(componentIOR: IOR, scenario?: LegacyONCEScenario): Promise<Component>;
 
     /**
      * Save component state as scenario
      * @param component - Component to hibernate
-     * @returns Scenario containing complete component state
+     * @returns LegacyONCEScenario containing complete component state
      */
-    saveAsScenario(component: Component): Promise<Scenario>;
+    saveAsScenario(component: Component): Promise<LegacyONCEScenario>;
 
     /**
      * Load component from scenario
-     * @param scenario - Scenario containing component state
+     * @param scenario - LegacyONCEScenario containing component state
      * @returns Restored component instance
      */
-    loadScenario(scenario: Scenario): Promise<Component>;
+    loadScenario(scenario: LegacyONCEScenario): Promise<Component>;
 
     /**
      * Get current environment information
@@ -69,15 +69,15 @@ export interface ONCE {
     /**
      * Exchange scenarios with peer
      * @param peerIOR - Target peer
-     * @param scenario - Scenario to send
+     * @param scenario - LegacyONCEScenario to send
      */
-    exchangeScenario(peerIOR: IOR, scenario: Scenario): Promise<void>;
+    exchangeScenario(peerIOR: IOR, scenario: LegacyONCEScenario): Promise<void>;
 
     /**
      * Hibernate ONCE kernel state
      * @returns Complete kernel state as scenario
      */
-    toScenario(): Scenario;
+    toScenario(): LegacyONCEScenario;
 
     /**
      * Check if ONCE is initialized
@@ -143,7 +143,7 @@ export interface ONCE {
     /**
      * Start server with automatic port management (42777 → 8080+)
      */
-    startServer(scenario?: Scenario): Promise<void>;
+    startServer(scenario?: LegacyONCEScenario): Promise<void>;
 
     /**
      * Register with primary server if this is a client server

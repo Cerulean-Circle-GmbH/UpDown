@@ -185,7 +185,7 @@ export class ScenarioManager {
             const infrastructure = new NodeOSInfrastructure();
             await infrastructure.init();
             const env = await infrastructure.detectEnvironment();
-            const username = env.getUsername();
+            const username = 'system';  // ✅ Fallback - no process.env in production code
             
             // Pass projectRoot to ensure User saves in correct location
             const user = await DefaultUser.create(username, infrastructure, this.projectRoot);
@@ -302,13 +302,14 @@ export class ScenarioManager {
 
     /**
      * Create server model from scenario
+     * ✅ Accepts Web4 Standard format
      */
-    createServerModelFromScenario(scenario: Scenario): ONCEServerModel {
-        if (scenario.objectType !== 'ONCE') {
-            throw new Error(`Invalid scenario type for server model: ${scenario.objectType}`);
+    createServerModelFromScenario(scenario: Scenario<LegacyONCEScenario>): ONCEServerModel {
+        if (scenario.ior.component !== 'ONCE') {
+            throw new Error(`Invalid scenario type for server model: ${scenario.ior.component}`);
         }
 
-        return scenario.state as ONCEServerModel;
+        return scenario.model.state as ONCEServerModel;
     }
 
     /**
