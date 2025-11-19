@@ -18,6 +18,9 @@ import { fileURLToPath } from 'url';
 import { ONCEScenarioMessage } from '../layer3/ONCEModel.interface.js';
 import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
 import { EnvironmentModel } from '../layer3/EnvironmentModel.interface.js';
+import { ScenarioTypeGuard } from '../layer1/ScenarioTypeGuard.js';
+import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
+import { Scenario } from '../layer3/Scenario.interface.js';
 
 /**
  * Server registry entry for primary server
@@ -1324,9 +1327,27 @@ export class ServerHierarchyManager {
                     }
                     
                     const scenarioData = JSON.parse(fs.readFileSync(scenarioPath, 'utf8'));
-                    const state = scenarioData.state?.state;
-                    const uuid = scenarioData.uuid;
-                    const port = scenarioData.state?.capabilities?.find((c: any) => c.capability === 'httpPort')?.port;
+                    
+                    // Use type guard to handle both formats
+                    // @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
+                    const guard = new ScenarioTypeGuard();
+                    guard.init(scenarioData);
+                    
+                    let state: string;
+                    let uuid: string;
+                    let port: number | undefined;
+                    
+                    if (guard.isLegacy()) {
+                        const legacy = guard.asLegacy()!;
+                        state = legacy.state?.state;
+                        uuid = legacy.uuid;
+                        port = legacy.state?.capabilities?.find((c: any) => c.capability === 'httpPort')?.port;
+                    } else {
+                        const web4 = guard.asWeb4<LegacyONCEScenario>()!;
+                        state = web4.model.state?.state;
+                        uuid = web4.model.uuid;
+                        port = web4.model.state?.capabilities?.find((c: any) => c.capability === 'httpPort')?.port;
+                    }
                     
                     if (state === LifecycleState.SHUTDOWN || state === LifecycleState.STOPPED) {
                         // Delete shutdown/stopped server scenarios (both main file and symlink)
@@ -1477,6 +1498,8 @@ export class ServerHierarchyManager {
     /**
      * Update scenario state for graceful shutdown tracking
      * Updates main scenario file (symlinks will automatically reflect changes)
+     * ✅ Supports both legacy and Web4 Standard formats
+     * @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
      */
     private async updateScenarioState(state: LifecycleState): Promise<void> {
         try {
@@ -1499,10 +1522,25 @@ export class ServerHierarchyManager {
             
             if (fs.existsSync(mainScenarioPath)) {
                 const scenarioData = JSON.parse(fs.readFileSync(mainScenarioPath, 'utf8'));
-                scenarioData.state.state = state;
-                scenarioData.metadata.modified = new Date().toISOString();
                 
-                fs.writeFileSync(mainScenarioPath, JSON.stringify(scenarioData, null, 2));
+                // Use type guard to handle both formats
+                const guard = new ScenarioTypeGuard();
+                guard.init(scenarioData);
+                
+                if (guard.isLegacy()) {
+                    // Legacy format
+                    const legacy = guard.asLegacy()!;
+                    legacy.state.state = state;
+                    legacy.metadata.modified = new Date().toISOString();
+                    fs.writeFileSync(mainScenarioPath, JSON.stringify(legacy, null, 2));
+                } else {
+                    // Web4 Standard format
+                    const web4 = guard.asWeb4<LegacyONCEScenario>()!;
+                    web4.model.state.state = state;
+                    web4.model.metadata.modified = new Date().toISOString();
+                    fs.writeFileSync(mainScenarioPath, JSON.stringify(web4, null, 2));
+                }
+                
                 console.log(`💾 Updated scenario state to: ${state}`);
             }
         } catch (error) {

@@ -438,9 +438,10 @@ export class DefaultONCE implements ONCE {
       // Store server model in our model
       this.model.serverModel = this.serverHierarchyManager.getServerModel();
       
-      // Save current state as scenario
-      const currentScenario = this.createCurrentScenario();
-      await this.scenarioManager.saveScenario(currentScenario);
+      // Save current state as scenario (Web4 Standard format)
+      // @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
+      const web4Scenario = await this.toScenario();
+      await this.scenarioManager.saveScenario(web4Scenario);
       
       await this.emitEvent(LifecycleEventType.AFTER_START);
       
