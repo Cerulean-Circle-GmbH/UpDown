@@ -1434,12 +1434,20 @@ export class ServerHierarchyManager {
             this.primaryServerConnection.close();
         }
 
+        // Close all WebSocket connections first
         if (this.wsServer) {
+            // Force close all WebSocket client connections
+            this.wsServer.clients.forEach(client => {
+                client.close();
+            });
             this.wsServer.close();
         }
 
         if (this.httpServer) {
             return new Promise((resolve) => {
+                // Force close all HTTP connections to prevent hanging
+                this.httpServer!.closeAllConnections?.();
+                
                 this.httpServer!.close(async () => {
                     console.log('🛑 Server stopped');
                     this.serverModel.state = LifecycleState.SHUTDOWN;
@@ -1455,6 +1463,13 @@ export class ServerHierarchyManager {
                         setTimeout(() => process.exit(0), 100);
                     }
                 });
+                
+                // Timeout fallback in case close() never completes
+                setTimeout(() => {
+                    console.warn('⚠️  Force closing HTTP server after timeout');
+                    this.serverModel.state = LifecycleState.SHUTDOWN;
+                    resolve();
+                }, 3000);
             });
         }
     }
