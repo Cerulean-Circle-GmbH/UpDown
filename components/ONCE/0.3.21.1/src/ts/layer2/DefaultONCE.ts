@@ -6,7 +6,8 @@
  */
 
 import { ONCE, EnvironmentInfo, ComponentQuery, PerformanceMetrics } from '../layer3/ONCE.js';
-import { Scenario } from '../layer3/Scenario.js';
+import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
+import { Scenario } from '../layer3/Scenario.interface.js';
 import { Component } from '../layer3/Component.js';
 import { IOR } from '../layer3/IOR.js';
 import { LifecycleEventType, LifecycleEventHandler, LifecycleHooks, LifecycleState } from '../layer3/LifecycleEvents.js';
@@ -16,6 +17,8 @@ import { ScenarioManager } from './ScenarioManager.js';
 import { ONCEModel } from '../layer3/ONCEModel.interface.js';
 import { User } from '../layer3/User.interface.js';
 import { MethodSignature } from '../layer3/MethodSignature.interface.js';
+import { DefaultUser } from './DefaultUser.js';
+import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
 import * as path from 'path';  // For version extraction from directory path
 import * as crypto from 'crypto';  // For UUID generation
 
@@ -331,12 +334,64 @@ export class DefaultONCE implements ONCE {
   }
 
   /**
-   * ✅ TRUE Radical OOP: toScenario() - Return ONCE-style scenario (not Web4TSComponent style)
-   * @pdca 2025-11-10-UTC-1830.migrate-once-to-0.3.20.0.pdca.md
+   * ✅ TRUE Radical OOP: toScenario() - Return Web4 Standard format wrapping legacy
+   * ✅ Uses insourced DefaultUser for owner generation
+   * ✅ Async to support User.toScenario()
+   * @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
    * @cliHide
    */
-  toScenario(): Scenario {
-    return this.createCurrentScenario();
+  async toScenario(): Promise<Scenario<LegacyONCEScenario>> {
+    // 1️⃣ Generate legacy scenario (current format)
+    const legacyScenario: LegacyONCEScenario = this.createCurrentScenario();
+    
+    // 2️⃣ Generate owner using insourced DefaultUser (Web4 pattern)
+    let ownerData: string;
+    try {
+      const infrastructure = new NodeOSInfrastructure();
+      await infrastructure.init();
+      const env = await infrastructure.detectEnvironment();
+      const username = env.getUsername();
+      
+      // ✅ Pass projectRoot to ensure User saves in correct location
+      const projectRoot = this.serverHierarchyManager.projectRoot;
+      const user = await DefaultUser.create(username, infrastructure, projectRoot);
+      
+      // User is now saved at: scenarios/{domain}/{hostname}/User/0.3.21.1/{uuid}.scenario.json
+      const userScenario = await user.toScenario();
+      const ownerJson = JSON.stringify(userScenario);
+      ownerData = Buffer.from(ownerJson).toString('base64');
+    } catch (error) {
+      // ✅ Fallback: Generate minimal User-like scenario
+      // ✅ Still NO process.env - use fallback values from infrastructure
+      const fallbackJson = JSON.stringify({
+        ior: {
+          uuid: legacyScenario.uuid,
+          component: 'User',
+          version: '0.3.21.1',
+          timestamp: new Date().toISOString()
+        },
+        owner: '',  // No nested owner in fallback
+        model: {
+          user: 'system',  // ✅ Hardcoded fallback, not process.env
+          hostname: legacyScenario.metadata.host || 'localhost',
+          uuid: legacyScenario.uuid,
+          component: legacyScenario.objectType,
+          version: legacyScenario.version
+        }
+      });
+      ownerData = Buffer.from(fallbackJson).toString('base64');
+    }
+    
+    // 3️⃣ Return Web4 Standard format
+    return {
+      ior: {
+        uuid: legacyScenario.uuid,
+        component: legacyScenario.objectType,
+        version: legacyScenario.version
+      },
+      owner: ownerData,  // ✅ Full User scenario (or fallback)
+      model: legacyScenario  // ✅ ENTIRE legacy scenario
+    };
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -428,7 +483,7 @@ export class DefaultONCE implements ONCE {
    * Create scenario from current state (domain logic from 0.2.0.0)
    * @cliHide
    */
-  private createCurrentScenario(): Scenario {
+  private createCurrentScenario(): LegacyONCEScenario {
     const serverModel = this.serverHierarchyManager.getServerModel();
     return this.scenarioManager.createScenarioFromServerModel(serverModel);
   }
