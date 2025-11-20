@@ -15,7 +15,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { logAction, logBroadcast, logRegistration, logConnection, logDisconnection, shortUUID, serverIdentity } from '../layer1/LoggingUtils.js';
 import { fileURLToPath } from 'url';
-import { ONCEScenarioMessage } from '../layer3/ONCEModel.interface.js';
+import { ONCEScenarioMessage } from '../layer3/ONCEScenarioMessage.interface.js';
 import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
 import { EnvironmentModel } from '../layer3/EnvironmentModel.interface.js';
 import { ScenarioTypeGuard } from '../layer1/ScenarioTypeGuard.js';

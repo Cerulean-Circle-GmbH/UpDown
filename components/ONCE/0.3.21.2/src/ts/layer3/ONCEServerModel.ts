@@ -1,66 +1,29 @@
 /**
  * ONCE Server Model v0.2.0.0 - Enhanced server state model
  * Implements requirement 471d2d0a-4914-4900-9aed-74b69e032679
+ * 
+ * ⚠️ DEPRECATED: This file now serves as a re-export hub for backward compatibility.
+ * New code should import directly from the specific files.
+ * 
+ * @pdca session/2025-11-19-UTC-1805.iteration-01-layer3-split.pdca.md
  */
 
-import { LifecycleState } from './LifecycleEvents.js';
-import { EnvironmentInfo } from './ONCE.js';
+// Re-exports for backward compatibility
+export type { ONCEServerModel } from './ONCEServerModel.interface.js';
+export type { ServerCapability } from './ServerCapability.interface.js';
+
+// Import for deprecated function
+import type { ONCEServerModel } from './ONCEServerModel.interface.js';
+import { LifecycleState } from './LifecycleState.enum.js';
+
+// Re-export necessary dependencies for backward compatibility
+export { LifecycleState } from './LifecycleState.enum.js';
 
 /**
- * Server capability definition
- */
-export interface ServerCapability {
-    capability: string;  // 'httpPort', 'httpsPort', 'wsPort', 'p2pPort'
-    port: number;
-}
-
-/**
- * Enhanced ONCE Server Model for v0.2.0.0
- * Contains all server instance information including process, network, and capabilities
- */
-export interface ONCEServerModel {
-    /** Process ID of the server */
-    pid: number;
-    
-    /** Current lifecycle state */
-    state: LifecycleState;
-    
-    /** Platform/environment information */
-    platform: EnvironmentInfo;
-    
-    /** Reverse internet domain (default: "local.once") */
-    domain: string;
-    
-    /** Extracted hostname (first part of FQDN, e.g., "McDonges-3") */
-    hostname: string;
-    
-    /** Fully qualified hostname (e.g., "McDonges-3.fritz.box") */
-    host: string;
-    
-    /** IP address (fallback: "127.0.0.1") */
-    ip: string;
-    
-    /** Server capabilities with their assigned ports */
-    capabilities: ServerCapability[];
-    
-    /** Server UUID for unique identification */
-    uuid: string;
-    
-    /** Whether this server is the primary name server (port 42777) */
-    isPrimaryServer: boolean;
-    
-    /** Primary server connection info (for client servers) */
-    primaryServer?: {
-        host: string;
-        port: number;
-    };
-    
-    /** If not primary, the IOR of the primary server this one registered with */
-    primaryServerIOR?: string;
-}
-
-/**
- * Default configuration for ONCE v0.2.0.0
+ * ⚠️ DEPRECATED: Configuration as constants violates Web4 "Everything is a Scenario" principle
+ * These values should be set in init() methods as scenario defaults, not as separate config
+ * @deprecated Use scenario-based initialization in component init() methods
+ * @see session/2025-11-19-UTC-1745.component-refactor-final.pdca.md - Web4 Principles
  */
 export const ONCE_DEFAULT_CONFIG = {
     /** Default primary server port */
@@ -80,7 +43,10 @@ export const ONCE_DEFAULT_CONFIG = {
 } as const;
 
 /**
- * Create default server model
+ * ⚠️ DEPRECATED: Functional factory function violates TRUE Radical OOP
+ * Use class constructors and init() methods following Web4 empty constructor pattern
+ * @deprecated Use `new ServerHierarchyManager().init(scenario)` pattern instead
+ * @see session/2025-11-19-UTC-1745.component-refactor-final.pdca.md - Web4 Patterns
  */
 export function createDefaultServerModel(): Partial<ONCEServerModel> {
     return {
