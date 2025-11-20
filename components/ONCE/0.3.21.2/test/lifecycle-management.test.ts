@@ -322,19 +322,28 @@ describe('Server Lifecycle Management', () => {
             
             // Manually set scenario back to running state (simulate unclean shutdown)
             const scenarioData = JSON.parse(fs.readFileSync(actualScenarioPath, 'utf8'));
-            if (!scenarioData.state) {
+            
+            // Handle both legacy and Web4 scenario formats
+            if (scenarioData.ior && scenarioData.model) {
+                // Web4 format: {ior, owner, model}
+                if (!scenarioData.model.state) {
+                    console.error('❌ Web4 Scenario has no model.state:', JSON.stringify(scenarioData, null, 2));
+                    throw new Error(`Web4 scenario has no model.state property: ${actualScenarioPath}`);
+                }
+                scenarioData.model.state.state = LifecycleState.RUNNING;
+            } else if (scenarioData.state) {
+                // Legacy format: {state}
+                if (typeof scenarioData.state === 'string') {
+                    scenarioData.state = LifecycleState.RUNNING;
+                } else if (scenarioData.state.state) {
+                    scenarioData.state.state = LifecycleState.RUNNING;
+                } else {
+                    console.error('❌ Unexpected state structure:', scenarioData.state);
+                    throw new Error(`Unexpected scenario state structure in: ${actualScenarioPath}`);
+                }
+            } else {
                 console.error('❌ Scenario structure:', JSON.stringify(scenarioData, null, 2));
                 throw new Error(`Scenario has no state property: ${actualScenarioPath}`);
-            }
-            if (typeof scenarioData.state === 'string') {
-                // Legacy flat structure: state is a string directly
-                scenarioData.state = LifecycleState.RUNNING;
-            } else if (scenarioData.state.state) {
-                // Current nested structure: state.state
-                scenarioData.state.state = LifecycleState.RUNNING;
-            } else {
-                console.error('❌ Unexpected state structure:', scenarioData.state);
-                throw new Error(`Unexpected scenario state structure in: ${actualScenarioPath}`);
             }
             fs.writeFileSync(actualScenarioPath, JSON.stringify(scenarioData, null, 2));
             
@@ -376,7 +385,16 @@ describe('Server Lifecycle Management', () => {
             // Verify scenario exists with RUNNING state
             expect(fs.existsSync(scenarioPath)).toBe(true);
             const runningScenario = JSON.parse(fs.readFileSync(scenarioPath, 'utf8'));
-            const runningState = typeof runningScenario.state === 'string' ? runningScenario.state : runningScenario.state.state;
+            
+            // Handle both Web4 and legacy formats
+            let runningState;
+            if (runningScenario.ior && runningScenario.model) {
+                // Web4 format
+                runningState = runningScenario.model.state?.state || runningScenario.model.state;
+            } else {
+                // Legacy format
+                runningState = typeof runningScenario.state === 'string' ? runningScenario.state : runningScenario.state?.state;
+            }
             expect(runningState).toBe(LifecycleState.RUNNING);
             
             // Stop server (triggers graceful shutdown)
@@ -385,7 +403,16 @@ describe('Server Lifecycle Management', () => {
             // Verify scenario was updated to SHUTDOWN state
             expect(fs.existsSync(scenarioPath)).toBe(true);
             const shutdownScenario = JSON.parse(fs.readFileSync(scenarioPath, 'utf8'));
-            const shutdownState = typeof shutdownScenario.state === 'string' ? shutdownScenario.state : shutdownScenario.state.state;
+            
+            // Handle both Web4 and legacy formats
+            let shutdownState;
+            if (shutdownScenario.ior && shutdownScenario.model) {
+                // Web4 format
+                shutdownState = shutdownScenario.model.state?.state || shutdownScenario.model.state;
+            } else {
+                // Legacy format
+                shutdownState = typeof shutdownScenario.state === 'string' ? shutdownScenario.state : shutdownScenario.state?.state;
+            }
             expect(shutdownState).toBe(LifecycleState.SHUTDOWN);
         }, 10000);
     });
@@ -469,7 +496,16 @@ describe('Server Lifecycle Management', () => {
             // Verify scenario shows shutdown state
             expect(fs.existsSync(clientScenarioPath)).toBe(true);
             const scenario = JSON.parse(fs.readFileSync(clientScenarioPath, 'utf8'));
-            const clientState = typeof scenario.state === 'string' ? scenario.state : scenario.state.state;
+            
+            // Handle both Web4 and legacy formats
+            let clientState;
+            if (scenario.ior && scenario.model) {
+                // Web4 format
+                clientState = scenario.model.state?.state || scenario.model.state;
+            } else {
+                // Legacy format
+                clientState = typeof scenario.state === 'string' ? scenario.state : scenario.state?.state;
+            }
             expect(clientState).toBe(LifecycleState.SHUTDOWN);
             
             // Cleanup
