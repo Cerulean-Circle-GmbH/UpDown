@@ -9,10 +9,354 @@
 
 ---
 
+## **🔄 Implementation Strategy: Iterative CMM3 Approach**
+
+This refactoring will be implemented through **strict iterative PDCA cycles**, where each iteration:
+
+1. **PLAN** - Design component refactoring, identify tests needed
+2. **DO** - Implement exactly the planned components
+3. **CHECK** - Run regression tests + new functionality tests (Vitest + Playwright)
+4. **ACT** - Fix issues until all tests pass
+5. **REPEAT CHECK-ACT** until iteration is complete and stable
+6. **NEXT ITERATION** - Only after current iteration is fully validated
+
+### **Iteration Rules (CMM3 Compliance)**:
+- ✅ Each iteration MUST compile
+- ✅ Each iteration MUST start (no runtime errors)
+- ✅ Each iteration MUST pass all regression tests
+- ✅ Each iteration MUST pass new functionality tests
+- ✅ Test-first approach: Write tests BEFORE implementation
+- ✅ Blackbox tests with Vitest (NO JEST EVER!)
+- ✅ End-to-end tests with Playwright (browser automation)
+- ✅ Each iteration documented in separate PDCA
+- ✅ Git commit after each successful iteration
+- ✅ NO moving to next iteration until current is stable
+
+### **Test Strategy**:
+- **Vitest** - Unit tests, integration tests (blackbox)
+- **Playwright** - E2E tests for browser clients and demo hub
+- **Test Coverage** - All Web4 principles validated
+- **Regression Suite** - All existing tests must pass
+- **New Tests** - Each iteration adds tests for new functionality
 
 ---
 
-## **📊 SUMMARY**
+## **✅ Web4 Principles Checklist**
+
+This refactoring adheres to the following Web4 architecture principles:
+
+### **Core Principles**
+- [ ] **Everything is a Scenario** - Configuration, state, all data must be scenarios with IOR + owner + model
+- [ ] **Model is Runtime, Scenario is Persistent** - Never construct scenarios from models; load scenarios, restore from scenarios
+- [ ] **User Lifecycle Pattern** - Users are INITIALLY constructed from system environment → stored as scenarios → ALWAYS recreated by loading that scenario
+- [ ] **Storage Pattern** - IndexedDB/FileSystem/Any storage ONLY holds scenarios (complete JSON with IOR + owner + model), identified ONLY by UUIDv4
+- [ ] **Convention over Configuration** - Direct mapping (enum → method name), no switch/case statements
+- [ ] **Empty Constructor + Init Pattern** - `constructor() {}`, `init(scenario?: T): this`, `toScenario(): Scenario<T>`
+- [ ] **No Factory Pattern Needed** - Empty constructor means objects can be created without prior knowledge; factories are obsolete
+- [ ] **One Type Per File** - Every interface, enum, class in its own file (`.interface.ts`, `.enum.ts`, `.ts`)
+- [ ] **State in Model, Instances in Class** - All data in `this.model`, all references as IORs (not instances)
+- [ ] **Path Authority** - Components derive their own paths and provide them to sub-components (use CLIModel)
+- [ ] **TRUE Radical OOP Discipline** - Explicit over cryptic; async/await over callbacks; typed instances over naked JSON
+- [ ] **Reference<T> for Nullable** - Use `Reference<T>` (T | null) instead of `T | undefined` or optional types
+- [ ] **Separation of Concerns** - Don't mix concerns (statistics, behavior, etc.); use separate classes with enums everywhere
+
+### **Layer Structure** (Web4 EAM 5-Layer Architecture)
+- [ ] **Layer 1 (Infrastructure)** - ONLY layer with `os`, `fs`, `http`, `ws` imports; provides system access
+- [ ] **Layer 2 (Implementation)** - Concrete classes; uses Layer 1; NO direct system imports
+- [ ] **Layer 3 (Interface/Service Contracts)** - ONLY `.interface.ts` files; pure TypeScript; zero implementation
+- [ ] **Layer 4 (Business Processes)** - Orchestration workflows with Git-based rollback; ONLY ASYNC layer
+- [ ] **Layer 5 (User Experience)** - CLI, UI, browser clients; all user/agent interaction points
+
+### **Naming Conventions**
+- [ ] **Interface Naming** - No `I` prefix; just the name (e.g., `ServerLifecycle`, not `IServerLifecycle`)
+- [ ] **Implementation Naming** - Specific context prefix (e.g., `HTTPSServerLifecycle`, `WSServerLifecycle`)
+- [ ] **Default Prefix** - ONLY used when interface and implementation would have same name (fallback only)
+- [ ] **Abstract Classes** - If using `Default*` prefix, implementation MUST be abstract for extension
+- [ ] **Concrete Implementations** - Use specific context names, not generic `Default*`
+
+### **Component Patterns**
+- [ ] **Observer Pattern** - For event handling (not functional callbacks); `LifecycleSubject` + `LifecycleObserver`
+- [ ] **Component Interface** - All components implement `Component<TModel>` with `model`, `ior`, `init()`, `toScenario()`
+- [ ] **Digital Assets** - Every scenario has IOR (component identification) + owner (asset ownership)
+- [ ] **Scenario Migration** - Support legacy format, export Web4 standard format (IOR + owner + model)
+- [ ] **CLI Autodiscovery** - Method discovery via `hasMethod()`, `getMethodSignature()`, `listMethods()`
+
+### **Anti-Patterns to Eliminate**
+- [ ] ❌ Configuration constants (`ONCE_DEFAULT_CONFIG`) → ✅ Scenario defaults in `init()`
+- [ ] ❌ Switch/case for dispatch → ✅ Dynamic method name calculation
+- [ ] ❌ Inline HTML in code → ✅ External HTML files with template variables
+- [ ] ❌ CommonJS `__dirname` → ✅ PathAuthority component (from CLIModel)
+- [ ] ❌ Direct system imports in Layer 2+ → ✅ Layer 1 infrastructure classes
+- [ ] ❌ Multiple types per file → ✅ One type per file (split `LifecycleEvents.ts`, etc.)
+- [ ] ❌ Functional event handlers → ✅ Observer Pattern (OOP)
+- [ ] ❌ Reinventing existing code → ✅ Reuse enums, models, logic
+- [ ] ❌ Promise-based callbacks (`new Promise((resolve, reject) => {...})`) → ✅ Async/await methods
+- [ ] ❌ Naked JSON objects (`init({uuid: '...', ...})`) → ✅ Typed scenario instances
+- [ ] ❌ Constructing scenarios from models (`restoreUserFromModel()`) → ✅ Load scenarios directly, restore from scenarios
+- [ ] ❌ String literal types (`'node' | 'browser' | ...`) → ✅ Enums (`ONCEEnvironment.NODE`)
+- [ ] ❌ Mixed concerns in interfaces (statistics, timestamps, etc.) → ✅ Separate classes (`RouteStatistics`)
+- [ ] ❌ Cryptic one-liners → ✅ Explicit, readable OOP with proper discipline
+- [ ] ❌ `T | undefined` or `T?` for nullable → ✅ `Reference<T>` (T | null) for explicit nullability
+- [ ] ❌ Factory pattern boilerplate → ✅ Empty constructor + init() pattern (factories obsolete!)
+
+---
+
+## **🏗️ NEW ONCE v0.3.21.2 Architecture**
+
+### **Architecture Overview**
+
+```plantuml
+@startuml ONCE Architecture
+!define INTERFACE_COLOR #E1F5FE
+!define IMPLEMENTATION_COLOR #C8E6C9
+!define INFRASTRUCTURE_COLOR #FFF9C4
+!define PROCESS_COLOR #F8BBD0
+!define UX_COLOR #E1BEE7
+
+package "Layer 5 - User Experience" <<UX_COLOR>> {
+  [CLI Commands]
+  [Demo Hub UI]
+  [Browser Clients]
+  [ONCE Client Pages]
+}
+
+package "Layer 4 - Business Processes" <<PROCESS_COLOR>> {
+  [Server Startup Process]
+  [Server Shutdown Process]
+  [User Session Process]
+  [Certificate Renewal Process]
+}
+
+package "Layer 3 - Interfaces" <<INTERFACE_COLOR>> {
+  [Component.interface.ts]
+  [ONCEServerModel.interface.ts]
+  [HTTPSServerModel.interface.ts]
+  [RouterModel.interface.ts]
+  [RouteModel.interface.ts]
+  [SessionManagerModel.interface.ts]
+  [LetsEncryptModel.interface.ts]
+  [LifecycleObserver.interface.ts]
+  [LifecycleState.enum.ts]
+  [LifecycleEventType.enum.ts]
+  [HttpMethod.enum.ts]
+}
+
+package "Layer 2 - Implementation" <<IMPLEMENTATION_COLOR>> {
+  [ServerHierarchyManager]
+  [DefaultHTTPSServer]
+  [DefaultRouter]
+  [DefaultRoute]
+  [DefaultSessionManager]
+  [DefaultLetsEncrypt]
+  [LifecycleSubject]
+  [ServerLifecycleObserver]
+}
+
+package "Layer 1 - Infrastructure" <<INFRASTRUCTURE_COLOR>> {
+  [NodeOSInfrastructure]
+  [NodeFileSystemInfrastructure]
+  [NodeNetworkInfrastructure]
+  [NodeHTTPInfrastructure]
+  [NodeWebSocketInfrastructure]
+}
+
+[CLI Commands] --> [Server Startup Process]
+[Demo Hub UI] --> [DefaultHTTPSServer]
+[Browser Clients] --> [DefaultRouter]
+
+[Server Startup Process] --> [ServerHierarchyManager]
+[Server Shutdown Process] --> [ServerHierarchyManager]
+[User Session Process] --> [DefaultSessionManager]
+[Certificate Renewal Process] --> [DefaultLetsEncrypt]
+
+[ServerHierarchyManager] --> [DefaultHTTPSServer]
+[ServerHierarchyManager] --> [LifecycleSubject]
+[DefaultHTTPSServer] --> [DefaultRouter]
+[DefaultHTTPSServer] --> [DefaultLetsEncrypt]
+[DefaultRouter] --> [DefaultRoute]
+[DefaultSessionManager] --> [DefaultUser]
+
+[ServerHierarchyManager] --> [ONCEServerModel.interface.ts]
+[DefaultHTTPSServer] --> [HTTPSServerModel.interface.ts]
+[DefaultRouter] --> [RouterModel.interface.ts]
+[DefaultRoute] --> [RouteModel.interface.ts]
+[DefaultSessionManager] --> [SessionManagerModel.interface.ts]
+[DefaultLetsEncrypt] --> [LetsEncryptModel.interface.ts]
+[LifecycleSubject] --> [LifecycleObserver.interface.ts]
+
+[DefaultHTTPSServer] --> [NodeHTTPInfrastructure]
+[DefaultHTTPSServer] --> [NodeWebSocketInfrastructure]
+[DefaultRouter] --> [NodeFileSystemInfrastructure]
+[DefaultLetsEncrypt] --> [NodeFileSystemInfrastructure]
+[DefaultSessionManager] --> [NodeOSInfrastructure]
+
+@enduml
+```
+
+### **Component Hierarchy**
+
+```plantuml
+@startuml Component Hierarchy
+skinparam component {
+  BackgroundColor<<interface>> LightBlue
+  BackgroundColor<<implementation>> LightGreen
+  BackgroundColor<<infrastructure>> LightYellow
+}
+
+component "Component<T>" <<interface>> {
+  + model: T
+  + ior: IOR
+  + init(scenario?: Scenario<T>): this
+  + toScenario(): Scenario<T>
+}
+
+component "DefaultHTTPSServer" <<implementation>> {
+  - model: HTTPSServerModel
+  - router: DefaultRouter
+  - lifecycleSubject: LifecycleSubject
+  + init(scenario?: Scenario<HTTPSServerModel>): this
+  + start(): Promise<void>
+  + stop(): Promise<void>
+}
+
+component "DefaultRouter" <<implementation>> {
+  - model: RouterModel
+  - routes: DefaultRoute[]
+  + addRoute(route: DefaultRoute): void
+  + handleRequest(req, res): void
+}
+
+component "DefaultRoute" <<implementation>> {
+  - model: RouteModel
+  + matches(pathname: string): boolean
+  + handle(req, res): void
+}
+
+component "DefaultSessionManager" <<implementation>> {
+  - model: SessionManagerModel
+  - users: Map<string, DefaultUser>
+  + createUser(): DefaultUser
+  + saveToIndexedDB(): Promise<void>
+}
+
+component "LifecycleSubject" <<implementation>> {
+  - model: LifecycleSubjectModel
+  - observers: LifecycleObserver[]
+  + attach(observer): void
+  + notify(event): Promise<void>
+}
+
+component "ServerLifecycleObserver" <<implementation>> {
+  - serverModel: ONCEServerModel
+  + onBeforeStart(event): void
+  + onAfterStart(event): void
+  + onBeforeStop(event): void
+}
+
+"Component<T>" <|.. "DefaultHTTPSServer"
+"Component<T>" <|.. "DefaultRouter"
+"Component<T>" <|.. "DefaultRoute"
+"Component<T>" <|.. "DefaultSessionManager"
+"Component<T>" <|.. "LifecycleSubject"
+
+"DefaultHTTPSServer" *-- "DefaultRouter"
+"DefaultHTTPSServer" *-- "LifecycleSubject"
+"DefaultRouter" o-- "DefaultRoute"
+"DefaultSessionManager" o-- "DefaultUser"
+"LifecycleSubject" o-- "ServerLifecycleObserver"
+
+@enduml
+```
+
+### **Lifecycle Event Flow (Observer Pattern)**
+
+```plantuml
+@startuml Lifecycle Event Flow
+participant "ServerHierarchyManager" as SHM
+participant "LifecycleSubject" as Subject
+participant "ServerLifecycleObserver" as Observer1
+participant "CustomObserver" as Observer2
+
+SHM -> Subject: attach(Observer1)
+SHM -> Subject: attach(Observer2)
+
+SHM -> Subject: notify(BEFORE_START)
+Subject -> Subject: calculateMethodName(BEFORE_START)\n→ "onBeforeStart"
+Subject -> Observer1: onBeforeStart(event)
+Observer1 --> Subject: void
+Subject -> Observer2: onBeforeStart(event)
+Observer2 --> Subject: Promise<void>
+Subject --> SHM: await Promise.all(promises)
+
+note right of Subject
+  ✅ Convention over Configuration:
+  - BEFORE_START → onBeforeStart
+  - AFTER_INIT → onAfterInit
+  - SERVER_REGISTRATION → onServerRegistration
+  
+  No switch/case needed!
+  Same pattern as CLI autodiscovery.
+end note
+
+SHM -> SHM: // Start server logic
+
+SHM -> Subject: notify(AFTER_START)
+Subject -> Observer1: onAfterStart(event)
+Subject -> Observer2: onAfterStart(event)
+
+@enduml
+```
+
+### **Scenario Flow (Everything is a Scenario)**
+
+```plantuml
+@startuml Scenario Flow
+participant "Component" as Comp
+participant "Scenario File" as File
+database "IndexedDB" as IDB
+participant "P2P Network" as P2P
+
+== Init (Restore from Scenario) ==
+File -> Comp: load scenario.json
+Comp -> Comp: init(scenario)
+note right
+  scenario = {
+    ior: { uuid, component, version },
+    owner: base64(User.toScenario()),
+    model: { ...state... }
+  }
+end note
+
+== Runtime ==
+Comp -> Comp: // Work with this.model
+
+== Hibernate (Save to Scenario) ==
+Comp -> Comp: toScenario()
+Comp -> File: save scenario.json
+
+== Transfer (P2P Communication) ==
+Comp -> P2P: send scenario
+P2P -> Comp: receive scenario
+Comp -> Comp: init(scenario)
+
+== Browser Persistence ==
+Comp -> IDB: saveToIndexedDB(scenario)
+IDB -> Comp: loadFromIndexedDB()
+Comp -> Comp: init(scenario)
+
+note bottom
+  ✅ Configuration IS a scenario
+  ✅ State IS a scenario
+  ✅ Everything IS a scenario
+  
+  No separate config files!
+  All data has IOR + owner + model.
+end note
+
+@enduml
+```
+
+---
 
 ## **🎯 OBJECTIVE**
 
@@ -30,7 +374,6 @@
 - ✅ **SessionManager** - User creation + IndexedDB storage
 
 ---
-
 
 ## **🔍 TRON Feedback (User Prompts)**
 
@@ -998,573 +1341,7 @@ export class SessionManager {
 
 ---
 
-
-## **📊 Summary**
-
-### **Files to Reuse (Already Perfect!)**
-
-**✅ EXISTING Enums** (2):
-1. `src/ts/layer3/LifecycleEvents.ts` - `LifecycleState` enum (PERFECT!)
-2. `src/ts/layer3/LifecycleEvents.ts` - `LifecycleEventType` enum (PERFECT!)
-
-**✅ EXISTING Models** (2):
-3. `src/ts/layer3/ONCEServerModel.ts` - `ONCEServerModel` interface (REUSE!)
-4. `src/ts/layer3/ONCEServerModel.ts` - `ServerCapability` interface (REUSE!)
-5. ~~`src/ts/layer3/ONCEServerModel.ts` - `ONCE_DEFAULT_CONFIG` const~~ ❌ **ARCHITECTURAL VIOLATION**
-
-**Why Reuse**:
-- ✅ Already follows enum pattern (not static class)
-- ✅ Already has all server state fields we need
-- ✅ Already includes `LifecycleState` integration
-- ✅ Already has `capabilities: ServerCapability[]`
-- ✅ Already has `isPrimaryServer` flag
-- ✅ Don't reinvent the wheel!
-
----
-
-### **🚨 ARCHITECTURAL VIOLATION: Configuration Const**
-
-**Problem**:
-```typescript
-// ❌ WRONG: Separate configuration const (from ONCEServerModel.ts)
-export const ONCE_DEFAULT_CONFIG = {
-  PRIMARY_PORT: 42777,
-  FALLBACK_PORT_START: 8080,
-  DEFAULT_DOMAIN: 'local.once',
-  DEFAULT_IP: '127.0.0.1',
-  MAX_PORT_SCAN: 100
-} as const;
-```
-
-**Issues**:
-- ❌ No IOR (which component does this belong to?)
-- ❌ No owner (who owns this digital asset?)
-- ❌ Not a scenario (can't be persisted/restored/transferred)
-- ❌ **Violates Web4 principle: EVERYTHING is a scenario**
-- ❌ **Separate "config" concept doesn't exist in Web4**
-
-**✅ CORRECT: No Separate Config - Just Use Server Scenario**
-
-```typescript
-// ✅ Web4 Principle: There is NO separate configuration
-// ✅ Configuration IS just the server scenario with default values
-// ✅ ONCEServerModel already has ALL the fields we need!
-
-// File: src/ts/layer2/HTTPSServer.ts
-import { Scenario } from '../layer3/Scenario.interface.js';
-import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
-import { LifecycleState } from '../layer3/LifecycleState.enum.js';
-
-export class HTTPSServer implements Component<ONCEServerModel> {
-  model!: ONCEServerModel;
-  
-  constructor() { }  // ✅ Empty
-  
-  /**
-   * Initialize with scenario (or create default)
-   * ✅ Default values are NOT a separate "config"!
-   * ✅ Default values are just constructor logic in init()
-   */
-  init(scenario?: Scenario<ONCEServerModel>): this {
-    if (scenario) {
-      // ✅ Restore from scenario (hibernation)
-      this.model = scenario.model;
-    } else {
-      // ✅ Create default model (NO separate config!)
-      this.model = {
-        uuid: crypto.randomUUID(),
-        pid: process.pid,
-        state: LifecycleState.CREATED,
-        
-        // ✅ Default network values (NOT a separate "config")
-        domain: 'local.once',
-        hostname: 'localhost',
-        host: 'localhost',
-        ip: '127.0.0.1',
-        
-        // ✅ Default port (NOT a separate "config")
-        capabilities: [
-          { capability: 'httpPort', port: 42777 }
-        ],
-        
-        isPrimaryServer: false,
-        platform: { /* ... */ },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-    }
-    return this;
-  }
-  
-  async toScenario(): Promise<Scenario<ONCEServerModel>> {
-    return {
-      ior: this.ior,
-      owner: await this.getOwnerData(),
-      model: { ...this.model }  // ✅ Entire state
-    };
-  }
-}
-```
-
-**Key Changes**:
-- ❌ No `ONCEServerConfigModel` interface (not needed!)
-- ❌ No `createDefaultONCEServerScenario()` function (not needed!)
-- ❌ No `DefaultONCEServerConfig.ts` file (not needed!)
-- ✅ Just use `ONCEServerModel` with default values in `init()`
-- ✅ Default values are constructor logic, not "config"
-
-**Usage**:
-```typescript
-// ✅ Create with defaults (NO separate config!)
-const server = new HTTPSServer().init();
-
-// ✅ Or: Restore from scenario
-const scenario = await loadScenarioFromFile('server.scenario.json');
-const server = new HTTPSServer().init(scenario);
-
-// ✅ Access values from model (NO "config")
-const port = server.model.capabilities[0].port;
-
-// ✅ Runtime port resolution (update model directly)
-async findAvailablePort(startPort: number = 8080): Promise<number> {
-  for (let port = startPort; port < startPort + 100; port++) {
-    if (await this.isPortAvailable(port)) {
-      // ✅ Update model (no separate config!)
-      this.model.capabilities.push({ capability: 'httpPort', port });
-      return port;
-    }
-  }
-  throw new Error('No available port');
-}
-```
-
----
-
-### **Files to Create (Minimal New Code)**
-
-**New Enums** (3):
-1. `src/ts/layer3/HttpMethod.enum.ts` (follows `LifecycleState` pattern)
-2. `src/ts/layer3/ONCEEnvironment.enum.ts` (NEW - replaces 'node' | 'browser' | ... string literals)
-3. `src/ts/layer3/RouteTargetType.enum.ts` (NEW - replaces 'file' | 'directory' | ... string literals)
-
-**New Type Aliases** (1):
-3. `src/ts/layer3/Reference.interface.ts` (insource from Web4TSComponent - nullable reference pattern)
-
-**New/Updated Models** (7):
-3. `src/ts/layer3/ONCEModel.interface.ts` (MINIMAL UPDATE - kernel state only)
-4. `src/ts/layer3/PathAuthorityModel.interface.ts` (NEW)
-5. `src/ts/layer3/SessionManagerModel.interface.ts` (NEW - uses Reference<DefaultUser>)
-6. `src/ts/layer3/HTTPSServerModel.interface.ts` (NEW - extends ONCEServerModel)
-7. `src/ts/layer3/RouterModel.interface.ts` (NEW)
-8. `src/ts/layer3/RouteModel.interface.ts` (NEW)
-9. `src/ts/layer3/LetsEncryptModel.interface.ts` (NEW)
-10. `src/ts/layer3/PrimaryServerModel.interface.ts` (NEW)
-
-**Layer 1 Infrastructure** (1):
-11. `src/ts/layer1/DefaultPathAuthority.ts` (NEW)
-
-**Layer 2 Components** (6):
-12. `src/ts/layer2/DefaultRouter.ts`
-13. `src/ts/layer2/DefaultRoute.ts`
-14. `src/ts/layer2/DefaultSessionManager.ts` (NEW)
-15. `src/ts/layer2/DefaultHTTPSServer.ts` (TODO)
-16. `src/ts/layer2/DefaultLetsEncrypt.ts` (TODO)
-17. `src/ts/layer2/DefaultPrimaryServer.ts` (TODO)
-18. `src/ts/layer2/RouteStatistics.ts` (NEW - separation of concerns: statistics in own class)
-
-**View Files** (5):
-18. `src/view/html/404.html` (NEW)
-19. `src/view/html/500.html` (NEW)
-20. `src/view/css/error.css` (NEW)
-21. `src/view/html/index.html` (UPDATE)
-22. `src/view/html/demo-hub.html` (UPDATE)
-
-**Kernel** (1):
-23. `src/ts/layer2/DefaultONCE.ts` (UPDATE)
-
----
-
-### **Anti-Patterns Eliminated**
-
-| Anti-Pattern | Violation | Solution |
-|--------------|-----------|----------|
-| Inline HTML | Separation of concerns | ✅ External HTML files |
-| `__dirname` calculation | CommonJS pattern | ✅ PathAuthority component |
-| Switch/case routing | Functional pattern | ✅ Dynamic Router |
-| Scattered paths | No DRY | ✅ PathAuthority model |
-| No session mgmt | Missing User integration | ✅ SessionManager + IndexedDB |
-
----
-
-### **Validation Criteria**
-
-**Success Criteria**:
-1. ✅ Static enums work (HttpMethod.GET, ServerRole.PRIMARY)
-2. ✅ Each component has own model
-3. ✅ Empty constructor + init(scenario) everywhere
-4. ✅ ONCE loads components (kernel pattern)
-5. ✅ HTTPSServer works (HTTP/HTTPS)
-6. ✅ Router works (dynamic routing, no switch/case)
-7. ✅ **NO inline HTML** - all HTML in external files
-8. ✅ **NO __dirname** - all paths from PathAuthority
-9. ✅ SessionManager creates Users
-10. ✅ Users stored in IndexedDB
-11. ✅ All existing functionality preserved
-12. ✅ Tests pass
-13. ✅ Zero breaking changes
-
----
-
-
----
-
 ## **📋 PLAN**
-
-This refactoring will be implemented through **strict iterative PDCA cycles**, where each iteration:
-
-1. **PLAN** - Design component refactoring, identify tests needed
-2. **DO** - Implement exactly the planned components
-3. **CHECK** - Run regression tests + new functionality tests (Vitest + Playwright)
-4. **ACT** - Fix issues until all tests pass
-5. **REPEAT CHECK-ACT** until iteration is complete and stable
-6. **NEXT ITERATION** - Only after current iteration is fully validated
-
-### **Iteration Rules (CMM3 Compliance)**:
-- ✅ Each iteration MUST compile
-- ✅ Each iteration MUST start (no runtime errors)
-- ✅ Each iteration MUST pass all regression tests
-- ✅ Each iteration MUST pass new functionality tests
-- ✅ Test-first approach: Write tests BEFORE implementation
-- ✅ Blackbox tests with Vitest (NO JEST EVER!)
-- ✅ End-to-end tests with Playwright (browser automation)
-- ✅ Each iteration documented in separate PDCA
-- ✅ Git commit after each successful iteration
-- ✅ NO moving to next iteration until current is stable
-
-### **Test Strategy**:
-- **Vitest** - Unit tests, integration tests (blackbox)
-- **Playwright** - E2E tests for browser clients and demo hub
-- **Test Coverage** - All Web4 principles validated
-- **Regression Suite** - All existing tests must pass
-- **New Tests** - Each iteration adds tests for new functionality
-
----
-
-
-This refactoring adheres to the following Web4 architecture principles:
-
-### **Core Principles**
-- [ ] **Everything is a Scenario** - Configuration, state, all data must be scenarios with IOR + owner + model
-- [ ] **Model is Runtime, Scenario is Persistent** - Never construct scenarios from models; load scenarios, restore from scenarios
-- [ ] **User Lifecycle Pattern** - Users are INITIALLY constructed from system environment → stored as scenarios → ALWAYS recreated by loading that scenario
-- [ ] **Storage Pattern** - IndexedDB/FileSystem/Any storage ONLY holds scenarios (complete JSON with IOR + owner + model), identified ONLY by UUIDv4
-- [ ] **Convention over Configuration** - Direct mapping (enum → method name), no switch/case statements
-- [ ] **Empty Constructor + Init Pattern** - `constructor() {}`, `init(scenario?: T): this`, `toScenario(): Scenario<T>`
-- [ ] **No Factory Pattern Needed** - Empty constructor means objects can be created without prior knowledge; factories are obsolete
-- [ ] **One Type Per File** - Every interface, enum, class in its own file (`.interface.ts`, `.enum.ts`, `.ts`)
-- [ ] **State in Model, Instances in Class** - All data in `this.model`, all references as IORs (not instances)
-- [ ] **Path Authority** - Components derive their own paths and provide them to sub-components (use CLIModel)
-- [ ] **TRUE Radical OOP Discipline** - Explicit over cryptic; async/await over callbacks; typed instances over naked JSON
-- [ ] **Reference<T> for Nullable** - Use `Reference<T>` (T | null) instead of `T | undefined` or optional types
-- [ ] **Separation of Concerns** - Don't mix concerns (statistics, behavior, etc.); use separate classes with enums everywhere
-
-### **Layer Structure** (Web4 EAM 5-Layer Architecture)
-- [ ] **Layer 1 (Infrastructure)** - ONLY layer with `os`, `fs`, `http`, `ws` imports; provides system access
-- [ ] **Layer 2 (Implementation)** - Concrete classes; uses Layer 1; NO direct system imports
-- [ ] **Layer 3 (Interface/Service Contracts)** - ONLY `.interface.ts` files; pure TypeScript; zero implementation
-- [ ] **Layer 4 (Business Processes)** - Orchestration workflows with Git-based rollback; ONLY ASYNC layer
-- [ ] **Layer 5 (User Experience)** - CLI, UI, browser clients; all user/agent interaction points
-
-### **Naming Conventions**
-- [ ] **Interface Naming** - No `I` prefix; just the name (e.g., `ServerLifecycle`, not `IServerLifecycle`)
-- [ ] **Implementation Naming** - Specific context prefix (e.g., `HTTPSServerLifecycle`, `WSServerLifecycle`)
-- [ ] **Default Prefix** - ONLY used when interface and implementation would have same name (fallback only)
-- [ ] **Abstract Classes** - If using `Default*` prefix, implementation MUST be abstract for extension
-- [ ] **Concrete Implementations** - Use specific context names, not generic `Default*`
-
-### **Component Patterns**
-- [ ] **Observer Pattern** - For event handling (not functional callbacks); `LifecycleSubject` + `LifecycleObserver`
-- [ ] **Component Interface** - All components implement `Component<TModel>` with `model`, `ior`, `init()`, `toScenario()`
-- [ ] **Digital Assets** - Every scenario has IOR (component identification) + owner (asset ownership)
-- [ ] **Scenario Migration** - Support legacy format, export Web4 standard format (IOR + owner + model)
-- [ ] **CLI Autodiscovery** - Method discovery via `hasMethod()`, `getMethodSignature()`, `listMethods()`
-
-### **Anti-Patterns to Eliminate**
-- [ ] ❌ Configuration constants (`ONCE_DEFAULT_CONFIG`) → ✅ Scenario defaults in `init()`
-- [ ] ❌ Switch/case for dispatch → ✅ Dynamic method name calculation
-- [ ] ❌ Inline HTML in code → ✅ External HTML files with template variables
-- [ ] ❌ CommonJS `__dirname` → ✅ PathAuthority component (from CLIModel)
-- [ ] ❌ Direct system imports in Layer 2+ → ✅ Layer 1 infrastructure classes
-- [ ] ❌ Multiple types per file → ✅ One type per file (split `LifecycleEvents.ts`, etc.)
-- [ ] ❌ Functional event handlers → ✅ Observer Pattern (OOP)
-- [ ] ❌ Reinventing existing code → ✅ Reuse enums, models, logic
-- [ ] ❌ Promise-based callbacks (`new Promise((resolve, reject) => {...})`) → ✅ Async/await methods
-- [ ] ❌ Naked JSON objects (`init({uuid: '...', ...})`) → ✅ Typed scenario instances
-- [ ] ❌ Constructing scenarios from models (`restoreUserFromModel()`) → ✅ Load scenarios directly, restore from scenarios
-- [ ] ❌ String literal types (`'node' | 'browser' | ...`) → ✅ Enums (`ONCEEnvironment.NODE`)
-- [ ] ❌ Mixed concerns in interfaces (statistics, timestamps, etc.) → ✅ Separate classes (`RouteStatistics`)
-- [ ] ❌ Cryptic one-liners → ✅ Explicit, readable OOP with proper discipline
-- [ ] ❌ `T | undefined` or `T?` for nullable → ✅ `Reference<T>` (T | null) for explicit nullability
-- [ ] ❌ Factory pattern boilerplate → ✅ Empty constructor + init() pattern (factories obsolete!)
-
----
-
-
-### **Architecture Overview**
-
-```plantuml
-@startuml ONCE Architecture
-!define INTERFACE_COLOR #E1F5FE
-!define IMPLEMENTATION_COLOR #C8E6C9
-!define INFRASTRUCTURE_COLOR #FFF9C4
-!define PROCESS_COLOR #F8BBD0
-!define UX_COLOR #E1BEE7
-
-package "Layer 5 - User Experience" <<UX_COLOR>> {
-  [CLI Commands]
-  [Demo Hub UI]
-  [Browser Clients]
-  [ONCE Client Pages]
-}
-
-package "Layer 4 - Business Processes" <<PROCESS_COLOR>> {
-  [Server Startup Process]
-  [Server Shutdown Process]
-  [User Session Process]
-  [Certificate Renewal Process]
-}
-
-package "Layer 3 - Interfaces" <<INTERFACE_COLOR>> {
-  [Component.interface.ts]
-  [ONCEServerModel.interface.ts]
-  [HTTPSServerModel.interface.ts]
-  [RouterModel.interface.ts]
-  [RouteModel.interface.ts]
-  [SessionManagerModel.interface.ts]
-  [LetsEncryptModel.interface.ts]
-  [LifecycleObserver.interface.ts]
-  [LifecycleState.enum.ts]
-  [LifecycleEventType.enum.ts]
-  [HttpMethod.enum.ts]
-}
-
-package "Layer 2 - Implementation" <<IMPLEMENTATION_COLOR>> {
-  [ServerHierarchyManager]
-  [DefaultHTTPSServer]
-  [DefaultRouter]
-  [DefaultRoute]
-  [DefaultSessionManager]
-  [DefaultLetsEncrypt]
-  [LifecycleSubject]
-  [ServerLifecycleObserver]
-}
-
-package "Layer 1 - Infrastructure" <<INFRASTRUCTURE_COLOR>> {
-  [NodeOSInfrastructure]
-  [NodeFileSystemInfrastructure]
-  [NodeNetworkInfrastructure]
-  [NodeHTTPInfrastructure]
-  [NodeWebSocketInfrastructure]
-}
-
-[CLI Commands] --> [Server Startup Process]
-[Demo Hub UI] --> [DefaultHTTPSServer]
-[Browser Clients] --> [DefaultRouter]
-
-[Server Startup Process] --> [ServerHierarchyManager]
-[Server Shutdown Process] --> [ServerHierarchyManager]
-[User Session Process] --> [DefaultSessionManager]
-[Certificate Renewal Process] --> [DefaultLetsEncrypt]
-
-[ServerHierarchyManager] --> [DefaultHTTPSServer]
-[ServerHierarchyManager] --> [LifecycleSubject]
-[DefaultHTTPSServer] --> [DefaultRouter]
-[DefaultHTTPSServer] --> [DefaultLetsEncrypt]
-[DefaultRouter] --> [DefaultRoute]
-[DefaultSessionManager] --> [DefaultUser]
-
-[ServerHierarchyManager] --> [ONCEServerModel.interface.ts]
-[DefaultHTTPSServer] --> [HTTPSServerModel.interface.ts]
-[DefaultRouter] --> [RouterModel.interface.ts]
-[DefaultRoute] --> [RouteModel.interface.ts]
-[DefaultSessionManager] --> [SessionManagerModel.interface.ts]
-[DefaultLetsEncrypt] --> [LetsEncryptModel.interface.ts]
-[LifecycleSubject] --> [LifecycleObserver.interface.ts]
-
-[DefaultHTTPSServer] --> [NodeHTTPInfrastructure]
-[DefaultHTTPSServer] --> [NodeWebSocketInfrastructure]
-[DefaultRouter] --> [NodeFileSystemInfrastructure]
-[DefaultLetsEncrypt] --> [NodeFileSystemInfrastructure]
-[DefaultSessionManager] --> [NodeOSInfrastructure]
-
-@enduml
-```
-
-### **Component Hierarchy**
-
-```plantuml
-@startuml Component Hierarchy
-skinparam component {
-  BackgroundColor<<interface>> LightBlue
-  BackgroundColor<<implementation>> LightGreen
-  BackgroundColor<<infrastructure>> LightYellow
-}
-
-component "Component<T>" <<interface>> {
-  + model: T
-  + ior: IOR
-  + init(scenario?: Scenario<T>): this
-  + toScenario(): Scenario<T>
-}
-
-component "DefaultHTTPSServer" <<implementation>> {
-  - model: HTTPSServerModel
-  - router: DefaultRouter
-  - lifecycleSubject: LifecycleSubject
-  + init(scenario?: Scenario<HTTPSServerModel>): this
-  + start(): Promise<void>
-  + stop(): Promise<void>
-}
-
-component "DefaultRouter" <<implementation>> {
-  - model: RouterModel
-  - routes: DefaultRoute[]
-  + addRoute(route: DefaultRoute): void
-  + handleRequest(req, res): void
-}
-
-component "DefaultRoute" <<implementation>> {
-  - model: RouteModel
-  + matches(pathname: string): boolean
-  + handle(req, res): void
-}
-
-component "DefaultSessionManager" <<implementation>> {
-  - model: SessionManagerModel
-  - users: Map<string, DefaultUser>
-  + createUser(): DefaultUser
-  + saveToIndexedDB(): Promise<void>
-}
-
-component "LifecycleSubject" <<implementation>> {
-  - model: LifecycleSubjectModel
-  - observers: LifecycleObserver[]
-  + attach(observer): void
-  + notify(event): Promise<void>
-}
-
-component "ServerLifecycleObserver" <<implementation>> {
-  - serverModel: ONCEServerModel
-  + onBeforeStart(event): void
-  + onAfterStart(event): void
-  + onBeforeStop(event): void
-}
-
-"Component<T>" <|.. "DefaultHTTPSServer"
-"Component<T>" <|.. "DefaultRouter"
-"Component<T>" <|.. "DefaultRoute"
-"Component<T>" <|.. "DefaultSessionManager"
-"Component<T>" <|.. "LifecycleSubject"
-
-"DefaultHTTPSServer" *-- "DefaultRouter"
-"DefaultHTTPSServer" *-- "LifecycleSubject"
-"DefaultRouter" o-- "DefaultRoute"
-"DefaultSessionManager" o-- "DefaultUser"
-"LifecycleSubject" o-- "ServerLifecycleObserver"
-
-@enduml
-```
-
-### **Lifecycle Event Flow (Observer Pattern)**
-
-```plantuml
-@startuml Lifecycle Event Flow
-participant "ServerHierarchyManager" as SHM
-participant "LifecycleSubject" as Subject
-participant "ServerLifecycleObserver" as Observer1
-participant "CustomObserver" as Observer2
-
-SHM -> Subject: attach(Observer1)
-SHM -> Subject: attach(Observer2)
-
-SHM -> Subject: notify(BEFORE_START)
-Subject -> Subject: calculateMethodName(BEFORE_START)\n→ "onBeforeStart"
-Subject -> Observer1: onBeforeStart(event)
-Observer1 --> Subject: void
-Subject -> Observer2: onBeforeStart(event)
-Observer2 --> Subject: Promise<void>
-Subject --> SHM: await Promise.all(promises)
-
-note right of Subject
-  ✅ Convention over Configuration:
-  - BEFORE_START → onBeforeStart
-  - AFTER_INIT → onAfterInit
-  - SERVER_REGISTRATION → onServerRegistration
-  
-  No switch/case needed!
-  Same pattern as CLI autodiscovery.
-end note
-
-SHM -> SHM: // Start server logic
-
-SHM -> Subject: notify(AFTER_START)
-Subject -> Observer1: onAfterStart(event)
-Subject -> Observer2: onAfterStart(event)
-
-@enduml
-```
-
-### **Scenario Flow (Everything is a Scenario)**
-
-```plantuml
-@startuml Scenario Flow
-participant "Component" as Comp
-participant "Scenario File" as File
-database "IndexedDB" as IDB
-participant "P2P Network" as P2P
-
-== Init (Restore from Scenario) ==
-File -> Comp: load scenario.json
-Comp -> Comp: init(scenario)
-note right
-  scenario = {
-    ior: { uuid, component, version },
-    owner: base64(User.toScenario()),
-    model: { ...state... }
-  }
-end note
-
-== Runtime ==
-Comp -> Comp: // Work with this.model
-
-== Hibernate (Save to Scenario) ==
-Comp -> Comp: toScenario()
-Comp -> File: save scenario.json
-
-== Transfer (P2P Communication) ==
-Comp -> P2P: send scenario
-P2P -> Comp: receive scenario
-Comp -> Comp: init(scenario)
-
-== Browser Persistence ==
-Comp -> IDB: saveToIndexedDB(scenario)
-IDB -> Comp: loadFromIndexedDB()
-Comp -> Comp: init(scenario)
-
-note bottom
-  ✅ Configuration IS a scenario
-  ✅ State IS a scenario
-  ✅ Everything IS a scenario
-  
-  No separate config files!
-  All data has IOR + owner + model.
-end note
-
-@enduml
-```
-
----
-
 
 ### **Phase 0: Layer 3 Audit (Interfaces Only!)**
 
@@ -4399,6 +4176,219 @@ export class DefaultSessionManager {
 
 ---
 
+## **📊 Summary**
+
+### **Files to Reuse (Already Perfect!)**
+
+**✅ EXISTING Enums** (2):
+1. `src/ts/layer3/LifecycleEvents.ts` - `LifecycleState` enum (PERFECT!)
+2. `src/ts/layer3/LifecycleEvents.ts` - `LifecycleEventType` enum (PERFECT!)
+
+**✅ EXISTING Models** (2):
+3. `src/ts/layer3/ONCEServerModel.ts` - `ONCEServerModel` interface (REUSE!)
+4. `src/ts/layer3/ONCEServerModel.ts` - `ServerCapability` interface (REUSE!)
+5. ~~`src/ts/layer3/ONCEServerModel.ts` - `ONCE_DEFAULT_CONFIG` const~~ ❌ **ARCHITECTURAL VIOLATION**
+
+**Why Reuse**:
+- ✅ Already follows enum pattern (not static class)
+- ✅ Already has all server state fields we need
+- ✅ Already includes `LifecycleState` integration
+- ✅ Already has `capabilities: ServerCapability[]`
+- ✅ Already has `isPrimaryServer` flag
+- ✅ Don't reinvent the wheel!
+
+---
+
+### **🚨 ARCHITECTURAL VIOLATION: Configuration Const**
+
+**Problem**:
+```typescript
+// ❌ WRONG: Separate configuration const (from ONCEServerModel.ts)
+export const ONCE_DEFAULT_CONFIG = {
+  PRIMARY_PORT: 42777,
+  FALLBACK_PORT_START: 8080,
+  DEFAULT_DOMAIN: 'local.once',
+  DEFAULT_IP: '127.0.0.1',
+  MAX_PORT_SCAN: 100
+} as const;
+```
+
+**Issues**:
+- ❌ No IOR (which component does this belong to?)
+- ❌ No owner (who owns this digital asset?)
+- ❌ Not a scenario (can't be persisted/restored/transferred)
+- ❌ **Violates Web4 principle: EVERYTHING is a scenario**
+- ❌ **Separate "config" concept doesn't exist in Web4**
+
+**✅ CORRECT: No Separate Config - Just Use Server Scenario**
+
+```typescript
+// ✅ Web4 Principle: There is NO separate configuration
+// ✅ Configuration IS just the server scenario with default values
+// ✅ ONCEServerModel already has ALL the fields we need!
+
+// File: src/ts/layer2/HTTPSServer.ts
+import { Scenario } from '../layer3/Scenario.interface.js';
+import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
+import { LifecycleState } from '../layer3/LifecycleState.enum.js';
+
+export class HTTPSServer implements Component<ONCEServerModel> {
+  model!: ONCEServerModel;
+  
+  constructor() { }  // ✅ Empty
+  
+  /**
+   * Initialize with scenario (or create default)
+   * ✅ Default values are NOT a separate "config"!
+   * ✅ Default values are just constructor logic in init()
+   */
+  init(scenario?: Scenario<ONCEServerModel>): this {
+    if (scenario) {
+      // ✅ Restore from scenario (hibernation)
+      this.model = scenario.model;
+    } else {
+      // ✅ Create default model (NO separate config!)
+      this.model = {
+        uuid: crypto.randomUUID(),
+        pid: process.pid,
+        state: LifecycleState.CREATED,
+        
+        // ✅ Default network values (NOT a separate "config")
+        domain: 'local.once',
+        hostname: 'localhost',
+        host: 'localhost',
+        ip: '127.0.0.1',
+        
+        // ✅ Default port (NOT a separate "config")
+        capabilities: [
+          { capability: 'httpPort', port: 42777 }
+        ],
+        
+        isPrimaryServer: false,
+        platform: { /* ... */ },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+    }
+    return this;
+  }
+  
+  async toScenario(): Promise<Scenario<ONCEServerModel>> {
+    return {
+      ior: this.ior,
+      owner: await this.getOwnerData(),
+      model: { ...this.model }  // ✅ Entire state
+    };
+  }
+}
+```
+
+**Key Changes**:
+- ❌ No `ONCEServerConfigModel` interface (not needed!)
+- ❌ No `createDefaultONCEServerScenario()` function (not needed!)
+- ❌ No `DefaultONCEServerConfig.ts` file (not needed!)
+- ✅ Just use `ONCEServerModel` with default values in `init()`
+- ✅ Default values are constructor logic, not "config"
+
+**Usage**:
+```typescript
+// ✅ Create with defaults (NO separate config!)
+const server = new HTTPSServer().init();
+
+// ✅ Or: Restore from scenario
+const scenario = await loadScenarioFromFile('server.scenario.json');
+const server = new HTTPSServer().init(scenario);
+
+// ✅ Access values from model (NO "config")
+const port = server.model.capabilities[0].port;
+
+// ✅ Runtime port resolution (update model directly)
+async findAvailablePort(startPort: number = 8080): Promise<number> {
+  for (let port = startPort; port < startPort + 100; port++) {
+    if (await this.isPortAvailable(port)) {
+      // ✅ Update model (no separate config!)
+      this.model.capabilities.push({ capability: 'httpPort', port });
+      return port;
+    }
+  }
+  throw new Error('No available port');
+}
+```
+
+---
+
+### **Files to Create (Minimal New Code)**
+
+**New Enums** (3):
+1. `src/ts/layer3/HttpMethod.enum.ts` (follows `LifecycleState` pattern)
+2. `src/ts/layer3/ONCEEnvironment.enum.ts` (NEW - replaces 'node' | 'browser' | ... string literals)
+3. `src/ts/layer3/RouteTargetType.enum.ts` (NEW - replaces 'file' | 'directory' | ... string literals)
+
+**New Type Aliases** (1):
+3. `src/ts/layer3/Reference.interface.ts` (insource from Web4TSComponent - nullable reference pattern)
+
+**New/Updated Models** (7):
+3. `src/ts/layer3/ONCEModel.interface.ts` (MINIMAL UPDATE - kernel state only)
+4. `src/ts/layer3/PathAuthorityModel.interface.ts` (NEW)
+5. `src/ts/layer3/SessionManagerModel.interface.ts` (NEW - uses Reference<DefaultUser>)
+6. `src/ts/layer3/HTTPSServerModel.interface.ts` (NEW - extends ONCEServerModel)
+7. `src/ts/layer3/RouterModel.interface.ts` (NEW)
+8. `src/ts/layer3/RouteModel.interface.ts` (NEW)
+9. `src/ts/layer3/LetsEncryptModel.interface.ts` (NEW)
+10. `src/ts/layer3/PrimaryServerModel.interface.ts` (NEW)
+
+**Layer 1 Infrastructure** (1):
+11. `src/ts/layer1/DefaultPathAuthority.ts` (NEW)
+
+**Layer 2 Components** (6):
+12. `src/ts/layer2/DefaultRouter.ts`
+13. `src/ts/layer2/DefaultRoute.ts`
+14. `src/ts/layer2/DefaultSessionManager.ts` (NEW)
+15. `src/ts/layer2/DefaultHTTPSServer.ts` (TODO)
+16. `src/ts/layer2/DefaultLetsEncrypt.ts` (TODO)
+17. `src/ts/layer2/DefaultPrimaryServer.ts` (TODO)
+18. `src/ts/layer2/RouteStatistics.ts` (NEW - separation of concerns: statistics in own class)
+
+**View Files** (5):
+18. `src/view/html/404.html` (NEW)
+19. `src/view/html/500.html` (NEW)
+20. `src/view/css/error.css` (NEW)
+21. `src/view/html/index.html` (UPDATE)
+22. `src/view/html/demo-hub.html` (UPDATE)
+
+**Kernel** (1):
+23. `src/ts/layer2/DefaultONCE.ts` (UPDATE)
+
+---
+
+### **Anti-Patterns Eliminated**
+
+| Anti-Pattern | Violation | Solution |
+|--------------|-----------|----------|
+| Inline HTML | Separation of concerns | ✅ External HTML files |
+| `__dirname` calculation | CommonJS pattern | ✅ PathAuthority component |
+| Switch/case routing | Functional pattern | ✅ Dynamic Router |
+| Scattered paths | No DRY | ✅ PathAuthority model |
+| No session mgmt | Missing User integration | ✅ SessionManager + IndexedDB |
+
+---
+
+### **Validation Criteria**
+
+**Success Criteria**:
+1. ✅ Static enums work (HttpMethod.GET, ServerRole.PRIMARY)
+2. ✅ Each component has own model
+3. ✅ Empty constructor + init(scenario) everywhere
+4. ✅ ONCE loads components (kernel pattern)
+5. ✅ HTTPSServer works (HTTP/HTTPS)
+6. ✅ Router works (dynamic routing, no switch/case)
+7. ✅ **NO inline HTML** - all HTML in external files
+8. ✅ **NO __dirname** - all paths from PathAuthority
+9. ✅ SessionManager creates Users
+10. ✅ Users stored in IndexedDB
+11. ✅ All existing functionality preserved
+12. ✅ Tests pass
+13. ✅ Zero breaking changes
 
 ---
 
@@ -4492,9 +4482,6 @@ This refactoring is implemented through **12 systematic iterations**, each with 
 
 ---
 
-
----
-
 ## **C - CHECK (Validation)**
 
 ### **Web4 Principles Compliance Check**
@@ -4567,9 +4554,6 @@ This refactoring is implemented through **12 systematic iterations**, each with 
 **Total Violations Found**: 13  
 **Violations Addressed in Plan**: 13 ✅  
 **Coverage**: 100% ✅
-
----
-
 
 ---
 
