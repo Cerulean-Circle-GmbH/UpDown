@@ -1812,7 +1812,11 @@ export class DefaultONCE implements ONCE {
         version: this.model.version || 'unknown', // ✅ Use dynamic version
         state: {
           type: 'relay',
-          from: { uuid: client1Model.uuid, port: client1Model.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0 },
+          from: { 
+            uuid: client1Model.uuid, 
+            port: client1Model.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0,
+            host: client1Model.host // ✅ Add host field
+          },
           to: { uuid: client2Model.uuid, port: client2Model.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0 },
           content: `Relay message from client 1 to client 2 via primary`,
           timestamp: new Date().toISOString(),
