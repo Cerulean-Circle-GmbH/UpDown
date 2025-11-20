@@ -565,5 +565,66 @@ describe('Primary Server Housekeeping', () => {
         expect(housekeepingLog).toContain('deleted');
         console.log('✅ Housekeeping summary logged:', housekeepingLog);
     }, 15000);
+
+    it('should clean up broken symlinks and empty directories', async () => {
+        // This test verifies Fix Finding 9 - Orphaned symlinks cleanup
+        // @pdca 2025-11-20-UTC-1600.iteration-01.5-test-stabilization.pdca.md
+        
+        const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+        
+        // Get the ONCE base directory (parent of version directories)
+        const onceBaseDir = path.dirname(scenarioBaseDir);
+        const testVersionDir = path.join(onceBaseDir, 'test-cleanup-version');
+        const capabilityDir = path.join(testVersionDir, 'capability', 'httpPort');
+        const port9000Dir = path.join(capabilityDir, '9000');
+        const port9001Dir = path.join(capabilityDir, '9001');
+        
+        fs.mkdirSync(port9000Dir, { recursive: true });
+        fs.mkdirSync(port9001Dir, { recursive: true });
+        
+        // Create broken symlinks (pointing to non-existent files)
+        const symlinkPath1 = path.join(port9000Dir, 'broken1.scenario.json');
+        const symlinkPath2 = path.join(port9001Dir, 'broken2.scenario.json');
+        
+        fs.symlinkSync('../../../non-existent-file.json', symlinkPath1);
+        fs.symlinkSync('../../../non-existent-file.json', symlinkPath2);
+        
+        // Verify broken symlinks exist before housekeeping
+        expect(fs.lstatSync(symlinkPath1).isSymbolicLink()).toBe(true);
+        expect(fs.lstatSync(symlinkPath2).isSymbolicLink()).toBe(true);
+        expect(fs.existsSync(symlinkPath1)).toBe(false); // Target doesn't exist
+        expect(fs.existsSync(symlinkPath2)).toBe(false); // Target doesn't exist
+        console.log(`✅ Created broken symlinks in ${testVersionDir}`);
+        
+        // Start primary server (triggers housekeeping)
+        primaryServer = new DefaultONCE();
+        await primaryServer.init();
+        await primaryServer.startServer();
+        serverInstances.push(primaryServer);
+        
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Verify broken symlinks were deleted
+        expect(fs.existsSync(symlinkPath1)).toBe(false);
+        expect(fs.existsSync(symlinkPath2)).toBe(false);
+        console.log('✅ Broken symlinks deleted');
+        
+        // Verify empty port directories were removed
+        expect(fs.existsSync(port9000Dir)).toBe(false);
+        expect(fs.existsSync(port9001Dir)).toBe(false);
+        console.log('✅ Empty port directories removed');
+        
+        // Verify capability directory was removed (should be empty after port dirs deleted)
+        expect(fs.existsSync(capabilityDir)).toBe(false);
+        console.log('✅ Empty capability directory removed');
+        
+        // Cleanup
+        await primaryServer.stopServer();
+        
+        // Clean up test version directory if it still exists
+        if (fs.existsSync(testVersionDir)) {
+            fs.rmSync(testVersionDir, { recursive: true, force: true });
+        }
+    }, 15000);
 });
 
