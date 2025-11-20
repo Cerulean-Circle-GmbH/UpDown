@@ -1,10 +1,10 @@
 {
-  "uuid": "2f4bb4f9-ea29-4ae5-b448-058abb06378a",
+  "uuid": "98b255a0-0b4e-4336-862c-3aef1fb9db71",
   "objectType": "ONCE",
   "version": "0.3.20.5",
   "state": {
-    "pid": 27144,
-    "state": "shutdown",
+    "pid": 94731,
+    "state": "stopping",
     "domain": "box.fritz",
     "host": "McDonges-3.fritz.box",
     "ip": "192.168.178.49",
@@ -19,7 +19,7 @@
       }
     ],
     "isPrimaryServer": true,
-    "uuid": "2f4bb4f9-ea29-4ae5-b448-058abb06378a",
+    "uuid": "98b255a0-0b4e-4336-862c-3aef1fb9db71",
     "platform": {
       "platform": "node",
       "version": "v22.20.0",
@@ -35,8 +35,8 @@
     "hostname": "McDonges-3"
   },
   "metadata": {
-    "created": "2025-11-20T14:44:21.141Z",
-    "modified": "2025-11-20T15:48:32.067Z",
+    "created": "2025-11-20T18:25:26.893Z",
+    "modified": "2025-11-20T18:25:40.652Z",
     "creator": "ONCE-v0.3.20.5",
     "description": "ONCE server Primary server instance",
     "tags": [
