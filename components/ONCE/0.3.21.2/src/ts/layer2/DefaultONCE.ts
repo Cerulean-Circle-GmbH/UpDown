@@ -10,7 +10,11 @@ import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { Component } from '../layer3/Component.js';
 import { IOR } from '../layer3/IOR.js';
-import { LifecycleEventType, LifecycleEventHandler, LifecycleHooks, LifecycleState } from '../layer3/LifecycleEvents.js';
+import { LifecycleEventType, LifecycleState } from '../layer3/LifecycleEvents.js';
+import { LifecycleObserver } from '../layer3/LifecycleObserver.interface.js';
+// ⚠️ DEPRECATED imports (functional pattern, will be removed):
+type LifecycleEventHandler = (event: any) => void | Promise<void>;
+type LifecycleHooks = Record<string, LifecycleEventHandler>;
 import { ONCEServerModel } from '../layer3/ONCEServerModel.js';
 import { ServerHierarchyManager } from './ServerHierarchyManager.js';
 import { ScenarioManager } from './ScenarioManager.js';
@@ -580,6 +584,34 @@ export class DefaultONCE implements ONCE {
       scenariosExchanged: 0,
       serversRegistered: this.getRegisteredServers().length
     };
+  }
+
+  /**
+   * Register lifecycle observer
+   * ✅ TRUE Radical OOP: Observer pattern replaces functional handlers
+   * @pdca session/2025-11-19-UTC-1805.iteration-01-layer3-split.pdca.md
+   */
+  attachObserver(observer: LifecycleObserver): void {
+    if (!this.model.observers) {
+      this.model.observers = [];
+    }
+    this.model.observers.push(observer);
+    console.log(`🔗 Lifecycle observer attached`);
+  }
+
+  /**
+   * Remove lifecycle observer
+   * ✅ TRUE Radical OOP: Observer pattern replaces functional handlers
+   * @pdca session/2025-11-19-UTC-1805.iteration-01-layer3-split.pdca.md
+   */
+  detachObserver(observer: LifecycleObserver): void {
+    if (this.model.observers) {
+      const index = this.model.observers.indexOf(observer);
+      if (index > -1) {
+        this.model.observers.splice(index, 1);
+        console.log(`🔗 Lifecycle observer detached`);
+      }
+    }
   }
 
   on(eventType: LifecycleEventType, handler: LifecycleEventHandler): void {

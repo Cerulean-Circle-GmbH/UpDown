@@ -1,12 +1,18 @@
 /**
  * ONCEModel - ONCE Component Model Interface
  * Web4 pattern: Component model following auto-discovery patterns
+ * @pdca session/2025-11-19-UTC-1805.iteration-01-layer3-split.pdca.md - Updated imports for Layer 3 split
  */
 
 import { Model } from './Model.interface.js';
 import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
-import { LifecycleEventType, LifecycleEventHandler } from './LifecycleEvents.js';
+import { LifecycleEventType } from './LifecycleEventType.enum.js';
+import { LifecycleObserver } from './LifecycleObserver.interface.js';
 import { ONCEServerModel } from './ONCEServerModel.js';
+
+// ⚠️ DEPRECATED: Functional event handlers (will be removed in future version)
+// Use LifecycleObserver instead
+type LifecycleEventHandler = (event: any) => void | Promise<void>;
 
 /**
  * Web4 Scenario Message - TRUE Radical OOP Message Format
@@ -79,7 +85,8 @@ export interface ONCEModel extends Model {
   initializationTime?: number;                     // Time taken for initialization (ms)
   scenario?: LegacyONCEScenario;                             // Current ONCE scenario
   serverModel?: ONCEServerModel;                   // Server model for hierarchy
-  eventHandlers?: Map<LifecycleEventType, LifecycleEventHandler[]>; // Lifecycle event handlers
+  eventHandlers?: Map<LifecycleEventType, LifecycleEventHandler[]>; // ⚠️ DEPRECATED: Use observers instead
+  observers?: LifecycleObserver[];                 // ✅ TRUE Radical OOP: Observer pattern (replaces eventHandlers)
   
   // 📨 Message Exchange Properties - TRUE Radical OOP
   // @pdca 2025-11-11-UTC-2322.pdca.md - Model-driven message tracking

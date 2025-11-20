@@ -1,11 +1,11 @@
 /**
  * ONCE - ONCE Component Interface
  * Web4 pattern: Component interface definition
- * @pdca 2025-11-10-UTC-1830.migrate-once-to-0.3.20.0.pdca.md - Updated for 0.3.20.0
+ * @pdca session/2025-11-19-UTC-1805.iteration-01-layer3-split.pdca.md - Updated for Layer 3 split
  */
 
 import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
-import { ONCE as ONCEDomain } from './ONCE.js';
+import { ONCEDomain } from './ONCEDomain.interface.js';
 
 /**
  * ONCE Component interface - combines domain interface with CLI methods
