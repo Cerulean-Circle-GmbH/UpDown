@@ -19,15 +19,11 @@ async function spawnServer(isPrimary: boolean = false): Promise<{ process: Child
         const serverType = isPrimary ? 'primary' : 'client';
         const scriptPath = path.resolve(__dirname, 'spawn-server.mjs');
         
-        // ✅ Pass TEST_PROJECT_ROOT environment variable for test isolation
-        const productionRoot = path.resolve(__dirname, '../../../..');
-        const testProjectRoot = path.join(productionRoot, 'components/ONCE', '0.3.21.2', 'test/data');
-        
         // Spawn node process running the spawn script
         const serverProcess = spawn('node', [scriptPath, serverType], {
             cwd: path.resolve(__dirname, '..'),
             stdio: ['ignore', 'pipe', 'pipe'],
-            env: { ...process.env, NODE_ENV: 'test', TEST_PROJECT_ROOT: testProjectRoot }
+            env: { ...process.env, NODE_ENV: 'test' }
         });
         
         let resolved = false;
@@ -145,18 +141,8 @@ describe('Server Lifecycle Management', () => {
         // Trigger web4ts initialization to populate model.projectRoot
         await (tempInstance as any).getWeb4TSComponent();
         
-        // ✅ TEST ISOLATION: Use test/data as project root (not production!)
-        const productionRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../../../..');
-        testProjectRoot = path.join(productionRoot, 'components/ONCE', tempInstance.model.version, 'test/data');
+        testProjectRoot = tempInstance.model.projectRoot;
         componentVersion = tempInstance.model.version;
-        
-        // Create test/data directory if it doesn't exist
-        if (!fs.existsSync(testProjectRoot)) {
-            fs.mkdirSync(testProjectRoot, { recursive: true });
-        }
-        
-        // ✅ Override project root for test isolation
-        tempInstance.model.projectRoot = testProjectRoot;
         
         // ✅ Get the actual domain/hostname being used by servers
         await tempInstance.startServer();

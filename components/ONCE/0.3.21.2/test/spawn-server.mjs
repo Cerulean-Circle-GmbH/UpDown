@@ -4,8 +4,6 @@
  */
 
 import { DefaultONCE } from '../dist/ts/layer2/DefaultONCE.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 const serverType = process.argv[2] || 'client';
 
@@ -13,13 +11,6 @@ async function main() {
     try {
         const server = new DefaultONCE();
         await server.init();
-        
-        // ✅ TEST ISOLATION: Override project root if TEST_PROJECT_ROOT env var is set
-        if (process.env.TEST_PROJECT_ROOT) {
-            server.model.projectRoot = process.env.TEST_PROJECT_ROOT;
-            process.stderr.write(`✅ Using test project root: ${process.env.TEST_PROJECT_ROOT}\n`);
-        }
-        
         await server.startServer();
         
         const model = server.getServerModel();
