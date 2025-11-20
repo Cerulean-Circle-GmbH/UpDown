@@ -22,6 +22,7 @@ import { EnvironmentModel } from '../layer3/EnvironmentModel.interface.js';
 import { ScenarioTypeGuard } from '../layer1/ScenarioTypeGuard.js';
 import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
+import { HostnameParser } from '../layer1/HostnameParser.js';
 
 /**
  * Server registry entry for primary server
@@ -87,6 +88,8 @@ export class ServerHierarchyManager {
     /**
      * Synchronous version of detectAndSetEnvironment() for use in constructor
      * Uses direct os module calls (will be improved in Iteration 2 with Layer 1)
+     * ✅ Web4 Principle 7: Async only in Layer 4 (this is sync for Layer 2)
+     * ✅ Web4 Principle 8: DRY - Uses HostnameParser utility class
      * @private
      */
     private detectAndSetEnvironmentSync(): void {
@@ -95,20 +98,12 @@ export class ServerHierarchyManager {
             const fullHostname = os.hostname();
             
             if (fullHostname && fullHostname !== 'localhost') {
-                this.serverModel.host = fullHostname; // FQDN: "McDonges-3.fritz.box"
+                // ✅ DRY: Use HostnameParser instead of inline logic
+                const parsed = HostnameParser.parseFQDN(fullHostname);
                 
-                // Extract short hostname and domain
-                if (fullHostname.includes('.')) {
-                    const parts = fullHostname.split('.');
-                    this.serverModel.hostname = parts[0]; // "McDonges-3"
-                    // ✅ FIX: Reverse domain parts to match directory structure
-                    // "McDonges-3.fritz.box" → domain "box.fritz"
-                    this.serverModel.domain = parts.slice(1).reverse().join('.'); // "box.fritz"
-                } else {
-                    // Simple hostname without dots
-                    this.serverModel.hostname = fullHostname;
-                    this.serverModel.domain = 'local.once'; // Fallback for non-FQDN
-                }
+                this.serverModel.host = parsed.fqdn;              // "McDonges-3.fritz.box"
+                this.serverModel.hostname = parsed.hostname;       // "McDonges-3"
+                this.serverModel.domain = parsed.domainReversed;   // "box.fritz" (reversed for paths)
                 
                 // Detect IP address from network interfaces
                 const interfaces = os.networkInterfaces();

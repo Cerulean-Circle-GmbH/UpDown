@@ -11,7 +11,7 @@
     "version": "0.3.21.1",
     "state": {
       "pid": 95614,
-      "state": "running",
+      "state": "shutdown",
       "domain": "box.fritz",
       "host": "McDonges-3.fritz.box",
       "ip": "192.168.178.49",
@@ -41,7 +41,7 @@
     },
     "metadata": {
       "created": "2025-11-19T16:17:21.856Z",
-      "modified": "2025-11-19T16:17:21.860Z",
+      "modified": "2025-11-20T14:42:43.155Z",
       "creator": "ONCE-v0.3.21.1",
       "description": "ONCE server Primary server instance",
       "tags": [
