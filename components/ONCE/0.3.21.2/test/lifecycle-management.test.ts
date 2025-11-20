@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { spawn, ChildProcess } from 'child_process';
 import * as http from 'http';
+import { LifecycleState } from '../src/ts/layer3/LifecycleState.enum.js';
 
 /**
  * Helper: Spawn a server as a separate process
@@ -314,10 +315,18 @@ describe('Server Lifecycle Management', () => {
             // Stop client but keep scenario as "running" (simulating crash)
             await clientServer.stopServer();
             
+            // Read the actual scenario file (not the symlink) to modify it
+            // Symlinks are at: ${scenarioBaseDir}/capability/httpPort/${port}/${uuid}.scenario.json
+            // Actual files are at: ${scenarioBaseDir}/${uuid}.scenario.json
+            const actualScenarioPath = `${scenarioBaseDir}/${clientModel.uuid}.scenario.json`;
+            
             // Manually set scenario back to running state (simulate unclean shutdown)
-            const scenarioData = JSON.parse(fs.readFileSync(clientScenarioPath, 'utf8'));
-            scenarioData.state.state = 'running';
-            fs.writeFileSync(clientScenarioPath, JSON.stringify(scenarioData, null, 2));
+            const scenarioData = JSON.parse(fs.readFileSync(actualScenarioPath, 'utf8'));
+            if (!scenarioData.state) {
+                throw new Error(`Scenario has no state property: ${actualScenarioPath}`);
+            }
+            scenarioData.state.state = LifecycleState.RUNNING;
+            fs.writeFileSync(actualScenarioPath, JSON.stringify(scenarioData, null, 2));
             
             // Scenario should be deleted by housekeeping since server is not reachable
             // We'll restart primary to trigger housekeeping again
@@ -357,7 +366,7 @@ describe('Server Lifecycle Management', () => {
             // Verify scenario exists with RUNNING state
             expect(fs.existsSync(scenarioPath)).toBe(true);
             const runningScenario = JSON.parse(fs.readFileSync(scenarioPath, 'utf8'));
-            expect(runningScenario.state.state).toBe('running');
+            expect(runningScenario.state.state).toBe(LifecycleState.RUNNING);
             
             // Stop server (triggers graceful shutdown)
             await server.stopServer();
@@ -365,7 +374,7 @@ describe('Server Lifecycle Management', () => {
             // Verify scenario was updated to SHUTDOWN state
             expect(fs.existsSync(scenarioPath)).toBe(true);
             const shutdownScenario = JSON.parse(fs.readFileSync(scenarioPath, 'utf8'));
-            expect(shutdownScenario.state.state).toBe('shutdown');
+            expect(shutdownScenario.state.state).toBe(LifecycleState.SHUTDOWN);
         }, 10000);
     });
     
@@ -448,7 +457,7 @@ describe('Server Lifecycle Management', () => {
             // Verify scenario shows shutdown state
             expect(fs.existsSync(clientScenarioPath)).toBe(true);
             const scenario = JSON.parse(fs.readFileSync(clientScenarioPath, 'utf8'));
-            expect(scenario.state.state).toBe('shutdown');
+            expect(scenario.state.state).toBe(LifecycleState.SHUTDOWN);
             
             // Cleanup
             await primaryServer.stopServer();
