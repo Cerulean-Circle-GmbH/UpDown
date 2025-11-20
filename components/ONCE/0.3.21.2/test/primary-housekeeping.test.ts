@@ -21,12 +21,24 @@ describe('Primary Server Housekeeping', () => {
     beforeEach(async () => {
         const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
         
-        // Get project root and version from DefaultONCE (Path Authority)
+        // ✅ TEST ISOLATION: Use test/data as project root (not production!)
+        // Path Authority: CLI provides paths, component uses them
+        const productionRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../../../..');
+        testProjectRoot = path.join(productionRoot, 'components/ONCE', '0.3.21.2', 'test/data');
+        
+        // Create test/data directory if it doesn't exist
+        if (!fs.existsSync(testProjectRoot)) {
+            fs.mkdirSync(testProjectRoot, { recursive: true });
+        }
+        
+        // Get version from DefaultONCE
         const tempInstance = new DefaultONCE();
         await tempInstance.init();
         await (tempInstance as any).getWeb4TSComponent();
-        testProjectRoot = tempInstance.model.projectRoot;
         componentVersion = tempInstance.model.version;
+        
+        // Override project root for test isolation
+        tempInstance.model.projectRoot = testProjectRoot;
         
         // Detect domain/hostname only once (first test run)
         if (!domainDetected) {
