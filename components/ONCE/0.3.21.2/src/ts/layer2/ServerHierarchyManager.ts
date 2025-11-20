@@ -699,7 +699,12 @@ export class ServerHierarchyManager {
                 break;
             case 'scenario-message':
                 // @pdca 2025-11-11-UTC-2322.pdca.md - Handle incoming scenario messages
-                if (message.scenario.state.type === 'broadcast') {
+                // ✅ Extract model from Web4 scenario format if needed
+                const scenarioModel = message.scenario.ior && message.scenario.model 
+                    ? message.scenario.model  // Web4 format: {ior, owner, model}
+                    : message.scenario;       // Legacy format: model directly
+                
+                if (scenarioModel.state?.type === 'broadcast') {
                     if (this.serverModel.isPrimaryServer) {
                         // Primary received broadcast (from browser or client) - broadcast to all
                         console.log(`📡 Primary broadcasting scenario ${message.scenario.uuid}`);
@@ -785,18 +790,23 @@ export class ServerHierarchyManager {
      * @pdca 2025-11-11-UTC-2322.pdca.md - Process and track received scenarios
      */
     private async handleScenarioMessage(scenario: ONCEScenarioMessage): Promise<void> {
+        // ✅ Extract model from Web4 scenario format if needed
+        const scenarioModel = (scenario as any).ior && (scenario as any).model 
+            ? (scenario as any).model  // Web4 format: {ior, owner, model}
+            : scenario;                // Legacy format: model directly
+        
         // Extract sender info
-        const fromUUID = scenario.state.from?.uuid || 'unknown';
-        const fromPort = scenario.state.from?.port || 'unknown';
+        const fromUUID = scenarioModel.state?.from?.uuid || 'unknown';
+        const fromPort = scenarioModel.state?.from?.port || 'unknown';
         const fromURL = fromPort !== 'unknown' ? `http://localhost:${fromPort}` : 'unknown';
         
         console.log(`📥 Received: scenario-message from ${fromUUID.substring(0, 8)}... at ${fromURL}`);
-        console.log(`   Type: ${scenario.state.type}`);
-        console.log(`   Content: ${scenario.state.content}`);
-        console.log(`   Sequence: ${scenario.state.sequence}`);
+        console.log(`   Type: ${scenarioModel.state?.type || 'unknown'}`);
+        console.log(`   Content: ${scenarioModel.state?.content || 'N/A'}`);
+        console.log(`   Sequence: ${scenarioModel.state?.sequence || 'N/A'}`);
         
         // Do NOT ACK an ACK (prevents infinite loop)
-        if (scenario.state.content.startsWith('ACK:')) {
+        if (scenarioModel.state?.content?.startsWith('ACK:')) {
             return;
         }
         
@@ -806,10 +816,10 @@ export class ServerHierarchyManager {
             objectType: 'ONCEMessage',
             version: this.version, // ✅ Use dynamic version
             state: {
-                type: scenario.state.type,
+                type: scenarioModel.state?.type || 'direct',
                 from: { uuid: this.serverModel.uuid, port: this.getHttpPort() },
-                to: scenario.state.from,
-                content: `ACK: ${scenario.uuid}`,
+                to: scenarioModel.state?.from || { uuid: 'unknown', port: 0 },
+                content: `ACK: ${(scenario as any).ior?.uuid || scenario.uuid}`,
                 timestamp: new Date().toISOString(),
                 sequence: 0
             },
@@ -817,14 +827,14 @@ export class ServerHierarchyManager {
                 created: new Date().toISOString(),
                 modified: new Date().toISOString(),
                 creator: 'ONCE-auto-ack',
-                description: `Acknowledgment for ${scenario.uuid}`
+                description: `Acknowledgment for ${(scenario as any).ior?.uuid || scenario.uuid}`
             }
         };
 
         // Send ack back to sender
-        if (scenario.state.from.port) {
+        if (scenarioModel.state?.from?.port) {
             try {
-                const ackConnection = new WebSocket(`ws://localhost:${scenario.state.from.port}`);
+                const ackConnection = new WebSocket(`ws://localhost:${scenarioModel.state.from.port}`);
                 ackConnection.on('open', () => {
                     ackConnection.send(JSON.stringify({
                         type: 'scenario-message',
