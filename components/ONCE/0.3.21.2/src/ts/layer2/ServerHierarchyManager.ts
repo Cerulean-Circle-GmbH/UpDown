@@ -13,6 +13,7 @@ import { IOR, iorToUrl } from '../layer3/IOR.js';
 import { v4 as uuidv4 } from 'uuid';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as os from 'os';
 import { logAction, logBroadcast, logRegistration, logConnection, logDisconnection, shortUUID, serverIdentity } from '../layer1/LoggingUtils.js';
 import { fileURLToPath } from 'url';
 import { ONCEScenarioMessage } from '../layer3/ONCEScenarioMessage.interface.js';
@@ -59,13 +60,16 @@ export class ServerHierarchyManager {
             pid: process.pid,
             state: LifecycleState.CREATED,
             platform: this.detectEnvironment(),
-            domain: 'local.once', // ✅ Temporary fallback, will be set by detectAndSetEnvironment()
-            hostname: 'localhost', // ✅ Temporary fallback, will be set by detectAndSetEnvironment()
-            host: 'localhost', // ✅ Temporary fallback, will be set by detectAndSetEnvironment()
-            ip: '127.0.0.1', // ✅ Temporary fallback, will be set by detectAndSetEnvironment()
+            domain: 'local.once', // ✅ Temporary fallback, will be overwritten below
+            hostname: 'localhost', // ✅ Temporary fallback, will be overwritten below
+            host: 'localhost', // ✅ Temporary fallback, will be overwritten below
+            ip: '127.0.0.1', // ✅ Temporary fallback, will be overwritten below
             capabilities: [],
             isPrimaryServer: false
         } as ONCEServerModel;
+        
+        // ✅ FIX: Call synchronous hostname detection immediately in constructor
+        this.detectAndSetEnvironmentSync();
     }
     
     /**
@@ -78,6 +82,56 @@ export class ServerHierarchyManager {
         this.serverModel.host = env.getFqdn();
         this.serverModel.ip = env.getPrimaryIP();
         this.serverModel.domain = env.getDomain();
+    }
+    
+    /**
+     * Synchronous version of detectAndSetEnvironment() for use in constructor
+     * Uses direct os module calls (will be improved in Iteration 2 with Layer 1)
+     * @private
+     */
+    private detectAndSetEnvironmentSync(): void {
+        try {
+            // Detect hostname using os.hostname()
+            const fullHostname = os.hostname();
+            
+            if (fullHostname && fullHostname !== 'localhost') {
+                this.serverModel.host = fullHostname; // FQDN: "McDonges-3.fritz.box"
+                
+                // Extract short hostname and domain
+                if (fullHostname.includes('.')) {
+                    const parts = fullHostname.split('.');
+                    this.serverModel.hostname = parts[0]; // "McDonges-3"
+                    // ✅ FIX: Reverse domain parts to match directory structure
+                    // "McDonges-3.fritz.box" → domain "box.fritz"
+                    this.serverModel.domain = parts.slice(1).reverse().join('.'); // "box.fritz"
+                } else {
+                    // Simple hostname without dots
+                    this.serverModel.hostname = fullHostname;
+                    this.serverModel.domain = 'local.once'; // Fallback for non-FQDN
+                }
+                
+                // Detect IP address from network interfaces
+                const interfaces = os.networkInterfaces();
+                for (const name of Object.keys(interfaces)) {
+                    const ifaces = interfaces[name];
+                    if (ifaces) {
+                        for (const iface of ifaces) {
+                            // Skip internal (loopback) interfaces
+                            if (iface.family === 'IPv4' && !iface.internal) {
+                                this.serverModel.ip = iface.address;
+                                break;
+                            }
+                        }
+                    }
+                    // Break outer loop if we found a non-loopback IP
+                    if (this.serverModel.ip !== '127.0.0.1') break;
+                }
+            }
+            // If detection fails, keep fallback values from model initialization
+        } catch (error) {
+            // If detection fails, keep fallback values
+            console.warn('⚠️  Hostname detection failed, using fallback values:', error);
+        }
     }
     
     /**
@@ -101,6 +155,9 @@ export class ServerHierarchyManager {
         this.serverModel.state = LifecycleState.STARTING;
 
         try {
+            // ✅ FIX: Detect hostname/domain/IP before starting server
+            await this.detectAndSetEnvironment();
+            
             // Get next available port (42777 or 8080+)
             const portResult = await this.portManager.getNextAvailablePort();
             
