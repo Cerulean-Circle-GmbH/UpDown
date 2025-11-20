@@ -1488,6 +1488,67 @@ export class ServerHierarchyManager {
             // Aggregate counts for this version
             totalDeleted += deletedCount;
             totalDiscovered += discoveredCount;
+            
+            // ✅ CLEANUP PHASE 1: Remove ALL broken symlinks in capability directory
+            const capabilityDir = path.join(scenarioBaseDir, 'capability');
+            if (fs.existsSync(capabilityDir)) {
+                const cleanupBrokenSymlinks = (dir: string): number => {
+                    let cleaned = 0;
+                    const items = fs.readdirSync(dir);
+                    
+                    for (const item of items) {
+                        const fullPath = path.join(dir, item);
+                        const stats = fs.lstatSync(fullPath);
+                        
+                        if (stats.isDirectory()) {
+                            cleaned += cleanupBrokenSymlinks(fullPath);
+                        } else if (stats.isSymbolicLink()) {
+                            // Check if symlink target exists
+                            if (!fs.existsSync(fullPath)) {
+                                fs.unlinkSync(fullPath);
+                                cleaned++;
+                                console.log(`🗑️  Deleted broken symlink: ${path.relative(scenarioBaseDir, fullPath)}`);
+                            }
+                        }
+                    }
+                    return cleaned;
+                };
+                
+                const brokenSymlinksRemoved = cleanupBrokenSymlinks(capabilityDir);
+                if (brokenSymlinksRemoved > 0) {
+                    console.log(`🗑️  Removed ${brokenSymlinksRemoved} broken symlink(s) in capability directory`);
+                }
+            }
+            
+            // ✅ CLEANUP PHASE 2: Remove empty directories after housekeeping
+            const cleanupEmptyDirs = (dir: string): boolean => {
+                if (!fs.existsSync(dir)) return true;
+                
+                const items = fs.readdirSync(dir);
+                
+                // Recursively clean subdirectories first
+                for (const item of items) {
+                    const fullPath = path.join(dir, item);
+                    if (fs.statSync(fullPath).isDirectory()) {
+                        cleanupEmptyDirs(fullPath);
+                    }
+                }
+                
+                // Check if directory is now empty
+                const remainingItems = fs.readdirSync(dir);
+                if (remainingItems.length === 0) {
+                    fs.rmdirSync(dir);
+                    console.log(`🗑️  Removed empty directory: ${path.relative(scenarioBaseDir, dir)}`);
+                    return true;
+                }
+                return false;
+            };
+            
+            // Clean up capability directories
+            if (fs.existsSync(capabilityDir)) {
+                cleanupEmptyDirs(capabilityDir);
+            }
+            
             }  // END for each version directory
             
             console.log(`✅ Housekeeping complete: ${totalDeleted} deleted, ${totalDiscovered} discovered`);
