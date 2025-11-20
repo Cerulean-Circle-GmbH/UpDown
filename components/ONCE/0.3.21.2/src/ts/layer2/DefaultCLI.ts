@@ -36,6 +36,21 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
   model!: CLIModel; // Definite assignment - initialized in init()
   
   /**
+   * Interoperable Object Reference (IOR)
+   * ⚠️ TODO: Properly implement IOR generation in init() method
+   * @pdca session/2025-11-19-UTC-1805.iteration-01-layer3-split.pdca.md - Stub added for compilation
+   */
+  ior: import("../layer3/IOR.js").IOR = {
+    protocol: 'web4',
+    host: 'localhost',
+    port: 0,
+    path: '/',
+    uuid: '',
+    objectType: 'CLI',
+    version: '0.0.0'
+  };
+  
+  /**
    * CLI's own method signatures (class metadata, not model state)
    * @pdca 2025-11-05-UTC-1158.pdca.md - Renamed from methodSignatures for clarity, protected for subclass access
    */

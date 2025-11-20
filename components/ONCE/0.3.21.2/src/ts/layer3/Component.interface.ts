@@ -4,23 +4,35 @@
  * 
  * Purpose: Provides common contract for:
  * - Lifecycle (init, toScenario)
+ * - Identity (ior - Interoperable Object Reference)
  * 
  * Note: Development methods (test, build, clean) are in Web4TSComponent interface
  * as they're specific to TypeScript component development, not universal
+ * 
+ * @pdca session/2025-11-19-UTC-1805.iteration-01-layer3-split.pdca.md - Added IOR property
  */
 
 import { Scenario } from './Scenario.interface.js';
 import { Model } from './Model.interface.js';
 import { MethodSignature } from './MethodSignature.interface.js';
+import { IOR } from './IOR.js';
 
 /**
  * Base interface for all Web4 components
- * Ensures every component has fundamental lifecycle methods
+ * Ensures every component has fundamental lifecycle methods and identity
  * 
  * @pdca 2025-11-03-1105-component-template-bugs.pdca.md - Added REQUIRED model property for polymorphic access
  * @pdca 2025-11-05-UTC-1158.pdca.md - Added method discovery interface for type-safe CLI routing
+ * @pdca session/2025-11-19-UTC-1805.iteration-01-layer3-split.pdca.md - Added IOR property
  */
 export interface Component<TModel extends Model = Model> {
+  /**
+   * Interoperable Object Reference (IOR)
+   * Unique identifier for this component instance in the Web4 network
+   * @pdca session/2025-11-19-UTC-1805.iteration-01-layer3-split.pdca.md
+   */
+  ior: IOR;
+  
   /**
    * Component's internal model/state (REQUIRED)
    * Every Web4 component MUST have a model (empty constructor + init pattern)
