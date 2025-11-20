@@ -1320,19 +1320,31 @@ export class ServerHierarchyManager {
         try {
             const domainPath = this.getDetectDomainPath();
             const hostname = this.serverModel.hostname;
-            const scenarioBaseDir = path.join(
+            const onceBaseDir = path.join(
                 this.projectRoot,
                 'scenarios',
                 ...domainPath,
                 hostname,
-                'ONCE',
-                this.version
+                'ONCE'
             );
             
-            if (!fs.existsSync(scenarioBaseDir)) {
+            if (!fs.existsSync(onceBaseDir)) {
                 console.log('📂 No existing scenarios found');
                 return { deleted: 0, discovered: 0 };
             }
+            
+            // ✅ FIX: Scan ALL version directories, not just current version
+            const versionDirs = fs.readdirSync(onceBaseDir).filter(item => {
+                const fullPath = path.join(onceBaseDir, item);
+                return fs.statSync(fullPath).isDirectory();
+            });
+            
+            let totalDeleted = 0;
+            let totalDiscovered = 0;
+            
+            for (const versionDir of versionDirs) {
+                const scenarioBaseDir = path.join(onceBaseDir, versionDir);
+                console.log(`🔍 Checking version ${versionDir}...`);
             
             // Find all scenario files
             const findScenarios = (dir: string): string[] => {
@@ -1367,7 +1379,7 @@ export class ServerHierarchyManager {
             };
             
             const scenarioFiles = findScenarios(scenarioBaseDir);
-            console.log(`📂 Found ${scenarioFiles.length} existing scenario(s)`);
+            console.log(`📂 Found ${scenarioFiles.length} scenario(s) in ${versionDir}`);
             
             let deletedCount = 0;
             let discoveredCount = 0;
@@ -1473,9 +1485,14 @@ export class ServerHierarchyManager {
                 }
             }
             
-            console.log(`✅ Housekeeping complete: ${deletedCount} deleted, ${discoveredCount} discovered`);
+            // Aggregate counts for this version
+            totalDeleted += deletedCount;
+            totalDiscovered += discoveredCount;
+            }  // END for each version directory
             
-            return { deleted: deletedCount, discovered: discoveredCount };
+            console.log(`✅ Housekeeping complete: ${totalDeleted} deleted, ${totalDiscovered} discovered`);
+            
+            return { deleted: totalDeleted, discovered: totalDiscovered };
             
         } catch (error) {
             console.error('❌ Housekeeping error:', error);
