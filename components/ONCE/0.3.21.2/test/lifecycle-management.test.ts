@@ -323,9 +323,19 @@ describe('Server Lifecycle Management', () => {
             // Manually set scenario back to running state (simulate unclean shutdown)
             const scenarioData = JSON.parse(fs.readFileSync(actualScenarioPath, 'utf8'));
             if (!scenarioData.state) {
+                console.error('❌ Scenario structure:', JSON.stringify(scenarioData, null, 2));
                 throw new Error(`Scenario has no state property: ${actualScenarioPath}`);
             }
-            scenarioData.state.state = LifecycleState.RUNNING;
+            if (typeof scenarioData.state === 'string') {
+                // Legacy flat structure: state is a string directly
+                scenarioData.state = LifecycleState.RUNNING;
+            } else if (scenarioData.state.state) {
+                // Current nested structure: state.state
+                scenarioData.state.state = LifecycleState.RUNNING;
+            } else {
+                console.error('❌ Unexpected state structure:', scenarioData.state);
+                throw new Error(`Unexpected scenario state structure in: ${actualScenarioPath}`);
+            }
             fs.writeFileSync(actualScenarioPath, JSON.stringify(scenarioData, null, 2));
             
             // Scenario should be deleted by housekeeping since server is not reachable
@@ -366,7 +376,8 @@ describe('Server Lifecycle Management', () => {
             // Verify scenario exists with RUNNING state
             expect(fs.existsSync(scenarioPath)).toBe(true);
             const runningScenario = JSON.parse(fs.readFileSync(scenarioPath, 'utf8'));
-            expect(runningScenario.state.state).toBe(LifecycleState.RUNNING);
+            const runningState = typeof runningScenario.state === 'string' ? runningScenario.state : runningScenario.state.state;
+            expect(runningState).toBe(LifecycleState.RUNNING);
             
             // Stop server (triggers graceful shutdown)
             await server.stopServer();
@@ -374,7 +385,8 @@ describe('Server Lifecycle Management', () => {
             // Verify scenario was updated to SHUTDOWN state
             expect(fs.existsSync(scenarioPath)).toBe(true);
             const shutdownScenario = JSON.parse(fs.readFileSync(scenarioPath, 'utf8'));
-            expect(shutdownScenario.state.state).toBe(LifecycleState.SHUTDOWN);
+            const shutdownState = typeof shutdownScenario.state === 'string' ? shutdownScenario.state : shutdownScenario.state.state;
+            expect(shutdownState).toBe(LifecycleState.SHUTDOWN);
         }, 10000);
     });
     
@@ -457,7 +469,8 @@ describe('Server Lifecycle Management', () => {
             // Verify scenario shows shutdown state
             expect(fs.existsSync(clientScenarioPath)).toBe(true);
             const scenario = JSON.parse(fs.readFileSync(clientScenarioPath, 'utf8'));
-            expect(scenario.state.state).toBe(LifecycleState.SHUTDOWN);
+            const clientState = typeof scenario.state === 'string' ? scenario.state : scenario.state.state;
+            expect(clientState).toBe(LifecycleState.SHUTDOWN);
             
             // Cleanup
             await primaryServer.stopServer();
