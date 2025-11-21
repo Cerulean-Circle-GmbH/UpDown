@@ -165,9 +165,10 @@ export class DefaultONCE implements ONCE {
     if (this.web4ts) return this.web4ts;
 
     const path = await import('path');
-    const url = new URL(import.meta.url);
-    const __filename = url.pathname;
-    const componentRoot = path.resolve(path.dirname(__filename), '../../..');
+    const componentRoot = path.resolve(
+      path.dirname(new URL(import.meta.url).pathname),
+      '../../..'
+    );
 
     // Web4 Principle: Detect project root correctly for test isolation
     const componentsDir = path.dirname(path.dirname(componentRoot));

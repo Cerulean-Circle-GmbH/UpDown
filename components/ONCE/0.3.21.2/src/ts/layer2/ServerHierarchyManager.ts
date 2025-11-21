@@ -15,7 +15,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { logAction, logBroadcast, logRegistration, logConnection, logDisconnection, shortUUID, serverIdentity } from '../layer1/LoggingUtils.js';
-import { fileURLToPath } from 'url';
 import { ONCEScenarioMessage } from '../layer3/ONCEScenarioMessage.interface.js';
 import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
 import { EnvironmentModel } from '../layer3/EnvironmentModel.interface.js';
@@ -308,10 +307,12 @@ export class ServerHierarchyManager {
                 'Access-Control-Allow-Origin': '*'
             });
             
-            // ✅ TRUE Radical OOP: Use path authority from component
-            // Derive component root from current file location
-            const dirname = path.dirname(fileURLToPath(import.meta.url));
-            const componentDir = path.resolve(dirname, '../../../'); // layer2 -> ts -> dist -> component root
+            // ✅ TRUE Radical OOP: Use path authority from component model (DRY)
+            const componentDir = this.component?.model.componentRoot;
+            if (!componentDir) {
+                res.end(JSON.stringify({ error: 'Component not initialized' }));
+                return;
+            }
             
             exec(`cd ${componentDir} && ./once startServer &`, (error) => {
                 if (error) {
@@ -505,8 +506,10 @@ export class ServerHierarchyManager {
      */
     private serveStaticFile(pathname: string, res: any): void {
         try {
-            const dirname = path.dirname(fileURLToPath(import.meta.url));
-            const componentRoot = path.join(dirname, '../../..');
+            const componentRoot = this.component?.model.componentRoot;
+            if (!componentRoot) {
+                throw new Error('Component not initialized');
+            }
             const filePath = path.join(componentRoot, pathname);
             
             console.log('Static file request:', pathname);
@@ -556,8 +559,11 @@ export class ServerHierarchyManager {
      * Radical OOP template renderer - uses native JS template literals with this context
      */
     private renderTemplate(templatePath: string): string {
-        const dirname = path.dirname(fileURLToPath(import.meta.url));
-        const fullPath = path.join(dirname, '../../../src/view/html', templatePath);
+        const componentRoot = this.component?.model.componentRoot;
+        if (!componentRoot) {
+            throw new Error('Component not initialized');
+        }
+        const fullPath = path.join(componentRoot, 'src/view/html', templatePath);
         const template = fs.readFileSync(fullPath, 'utf-8');
         // Escape backticks in template to prevent breaking the Function constructor
         const escapedTemplate = template.replace(/`/g, '\\`');
@@ -592,30 +598,15 @@ export class ServerHierarchyManager {
 
     /**
      * Get version via path authority
-     * ✅ TRUE Radical OOP: Extract from own path location
+     * ✅ TRUE Radical OOP: Use component model (DRY)
      */
     private get version(): string {
-        // First: try backward link to component
-        if (this.component?.model?.version) {
-            return this.component.model.version;
-        }
-        
-        // Fallback: Path authority - derive version from component directory path
-        const dirname = path.dirname(fileURLToPath(import.meta.url));
-        const match = dirname.match(/ONCE\/(\d+\.\d+\.\d+\.\d+)/);
-        return match ? match[1] : 'unknown';
+        return this.component?.model?.version || 'unknown';
     }
 
     private get projectRoot(): string {
-        // Path authority: Use backward link to component instance if available
-        if (this.component?.model?.projectRoot) {
-            return this.component.model.projectRoot;
-        }
-        
-        // Fallback: derive from component path
-        // From dist/ts/layer2/, go up 7 levels: layer2 -> ts -> dist -> 0.3.20.3 -> ONCE -> components -> UpDown
-        const dirname = path.dirname(fileURLToPath(import.meta.url));
-        return path.resolve(dirname, '../../../../../../');
+        // ✅ Path authority: Use component model (DRY)
+        return this.component?.model?.projectRoot || '';
     }
     
     /**
@@ -631,8 +622,11 @@ export class ServerHierarchyManager {
      * ✅ TRUE Radical OOP: Dynamically inject version instead of hardcoding
      */
     private getSimpleONCEClientHTML(): string {
-        const dirname = path.dirname(fileURLToPath(import.meta.url));
-        const fullPath = path.join(dirname, '../../../src/view/html/once-client.html');
+        const componentRoot = this.component?.model.componentRoot;
+        if (!componentRoot) {
+            throw new Error('Component not initialized');
+        }
+        const fullPath = path.join(componentRoot, 'src/view/html/once-client.html');
         const html = fs.readFileSync(fullPath, 'utf-8');
         
         // Replace all hardcoded version strings with dynamic version
@@ -644,8 +638,11 @@ export class ServerHierarchyManager {
      * ✅ TRUE Radical OOP: Dynamically inject version instead of hardcoding
      */
     private getDemoHubHTML(): string {
-        const dirname = path.dirname(fileURLToPath(import.meta.url));
-        const fullPath = path.join(dirname, '../../../src/view/html/demo-hub.html');
+        const componentRoot = this.component?.model.componentRoot;
+        if (!componentRoot) {
+            throw new Error('Component not initialized');
+        }
+        const fullPath = path.join(componentRoot, 'src/view/html/demo-hub.html');
         const html = fs.readFileSync(fullPath, 'utf-8');
         
         // Replace all hardcoded version strings with dynamic version
