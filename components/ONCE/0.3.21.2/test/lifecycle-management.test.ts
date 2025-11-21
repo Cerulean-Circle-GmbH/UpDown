@@ -130,7 +130,7 @@ describe('Server Lifecycle Management (Black-Box)', () => {
     let clientCLIs: ONCECLI[] = [];
     
     beforeEach(async () => {
-        // Setup: Create test/data directory
+        // Setup: Use test/data directory (should be populated by baseline test)
         componentRoot = path.resolve(__dirname, '..');
         testDataDir = path.join(componentRoot, 'test/data');
         
@@ -138,11 +138,26 @@ describe('Server Lifecycle Management (Black-Box)', () => {
         // For now, create a base scenarios directory
         const scenariosBase = path.join(testDataDir, 'scenarios');
         
-        // Clean test data
-        if (fs.existsSync(testDataDir)) {
-            fs.rmSync(testDataDir, { recursive: true, force: true });
+        // ✅ IMPORTANT: Don't wipe test/data completely - baseline test populated it!
+        // Only clean old scenario files, keep component structure
+        if (fs.existsSync(scenariosBase)) {
+            // Recursively remove scenario files but keep directory structure
+            const removeScenarios = (dir: string) => {
+                if (!fs.existsSync(dir)) return;
+                const entries = fs.readdirSync(dir, { withFileTypes: true });
+                for (const entry of entries) {
+                    const fullPath = path.join(dir, entry.name);
+                    if (entry.isDirectory()) {
+                        removeScenarios(fullPath);
+                    } else if (entry.name.endsWith('.scenario.json')) {
+                        fs.unlinkSync(fullPath);
+                    }
+                }
+            };
+            removeScenarios(scenariosBase);
+        } else {
+            fs.mkdirSync(scenariosBase, { recursive: true });
         }
-        fs.mkdirSync(scenariosBase, { recursive: true });
         
         // scenarioDir will be set after first server start (dynamic domain detection)
         scenarioDir = '';
