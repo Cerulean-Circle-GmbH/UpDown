@@ -2014,10 +2014,26 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
     console.log();
     
     try {
-      // Run the baseline test that creates IdealMinimalComponent and Web4TSComponent in test/data
+      // ✅ Smart baseline test detection: Use component-specific test
+      // @pdca 2025-11-21-UTC-1600.version-discovery-symlink-resolution.pdca.md
+      // For Web4TSComponent: idealminimalcomponent-creation-isolation.test.ts (legacy name)
+      // For other components: <component-lowercase>-test-isolation-setup.test.ts
+      const callingComponent = this.model.context?.model?.component || this.model.component;
+      const componentLower = callingComponent.toLowerCase();
+      
+      let baselineTestName: string;
+      if (callingComponent === 'Web4TSComponent') {
+        // Legacy: Web4TSComponent uses the IdealMinimalComponent test
+        baselineTestName = 'idealminimalcomponent-creation-isolation.test.ts';
+      } else {
+        // Standard naming: <component>-test-isolation-setup.test.ts
+        baselineTestName = `${componentLower}-test-isolation-setup.test.ts`;
+      }
+      
+      // Run the baseline test that populates test/data
       const { execSync } = await import('child_process');
       execSync(
-        `npx vitest run test/vitest/idealminimalcomponent-creation-isolation.test.ts`,
+        `npx vitest run test/vitest/${baselineTestName}`,
         {
           cwd: componentRoot,
           stdio: 'inherit'  // Show output
@@ -2025,8 +2041,13 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
       );
       console.log();
       console.log(`✅ Test isolation environment ready!`);
-      console.log(`   IdealMinimalComponent created in test/data`);
-      console.log(`   Try: idealminimalcomponent info`);
+      if (callingComponent === 'Web4TSComponent') {
+        console.log(`   IdealMinimalComponent created in test/data`);
+        console.log(`   Try: idealminimalcomponent info`);
+      } else {
+        console.log(`   ${callingComponent} test environment created in test/data`);
+        console.log(`   Try: ${componentLower} info`);
+      }
       console.log();
     } catch (error) {
       console.error(`⚠️  Baseline test had issues, but continuing...`);
