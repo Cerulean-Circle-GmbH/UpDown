@@ -59,6 +59,13 @@ export class DefaultONCE implements ONCE {
     const isVersionDir = /^\d+\.\d+\.\d+\.\d+$/.test(componentDirName);
     const versionString = isVersionDir ? componentDirName : '0.0.0.0';
     
+    // ✅ CRITICAL: Calculate componentRoot and projectRoot in constructor for path authority
+    // These are needed by ServerHierarchyManager and ScenarioManager immediately
+    const componentRoot = currentVersionDir;
+    const componentsDir = path.dirname(path.dirname(componentRoot));
+    const projectRoot = path.dirname(componentsDir);
+    const isTestIsolation = projectRoot.includes('/test/data');
+    
     // Empty constructor - Web4 pattern
     this.model = {
       uuid: crypto.randomUUID(),
@@ -71,7 +78,13 @@ export class DefaultONCE implements ONCE {
       version: versionString,   // ✅ Extracted from directory path (DRY!)
       initialized: false,       // ONCE kernel not initialized yet
       initializationTime: 0,    // Will be set after init()
-      eventHandlers: new Map()  // Lifecycle event handlers
+      eventHandlers: new Map(), // Lifecycle event handlers
+      // ✅ Set path authority immediately for managers
+      componentRoot,
+      projectRoot,
+      targetDirectory: projectRoot,
+      targetComponentRoot: componentRoot,
+      isTestIsolation
     };
     
     // Initialize managers (domain logic from 0.2.0.0)
@@ -443,7 +456,10 @@ export class DefaultONCE implements ONCE {
     try {
       // Initialize if not already initialized
       if (!this.model.initialized) {
-        await this.init(scenario ? { model: { scenario } } as any : undefined);
+        // ✅ Filter out CLI keywords that are not scenarios
+        // "primary" and "client" are command keywords, not scenario paths
+        const isKeyword = typeof scenario === 'string' && ['primary', 'client'].includes(scenario.toLowerCase());
+        await this.init(scenario && !isKeyword ? { model: { scenario } } as any : undefined);
       }
 
       // ✅ Detect environment using Layer 1 infrastructure (TRUE Radical OOP)

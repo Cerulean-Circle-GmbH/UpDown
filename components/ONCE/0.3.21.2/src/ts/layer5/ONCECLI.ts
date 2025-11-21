@@ -30,7 +30,15 @@ export class ONCECLI extends DefaultCLI {
     this.init();
     
     // Create component (without init - init() is async and will be called later if needed)
+    // Component calculates its own componentRoot from import.meta.url in constructor
     this.component = new DefaultONCE();
+    
+    // ✅ Direct model assignment (Web4 pattern - NO re-init!)
+    // Component already set: IOR, owner, version, componentRoot (from its own location)
+    // CLI provides: projectRoot, targetDirectory (path context for operations)
+    // @pdca 2025-11-21-UTC-1245 - Match Web4TSComponentCLI pattern
+    this.component.model.projectRoot = this.model.projectRoot;
+    this.component.model.targetDirectory = this.model.projectRoot;
     
     // Discover methods from CLI (walks CLI prototype chain)
     this.discoverMethods();
@@ -44,6 +52,24 @@ export class ONCECLI extends DefaultCLI {
         this.methodSignatures.set(methodName, signature);
       }
     }
+  }
+
+  /**
+   * Override init() to support test scenarios
+   * @pdca 2025-11-21-UTC-1500.scenario-based-test-pattern.md
+   */
+  init(scenario?: any): this {
+    // Call parent init
+    super.init(scenario);
+    
+    // ✅ If scenario provided, update component's projectRoot for test isolation
+    if (scenario?.model?.projectRoot && this.component) {
+      this.component.model.projectRoot = scenario.model.projectRoot;
+      this.component.model.targetDirectory = scenario.model.projectRoot;
+      this.component.model.isTestIsolation = scenario.model.isTestIsolation || false;
+    }
+    
+    return this;
   }
 
   /**

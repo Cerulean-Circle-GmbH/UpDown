@@ -622,11 +622,10 @@ export class ServerHierarchyManager {
      * ✅ TRUE Radical OOP: Dynamically inject version instead of hardcoding
      */
     private getSimpleONCEClientHTML(): string {
-        const componentRoot = this.component?.model.componentRoot;
-        if (!componentRoot) {
-            throw new Error('Component not initialized');
+        if (!this.component?.model.componentRoot) {
+            throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
         }
-        const fullPath = path.join(componentRoot, 'src/view/html/once-client.html');
+        const fullPath = path.join(this.component.model.componentRoot, 'src/view/html/once-client.html');
         const html = fs.readFileSync(fullPath, 'utf-8');
         
         // Replace all hardcoded version strings with dynamic version
@@ -636,13 +635,13 @@ export class ServerHierarchyManager {
     /**
      * Get demo hub HTML (for /demo endpoint)
      * ✅ TRUE Radical OOP: Dynamically inject version instead of hardcoding
+     * ✅ Path Authority: component.model.componentRoot set in DefaultONCE constructor
      */
     private getDemoHubHTML(): string {
-        const componentRoot = this.component?.model.componentRoot;
-        if (!componentRoot) {
-            throw new Error('Component not initialized');
+        if (!this.component?.model.componentRoot) {
+            throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
         }
-        const fullPath = path.join(componentRoot, 'src/view/html/demo-hub.html');
+        const fullPath = path.join(this.component.model.componentRoot, 'src/view/html/demo-hub.html');
         const html = fs.readFileSync(fullPath, 'utf-8');
         
         // Replace all hardcoded version strings with dynamic version
@@ -1443,9 +1442,15 @@ export class ServerHierarchyManager {
                         deletedCount++;
                         console.log(`🗑️  Deleted shutdown server scenario: ${uuid} (port ${port})`);
                     } else if (state === LifecycleState.RUNNING || state === LifecycleState.CLIENT_SERVER) {
-                        // Discover running client server
-                        if (port && port !== 42777) {
-                            // Try to connect to the server
+                        // Check if this is a different server (not ourself)
+                        if (uuid === this.serverModel.uuid) {
+                            // Skip our own scenario
+                            continue;
+                        }
+                        
+                        // Discover running server (client or old primary)
+                        if (port) {
+                            // Try to connect to the server to see if it's reachable
                             try {
                                 const http = await import('http');
                                 await new Promise<void>((resolve, reject) => {
@@ -1457,8 +1462,6 @@ export class ServerHierarchyManager {
                                         timeout: 1000
                                     }, (res) => {
                                         if (res.statusCode === 200) {
-                                            discoveredCount++;
-                                            console.log(`🔍 Discovered running client server: ${uuid} on port ${port}`);
                                             resolve();
                                         } else {
                                             reject(new Error('Server not healthy'));
@@ -1472,6 +1475,31 @@ export class ServerHierarchyManager {
                                     });
                                     req.end();
                                 });
+                                
+                                // Server is reachable
+                                if (port === 42777) {
+                                    // Found another primary server - this is a conflict!
+                                    // Delete this scenario and let the current primary take over
+                                    fs.unlinkSync(scenarioPath);
+                                    deletedCount++;
+                                    console.log(`⚠️  Deleted conflicting primary scenario: ${uuid} (port ${port})`);
+                                } else {
+                                    // Client server is running - register it
+                                    discoveredCount++;
+                                    console.log(`🔍 Discovered running client server: ${uuid} on port ${port}`);
+                                    
+                                    // Parse the full scenario to get the model
+                                    const serverModel = guard.isLegacy() 
+                                        ? guard.asLegacy()!.state as ONCEServerModel
+                                        : guard.asWeb4<LegacyONCEScenario>()!.model.state as ONCEServerModel;
+                                    
+                                    // Register the discovered server
+                                    this.serverRegistry.set(uuid, {
+                                        model: serverModel,
+                                        lastSeen: new Date().toISOString(),
+                                        websocket: undefined // Will connect later
+                                    });
+                                }
                             } catch (error) {
                                 // Server not reachable, delete stale scenario (both main file and symlink)
                                 fs.unlinkSync(scenarioPath);
