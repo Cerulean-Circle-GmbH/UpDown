@@ -4439,6 +4439,13 @@ Standards:
         continue;
       }
       
+      // SKIP scenarios directory - belongs at PROJECT ROOT, NEVER in component directory
+      // @pdca 2025-11-21-UTC-2000.fix-scenarios-in-component-directory.pdca.md
+      if (entry.name === 'scenarios' && relativePath === '') {
+        console.log(`   ⚠️  Skipping scenarios directory (should be at project root, not in component)`);
+        continue;
+      }
+      
       // SKIP test/data contents - but create empty test/data structure
       if (entryRelativePath === 'test/data' || entryRelativePath === path.join('test', 'data')) {
         // Create empty test/data directory in target (with structure)

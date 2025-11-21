@@ -1,0 +1,61 @@
+{
+  "uuid": "edfa9adc-e67b-4b4c-93d3-30d62af72525",
+  "objectType": "ONCE",
+  "version": "0.3.21.2",
+  "state": {
+    "pid": 51307,
+    "state": "shutdown",
+    "domain": "box.fritz",
+    "host": "McDonges-3.fritz.box",
+    "ip": "192.168.178.49",
+    "capabilities": [
+      {
+        "capability": "httpPort",
+        "port": 8083
+      },
+      {
+        "capability": "wsPort",
+        "port": 8083
+      }
+    ],
+    "isPrimaryServer": false,
+    "uuid": "edfa9adc-e67b-4b4c-93d3-30d62af72525",
+    "platform": {
+      "platform": "node",
+      "version": "v22.20.0",
+      "capabilities": [
+        "server",
+        "websocket",
+        "p2p"
+      ],
+      "isOnline": true
+    },
+    "hostname": "McDonges-3",
+    "primaryServerIOR": "web4://McDonges-3.fritz.box:42777/once?uuid=84c72f3c-42c6-46cd-8c68-f4864fd70d9a&type=ONCE&version=0.3.21.2",
+    "primaryServer": {
+      "host": "McDonges-3",
+      "port": 42777
+    },
+    "created": "2025-11-21T17:38:06.582Z"
+  },
+  "metadata": {
+    "created": "2025-11-21T17:38:06.582Z",
+    "modified": "2025-11-21T17:38:20.663Z",
+    "creator": "ONCE-v0.3.21.2",
+    "description": "ONCE server scenario - Client server",
+    "domain": "box.fritz",
+    "host": "McDonges-3.fritz.box",
+    "port": 8083,
+    "isPrimaryServer": false,
+    "capabilities": [
+      {
+        "capability": "httpPort",
+        "port": 8083
+      },
+      {
+        "capability": "wsPort",
+        "port": 8083
+      }
+    ]
+  }
+}

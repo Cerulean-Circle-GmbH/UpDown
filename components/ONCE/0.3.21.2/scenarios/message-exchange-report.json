@@ -1,90 +1,95 @@
 {
-  "timestamp": "2025-11-19T09:14:02.211Z",
+  "timestamp": "2025-11-21T17:39:17.794Z",
   "configuration": {
     "primary": {
-      "uuid": "9b6c5d27-c55e-4d4e-94cf-eafd3e4f15c0",
+      "uuid": "2628edfc-ee4d-4cdb-ba47-2878cf1f0e6c",
       "port": 42777
     },
     "clients": [
       {
-        "uuid": "ae001853-6bd0-4484-9110-c2fbb7aebc63",
-        "port": 8080
+        "uuid": "fc55ee65-a7e5-4571-998a-96603fd01c00",
+        "port": 8081
       },
       {
-        "uuid": "f6afbaad-fb38-4843-848e-2181e975ef93",
-        "port": 8081
+        "uuid": "7aa48e1c-f5c5-40b7-9c27-281766fe91d8",
+        "port": 8082
+      },
+      {
+        "uuid": "c8be6f8a-18e1-47b8-b081-e9aab4733032",
+        "port": 8083
       }
     ]
   },
   "messages": [
     {
-      "uuid": "03f2c282-6d48-48cd-acfd-0452223cdaf2",
+      "uuid": "0646e1f1-71b8-4483-97aa-a03c61576169",
       "objectType": "ONCEMessage",
-      "version": "0.3.21.1",
+      "version": "0.3.21.2",
       "state": {
         "type": "broadcast",
         "from": {
-          "uuid": "9b6c5d27-c55e-4d4e-94cf-eafd3e4f15c0",
+          "uuid": "2628edfc-ee4d-4cdb-ba47-2878cf1f0e6c",
           "port": 42777
         },
         "to": "all",
         "content": "Broadcast message from primary to all clients",
-        "timestamp": "2025-11-19T09:13:58.208Z",
+        "timestamp": "2025-11-21T17:39:13.791Z",
         "sequence": 1
       },
       "metadata": {
-        "created": "2025-11-19T09:13:58.208Z",
-        "modified": "2025-11-19T09:13:58.208Z",
+        "created": "2025-11-21T17:39:13.791Z",
+        "modified": "2025-11-21T17:39:13.791Z",
         "creator": "ONCE-demoMessages",
         "description": "Broadcast pattern demo message"
       }
     },
     {
-      "uuid": "dd406f91-a352-4ae6-b6a1-a563c5f9ef08",
+      "uuid": "bbb982f3-209a-4383-9dcb-4e053b13360f",
       "objectType": "ONCEMessage",
-      "version": "0.3.21.1",
+      "version": "0.3.21.2",
       "state": {
         "type": "relay",
         "from": {
-          "uuid": "ae001853-6bd0-4484-9110-c2fbb7aebc63",
-          "port": 8080
+          "uuid": "fc55ee65-a7e5-4571-998a-96603fd01c00",
+          "port": 8081,
+          "host": "McDonges-3.fritz.box"
         },
         "to": {
-          "uuid": "f6afbaad-fb38-4843-848e-2181e975ef93",
-          "port": 8081
+          "uuid": "7aa48e1c-f5c5-40b7-9c27-281766fe91d8",
+          "port": 8082
         },
         "content": "Relay message from client 1 to client 2 via primary",
-        "timestamp": "2025-11-19T09:13:59.209Z",
+        "timestamp": "2025-11-21T17:39:14.792Z",
         "sequence": 2
       },
       "metadata": {
-        "created": "2025-11-19T09:13:59.209Z",
-        "modified": "2025-11-19T09:13:59.209Z",
+        "created": "2025-11-21T17:39:14.792Z",
+        "modified": "2025-11-21T17:39:14.792Z",
         "creator": "ONCE-demoMessages",
         "description": "Relay pattern demo message"
       }
     },
     {
-      "uuid": "894bbdb0-15b5-4bb9-ba4e-b9358713ba88",
+      "uuid": "ff3f4aae-69cd-4334-99cb-65a59b6b773a",
       "objectType": "ONCEMessage",
-      "version": "0.3.21.1",
+      "version": "0.3.21.2",
       "state": {
         "type": "p2p",
         "from": {
-          "uuid": "ae001853-6bd0-4484-9110-c2fbb7aebc63",
-          "port": 8080
-        },
-        "to": {
-          "uuid": "f6afbaad-fb38-4843-848e-2181e975ef93",
+          "uuid": "fc55ee65-a7e5-4571-998a-96603fd01c00",
           "port": 8081
         },
+        "to": {
+          "uuid": "7aa48e1c-f5c5-40b7-9c27-281766fe91d8",
+          "port": 8082
+        },
         "content": "Direct P2P message from client 1 to client 2",
-        "timestamp": "2025-11-19T09:14:00.210Z",
+        "timestamp": "2025-11-21T17:39:15.793Z",
         "sequence": 3
       },
       "metadata": {
-        "created": "2025-11-19T09:14:00.210Z",
-        "modified": "2025-11-19T09:14:00.210Z",
+        "created": "2025-11-21T17:39:15.793Z",
+        "modified": "2025-11-21T17:39:15.793Z",
         "creator": "ONCE-demoMessages",
         "description": "P2P pattern demo message"
       }
