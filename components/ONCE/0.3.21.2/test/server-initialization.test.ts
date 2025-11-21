@@ -269,7 +269,7 @@ describe('Server Initialization - Domain and Hostname Detection', () => {
                 'scenarios',
                 'local.once',
                 'ONCE',
-                manager.component.version,
+                manager.version || '0.3.21.2', // Use manager's version or current version
                 `${manager.serverModel.uuid}.scenario.json`
             );
             
