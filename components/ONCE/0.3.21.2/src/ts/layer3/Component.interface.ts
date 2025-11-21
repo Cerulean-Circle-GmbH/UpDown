@@ -87,6 +87,47 @@ export interface Component<TModel extends Model = Model> {
    * @returns Array of method names
    */
   listMethods(): string[];
+  
+  // ========================================
+  // CLI METHODS (Optional - for development)
+  // @pdca session/2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md
+  // ========================================
+  
+  /**
+   * Display component information
+   * @param topic Optional specific topic to display
+   */
+  info?(topic?: string): Promise<this>;
+  
+  /**
+   * Run component tests
+   * @param scope Optional test scope filter
+   * @param references Optional test file references
+   */
+  test?(scope?: string, ...references: string[]): Promise<this>;
+  
+  /**
+   * Build component artifacts
+   */
+  build?(): Promise<this>;
+  
+  /**
+   * Clean component build artifacts
+   */
+  clean?(): Promise<this>;
+  
+  /**
+   * Display component directory tree
+   * @param depth Optional tree depth
+   * @param showHidden Optional show hidden files flag
+   */
+  tree?(depth?: string, showHidden?: string): Promise<this>;
+  
+  /**
+   * Manage component symlinks
+   * @param action Optional action (list, create, verify, clean)
+   */
+  links?(action?: string): Promise<this>;
 }
 
 

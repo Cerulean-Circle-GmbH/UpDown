@@ -7,7 +7,7 @@ import { createServer, Server } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
 import { exec } from 'child_process';
 import { PortManager } from './PortManager.js';
-import { ONCEServerModel, ONCE_DEFAULT_CONFIG, createDefaultServerModel } from '../layer3/ONCEServerModel.js';
+import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
 import { LifecycleState } from '../layer3/LifecycleEvents.js';
 import { IOR, iorToUrl } from '../layer3/IOR.js';
 import { v4 as uuidv4 } from 'uuid';
@@ -51,19 +51,16 @@ export class ServerHierarchyManager {
         this.portManager = PortManager.getInstance();
         this.infrastructure = new NodeOSInfrastructure(); // ✅ Create infrastructure
         
-        // Initialize server model with defaults
-        const defaultModel = createDefaultServerModel();
-        
+        // Initialize server model with defaults (inlined from ONCEServerModel.ts)
         this.serverModel = {
-            ...defaultModel,
             uuid: uuidv4(),
             pid: process.pid,
             state: LifecycleState.CREATED,
             platform: this.detectEnvironment(),
-            domain: 'local.once', // ✅ Temporary fallback, will be overwritten below
-            hostname: 'localhost', // ✅ Temporary fallback, will be overwritten below
-            host: 'localhost', // ✅ Temporary fallback, will be overwritten below
-            ip: '127.0.0.1', // ✅ Temporary fallback, will be overwritten below
+            domain: 'local.once', // ✅ Will be detected dynamically
+            hostname: 'localhost', // ✅ Will be detected dynamically
+            host: 'localhost', // ✅ Will be detected dynamically
+            ip: '127.0.0.1', // ✅ Will be detected dynamically
             capabilities: [],
             isPrimaryServer: false
         } as ONCEServerModel;

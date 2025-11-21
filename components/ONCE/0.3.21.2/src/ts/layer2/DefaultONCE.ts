@@ -15,7 +15,7 @@ import { LifecycleObserver } from '../layer3/LifecycleObserver.interface.js';
 // ⚠️ DEPRECATED imports (functional pattern, will be removed):
 type LifecycleEventHandler = (event: any) => void | Promise<void>;
 type LifecycleHooks = Record<string, LifecycleEventHandler>;
-import { ONCEServerModel } from '../layer3/ONCEServerModel.js';
+import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
 import { ServerHierarchyManager } from './ServerHierarchyManager.js';
 import { ScenarioManager } from './ScenarioManager.js';
 import { ONCEModel } from '../layer3/ONCEModel.interface.js';
