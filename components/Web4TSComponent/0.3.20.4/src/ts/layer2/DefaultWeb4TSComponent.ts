@@ -13,10 +13,11 @@ import { DefaultColors } from '../layer4/DefaultColors.js';
 import { SemanticVersion } from './SemanticVersion.js';
 import { MethodSignature } from '../layer3/MethodSignature.interface.js';
 import * as fs from 'fs/promises';
-import { existsSync, readdirSync, statSync, lstatSync, readlinkSync } from 'fs';
+import { existsSync, readdirSync, statSync, lstatSync, readlinkSync, realpathSync, mkdirSync } from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 import { randomUUID } from 'crypto';
+import { fileURLToPath } from 'url';
 import { User } from '../layer3/User.interface.js';
 
 export class DefaultWeb4TSComponent implements Web4TSComponent {
@@ -162,8 +163,11 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
   init(scenario?: Scenario<Web4TSComponentModel>): this {
     if (!this.model) {
       // ✅ Discover component's own root from file system (single source of truth)
+      // @pdca 2025-11-21-UTC-1306.testshell-auto-create-test-data-bug.pdca.md
+      // ✅ CRITICAL: Resolve symlinks to get REAL version (not 'latest' or 'dev')
       const currentFileUrl = new URL(import.meta.url);
-      const currentVersionDir = path.resolve(path.dirname(currentFileUrl.pathname), '..', '..', '..');
+      const currentFilePath = path.dirname(fileURLToPath(currentFileUrl));
+      const currentVersionDir = realpathSync(path.resolve(currentFilePath, '..', '..', '..'));
       const componentDirName = path.basename(currentVersionDir);
       const isVersionDir = /^\d+\.\d+\.\d+\.\d+$/.test(componentDirName);
       
@@ -1973,11 +1977,12 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
     // Check if running in non-interactive mode (for automated tests)
     const isNonInteractive = process.env.TEST_NON_INTERACTIVE === 'true';
     
-    // Check if test/data exists
+    // ✅ Web4 Principle: Auto-create test/data if it doesn't exist
+    // @pdca 2025-11-21-UTC-1306.testshell-auto-create-test-data-bug.pdca.md
+    // Don't delegate basic setup to the user - just do it!
     if (!existsSync(testDataDir)) {
-      console.error(`❌ Test data directory not found: ${testDataDir}`);
-      console.log(`💡 Create test/data directory first`);
-      return this;
+      mkdirSync(testDataDir, { recursive: true });
+      console.log(`📁 Created test data directory: ${testDataDir}`);
     }
     
     // Check if component's source.env exists

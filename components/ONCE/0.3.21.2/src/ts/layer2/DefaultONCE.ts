@@ -197,20 +197,17 @@ export class DefaultONCE implements ONCE {
     this.model.targetComponentRoot = componentRoot;
     this.model.isTestIsolation = isTestIsolation;
 
-    // Import Web4TSComponent and SemanticVersion dynamically
+    // Import Web4TSComponent dynamically
     const web4tscomponentModule = await import(
       `${projectRoot}/components/Web4TSComponent/latest/dist/ts/layer2/DefaultWeb4TSComponent.js`
     );
-    const semanticVersionModule = await import(
-      `${projectRoot}/components/Web4TSComponent/latest/dist/ts/layer2/SemanticVersion.js`
-    );
     const { DefaultWeb4TSComponent } = web4tscomponentModule;
-    const { SemanticVersion } = semanticVersionModule;
 
     // ✅ CRITICAL: Initialize Web4TSComponent for delegation
+    // ✅ Single Source of Truth: Let Web4TSComponent discover its OWN version
+    // @pdca 2025-11-21-UTC-1600.version-discovery-symlink-resolution.pdca.md
     this.web4ts = new DefaultWeb4TSComponent().init({
       model: {
-        version: await SemanticVersion.fromString(this.model.version || '0.0.0.0'),
         componentRoot: componentRoot,
         projectRoot: projectRoot,
         targetDirectory: projectRoot
