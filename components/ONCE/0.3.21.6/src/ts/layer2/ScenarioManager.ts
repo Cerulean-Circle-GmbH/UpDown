@@ -139,6 +139,7 @@ export class ScenarioManager {
 
         // Save the ORIGINAL format (preserve what was passed in)
         writeFileSync(scenarioPath, JSON.stringify(scenario, null, 2));
+        console.log(`📝 [WRITE] ScenarioManager.saveScenario() projectRoot=${this.projectRoot} → ${scenarioPath}`);
         
         logAction('💾', legacyData.uuid, 'Scenario saved', `${serverIdentity(legacyData.state.hostname, legacyData.state.httpPort)} → ${basename(scenarioPath)}`);
         return scenarioPath;

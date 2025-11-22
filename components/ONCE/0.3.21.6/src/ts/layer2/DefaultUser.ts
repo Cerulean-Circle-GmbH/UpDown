@@ -198,6 +198,7 @@ export class DefaultUser implements User {
     
     // Save scenario
     fs.writeFileSync(scenarioPath, JSON.stringify(scenario, null, 2));
+    console.log(`📝 [WRITE] DefaultUser.saveScenario() projectRoot=${projectRoot} → ${scenarioPath}`);
     console.log(`💾 User scenario saved: ${path.basename(scenarioPath)}`);
     
     return scenarioPath;

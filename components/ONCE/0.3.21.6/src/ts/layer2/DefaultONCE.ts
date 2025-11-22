@@ -331,7 +331,9 @@ export class DefaultONCE implements ONCE {
       // Web4TSComponent-style scenario with model property
       const web4Scenario = scenario as any;
       if (web4Scenario.model) {
+        console.log(`🔍 [PATH] DefaultONCE.init() BEFORE: projectRoot=${this.model.projectRoot} componentRoot=${this.model.componentRoot}`);
         this.model = { ...this.model, ...web4Scenario.model };
+        console.log(`🔍 [PATH] DefaultONCE.init() AFTER: projectRoot=${this.model.projectRoot} componentRoot=${this.model.componentRoot} isTestIsolation=${this.model.isTestIsolation}`);
       }
     } else if (scenario) {
       // ONCE-style scenario from v0.2.0.0 (legacy format)

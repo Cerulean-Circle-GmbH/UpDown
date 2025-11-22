@@ -1041,6 +1041,8 @@ export class ServerHierarchyManager {
         );
         const capabilitySymlink = path.join(capabilityDir, `${this.serverModel.uuid}.scenario.json`);
         
+        console.log(`🔍 [PATH] ServerHierarchyManager.loadOrCreateScenario() projectRoot=${this.projectRoot} scenario=${mainScenarioPath}`);
+        
         try {
             // Try to load existing scenario first
             const fs = await import('fs');
@@ -1138,7 +1140,7 @@ export class ServerHierarchyManager {
 
             // Save main scenario file
             fs.writeFileSync(mainScenarioPath, JSON.stringify(scenario, null, 2));
-            // Logging done by ScenarioManager
+            console.log(`📝 [WRITE] ServerHierarchyManager.saveScenario() → ${mainScenarioPath}`);
             
             // Create capability symlink pointing to main file
             this.ensureCapabilitySymlink(capabilityDir, capabilitySymlink, mainScenarioPath);
