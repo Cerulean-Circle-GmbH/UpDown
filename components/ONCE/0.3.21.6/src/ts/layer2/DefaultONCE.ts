@@ -90,6 +90,63 @@ export class DefaultONCE implements ONCE {
   }
 
   /**
+   * ✅ Static factory method - Web4 Component Pattern
+   * Creates ONCE instance and registers as global singleton
+   * @param scenario Optional scenario for initialization
+   * @returns ONCE instance registered globally
+   * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md - Phase 2
+   */
+  static start(scenario?: any): DefaultONCE {
+    // Create instance
+    const once = new DefaultONCE();
+    
+    // Initialize with scenario if provided
+    if (scenario) {
+      once.init(scenario);
+    }
+    
+    // Register as global singleton
+    once.registerGlobalSingleton();
+    
+    return once;
+  }
+
+  /**
+   * Register ONCE as global singleton in all environments
+   * - Browser: window.global.ONCE
+   * - Node.js: global.ONCE
+   * - Workers/PWA: self.global.ONCE
+   * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md - Phase 2
+   * @cliHide
+   */
+  private registerGlobalSingleton(): void {
+    try {
+      // Detect environment and register appropriately
+      if (typeof window !== 'undefined') {
+        // Browser environment
+        if (!window.global) {
+          (window as any).global = {};
+        }
+        window.global!.ONCE = this;
+        console.log('🌐 ONCE registered as window.global.ONCE');
+      } else if (typeof global !== 'undefined') {
+        // Node.js environment
+        (global as any).ONCE = this;
+        console.log('🌐 ONCE registered as global.ONCE');
+      } else if (typeof self !== 'undefined') {
+        // Worker/PWA environment
+        if (!(self as any).global) {
+          (self as any).global = {};
+        }
+        (self as any).global.ONCE = this;
+        console.log('🌐 ONCE registered as self.global.ONCE');
+      }
+    } catch (error) {
+      console.warn('⚠️ Failed to register global singleton:', error);
+    }
+  }
+
+  /**
    * ✅ Synchronous path discovery - called in constructor
    * Discovers componentRoot and version from import.meta.url (with realpathSync)
    * @pdca 2025-11-21-UTC-1630.test-isolation-path-violation.pdca.md
