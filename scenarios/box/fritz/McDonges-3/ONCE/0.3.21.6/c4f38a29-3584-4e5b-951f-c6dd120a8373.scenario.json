@@ -1,0 +1,63 @@
+{
+  "ior": {
+    "uuid": "c4f38a29-3584-4e5b-951f-c6dd120a8373",
+    "component": "ONCE",
+    "version": "0.3.21.6"
+  },
+  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkxTFRFeExUSXlWREE1T2pVd09qRTNMakUwTUZvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwidXNlcm5hbWUiOiJzeXN0ZW0iLCJob3N0bmFtZSI6Ik1jRG9uZ2VzLTMuZnJpdHouYm94In19",
+  "model": {
+    "uuid": "c4f38a29-3584-4e5b-951f-c6dd120a8373",
+    "objectType": "ONCE",
+    "version": "0.3.21.6",
+    "state": {
+      "uuid": "c4f38a29-3584-4e5b-951f-c6dd120a8373",
+      "pid": 98900,
+      "state": "running",
+      "platform": {
+        "platform": "node",
+        "version": "v22.20.0",
+        "capabilities": [
+          "server",
+          "websocket",
+          "p2p"
+        ],
+        "isOnline": true
+      },
+      "domain": "box.fritz",
+      "hostname": "McDonges-3",
+      "host": "McDonges-3.fritz.box",
+      "ip": "192.168.178.49",
+      "capabilities": [
+        {
+          "capability": "httpPort",
+          "port": 8083
+        },
+        {
+          "capability": "wsPort",
+          "port": 8083
+        }
+      ],
+      "isPrimaryServer": false,
+      "primaryServerIOR": "web4://McDonges-3.fritz.box:42777/once?uuid=523f5501-4b4f-4e5d-9317-979fd98652b8&type=ONCE&version=0.3.21.6",
+      "primaryServer": {
+        "host": "McDonges-3",
+        "port": 42777
+      }
+    },
+    "metadata": {
+      "created": "2025-11-22T09:50:17.139Z",
+      "modified": "2025-11-22T09:50:17.141Z",
+      "creator": "ONCE-v0.3.21.6",
+      "description": "ONCE server Client server instance",
+      "tags": [
+        "server",
+        "once",
+        "client"
+      ],
+      "domain": "box.fritz",
+      "host": "McDonges-3.fritz.box",
+      "port": 8083,
+      "isPrimaryServer": false
+    }
+  }
+}
