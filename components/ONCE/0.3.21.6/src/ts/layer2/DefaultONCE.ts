@@ -1764,6 +1764,181 @@ export class DefaultONCE implements ONCE {
     return this.delegateToWeb4TS('test', scope, ...references);
   }
 
+  // ============================================================================
+  // MICRO KERNEL METHODS - Route Handler Delegation
+  // @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+  // Routes delegate to these methods (Radical OOP pattern)
+  // ============================================================================
+
+  /**
+   * Get server health status
+   * @returns Health model with complete server state
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/getHealth
+   * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+   */
+  getHealth(): import('../layer3/HealthModel.interface.js').HealthModel {
+    if (!this.serverHierarchyManager) {
+      throw new Error('Server not initialized. Call startServer() first.');
+    }
+
+    const serverModel = this.serverHierarchyManager.getServerModel();
+    
+    // Client servers include primary connection info
+    const primaryInfo = serverModel.isPrimaryServer ? null : {
+      host: serverModel.primaryServer?.host || 'localhost',
+      port: serverModel.primaryServer?.port || 42777,
+      connected: !!(this.serverHierarchyManager as any).primaryServerConnection,
+      domain: serverModel.domain
+    };
+
+    return {
+      status: 'running',
+      uuid: serverModel.uuid,
+      isPrimaryServer: serverModel.isPrimaryServer,
+      state: serverModel.state,
+      capabilities: serverModel.capabilities,
+      domain: serverModel.domain,
+      hostname: serverModel.hostname,
+      version: this.model.version || '0.0.0.0',
+      primaryServer: primaryInfo,
+      message: `ONCE v${this.model.version} Server - Micro Kernel`
+    };
+  }
+
+  /**
+   * Get all registered servers (Primary only)
+   * @returns Server list model with all registered servers
+   * @throws Error if called on non-primary server
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/getServers
+   * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+   */
+  getServers(): import('../layer3/ServerListModel.interface.js').ServerListModel {
+    if (!this.serverHierarchyManager) {
+      throw new Error('Server not initialized. Call startServer() first.');
+    }
+
+    const serverModel = this.serverHierarchyManager.getServerModel();
+    
+    if (!serverModel.isPrimaryServer) {
+      throw new Error('Only primary server can list all servers');
+    }
+
+    const serverRegistry = (this.serverHierarchyManager as any).serverRegistry as Map<string, any>;
+
+    return {
+      primary: true,
+      primaryServer: serverModel,
+      servers: Array.from(serverRegistry.values()).map((entry: any) => entry.model)
+    };
+  }
+
+  /**
+   * Serve ONCE browser client HTML
+   * @returns Rendered HTML for browser client
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/serveOnceClient
+   * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+   */
+  serveOnceClient(): string {
+    if (!this.serverHierarchyManager) {
+      throw new Error('Server not initialized. Call startServer() first.');
+    }
+    
+    return this.serverHierarchyManager.getSimpleONCEClientHTML();
+  }
+
+  /**
+   * Serve demo hub HTML
+   * @returns Rendered HTML for demo hub
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/serveDemoHub
+   * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+   */
+  serveDemoHub(): string {
+    if (!this.serverHierarchyManager) {
+      throw new Error('Server not initialized. Call startServer() first.');
+    }
+    
+    return this.serverHierarchyManager.getDemoHubHTML();
+  }
+
+  /**
+   * Serve server status HTML
+   * @returns Rendered HTML for server status
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/serveStatus
+   * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+   */
+  serveStatus(): string {
+    if (!this.serverHierarchyManager) {
+      throw new Error('Server not initialized. Call startServer() first.');
+    }
+    
+    return this.serverHierarchyManager.getServerStatusHTML();
+  }
+
+  /**
+   * Start a new client server dynamically
+   * @throws Error if component not initialized
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/startClientServer
+   * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+   */
+  async startClientServer(): Promise<void> {
+    const { exec } = await import('child_process');
+    const componentDir = this.model.componentRoot;
+
+    if (!componentDir) {
+      throw new Error('Component not initialized');
+    }
+
+    return new Promise((resolve, reject) => {
+      exec(`cd ${componentDir} && ./once startServer &`, (error) => {
+        if (error) {
+          console.error('❌ Failed to start server:', error);
+          reject(error);
+        } else {
+          console.log('✅ Server starting in background...');
+          resolve();
+        }
+      });
+    });
+  }
+
+  /**
+   * Discover servers via housekeeping
+   * @returns Discovery result with deleted and discovered counts
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/discoverServers
+   * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+   */
+  async discoverServers(): Promise<import('../layer3/DiscoveryResult.interface.js').DiscoveryResult> {
+    if (!this.serverHierarchyManager) {
+      throw new Error('Server not initialized. Call startServer() first.');
+    }
+
+    console.log('🔍 Manual discovery triggered');
+    const result = await this.serverHierarchyManager.performHousekeeping();
+    
+    return {
+      deleted: result?.deleted || 0,
+      discovered: result?.discovered || 0
+    };
+  }
+
+  /**
+   * Shutdown all servers gracefully (Primary only)
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/shutdownAll
+   * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+   */
+  async shutdownAll(): Promise<void> {
+    if (!this.serverHierarchyManager) {
+      throw new Error('Server not initialized. Call startServer() first.');
+    }
+
+    console.log('🛑 Graceful shutdown of all servers initiated');
+    await this.serverHierarchyManager.shutdownAllServers();
+  }
+
+  // ============================================================================
+  // END MICRO KERNEL METHODS
+  // ============================================================================
+
   /**
    * Automated multi-server demo with Web4 scenario message exchange
    * ⚠️ DEPRECATED: Protocol-based messaging violates Web4 protocol-less communication

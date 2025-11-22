@@ -262,118 +262,99 @@ export class ServerHierarchyManager {
         const url = new URL(req.url, `http://${req.headers.host}`);
         
         if (url.pathname === '/') {
-            // Root path - serve comprehensive server status page (like v0.1.0.2 view/html/index.html)
+            // ✅ RADICAL OOP: Delegate to DefaultONCE.serveStatus()
+            // @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
             res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(this.getServerStatusHTML());
+            res.end(this.component!.serveStatus());
         } else if (url.pathname === '/health') {
-            // Health endpoint - JSON status
+            // ✅ RADICAL OOP: Delegate to DefaultONCE.getHealth()
+            // @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
             res.writeHead(200, { 
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             });
             
-            // Include primary server connection info for client servers
-            const primaryInfo = this.serverModel.isPrimaryServer ? null : {
-                host: this.serverModel.primaryServer?.host || 'localhost',
-                port: this.serverModel.primaryServer?.port || 42777,
-                connected: !!this.primaryServerConnection,
-                domain: this.serverModel.domain
-            };
-            
-            res.end(JSON.stringify({
-                status: 'running',
-                uuid: this.serverModel.uuid,
-                isPrimaryServer: this.serverModel.isPrimaryServer,
-                state: this.serverModel.state,
-                capabilities: this.serverModel.capabilities,
-                domain: this.serverModel.domain,
-                hostname: this.serverModel.hostname,
-                version: this.versionFromComponent,
-                primaryServer: primaryInfo,
-                message: `ONCE v${this.versionFromComponent} Server - Enhanced Hierarchy`
-            }));
-        } else if (url.pathname === '/once' || url.pathname === '/once/') {
-            // Simple browser client endpoint - just ONCE import and heading
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(this.getSimpleONCEClientHTML());
-        } else if (url.pathname === '/demo' || url.pathname === '/demo/') {
-            // Demo hub - landing page with all server links
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(this.getDemoHubHTML());
-        } else if (url.pathname === '/servers' && this.serverModel.isPrimaryServer) {
-            // Only primary server can list all servers
-            res.writeHead(200, { 
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            });
-            res.end(JSON.stringify({
-                primary: this.serverModel.isPrimaryServer,
-                primaryServer: this.serverModel, // ✅ Include full primary model for UI
-                servers: Array.from(this.serverRegistry.values()).map(entry => entry.model)
-            }));
-        } else if (url.pathname === '/start-server' && req.method === 'POST' && this.serverModel.isPrimaryServer) {
-            // Start a new client server dynamically
-            res.writeHead(200, { 
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            });
-            
-            // ✅ TRUE Radical OOP: Use path authority from component model (DRY)
-            const componentDir = this.component?.model.componentRoot;
-            if (!componentDir) {
-                res.end(JSON.stringify({ error: 'Component not initialized' }));
-                return;
+            try {
+                const health = this.component!.getHealth();
+                res.end(JSON.stringify(health));
+            } catch (error: any) {
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: error.message }));
             }
-            
-            exec(`cd ${componentDir} && ./once startServer &`, (error) => {
-                if (error) {
-                    console.error('Failed to start server:', error);
-                }
-            });
-            
-            res.end(JSON.stringify({ success: true, message: 'Server starting...' }));
-        } else if (url.pathname === '/discover-servers' && req.method === 'POST' && this.serverModel.isPrimaryServer) {
-            // Trigger housekeeping/discovery manually
+        } else if (url.pathname === '/once' || url.pathname === '/once/') {
+            // ✅ RADICAL OOP: Delegate to DefaultONCE.serveOnceClient()
+            // @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(this.component!.serveOnceClient());
+        } else if (url.pathname === '/demo' || url.pathname === '/demo/') {
+            // ✅ RADICAL OOP: Delegate to DefaultONCE.serveDemoHub()
+            // @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(this.component!.serveDemoHub());
+        } else if (url.pathname === '/servers' && this.serverModel.isPrimaryServer) {
+            // ✅ RADICAL OOP: Delegate to DefaultONCE.getServers()
+            // @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
             res.writeHead(200, { 
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             });
             
-            console.log('🔍 Manual discovery triggered from demo hub');
-            const result = await this.performHousekeeping();
-            res.end(JSON.stringify({ 
-                success: true, 
-                message: 'Discovery complete',
-                deleted: result?.deleted || 0,
-                discovered: result?.discovered || 0
-            }));
+            try {
+                const serverList = this.component!.getServers();
+                res.end(JSON.stringify(serverList));
+            } catch (error: any) {
+                res.writeHead(403, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: error.message }));
+            }
+        } else if (url.pathname === '/start-server' && req.method === 'POST' && this.serverModel.isPrimaryServer) {
+            // ✅ RADICAL OOP: Delegate to DefaultONCE.startClientServer()
+            // @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+            res.writeHead(200, { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            
+            try {
+                await this.component!.startClientServer();
+                res.end(JSON.stringify({ success: true, message: 'Server starting...' }));
+            } catch (error: any) {
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: error.message }));
+            }
+        } else if (url.pathname === '/discover-servers' && req.method === 'POST' && this.serverModel.isPrimaryServer) {
+            // ✅ RADICAL OOP: Delegate to DefaultONCE.discoverServers()
+            // @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+            res.writeHead(200, { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            
+            try {
+                const result = await this.component!.discoverServers();
+                res.end(JSON.stringify({ 
+                    success: true, 
+                    message: 'Discovery complete',
+                    deleted: result.deleted,
+                    discovered: result.discovered
+                }));
+            } catch (error: any) {
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: error.message }));
+            }
         } else if (url.pathname === '/shutdown-all' && req.method === 'POST' && this.serverModel.isPrimaryServer) {
-            // Gracefully shutdown all servers
+            // ✅ RADICAL OOP: Delegate to DefaultONCE.shutdownAll()
+            // @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
             res.writeHead(200, { 
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             });
             res.end(JSON.stringify({ success: true, message: 'Shutting down all servers...' }));
             
-            console.log('🛑 Graceful shutdown of all servers initiated');
-            
-            // Shutdown all client servers first
-            for (const [uuid, entry] of this.serverRegistry.entries()) {
-                if (entry.websocket && entry.websocket.readyState === WebSocket.OPEN) {
-                    console.log(`🛑 Sending shutdown to client: ${uuid}`);
-                    entry.websocket.send(JSON.stringify({ type: 'shutdown-command' }));
-                }
-            }
-            
-            // Wait for clients to shutdown
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            // Shutdown primary server
-            console.log('🛑 Shutting down primary server');
-            await this.stopServer();
-            
-            // Exit process
-            process.exit(0);
+            // Await in background (don't block response)
+            this.component!.shutdownAll().then(() => {
+                // Exit process after shutdown complete
+                process.exit(0);
+            }).catch(console.error);
         } else if (url.pathname === '/shutdown-primary' && req.method === 'POST') {
             // Allow ANY client (or test) to trigger cascading shutdown of primary + all clients
             // This enables tests to clean up existing server hierarchy before starting fresh
@@ -583,8 +564,10 @@ export class ServerHierarchyManager {
 
     /**
      * Get comprehensive server status HTML (for root path /)
+     * @deprecated Use DefaultONCE.serveStatus() instead (delegates to this method)
+     * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
      */
-    private getServerStatusHTML(): string {
+    getServerStatusHTML(): string {
         return this.renderTemplate('server-status.html');
     }
 
@@ -632,8 +615,10 @@ export class ServerHierarchyManager {
     /**
      * Get simple ONCE client HTML (for /once endpoint)
      * ✅ TRUE Radical OOP: Dynamically inject version instead of hardcoding
+     * @deprecated Use DefaultONCE.serveOnceClient() instead (delegates to this method)
+     * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
      */
-    private getSimpleONCEClientHTML(): string {
+    getSimpleONCEClientHTML(): string {
         if (!this.component?.model.componentRoot) {
             throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
         }
@@ -648,8 +633,10 @@ export class ServerHierarchyManager {
      * Get demo hub HTML (for /demo endpoint)
      * ✅ TRUE Radical OOP: Dynamically inject version instead of hardcoding
      * ✅ Path Authority: component.model.componentRoot set in DefaultONCE constructor
+     * @deprecated Use DefaultONCE.serveDemoHub() instead (delegates to this method)
+     * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
      */
-    private getDemoHubHTML(): string {
+    getDemoHubHTML(): string {
         if (!this.component?.model.componentRoot) {
             throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
         }
@@ -1339,12 +1326,13 @@ export class ServerHierarchyManager {
     }
 
     /**
-     * Perform housekeeping at primary server startup
+     * Perform housekeeping at primary server startup (infrastructure method)
      * - Load existing scenarios from filesystem
      * - Delete scenarios with state=shutdown
      * - Discover and re-register running client servers
+     * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
      */
-    private async performHousekeeping(): Promise<{ deleted: number; discovered: number }> {
+    async performHousekeeping(): Promise<{ deleted: number; discovered: number }> {
         console.log('🧹 Performing primary server housekeeping...');
         
         try {
@@ -1743,5 +1731,33 @@ export class ServerHierarchyManager {
         } catch (error) {
             console.error('⚠️  Failed to update scenario state:', error);
         }
+    }
+
+    /**
+     * Shutdown all servers gracefully (infrastructure method)
+     * Called by DefaultONCE.shutdownAll()
+     * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+     */
+    async shutdownAllServers(): Promise<void> {
+        // Shutdown all client servers first
+        for (const [uuid, entry] of this.serverRegistry.entries()) {
+            if (entry.websocket && entry.websocket.readyState === WebSocket.OPEN) {
+                console.log(`🛑 Sending shutdown to client: ${uuid}`);
+                entry.websocket.send(JSON.stringify({ type: 'shutdown-command' }));
+            }
+        }
+        
+        // Give clients time to shutdown
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Shutdown self
+        await this.stopServer();
+    }
+
+    /**
+     * Helper method for async sleep
+     */
+    private sleep(ms: number): Promise<void> {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 }
