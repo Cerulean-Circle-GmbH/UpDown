@@ -64,6 +64,20 @@ export interface ONCEModel extends Model {
   eventHandlers?: Map<LifecycleEventType, LifecycleEventHandler[]>; // ⚠️ DEPRECATED: Use observers instead
   observers?: LifecycleObserver[];                 // ✅ TRUE Radical OOP: Observer pattern (replaces eventHandlers)
   
+  // 🌐 Primary Server IOR with Failover Profiles
+  // @pdca 2025-11-22-UTC-1430.iteration-01.6.4a-ior-failover.pdca.md
+  /**
+   * Primary Server IOR with failover profiles
+   * Supports CORBA 2.3+ style failover: comma-separated host:port pairs
+   * 
+   * Examples:
+   * - Single host: 'ior:https://localhost:42777/ONCE/0.3.21.6/primary-uuid'
+   * - Multi-region: 'ior:https://primary.once.network:42777,europe:42778,asia:42779/ONCE/0.3.21.6/registry-uuid'
+   * 
+   * Resolution tries profiles in sequence until one succeeds
+   */
+  primaryServerIor?: string;
+  
   // 📨 Message Exchange Properties - TRUE Radical OOP
   // ⚠️ DEPRECATED: Protocol-based messaging violates Web4 protocol-less communication
   // @pdca 2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md - Iteration 1.6.2

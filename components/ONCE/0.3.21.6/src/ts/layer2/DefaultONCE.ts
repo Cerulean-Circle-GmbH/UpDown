@@ -73,7 +73,13 @@ export class DefaultONCE implements ONCE {
       projectRoot: '',
       targetDirectory: '',
       targetComponentRoot: '',
-      isTestIsolation: false
+      isTestIsolation: false,
+      // Primary Server IOR with Failover (configurable via environment)
+      // @pdca 2025-11-22-UTC-1430.iteration-01.6.4a-ior-failover.pdca.md
+      // Default: localhost for development
+      // Production: Set ONCE_PRIMARY_IOR environment variable
+      // Example multi-region: 'ior:https://primary.once.network:42777,europe:42778,asia:42779/ONCE/0.3.21.6/registry-uuid'
+      primaryServerIor: process.env.ONCE_PRIMARY_IOR || 'ior:https://localhost:42777/ONCE/0.0.0.0/primary-server-uuid'
     };
     
     // ✅ Synchronous path discovery (needed for CLI to work)

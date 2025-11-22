@@ -173,6 +173,93 @@ export class DefaultIOR implements IOR {
     }
     
     /**
+     * Resolve IOR with automatic failover
+     * Tries each profile in sequence until one succeeds
+     * 
+     * @param iorString IOR string with profiles (e.g., 'ior:https://host1:42777,host2:42778/...')
+     * @param timeout Timeout per profile attempt (ms) - default 5000ms
+     * @returns Resolved scenario from first successful profile
+     * @throws Error if all profiles fail
+     * @pdca 2025-11-22-UTC-1430.iteration-01.6.4a-ior-failover.pdca.md
+     */
+    async resolveWithFailover(iorString: string, timeout: number = 5000): Promise<any> {
+        // Parse IOR string into profiles
+        this.parseIorString(iorString);
+        
+        const allProfiles = this.getProfiles();
+        
+        if (allProfiles.length === 0) {
+            throw new Error('No IOR profiles found for failover resolution');
+        }
+        
+        // Try each profile in sequence
+        const errors: Error[] = [];
+        for (let i = 0; i < allProfiles.length; i++) {
+            const profile = allProfiles[i];
+            const profileUrl = `${profile.protocol || 'https'}://${profile.host}:${profile.port}${this.model.path || ''}`;
+            
+            try {
+                console.log(`🔄 [IOR] Trying profile ${i + 1}/${allProfiles.length}: ${profile.host}:${profile.port}`);
+                
+                // Use dynamic import for Node.js compatibility
+                if (typeof fetch === 'undefined') {
+                    // Node.js environment - use http/https modules
+                    const https = await import('https');
+                    const http = await import('http');
+                    const module = profile.protocol === 'https' ? https : http;
+                    
+                    return await new Promise((resolve, reject) => {
+                        const timeoutId = setTimeout(() => {
+                            reject(new Error(`Timeout after ${timeout}ms`));
+                        }, timeout);
+                        
+                        module.get(profileUrl, (res) => {
+                            clearTimeout(timeoutId);
+                            let data = '';
+                            res.on('data', chunk => data += chunk);
+                            res.on('end', () => {
+                                if (res.statusCode === 200) {
+                                    console.log(`✅ [IOR] Resolved via profile ${i + 1}: ${profile.host}:${profile.port}`);
+                                    resolve(JSON.parse(data));
+                                } else {
+                                    reject(new Error(`HTTP ${res.statusCode}`));
+                                }
+                            });
+                        }).on('error', reject);
+                    });
+                } else {
+                    // Browser environment - use fetch with AbortController
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), timeout);
+                    
+                    const response = await fetch(profileUrl, {
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (response.ok) {
+                        console.log(`✅ [IOR] Resolved via profile ${i + 1}: ${profile.host}:${profile.port}`);
+                        return await response.json();
+                    }
+                    
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error: any) {
+                console.warn(`⚠️  [IOR] Profile ${i + 1} failed: ${profile.host}:${profile.port} - ${error.message}`);
+                errors.push(error);
+                // Continue to next profile
+            }
+        }
+        
+        // All profiles failed
+        throw new Error(
+            `IOR resolution failed for all ${allProfiles.length} profile(s). ` +
+            `Errors: ${errors.map(e => e.message).join('; ')}`
+        );
+    }
+    
+    /**
      * Convert IOR to standard URL format
      * @returns URL string representation
      */
