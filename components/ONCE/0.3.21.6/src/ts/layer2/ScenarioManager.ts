@@ -141,7 +141,11 @@ export class ScenarioManager {
         writeFileSync(scenarioPath, JSON.stringify(scenario, null, 2));
         console.log(`📝 [WRITE] ScenarioManager.saveScenario() projectRoot=${this.projectRoot} → ${scenarioPath}`);
         
-        logAction('💾', legacyData.uuid, 'Scenario saved', `${serverIdentity(legacyData.state.hostname, legacyData.state.httpPort)} → ${basename(scenarioPath)}`);
+        // Extract port from capabilities for logging (httpPort might not be in state)
+        const httpCapability = legacyData.state.capabilities?.find((c: any) => c.capability === 'httpPort');
+        const port = httpCapability?.port || legacyData.state.httpPort || 'unknown';
+        
+        logAction('💾', legacyData.uuid, 'Scenario saved', `${serverIdentity(legacyData.state.hostname, port)} → ${basename(scenarioPath)}`);
         return scenarioPath;
     }
 
