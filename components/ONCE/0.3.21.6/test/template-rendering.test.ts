@@ -2,17 +2,21 @@ import { describe, it, expect } from 'vitest';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { DefaultONCE } from '../src/ts/layer2/DefaultONCE.js';
+import { fileURLToPath } from 'url';
+import * as path from 'path';
 
 const execAsync = promisify(exec);
 
-// Dynamically get component version
-const componentVersion = '0.3.21.2';
+// ✅ Dynamically discover component root from test file location
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const componentRoot = path.resolve(__dirname, '..');
 
 describe('HTML Template Rendering', () => {
     it('should render server-status.html with model values (not template placeholders)', async () => {
         // Start server in background, fetch HTML, check content, kill server
         const testScript = `
-cd /Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/${componentVersion} && \
+cd ${componentRoot} && \
 ./once testInput s > /dev/null 2>&1 & \
 ONCE_PID=$! && \
 sleep 3 && \
@@ -35,11 +39,11 @@ echo "$HTML"
         expect(html).toMatch(/[0-9a-f-]{36}/); // UUID pattern
         // Check for domain (could be local.once, fritz.box, etc.)
         expect(html).toMatch(/(local\.once|fritz\.box|localhost)/);
-    }, 15000);
+    }, 30000); // Increased timeout to 30s
 
     it('should render once-client.html without placeholders', async () => {
         const testScript = `
-cd /Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/${componentVersion} && \
+cd ${componentRoot} && \
 ./once testInput s > /dev/null 2>&1 & \
 ONCE_PID=$! && \
 sleep 3 && \

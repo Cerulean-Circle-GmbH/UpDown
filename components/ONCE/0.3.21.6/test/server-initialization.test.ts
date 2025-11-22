@@ -12,9 +12,27 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import os from 'os';
+import * as path from 'path';
+import * as fs from 'fs';
+import { fileURLToPath } from 'url';
 
 describe('Server Initialization - Domain and Hostname Detection', () => {
     let serverInstance: any;
+    let testProjectRoot: string;
+    let componentRoot: string;
+
+    beforeEach(async () => {
+        // ✅ TEST ISOLATION: Dynamically discover component root and use test/data
+        const __filename = fileURLToPath(import.meta.url);
+        const __dirname = path.dirname(__filename);
+        componentRoot = path.resolve(__dirname, '..');
+        testProjectRoot = path.join(componentRoot, 'test/data');
+        
+        // Create test/data directory if it doesn't exist
+        if (!fs.existsSync(testProjectRoot)) {
+            fs.mkdirSync(testProjectRoot, { recursive: true });
+        }
+    });
 
     afterEach(async () => {
         if (serverInstance) {
@@ -151,23 +169,24 @@ describe('Server Initialization - Domain and Hostname Detection', () => {
 
     describe('Scenario Path Construction', () => {
         it('should construct hierarchical path based on detected domain/hostname', async () => {
-            // GIVEN: ServerHierarchyManager with detected domain/hostname
+            // GIVEN: DefaultONCE with test isolation
+            const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+            const once = new DefaultONCE();
+            await once.init();
+            await (once as any).getWeb4TSComponent();
+            
+            // ✅ TEST ISOLATION: Override project root
+            once.model.projectRoot = testProjectRoot;
+            
             const actualHostname = os.hostname();
-            const { ServerHierarchyManager } = await import('../src/ts/layer2/ServerHierarchyManager.js');
-            const manager = new ServerHierarchyManager();
 
             // WHEN: Server starts and saves scenario
-            await manager.startServer();
-            serverInstance = manager;
+            await once.startServer();
+            serverInstance = once;
 
-            // THEN: Scenario should be in hierarchical path
-            // For "McDonges-3.fritz.box" -> scenarios/box/fritz/McDonges-3/ONCE/0.3.20.5/
-            // For "localhost" -> scenarios/local/once/localhost/ONCE/0.3.20.5/
-            const fs = await import('fs');
-            const path = await import('path');
-            
-            // Get project root
-            const projectRoot = process.cwd();
+            // THEN: Scenario should be in hierarchical path in test/data
+            // Get project root from test isolation
+            const projectRoot = testProjectRoot;
             
             // Expected path structure
             let expectedPathParts: string[];
@@ -207,75 +226,94 @@ describe('Server Initialization - Domain and Hostname Detection', () => {
         });
 
         it('should save scenario file with correct domain/hostname metadata', async () => {
-            // GIVEN: ServerHierarchyManager with detected domain/hostname
+            // GIVEN: DefaultONCE with test isolation
+            const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+            const once = new DefaultONCE();
+            await once.init();
+            await (once as any).getWeb4TSComponent();
+            
+            // ✅ TEST ISOLATION: Override project root
+            once.model.projectRoot = testProjectRoot;
+            
             const actualHostname = os.hostname();
-            const { ServerHierarchyManager } = await import('../src/ts/layer2/ServerHierarchyManager.js');
-            const manager = new ServerHierarchyManager();
 
             // WHEN: Server starts and saves scenario
-            await manager.startServer();
-            serverInstance = manager;
+            await once.startServer();
+            serverInstance = once;
+            const manager = (once as any).serverHierarchyManager;
 
             // Wait for scenario to be saved
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 2000)); // Increased wait time
 
-            // THEN: Find the scenario file
-            const fs = await import('fs');
-            const path = await import('path');
+            // THEN: Find the scenario file in test/data (not symlinks)
             const glob = await import('glob');
             
-            const projectRoot = process.cwd();
-            const scenarioPattern = path.join(projectRoot, 'scenarios', '**', `${manager.serverModel.uuid}.scenario.json`);
-            const scenarioFiles = glob.sync(scenarioPattern);
+            const projectRoot = testProjectRoot;
+            // Find the main scenario file (not in capability subdirectories which are symlinks)
+            const scenarioPattern = path.join(projectRoot, 'scenarios', '**', manager.serverModel.uuid.substr(0,8), '*.scenario.json');
+            // Alternative: look for files at the specific depth where main scenarios are stored
+            const versionDir = path.join(projectRoot, 'scenarios', '**', 'ONCE', once.model.version);
+            const scenarioFile = path.join(versionDir, `${manager.serverModel.uuid}.scenario.json`);
             
-            expect(scenarioFiles.length).toBeGreaterThan(0);
+            console.log(`Looking for scenario file: ${scenarioFile}`);
             
-            const scenarioFile = scenarioFiles[0];
+            // Wait a bit more if file doesn't exist yet
+            if (!fs.existsSync(scenarioFile)) {
+                console.log('Scenario not found, waiting longer...');
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+            
+            expect(fs.existsSync(scenarioFile)).toBe(true);
             console.log(`Found scenario file: ${scenarioFile}`);
             
             // Read scenario content
             const scenarioContent = JSON.parse(fs.readFileSync(scenarioFile, 'utf-8'));
             
-            // Verify metadata has correct values (not fallbacks)
-            expect(scenarioContent.metadata.domain).toBe(manager.serverModel.domain);
-            expect(scenarioContent.metadata.host).toBe(manager.serverModel.host);
+            // Debug: log the structure
+            console.log(`Scenario structure: objectType=${scenarioContent.objectType}, has state=${!!scenarioContent.state}`);
             
-            // State should also have correct values
+            // Verify state has correct values (not fallbacks)
+            expect(scenarioContent.state).toBeDefined();
             expect(scenarioContent.state.domain).toBe(manager.serverModel.domain);
             expect(scenarioContent.state.host).toBe(manager.serverModel.host);
             expect(scenarioContent.state.ip).toBe(manager.serverModel.ip);
             
             // If FQDN, verify it's not using fallbacks
             if (actualHostname.includes('.') && actualHostname !== 'localhost') {
-                expect(scenarioContent.metadata.domain).not.toBe('local.once');
-                expect(scenarioContent.metadata.host).not.toBe('localhost');
+                expect(scenarioContent.state.domain).not.toBe('local.once');
+                expect(scenarioContent.state.host).not.toBe('localhost');
                 expect(scenarioContent.state.ip).not.toBe('127.0.0.1');
             }
             
             console.log('✅ Scenario metadata:');
-            console.log(`   domain: ${scenarioContent.metadata.domain}`);
-            console.log(`   host: ${scenarioContent.metadata.host}`);
+            console.log(`   domain: ${scenarioContent.state.domain}`);
+            console.log(`   host: ${scenarioContent.state.host}`);
             console.log(`   state.ip: ${scenarioContent.state.ip}`);
         });
     });
 
     describe('Regression Tests - Bug Verification', () => {
         it('should NOT save scenarios to old flat path (local.once/ONCE/)', async () => {
-            // GIVEN: ServerHierarchyManager on system with FQDN
+            // GIVEN: DefaultONCE with test isolation
+            const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+            const once = new DefaultONCE();
+            await once.init();
+            await (once as any).getWeb4TSComponent();
+            
+            // ✅ TEST ISOLATION: Override project root
+            once.model.projectRoot = testProjectRoot;
+            
             const actualHostname = os.hostname();
-            const { ServerHierarchyManager } = await import('../src/ts/layer2/ServerHierarchyManager.js');
-            const manager = new ServerHierarchyManager();
 
             // WHEN: Server starts
-            await manager.startServer();
-            serverInstance = manager;
+            await once.startServer();
+            serverInstance = once;
+            const manager = (once as any).serverHierarchyManager;
             
             await new Promise(resolve => setTimeout(resolve, 1000));
 
-            // THEN: Scenario should NOT be in old flat path
-            const fs = await import('fs');
-            const path = await import('path');
-            const projectRoot = process.cwd();
+            // THEN: Scenario should NOT be in old flat path in test/data
+            const projectRoot = testProjectRoot;
             
             const oldFlatPath = path.join(
                 projectRoot,

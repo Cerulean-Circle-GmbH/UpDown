@@ -7,7 +7,7 @@
 import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { ScenarioTypeGuard } from '../layer1/ScenarioTypeGuard.js';
-import { ONCEServerModel } from '../layer3/ONCEServerModel.js';
+import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
 import { DefaultUser } from './DefaultUser.js';
 import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';

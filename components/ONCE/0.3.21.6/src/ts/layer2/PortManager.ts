@@ -4,7 +4,14 @@
  */
 
 import { createServer } from 'http';
-import { ONCE_DEFAULT_CONFIG } from '../layer3/ONCEServerModel.js';
+
+/**
+ * Port configuration constants (inlined from ONCEServerModel.ts)
+ * @pdca session/2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md
+ */
+const PRIMARY_PORT = 42777;
+const FALLBACK_PORT_START = 8080;
+const MAX_PORT_SCAN = 100;
 
 /**
  * Port availability result
@@ -63,19 +70,19 @@ export class PortManager {
      */
     async getNextAvailablePort(): Promise<PortAvailabilityResult> {
         // First try the primary server port 42777
-        const primaryAvailable = await this.isPortAvailable(ONCE_DEFAULT_CONFIG.PRIMARY_PORT);
+        const primaryAvailable = await this.isPortAvailable(PRIMARY_PORT);
         
         if (primaryAvailable) {
             return {
-                port: ONCE_DEFAULT_CONFIG.PRIMARY_PORT,
+                port: PRIMARY_PORT,
                 available: true,
                 isPrimary: true
             };
         }
 
         // Primary port is occupied, scan fallback range starting from 8080
-        for (let port = ONCE_DEFAULT_CONFIG.FALLBACK_PORT_START; 
-             port < ONCE_DEFAULT_CONFIG.FALLBACK_PORT_START + ONCE_DEFAULT_CONFIG.MAX_PORT_SCAN; 
+        for (let port = FALLBACK_PORT_START; 
+             port < FALLBACK_PORT_START + MAX_PORT_SCAN; 
              port++) {
             
             const available = await this.isPortAvailable(port);
@@ -90,28 +97,28 @@ export class PortManager {
         }
 
         // No ports available in range
-        throw new Error(`No available ports found in range ${ONCE_DEFAULT_CONFIG.FALLBACK_PORT_START}-${ONCE_DEFAULT_CONFIG.FALLBACK_PORT_START + ONCE_DEFAULT_CONFIG.MAX_PORT_SCAN}`);
+        throw new Error(`No available ports found in range ${FALLBACK_PORT_START}-${FALLBACK_PORT_START + MAX_PORT_SCAN}`);
     }
 
     /**
      * Check if primary server (port 42777) is running
      */
     async isPrimaryServerRunning(): Promise<boolean> {
-        return !(await this.isPortAvailable(ONCE_DEFAULT_CONFIG.PRIMARY_PORT));
+        return !(await this.isPortAvailable(PRIMARY_PORT));
     }
 
     /**
      * Get primary server port
      */
     getPrimaryPort(): number {
-        return ONCE_DEFAULT_CONFIG.PRIMARY_PORT;
+        return PRIMARY_PORT;
     }
 
     /**
      * Check if a port is the primary server port
      */
     isPrimaryPort(port: number): boolean {
-        return port === ONCE_DEFAULT_CONFIG.PRIMARY_PORT;
+        return port === PRIMARY_PORT;
     }
 }
 

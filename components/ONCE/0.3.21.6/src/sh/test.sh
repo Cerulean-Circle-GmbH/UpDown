@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
-# npm test → test.sh verbose → web4tscomponent test (verbose) → vitest (with recursion prevention & promotion)
-# Direct test.sh call → silent build
+# npm test → test.sh → vitest (with recursion prevention)
+# When called via Web4TSComponent delegation, just run vitest directly
 
 MODE=${1:-silent}
 
@@ -12,6 +12,8 @@ else
     ./src/sh/build.sh
 fi
 
-# Run web4tscomponent test (handles vitest execution, recursion prevention, and promotion)
-./web4tscomponent test
-
+# 🚨 RECURSION PREVENTION: If called from npm test (via Web4TSComponent delegation),
+# just run vitest directly. Don't call ./web4tscomponent test again!
+# Web4TSComponent.test() already handles context and runs: execSync('npm test', { cwd: componentPath })
+# So this script should just run the actual tests.
+npx vitest run --bail=false

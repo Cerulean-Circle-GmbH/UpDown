@@ -6,6 +6,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 
 describe('Primary Server Housekeeping', () => {
     let primaryServer: any;
@@ -21,10 +22,13 @@ describe('Primary Server Housekeeping', () => {
     beforeEach(async () => {
         const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
         
+        // ✅ Dynamically discover component root from test file location
+        const __filename = fileURLToPath(import.meta.url);
+        const __dirname = path.dirname(__filename);
+        const componentRoot = path.resolve(__dirname, '..');
+        
         // ✅ TEST ISOLATION: Use test/data as project root (not production!)
-        // Path Authority: CLI provides paths, component uses them
-        const productionRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../../../..');
-        testProjectRoot = path.join(productionRoot, 'components/ONCE', '0.3.21.2', 'test/data');
+        testProjectRoot = path.join(componentRoot, 'test/data');
         
         // Create test/data directory if it doesn't exist
         if (!fs.existsSync(testProjectRoot)) {

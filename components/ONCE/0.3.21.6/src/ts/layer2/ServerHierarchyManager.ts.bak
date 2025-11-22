@@ -287,9 +287,9 @@ export class ServerHierarchyManager {
                 capabilities: this.serverModel.capabilities,
                 domain: this.serverModel.domain,
                 hostname: this.serverModel.hostname,
-                version: this.versionFromComponent,
+                version: this.version,
                 primaryServer: primaryInfo,
-                message: `ONCE v${this.versionFromComponent} Server - Enhanced Hierarchy`
+                message: `ONCE v${this.version} Server - Enhanced Hierarchy`
             }));
         } else if (url.pathname === '/once' || url.pathname === '/once/') {
             // Simple browser client endpoint - just ONCE import and heading
@@ -464,7 +464,7 @@ export class ServerHierarchyManager {
                             ...domainPath,
                             hostname,
                             'ONCE',
-                            this.versionFromComponent,
+                            this.version,
                             'capability',
                             'httpPort',
                             port.toString()
@@ -640,7 +640,7 @@ export class ServerHierarchyManager {
         const html = fs.readFileSync(fullPath, 'utf-8');
         
         // Replace all hardcoded version strings with dynamic version
-        return html.replace(/0\.3\.20\.[0-9]/g, this.versionFromComponent);
+        return html.replace(/0\.3\.20\.[0-9]/g, this.version);
     }
 
     /**
@@ -656,7 +656,7 @@ export class ServerHierarchyManager {
         const html = fs.readFileSync(fullPath, 'utf-8');
         
         // Replace all hardcoded version strings with dynamic version
-        return html.replace(/0\.3\.20\.[0-9]/g, this.versionFromComponent);
+        return html.replace(/0\.3\.20\.[0-9]/g, this.version);
     }
 
     /**
@@ -821,7 +821,7 @@ export class ServerHierarchyManager {
         const ackScenario: ONCEScenarioMessage = {
             uuid: uuidv4(),
             objectType: 'ONCEMessage',
-            version: this.versionFromComponent, // ✅ Use dynamic version
+            version: this.version, // ✅ Use dynamic version
             state: {
                 type: scenarioModel.state?.type || 'direct',
                 from: { uuid: this.serverModel.uuid, port: this.getHttpPort() },
@@ -998,7 +998,7 @@ export class ServerHierarchyManager {
             path: '/once',
             uuid: primaryServerModel.uuid,
             objectType: 'ONCE',
-            version: this.versionFromComponent
+            version: this.version
         };
 
         return iorToUrl(ior);
@@ -1023,7 +1023,7 @@ export class ServerHierarchyManager {
             ...domainPath,      // Spread domain parts as separate directories
             hostname,
             'ONCE',
-            this.versionFromComponent
+            this.version
         );
         const mainScenarioPath = path.join(mainScenarioDir, `${this.serverModel.uuid}.scenario.json`);
         
@@ -1034,7 +1034,7 @@ export class ServerHierarchyManager {
             ...domainPath,
             hostname,
             'ONCE',
-            this.versionFromComponent,
+            this.version,
             'capability',
             'httpPort',
             httpCapability.port.toString()
@@ -1118,7 +1118,7 @@ export class ServerHierarchyManager {
             const scenario = {
                 uuid: this.serverModel.uuid,
                 objectType: 'ONCE',
-                version: this.versionFromComponent,
+                version: this.version,
                 state: {
                     ...this.serverModel,
                     created: new Date().toISOString()
@@ -1126,7 +1126,7 @@ export class ServerHierarchyManager {
                 metadata: {
                     created: new Date().toISOString(),
                     modified: new Date().toISOString(),
-                    creator: `ONCE-v${this.versionFromComponent}`,
+                    creator: `ONCE-v${this.version}`,
                     description: `ONCE server scenario - ${this.serverModel.isPrimaryServer ? 'Primary' : 'Client'} server`,
                     domain: this.serverModel.domain,
                     host: this.serverModel.host,
@@ -1700,7 +1700,7 @@ export class ServerHierarchyManager {
                 ...domainPath,
                 hostname,
                 'ONCE',
-                this.versionFromComponent,
+                this.version,
                 `${this.serverModel.uuid}.scenario.json`
             );
             

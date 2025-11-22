@@ -10,14 +10,17 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 
 const execAsync = promisify(exec);
 
-// Dynamically get component version
-const componentVersion = '0.3.21.2'; // Current version
+// ✅ Dynamically discover component root from test file location
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const componentRoot = path.resolve(__dirname, '..');
+const componentVersion = path.basename(componentRoot); // Extract version from path
 
 describe('ONCE Multi-Server Message Exchange', () => {
-  const componentRoot = `/Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/${componentVersion}`;
   
   beforeAll(async () => {
     // Clean up any existing test artifacts

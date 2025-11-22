@@ -15,7 +15,7 @@ import { LifecycleObserver } from '../layer3/LifecycleObserver.interface.js';
 // ⚠️ DEPRECATED imports (functional pattern, will be removed):
 type LifecycleEventHandler = (event: any) => void | Promise<void>;
 type LifecycleHooks = Record<string, LifecycleEventHandler>;
-import { ONCEServerModel } from '../layer3/ONCEServerModel.js';
+import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
 import { ServerHierarchyManager } from './ServerHierarchyManager.js';
 import { ScenarioManager } from './ScenarioManager.js';
 import { ONCEModel } from '../layer3/ONCEModel.interface.js';
@@ -251,9 +251,13 @@ export class DefaultONCE implements ONCE {
     web4ts.model.isDelegation = true;
     web4ts.model.delegationInfo = `via Web4TSComponent v${web4ts.model.version.toString()}`;
     
-    // ✅ CRITICAL: Set component name for infrastructure methods (e.g., setCICDVersion)
-    // These methods use this.model.component to determine target component
+    // ✅ CRITICAL: Set component name and paths for infrastructure methods
+    // These are needed by test(), build(), and other delegated methods
     web4ts.model.component = this.model.component;
+    web4ts.model.version = this.model.version;
+    web4ts.model.componentRoot = this.model.componentRoot;
+    web4ts.model.targetComponentRoot = this.model.componentRoot;
+    web4ts.model.projectRoot = this.model.projectRoot;
     
     // Test isolation context (if applicable)
     if (this.model.isTestIsolation && this.model.projectRoot) {

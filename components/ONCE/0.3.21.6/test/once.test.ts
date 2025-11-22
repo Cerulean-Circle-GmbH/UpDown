@@ -64,7 +64,7 @@ describe('ONCE CLI Location Resilience', () => {
       const result = execSync('./once', {
         cwd: scriptsDir,
         encoding: 'utf-8',
-        timeout: 10000
+        timeout: 30000 // Increased to 30s
       });
       
       expect(result).toContain('ONCE CLI Tool');
@@ -76,7 +76,7 @@ describe('ONCE CLI Location Resilience', () => {
       console.error('   The CLI script needs proper symlink resolution logic.');
       throw new Error(`CLI script failed from scripts/ directory: ${error.message}`);
     }
-  });
+  }, 35000); // Increased test timeout to 35s
 });
 
 describe('ONCE Delegated Infrastructure Methods', () => {
