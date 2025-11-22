@@ -211,13 +211,16 @@ function readScenarioPort(filePath: string): number | null {
  * Helper: Create test scenario for CLI
  */
 function createTestScenario(testDataDir: string, componentRoot: string): Scenario<CLIModel> {
+    // ✅ Dynamically determine component version from componentRoot path
+    const componentVersion = path.basename(componentRoot);
+    
     return {
         ior: {
             protocol: 'web4',
             host: 'localhost',
             uuid: uuidv4(),
             component: 'ONCE',
-            version: '0.3.21.2'
+            version: componentVersion
         },
         owner: 'test-runner-uuid',
         model: {
@@ -225,7 +228,7 @@ function createTestScenario(testDataDir: string, componentRoot: string): Scenari
             componentRoot: componentRoot,
             targetDirectory: testDataDir,
             isTestIsolation: true,
-            version: '0.3.21.2'
+            version: componentVersion
         }
     };
 }
