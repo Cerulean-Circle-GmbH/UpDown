@@ -17,7 +17,8 @@ import { realpathSync } from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { logAction, logBroadcast, logRegistration, logConnection, logDisconnection, shortUUID, serverIdentity } from '../layer1/LoggingUtils.js';
-import { ONCEScenarioMessage } from '../layer3/ONCEScenarioMessage.interface.js';
+// ⚠️ DELETED: ONCEScenarioMessage - Protocol violation (Web4 is protocol-less)
+// @pdca 2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md - Iteration 1.6.2
 import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
 import { EnvironmentModel } from '../layer3/EnvironmentModel.interface.js';
 import { ScenarioTypeGuard } from '../layer1/ScenarioTypeGuard.js';
@@ -794,9 +795,11 @@ export class ServerHierarchyManager {
 
     /**
      * Handle incoming scenario message
-     * @pdca 2025-11-11-UTC-2322.pdca.md - Process and track received scenarios
+     * ⚠️ DEPRECATED: Protocol-based messaging violates Web4 protocol-less communication
+     * @pdca 2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md - Iteration 1.6.2
+     * @deprecated Will be replaced with scenario replication in Iteration 1.6.3
      */
-    private async handleScenarioMessage(scenario: ONCEScenarioMessage): Promise<void> {
+    private async handleScenarioMessage(scenario: any): Promise<void> {
         // ✅ Extract model from Web4 scenario format if needed
         const scenarioModel = (scenario as any).ior && (scenario as any).model 
             ? (scenario as any).model  // Web4 format: {ior, owner, model}
@@ -818,7 +821,7 @@ export class ServerHierarchyManager {
         }
         
         // Send acknowledgment as proper Scenario
-        const ackScenario: ONCEScenarioMessage = {
+        const ackScenario: any = {
             uuid: uuidv4(),
             objectType: 'ONCEMessage',
             version: this.versionFromComponent, // ✅ Use dynamic version
@@ -1201,9 +1204,11 @@ export class ServerHierarchyManager {
 
     /**
      * Broadcast scenario message to all registered clients
-     * @pdca 2025-11-11-UTC-2322.pdca.md - Automated multi-server demo
+     * ⚠️ DEPRECATED: Protocol-based messaging violates Web4 protocol-less communication
+     * @pdca 2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md - Iteration 1.6.2
+     * @deprecated Will be replaced with scenario replication in Iteration 1.6.3
      */
-    broadcastScenario(scenario: ONCEScenarioMessage): void {
+    broadcastScenario(scenario: any): void {
         if (!this.serverModel.isPrimaryServer) {
             console.log('⚠️  Only primary server can broadcast');
             return;
@@ -1225,9 +1230,11 @@ export class ServerHierarchyManager {
 
     /**
      * Broadcast scenario message to all connected browser clients (on this server)
-     * @pdca 2025-11-11-UTC-2322.pdca.md - Client server forwards primary broadcasts to browsers
+     * ⚠️ DEPRECATED: Protocol-based messaging violates Web4 protocol-less communication
+     * @pdca 2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md - Iteration 1.6.2
+     * @deprecated Will be replaced with scenario replication in Iteration 1.6.3
      */
-    private broadcastToBrowserClients(scenario: ONCEScenarioMessage): void {
+    private broadcastToBrowserClients(scenario: any): void {
         const clientCount = this.browserClients.size;
         logBroadcast(this.serverModel.uuid, clientCount, 'browsers', `scenario ${shortUUID(scenario.uuid)}`);
         
@@ -1272,9 +1279,11 @@ export class ServerHierarchyManager {
 
     /**
      * Relay scenario message from one client through primary to another client
-     * @pdca 2025-11-11-UTC-2322.pdca.md - Hub-and-spoke pattern
+     * ⚠️ DEPRECATED: Protocol-based messaging violates Web4 protocol-less communication
+     * @pdca 2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md - Iteration 1.6.2
+     * @deprecated Will be replaced with scenario replication in Iteration 1.6.3
      */
-    relayScenario(scenario: ONCEScenarioMessage, targetUUID: string): void {
+    relayScenario(scenario: any, targetUUID: string): void {
         if (!this.serverModel.isPrimaryServer) {
             // Client sends to primary for relay
             if (this.primaryServerConnection && this.primaryServerConnection.readyState === WebSocket.OPEN) {
@@ -1303,9 +1312,11 @@ export class ServerHierarchyManager {
 
     /**
      * Send scenario directly to peer (P2P)
-     * @pdca 2025-11-11-UTC-2322.pdca.md - Direct peer-to-peer
+     * ⚠️ DEPRECATED: Protocol-based messaging violates Web4 protocol-less communication
+     * @pdca 2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md - Iteration 1.6.2
+     * @deprecated Will be replaced with scenario replication in Iteration 1.6.3
      */
-    sendScenarioToPeer(scenario: ONCEScenarioMessage, peerPort: number): void {
+    sendScenarioToPeer(scenario: any, peerPort: number): void {
         try {
             const wsUrl = `ws://localhost:${peerPort}`;
             const peerConnection = new WebSocket(wsUrl);

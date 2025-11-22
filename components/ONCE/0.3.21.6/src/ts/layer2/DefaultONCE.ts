@@ -1766,10 +1766,11 @@ export class DefaultONCE implements ONCE {
 
   /**
    * Automated multi-server demo with Web4 scenario message exchange
-   * @pdca 2025-11-11-UTC-2322.pdca.md - Automated demo with all patterns
+   * ⚠️ DEPRECATED: Protocol-based messaging violates Web4 protocol-less communication
+   * @pdca 2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md - Iteration 1.6.2
+   * @deprecated Will be replaced with scenario replication demo in Iteration 1.6.3
    * @param clientCount Number of client servers to spawn (default: 3)
-   * @cliSyntax clientCount
-   * @cliDefault clientCount 3
+   * @cliHide
    */
   async demoMessages(clientCount: string = '3'): Promise<this> {
     const count = parseInt(clientCount, 10);

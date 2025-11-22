@@ -9,7 +9,20 @@ import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
 import { LifecycleEventType } from './LifecycleEventType.enum.js';
 import { LifecycleObserver } from './LifecycleObserver.interface.js';
 import { ONCEServerModel } from './ONCEServerModel.interface.js';
-import { ONCEMessageTracker } from './ONCEMessageTracker.interface.js';
+
+// ⚠️ DEPRECATED: Keeping type definition for backward compatibility until Iteration 1.6.3
+// @pdca 2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md - Iteration 1.6.2
+// Type definition kept inline to avoid dependency on deleted interface file
+type ONCEMessageTracker = {
+  sent: any[];
+  received: any[];
+  acknowledged: string[];
+  patterns: {
+    broadcast: number;
+    relay: number;
+    p2p: number;
+  };
+};
 
 // ⚠️ DEPRECATED: Functional event handlers (will be removed in future version)
 // Use LifecycleObserver instead
@@ -52,6 +65,8 @@ export interface ONCEModel extends Model {
   observers?: LifecycleObserver[];                 // ✅ TRUE Radical OOP: Observer pattern (replaces eventHandlers)
   
   // 📨 Message Exchange Properties - TRUE Radical OOP
-  // @pdca 2025-11-11-UTC-2322.pdca.md - Model-driven message tracking
-  messageTracker?: ONCEMessageTracker;             // All message tracking in model
+  // ⚠️ DEPRECATED: Protocol-based messaging violates Web4 protocol-less communication
+  // @pdca 2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md - Iteration 1.6.2
+  // @deprecated Will be removed in Iteration 1.6.3 (P2P redesign with scenario replication)
+  messageTracker?: ONCEMessageTracker;             // TEMPORARILY KEPT for backward compatibility with demoMessages
 }
