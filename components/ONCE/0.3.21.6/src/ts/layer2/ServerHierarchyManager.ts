@@ -676,26 +676,30 @@ export class ServerHierarchyManager {
 
     /**
      * Handle WebSocket messages
-     * ⚠️ DEPRECATED: Protocol-based registration removed (Web4 Protocol-Less)
-     * @pdca 2025-11-22-UTC-1500.iteration-01.6.4b-protocol-less-registry.pdca.md
-     * @deprecated Server registration now via filesystem scenario discovery
+     * ✅ Protocol-Less: Receives scenarios directly (not protocol messages)
+     * @pdca 2025-11-22-UTC-1600.iteration-01.6.4d-scenario-state-transfer.pdca.md
      */
     private async handleWebSocketMessage(ws: WebSocket, message: any): Promise<void> {
+        // ✅ NEW: Check if message is a scenario (has ior and model)
+        if (message.ior && message.model) {
+            // This is a scenario state update from a client server
+            this.handleScenarioStateUpdate(ws, message);
+            return;
+        }
+        
+        // Legacy protocol handling (for backward compatibility / deprecation warnings)
         switch (message.type) {
             case 'server-registration':
-                // ❌ REMOVED: Protocol-based server registration
-                // Servers are now discovered via filesystem scenario scanning
-                console.warn('⚠️  server-registration message deprecated - use filesystem scenario discovery');
+                // ❌ DEPRECATED: Protocol-based server registration
+                console.warn('⚠️  server-registration deprecated - send scenario directly');
                 break;
             case 'server-unregister':
-                // ❌ REMOVED: Protocol-based unregistration
-                // Server removal handled by housekeeping (stale scenario cleanup)
-                console.warn('⚠️  server-unregister message deprecated - handled by housekeeping');
+                // ❌ DEPRECATED: Protocol-based unregistration
+                console.warn('⚠️  server-unregister deprecated - send scenario with state=stopped');
                 break;
             case 'server-discovery':
-                // ❌ REMOVED: Protocol-based discovery
-                // Discovery via filesystem scenario scanning
-                console.warn('⚠️  server-discovery message deprecated - use filesystem scenario discovery');
+                // ❌ DEPRECATED: Protocol-based discovery
+                console.warn('⚠️  server-discovery deprecated - use filesystem discovery');
                 break;
             case 'scenario-message':
                 // @pdca 2025-11-11-UTC-2322.pdca.md - Handle incoming scenario messages
@@ -891,6 +895,111 @@ export class ServerHierarchyManager {
     }
 
     /**
+     * Notify primary server of state change via scenario transfer
+     * ✅ Protocol-Less: Sends full scenario, no message wrapper
+     * @pdca 2025-11-22-UTC-1600.iteration-01.6.4d-scenario-state-transfer.pdca.md
+     */
+    private notifyPrimaryOfStateChange(): void {
+        if (this.serverModel.isPrimaryServer) return;  // Primary doesn't notify itself
+        
+        if (this.primaryServerConnection && this.primaryServerConnection.readyState === WebSocket.OPEN) {
+            // Generate scenario directly from current state
+            const scenario = this.getScenarioFromState();
+            if (scenario) {
+                this.primaryServerConnection.send(JSON.stringify(scenario));
+                console.log(`📤 Sent scenario to primary (state: ${this.serverModel.state})`);
+            }
+        }
+    }
+    
+    /**
+     * Generate scenario from current server state
+     * Used for real-time state transfer to primary
+     */
+    private getScenarioFromState(): any {
+        // ✅ Web4 Scenario Format: { ior, owner, model }
+        return {
+            ior: {
+                protocol: 'https',
+                host: this.serverModel.host,
+                port: this.serverModel.capabilities.find(c => c.capability === 'httpPort')?.port || 0,
+                path: `/ONCE/${this.version}/${this.serverModel.uuid}`,
+                uuid: this.serverModel.uuid,
+                iorString: `ior:https://${this.serverModel.host}:${this.serverModel.capabilities.find(c => c.capability === 'httpPort')?.port}/ONCE/${this.version}/${this.serverModel.uuid}`
+            },
+            owner: { userId: 'system', timestamp: new Date().toISOString() },  // Default owner
+            model: {
+                uuid: this.serverModel.uuid,
+                version: this.version,
+                state: this.serverModel  // Full server model as state
+            }
+        };
+    }
+
+    /**
+     * Handle incoming scenario from client server
+     * ✅ Protocol-Less: No message types, just scenarios
+     * @pdca 2025-11-22-UTC-1600.iteration-01.6.4d-scenario-state-transfer.pdca.md
+     */
+    private handleScenarioStateUpdate(ws: WebSocket, scenario: any): void {
+        const guard = new ScenarioTypeGuard();
+        guard.init(scenario);
+        
+        const state = guard.isLegacy() 
+            ? guard.asLegacy()!.state?.state
+            : guard.asWeb4<LegacyONCEScenario>()!.model.state?.state;
+        
+        const uuid = guard.isLegacy()
+            ? guard.asLegacy()!.uuid
+            : guard.asWeb4<LegacyONCEScenario>()!.model.uuid;
+        
+        const capabilities = guard.isLegacy()
+            ? guard.asLegacy()!.state?.capabilities
+            : guard.asWeb4<LegacyONCEScenario>()!.model.state?.capabilities;
+        
+        const port = capabilities?.find((c: any) => c.capability === 'httpPort')?.port;
+        
+        if (!uuid) {
+            console.warn('⚠️  Received scenario without UUID');
+            return;
+        }
+        
+        console.log(`📥 Received scenario from ${uuid} (state: ${state}, port: ${port})`);
+        
+        // State-based actions
+        if (state === LifecycleState.STOPPED || state === LifecycleState.SHUTDOWN) {
+            // Deregister server
+            if (this.serverRegistry.has(uuid)) {
+                this.serverRegistry.delete(uuid);
+                console.log(`🗑️  Server ${uuid} deregistered (state: ${state})`);
+                
+                // Broadcast deregistration to browser clients
+                this.broadcastToBrowserClients({
+                    type: 'server-deregistered',  // For browser UI only
+                    uuid: uuid
+                });
+            }
+        } else if (state === LifecycleState.RUNNING || state === LifecycleState.CLIENT_SERVER) {
+            // Register or update server
+            const wasRegistered = this.serverRegistry.has(uuid);
+            this.serverRegistry.set(uuid, {
+                scenario: scenario,  // ✅ Store full scenario
+                lastSeen: new Date().toISOString(),
+                websocket: ws  // Keep connection for real-time updates
+            });
+            
+            const action = wasRegistered ? 'updated' : 'registered';
+            console.log(`📡 Server ${uuid} ${action} (state: ${state}, port: ${port})`);
+            
+            // Broadcast to browser clients
+            this.broadcastToBrowserClients({
+                type: 'server-registered',  // For browser UI only
+                scenario: scenario
+            });
+        }
+    }
+
+    /**
      * Handle server discovery requests (primary server only)
      * ⚠️ DEPRECATED: Protocol-based discovery removed
      * @pdca 2025-11-22-UTC-1500.iteration-01.6.4b-protocol-less-registry.pdca.md
@@ -904,6 +1013,8 @@ export class ServerHierarchyManager {
 
     /**
      * Register with primary server (client servers only)
+     * ✅ Protocol-Less: Sends scenario state, not protocol message
+     * @pdca 2025-11-22-UTC-1600.iteration-01.6.4d-scenario-state-transfer.pdca.md
      */
     private async registerWithPrimaryServer(): Promise<void> {
         if (this.serverModel.isPrimaryServer) {
@@ -925,11 +1036,12 @@ export class ServerHierarchyManager {
                 this.primaryServerConnection.on('open', () => {
                     console.log(`🔗 Connected to primary server at port ${primaryPort}`);
                     
-                    // Send registration message
-                    this.primaryServerConnection!.send(JSON.stringify({
-                        type: 'server-registration',
-                        serverModel: this.serverModel
-                    }));
+                    // ✅ NEW: Send full scenario (not protocol message)
+                    this.notifyPrimaryOfStateChange();
+                    
+                    // Mark as registered immediately (no confirmation needed)
+                    this.serverModel.state = LifecycleState.REGISTERED;
+                    resolve();
                 });
 
         this.primaryServerConnection.on('message', async (data: any) => {
@@ -1605,6 +1717,8 @@ export class ServerHierarchyManager {
 
     /**
      * Stop server gracefully
+     * ✅ Sends scenario state update to primary
+     * @pdca 2025-11-22-UTC-1600.iteration-01.6.4d-scenario-state-transfer.pdca.md
      */
     async stopServer(): Promise<void> {
         this.serverModel.state = LifecycleState.STOPPING;
@@ -1612,26 +1726,12 @@ export class ServerHierarchyManager {
         // Update scenario to reflect stopping state
         await this.updateScenarioState(LifecycleState.STOPPING);
 
-        // ✅ NEW: Notify primary server to unregister this client
-        if (!this.serverModel.isPrimaryServer && this.primaryServerConnection) {
-            try {
-                const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
-                const unregisterMsg = {
-                    type: 'server-unregister',
-                    data: {
-                        uuid: this.serverModel.uuid,
-                        port: httpCapability?.port
-                    }
-                };
-                this.primaryServerConnection.send(JSON.stringify(unregisterMsg));
-                // Give primary time to process unregister message
-                await new Promise(resolve => setTimeout(resolve, 100));
-            } catch (error) {
-                console.warn('⚠️  Failed to notify primary of shutdown:', error);
-            }
-        }
+        // ✅ NEW: Notify primary via scenario state transfer
+        this.notifyPrimaryOfStateChange();  // Send scenario with state=stopping
 
         if (this.primaryServerConnection) {
+            // Give primary time to process state change
+            await new Promise(resolve => setTimeout(resolve, 100));
             this.primaryServerConnection.close();
         }
 
