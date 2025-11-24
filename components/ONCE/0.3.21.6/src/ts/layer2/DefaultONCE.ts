@@ -1834,6 +1834,64 @@ export class DefaultONCE implements ONCE {
   // ============================================================================
 
   /**
+   * IOR-based Method Invocation
+   * Maps URL endpoint to method call (like CLI does)
+   * 
+   * IOR Format with Method Invocation:
+   * - Basic IOR (reference only): ior:https://host:port/Component/version/uuid
+   * - IOR with method (executable): ior:https://host:port/Component/version/uuid/methodName
+   * - IOR with parameters: ior:https://host:port/Component/version/uuid/methodName?param1=value1
+   * 
+   * Examples:
+   * - ior:https://localhost:42777/ONCE/0.3.21.6/uuid/getHealth
+   * - ior:https://localhost:42777/ONCE/0.3.21.6/uuid/getServers
+   * - ior:https://localhost:42777/ONCE/0.3.21.6/uuid/startServer?port=8080
+   * 
+   * Usage (HTTP):
+   * GET http://localhost:42777/ONCE/getHealth
+   * GET http://localhost:42777/ONCE/getServers
+   * GET http://localhost:42777/ONCE/0.3.21.6/uuid/info
+   * 
+   * @param methodName The method name to invoke
+   * @param params Query parameters to set on model (temporary)
+   * @returns Result of method invocation
+   * @throws Error if method not found or not callable
+   * @pdca 2025-11-22-UTC-1730.iteration-01.6.5-ior-method-invocation.pdca.md
+   */
+  async invokeMethod(methodName: string, params: Record<string, any> = {}): Promise<any> {
+    // Check if method exists and is callable
+    if (typeof (this as any)[methodName] !== 'function') {
+      throw new Error(`Method '${methodName}' not found on ONCE component`);
+    }
+    
+    // Security: Check if method is public (not starting with underscore)
+    if (methodName.startsWith('_')) {
+      throw new Error(`Method '${methodName}' is private and cannot be invoked via IOR`);
+    }
+    
+    // Temporarily set params on model (for parameterless methods)
+    // This follows Radical OOP: methods act on model, not on parameters
+    const originalValues: Record<string, any> = {};
+    for (const [key, value] of Object.entries(params)) {
+      if (key in this.model) {
+        originalValues[key] = (this.model as any)[key];
+      }
+      (this.model as any)[key] = value;
+    }
+    
+    try {
+      // Call method (may be sync or async)
+      const result = await (this as any)[methodName]();
+      return result;
+    } finally {
+      // Restore original values (cleanup)
+      for (const [key, value] of Object.entries(originalValues)) {
+        (this.model as any)[key] = value;
+      }
+    }
+  }
+
+  /**
    * Get server health status
    * @returns Health model with complete server state
    * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/getHealth

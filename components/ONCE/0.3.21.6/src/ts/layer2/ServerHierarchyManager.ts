@@ -490,9 +490,77 @@ export class ServerHierarchyManager {
             // Serve static files from component directory
             this.serveStaticFile(url.pathname, res);
         } else {
-            res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end('Not Found');
+            // ============================================================================
+            // ✅ GENERIC METHOD INVOCATION ENDPOINT - IOR-based Method Calls
+            // @pdca 2025-11-22-UTC-1730.iteration-01.6.5-ior-method-invocation.pdca.md
+            // 
+            // Pattern: /ONCE/{method} or /ONCE/{version}/{uuid}/{method}
+            // Like CLI: "once info" → GET /ONCE/info
+            // Query params: ?param1=value1 → set on model temporarily
+            // 
+            // Examples:
+            // GET /ONCE/getHealth → DefaultONCE.getHealth()
+            // GET /ONCE/getServers → DefaultONCE.getServers()
+            // GET /ONCE/info → DefaultONCE.info()
+            // ============================================================================
+            const methodMatch = url.pathname.match(/^\/ONCE\/(?:[\d.]+\/[\w-]+\/)?([\w]+)$/);
+            if (methodMatch) {
+                const methodName = methodMatch[1];
+                
+                // Parse query parameters
+                const params: Record<string, any> = {};
+                url.searchParams.forEach((value, key) => {
+                    params[key] = value;
+                });
+                
+                try {
+                    // Delegate to DefaultONCE.invokeMethod()
+                    const result = await (this.component as any).invokeMethod(methodName, params);
+                    
+                    res.writeHead(200, { 
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    });
+                    res.end(JSON.stringify(result));
+                } catch (error: any) {
+                    res.writeHead(404, { 
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    });
+                    res.end(JSON.stringify({ 
+                        error: error.message,
+                        method: methodName,
+                        availableMethods: this.getAvailableMethods()
+                    }));
+                }
+            } else {
+                // 404 Not Found
+                res.writeHead(404, { 'Content-Type': 'text/plain' });
+                res.end('Not Found');
+            }
         }
+    }
+
+    /**
+     * Get list of available public methods for method invocation
+     * Used for error messages when method not found
+     * @pdca 2025-11-22-UTC-1730.iteration-01.6.5-ior-method-invocation.pdca.md
+     */
+    private getAvailableMethods(): string[] {
+        return [
+            'getHealth',
+            'getServers',
+            'info',
+            'test',
+            'serveOnceClient',
+            'serveDemoHub',
+            'serveStatus',
+            'startServer',
+            'stopServer',
+            'startClientServer',
+            'discoverServers',
+            'shutdownAll'
+        ];
     }
 
     /**
