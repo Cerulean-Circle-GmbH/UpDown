@@ -1870,10 +1870,12 @@ export class DefaultONCE implements ONCE {
 
   /**
    * Get all registered servers (Primary only)
-   * @returns Server list model with all registered servers
+   * ✅ PROTOCOL-LESS: Returns scenarios (not models)
+   * @returns Server list with scenarios
    * @throws Error if called on non-primary server
    * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/getServers
    * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+   * @pdca 2025-11-22-UTC-1500.iteration-01.6.4b-protocol-less-registry.pdca.md
    */
   getServers(): import('../layer3/ServerListModel.interface.js').ServerListModel {
     if (!this.serverHierarchyManager) {
@@ -1891,7 +1893,7 @@ export class DefaultONCE implements ONCE {
     return {
       primary: true,
       primaryServer: serverModel,
-      servers: Array.from(serverRegistry.values()).map((entry: any) => entry.model)
+      servers: Array.from(serverRegistry.values()).map((entry: any) => entry.scenario)  // ✅ Return scenarios
     };
   }
 

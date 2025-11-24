@@ -28,11 +28,13 @@ import { HostnameParser } from '../layer1/HostnameParser.js';
 
 /**
  * Server registry entry for primary server
+ * ✅ Protocol-Less: Stores scenarios, not message data
+ * @pdca 2025-11-22-UTC-1500.iteration-01.6.4b-protocol-less-registry.pdca.md
  */
 export interface ServerRegistryEntry {
-    model: ONCEServerModel;
+    scenario: any;  // Scenario<LegacyONCEScenario> - full scenario object
     lastSeen: string;
-    websocket?: WebSocket;
+    websocket?: WebSocket;  // KEEP for browser clients (NOT for server registration)
 }
 
 /**
@@ -673,24 +675,27 @@ export class ServerHierarchyManager {
     }
 
     /**
-     * Handle WebSocket messages (server registration, discovery, etc.)
+     * Handle WebSocket messages
+     * ⚠️ DEPRECATED: Protocol-based registration removed (Web4 Protocol-Less)
+     * @pdca 2025-11-22-UTC-1500.iteration-01.6.4b-protocol-less-registry.pdca.md
+     * @deprecated Server registration now via filesystem scenario discovery
      */
     private async handleWebSocketMessage(ws: WebSocket, message: any): Promise<void> {
         switch (message.type) {
             case 'server-registration':
-                if (this.serverModel.isPrimaryServer) {
-                    await this.handleServerRegistration(ws, message.serverModel);
-                }
+                // ❌ REMOVED: Protocol-based server registration
+                // Servers are now discovered via filesystem scenario scanning
+                console.warn('⚠️  server-registration message deprecated - use filesystem scenario discovery');
                 break;
             case 'server-unregister':
-                if (this.serverModel.isPrimaryServer) {
-                    await this.handleServerUnregister(message.data);
-                }
+                // ❌ REMOVED: Protocol-based unregistration
+                // Server removal handled by housekeeping (stale scenario cleanup)
+                console.warn('⚠️  server-unregister message deprecated - handled by housekeeping');
                 break;
             case 'server-discovery':
-                if (this.serverModel.isPrimaryServer) {
-                    await this.handleServerDiscovery(ws, message.query);
-                }
+                // ❌ REMOVED: Protocol-based discovery
+                // Discovery via filesystem scenario scanning
+                console.warn('⚠️  server-discovery message deprecated - use filesystem scenario discovery');
                 break;
             case 'scenario-message':
                 // @pdca 2025-11-11-UTC-2322.pdca.md - Handle incoming scenario messages
@@ -749,7 +754,13 @@ export class ServerHierarchyManager {
                 if (this.serverModel.isPrimaryServer && this.serverRegistry.size > 0) {
                     // Primary can help route P2P
                     const firstClient = Array.from(this.serverRegistry.values())[0];
-                    const port = firstClient.model.capabilities.find(c => c.capability === 'httpPort')?.port;
+                    // Extract capabilities from scenario
+                    const guard = new ScenarioTypeGuard();
+                    guard.init(firstClient.scenario);
+                    const capabilities = guard.isLegacy() 
+                        ? guard.asLegacy()!.state?.capabilities
+                        : guard.asWeb4<LegacyONCEScenario>()!.model.state?.capabilities;
+                    const port = capabilities?.find((c: any) => c.capability === 'httpPort')?.port;
                     if (port) {
                         this.sendScenarioToPeer(message.scenario, port);
                     }
@@ -855,28 +866,14 @@ export class ServerHierarchyManager {
 
     /**
      * Handle server registration (primary server only)
+     * ⚠️ DEPRECATED: Protocol-based registration removed
+     * @pdca 2025-11-22-UTC-1500.iteration-01.6.4b-protocol-less-registry.pdca.md
+     * @deprecated Use filesystem scenario discovery instead
      */
     private async handleServerRegistration(ws: WebSocket, clientServerModel: ONCEServerModel): Promise<void> {
-        const httpPort = clientServerModel.capabilities.find(c => c.capability === 'httpPort')?.port || 0;
-        logRegistration(clientServerModel.uuid, clientServerModel.hostname, httpPort);
-        
-        // Remove from browser clients - this is a server connection
-        this.browserClients.delete(ws);
-        
-        this.serverRegistry.set(clientServerModel.uuid, {
-            model: clientServerModel,
-            lastSeen: new Date().toISOString(),
-            websocket: ws
-        });
-
-        // Send registration confirmation
-        ws.send(JSON.stringify({
-            type: 'registration-confirmed',
-            primaryServerModel: this.serverModel
-        }));
-        
-        // ✅ Broadcast server registration event to all browser clients
-        this.broadcastServerEvent('server-registered', clientServerModel);
+        console.warn('⚠️  handleServerRegistration deprecated - use filesystem scenario discovery');
+        // ❌ REMOVED: Protocol-based registration
+        // Servers are discovered via performHousekeeping() filesystem scan
     }
 
     /**
@@ -895,14 +892,14 @@ export class ServerHierarchyManager {
 
     /**
      * Handle server discovery requests (primary server only)
+     * ⚠️ DEPRECATED: Protocol-based discovery removed
+     * @pdca 2025-11-22-UTC-1500.iteration-01.6.4b-protocol-less-registry.pdca.md
+     * @deprecated Use filesystem scenario discovery instead
      */
     private async handleServerDiscovery(ws: WebSocket, query: any): Promise<void> {
-        const servers = Array.from(this.serverRegistry.values()).map(entry => entry.model);
-        
-        ws.send(JSON.stringify({
-            type: 'discovery-response',
-            servers: servers
-        }));
+        console.warn('⚠️  handleServerDiscovery deprecated - use filesystem scenario discovery');
+        // ❌ REMOVED: Protocol-based discovery
+        // Servers are discovered via performHousekeeping() filesystem scan
     }
 
     /**
@@ -1181,12 +1178,14 @@ export class ServerHierarchyManager {
 
     /**
      * Get registered servers (primary server only)
+     * ✅ PROTOCOL-LESS: Returns scenarios (not models)
+     * @pdca 2025-11-22-UTC-1500.iteration-01.6.4b-protocol-less-registry.pdca.md
      */
-    getRegisteredServers(): ONCEServerModel[] {
+    getRegisteredServers(): any[] {  // Returns Scenario[] instead of ONCEServerModel[]
         if (!this.serverModel.isPrimaryServer) {
             return [];
         }
-        return Array.from(this.serverRegistry.values()).map(entry => entry.model);
+        return Array.from(this.serverRegistry.values()).map(entry => entry.scenario);
     }
 
     /**
@@ -1500,16 +1499,12 @@ export class ServerHierarchyManager {
                                     discoveredCount++;
                                     console.log(`🔍 Discovered running client server: ${uuid} on port ${port}`);
                                     
-                                    // Parse the full scenario to get the model
-                                    const serverModel = guard.isLegacy() 
-                                        ? guard.asLegacy()!.state as ONCEServerModel
-                                        : guard.asWeb4<LegacyONCEScenario>()!.model.state as ONCEServerModel;
-                                    
-                                    // Register the discovered server
+                                    // ✅ PROTOCOL-LESS: Store full scenario (not just model)
+                                    // @pdca 2025-11-22-UTC-1500.iteration-01.6.4b-protocol-less-registry.pdca.md
                                     this.serverRegistry.set(uuid, {
-                                        model: serverModel,
+                                        scenario: scenarioData,  // Store full scenario object
                                         lastSeen: new Date().toISOString(),
-                                        websocket: undefined // Will connect later
+                                        websocket: undefined // Will connect later if needed
                                     });
                                 }
                             } catch (error) {

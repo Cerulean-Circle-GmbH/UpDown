@@ -1,8 +1,10 @@
 /**
  * Server List Model - All registered servers data
+ * ✅ PROTOCOL-LESS: Returns scenarios (not models)
  * @layer3
  * @pattern Interface Contract
  * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+ * @pdca 2025-11-22-UTC-1500.iteration-01.6.4b-protocol-less-registry.pdca.md
  */
 
 import type { ONCEServerModel } from './ONCEServerModel.interface.js';
@@ -18,7 +20,7 @@ export interface ServerListModel {
     /** Primary server model (full details) */
     primaryServer: ONCEServerModel;
     
-    /** All registered client servers */
-    servers: ONCEServerModel[];
+    /** All registered client servers (as scenarios for protocol-less communication) */
+    servers: any[];  // Scenario<LegacyONCEScenario>[] - full scenario objects
 }
 
