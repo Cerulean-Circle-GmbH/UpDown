@@ -1,15 +1,20 @@
 /**
- * ONCE v0.2.0.0 - Object Network Communication Engine
- * Enhanced from 0.1.0.2 with server hierarchy and scenario-based configuration
+ * ONCE v0.3.21.6 - Object Network Communication Engine
  * 
- * ⚠️ DEPRECATED: This file now serves as a re-export hub for backward compatibility.
- * New code should import directly from ONCE.interface.ts
+ * ⚠️ DEPRECATED: This file now re-exports from layer1/ONCE.ts
  * 
- * @pdca session/2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md
+ * New code should import from:
+ * - import { ONCE } from '@web4x/once'; (main entry point)
+ * - import type { ONCEKernel } from '@web4x/once/layer3/ONCE.interface';
+ * 
+ * @pdca session/2025-11-22-UTC-2200.iteration-01.8-unified-kernel-architecture.pdca.md
  */
 
-// Re-exports for backward compatibility
-export type { ONCE } from './ONCE.interface.js';
+// Re-export from Layer 1 (universal entry point)
+export { ONCE } from '../layer1/ONCE.js';
+
+// Re-export types for backward compatibility
+export type { ONCEKernel } from './ONCE.interface.js';
 export type { EnvironmentInfo } from './EnvironmentInfo.interface.js';
 export type { ComponentQuery } from './ComponentQuery.interface.js';
 export type { PerformanceMetrics } from './PerformanceMetrics.interface.js';
