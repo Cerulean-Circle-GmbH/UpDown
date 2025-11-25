@@ -123,12 +123,13 @@
             peerHost: peerHost
         };
         
-        // ONCE.start() detects environment (browser) and loads BrowserONCEKernel
+        // ONCE.start() detects environment (browser) and loads BrowserOnce
         const kernel = await ONCE.start(scenario);
         
-        // Make kernel globally accessible via window.global.ONCE and ONCE.getInstance()
-        window.global = window.global || {};
-        window.global.ONCE = kernel;
+        // Kernel is already globally accessible via:
+        // - window.ONCE (direct access)
+        // - window.global.ONCE (Web4 pattern)
+        // - ONCE.getInstance() (static method)
         
         // Attach button handlers (Radical OOP methods)
         document.getElementById('broadcastBtn').addEventListener('click', function() {
@@ -149,7 +150,7 @@
         
         console.log('✅ ONCE Kernel started:', kernel);
         console.log('   Peer:', peerHost);
-        console.log('   Access via: ONCE.getInstance() or window.global.ONCE');
+        console.log('   Access via: window.ONCE, window.global.ONCE, or ONCE.getInstance()');
     </script>
 </body>
 </html>

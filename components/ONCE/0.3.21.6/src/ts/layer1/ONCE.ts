@@ -165,10 +165,11 @@ export class Once {
             case EnvironmentType.IFRAME: {
                 const { BrowserOnce } = await import('../layer2/BrowserOnce.js');
                 const kernel = new BrowserOnce();
-                // Register global singleton for browser
+                // Register global singleton for browser (both window.ONCE and window.global.ONCE)
                 if (typeof window !== 'undefined') {
                     (window as any).global = (window as any).global || {};
                     (window as any).global.ONCE = kernel;
+                    (window as any).ONCE = kernel;  // Direct window.ONCE access
                 }
                 return kernel;
             }
