@@ -283,11 +283,16 @@ export class ServerHierarchyManager {
                 res.writeHead(500, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ error: error.message }));
             }
-        } else if (url.pathname === '/once' || url.pathname === '/once/') {
-            // ✅ RADICAL OOP: Delegate to DefaultONCE.serveOnceClient()
-            // @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+        } else if (url.pathname === '/onceCommunicationLog' || url.pathname === '/onceCommunicationLog/') {
+            // ✅ RADICAL OOP: Delegate to NodeJsOnce.serveOnceCommunicationLog()
+            // @pdca 2025-11-25-UTC-2030.iteration-01.11-once-route-refactoring.pdca.md
             res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(this.component!.serveOnceClient());
+            res.end(this.component!.serveOnceCommunicationLog());
+        } else if (url.pathname === '/once' || url.pathname === '/once/') {
+            // ✅ RADICAL OOP: Delegate to NodeJsOnce.serveOnceMinimal()
+            // @pdca 2025-11-25-UTC-2030.iteration-01.11-once-route-refactoring.pdca.md
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(this.component!.serveOnceMinimal());
         } else if (url.pathname === '/demo' || url.pathname === '/demo/') {
             // ✅ RADICAL OOP: Delegate to DefaultONCE.serveDemoHub()
             // @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
@@ -688,11 +693,26 @@ export class ServerHierarchyManager {
      * @deprecated Use DefaultONCE.serveOnceClient() instead (delegates to this method)
      * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
      */
-    getSimpleONCEClientHTML(): string {
+    getOnceCommunicationLogHTML(): string {
         if (!this.component?.model.componentRoot) {
             throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
         }
         const fullPath = path.join(this.component.model.componentRoot, 'src/view/html/once-client.html');
+        const html = fs.readFileSync(fullPath, 'utf-8');
+        
+        // Replace all hardcoded version strings with dynamic version
+        return html.replace(/0\.3\.20\.[0-9]/g, this.versionFromComponent);
+    }
+
+    /**
+     * Get minimal ONCE bootstrap HTML (for /once endpoint)
+     * @pdca 2025-11-25-UTC-2030.iteration-01.11-once-route-refactoring.pdca.md
+     */
+    getOnceMinimalHTML(): string {
+        if (!this.component?.model.componentRoot) {
+            throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
+        }
+        const fullPath = path.join(this.component.model.componentRoot, 'src/view/html/once-minimal.html');
         const html = fs.readFileSync(fullPath, 'utf-8');
         
         // Replace all hardcoded version strings with dynamic version

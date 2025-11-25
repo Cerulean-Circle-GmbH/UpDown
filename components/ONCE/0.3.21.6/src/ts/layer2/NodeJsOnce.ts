@@ -1962,17 +1962,31 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   }
 
   /**
-   * Serve ONCE browser client HTML
-   * @returns Rendered HTML for browser client
-   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/serveOnceClient
-   * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+   * Serve ONCE P2P Communication Log HTML (demo page with full UI)
+   * @returns Rendered HTML for P2P communication demo
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/serveOnceCommunicationLog
+   * @pdca 2025-11-25-UTC-2030.iteration-01.11-once-route-refactoring.pdca.md
    */
-  serveOnceClient(): string {
+  serveOnceCommunicationLog(): string {
     if (!this.serverHierarchyManager) {
       throw new Error('Server not initialized. Call startServer() first.');
     }
     
-    return this.serverHierarchyManager.getSimpleONCEClientHTML();
+    return this.serverHierarchyManager.getOnceCommunicationLogHTML();
+  }
+
+  /**
+   * Serve minimal ONCE bootstrap HTML (just loads BrowserOnce kernel)
+   * @returns Minimal HTML for ONCE kernel bootstrap
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/serveOnceMinimal
+   * @pdca 2025-11-25-UTC-2030.iteration-01.11-once-route-refactoring.pdca.md
+   */
+  serveOnceMinimal(): string {
+    if (!this.serverHierarchyManager) {
+      throw new Error('Server not initialized. Call startServer() first.');
+    }
+    
+    return this.serverHierarchyManager.getOnceMinimalHTML();
   }
 
   /**
