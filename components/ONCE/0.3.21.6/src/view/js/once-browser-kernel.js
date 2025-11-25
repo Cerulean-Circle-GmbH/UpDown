@@ -1,5 +1,6 @@
 /**
  * BrowserONCEKernel - Radical OOP P2P Kernel for Browser
+ * Extends AbstractONCEKernel for unified architecture
  * 
  * Web4 Architecture:
  * - Empty constructor (Radical OOP)
@@ -7,14 +8,18 @@
  * - Methods operate on model
  * - NO arrow functions
  * - NO callbacks
- * - P2P terminology (peers, not clients/servers)
+ * - P2P terminology (peers, not clients/peers)
  * 
- * @pdca session/2025-11-22-UTC-2000.iteration-01.7-browser-client-kernel.pdca.md
+ * @pdca session/2025-11-22-UTC-2200.iteration-01.8-unified-kernel-architecture.pdca.md
  */
+
+// Note: This is a JavaScript file (not TypeScript) for direct browser use
+// In future, we'll compile from TypeScript BrowserONCEKernel.ts
 
 export class BrowserONCEKernel {
     constructor() {
         // ✅ Empty constructor (Radical OOP)
+        // Extends AbstractONCEKernel conceptually (JS limitation)
         this.model = null;
     }
     

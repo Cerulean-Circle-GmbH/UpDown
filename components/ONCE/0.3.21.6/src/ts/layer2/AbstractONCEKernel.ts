@@ -13,14 +13,15 @@
  * - Methods operate on model
  * - No arrow functions, no callbacks
  * 
+ * Note: Does NOT implement full ONCE interface - that's environment-specific
+ * Only provides shared helper methods
+ * 
  * @layer2
  * @pattern Abstract Base Class
  * @pdca session/2025-11-22-UTC-2200.iteration-01.8-unified-kernel-architecture.pdca.md
  */
 
-import type { ONCEKernel } from '../layer3/ONCE.interface.js';
-
-export abstract class AbstractONCEKernel implements ONCEKernel {
+export abstract class AbstractONCEKernel {
     /**
      * Model storage (Radical OOP)
      * Each subclass defines its own model type
@@ -37,42 +38,20 @@ export abstract class AbstractONCEKernel implements ONCEKernel {
     
     /**
      * Initialize kernel with scenario
-     * Must be implemented by subclasses
+     * Subclasses should implement this
      * 
      * @param scenario - Initialization scenario
      * @returns Promise<this> - Fluent API
      */
-    abstract init(scenario?: any): Promise<this>;
+    abstract init(scenario?: any): Promise<any>;
     
     /**
      * Get kernel health status
-     * Must be implemented by subclasses
+     * Subclasses should implement this
      * 
      * @returns Promise<any> - Health status object
      */
     abstract getHealth(): Promise<any>;
-    
-    /**
-     * Invoke method on kernel (IOR-based invocation)
-     * Must be implemented by subclasses
-     * 
-     * @param method - Method name
-     * @param params - Method parameters
-     * @returns Promise<any> - Method result
-     */
-    abstract invokeMethod(method: string, params: any): Promise<any>;
-    
-    /**
-     * Start kernel (begin operations)
-     * Must be implemented by subclasses
-     */
-    abstract start(): Promise<void>;
-    
-    /**
-     * Stop kernel (cleanup)
-     * Must be implemented by subclasses
-     */
-    abstract stop(): Promise<void>;
     
     // ========================================
     // SHARED HELPER METHODS

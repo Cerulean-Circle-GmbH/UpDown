@@ -167,8 +167,19 @@ export interface ONCE {
     isPrimaryServer(): boolean;
 
     /**
-     * Get all registered server instances (only available on primary server)
+     * Get all registered peer instances (only available on primary peer)
      */
     getRegisteredServers(): ONCEServerModel[];
 }
+
+/**
+ * ONCEKernel - Type alias for ONCE interface
+ * Used by AbstractONCEKernel and unified architecture
+ * 
+ * @pdca session/2025-11-22-UTC-2200.iteration-01.8-unified-kernel-architecture.pdca.md
+ */
+export type ONCEKernel = ONCE;
+
+// Re-export commonly used types
+export type { EnvironmentInfo, ComponentQuery, PerformanceMetrics };
 

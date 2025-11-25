@@ -6,6 +6,6 @@
 export interface Model {
   uuid: string;
   name: string;
-  origin: string;
-  definition: string;
+  // origin: string;
+  // definition: string;
 }

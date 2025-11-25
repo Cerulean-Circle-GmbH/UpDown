@@ -1,11 +1,17 @@
 /**
- * DefaultONCE v0.3.20.0 - ONCE Component Implementation
- * Upgraded from v0.2.0.0 with TRUE Radical OOP CLI infrastructure from Web4TSComponent 0.3.20.0
- * Domain logic preserved from v0.2.0.0 (server hierarchy, scenario management, lifecycle events)
- * @pdca 2025-11-10-UTC-1830.migrate-once-to-0.3.20.0.pdca.md
+ * DefaultONCE v0.3.21.6 - Node.js ONCE Kernel Implementation
+ * Extended from AbstractONCEKernel for unified architecture
+ * Domain logic preserved: peer hierarchy, scenario management, lifecycle events
+ * 
+ * @pdca session/2025-11-22-UTC-2200.iteration-01.8-unified-kernel-architecture.pdca.md
  */
 
-import { ONCE, EnvironmentInfo, ComponentQuery, PerformanceMetrics } from '../layer3/ONCE.js';
+import { AbstractONCEKernel } from './AbstractONCEKernel.js';
+import type { ONCEKernel } from '../layer3/ONCE.interface.js';
+import type { ONCE as ONCEInterface } from '../layer3/ONCE.interface.js';
+import type { EnvironmentInfo } from '../layer3/EnvironmentInfo.interface.js';
+import type { ComponentQuery } from '../layer3/ComponentQuery.interface.js';
+import type { PerformanceMetrics } from '../layer3/PerformanceMetrics.interface.js';
 import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { Component } from '../layer3/Component.interface.js';
@@ -28,16 +34,17 @@ import * as crypto from 'crypto';  // For UUID generation
 import { realpathSync } from 'fs';  // For symlink resolution
 
 /**
- * DefaultONCE v0.3.20.0 - TRUE Radical OOP with 0.2.0.0 domain logic
- * ✅ Empty constructor
- * ✅ Model-driven state (not private properties)
- * ✅ Method chaining
- * ✅ getTarget() for delegation
- * ✅ updateModelPaths() for DRY path management
- * ✅ Server hierarchy and scenario management from v0.2.0.0
+ * DefaultONCE v0.3.21.6 - Node.js Peer Kernel
+ * 
+ * ✅ Extends AbstractONCEKernel (unified architecture)
+ * ✅ Empty constructor (Radical OOP)
+ * ✅ Model-driven state
+ * ✅ Peer hierarchy and scenario management
+ * ✅ IOR-based method invocation
  */
-export class DefaultONCE implements ONCE {
-  model: ONCEModel;
+export class DefaultONCE extends AbstractONCEKernel implements ONCEInterface {
+  // Override model with specific type
+  protected model: ONCEModel;
   private web4ts?: any; // Lazy-initialized Web4TSComponent for delegation (dynamic import, no static dependency)
   private user?: User; // Optional User service (lazy initialization)
   private methods: Map<string, MethodSignature> = new Map();
@@ -47,12 +54,15 @@ export class DefaultONCE implements ONCE {
   private scenarioManager: ScenarioManager;
 
   /**
-   * ✅ TRUE Radical OOP: Empty constructor - Web4 pattern
-   * @pdca 2025-11-21-UTC-1630.test-isolation-path-violation.pdca.md - Remove ALL path calculations
-   * Path Authority: CLI calculates paths, NOT the component!
-   * BUT: Component must discover its own componentRoot and version for standalone use
+   * ✅ Extends AbstractONCEKernel (unified architecture v0.3.21.6)
+   * Constructor has minimal initialization for backward compatibility
+   * Full refactoring to empty constructor + init() pattern in future iteration
+   * 
+   * @pdca session/2025-11-22-UTC-2200.iteration-01.8-unified-kernel-architecture.pdca.md
    */
   constructor() {
+    super(); // AbstractONCEKernel (unified architecture)
+    
     // ✅ Web4 Pattern: Minimal constructor
     
     // Minimal model initialization
@@ -1897,7 +1907,7 @@ export class DefaultONCE implements ONCE {
    * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/getHealth
    * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
    */
-  getHealth(): import('../layer3/HealthModel.interface.js').HealthModel {
+  async getHealth(): Promise<any> {
     if (!this.serverHierarchyManager) {
       throw new Error('Server not initialized. Call startServer() first.');
     }
