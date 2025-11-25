@@ -396,7 +396,7 @@ export class DefaultONCE extends AbstractONCEKernel implements ONCEInterface {
    * @pdca 2025-11-21-UTC-1630.test-isolation-path-violation.pdca.md - Paths already discovered in constructor
    * @cliHide
    */
-  async init(scenario?: Scenario<any> | LegacyONCEScenario): Promise<ONCE> {
+  async init(scenario?: Scenario<any> | LegacyONCEScenario): Promise<DefaultONCE> {
     // Paths already discovered in constructor via _discoverPaths()
     
     // Process scenario (may override paths from CLI)
@@ -655,7 +655,12 @@ export class DefaultONCE extends AbstractONCEKernel implements ONCEInterface {
 
   getEnvironment(): EnvironmentInfo {
     return {
-      platform: 'node',
+      isBrowser: false,
+      isNode: true,
+      isWorker: false,
+      isServiceWorker: false,
+      isPWA: false,
+      isIframe: false,
       version: process.version,
       capabilities: ['server', 'websocket', 'p2p'],
       isOnline: true,

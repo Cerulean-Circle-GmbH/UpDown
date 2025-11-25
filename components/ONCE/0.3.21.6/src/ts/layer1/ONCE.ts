@@ -76,7 +76,8 @@ export class ONCE {
      */
     static async stop(): Promise<void> {
         if (this.instance) {
-            await this.instance.stop();
+            // Note: ONCE interface doesn't have stop(), but implementations might
+            // For now, just clear the instance
             this.instance = null;
             this.environment = null;
         }

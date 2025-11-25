@@ -32,7 +32,7 @@ export class DefaultUser implements User {
   /**
    * Initialize from scenario - Web4 pattern
    */
-  public init(scenario?: Scenario<UserModel>): User {
+  public init(scenario?: Scenario<UserModel>): this {
     if (scenario && scenario.model) {
       this.model = { ...scenario.model };
     } else {

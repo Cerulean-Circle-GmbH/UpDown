@@ -103,8 +103,8 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
       this.model = {
         uuid: crypto.randomUUID(),
         name: "cli",
-        origin: "system",
-        definition: "CLI model",
+        // origin: "system",  // ❌ REMOVED: Not in CLIModel interface
+        // definition: "CLI model",  // ❌ REMOVED: Not in CLIModel interface
         
         // ✅ Path Authority fields (calculated ONCE, inherited by ALL CLIs)
         projectRoot: projectRoot,
