@@ -1,5 +1,5 @@
 /**
- * ONCE - Universal Kernel Entry Point (Layer 1)
+ * Once - Universal Kernel Entry Point (Layer 1)
  * 
  * Environment-agnostic entry point for ONCE kernel.
  * Detects environment (Node.js, Browser, Worker, Service Worker, PWA)
@@ -12,6 +12,8 @@
  * const health = await kernel.getHealth();
  * ```
  * 
+ * Note: Class name is "Once", but exported as "ONCE" (global singleton accessor)
+ * 
  * @layer1
  * @pattern Singleton Factory
  * @pdca session/2025-11-22-UTC-2200.iteration-01.8-unified-kernel-architecture.pdca.md
@@ -22,7 +24,7 @@ import type { EnvironmentInfo } from '../layer3/EnvironmentInfo.interface.js';
 import { EnvironmentType } from '../layer3/EnvironmentType.enum.js';
 import { DefaultEnvironmentInfo } from '../layer2/DefaultEnvironmentInfo.js';
 
-export class ONCE {
+export class Once {
     // Singleton instance
     private static instance: ONCEKernel | null = null;
     private static environment: EnvironmentInfo | null = null;
@@ -190,6 +192,9 @@ export class ONCE {
         }
     }
 }
+
+// Export as ONCE singleton (global accessor)
+export const ONCE = Once;
 
 // Re-export types for convenience
 export type { ONCEKernel } from '../layer3/ONCE.interface.js';
