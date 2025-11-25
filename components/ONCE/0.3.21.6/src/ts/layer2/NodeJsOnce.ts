@@ -1112,7 +1112,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
             console.log('   🔵 Launching client server...');
             try {
               // Create a new ONCE instance for client server
-              const clientOnce = new DefaultONCE();
+              const clientOnce = new NodeJsOnce();
               await clientOnce.init();
               await clientOnce.startServer();
               clientServers.push(clientOnce);
@@ -1671,7 +1671,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
               ((this.model.serverModel as any).clientServers as any[]) = [];
             }
             
-            const clientOnce = new DefaultONCE();
+            const clientOnce = new NodeJsOnce();
             await clientOnce.init();
             await clientOnce.startServer();
             const clientModel = clientOnce.getServerModel();
@@ -2104,7 +2104,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
     const clients: any[] = [];
     console.log(`🔵 Spawning ${count} client servers...`);
     for (let i = 0; i < count; i++) {
-      const client = new DefaultONCE();
+      const client = new NodeJsOnce();
       await client.init();
       await client.startServer();
       clients.push(client);

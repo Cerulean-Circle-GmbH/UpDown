@@ -13,7 +13,7 @@
     "state": {
       "uuid": "038690f0-f2bd-4ce2-b20d-7e6ff81de1ef",
       "pid": 6143,
-      "state": "running",
+      "state": "shutdown",
       "platform": {
         "platform": "node",
         "version": "v22.20.0",
@@ -42,7 +42,7 @@
     },
     "metadata": {
       "created": "2025-11-25T18:14:02.210Z",
-      "modified": "2025-11-25T18:14:02.263Z",
+      "modified": "2025-11-25T19:14:27.160Z",
       "creator": "ONCE-v0.3.21.6",
       "description": "ONCE server Primary server instance",
       "tags": [

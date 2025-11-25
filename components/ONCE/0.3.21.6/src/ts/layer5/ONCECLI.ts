@@ -31,7 +31,7 @@ export class ONCECLI extends DefaultCLI {
     
     // Create component - it discovers its own componentRoot and version in constructor
     // @pdca 2025-11-21-UTC-1630.test-isolation-path-violation.pdca.md - Follow Web4TSComponent pattern
-    this.component = new DefaultONCE();
+    this.component = new NodeJsOnce();
     
     // ✅ Path Authority: CLI overrides projectRoot and other CLI-specific paths
     // Component already set: componentRoot, version (from its own constructor via discoverPathsFromFilesystem())
