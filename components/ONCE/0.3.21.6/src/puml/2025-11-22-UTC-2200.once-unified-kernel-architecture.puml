@@ -1,0 +1,235 @@
+@startuml ONCE Unified Kernel Architecture
+
+!define PRIMARY_COLOR #4A90E2
+!define SECONDARY_COLOR #50C878
+!define LAYER1_COLOR #FFB84D
+!define LAYER2_COLOR #A78BFA
+!define LAYER3_COLOR #60A5FA
+
+title ONCE Unified Kernel Architecture\nEnvironment-Agnostic P2P Kernel
+
+package "Layer 1: Infrastructure & Environment Detection" as Layer1 <<Rectangle>> {
+  
+  class ONCE <<singleton>> #LAYER1_COLOR {
+    {static} - instance: ONCE | null
+    {static} - environment: string | null
+    {static} - kernel: ONCEKernel | null
+    --
+    {static} + start(scenario?: any): Promise<ONCEKernel>
+    {static} - detectEnvironment(): string
+    {static} - loadKernel(env: string): Promise<ONCEKernel>
+    {static} + getInstance(): ONCEKernel
+  }
+  
+  interface EnvironmentInfo {
+    + type: string
+    + isNode: boolean
+    + isBrowser: boolean
+    + isWorker: boolean
+    + isServiceWorker: boolean
+    + isPWA: boolean
+    + version: string
+    + capabilities: string[]
+  }
+  
+  note right of ONCE
+    **Entry Point for ALL Environments**
+    
+    Detects:
+    - Node.js server
+    - Browser (window)
+    - Web Worker
+    - Service Worker
+    - PWA context
+    
+    Then loads appropriate kernel
+    implementation from Layer 2
+  end note
+}
+
+package "Layer 2: Kernel Implementations" as Layer2 <<Rectangle>> {
+  
+  abstract class AbstractONCEKernel <<abstract>> #LAYER2_COLOR {
+    # model: ONCEKernelModel | null
+    --
+    + constructor()
+    + {abstract} init(scenario: any): Promise<this>
+    + {abstract} getHealth(): Promise<any>
+    + {abstract} invokeMethod(method: string, params: any): Promise<any>
+    + {abstract} start(): Promise<void>
+    + {abstract} stop(): Promise<void>
+  }
+  
+  class DefaultONCE #LAYER2_COLOR {
+    - model: ONCEServerModel
+    - hierarchyManager: ServerHierarchyManager
+    - httpServer: any
+    - wsServer: any
+    --
+    + init(scenario: ONCEServerScenario): Promise<this>
+    + getHealth(): Promise<any>
+    + invokeMethod(method, params): Promise<any>
+    + start(): Promise<void>
+    + stop(): Promise<void>
+    + getPeers(): Promise<any>
+    + registerComponent(component): void
+  }
+  
+  class BrowserONCEKernel #LAYER2_COLOR {
+    - model: ONCEBrowserModel
+    - pollingInterval: any
+    --
+    + init(scenario: ONCEBrowserScenario): Promise<this>
+    + getHealth(): Promise<any>
+    + invokeMethod(method, params): Promise<any>
+    + start(): Promise<void>
+    + stop(): Promise<void>
+    + connect(): Promise<void>
+    + getPeers(): Promise<any>
+    + pollUpdates(): void
+  }
+  
+  class WorkerONCEKernel #LAYER2_COLOR {
+    - model: ONCEWorkerModel
+    --
+    + init(scenario: ONCEWorkerScenario): Promise<this>
+    + getHealth(): Promise<any>
+    + invokeMethod(method, params): Promise<any>
+    + start(): Promise<void>
+    + stop(): Promise<void>
+    + postMessage(message: any): void
+  }
+  
+  class ServiceWorkerONCEKernel #LAYER2_COLOR {
+    - model: ONCESWModel
+    - cache: Cache
+    --
+    + init(scenario: ONCESWScenario): Promise<this>
+    + getHealth(): Promise<any>
+    + invokeMethod(method, params): Promise<any>
+    + start(): Promise<void>
+    + stop(): Promise<void>
+    + handleFetch(request: Request): Promise<Response>
+  }
+  
+  note right of AbstractONCEKernel
+    **All kernels share same interface**
+    
+    Empty constructor (Radical OOP)
+    State in this.model
+    Methods operate on model
+    No arrow functions, no callbacks
+  end note
+}
+
+package "Layer 3: Interfaces & Types" as Layer3 <<Rectangle>> {
+  
+  interface ONCEKernel <<interface>> #LAYER3_COLOR {
+    + model: any
+    + init(scenario: any): Promise<this>
+    + getHealth(): Promise<any>
+    + invokeMethod(method: string, params: any): Promise<any>
+    + start(): Promise<void>
+    + stop(): Promise<void>
+  }
+  
+  interface ONCEKernelModel <<interface>> #LAYER3_COLOR {
+    + uuid: string
+    + version: string
+    + environment: EnvironmentInfo
+    + peers: any[]
+    + connectionTime: Date | null
+    + stats: any
+  }
+  
+  interface ONCEServerModel #LAYER3_COLOR {
+    + httpPort: number
+    + wsPort: number
+    + role: string
+    + hierarchyManager: any
+  }
+  
+  interface ONCEBrowserModel #LAYER3_COLOR {
+    + peerHost: string
+    + isConnected: boolean
+    + elements: any
+  }
+  
+  interface ONCEWorkerModel #LAYER3_COLOR {
+    + parentPort: any
+    + workerData: any
+  }
+  
+  interface ONCESWModel #LAYER3_COLOR {
+    + cacheName: string
+    + offlineMode: boolean
+  }
+}
+
+' Relationships
+ONCE ..> EnvironmentInfo : detects
+ONCE ..> ONCEKernel : loads & returns
+ONCE --> AbstractONCEKernel : instantiates one of
+
+AbstractONCEKernel ..|> ONCEKernel : implements
+DefaultONCE --|> AbstractONCEKernel
+BrowserONCEKernel --|> AbstractONCEKernel
+WorkerONCEKernel --|> AbstractONCEKernel
+ServiceWorkerONCEKernel --|> AbstractONCEKernel
+
+ONCEKernel --> ONCEKernelModel : has
+DefaultONCE --> ONCEServerModel : uses
+BrowserONCEKernel --> ONCEBrowserModel : uses
+WorkerONCEKernel --> ONCEWorkerModel : uses
+ServiceWorkerONCEKernel --> ONCESWModel : uses
+
+' Usage Flow
+note as UsageNote
+  **Usage (Identical Everywhere)**
+  
+  ```typescript
+  // In Node.js
+  import { ONCE } from './layer1/ONCE.js';
+  const kernel = await ONCE.start(scenario);
+  
+  // In Browser
+  import { ONCE } from '/ONCE/0.3.21.6/layer1/ONCE.js';
+  const kernel = await ONCE.start(scenario);
+  
+  // In Worker
+  import { ONCE } from '../layer1/ONCE.js';
+  const kernel = await ONCE.start(scenario);
+  
+  // Always returns ONCEKernel interface
+  const health = await kernel.getHealth();
+  const result = await kernel.invokeMethod('getPeers', {});
+  ```
+end note
+
+' Environment Detection Flow
+note as DetectionFlow
+  **Environment Detection Logic**
+  
+  1. Check typeof window
+     → if undefined: Node.js or Worker
+  2. Check typeof self
+     → if ServiceWorkerGlobalScope: Service Worker
+     → if DedicatedWorkerGlobalScope: Web Worker
+  3. Check window.navigator.standalone
+     → if true: PWA
+     → else: Browser
+  4. Check process.versions?.node
+     → if exists: Node.js
+  
+  Return appropriate kernel:
+  - Node.js → DefaultONCE
+  - Browser → BrowserONCEKernel
+  - Worker → WorkerONCEKernel
+  - ServiceWorker → ServiceWorkerONCEKernel
+end note
+
+UsageNote .. ONCE
+DetectionFlow .. ONCE
+
+@enduml
+
