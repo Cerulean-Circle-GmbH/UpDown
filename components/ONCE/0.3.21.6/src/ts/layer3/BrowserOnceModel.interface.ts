@@ -1,31 +1,32 @@
 /**
- * BrowserONCEKernelModel - Browser/PWA ONCE Kernel Model
+ * BrowserOnceModel - Browser/PWA ONCE Kernel Model
  * 
- * Extends ONCEKernelModel with browser-specific state
+ * Extends OnceKernelModel with browser-specific state
  * 
  * @layer3
  * @pattern Interface Contract
- * @pdca session/2025-11-25-UTC-1750.iteration-01.9-browser-html-uses-once-ts.pdca.md
+ * @pdca session/2025-11-25-UTC-1930.iteration-01.10-once-naming-convention-standardization.pdca.md
  */
 
 import type { ONCEKernelModel } from './ONCEKernelModel.interface.js';
+import type { Reference } from './Reference.interface.js';
 
-export interface BrowserONCEKernelModel extends ONCEKernelModel {
+export interface BrowserOnceModel extends ONCEKernelModel {
     // P2P connection info (browser-specific)
     peerHost: string;
-    peerUUID: string | null;
+    peerUUID: Reference<string>;
     peerVersion: string;
     isConnected: boolean;
     
     // Primary peer reference
-    primaryPeer: {
+    primaryPeer: Reference<{
         host: string;
         port: number;
         uuid: string;
-    } | null;
+    }>;
     
     // WebSocket connection
-    ws: WebSocket | null;
+    ws: Reference<WebSocket>;
     
     // Statistics (browser-specific)
     stats: {

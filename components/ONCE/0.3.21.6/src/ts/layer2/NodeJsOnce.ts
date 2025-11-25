@@ -1,12 +1,12 @@
 /**
- * DefaultONCE v0.3.21.6 - Node.js ONCE Kernel Implementation
- * Extended from AbstractONCEKernel for unified architecture
+ * NodeJsOnce v0.3.21.6 - Node.js ONCE Kernel Implementation
+ * Extended from DefaultOnceKernel for unified architecture
  * Domain logic preserved: peer hierarchy, scenario management, lifecycle events
  * 
- * @pdca session/2025-11-22-UTC-2200.iteration-01.8-unified-kernel-architecture.pdca.md
+ * @pdca session/2025-11-25-UTC-1930.iteration-01.10-once-naming-convention-standardization.pdca.md
  */
 
-import { AbstractONCEKernel } from './AbstractONCEKernel.js';
+import { DefaultOnceKernel } from './DefaultOnceKernel.js';
 import type { ONCEKernel } from '../layer3/ONCE.interface.js';
 import type { ONCE as ONCEInterface } from '../layer3/ONCE.interface.js';
 import type { EnvironmentInfo } from '../layer3/EnvironmentInfo.interface.js';
@@ -43,7 +43,7 @@ import { realpathSync } from 'fs';  // For symlink resolution
  * ✅ Peer hierarchy and scenario management
  * ✅ IOR-based method invocation
  */
-export class DefaultONCE extends AbstractONCEKernel implements ONCEInterface {
+export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   // Override model with specific type
   protected model: ONCEModel;
   private web4ts?: any; // Lazy-initialized Web4TSComponent for delegation (dynamic import, no static dependency)
@@ -113,9 +113,9 @@ export class DefaultONCE extends AbstractONCEKernel implements ONCEInterface {
    * @returns ONCE instance registered globally
    * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md - Phase 2
    */
-  static start(scenario?: any): DefaultONCE {
+  static start(scenario?: any): NodeJsOnce {
     // Create instance
-    const once = new DefaultONCE();
+    const once = new NodeJsOnce();
     
     // Initialize with scenario if provided
     if (scenario) {
@@ -397,7 +397,7 @@ export class DefaultONCE extends AbstractONCEKernel implements ONCEInterface {
    * @pdca 2025-11-21-UTC-1630.test-isolation-path-violation.pdca.md - Paths already discovered in constructor
    * @cliHide
    */
-  async init(scenario?: Scenario<any> | LegacyONCEScenario): Promise<DefaultONCE> {
+  async init(scenario?: Scenario<any> | LegacyONCEScenario): Promise<NodeJsOnce> {
     // Paths already discovered in constructor via _discoverPaths()
     
     // Process scenario (may override paths from CLI)

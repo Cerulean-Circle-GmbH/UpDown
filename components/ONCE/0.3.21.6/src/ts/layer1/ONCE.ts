@@ -156,15 +156,15 @@ export class Once {
     private static async loadKernel(envType: EnvironmentType): Promise<any> {
         switch (envType) {
             case EnvironmentType.NODE: {
-                const { DefaultONCE } = await import('../layer2/DefaultONCE.js');
-                return new DefaultONCE();
+                const { NodeJsOnce } = await import('../layer2/NodeJsOnce.js');
+                return new NodeJsOnce();
             }
             
             case EnvironmentType.BROWSER:
             case EnvironmentType.PWA:
             case EnvironmentType.IFRAME: {
-                const { BrowserONCEKernel } = await import('../layer2/BrowserONCEKernel.js');
-                const kernel = new BrowserONCEKernel();
+                const { BrowserOnce } = await import('../layer2/BrowserOnce.js');
+                const kernel = new BrowserOnce();
                 // Register global singleton for browser
                 if (typeof window !== 'undefined') {
                     (window as any).global = (window as any).global || {};
@@ -174,21 +174,21 @@ export class Once {
             }
             
             case EnvironmentType.WORKER: {
-                // Future: WorkerONCEKernel
-                console.warn('[ONCE] Worker kernel not yet implemented, using Browser kernel');
-                const { BrowserONCEKernel } = await import('../layer2/BrowserONCEKernel.js');
-                return new BrowserONCEKernel();
+                // Future: WorkerOnce
+                console.warn('[Once] Worker kernel not yet implemented, using Browser kernel');
+                const { BrowserOnce } = await import('../layer2/BrowserOnce.js');
+                return new BrowserOnce();
             }
             
             case EnvironmentType.SERVICE_WORKER: {
-                // Future: ServiceWorkerONCEKernel
-                console.warn('[ONCE] Service Worker kernel not yet implemented, using Browser kernel');
-                const { BrowserONCEKernel } = await import('../layer2/BrowserONCEKernel.js');
-                return new BrowserONCEKernel();
+                // Future: ServiceWorkerOnce
+                console.warn('[Once] Service Worker kernel not yet implemented, using Browser kernel');
+                const { BrowserOnce } = await import('../layer2/BrowserOnce.js');
+                return new BrowserOnce();
             }
             
             default:
-                throw new Error(`[ONCE] Unsupported environment type: ${envType}`);
+                throw new Error(`[Once] Unsupported environment type: ${envType}`);
         }
     }
 }

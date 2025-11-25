@@ -1,11 +1,11 @@
 /**
- * AbstractONCEKernel - Base class for all ONCE kernel implementations
+ * DefaultOnceKernel - Base class for all ONCE kernel implementations
  * 
  * Provides common functionality for:
- * - Node.js (DefaultONCE)
- * - Browser (BrowserONCEKernel)
- * - Web Worker (WorkerONCEKernel)
- * - Service Worker (ServiceWorkerONCEKernel)
+ * - Node.js (NodeJsOnce)
+ * - Browser (BrowserOnce)
+ * - Web Worker (WorkerOnce)
+ * - Service Worker (ServiceWorkerOnce)
  * 
  * Radical OOP Pattern:
  * - Empty constructor
@@ -13,20 +13,23 @@
  * - Methods operate on model
  * - No arrow functions, no callbacks
  * 
- * Note: Does NOT implement full ONCE interface - that's environment-specific
+ * Note: Does NOT implement full OnceKernel interface - that's environment-specific
  * Only provides shared helper methods
  * 
  * @layer2
  * @pattern Abstract Base Class
- * @pdca session/2025-11-22-UTC-2200.iteration-01.8-unified-kernel-architecture.pdca.md
+ * @pdca session/2025-11-25-UTC-1930.iteration-01.10-once-naming-convention-standardization.pdca.md
  */
 
-export abstract class AbstractONCEKernel {
+import type { Reference } from '../layer3/Reference.interface.js';
+import type { Model } from '../layer3/Model.interface.js';
+
+export abstract class DefaultOnceKernel {
     /**
      * Model storage (Radical OOP)
      * Each subclass defines its own model type
      */
-    protected model: any = null;
+    protected model: Reference<Model> = null;
     
     /**
      * Empty constructor (Radical OOP)

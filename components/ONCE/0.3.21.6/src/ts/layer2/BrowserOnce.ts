@@ -1,7 +1,7 @@
 /**
- * BrowserONCEKernel - Browser/PWA ONCE Kernel Implementation (TypeScript)
+ * BrowserOnce - Browser/PWA ONCE Kernel Implementation (TypeScript)
  * 
- * Extends AbstractONCEKernel for unified kernel architecture
+ * Extends DefaultOnceKernel for unified kernel architecture
  * 
  * Web4 Architecture:
  * - Empty constructor (Radical OOP)
@@ -14,17 +14,17 @@
  * 
  * @layer2
  * @pattern Concrete Kernel Implementation
- * @pdca session/2025-11-25-UTC-1750.iteration-01.9-browser-html-uses-once-ts.pdca.md
+ * @pdca session/2025-11-25-UTC-1930.iteration-01.10-once-naming-convention-standardization.pdca.md
  */
 
-import { AbstractONCEKernel } from './AbstractONCEKernel.js';
-import type { BrowserONCEKernelModel } from '../layer3/BrowserONCEKernelModel.interface.js';
+import { DefaultOnceKernel } from './DefaultOnceKernel.js';
+import type { BrowserOnceModel } from '../layer3/BrowserOnceModel.interface.js';
 import { EnvironmentType } from '../layer3/EnvironmentType.enum.js';
 import { DefaultEnvironmentInfo } from './DefaultEnvironmentInfo.js';
 
-export class BrowserONCEKernel extends AbstractONCEKernel {
+export class BrowserOnce extends DefaultOnceKernel {
     // ✅ Type the model properly
-    protected declare model: BrowserONCEKernelModel;
+    protected declare model: BrowserOnceModel;
     
     constructor() {
         // ✅ Empty constructor (Radical OOP)

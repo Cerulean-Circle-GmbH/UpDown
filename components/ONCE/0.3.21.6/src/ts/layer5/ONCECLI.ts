@@ -6,7 +6,7 @@
  */
 
 import { DefaultCLI } from '../layer2/DefaultCLI.js';
-import { DefaultONCE } from '../layer2/DefaultONCE.js';
+import { NodeJsOnce } from '../layer2/NodeJsOnce.js';
 import { MethodSignature } from '../layer3/MethodSignature.interface.js';
 
 export class ONCECLI extends DefaultCLI {
