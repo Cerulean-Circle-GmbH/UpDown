@@ -1,6 +1,8 @@
 /**
  * ONCEKernelModel - Base model interface for all ONCE kernels
  * 
+ * Extends Model (Web4 principle: all models extend base Model)
+ * 
  * Shared state properties across all environments:
  * - Node.js (ONCEServerModel extends this)
  * - Browser (ONCEBrowserModel extends this)
@@ -12,11 +14,11 @@
  * @pdca session/2025-11-22-UTC-2200.iteration-01.8-unified-kernel-architecture.pdca.md
  */
 
+import type { Model } from './Model.interface.js';
 import type { EnvironmentInfo } from './EnvironmentInfo.interface.js';
 
-export interface ONCEKernelModel {
-    // Identity
-    uuid: string;
+export interface ONCEKernelModel extends Model {
+    // Identity (uuid, name inherited from Model)
     version: string;
     
     // Environment

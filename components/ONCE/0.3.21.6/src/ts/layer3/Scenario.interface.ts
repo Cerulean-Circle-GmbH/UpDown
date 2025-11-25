@@ -2,10 +2,14 @@
  * Scenario - Web4 Scenario Interface with Complete IOR
  * Web4 pattern: Scenario support for component state management
  * 
+ * Generic type T must extend Model (Web4 principle: strong typing)
+ * 
  * @pdca session/2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md
  */
 
-export interface Scenario<T = any> {
+import type { Model } from './Model.interface.js';
+
+export interface Scenario<T extends Model = Model> {
   ior: {
     // ✅ Core identity (REQUIRED)
     uuid: string;              // Object instance UUID
