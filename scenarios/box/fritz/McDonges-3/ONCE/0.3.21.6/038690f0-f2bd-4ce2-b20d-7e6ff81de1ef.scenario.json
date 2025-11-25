@@ -1,19 +1,19 @@
 {
   "ior": {
-    "uuid": "6ff4cad0-3f18-42e1-b7f3-e5c62c7e8017",
+    "uuid": "038690f0-f2bd-4ce2-b20d-7e6ff81de1ef",
     "component": "ONCE",
     "version": "0.3.21.6"
   },
-  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkxTFRFeExUSTFWREUyT2pNM09qQTFMamc1TlZvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwibmFtZSI6ImRvbmdlcyIsInVzZXJuYW1lIjoic3lzdGVtIiwiaG9zdG5hbWUiOiJNY0Rvbmdlcy0zLmZyaXR6LmJveCJ9fQ==",
+  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkxTFRFeExUSTFWREU0T2pFME9qQXlMakkyTWxvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwibmFtZSI6ImRvbmdlcyIsInVzZXJuYW1lIjoic3lzdGVtIiwiaG9zdG5hbWUiOiJNY0Rvbmdlcy0zLmZyaXR6LmJveCJ9fQ==",
   "model": {
-    "uuid": "6ff4cad0-3f18-42e1-b7f3-e5c62c7e8017",
-    "name": "ONCE-6ff4cad0",
+    "uuid": "038690f0-f2bd-4ce2-b20d-7e6ff81de1ef",
+    "name": "McDonges-3",
     "objectType": "ONCE",
     "version": "0.3.21.6",
     "state": {
-      "uuid": "6ff4cad0-3f18-42e1-b7f3-e5c62c7e8017",
-      "pid": 64773,
-      "state": "shutdown",
+      "uuid": "038690f0-f2bd-4ce2-b20d-7e6ff81de1ef",
+      "pid": 6143,
+      "state": "running",
       "platform": {
         "platform": "node",
         "version": "v22.20.0",
@@ -41,8 +41,8 @@
       "isPrimaryServer": true
     },
     "metadata": {
-      "created": "2025-11-25T16:37:05.891Z",
-      "modified": "2025-11-25T16:37:18.989Z",
+      "created": "2025-11-25T18:14:02.210Z",
+      "modified": "2025-11-25T18:14:02.263Z",
       "creator": "ONCE-v0.3.21.6",
       "description": "ONCE server Primary server instance",
       "tags": [
