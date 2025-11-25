@@ -22,6 +22,7 @@ export class DefaultUser implements User {
   constructor() {
     this.model = {
       uuid: '',
+      name: '', // Web4 Principle 1a: Model requires name
       username: '',
       hostname: ''
     };
@@ -31,12 +32,13 @@ export class DefaultUser implements User {
   /**
    * Initialize from scenario - Web4 pattern
    */
-  public init(scenario?: Scenario<UserModel>): this {
+  public init(scenario?: Scenario<UserModel>): User {
     if (scenario && scenario.model) {
       this.model = { ...scenario.model };
     } else {
       // Auto-detect if no scenario provided
       this.model.username = process.env.USER || 'unknown';
+      this.model.name = this.model.username; // Use username as display name
       this.model.uuid = this.getUserUUID(this.model.username);
       // hostname will be set by detectEnvironment
       this.model.hostname = 'localhost';

@@ -281,6 +281,7 @@ export class ScenarioManager {
     createScenarioFromServerModel(serverModel: ONCEServerModel): LegacyONCEScenario {
         return {
             uuid: serverModel.uuid,
+            name: serverModel.name || `ONCE-${serverModel.uuid.slice(0, 8)}`, // Web4 Principle 1a: Model requires name
             objectType: 'ONCE',
             version: this.version, // ✅ Use dynamic version
             state: {

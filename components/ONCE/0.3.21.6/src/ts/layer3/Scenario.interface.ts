@@ -2,7 +2,12 @@
  * Scenario - Web4 Scenario Interface with Complete IOR
  * Web4 pattern: Scenario support for component state management
  * 
- * Generic type T must extend Model (Web4 principle: strong typing)
+ * Generic type T must extend Model (Web4 Principle 1a: All models extend Model)
+ * 
+ * Scenario is an aggregation of three models:
+ * 1. IOR (Internet Object Reference) - identity & network location
+ * 2. owner (UserModel) - ownership attribution
+ * 3. model (T extends Model) - component-specific state
  * 
  * @pdca session/2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md
  */

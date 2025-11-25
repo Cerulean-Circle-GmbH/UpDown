@@ -4,6 +4,7 @@
  * @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
  */
 
+import { Model } from '../layer3/Model.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
 
@@ -53,9 +54,10 @@ export class ScenarioTypeGuard {
   }
   
   /**
-   * Get scenario with type guard
+   * Get scenario with type guard (Web4 Standard format)
+   * @param T - Model type (must extend Model)
    */
-  public asWeb4<T = any>(): Scenario<T> | null {
+  public asWeb4<T extends Model = Model>(): Scenario<T> | null {
     return this.isWeb4() ? (this.model as Scenario<T>) : null;
   }
 }
