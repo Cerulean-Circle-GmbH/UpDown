@@ -34,7 +34,7 @@ import { HostnameParser } from '../layer1/HostnameParser.js';
 export interface ServerRegistryEntry {
     scenario: any;  // Scenario<LegacyONCEScenario> - full scenario object
     lastSeen: string;
-    websocket?: WebSocket;  // KEEP for browser clients (NOT for server registration)
+    websocket?: WebSocket;  // KEEP for browser peers (NOT for peer kernel registration)
 }
 
 /**
@@ -67,7 +67,7 @@ export class ServerHierarchyManager {
             ? componentDirName 
             : '0.0.0.0';  // Known fallback for development (not a bug-hiding fallback)
         
-        // Initialize server model with defaults (inlined from ONCEServerModel.ts)
+        // Initialize peer model with defaults (inlined from ONCEServerModel.ts)
         this.serverModel = {
             uuid: uuidv4(),
             pid: process.pid,
@@ -162,7 +162,7 @@ export class ServerHierarchyManager {
         this.serverModel.state = LifecycleState.STARTING;
 
         try {
-            // ✅ FIX: Detect hostname/domain/IP before starting server
+            // ✅ FIX: Detect hostname/domain/IP before starting peer kernel
             await this.detectAndSetEnvironment();
             
             // Get next available port (42777 or 8080+)
@@ -176,10 +176,10 @@ export class ServerHierarchyManager {
                 port: portResult.port
             });
 
-            // Start HTTP server
+            // Start HTTP peer endpoint
             await this.startHttpServer(portResult.port);
             
-            // Start WebSocket server
+            // Start WebSocket peer communication
             await this.startWebSocketServer();
             
             if (this.serverModel.isPrimaryServer) {
@@ -188,13 +188,13 @@ export class ServerHierarchyManager {
                 console.log(`🏠 Domain: ${this.serverModel.domain}`);
                 this.serverModel.state = LifecycleState.PRIMARY_SERVER;
                 
-                // Perform housekeeping: discover existing servers, cleanup shutdown scenarios
+                // Perform housekeeping: discover existing peers, cleanup shutdown scenarios
                 await this.performHousekeeping();
             } else {
                 console.log(`🔵 Started as CLIENT SERVER on port ${portResult.port}`);
                 console.log(`📋 Server UUID: ${this.serverModel.uuid}`);
                 
-                // Register with primary server
+                // Register with primary peer
                 await this.registerWithPrimaryServer();
                 this.serverModel.state = LifecycleState.CLIENT_SERVER;
             }
