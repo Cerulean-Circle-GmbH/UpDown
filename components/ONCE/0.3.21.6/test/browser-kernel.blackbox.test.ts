@@ -78,12 +78,15 @@ describe('BrowserONCEKernel - Initialization (Blackbox)', () => {
         
         // Mock successful health check
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ servers: [] })
         });
         
@@ -101,12 +104,15 @@ describe('BrowserONCEKernel - Initialization (Blackbox)', () => {
         
         // Mock successful health check
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ servers: [] })
         });
         
@@ -123,12 +129,15 @@ describe('BrowserONCEKernel - Initialization (Blackbox)', () => {
         
         // Mock successful health check
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ servers: [] })
         });
         
@@ -152,12 +161,15 @@ describe('BrowserONCEKernel - P2P Connection (Blackbox)', () => {
         
         // Mock successful connection
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ servers: [] })
         });
         
@@ -217,6 +229,7 @@ describe('BrowserONCEKernel - Health Monitoring (Blackbox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -244,13 +257,16 @@ describe('BrowserONCEKernel - Peer Discovery (Blackbox)', () => {
         
         // Mock health check
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         // Mock servers/peers response
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({
                 servers: [
                     { host: 'peer1', capabilities: [{ capability: 'httpPort', port: 8080 }] },
@@ -275,12 +291,15 @@ describe('BrowserONCEKernel - Peer Discovery (Blackbox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({
                 servers: [
                     { host: 'peer1', capabilities: [{ capability: 'httpPort', port: 8080 }] }
@@ -305,12 +324,15 @@ describe('BrowserONCEKernel - Peer Discovery (Blackbox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({
                 servers: [
                     { host: 'peer1', capabilities: [{ capability: 'httpPort', port: 8080 }] }
@@ -325,6 +347,7 @@ describe('BrowserONCEKernel - Peer Discovery (Blackbox)', () => {
         
         // Mock new peers response
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({
                 servers: [
                     { host: 'peer1', capabilities: [{ capability: 'httpPort', port: 8080 }] },
@@ -353,6 +376,7 @@ describe('BrowserONCEKernel - Polling (Blackbox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -382,6 +406,7 @@ describe('BrowserONCEKernel - Message Tracking (Blackbox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -401,6 +426,7 @@ describe('BrowserONCEKernel - Message Tracking (Blackbox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -436,6 +462,7 @@ describe('BrowserONCEKernel - Radical OOP (Blackbox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -495,6 +522,7 @@ describe('BrowserONCEKernel - Log Management (Blackbox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         

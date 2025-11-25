@@ -88,7 +88,10 @@ export class BrowserONCEKernel {
         
         try {
             // Get initial health status
-            await this.getHealth();
+            const healthSuccess = await this.getHealth();
+            if (!healthSuccess) {
+                throw new Error('Health check failed');
+            }
             
             // Get peer information
             await this.getPeerInfo();
@@ -114,12 +117,17 @@ export class BrowserONCEKernel {
             // For now, use direct fetch until kernel is fully integrated
             // TODO: Replace with this.model.kernel.invokeMethod('getHealth', {})
             const response = await fetch(`http://${this.model.peerHost}/health`);
+            if (!response || !response.ok) {
+                throw new Error('Health check failed');
+            }
             const health = await response.json();
             
             this.updateHealthDisplay(health);
+            return true;
         } catch (error) {
             console.error('Health check failed:', error);
             this.updateHealthDisplay({ status: 'unhealthy', error: error.message });
+            return false;
         }
     }
     
@@ -157,6 +165,9 @@ export class BrowserONCEKernel {
             }
             
             const response = await fetch(endpoint);
+            if (!response || !response.ok) {
+                throw new Error('Peers fetch failed');
+            }
             const data = await response.json();
             
             this.model.peers = data.servers || [];  // TODO: API should return "peers" not "servers"

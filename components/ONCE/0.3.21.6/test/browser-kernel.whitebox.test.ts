@@ -68,6 +68,7 @@ describe('BrowserONCEKernel - Model Initialization (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -99,6 +100,7 @@ describe('BrowserONCEKernel - Model Initialization (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -121,12 +123,15 @@ describe('BrowserONCEKernel - Model Initialization (Whitebox)', () => {
         
         // Mock responses - no peers
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ servers: [] })
         });
         
@@ -143,6 +148,7 @@ describe('BrowserONCEKernel - Model Initialization (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -163,6 +169,7 @@ describe('BrowserONCEKernel - Model Initialization (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -189,6 +196,7 @@ describe('BrowserONCEKernel - State Transitions (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -207,6 +215,7 @@ describe('BrowserONCEKernel - State Transitions (Whitebox)', () => {
         
         // Mock successful connection
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -237,12 +246,15 @@ describe('BrowserONCEKernel - State Transitions (Whitebox)', () => {
         
         // Mock init responses
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ servers: [] })
         });
         
@@ -251,6 +263,7 @@ describe('BrowserONCEKernel - State Transitions (Whitebox)', () => {
         
         // Mock new peers data
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({
                 servers: [
                     { host: 'peer1', capabilities: [{ capability: 'httpPort', port: 8080 }] }
@@ -272,6 +285,7 @@ describe('BrowserONCEKernel - State Transitions (Whitebox)', () => {
         
         // Mock init responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -301,6 +315,7 @@ describe('BrowserONCEKernel - DOM Updates (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -322,6 +337,7 @@ describe('BrowserONCEKernel - DOM Updates (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -343,6 +359,7 @@ describe('BrowserONCEKernel - DOM Updates (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -370,6 +387,7 @@ describe('BrowserONCEKernel - DOM Updates (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -394,6 +412,7 @@ describe('BrowserONCEKernel - DOM Updates (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -414,6 +433,7 @@ describe('BrowserONCEKernel - DOM Updates (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -447,6 +467,7 @@ describe('BrowserONCEKernel - Polling Logic (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -470,6 +491,7 @@ describe('BrowserONCEKernel - Polling Logic (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -495,6 +517,7 @@ describe('BrowserONCEKernel - Polling Logic (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -568,6 +591,7 @@ describe('BrowserONCEKernel - Error Handling (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -584,12 +608,15 @@ describe('BrowserONCEKernel - Error Handling (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         (global.fetch as any).mockResolvedValueOnce({
+            ok: true,
             json: async () => ({ servers: [] })
         });
         
@@ -618,6 +645,7 @@ describe('BrowserONCEKernel - Code Coverage (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -632,6 +660,7 @@ describe('BrowserONCEKernel - Code Coverage (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -646,6 +675,7 @@ describe('BrowserONCEKernel - Code Coverage (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
@@ -677,6 +707,7 @@ describe('BrowserONCEKernel - Connection Time (Whitebox)', () => {
         
         // Mock responses
         (global.fetch as any).mockResolvedValue({
+            ok: true,
             json: async () => ({ status: 'healthy', uuid: 'test-uuid' })
         });
         
