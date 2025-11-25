@@ -8,7 +8,7 @@
  */
 
 import { LifecycleEventType } from './LifecycleEventType.enum.js';
-import { Component } from './Component.js';
+import { Component } from './Component.interface.js';
 import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
 
 export interface LifecycleEvent {

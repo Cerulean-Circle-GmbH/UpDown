@@ -8,7 +8,7 @@
 import { ONCE, EnvironmentInfo, ComponentQuery, PerformanceMetrics } from '../layer3/ONCE.js';
 import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
-import { Component } from '../layer3/Component.js';
+import { Component } from '../layer3/Component.interface.js';
 import { IOR } from '../layer3/IOR.js';
 import { LifecycleEventType, LifecycleState } from '../layer3/LifecycleEvents.js';
 import { LifecycleObserver } from '../layer3/LifecycleObserver.interface.js';
@@ -655,7 +655,7 @@ export class DefaultONCE implements ONCE {
   }
 
   async registerComponent(component: Component, ior: IOR): Promise<void> {
-    console.log(`📋 Component registration: ${component.uuid}`);
+    console.log(`📋 Component registration: ${ior.toString()}`);
   }
 
   async discoverComponents(query?: ComponentQuery): Promise<IOR[]> {
@@ -738,19 +738,19 @@ export class DefaultONCE implements ONCE {
   }
 
   registerLifecycleHooks(component: Component, hooks: LifecycleHooks): void {
-    console.log(`🎣 Lifecycle hooks registered for ${component.uuid}`);
+    console.log(`🎣 Lifecycle hooks registered for ${component.ior.toString()}`);
   }
 
   async pauseComponent(component: Component): Promise<void> {
-    console.log(`⏸️ Pausing component: ${component.uuid}`);
+    console.log(`⏸️ Pausing component: ${component.ior.toString()}`);
   }
 
   async resumeComponent(component: Component): Promise<void> {
-    console.log(`▶️ Resuming component: ${component.uuid}`);
+    console.log(`▶️ Resuming component: ${component.ior.toString()}`);
   }
 
   async stopComponent(component: Component): Promise<void> {
-    console.log(`⏹️ Stopping component: ${component.uuid}`);
+    console.log(`⏹️ Stopping component: ${component.ior.toString()}`);
   }
 
   /**

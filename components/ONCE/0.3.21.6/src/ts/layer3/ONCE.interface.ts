@@ -10,7 +10,7 @@
 
 import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
 import { Scenario } from './Scenario.interface.js';
-import { Component } from './Component.js';
+import { Component } from './Component.interface.js';
 import { IOR } from './IOR.js';
 import { LifecycleObserver } from './LifecycleObserver.interface.js';
 import { ONCEServerModel } from './ONCEServerModel.interface.js';
