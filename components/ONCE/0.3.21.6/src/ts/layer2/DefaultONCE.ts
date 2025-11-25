@@ -10,6 +10,7 @@ import { AbstractONCEKernel } from './AbstractONCEKernel.js';
 import type { ONCEKernel } from '../layer3/ONCE.interface.js';
 import type { ONCE as ONCEInterface } from '../layer3/ONCE.interface.js';
 import type { EnvironmentInfo } from '../layer3/EnvironmentInfo.interface.js';
+import { DefaultEnvironmentInfo } from './DefaultEnvironmentInfo.js';
 import type { ComponentQuery } from '../layer3/ComponentQuery.interface.js';
 import type { PerformanceMetrics } from '../layer3/PerformanceMetrics.interface.js';
 import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
@@ -654,19 +655,11 @@ export class DefaultONCE extends AbstractONCEKernel implements ONCEInterface {
   }
 
   getEnvironment(): EnvironmentInfo {
-    return {
-      isBrowser: false,
-      isNode: true,
-      isWorker: false,
-      isServiceWorker: false,
-      isPWA: false,
-      isIframe: false,
-      version: process.version,
-      capabilities: ['server', 'websocket', 'p2p'],
-      isOnline: true,
-      hostname: this.detectHostname(),
-      ip: '127.0.0.1'
-    };
+    return DefaultEnvironmentInfo.createNodeEnvironment(
+      process.version,
+      this.detectHostname(),
+      '127.0.0.1'
+    ).getModel();
   }
 
   async registerComponent(component: Component, ior: IOR): Promise<void> {

@@ -9,16 +9,17 @@
  * - PWA (progressive web app)
  * - iframe (embedded context)
  * 
+ * Web4 Principle: Use enums, not string literals
+ * 
  * @layer3
  * @pattern Interface Contract
  * @pdca session/2025-11-19-UTC-1805.iteration-01-layer3-split.pdca.md
  */
 
-// Type aliases (not enums - Web4 principle)
-type EnvironmentType = 'nodejs' | 'browser' | 'worker' | 'service-worker' | 'pwa' | 'iframe';
+import { EnvironmentType } from './EnvironmentType.enum.js';
 
 export interface EnvironmentInfo {
-    // Environment type
+    // Environment type (enum, not string literal)
     type: EnvironmentType;
     
     // Boolean flags for easy checks
