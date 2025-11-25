@@ -14,23 +14,20 @@
 
 **User Question**: "when will once-client.html be using the once kernel instead of the hardcoded functional shit scripts?"
 
-**Note**: Retaining "once-client.html" filename as-is for backward compatibility, but treating it as a browser kernel peer.
-
 **Current State**: Browser HTML has ~400 lines of hardcoded functional JavaScript:
 - Manual WebSocket connection handling
 - Protocol-based message passing (`type: 'scenario-p2p'`, etc.)
-- Direct `fetch()` calls to `/health`, `/peers` endpoints
+- Direct `fetch()` calls to `/health`, `/servers` endpoints
 - Inline stats tracking
 - UUID generation in browser
 - **NO use of `global.ONCE` kernel**
-- **WRONG terminology**: Uses "peer/kernel" instead of "peer/kernel" (violates Web4 Principle 13)
+- **WRONG terminology**: Uses "client/server" instead of "peer kernels"
 
 **Web4 Principle 13**: P2P Kernel Everywhere - No Client/Server Terminology
 - ONCE = Object Network Communication Engine (P2P micro kernel)
 - Runs everywhere: Browser, Node.js, Worker, PWA, Edge
-- NO "peer/kernel" distinction - Every ONCE instance is a peer kernel
-- Correct terminology: "ONCE kernel", "peer", "node", "kernel instance"
-- Avoid: "client", "server" (except in technical terms like "HTTP server", "Service Worker")
+- NO "client/server" - Every ONCE is a peer kernel
+- Terminology: "ONCE kernel", "peer", "node" (NOT "client", "server")
 
 **This is a GAP**: Browser kernel integration was NOT explicitly planned in original tracking PDCA.
 
@@ -58,14 +55,14 @@ Refactor browser peer to use the ONCE kernel (global.ONCE) instead of hardcoded 
 - Inconsistent with P2P architecture
 - Hard to maintain and test
 - Violates Radical OOP discipline
-- Confusing "peer/kernel" terminology violates P2P paradigm
+- Confusing "client/server" terminology violates P2P paradigm
 
 ---
 
 ### **Root Cause Analysis**
 
 **5W1H**:
-- **What**: Browser kernel peer needs kernel integration
+- **What**: Browser client needs kernel integration
 - **Why**: Current code is pre-Web4 functional JavaScript
 - **When**: After Iteration 1.6 (kernel is now ready with global.ONCE)
 - **Where**: `src/view/html/once-client.html` (~400 lines inline JS)
@@ -88,7 +85,7 @@ Refactor browser peer to use the ONCE kernel (global.ONCE) instead of hardcoded 
 - [ ] Replace protocol messages → scenario state transfer
 - [ ] Extract inline JavaScript → external module file
 - [ ] Implement Radical OOP pattern in browser
-- [ ] Write Playwright E2E tests for browser kernel peer
+- [ ] Write Playwright E2E tests for browser client
 
 **Out of Scope**:
 - UI/UX redesign (keep current look & feel)
@@ -184,7 +181,7 @@ class BrowserONCEKernel {
     }
     
     async getPeers() {
-        // ✅ IOR-based method invocation (NOT "getPeers")
+        // ✅ IOR-based method invocation (NOT "getServers")
         const peers = await this.model.kernel.invokeMethod('getPeers', {});
         this.model.peers = peers.peers;
         this.updatePeersDisplay(peers);
@@ -213,7 +210,7 @@ class BrowserONCEKernel {
     
     // ✅ NO CALLBACKS, NO ARROW FUNCTIONS - Just methods!
     // ✅ NO event listeners (once.on) - Use polling or Observer Pattern
-    // ✅ P2P terminology: peers, nodes, kernels (NOT peer/kernel)
+    // ✅ P2P terminology: peers, nodes, kernels (NOT client/server)
 }
 
 // Usage (P2P kernel instantiation)
@@ -225,16 +222,16 @@ await kernel.init({ peerHost: window.location.host });
 1. ❌ **NO arrow functions** (`() => {}`)
 2. ❌ **NO callbacks** (`.then()`, `.onmessage`)
 3. ❌ **NO event listeners** (`once.on('event', callback)`)
-4. ❌ **NO peer/kernel terminology** (use "peer", "kernel", "node")
+4. ❌ **NO client/server terminology** (use "peer", "kernel", "node")
 5. ✅ **YES methods** operating on `this.model`
 6. ✅ **YES polling** or Observer Pattern (method-based)
 7. ✅ **YES IOR-based** method invocation
-8. ✅ **YES P2P terminology** (peers, not clients/peers)
+8. ✅ **YES P2P terminology** (peers, not clients/servers)
 ```javascript
 // External module: once-client.js
 import { ONCE } from '/ONCE/0.3.21.6/bundle.js';
 
-// Browser kernel peer as Radical OOP class
+// Browser client as Radical OOP class
 class BrowserONCEClient {
     constructor() {
         // Empty constructor (Radical OOP)
@@ -250,7 +247,7 @@ class BrowserONCEClient {
             connectionTime: null
         };
         
-        // Connect to peer (method, not callback)
+        // Connect to server (method, not callback)
         await this.connect();
         
         return this;
@@ -268,9 +265,9 @@ class BrowserONCEClient {
         this.updateHealthDisplay(health);
     }
     
-    async getPeers() {
+    async getServers() {
         // IOR-based method invocation
-        const servers = await this.model.kernel.invokeMethod('getPeers', {});
+        const servers = await this.model.kernel.invokeMethod('getServers', {});
         this.updateServersDisplay(servers);
     }
     
@@ -333,7 +330,7 @@ src/view/js/once-client.js (300 lines - extracted logic as module)
   - [ ] Implement scenario-based state listeners
 - [ ] **Step 4**: Replace HTTP fetch calls
   - [ ] `/health` → `once.invokeMethod('getHealth')`
-  - [ ] `/peers` → `once.invokeMethod('getPeers')`
+  - [ ] `/servers` → `once.invokeMethod('getServers')`
   - [ ] Query params → method params
 - [ ] **Step 5**: Remove protocol message types
   - [ ] No more `type: 'scenario-p2p'`
@@ -446,7 +443,7 @@ src/view/js/once-client.js (300 lines - extracted logic as module)
 - ✅ Created `src/view/js/once-browser-kernel.js` with `BrowserONCEKernel` class
 - ✅ Simplified `once-client.html` to ~112 lines (HTML/CSS only)
 - ✅ Implemented Radical OOP (no arrow functions, no callbacks)
-- ✅ Updated all terminology from "peer/kernel" to "peer/kernel"
+- ✅ Updated all terminology from "client/server" to "peer/kernel"
 - ✅ Backed up old file to `once-client.html.bak`
 - ✅ Built successfully
 - ✅ Git commit with correct one-line PDCA filename
@@ -1263,7 +1260,7 @@ Duration    ~2 seconds
 - ✅ **Radical OOP**: Empty constructor, state in `this.model`, methods only
 - ✅ **No arrow functions**: All methods are proper class methods
 - ✅ **No callbacks**: Polling-based updates instead of event listeners
-- ✅ **P2P terminology**: "peer", "kernel", "node" (not "peer/kernel")
+- ✅ **P2P terminology**: "peer", "kernel", "node" (not "client/server")
 - ✅ **External module**: JavaScript separated from HTML
 - ✅ **One type per file**: `BrowserONCEKernel` in its own module
 
@@ -1390,7 +1387,7 @@ Duration    ~2 seconds
 
 4. **P2P Terminology Shift**
    - Consistent use of "peer", "kernel", "node" throughout code and tests
-   - Aligns with Web4 Principle 13 (no peer/kernel)
+   - Aligns with Web4 Principle 13 (no client/server)
    - Reinforces P2P architecture mindset
 
 5. **Comprehensive Test Coverage**
@@ -1538,7 +1535,7 @@ Duration    ~2 seconds
 **Iteration 1.7: Browser ONCE Kernel Integration** is **COMPLETE** ✅
 
 **Summary**:
-Successfully refactored browser kernel peer from 455 lines of inline functional JavaScript to a clean, external Radical OOP module. Created comprehensive test suite (61 total tests across blackbox, whitebox, and E2E). Achieved 87% unit test pass rate with all architectural goals met. P2P terminology consistently applied throughout. Browser now loads ONCE kernel as an ES6 module with proper separation of concerns.
+Successfully refactored browser client from 455 lines of inline functional JavaScript to a clean, external Radical OOP module. Created comprehensive test suite (61 total tests across blackbox, whitebox, and E2E). Achieved 87% unit test pass rate with all architectural goals met. P2P terminology consistently applied throughout. Browser now loads ONCE kernel as an ES6 module with proper separation of concerns.
 
 **Impact**:
 - ✅ Browser code now follows Web4 architecture
