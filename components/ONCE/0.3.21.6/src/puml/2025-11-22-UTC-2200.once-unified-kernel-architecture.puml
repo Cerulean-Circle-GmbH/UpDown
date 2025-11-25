@@ -11,13 +11,13 @@ title ONCE Unified Kernel Architecture\nEnvironment-Agnostic P2P Kernel
 package "Layer 1: Infrastructure & Environment Detection" as Layer1 <<Rectangle>> {
   
   class Once <<singleton>> #LAYER1_COLOR {
-    {static} - instance: ONCEKernel | null
+    {static} - instance: OnceKernel | null
     {static} - environment: EnvironmentInfo | null
     --
-    {static} + start(scenario?: any): Promise<ONCEKernel>
+    {static} + start(scenario?: any): Promise<OnceKernel>
     {static} - detectEnvironment(): EnvironmentInfo
     {static} - loadKernel(envType: EnvironmentType): Promise<any>
-    {static} + getInstance(): ONCEKernel | null
+    {static} + getInstance(): OnceKernel | null
     {static} + getEnvironment(): EnvironmentInfo | null
     {static} + stop(): Promise<void>
   }
@@ -62,7 +62,7 @@ package "Layer 1: Infrastructure & Environment Detection" as Layer1 <<Rectangle>
 
 package "Layer 2: Kernel Implementations" as Layer2 <<Rectangle>> {
   
-  class DefaultONCEKernel <<base>> #LAYER2_COLOR {
+  class DefaultOnceKernel <<base>> #LAYER2_COLOR {
     # model: any | null
     --
     + constructor()
@@ -133,7 +133,7 @@ package "Layer 2: Kernel Implementations" as Layer2 <<Rectangle>> {
     + handleFetch(request: Request): Promise<Response>
   }
   
-  note right of DefaultONCEKernel
+  note right of DefaultOnceKernel
     **Base class for all environment kernels**
     
     Provides shared helpers:
@@ -152,7 +152,7 @@ package "Layer 2: Kernel Implementations" as Layer2 <<Rectangle>> {
 
 package "Layer 3: Interfaces & Types" as Layer3 <<Rectangle>> {
   
-  interface ONCEKernel <<interface>> #LAYER3_COLOR {
+  interface OnceKernel <<interface>> #LAYER3_COLOR {
     + model: any
     + init(scenario?: any): Promise<any>
     + getHealth(): Promise<any>
@@ -162,7 +162,7 @@ package "Layer 3: Interfaces & Types" as Layer3 <<Rectangle>> {
     + getEnvironment(): EnvironmentInfo
   }
   
-  interface ONCEKernelModel <<interface>> #LAYER3_COLOR {
+  interface OnceKernelModel <<interface>> #LAYER3_COLOR {
     + uuid: string
     + name: string
     + version: string
@@ -203,16 +203,16 @@ package "Layer 3: Interfaces & Types" as Layer3 <<Rectangle>> {
 
 ' Relationships
 Once ..> EnvironmentInfo : detects
-Once ..> ONCEKernel : loads & returns
-Once --> DefaultONCEKernel : instantiates one of
+Once ..> OnceKernel : loads & returns
+Once --> DefaultOnceKernel : instantiates one of
 
-DefaultONCEKernel ..|> ONCEKernel : implements
-NodeJsOnce --|> DefaultONCEKernel
-BrowserOnce --|> DefaultONCEKernel
-WorkerOnce --|> DefaultONCEKernel
-ServiceWorkerOnce --|> DefaultONCEKernel
+DefaultOnceKernel ..|> OnceKernel : implements
+NodeJsOnce --|> DefaultOnceKernel
+BrowserOnce --|> DefaultOnceKernel
+WorkerOnce --|> DefaultOnceKernel
+ServiceWorkerOnce --|> DefaultOnceKernel
 
-ONCEKernel --> ONCEKernelModel : has
+OnceKernel --> OnceKernelModel : has
 NodeJsOnce --> NodeJsOnceModel : uses
 BrowserOnce --> BrowserOnceModel : uses
 WorkerOnce --> WorkerOnceModel : uses
@@ -235,7 +235,7 @@ note as UsageNote
   // In Worker
   const kernel = await ONCE.start(scenario);
   
-  // Always returns ONCEKernel interface
+  // Always returns OnceKernel interface
   const health = await kernel.getHealth();
   const result = await kernel.invokeMethod('getPeers', {});
   
