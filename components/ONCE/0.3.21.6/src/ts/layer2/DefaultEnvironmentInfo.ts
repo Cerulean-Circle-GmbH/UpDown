@@ -80,6 +80,106 @@ export class DefaultEnvironmentInfo implements EnvironmentInfo {
     }
     
     /**
+     * Static factory: Create for PWA environment
+     */
+    static createPWAEnvironment(version: string): DefaultEnvironmentInfo {
+        const env = new DefaultEnvironmentInfo();
+        env.model = {
+            type: EnvironmentType.PWA,
+            isNode: false,
+            isBrowser: true,
+            isWorker: false,
+            isServiceWorker: false,
+            isPWA: true,
+            isIframe: false,
+            version,
+            capabilities: ['websocket', 'p2p', 'dom', 'standalone'],
+            isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true
+        };
+        return env;
+    }
+    
+    /**
+     * Static factory: Create for iFrame environment
+     */
+    static createIFrameEnvironment(version: string): DefaultEnvironmentInfo {
+        const env = new DefaultEnvironmentInfo();
+        env.model = {
+            type: EnvironmentType.IFRAME,
+            isNode: false,
+            isBrowser: true,
+            isWorker: false,
+            isServiceWorker: false,
+            isPWA: false,
+            isIframe: true,
+            version,
+            capabilities: ['websocket', 'p2p', 'dom', 'embedded'],
+            isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true
+        };
+        return env;
+    }
+    
+    /**
+     * Static factory: Create for Service Worker environment
+     */
+    static createServiceWorkerEnvironment(version: string): DefaultEnvironmentInfo {
+        const env = new DefaultEnvironmentInfo();
+        env.model = {
+            type: EnvironmentType.SERVICE_WORKER,
+            isNode: false,
+            isBrowser: false,
+            isWorker: false,
+            isServiceWorker: true,
+            isPWA: false,
+            isIframe: false,
+            version,
+            capabilities: ['cache', 'fetch', 'push', 'sync'],
+            isOnline: true
+        };
+        return env;
+    }
+    
+    /**
+     * Static factory: Create for Web Worker environment
+     */
+    static createWorkerEnvironment(version: string): DefaultEnvironmentInfo {
+        const env = new DefaultEnvironmentInfo();
+        env.model = {
+            type: EnvironmentType.WORKER,
+            isNode: false,
+            isBrowser: false,
+            isWorker: true,
+            isServiceWorker: false,
+            isPWA: false,
+            isIframe: false,
+            version,
+            capabilities: ['postMessage', 'importScripts'],
+            isOnline: true
+        };
+        return env;
+    }
+    
+    /**
+     * Static factory: Create fallback/unknown environment
+     */
+    static createUnknownEnvironment(): DefaultEnvironmentInfo {
+        const env = new DefaultEnvironmentInfo();
+        env.model = {
+            type: EnvironmentType.BROWSER, // Default fallback
+            isNode: false,
+            isBrowser: true,
+            isWorker: false,
+            isServiceWorker: false,
+            isPWA: false,
+            isIframe: false,
+            version: 'unknown',
+            capabilities: [],
+            isOnline: true
+        };
+        return env;
+    }
+    
+    /**
      * Get environment info (EnvironmentInfo interface implementation)
      */
     get type(): EnvironmentType { return this.model.type; }

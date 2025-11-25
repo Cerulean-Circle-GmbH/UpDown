@@ -8,6 +8,7 @@
 import { createHash } from 'crypto';
 import { User } from '../layer3/User.interface.js';
 import { UserModel } from '../layer3/UserModel.interface.js';
+import { Model } from '../layer3/Model.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
 import { EnvironmentModel } from '../layer3/EnvironmentModel.interface.js';
@@ -32,9 +33,9 @@ export class DefaultUser implements User {
   /**
    * Initialize from scenario - Web4 pattern
    */
-  public init(scenario?: Scenario<UserModel>): this {
+  public init(scenario?: Scenario<Model>): this {
     if (scenario && scenario.model) {
-      this.model = { ...scenario.model };
+      this.model = { ...scenario.model } as UserModel;
     } else {
       // Auto-detect if no scenario provided
       this.model.username = process.env.USER || 'unknown';

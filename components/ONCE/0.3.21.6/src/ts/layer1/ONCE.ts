@@ -19,6 +19,8 @@
 
 import type { ONCEKernel } from '../layer3/ONCE.interface.js';
 import type { EnvironmentInfo } from '../layer3/EnvironmentInfo.interface.js';
+import { EnvironmentType } from '../layer3/EnvironmentType.enum.js';
+import { DefaultEnvironmentInfo } from '../layer2/DefaultEnvironmentInfo.js';
 
 export class ONCE {
     // Singleton instance
@@ -93,54 +95,27 @@ export class ONCE {
         if (typeof process !== 'undefined' && 
             process.versions && 
             process.versions.node) {
-            return {
-                type: 'nodejs',
-                isNode: true,
-                isBrowser: false,
-                isWorker: false,
-                isServiceWorker: false,
-                isPWA: false,
-                isIframe: false,
-                version: process.versions.node,
-                capabilities: ['fs', 'http', 'crypto', 'net'],
-                isOnline: true,
-                hostname: process.env.HOSTNAME,
-                ip: undefined // Will be set during init
-            };
+            return DefaultEnvironmentInfo.createNodeEnvironment(
+                process.versions.node,
+                process.env.HOSTNAME,
+                undefined
+            ).getModel();
         }
         
         // Check for Service Worker
         if (typeof self !== 'undefined' && 
             (self as any).constructor.name === 'ServiceWorkerGlobalScope') {
-            return {
-                type: 'service-worker',
-                isNode: false,
-                isBrowser: false,
-                isWorker: false,
-                isServiceWorker: true,
-                isPWA: false,
-                isIframe: false,
-                version: (self as any).navigator.userAgent,
-                capabilities: ['cache', 'fetch', 'push', 'sync'],
-                isOnline: (self as any).navigator.onLine
-            };
+            return DefaultEnvironmentInfo.createServiceWorkerEnvironment(
+                (self as any).navigator.userAgent
+            ).getModel();
         }
         
         // Check for Web Worker
         if (typeof self !== 'undefined' && 
             (self as any).constructor.name === 'DedicatedWorkerGlobalScope') {
-            return {
-                type: 'worker',
-                isNode: false,
-                isBrowser: false,
-                isWorker: true,
-                isServiceWorker: false,
-                isPWA: false,
-                isIframe: false,
-                version: (self as any).navigator.userAgent,
-                capabilities: ['postMessage', 'importScripts'],
-                isOnline: (self as any).navigator.onLine
-            };
+            return DefaultEnvironmentInfo.createWorkerEnvironment(
+                (self as any).navigator.userAgent
+            ).getModel();
         }
         
         // Check for Browser (window context)
@@ -150,34 +125,24 @@ export class ONCE {
             
             const isIframe = window !== window.parent;
             
-            return {
-                type: isPWA ? 'pwa' : (isIframe ? 'iframe' : 'browser'),
-                isNode: false,
-                isBrowser: true,
-                isWorker: false,
-                isServiceWorker: false,
-                isPWA: isPWA,
-                isIframe: isIframe,
-                version: window.navigator.userAgent,
-                capabilities: ['dom', 'fetch', 'localstorage', 'websocket'],
-                isOnline: window.navigator.onLine
-            };
+            if (isPWA) {
+                return DefaultEnvironmentInfo.createPWAEnvironment(
+                    window.navigator.userAgent
+                ).getModel();
+            } else if (isIframe) {
+                return DefaultEnvironmentInfo.createIFrameEnvironment(
+                    window.navigator.userAgent
+                ).getModel();
+            } else {
+                return DefaultEnvironmentInfo.createBrowserEnvironment(
+                    window.navigator.userAgent
+                ).getModel();
+            }
         }
         
         // Fallback (unknown environment)
         console.warn('[ONCE] Unknown environment detected');
-        return {
-            type: 'browser', // Default fallback
-            isNode: false,
-            isBrowser: true,
-            isWorker: false,
-            isServiceWorker: false,
-            isPWA: false,
-            isIframe: false,
-            version: 'unknown',
-            capabilities: [],
-            isOnline: true
-        };
+        return DefaultEnvironmentInfo.createUnknownEnvironment().getModel();
     }
     
     /**
@@ -186,28 +151,34 @@ export class ONCE {
      * @param envType - Environment type
      * @returns Promise<ONCEKernel>
      */
-    private static async loadKernel(envType: string): Promise<ONCEKernel> {
+    private static async loadKernel(envType: EnvironmentType): Promise<any> {
         switch (envType) {
-            case 'nodejs': {
+            case EnvironmentType.NODE: {
                 const { DefaultONCE } = await import('../layer2/DefaultONCE.js');
                 return new DefaultONCE();
             }
             
-            case 'browser':
-            case 'pwa':
-            case 'iframe': {
+            case EnvironmentType.BROWSER:
+            case EnvironmentType.PWA:
+            case EnvironmentType.IFRAME: {
                 const { BrowserONCEKernel } = await import('../layer2/BrowserONCEKernel.js');
-                return new BrowserONCEKernel();
+                const kernel = new BrowserONCEKernel();
+                // Register global singleton for browser
+                if (typeof window !== 'undefined') {
+                    (window as any).global = (window as any).global || {};
+                    (window as any).global.ONCE = kernel;
+                }
+                return kernel;
             }
             
-            case 'worker': {
+            case EnvironmentType.WORKER: {
                 // Future: WorkerONCEKernel
                 console.warn('[ONCE] Worker kernel not yet implemented, using Browser kernel');
                 const { BrowserONCEKernel } = await import('../layer2/BrowserONCEKernel.js');
                 return new BrowserONCEKernel();
             }
             
-            case 'service-worker': {
+            case EnvironmentType.SERVICE_WORKER: {
                 // Future: ServiceWorkerONCEKernel
                 console.warn('[ONCE] Service Worker kernel not yet implemented, using Browser kernel');
                 const { BrowserONCEKernel } = await import('../layer2/BrowserONCEKernel.js');

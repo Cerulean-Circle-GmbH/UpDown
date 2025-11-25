@@ -1,10 +1,10 @@
 {
-  "uuid": "761f7e2a-042e-4598-b947-0c6c74a634fd",
+  "uuid": "7820bc7a-0201-4c35-9f5d-ade7e82dc2c9",
   "objectType": "ONCE",
   "version": "0.3.21.6",
   "state": {
-    "uuid": "761f7e2a-042e-4598-b947-0c6c74a634fd",
-    "pid": 93197,
+    "uuid": "7820bc7a-0201-4c35-9f5d-ade7e82dc2c9",
+    "pid": 60338,
     "state": "running",
     "platform": {
       "platform": "node",
@@ -23,33 +23,33 @@
     "capabilities": [
       {
         "capability": "httpPort",
-        "port": 8081
+        "port": 42777
       },
       {
         "capability": "wsPort",
-        "port": 8081
+        "port": 42777
       }
     ],
-    "isPrimaryServer": false,
-    "created": "2025-11-25T10:05:10.583Z"
+    "isPrimaryServer": true,
+    "created": "2025-11-25T16:37:19.208Z"
   },
   "metadata": {
-    "created": "2025-11-25T10:05:10.583Z",
-    "modified": "2025-11-25T10:05:10.583Z",
+    "created": "2025-11-25T16:37:19.208Z",
+    "modified": "2025-11-25T16:37:19.208Z",
     "creator": "ONCE-v0.3.21.6",
-    "description": "ONCE server scenario - Client server",
+    "description": "ONCE server scenario - Primary server",
     "domain": "box.fritz",
     "host": "McDonges-3.fritz.box",
-    "port": 8081,
-    "isPrimaryServer": false,
+    "port": 42777,
+    "isPrimaryServer": true,
     "capabilities": [
       {
         "capability": "httpPort",
-        "port": 8081
+        "port": 42777
       },
       {
         "capability": "wsPort",
-        "port": 8081
+        "port": 42777
       }
     ]
   }

@@ -1,18 +1,19 @@
 {
   "ior": {
-    "uuid": "0146294f-4582-41e4-a192-799c0709dd20",
+    "uuid": "7820bc7a-0201-4c35-9f5d-ade7e82dc2c9",
     "component": "ONCE",
     "version": "0.3.21.6"
   },
-  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkxTFRFeExUSXlWREV4T2pReU9qQXlMakExTkZvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwidXNlcm5hbWUiOiJzeXN0ZW0iLCJob3N0bmFtZSI6Ik1jRG9uZ2VzLTMuZnJpdHouYm94In19",
+  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkxTFRFeExUSTFWREUyT2pNM09qRTVMakl4TVZvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwibmFtZSI6ImRvbmdlcyIsInVzZXJuYW1lIjoic3lzdGVtIiwiaG9zdG5hbWUiOiJNY0Rvbmdlcy0zLmZyaXR6LmJveCJ9fQ==",
   "model": {
-    "uuid": "0146294f-4582-41e4-a192-799c0709dd20",
+    "uuid": "7820bc7a-0201-4c35-9f5d-ade7e82dc2c9",
+    "name": "ONCE-7820bc7a",
     "objectType": "ONCE",
     "version": "0.3.21.6",
     "state": {
-      "uuid": "0146294f-4582-41e4-a192-799c0709dd20",
-      "pid": 81572,
-      "state": "shutdown",
+      "uuid": "7820bc7a-0201-4c35-9f5d-ade7e82dc2c9",
+      "pid": 60338,
+      "state": "running",
       "platform": {
         "platform": "node",
         "version": "v22.20.0",
@@ -40,8 +41,8 @@
       "isPrimaryServer": true
     },
     "metadata": {
-      "created": "2025-11-22T11:42:02.050Z",
-      "modified": "2025-11-22T11:45:14.648Z",
+      "created": "2025-11-25T16:37:19.209Z",
+      "modified": "2025-11-25T16:37:19.211Z",
       "creator": "ONCE-v0.3.21.6",
       "description": "ONCE server Primary server instance",
       "tags": [

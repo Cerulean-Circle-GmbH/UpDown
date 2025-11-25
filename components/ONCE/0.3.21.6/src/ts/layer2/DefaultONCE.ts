@@ -1231,12 +1231,10 @@ export class DefaultONCE extends AbstractONCEKernel implements ONCEInterface {
 
   /**
    * Sleep utility for test sequences
-   * ✅ TRUE Radical OOP: Simple promise-based delay
+   * ✅ TRUE Radical OOP: Simple promise-based delay (inherited from AbstractONCEKernel)
    * @cliHide
    */
-  private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+  // Removed: sleep() is now inherited from AbstractONCEKernel as protected method
 
   /**
    * Parameter completion for mode parameter (used by demo command)

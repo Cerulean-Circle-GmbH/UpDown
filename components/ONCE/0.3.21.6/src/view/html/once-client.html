@@ -110,45 +110,46 @@
         <div class="connection">📡 Initializing ONCE Browser Kernel...</div>
     </div>
     
+    <!-- ✅ Load ONCE.ts - Auto-detects browser environment and boots BrowserONCEKernel -->
     <script type="module">
-        // ✅ Load ONCE Browser Kernel (Radical OOP module)
-        import { BrowserONCEKernel } from '../js/once-browser-kernel.js';
-        
-        // ✅ Initialize kernel instance
-        const kernel = new BrowserONCEKernel();
+        import { ONCE } from '../../dist/ts/layer1/ONCE.js';
         
         // Get peer host from URL or use current location
         const urlParams = new URLSearchParams(window.location.search);
-        const peerHost = urlParams.get('peer') || urlParams.get('server') || window.location.host;
+        const peerHost = urlParams.get('peer') || window.location.host;
         
         // Initialize with scenario
-        await kernel.init({
+        const scenario = {
             peerHost: peerHost
-        });
+        };
         
-        // ✅ Attach button handlers (method calls, not inline onclick)
-        document.getElementById('broadcastBtn').addEventListener('click', () => {
+        // ONCE.start() detects environment (browser) and loads BrowserONCEKernel
+        const kernel = await ONCE.start(scenario);
+        
+        // Make kernel globally accessible via window.global.ONCE and ONCE.getInstance()
+        window.global = window.global || {};
+        window.global.ONCE = kernel;
+        
+        // Attach button handlers (Radical OOP methods)
+        document.getElementById('broadcastBtn').addEventListener('click', function() {
             kernel.broadcastToAll();
         });
         
-        document.getElementById('relayBtn').addEventListener('click', () => {
+        document.getElementById('relayBtn').addEventListener('click', function() {
             kernel.relayViaPrimary();
         });
         
-        document.getElementById('p2pBtn').addEventListener('click', () => {
+        document.getElementById('p2pBtn').addEventListener('click', function() {
             kernel.sendP2PDirect();
         });
         
-        document.getElementById('clearBtn').addEventListener('click', () => {
+        document.getElementById('clearBtn').addEventListener('click', function() {
             kernel.clearLog();
         });
         
-        // Make kernel globally accessible for debugging
-        window.onceKernel = kernel;
-        
-        console.log('✅ ONCE Browser Kernel initialized');
+        console.log('✅ ONCE Kernel started:', kernel);
         console.log('   Peer:', peerHost);
-        console.log('   Access via: window.onceKernel');
+        console.log('   Access via: ONCE.getInstance() or window.global.ONCE');
     </script>
 </body>
 </html>
