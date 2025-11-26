@@ -76,6 +76,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       updatedAt: new Date().toISOString(),
       component: 'ONCE',
       version: '0.0.0.0',     // Will be discovered in discoverPathsFromFilesystem()
+      state: LifecycleState.CREATED, // ✅ Initial lifecycle state
       initialized: false,
       initializationTime: 0,
       eventHandlers: new Map(),
@@ -85,12 +86,13 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       targetDirectory: '',
       targetComponentRoot: '',
       isTestIsolation: false,
-      // Primary Server IOR with Failover (configurable via environment)
+      // Primary Server IOR with Failover
       // @pdca 2025-11-22-UTC-1430.iteration-01.6.4a-ior-failover.pdca.md
+      // ✅ Web4: Configuration via scenario, NOT environment variables
       // Default: localhost for development
-      // Production: Set ONCE_PRIMARY_IOR environment variable
+      // Production: Set via init() scenario
       // Example multi-region: 'ior:https://primary.once.network:42777,europe:42778,asia:42779/ONCE/0.3.21.6/registry-uuid'
-      primaryServerIor: process.env.ONCE_PRIMARY_IOR || 'ior:https://localhost:42777/ONCE/0.0.0.0/primary-server-uuid'
+      primaryServerIor: 'ior:https://localhost:42777/ONCE/0.0.0.0/primary-server-uuid'
     };
     
     // ✅ Synchronous path discovery (needed for CLI to work)
@@ -424,6 +426,9 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
     if (this.model.scenario && !this.model.initialized) {
       const startTime = Date.now();
       console.log('🚀 Initializing ONCE v0.3.20.0...');
+      
+      // ✅ Transition to INITIALIZING state
+      this.transitionTo(LifecycleState.INITIALIZING, LifecycleEventType.BEFORE_INIT);
 
       try {
         console.log(`📂 Loading from scenario: ${this.model.scenario.uuid}`);
@@ -444,15 +449,16 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
         this.model.initialized = true;
         this.model.initializationTime = Date.now() - startTime;
 
-        // Emit after-init event
-        await this.emitEvent(LifecycleEventType.AFTER_INIT, {
+        // ✅ Transition to INITIALIZED state
+        this.transitionTo(LifecycleState.INITIALIZED, LifecycleEventType.AFTER_INIT, {
           initializationTime: this.model.initializationTime
         });
 
         console.log(`✅ ONCE v0.3.20.0 initialized in ${this.model.initializationTime}ms`);
       } catch (error) {
         console.error('❌ ONCE initialization failed:', error);
-        await this.emitEvent(LifecycleEventType.ERROR, { error });
+        // ✅ Transition to ERROR state
+        this.transitionTo(LifecycleState.ERROR, LifecycleEventType.ERROR, { error });
         throw error;
       }
     }
@@ -548,7 +554,8 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   async startServer(scenario?: string | LegacyONCEScenario): Promise<void> {
     console.log('🚀 Starting ONCE server...');
     
-    await this.emitEvent(LifecycleEventType.BEFORE_START);
+    // ✅ Transition to STARTING state
+    this.transitionTo(LifecycleState.STARTING, LifecycleEventType.BEFORE_START);
     
     try {
       // Initialize if not already initialized
@@ -573,10 +580,12 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       const web4Scenario = await this.toScenario();
       await this.scenarioManager.saveScenario(web4Scenario);
       
-      await this.emitEvent(LifecycleEventType.AFTER_START);
+      // ✅ Transition to RUNNING state
+      this.transitionTo(LifecycleState.RUNNING, LifecycleEventType.AFTER_START);
       
     } catch (error) {
-      await this.emitEvent(LifecycleEventType.ERROR, { error });
+      // ✅ Transition to ERROR state
+      this.transitionTo(LifecycleState.ERROR, LifecycleEventType.ERROR, { error });
       throw error;
     }
   }
@@ -619,27 +628,10 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
     return this.scenarioManager.createScenarioFromServerModel(serverModel);
   }
 
-  /**
-   * Emit lifecycle event (domain logic from 0.2.0.0)
-   * @cliHide
-   */
-  private async emitEvent(eventType: LifecycleEventType, data?: any): Promise<void> {
-    const handlers = this.model.eventHandlers?.get(eventType) || [];
-    const event = {
-      type: eventType,
-      timestamp: new Date().toISOString(),
-      data
-    };
-
-    for (const handler of handlers) {
-      try {
-        await handler(event);
-      } catch (error) {
-        console.error(`❌ Event handler error for ${eventType}:`, error);
-      }
-    }
-  }
-
+  // ========================================
+  // ONCE INTERFACE PLACEHOLDER IMPLEMENTATIONS
+  // ========================================
+  
   // Placeholder implementations for ONCE interface methods (domain logic from 0.2.0.0)
 
   async startComponent(componentIOR: IOR, scenario?: LegacyONCEScenario): Promise<Component> {
@@ -855,11 +847,13 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
     }
     
     // No scenario provided - stop current server (self)
-    await this.emitEvent(LifecycleEventType.BEFORE_STOP);
+    // ✅ Transition to STOPPING state
+    this.transitionTo(LifecycleState.STOPPING, LifecycleEventType.BEFORE_STOP);
     
     await this.serverHierarchyManager.stopServer();
     
-    await this.emitEvent(LifecycleEventType.AFTER_STOP);
+    // ✅ Transition to STOPPED state
+    this.transitionTo(LifecycleState.STOPPED, LifecycleEventType.AFTER_STOP);
   }
 
   /**

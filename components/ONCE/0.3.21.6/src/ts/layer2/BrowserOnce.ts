@@ -21,6 +21,8 @@ import { DefaultOnceKernel } from './DefaultOnceKernel.js';
 import type { BrowserOnceModel } from '../layer3/BrowserOnceModel.interface.js';
 import { EnvironmentType } from '../layer3/EnvironmentType.enum.js';
 import { DefaultEnvironmentInfo } from './DefaultEnvironmentInfo.js';
+import { LifecycleState } from '../layer3/LifecycleState.enum.js';
+import { LifecycleEventType } from '../layer3/LifecycleEventType.enum.js';
 
 export class BrowserOnce extends DefaultOnceKernel {
     // ✅ Type the model properly
@@ -32,6 +34,9 @@ export class BrowserOnce extends DefaultOnceKernel {
     }
     
     async init(scenario?: any): Promise<this> {
+        // ✅ Transition to INITIALIZING state
+        this.transitionTo(LifecycleState.INITIALIZING, LifecycleEventType.BEFORE_INIT);
+        
         // ✅ Initialize with scenario
         this.model = {
             // Base model properties (from Model interface)
@@ -40,6 +45,7 @@ export class BrowserOnce extends DefaultOnceKernel {
             
             // Kernel properties (from ONCEKernelModel)
             version: '0.3.21.6',
+            state: LifecycleState.INITIALIZING, // Current lifecycle state
             environment: DefaultEnvironmentInfo.createBrowserEnvironment(
                 navigator.userAgent
             ).getModel(),
@@ -94,6 +100,9 @@ export class BrowserOnce extends DefaultOnceKernel {
         
         // 6. Start connection timer
         this.startConnectionTimer();
+        
+        // ✅ Transition to INITIALIZED state
+        this.transitionTo(LifecycleState.INITIALIZED, LifecycleEventType.AFTER_INIT);
         
         return this;
     }

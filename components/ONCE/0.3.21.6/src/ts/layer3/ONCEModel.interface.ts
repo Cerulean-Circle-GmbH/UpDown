@@ -7,6 +7,7 @@
 import { Model } from './Model.interface.js';
 import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
 import { LifecycleEventType } from './LifecycleEventType.enum.js';
+import { LifecycleState } from './LifecycleState.enum.js';
 import { LifecycleObserver } from './LifecycleObserver.interface.js';
 import { ONCEServerModel } from './ONCEServerModel.interface.js';
 
@@ -57,6 +58,7 @@ export interface ONCEModel extends Model {
 
   // 🔌 ONCE Domain Properties - Store ONCE Server State
   // @pdca 2025-11-10-UTC-1830.migrate-once-to-0.3.20.0.pdca.md
+  state?: LifecycleState;                              // ✅ Current lifecycle state
   initialized?: boolean;                           // ONCE kernel initialization flag
   initializationTime?: number;                     // Time taken for initialization (ms)
   scenario?: LegacyONCEScenario;                             // Current ONCE scenario

@@ -17,6 +17,7 @@
 import type { Model } from './Model.interface.js';
 import type { EnvironmentInfo } from './EnvironmentInfo.interface.js';
 import type { Reference } from './Reference.interface.js';
+import type { LifecycleState } from './LifecycleState.enum.js';
 
 export interface ONCEKernelModel extends Model {
     // Identity (uuid, name inherited from Model)
@@ -29,6 +30,7 @@ export interface ONCEKernelModel extends Model {
     peers: any[]; // Connected peer kernels
     
     // Lifecycle
+    state: LifecycleState; // Current lifecycle state
     connectionTime: Reference<Date>;
     startTime: Reference<Date>;
     

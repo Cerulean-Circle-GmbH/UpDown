@@ -12,19 +12,24 @@
  * - State in this.model
  * - Methods operate on model
  * - No arrow functions, no callbacks
+ * - Observer Pattern for lifecycle events
  * 
  * Note: Does NOT implement full OnceKernel interface - that's environment-specific
- * Only provides shared helper methods
+ * Only provides shared helper methods and lifecycle management
  * 
  * @layer2
- * @pattern Abstract Base Class
- * @pdca session/2025-11-25-UTC-1930.iteration-01.10-once-naming-convention-standardization.pdca.md
+ * @pattern Abstract Base Class + Observer Pattern
+ * @pdca session/2025-11-26-UTC-0000.iteration-01.13-lifecycle-events-radical-oop.pdca.md
  */
 
 import type { Reference } from '../layer3/Reference.interface.js';
 import type { Model } from '../layer3/Model.interface.js';
+import type { LifecycleObserver } from '../layer3/LifecycleObserver.interface.js';
+import type { LifecycleManager } from '../layer3/LifecycleManager.interface.js';
+import { LifecycleEventType } from '../layer3/LifecycleEventType.enum.js';
+import { LifecycleState } from '../layer3/LifecycleState.enum.js';
 
-export abstract class DefaultOnceKernel {
+export abstract class DefaultOnceKernel implements LifecycleManager {
     /**
      * Model storage (Radical OOP)
      * Each subclass defines its own model type
@@ -32,11 +37,24 @@ export abstract class DefaultOnceKernel {
     protected model: Reference<Model> = null;
     
     /**
+     * Lifecycle observers (Observer Pattern)
+     * NO callbacks, just objects implementing LifecycleObserver
+     */
+    private observers: LifecycleObserver[] = [];
+    
+    /**
+     * Current lifecycle state
+     * Stored here for quick access, also reflected in model.state when model exists
+     */
+    private state: LifecycleState = LifecycleState.CREATED;
+    
+    /**
      * Empty constructor (Radical OOP)
      * All initialization happens in init()
      */
     constructor() {
         // ✅ Empty constructor - no logic here
+        // State initialized to CREATED
     }
     
     /**
@@ -55,6 +73,160 @@ export abstract class DefaultOnceKernel {
      * @returns Promise<any> - Health status object
      */
     abstract getHealth(): Promise<any>;
+    
+    // ========================================
+    // LIFECYCLE MANAGEMENT (Observer Pattern)
+    // ========================================
+    
+    /**
+     * Attach lifecycle observer
+     * 
+     * @param observer - Observer to attach
+     */
+    public attachObserver(observer: LifecycleObserver): void {
+        if (!this.observers.includes(observer)) {
+            this.observers.push(observer);
+        }
+    }
+    
+    /**
+     * Detach lifecycle observer
+     * 
+     * @param observer - Observer to detach
+     */
+    public detachObserver(observer: LifecycleObserver): void {
+        const index = this.observers.indexOf(observer);
+        if (index !== -1) {
+            this.observers.splice(index, 1);
+        }
+    }
+    
+    /**
+     * Notify all observers of lifecycle event
+     * 
+     * Uses convention-over-configuration to call appropriate observer method.
+     * Converts event type to method name: BEFORE_START → onBeforeStart
+     * 
+     * @param eventType - Type of lifecycle event
+     * @param data - Optional event data
+     */
+    public notifyObservers(eventType: LifecycleEventType, data?: any): void {
+        // Convert event type to method name (e.g., BEFORE_START → onBeforeStart)
+        const methodName = this.eventTypeToMethodName(eventType);
+        
+        for (const observer of this.observers) {
+            const method = (observer as any)[methodName];
+            if (typeof method === 'function') {
+                try {
+                    method.call(observer, this, data);
+                } catch (error) {
+                    console.error(`[DefaultOnceKernel] Observer method ${methodName} error:`, error);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Get current lifecycle state
+     * 
+     * @returns Current lifecycle state
+     */
+    public getLifecycleState(): LifecycleState {
+        return this.state;
+    }
+    
+    /**
+     * Validate state transition
+     * 
+     * @param targetState - Target state to transition to
+     * @returns true if transition is valid
+     */
+    public canTransitionTo(targetState: LifecycleState): boolean {
+        const currentState = this.state;
+        
+        // ERROR state can be reached from any state
+        if (targetState === LifecycleState.ERROR) {
+            return true;
+        }
+        
+        // Define valid transitions
+        const validTransitions: Record<LifecycleState, LifecycleState[]> = {
+            [LifecycleState.CREATED]: [LifecycleState.INITIALIZING],
+            [LifecycleState.INITIALIZING]: [LifecycleState.INITIALIZED, LifecycleState.ERROR],
+            [LifecycleState.INITIALIZED]: [LifecycleState.STARTING],
+            [LifecycleState.STARTING]: [LifecycleState.RUNNING, LifecycleState.ERROR],
+            [LifecycleState.RUNNING]: [LifecycleState.PAUSING, LifecycleState.STOPPING],
+            [LifecycleState.PAUSING]: [LifecycleState.PAUSED, LifecycleState.ERROR],
+            [LifecycleState.PAUSED]: [LifecycleState.RESUMING],
+            [LifecycleState.RESUMING]: [LifecycleState.RUNNING, LifecycleState.ERROR],
+            [LifecycleState.STOPPING]: [LifecycleState.STOPPED, LifecycleState.ERROR],
+            [LifecycleState.STOPPED]: [LifecycleState.SHUTTING_DOWN],
+            [LifecycleState.SHUTTING_DOWN]: [LifecycleState.SHUTDOWN, LifecycleState.ERROR],
+            [LifecycleState.SHUTDOWN]: [], // Terminal state
+            [LifecycleState.ERROR]: [LifecycleState.STOPPED], // Can recover to STOPPED
+            
+            // Server hierarchy states (special cases)
+            [LifecycleState.REGISTERING]: [LifecycleState.REGISTERED, LifecycleState.ERROR],
+            [LifecycleState.REGISTERED]: [LifecycleState.RUNNING, LifecycleState.ERROR],
+            [LifecycleState.PRIMARY_SERVER]: [LifecycleState.RUNNING, LifecycleState.STOPPING],
+            [LifecycleState.CLIENT_SERVER]: [LifecycleState.RUNNING, LifecycleState.STOPPING]
+        };
+        
+        const allowedTargets = validTransitions[currentState] || [];
+        return allowedTargets.includes(targetState);
+    }
+    
+    /**
+     * Transition to new state
+     * 
+     * Validates transition, updates state, updates model if exists, notifies observers.
+     * 
+     * @param targetState - Target state to transition to
+     * @param eventType - Lifecycle event type (for observer notification)
+     * @param data - Optional event data
+     * 
+     * @throws Error if transition is invalid
+     */
+    public transitionTo(targetState: LifecycleState, eventType: LifecycleEventType, data?: any): void {
+        // Validate transition
+        if (!this.canTransitionTo(targetState)) {
+            throw new Error(
+                `[DefaultOnceKernel] Invalid state transition: ${this.state} → ${targetState}`
+            );
+        }
+        
+        // Update state
+        this.state = targetState;
+        
+        // Update model if it exists (after init)
+        if (this.model && 'state' in this.model) {
+            (this.model as any).state = targetState;
+        }
+        
+        // Notify observers
+        this.notifyObservers(eventType, data);
+    }
+    
+    /**
+     * Convert lifecycle event type to observer method name
+     * 
+     * Convention: BEFORE_START → onBeforeStart
+     * 
+     * @param eventType - Lifecycle event type
+     * @returns Method name
+     */
+    private eventTypeToMethodName(eventType: LifecycleEventType): string {
+        // Convert kebab-case to camelCase and prefix with 'on'
+        // Example: 'before-start' → 'onBeforeStart'
+        const parts = eventType.split('-');
+        const camelCase = parts.map((part, index) => {
+            return index === 0 
+                ? part.charAt(0).toUpperCase() + part.slice(1)
+                : part.charAt(0).toUpperCase() + part.slice(1);
+        }).join('');
+        
+        return 'on' + camelCase;
+    }
     
     // ========================================
     // SHARED HELPER METHODS
