@@ -402,6 +402,11 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   async init(scenario?: Scenario<any> | LegacyONCEScenario): Promise<NodeJsOnce> {
     // Paths already discovered in constructor via _discoverPaths()
     
+    // ✅ Always transition to INITIALIZING (even without scenario)
+    if (this.getLifecycleState() === LifecycleState.CREATED) {
+      this.transitionTo(LifecycleState.INITIALIZING, LifecycleEventType.BEFORE_INIT);
+    }
+    
     // Process scenario (may override paths from CLI)
     if (scenario && typeof scenario === 'object' && 'model' in scenario) {
       // Web4TSComponent-style scenario with model property
@@ -425,10 +430,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
     // Initialize ONCE kernel if scenario provided (domain logic from 0.2.0.0)
     if (this.model.scenario && !this.model.initialized) {
       const startTime = Date.now();
-      console.log('🚀 Initializing ONCE v0.3.20.0...');
-      
-      // ✅ Transition to INITIALIZING state
-      this.transitionTo(LifecycleState.INITIALIZING, LifecycleEventType.BEFORE_INIT);
+      console.log(`🚀 Initializing ONCE v${this.model.version}...`);
 
       try {
         console.log(`📂 Loading from scenario: ${this.model.scenario.uuid}`);
@@ -449,18 +451,21 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
         this.model.initialized = true;
         this.model.initializationTime = Date.now() - startTime;
 
-        // ✅ Transition to INITIALIZED state
-        this.transitionTo(LifecycleState.INITIALIZED, LifecycleEventType.AFTER_INIT, {
-          initializationTime: this.model.initializationTime
-        });
-
-        console.log(`✅ ONCE v0.3.20.0 initialized in ${this.model.initializationTime}ms`);
+        console.log(`✅ ONCE v${this.model.version} initialized in ${this.model.initializationTime}ms`);
       } catch (error) {
         console.error('❌ ONCE initialization failed:', error);
         // ✅ Transition to ERROR state
         this.transitionTo(LifecycleState.ERROR, LifecycleEventType.ERROR, { error });
         throw error;
       }
+    }
+    
+    // ✅ Always transition to INITIALIZED (even without scenario)
+    if (this.getLifecycleState() === LifecycleState.INITIALIZING) {
+      this.transitionTo(LifecycleState.INITIALIZED, LifecycleEventType.AFTER_INIT, {
+        initializationTime: this.model.initializationTime || 0
+      });
+      this.model.initialized = true;
     }
     
     return this;
@@ -554,9 +559,6 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   async startServer(scenario?: string | LegacyONCEScenario): Promise<void> {
     console.log('🚀 Starting ONCE server...');
     
-    // ✅ Transition to STARTING state
-    this.transitionTo(LifecycleState.STARTING, LifecycleEventType.BEFORE_START);
-    
     try {
       // Initialize if not already initialized
       if (!this.model.initialized) {
@@ -565,6 +567,9 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
         const isKeyword = typeof scenario === 'string' && ['primary', 'client'].includes(scenario.toLowerCase());
         await this.init(scenario && !isKeyword ? { model: { scenario } } as any : undefined);
       }
+      
+      // ✅ Transition to STARTING state (after init if needed)
+      this.transitionTo(LifecycleState.STARTING, LifecycleEventType.BEFORE_START);
 
       // ✅ Detect environment using Layer 1 infrastructure (TRUE Radical OOP)
       await this.serverHierarchyManager.detectAndSetEnvironment();
@@ -635,15 +640,15 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   // Placeholder implementations for ONCE interface methods (domain logic from 0.2.0.0)
 
   async startComponent(componentIOR: IOR, scenario?: LegacyONCEScenario): Promise<Component> {
-    throw new Error('startComponent not implemented in v0.3.20.0');
+    throw new Error(`startComponent not implemented in v${this.model.version}`);
   }
 
   async saveAsScenario(component: Component): Promise<Scenario<LegacyONCEScenario>> {
-    throw new Error('saveAsScenario not implemented in v0.3.20.0');
+    throw new Error(`saveAsScenario not implemented in v${this.model.version}`);
   }
 
   async loadScenario(scenario: LegacyONCEScenario): Promise<Component> {
-    throw new Error('loadScenario not implemented in v0.3.20.0');
+    throw new Error(`loadScenario not implemented in v${this.model.version}`);
   }
 
   getEnvironment(): EnvironmentInfo {
@@ -675,7 +680,8 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   }
 
   getVersion(): string {
-    return '0.3.20.0';
+    // ✅ Web4: Version from semantic versioning (directory structure), not hardcoded
+    return this.model.version || '0.0.0.0'; // Fallback only if discovery failed
   }
 
   getMetrics(): PerformanceMetrics {
@@ -874,7 +880,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       return await this.demoMessages(mode);
     }
     
-    console.log('🎭 ONCE v0.3.20.1 Demo Starting...');
+    console.log(`🎭 ONCE v${this.model.version} Demo Starting...`);
     console.log('');
     
     // ✅ RADICAL OOP: Store demo mode in model
@@ -891,10 +897,10 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       
       console.log('🏠 Project root detected:', this.model.projectRoot || '(not set)');
       console.log('🚫 No environment variables required');
-      console.log('🌐 Server hierarchy: Port 42777 → 8080+ (enhanced v0.2.0.0)');
+      console.log('🌐 Server hierarchy: Port 42777 → 8080+');
       console.log('');
       
-      console.log('ℹ️  Demo initialized - Enhanced v0.3.20.1 with server hierarchy');
+      console.log('ℹ️  Demo initialized - Server hierarchy with P2P communication');
       console.log('ℹ️  Press [h] for help, [s] to start server, [q] to quit');
       
       // Setup interactive keyboard
@@ -1051,7 +1057,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
    * @pdca 2025-11-10-UTC-1915.add-testInput-command.pdca.md - Port test sequence from 0.2.0.0
    */
   async testInput(sequence: string): Promise<this> {
-    console.log(`🧪 ONCE v0.3.20.0 Test Sequence: "${sequence}"`);
+    console.log(`🧪 ONCE v${this.model.version} Test Sequence: "${sequence}"`);
     console.log('');
     
     // ✅ RADICAL OOP: Store test sequence in model
@@ -1535,7 +1541,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
     const reset = '\x1b[0m';
     
     console.log(`${bold}${cyan}╔════════════════════════════════════════════════╗${reset}`);
-    console.log(`${bold}${cyan}║    ONCE Interactive Demo Controller v0.3.20.1  ║${reset}`);
+    console.log(`${bold}${cyan}║    ONCE Interactive Demo Controller v${this.model.version}  ║${reset}`);
     console.log(`${bold}${cyan}║         Enhanced Server Hierarchy              ║${reset}`);
     console.log(`${bold}${cyan}╚════════════════════════════════════════════════╝${reset}`);
     console.log('');
@@ -1706,7 +1712,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
         case 'm':
           // Show metrics
           console.log('📊 Server Metrics & Status:');
-          console.log('📋 ONCE v0.3.20.1 - Enhanced Server Hierarchy');
+          console.log(`📋 ONCE v${this.model.version} - P2P Server Hierarchy`);
           console.log('🏠 Domain: local.once');
           console.log('🔧 Status: Interactive demo active');
           if (this.model.serverModel) {
