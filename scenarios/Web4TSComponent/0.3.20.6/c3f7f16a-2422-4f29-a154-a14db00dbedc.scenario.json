@@ -1,0 +1,46 @@
+{
+  "ior": {
+    "uuid": "85566564-1049-4dcb-be92-ab10787ca0dd",
+    "component": "Web4TSComponent",
+    "version": "0.3.20.6"
+  },
+  "owner": "eyJpb3IiOnsidXVpZCI6Ijg1NTY2NTY0LTEwNDktNGRjYi1iZTkyLWFiMTA3ODdjYTBkZCIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4wLjAuMCIsInRpbWVzdGFtcCI6IjIwMjUtMTEtMjdUMTg6Mzc6NTAuODE0WiJ9LCJvd25lciI6IiIsIm1vZGVsIjp7InVzZXIiOiJkb25nZXMiLCJob3N0bmFtZSI6ImxvY2FsaG9zdCIsInV1aWQiOiI4NTU2NjU2NC0xMDQ5LTRkY2ItYmU5Mi1hYjEwNzg3Y2EwZGQiLCJjb21wb25lbnQiOiJXZWI0VFNDb21wb25lbnQiLCJ2ZXJzaW9uIjoiMC4zLjIwLjYifX0=",
+  "model": {
+    "uuid": "85566564-1049-4dcb-be92-ab10787ca0dd",
+    "name": "",
+    "origin": "",
+    "definition": "",
+    "component": "Web4TSComponent",
+    "version": {
+      "model": {
+        "uuid": "5bbc238a-e314-429e-8b1e-b672765de3ec",
+        "name": "version",
+        "origin": "system",
+        "definition": "Semantic version",
+        "major": 0,
+        "minor": 3,
+        "patch": 20,
+        "revision": 6,
+        "versionString": "0.3.20.6"
+      }
+    },
+    "componentRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.20.6",
+    "projectRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown",
+    "targetDirectory": "/Users/Shared/Workspaces/2cuGitHub/UpDown",
+    "componentsDirectory": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components",
+    "isTestIsolation": false,
+    "displayName": "Web4TSComponent",
+    "displayVersion": "0.3.20.6",
+    "isDelegation": false,
+    "componentsDir": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components",
+    "scriptsDir": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scripts",
+    "scriptsVersionDir": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scripts/versions",
+    "testDataDir": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.20.6/test/data",
+    "contextComponent": "Web4TSComponent",
+    "contextVersion": "0.3.20.6",
+    "contextPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.20.6",
+    "targetComponentRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.20.6",
+    "componentPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.20.6",
+    "implementationClassName": "DefaultWeb4TSComponent"
+  }
+}

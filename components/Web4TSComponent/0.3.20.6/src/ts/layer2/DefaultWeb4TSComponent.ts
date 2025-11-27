@@ -521,6 +521,9 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
       owner: ownerData,
       model: {
         ...this.model,
+        // ✅ Exclude circular reference: context contains another component instance
+        // @pdca 2025-11-27-UTC-1805.iteration-01.19-updateComponentDescriptor-command.pdca.md
+        context: undefined,
         // ✅ Include implementationClassName (Web4 "Everything is a Scenario" principle)
         // @pdca 2025-11-27-UTC-1724.migrate-component-scenario-creation.pdca.md
         implementationClassName: this.model.implementationClassName || this.constructor.name
@@ -1283,8 +1286,9 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
     
     // ✅ NEW: Generate component scenario file (Web4 "Everything is a Scenario" principle)
     // @pdca 2025-11-27-UTC-1724.migrate-component-scenario-creation.pdca.md
+    // @principle 16: componentScenarioCreate() - Object-Action naming (noun-verb pattern)
     console.log(`📄 Creating component scenario file...`);
-    await this.createComponentScenario(component, version, componentRoot);
+    await this.componentScenarioCreate(component, version, componentRoot);
     
     // Tier 1 Improvement: Automatically initialize component integration
     // PDCA: 2025-10-10-UTC-1850-component-initialization-ux-gap.pdca.md
@@ -1347,8 +1351,9 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
    * - Creates symlink: {ComponentRoot}/{Component}.component.json → ../../scenarios/.../
    * 
    * Web4 Principles:
-   * - "Everything is a Scenario": Configuration IS scenario state
-   * - DRY: Single source of truth via symlinks
+   * - Principle 1: "Everything is a Scenario": Configuration IS scenario state
+   * - Principle 8: DRY: Single source of truth via symlinks
+   * - Principle 16: Object-Action naming - componentScenarioCreate() groups with other componentScenario* methods
    * - Path Authority: Scenarios ALWAYS at PROJECT_ROOT/scenarios/
    * - Test Isolation: Same relative path in test and production
    * 
@@ -1356,9 +1361,10 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
    * @param version Component version
    * @param componentRoot Full path to component directory (from Path Authority)
    * @pdca 2025-11-27-UTC-1724.migrate-component-scenario-creation.pdca.md
+   * @pdca 2025-11-27-UTC-1805.iteration-01.19-updateComponentDescriptor-command.pdca.md - Renamed for Principle 16
    * @private
    */
-  private async createComponentScenario(
+  private async componentScenarioCreate(
     component: string, 
     version: string,
     componentRoot: string
@@ -1414,6 +1420,44 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
         console.warn(`   ⚠️  Could not create symlink:`, error.message);
       }
     }
+  }
+
+  /**
+   * Generate component.json scenario file for existing components
+   * Used to create scenario files for components that were created before this feature existed
+   * 
+   * Usage: web4tscomponent on ONCE latest componentDescriptorUpdate
+   * 
+   * Web4 Principles:
+   * - Principle 1: "Everything is a Scenario" - all components need scenario files
+   * - Principle 16: Object-Action naming - componentDescriptorUpdate() groups with other componentDescriptor* methods
+   * 
+   * @pdca 2025-11-27-UTC-1805.iteration-01.19-updateComponentDescriptor-command.pdca.md
+   * @cliSyntax
+   */
+  async componentDescriptorUpdate(): Promise<this> {
+    this.printQuickHeader();
+    
+    // Must have context loaded via on()
+    if (!this.model.context) {
+      console.error('❌ Error: No component context loaded');
+      console.log('   Usage: web4tscomponent on <Component> <Version> componentDescriptorUpdate');
+      throw new Error('componentDescriptorUpdate requires context from on() command');
+    }
+    
+    const targetComponent = this.model.context;
+    const componentName = targetComponent.model.component;
+    const componentVersion = targetComponent.model.version.toString();
+    const componentRoot = this.model.targetComponentRoot!;
+    
+    console.log(`📄 Generating component descriptor for ${componentName} ${componentVersion}...`);
+    
+    // Call the existing componentScenarioCreate method
+    await this.componentScenarioCreate(componentName, componentVersion, componentRoot);
+    
+    console.log(`✅ Component descriptor created successfully`);
+    
+    return this;
   }
 
   /**
