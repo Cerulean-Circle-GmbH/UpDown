@@ -658,8 +658,14 @@ describe('Server Lifecycle Management (Black-Box)', () => {
         scenarioDir = getOrDiscoverScenarioDir(testDataDir, scenarioDir);
         
         // ASSERT: Clients should still be running (use actual ports)
+        // Wait a bit longer for clients to reconnect after primary restart
+        await sleep(2);
         const client1Healthy = await checkServerHealth(client1Port);
         const client2Healthy = await checkServerHealth(client2Port);
+        
+        // Log for debugging
+        console.log(`🔍 Client health check: client1(${client1Port})=${client1Healthy}, client2(${client2Port})=${client2Healthy}`);
+        
         expect(client1Healthy).toBe(true);
         expect(client2Healthy).toBe(true);
         
