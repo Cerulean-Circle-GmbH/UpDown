@@ -1061,11 +1061,9 @@ export class ServerHierarchyManager {
                 this.serverRegistry.delete(uuid);
                 console.log(`🗑️  Server ${uuid} deregistered (state: ${state})`);
                 
-                // Broadcast deregistration to browser clients
-                this.broadcastToBrowserClients({
-                    type: 'server-deregistered',  // For browser UI only
-                    uuid: uuid
-                });
+                // ✅ Protocol-less: Broadcast scenario with updated state
+                // Browser peers will detect STOPPED/SHUTDOWN state and remove from UI
+                this.broadcastToBrowserClients(scenario);
             }
         } else if (state === LifecycleState.RUNNING || state === LifecycleState.CLIENT_SERVER) {
             // Register or update server
@@ -1079,11 +1077,8 @@ export class ServerHierarchyManager {
             const action = wasRegistered ? 'updated' : 'registered';
             console.log(`📡 Server ${uuid} ${action} (state: ${state}, port: ${port})`);
             
-            // Broadcast to browser clients
-            this.broadcastToBrowserClients({
-                type: 'server-registered',  // For browser UI only
-                scenario: scenario
-            });
+            // ✅ Protocol-less: Broadcast scenario (browser detects from state)
+            this.broadcastToBrowserClients(scenario);
         }
     }
 
@@ -1420,21 +1415,25 @@ export class ServerHierarchyManager {
      * @pdca 2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md - Iteration 1.6.2
      * @deprecated Will be replaced with scenario replication in Iteration 1.6.3
      */
+    /**
+     * Broadcast scenario to browser peers (protocol-less)
+     * ✅ Web4 Principle 11: Protocol-Less Communication
+     * ✅ Sends pure scenario JSON (NO message envelope)
+     * @pdca 2025-11-26-UTC-0215.iteration-01.14-websocket-state-transfer-completion.pdca.md
+     */
     private broadcastToBrowserClients(scenario: any): void {
         const clientCount = this.browserClients.size;
         logBroadcast(this.serverModel.uuid, clientCount, 'browsers', `scenario ${shortUUID(scenario.uuid)}`);
         
         if (clientCount === 0) {
-            console.log('ℹ️  No browser clients connected');
+            console.log('ℹ️  No browser peers connected');
             return;
         }
         
+        // ✅ Protocol-less: Send scenario directly (NO envelope)
         this.browserClients.forEach((client: WebSocket) => {
             if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify({
-                    type: 'scenario-message',
-                    scenario: scenario
-                }));
+                client.send(JSON.stringify(scenario));  // ✅ Pure state transfer
             }
         });
     }

@@ -292,16 +292,40 @@ export class BrowserOnce extends DefaultOnceKernel {
         this.updateStatsDisplay();
     }
     
+    /**
+     * Update peer state in model (protocol-less state transfer)
+     * ✅ Adds new peers or updates existing
+     * ✅ Removes peers with STOPPED/SHUTDOWN state
+     * @pdca 2025-11-26-UTC-0215.iteration-01.14-websocket-state-transfer-completion.pdca.md
+     */
     private updatePeerState(scenario: any): void {
-        // ✅ Update or add peer in model
+        const uuid = scenario.ior?.uuid || scenario.model?.uuid;
+        const state = scenario.model?.state?.state;
+        
+        // ✅ Remove peer if STOPPED or SHUTDOWN
+        if (state === 'STOPPED' || state === 'SHUTDOWN') {
+            const removeIndex = this.model.peers.findIndex(
+                p => (p.ior?.uuid || p.model?.uuid) === uuid
+            );
+            
+            if (removeIndex >= 0) {
+                this.model.peers.splice(removeIndex, 1);
+                console.log(`🗑️  Peer removed: ${uuid} (${state})`);
+            }
+            return;
+        }
+        
+        // ✅ Update or add peer
         const existingIndex = this.model.peers.findIndex(
-            p => p.ior?.uuid === scenario.ior?.uuid
+            p => (p.ior?.uuid || p.model?.uuid) === uuid
         );
         
         if (existingIndex >= 0) {
             this.model.peers[existingIndex] = scenario;
+            console.log(`🔄 Peer updated: ${uuid}`);
         } else {
             this.model.peers.push(scenario);
+            console.log(`➕ Peer added: ${uuid}`);
         }
     }
     

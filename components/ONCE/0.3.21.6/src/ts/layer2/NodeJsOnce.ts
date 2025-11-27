@@ -588,10 +588,33 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       // ✅ Transition to RUNNING state
       this.transitionTo(LifecycleState.RUNNING, LifecycleEventType.AFTER_START);
       
+      // ✅ Broadcast scenario update to all peers (protocol-less)
+      await this.sendScenarioUpdate();
+      
     } catch (error) {
       // ✅ Transition to ERROR state
       this.transitionTo(LifecycleState.ERROR, LifecycleEventType.ERROR, { error });
       throw error;
+    }
+  }
+
+  /**
+   * Send scenario update to all connected peers (protocol-less state transfer)
+   * ✅ Web4 Principle 11: Protocol-Less Communication
+   * ✅ Broadcasts full scenario to primary server and browser peers
+   * @pdca 2025-11-26-UTC-0215.iteration-01.14-websocket-state-transfer-completion.pdca.md
+   */
+  async sendScenarioUpdate(): Promise<void> {
+    try {
+      // Generate current scenario
+      const scenario = await this.toScenario();
+      
+      // Broadcast to all connected peers via ServerHierarchyManager
+      this.serverHierarchyManager.broadcastScenario(scenario);
+      
+      console.log(`📡 Scenario update broadcast: ${scenario.ior?.uuid || 'unknown'}`);
+    } catch (error) {
+      console.error('❌ Failed to send scenario update:', error);
     }
   }
 
@@ -856,10 +879,16 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
     // ✅ Transition to STOPPING state
     this.transitionTo(LifecycleState.STOPPING, LifecycleEventType.BEFORE_STOP);
     
+    // ✅ Broadcast STOPPING state to peers
+    await this.sendScenarioUpdate();
+    
     await this.serverHierarchyManager.stopServer();
     
     // ✅ Transition to STOPPED state
     this.transitionTo(LifecycleState.STOPPED, LifecycleEventType.AFTER_STOP);
+    
+    // ✅ Broadcast STOPPED state to peers
+    await this.sendScenarioUpdate();
   }
 
   /**
