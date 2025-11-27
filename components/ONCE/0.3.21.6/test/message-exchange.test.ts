@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { DefaultONCE } from '../src/ts/layer2/DefaultONCE.js';
+import { NodeJsOnce } from '../src/ts/layer2/NodeJsOnce.js';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as fs from 'fs';
@@ -179,7 +179,7 @@ grep -c "ACK:" /tmp/test-ack.log
 
   it('should track messages in model (no private state)', async () => {
     // This test verifies Radical OOP by checking the implementation
-    const once = new DefaultONCE();
+    const once = new NodeJsOnce();
     await once.init();
 
     // Initialize message tracker
@@ -244,7 +244,7 @@ cat scenarios/message-exchange-report.json
     // NOTE: Test violates test isolation - requires no production primary running
     // TODO: Rewrite as black-box test in test/data like lifecycle-management.test.ts
     // Start primary + 1 client
-    const primary = new DefaultONCE();
+    const primary = new NodeJsOnce();
     await primary.init();
     await primary.startServer();
     const primaryModel = primary.getServerModel();
@@ -252,7 +252,7 @@ cat scenarios/message-exchange-report.json
 
     await new Promise(resolve => setTimeout(resolve, 1000)); // Let primary settle
 
-    const client = new DefaultONCE();
+    const client = new NodeJsOnce();
     await client.init();
     await client.startServer();
     const clientModel = client.getServerModel();
@@ -286,7 +286,7 @@ cat scenarios/message-exchange-report.json
     // NOTE: Test violates test isolation - requires no production primary running
     // TODO: Rewrite as black-box test in test/data like lifecycle-management.test.ts
     // Start primary + 1 client
-    const primary = new DefaultONCE();
+    const primary = new NodeJsOnce();
     await primary.init();
     await primary.startServer();
     const primaryModel = primary.getServerModel();
@@ -294,7 +294,7 @@ cat scenarios/message-exchange-report.json
 
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const client = new DefaultONCE();
+    const client = new NodeJsOnce();
     await client.init();
     await client.startServer();
     const clientModel = client.getServerModel();
@@ -327,13 +327,13 @@ cat scenarios/message-exchange-report.json
     // 2. Use that info to fetch /servers from primary
 
     // Start primary + 1 client
-    const primary = new DefaultONCE();
+    const primary = new NodeJsOnce();
     await primary.init();
     await primary.startServer();
 
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const client = new DefaultONCE();
+    const client = new NodeJsOnce();
     await client.init();
     await client.startServer();
     const clientModel = client.getServerModel();
@@ -404,7 +404,7 @@ cat scenarios/message-exchange-report.json
     // Browser → Client /health → get primary address → Primary /servers → get server list
     
     // Start primary + 2 clients
-    const primary = new DefaultONCE();
+    const primary = new NodeJsOnce();
     await primary.init();
     await primary.startServer();
     const primaryModel = primary.getServerModel();
@@ -412,7 +412,7 @@ cat scenarios/message-exchange-report.json
 
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const client1 = new DefaultONCE();
+    const client1 = new NodeJsOnce();
     await client1.init();
     await client1.startServer();
     const client1Model = client1.getServerModel();
@@ -420,7 +420,7 @@ cat scenarios/message-exchange-report.json
 
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const client2 = new DefaultONCE();
+    const client2 = new NodeJsOnce();
     await client2.init();
     await client2.startServer();
     const client2Model = client2.getServerModel();

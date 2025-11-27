@@ -3,13 +3,13 @@
  * Usage: node spawn-server.mjs [primary|client]
  */
 
-import { DefaultONCE } from '../dist/ts/layer2/DefaultONCE.js';
+import { NodeJsOnce } from '../dist/ts/layer2/NodeJsOnce.js';
 
 const serverType = process.argv[2] || 'client';
 
 async function main() {
     try {
-        const server = new DefaultONCE();
+        const server = new NodeJsOnce();
         await server.init();
         await server.startServer();
         

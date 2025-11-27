@@ -21,15 +21,15 @@ describe('Browser Broadcast Flow', () => {
     let componentVersion: string;
     
     beforeAll(async () => {
-        const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+        const { NodeJsOnce } = await import('../dist/ts/layer2/NodeJsOnce.js');
         
         // Get component version
-        const tempInstance = new DefaultONCE();
+        const tempInstance = new NodeJsOnce();
         await tempInstance.init();
         componentVersion = tempInstance.model.version;
         
         // Start primary server (42777)
-        primaryServer = new DefaultONCE();
+        primaryServer = new NodeJsOnce();
         await primaryServer.init();
         await primaryServer.startServer();
         
@@ -37,13 +37,13 @@ describe('Browser Broadcast Flow', () => {
         await new Promise(resolve => setTimeout(resolve, 1000));
         
         // Start client servers (8080, 8081)
-        clientServer1 = new DefaultONCE();
+        clientServer1 = new NodeJsOnce();
         await clientServer1.init();
         await clientServer1.startServer();
         
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        clientServer2 = new DefaultONCE();
+        clientServer2 = new NodeJsOnce();
         await clientServer2.init();
         await clientServer2.startServer();
         

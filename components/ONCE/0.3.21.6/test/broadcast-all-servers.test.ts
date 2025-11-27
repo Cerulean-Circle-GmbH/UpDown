@@ -14,26 +14,26 @@ describe('Broadcast to All Servers (Including Primary)', () => {
     let componentVersion: string;
     
     beforeAll(async () => {
-        const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+        const { NodeJsOnce } = await import('../dist/ts/layer2/NodeJsOnce.js');
         
         // Get component version
-        const tempInstance = new DefaultONCE();
+        const tempInstance = new NodeJsOnce();
         await tempInstance.init();
         componentVersion = tempInstance.model.version;
         
         // Start primary server
-        primaryServer = new DefaultONCE();
+        primaryServer = new NodeJsOnce();
         await primaryServer.init();
         await primaryServer.startServer();
         console.log('✅ Primary server started on 42777');
         
         // Start two client servers
-        clientServer1 = new DefaultONCE();
+        clientServer1 = new NodeJsOnce();
         await clientServer1.init();
         await clientServer1.startServer();
         console.log('✅ Client server 1 started on 8080');
         
-        clientServer2 = new DefaultONCE();
+        clientServer2 = new NodeJsOnce();
         await clientServer2.init();
         await clientServer2.startServer();
         console.log('✅ Client server 2 started on 8081');

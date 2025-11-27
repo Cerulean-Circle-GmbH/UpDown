@@ -170,8 +170,8 @@ describe('Server Initialization - Domain and Hostname Detection', () => {
     describe('Scenario Path Construction', () => {
         it('should construct hierarchical path based on detected domain/hostname', async () => {
             // GIVEN: DefaultONCE with test isolation
-            const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
-            const once = new DefaultONCE();
+            const { NodeJsOnce } = await import('../dist/ts/layer2/NodeJsOnce.js');
+            const once = new NodeJsOnce();
             await once.init();
             await (once as any).getWeb4TSComponent();
             
@@ -227,8 +227,8 @@ describe('Server Initialization - Domain and Hostname Detection', () => {
 
         it('should save scenario file with correct domain/hostname metadata', async () => {
             // GIVEN: DefaultONCE with test isolation
-            const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
-            const once = new DefaultONCE();
+            const { NodeJsOnce } = await import('../dist/ts/layer2/NodeJsOnce.js');
+            const once = new NodeJsOnce();
             await once.init();
             await (once as any).getWeb4TSComponent();
             
@@ -295,8 +295,8 @@ describe('Server Initialization - Domain and Hostname Detection', () => {
     describe('Regression Tests - Bug Verification', () => {
         it('should NOT save scenarios to old flat path (local.once/ONCE/)', async () => {
             // GIVEN: DefaultONCE with test isolation
-            const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
-            const once = new DefaultONCE();
+            const { NodeJsOnce } = await import('../dist/ts/layer2/NodeJsOnce.js');
+            const once = new NodeJsOnce();
             await once.init();
             await (once as any).getWeb4TSComponent();
             

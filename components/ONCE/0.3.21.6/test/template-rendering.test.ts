@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { DefaultONCE } from '../src/ts/layer2/DefaultONCE.js';
+import { NodeJsOnce } from '../src/ts/layer2/NodeJsOnce.js';
 import { fileURLToPath } from 'url';
 import * as path from 'path';
 
@@ -55,9 +55,10 @@ echo "$HTML"
         const { stdout} = await execAsync(testScript);
         const html = stdout;
         
-        // Check that HTML is rendered and contains browser client content
-        expect(html).toContain('ONCE Browser Client');
-        expect(html).toContain('Interactive Demo');
+        // Check that HTML is rendered and contains ONCE Kernel content (new minimal page)
+        expect(html).toContain('ONCE Kernel');
+        expect(html).toContain('Initializing');
+        expect(html).toContain('ONCE.start');
     }, 15000);
 });
 

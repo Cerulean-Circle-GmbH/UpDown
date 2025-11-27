@@ -20,7 +20,7 @@ describe('Primary Server Housekeeping', () => {
     let domainDetected = false; // Cache domain detection across tests
     
     beforeEach(async () => {
-        const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+        const { NodeJsOnce } = await import('../dist/ts/layer2/NodeJsOnce.js');
         
         // ✅ Dynamically discover component root from test file location
         const __filename = fileURLToPath(import.meta.url);
@@ -36,7 +36,7 @@ describe('Primary Server Housekeeping', () => {
         }
         
         // Get version from DefaultONCE
-        const tempInstance = new DefaultONCE();
+        const tempInstance = new NodeJsOnce();
         await tempInstance.init();
         await (tempInstance as any).getWeb4TSComponent();
         componentVersion = tempInstance.model.version;
@@ -225,7 +225,7 @@ describe('Primary Server Housekeeping', () => {
     });
     
     it('should delete scenarios with state=shutdown on startup', async () => {
-        const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+        const { NodeJsOnce } = await import('../dist/ts/layer2/NodeJsOnce.js');
         
         // ✅ FIX: Create shutdown scenario BEFORE starting primary server
         // This way housekeeping (which runs on startup) will find and delete it
@@ -260,7 +260,7 @@ describe('Primary Server Housekeeping', () => {
         expect(fs.lstatSync(symlinkPath).isSymbolicLink()).toBe(true);
         
         // NOW start primary server - housekeeping runs automatically and should delete shutdown scenario
-        primaryServer = new DefaultONCE();
+        primaryServer = new NodeJsOnce();
         await primaryServer.init();
         // Override projectRoot for test isolation
         primaryServer.model.projectRoot = testProjectRoot;
@@ -277,7 +277,7 @@ describe('Primary Server Housekeeping', () => {
     }, 15000);
     
     it('should delete stale scenarios for unreachable servers', async () => {
-        const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+        const { NodeJsOnce } = await import('../dist/ts/layer2/NodeJsOnce.js');
         
         // ✅ FIX: Create stale scenario BEFORE starting primary server
         const staleScenario = {
@@ -310,7 +310,7 @@ describe('Primary Server Housekeeping', () => {
         expect(fs.existsSync(mainScenarioPath)).toBe(true);
         
         // NOW start primary server - housekeeping should try to reach port 9999, fail, and delete
-        primaryServer = new DefaultONCE();
+        primaryServer = new NodeJsOnce();
         await primaryServer.init();
         // Override projectRoot for test isolation
         primaryServer.model.projectRoot = testProjectRoot;
@@ -327,10 +327,10 @@ describe('Primary Server Housekeeping', () => {
     }, 15000);
     
     it('should keep scenarios for running and reachable servers', async () => {
-        const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+        const { NodeJsOnce } = await import('../dist/ts/layer2/NodeJsOnce.js');
         
         // Start primary first
-        primaryServer = new DefaultONCE();
+        primaryServer = new NodeJsOnce();
         await primaryServer.init();
         primaryServer.model.projectRoot = testProjectRoot;  // ✅ Test isolation
         await primaryServer.startServer();
@@ -338,7 +338,7 @@ describe('Primary Server Housekeeping', () => {
         console.log('✅ Primary server started');
         
         // Start a real client server
-        const clientServer = new DefaultONCE();
+        const clientServer = new NodeJsOnce();
         await clientServer.init();
         clientServer.model.projectRoot = testProjectRoot;  // ✅ Test isolation
         await clientServer.startServer();
@@ -379,16 +379,16 @@ describe('Primary Server Housekeeping', () => {
     }, 40000);
     
     it('should discover and re-register running client servers', async () => {
-        const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+        const { NodeJsOnce } = await import('../dist/ts/layer2/NodeJsOnce.js');
         
         // Start primary
-        primaryServer = new DefaultONCE();
+        primaryServer = new NodeJsOnce();
         await primaryServer.init();
         primaryServer.model.projectRoot = testProjectRoot;  // ✅ Test isolation
         await primaryServer.startServer();
         
         // Start client
-        const clientServer = new DefaultONCE();
+        const clientServer = new NodeJsOnce();
         await clientServer.init();
         clientServer.model.projectRoot = testProjectRoot;  // ✅ Test isolation
         await clientServer.startServer();
@@ -425,7 +425,7 @@ describe('Primary Server Housekeeping', () => {
     }, 25000);
     
     it('should handle mixed scenarios: delete stale, keep running', async () => {
-        const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+        const { NodeJsOnce } = await import('../dist/ts/layer2/NodeJsOnce.js');
         
         // ✅ FIX: Create test scenarios BEFORE starting primary
         const scenarios = [
@@ -466,7 +466,7 @@ describe('Primary Server Housekeeping', () => {
         console.log('✅ Created 4 test scenarios with symlinks (2 shutdown, 2 stale)');
         
         // Start a real client server (will be kept)
-        const clientServer = new DefaultONCE();
+        const clientServer = new NodeJsOnce();
         await clientServer.init();
         clientServer.model.projectRoot = testProjectRoot;  // ✅ Test isolation
         await clientServer.startServer();
@@ -482,7 +482,7 @@ describe('Primary Server Housekeeping', () => {
         await new Promise(resolve => setTimeout(resolve, 1000));
         
         // NOW start primary - triggers housekeeping which should clean up stale/shutdown scenarios
-        primaryServer = new DefaultONCE();
+        primaryServer = new NodeJsOnce();
         await primaryServer.init();
         primaryServer.model.projectRoot = testProjectRoot;  // ✅ Test isolation
         await primaryServer.startServer();
@@ -519,7 +519,7 @@ describe('Primary Server Housekeeping', () => {
     }, 30000);
     
     it('should log housekeeping summary with counts', async () => {
-        const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+        const { NodeJsOnce } = await import('../dist/ts/layer2/NodeJsOnce.js');
         
         // Create test scenarios (main location + symlinks)
         const shutdownScenario = {
@@ -559,7 +559,7 @@ describe('Primary Server Housekeeping', () => {
         };
         
         // Start primary - housekeeping runs and should log summary
-        primaryServer = new DefaultONCE();
+        primaryServer = new NodeJsOnce();
         await primaryServer.init();
         primaryServer.model.projectRoot = testProjectRoot;  // ✅ Test isolation
         await primaryServer.startServer();
@@ -581,7 +581,7 @@ describe('Primary Server Housekeeping', () => {
         // This test verifies Fix Finding 9 - Orphaned symlinks cleanup
         // @pdca 2025-11-20-UTC-1600.iteration-01.5-test-stabilization.pdca.md
         
-        const { DefaultONCE } = await import('../dist/ts/layer2/DefaultONCE.js');
+        const { NodeJsOnce } = await import('../dist/ts/layer2/NodeJsOnce.js');
         
         // Get the ONCE base directory (parent of version directories)
         const onceBaseDir = path.dirname(scenarioBaseDir);
@@ -608,7 +608,7 @@ describe('Primary Server Housekeeping', () => {
         console.log(`✅ Created broken symlinks in ${testVersionDir}`);
         
         // Start primary server (triggers housekeeping)
-        primaryServer = new DefaultONCE();
+        primaryServer = new NodeJsOnce();
         await primaryServer.init();
         primaryServer.model.projectRoot = testProjectRoot;  // ✅ Test isolation
         await primaryServer.startServer();

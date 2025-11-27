@@ -4,19 +4,19 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { DefaultONCE } from '../src/ts/layer2/DefaultONCE.js';
+import { NodeJsOnce } from '../src/ts/layer2/NodeJsOnce.js';
 import { execSync } from 'child_process';
 import { existsSync } from 'fs';
 import * as path from 'path';
 
 describe('ONCE Basic Tests', () => {
   it('should create instance successfully', () => {
-    const component = new DefaultONCE();
+    const component = new NodeJsOnce();
     expect(component).toBeDefined();
   });
 
   it('should have empty constructor (Web4 standard)', () => {
-    const component = new DefaultONCE();
+    const component = new NodeJsOnce();
     expect(component).toBeInstanceOf(DefaultONCE);
   });
 });
