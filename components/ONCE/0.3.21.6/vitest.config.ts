@@ -5,7 +5,14 @@ export default defineConfig({
     environment: 'node',
     globals: true,
     include: ['test/**/*.test.ts'],
-    exclude: ['test/data/**', 'test/logs/**', '**/node_modules/**'],  // Exclude test data, logs, and node_modules
+    exclude: [
+      'test/data/**',
+      'test/logs/**', 
+      '**/node_modules/**',
+      // Exclude deprecated white-box tests
+      'test/**/*.deprecated.test.ts',
+      'test/**/*.whitebox.test.ts.deprecated'
+    ],
     testTimeout: 180000,   // 180s per test (3 minutes) - standardized timeout
     hookTimeout: 180000,   // 180s for setup/teardown (increased from 30s to handle slow tests)
     teardownTimeout: 30000, // 30s for cleanup
