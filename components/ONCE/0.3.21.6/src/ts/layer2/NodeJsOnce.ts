@@ -179,13 +179,27 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       const isVersionDir = /^\d+\.\d+\.\d+\.\d+$/.test(componentDirName);
       
       const versionString = isVersionDir ? componentDirName : '0.0.0.0';
+      const componentRoot = currentVersionDir;
+      
+      // ✅ Derive projectRoot from componentRoot
+      // Path: /path/to/project/components/ONCE/0.3.21.6
+      // projectRoot: /path/to/project
+      const componentsDir = path.resolve(componentRoot, '..', '..'); // up to components/
+      const projectRoot = path.resolve(componentsDir, '..'); // up to project root
       
       // Set component's own discovered paths
-      this.model.componentRoot = currentVersionDir;
+      this.model.componentRoot = componentRoot;
+      this.model.projectRoot = projectRoot;
       this.model.version = versionString;
+      
+      // Detect test isolation: check if we're running from test/data
+      const isTestIsolation = componentRoot.includes('/test/data/');
+      this.model.isTestIsolation = isTestIsolation;
+      
+      console.log(`🔍 [PATH DISCOVERY] componentRoot=${componentRoot} projectRoot=${projectRoot} isTestIsolation=${isTestIsolation}`);
     } catch (error) {
       // Fallback: if path discovery fails, keep defaults
-      console.warn('⚠️ Path discovery failed, using defaults:', error);
+      console.warn('⚠️  Path discovery failed, using defaults:', error);
     }
   }
 
