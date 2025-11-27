@@ -136,3 +136,4 @@ export interface LifecycleManager {
     transitionTo(targetState: LifecycleState, eventType: LifecycleEventType, data?: any): void;
 }
 
+
