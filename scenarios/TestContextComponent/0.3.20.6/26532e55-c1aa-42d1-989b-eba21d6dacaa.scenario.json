@@ -1,0 +1,40 @@
+{
+  "ior": {
+    "uuid": "1123f648-b9db-4417-8c34-6c94f07e92a2",
+    "component": "TestContextComponent",
+    "version": "0.3.20.6"
+  },
+  "owner": "eyJpb3IiOnsidXVpZCI6IjExMjNmNjQ4LWI5ZGItNDQxNy04YzM0LTZjOTRmMDdlOTJhMiIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4wLjAuMCIsInRpbWVzdGFtcCI6IjIwMjUtMTEtMjdUMTc6NTA6NDEuMTM2WiJ9LCJvd25lciI6IiIsIm1vZGVsIjp7InVzZXIiOiJkb25nZXMiLCJob3N0bmFtZSI6ImxvY2FsaG9zdCIsInV1aWQiOiIxMTIzZjY0OC1iOWRiLTQ0MTctOGMzNC02Yzk0ZjA3ZTkyYTIiLCJjb21wb25lbnQiOiJUZXN0Q29udGV4dENvbXBvbmVudCIsInZlcnNpb24iOiIwLjMuMjAuNiJ9fQ==",
+  "model": {
+    "uuid": "1123f648-b9db-4417-8c34-6c94f07e92a2",
+    "name": "",
+    "origin": "",
+    "definition": "",
+    "component": "TestContextComponent",
+    "version": {
+      "model": {
+        "uuid": "a7427101-aeb9-4269-90e0-26e06aa98d24",
+        "name": "version",
+        "origin": "system",
+        "definition": "Semantic version",
+        "major": 0,
+        "minor": 3,
+        "patch": 20,
+        "revision": 6,
+        "versionString": "0.3.20.6"
+      }
+    },
+    "componentRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.20.6",
+    "projectRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown",
+    "targetDirectory": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.20.6/test/temp/context-delegation-test",
+    "componentsDirectory": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.20.6/test/temp/context-delegation-test/components",
+    "isTestIsolation": false,
+    "displayName": "Web4TSComponent",
+    "displayVersion": "0.3.20.6",
+    "isDelegation": false,
+    "targetComponentRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.20.6",
+    "componentPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.20.6",
+    "toVersion": "0.1.0.0",
+    "implementationClassName": "DefaultWeb4TSComponent"
+  }
+}

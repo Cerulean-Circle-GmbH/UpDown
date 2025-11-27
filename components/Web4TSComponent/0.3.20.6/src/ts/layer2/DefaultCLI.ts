@@ -364,6 +364,8 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
     const scenario = await this.componentScenarioRead(componentPath, componentName);
     const implementationClassName = scenario?.model?.implementationClassName || `Default${componentName}`;
     
+    console.log(`🔍 [CLASS DISCOVERY] Scenario=${scenario ? 'found' : 'not found'} implementationClassName=${implementationClassName}`);
+    
     const modulePath = join(componentPath, 'dist', 'ts', 'layer2', `${implementationClassName}.js`);
     
     if (!existsSync(modulePath)) {

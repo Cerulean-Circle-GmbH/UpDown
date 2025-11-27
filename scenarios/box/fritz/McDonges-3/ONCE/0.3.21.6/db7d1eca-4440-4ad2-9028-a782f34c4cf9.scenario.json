@@ -1,0 +1,59 @@
+{
+  "ior": {
+    "uuid": "db7d1eca-4440-4ad2-9028-a782f34c4cf9",
+    "component": "ONCE",
+    "version": "0.3.21.6"
+  },
+  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkxTFRFeExUSTNWREV6T2pNNE9qTTVMakU0TVZvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwibmFtZSI6ImRvbmdlcyIsInVzZXJuYW1lIjoic3lzdGVtIiwiaG9zdG5hbWUiOiJNY0Rvbmdlcy0zLmZyaXR6LmJveCJ9fQ==",
+  "model": {
+    "uuid": "db7d1eca-4440-4ad2-9028-a782f34c4cf9",
+    "name": "McDonges-3",
+    "objectType": "ONCE",
+    "version": "0.3.21.6",
+    "state": {
+      "uuid": "db7d1eca-4440-4ad2-9028-a782f34c4cf9",
+      "pid": 75644,
+      "state": "running",
+      "platform": {
+        "platform": "node",
+        "version": "v22.20.0",
+        "capabilities": [
+          "server",
+          "websocket",
+          "p2p"
+        ],
+        "isOnline": true
+      },
+      "domain": "box.fritz",
+      "hostname": "McDonges-3",
+      "host": "McDonges-3.fritz.box",
+      "ip": "192.168.178.49",
+      "capabilities": [
+        {
+          "capability": "httpPort",
+          "port": 8102
+        },
+        {
+          "capability": "wsPort",
+          "port": 8102
+        }
+      ],
+      "isPrimaryServer": false
+    },
+    "metadata": {
+      "created": "2025-11-27T13:38:39.175Z",
+      "modified": "2025-11-27T13:38:39.183Z",
+      "creator": "ONCE-v0.3.21.6",
+      "description": "ONCE server Client server instance",
+      "tags": [
+        "server",
+        "once",
+        "client"
+      ],
+      "domain": "box.fritz",
+      "host": "McDonges-3.fritz.box",
+      "port": 8102,
+      "isPrimaryServer": false
+    }
+  }
+}

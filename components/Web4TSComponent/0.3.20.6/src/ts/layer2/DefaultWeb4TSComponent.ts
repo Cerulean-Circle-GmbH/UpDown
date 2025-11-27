@@ -1452,8 +1452,47 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
     
     console.log(`📄 Generating component descriptor for ${componentName} ${componentVersion}...`);
     
-    // Call the existing componentScenarioCreate method
-    await this.componentScenarioCreate(componentName, componentVersion, componentRoot);
+    // ✅ Generate scenario for TARGET component, not this Web4TSComponent
+    // Get target component's scenario
+    const targetScenario = await targetComponent.toScenario();
+    
+    // ✅ Ensure implementationClassName is set (Web4 Principle 1: "Everything is a Scenario")
+    // @pdca 2025-11-27-UTC-1950.iteration-01.20-dynamic-implementation-loading.pdca.md
+    if (!targetScenario.model.implementationClassName) {
+      targetScenario.model.implementationClassName = targetComponent.constructor.name;
+    }
+    
+    // Generate UUID for scenario
+    const crypto = await import('crypto');
+    const scenarioUuid = crypto.randomUUID();
+    
+    // Path Authority: Use projectRoot from model
+    const scenariosRoot = path.join(this.model.projectRoot, 'scenarios');
+    const scenarioDir = path.join(scenariosRoot, componentName, componentVersion);
+    
+    // Create directory
+    const fs = await import('fs/promises');
+    await fs.mkdir(scenarioDir, { recursive: true });
+    
+    // Write scenario
+    const scenarioPath = path.join(scenarioDir, `${scenarioUuid}.scenario.json`);
+    await fs.writeFile(scenarioPath, JSON.stringify(targetScenario, null, 2));
+    
+    // Create or update symlink
+    const symlinkPath = path.join(componentRoot, `${componentName}.component.json`);
+    const relativePath = path.relative(componentRoot, scenarioPath);
+    
+    try {
+      // Remove existing symlink if present
+      if (existsSync(symlinkPath)) {
+        await fs.unlink(symlinkPath);
+      }
+      await fs.symlink(relativePath, symlinkPath);
+      console.log(`   ✅ Scenario: ${scenarioUuid}.scenario.json`);
+      console.log(`   🔗 Symlink: ${componentName}.component.json → scenarios/${componentName}/${componentVersion}/`);
+    } catch (error: any) {
+      console.warn(`   ⚠️  Could not create symlink:`, error.message);
+    }
     
     console.log(`✅ Component descriptor created successfully`);
     

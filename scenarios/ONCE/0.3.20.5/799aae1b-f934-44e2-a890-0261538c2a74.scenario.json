@@ -1,0 +1,27 @@
+{
+  "ior": {
+    "uuid": "f2a12965-12e1-40d9-9a61-66f6748884a2",
+    "component": "ONCE",
+    "version": "0.3.20.5"
+  },
+  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYTEyOTY1LTEyZTEtNDBkOS05YTYxLTY2ZjY3NDg4ODRhMiIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4wLjAuMCIsInRpbWVzdGFtcCI6IjIwMjUtMTEtMjdUMTk6MTM6MDMuNTcwWiJ9LCJvd25lciI6IiIsIm1vZGVsIjp7InVzZXIiOiJkb25nZXMiLCJob3N0bmFtZSI6ImxvY2FsaG9zdCIsInV1aWQiOiJmMmExMjk2NS0xMmUxLTQwZDktOWE2MS02NmY2NzQ4ODg0YTIiLCJjb21wb25lbnQiOiJPTkNFIiwidmVyc2lvbiI6IjAuMy4yMC41In19",
+  "model": {
+    "uuid": "f2a12965-12e1-40d9-9a61-66f6748884a2",
+    "name": "",
+    "origin": "",
+    "definition": "",
+    "component": "ONCE",
+    "version": "0.3.20.5",
+    "componentRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.20.6",
+    "projectRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown",
+    "targetDirectory": "/Users/Shared/Workspaces/2cuGitHub/UpDown",
+    "componentsDirectory": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components",
+    "isTestIsolation": false,
+    "displayName": "ONCE",
+    "displayVersion": "0.3.20.5",
+    "isDelegation": false,
+    "targetComponentRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.20.5",
+    "componentPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.20.5",
+    "implementationClassName": "DefaultWeb4TSComponent"
+  }
+}
