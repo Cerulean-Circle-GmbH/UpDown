@@ -1,0 +1,103 @@
+{
+  "timestamp": "2025-11-25T16:37:11.949Z",
+  "configuration": {
+    "primary": {
+      "uuid": "6ff4cad0-3f18-42e1-b7f3-e5c62c7e8017",
+      "port": 42777
+    },
+    "clients": [
+      {
+        "uuid": "ec61a299-92e0-471d-b6da-df89ee1c778b",
+        "port": 8080
+      },
+      {
+        "uuid": "c42a79dd-bce6-410f-b4a3-ce57718609a0",
+        "port": 8081
+      },
+      {
+        "uuid": "825dc59b-3636-482c-8320-ff4562398d62",
+        "port": 8082
+      }
+    ]
+  },
+  "messages": [
+    {
+      "uuid": "24bbb236-c2e6-4262-a7c0-d67d459e77f8",
+      "objectType": "ONCEMessage",
+      "version": "0.3.21.6",
+      "state": {
+        "type": "broadcast",
+        "from": {
+          "uuid": "6ff4cad0-3f18-42e1-b7f3-e5c62c7e8017",
+          "port": 42777
+        },
+        "to": "all",
+        "content": "Broadcast message from primary to all clients",
+        "timestamp": "2025-11-25T16:37:07.944Z",
+        "sequence": 1
+      },
+      "metadata": {
+        "created": "2025-11-25T16:37:07.944Z",
+        "modified": "2025-11-25T16:37:07.944Z",
+        "creator": "ONCE-demoMessages",
+        "description": "Broadcast pattern demo message"
+      }
+    },
+    {
+      "uuid": "35ac2764-385a-46dc-ade1-8a8d5c736fdc",
+      "objectType": "ONCEMessage",
+      "version": "0.3.21.6",
+      "state": {
+        "type": "relay",
+        "from": {
+          "uuid": "ec61a299-92e0-471d-b6da-df89ee1c778b",
+          "port": 8080,
+          "host": "McDonges-3.fritz.box"
+        },
+        "to": {
+          "uuid": "c42a79dd-bce6-410f-b4a3-ce57718609a0",
+          "port": 8081
+        },
+        "content": "Relay message from client 1 to client 2 via primary",
+        "timestamp": "2025-11-25T16:37:08.945Z",
+        "sequence": 2
+      },
+      "metadata": {
+        "created": "2025-11-25T16:37:08.945Z",
+        "modified": "2025-11-25T16:37:08.945Z",
+        "creator": "ONCE-demoMessages",
+        "description": "Relay pattern demo message"
+      }
+    },
+    {
+      "uuid": "a4b4e9c8-a7df-47dc-97a3-67ff79d774ec",
+      "objectType": "ONCEMessage",
+      "version": "0.3.21.6",
+      "state": {
+        "type": "p2p",
+        "from": {
+          "uuid": "ec61a299-92e0-471d-b6da-df89ee1c778b",
+          "port": 8080
+        },
+        "to": {
+          "uuid": "c42a79dd-bce6-410f-b4a3-ce57718609a0",
+          "port": 8081
+        },
+        "content": "Direct P2P message from client 1 to client 2",
+        "timestamp": "2025-11-25T16:37:09.948Z",
+        "sequence": 3
+      },
+      "metadata": {
+        "created": "2025-11-25T16:37:09.948Z",
+        "modified": "2025-11-25T16:37:09.948Z",
+        "creator": "ONCE-demoMessages",
+        "description": "P2P pattern demo message"
+      }
+    }
+  ],
+  "patterns": {
+    "broadcast": 1,
+    "relay": 1,
+    "p2p": 1
+  }
+}

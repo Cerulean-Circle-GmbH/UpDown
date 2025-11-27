@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONCE v0.3.21.6 Demo Hub - P2P Network Visualization</title>
+    <style>
+        body { 
+            font-family: 'Courier New', monospace; 
+            background: #1a1a1a; 
+            color: #0f0; 
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .demo-header { 
+            border: 2px solid #0f0; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            text-align: center;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        h1 { margin: 0 0 10px 0; color: #0f0; }
+        h2 { color: #ff0; margin: 20px 0 10px 0; }
+        
+        .connection-status {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .stat-box {
+            border: 1px solid #0f0;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.05);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ff0;
+            display: block;
+            margin: 10px 0;
+        }
+        
+        .peer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .peer-card {
+            border: 2px solid #0f0;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .peer-card.running {
+            border-color: #0f0;
+        }
+        
+        .peer-card.stopped {
+            border-color: #666;
+            opacity: 0.5;
+        }
+        
+        .peer-card:hover {
+            background: rgba(0, 255, 0, 0.15);
+            border-color: #ff0;
+        }
+        
+        .peer-card h3 {
+            margin: 0 0 10px 0;
+            color: #ff0;
+            font-size: 1.1em;
+        }
+        
+        .peer-info {
+            font-size: 0.9em;
+            margin: 5px 0;
+        }
+        
+        .peer-state {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .state-RUNNING { background: #0f0; color: #000; }
+        .state-STOPPED { background: #666; color: #fff; }
+        .state-STARTING { background: #ff0; color: #000; }
+        
+        button {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: #ff0;
+        }
+        
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .message-log { 
+            background: #000; 
+            border: 1px solid #0f0; 
+            padding: 15px; 
+            height: 300px; 
+            overflow-y: scroll; 
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .log-entry { margin: 2px 0; }
+        .log-connection { color: #0ff; }
+        .log-update { color: #0f0; }
+        .log-error { color: #f00; }
+        .timestamp { color: #999; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="demo-header">
+        <h1>🎭 ONCE v0.3.21.6 Demo Hub</h1>
+        <p>P2P Network Visualization - Unified Kernel Architecture</p>
+        <div class="connection-status" id="connectionStatus">🔴 Initializing...</div>
+    </div>
+    
+    <div class="stats-grid">
+        <div class="stat-box">
+            <strong>Total Peers</strong>
+            <span class="stat-value" id="totalPeers">0</span>
+        </div>
+        <div class="stat-box">
+            <strong>Running Peers</strong>
+            <span class="stat-value" id="runningPeers">0</span>
+        </div>
+        <div class="stat-box">
+            <strong>Connection Time</strong>
+            <span class="stat-value" id="connectionTime">--:--</span>
+        </div>
+        <div class="stat-box">
+            <strong>Updates Received</strong>
+            <span class="stat-value" id="updatesReceived">0</span>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button id="refreshBtn">🔄 Refresh Peers</button>
+        <button id="clearLogBtn">🗑️ Clear Log</button>
+    </div>
+    
+    <h2>📡 Connected Peers</h2>
+    <div class="peer-grid" id="peerGrid">
+        <div class="peer-card">
+            <p style="text-align: center; color: #666;">Waiting for peer updates...</p>
+        </div>
+    </div>
+    
+    <h2>📋 Activity Log</h2>
+    <div class="message-log" id="activityLog">
+        <div class="log-entry log-connection">📡 Initializing ONCE Browser Kernel...</div>
+    </div>
+    
+    <!-- ✅ Load Once.ts - Unified Kernel -->
+    <script type="module">
+        import { ONCE } from '../../dist/ts/layer1/ONCE.js';
+        
+        // Get peer host from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const peerHost = urlParams.get('peer') || window.location.host;
+        
+        // Boot kernel
+        const kernel = await ONCE.start({ peerHost });
+        
+        // Update connection status
+        document.getElementById('connectionStatus').textContent = '🟢 Connected to P2P Network';
+        addLog('connection', '✅ ONCE Kernel booted');
+        addLog('connection', `📡 Connected to: ${peerHost}`);
+        
+        // Statistics
+        let updatesCount = 0;
+        const startTime = Date.now();
+        
+        // Update UI with current peers
+        function updatePeerDisplay() {
+            const peers = kernel.model.peers || [];
+            const runningPeers = peers.filter(p => {
+                const state = p.model?.state?.state;
+                return state === 'RUNNING' || state === 'INITIALIZED';
+            });
+            
+            // Update stats
+            document.getElementById('totalPeers').textContent = peers.length;
+            document.getElementById('runningPeers').textContent = runningPeers.length;
+            
+            // Update connection time
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const mins = Math.floor(elapsed / 60);
+            const secs = elapsed % 60;
+            document.getElementById('connectionTime').textContent = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            
+            // Update peer grid
+            const grid = document.getElementById('peerGrid');
+            if (peers.length === 0) {
+                grid.innerHTML = '<div class="peer-card"><p style="text-align: center; color: #666;">No peers connected yet...</p></div>';
+                return;
+            }
+            
+            grid.innerHTML = peers.map(peer => {
+                const uuid = peer.ior?.uuid || peer.model?.uuid || 'unknown';
+                const state = peer.model?.state?.state || 'UNKNOWN';
+                const port = peer.model?.state?.capabilities?.find(c => c.capability === 'httpPort')?.port || 'N/A';
+                const version = peer.ior?.version || peer.model?.version || 'N/A';
+                
+                return `
+                    <div class="peer-card ${state === 'RUNNING' ? 'running' : 'stopped'}">
+                        <h3>Peer ${uuid.substring(0, 8)}</h3>
+                        <div class="peer-info">
+                            <strong>State:</strong> 
+                            <span class="peer-state state-${state}">${state}</span>
+                        </div>
+                        <div class="peer-info"><strong>Port:</strong> ${port}</div>
+                        <div class="peer-info"><strong>Version:</strong> ${version}</div>
+                        <div class="peer-info"><strong>UUID:</strong> ${uuid}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Add log entry
+        function addLog(type, message) {
+            const log = document.getElementById('activityLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.innerHTML = `<span class="timestamp">[${timestamp}]</span> ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        // Listen for peer updates (via original WebSocket onmessage in BrowserOnce)
+        // The kernel already handles WebSocket updates internally
+        // We just need to poll the model periodically
+        setInterval(() => {
+            updatePeerDisplay();
+            updatesCount++;
+            document.getElementById('updatesReceived').textContent = updatesCount;
+        }, 1000);
+        
+        // Button handlers
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+            addLog('update', '🔄 Refreshing peer list...');
+            updatePeerDisplay();
+        });
+        
+        document.getElementById('clearLogBtn').addEventListener('click', function() {
+            document.getElementById('activityLog').innerHTML = '';
+            addLog('connection', '🗑️ Log cleared');
+        });
+        
+        // Initial display
+        updatePeerDisplay();
+        
+        console.log('✅ ONCE Demo Hub initialized');
+        console.log('   Kernel:', kernel);
+        console.log('   Access via: window.ONCE, global.ONCE, ONCE.getInstance()');
+    </script>
+</body>
+</html>
