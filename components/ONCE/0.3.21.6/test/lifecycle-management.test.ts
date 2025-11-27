@@ -489,15 +489,18 @@ describe('Server Lifecycle Management (Black-Box)', () => {
         // Discover scenario directory
         scenarioDir = getOrDiscoverScenarioDir(testDataDir, scenarioDir);
         
-        // ASSERT: Client scenario should exist
+        // ASSERT: Client scenario should exist (any non-primary port)
         const clientScenarios = getScenarioFiles(scenarioDir).filter(f => {
             const port = readScenarioPort(f);
-            return port === 8080;
+            const state = readScenarioState(f);
+            // Look for any client server (not primary 42777, not shutdown)
+            return port !== 42777 && state !== LifecycleState.SHUTDOWN;
         });
         expect(clientScenarios.length).toBeGreaterThan(0);
         
-        // ASSERT: Client should be healthy
-        const clientHealthy = await checkServerHealth(8080);
+        // ASSERT: Client should be healthy (use actual port from scenario)
+        const actualClientPort = readScenarioPort(clientScenarios[0]);
+        const clientHealthy = await checkServerHealth(actualClientPort);
         expect(clientHealthy).toBe(true);
         
         // ASSERT: Client state should be RUNNING or CLIENT_SERVER
@@ -519,19 +522,23 @@ describe('Server Lifecycle Management (Black-Box)', () => {
         clientCLIs.push(clientCLI);
         
         await waitForServer(42777, 5000);
-        await waitForServer(8080, 5000);
+        // Wait for client to start (use dynamic port)
+        const clientPort = clientCLI.component.model.httpPort || 8080;
+        await waitForServer(clientPort, 5000);
         await sleep(2); // Wait for registration
         
         // Discover scenario directory
         scenarioDir = getOrDiscoverScenarioDir(testDataDir, scenarioDir);
         
-        // Get client scenario path
+        // Get client scenario path (any non-primary port)
         const clientScenarios = getScenarioFiles(scenarioDir).filter(f => {
             const port = readScenarioPort(f);
-            return port === 8080;
+            const state = readScenarioState(f);
+            return port !== 42777 && state !== LifecycleState.SHUTDOWN;
         });
         expect(clientScenarios.length).toBe(1);
         const clientScenarioPath = clientScenarios[0];
+        const actualClientPort = readScenarioPort(clientScenarioPath);
         
         // ACT: Gracefully stop client
         await clientCLI.component.stopServer();
@@ -540,7 +547,7 @@ describe('Server Lifecycle Management (Black-Box)', () => {
         // Re-read scenario to ensure we get latest state
         const updatedScenarios = getScenarioFiles(scenarioDir).filter(f => {
             const port = readScenarioPort(f);
-            return port === 8080;
+            return port === actualClientPort;
         });
         
         // ASSERT: Client scenario should be marked as SHUTDOWN (or deleted by housekeeping)
@@ -550,8 +557,8 @@ describe('Server Lifecycle Management (Black-Box)', () => {
         }
         // If scenario was deleted by housekeeping, that's also acceptable
         
-        // ASSERT: Client should not be reachable
-        const clientHealthy = await checkServerHealth(8080);
+        // ASSERT: Client should not be reachable (use actual port)
+        const clientHealthy = await checkServerHealth(actualClientPort);
         expect(clientHealthy).toBe(false);
     }, 20000);
     
@@ -623,9 +630,13 @@ describe('Server Lifecycle Management (Black-Box)', () => {
         await client2CLI.component.startServer();
         clientCLIs.push(client2CLI);
         
+        // Get actual client ports
+        const client1Port = client1CLI.component.model.httpPort;
+        const client2Port = client2CLI.component.model.httpPort;
+        
         await waitForServer(42777, 5000);
-        await waitForServer(8080, 5000);
-        await waitForServer(8081, 5000);
+        await waitForServer(client1Port, 5000);
+        await waitForServer(client2Port, 5000);
         await sleep(2); // Wait for registration
         
         // ACT: "Crash" primary (stop without cleanup - simulates crash)
@@ -646,24 +657,18 @@ describe('Server Lifecycle Management (Black-Box)', () => {
         // Discover scenario directory
         scenarioDir = getOrDiscoverScenarioDir(testDataDir, scenarioDir);
         
-        // ASSERT: Clients should still be running
-        const client1Healthy = await checkServerHealth(8080);
-        const client2Healthy = await checkServerHealth(8081);
+        // ASSERT: Clients should still be running (use actual ports)
+        const client1Healthy = await checkServerHealth(client1Port);
+        const client2Healthy = await checkServerHealth(client2Port);
         expect(client1Healthy).toBe(true);
         expect(client2Healthy).toBe(true);
         
-        // ASSERT: Client scenarios should still exist
-        const client1Scenarios = getScenarioFiles(scenarioDir).filter(f => {
+        // ASSERT: Client scenarios should still exist (any non-primary, non-shutdown ports)
+        const activeClientScenarios = getScenarioFiles(scenarioDir).filter(f => {
             const port = readScenarioPort(f);
             const state = readScenarioState(f);
-            return port === 8080 && state !== LifecycleState.SHUTDOWN;
+            return port !== 42777 && state !== LifecycleState.SHUTDOWN;
         });
-        const client2Scenarios = getScenarioFiles(scenarioDir).filter(f => {
-            const port = readScenarioPort(f);
-            const state = readScenarioState(f);
-            return port === 8081 && state !== LifecycleState.SHUTDOWN;
-        });
-        expect(client1Scenarios.length).toBe(1);
-        expect(client2Scenarios.length).toBe(1);
+        expect(activeClientScenarios.length).toBeGreaterThanOrEqual(2);
     }, 30000);
 });
