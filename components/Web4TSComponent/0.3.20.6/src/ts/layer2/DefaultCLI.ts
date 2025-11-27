@@ -305,6 +305,38 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
   }
 
   /**
+   * Read component scenario file (component.json symlink)
+   * 
+   * Web4 Principle 1: "Everything is a Scenario" - configuration stored in scenario, not hardcoded
+   * Web4 Principle 16: Object-Action naming - componentScenarioRead() groups with other component methods
+   * 
+   * Reads the component.json symlink (which points to scenarios/{Component}/{Version}/{uuid}.scenario.json)
+   * to extract the implementationClassName for dynamic class loading.
+   * 
+   * @param componentPath Absolute path to component directory
+   * @param componentName Name of component
+   * @returns Parsed scenario or null if file doesn't exist
+   * @pdca 2025-11-27-UTC-1950.iteration-01.20-dynamic-implementation-loading.pdca.md
+   */
+  private async componentScenarioRead(
+    componentPath: string,
+    componentName: string
+  ): Promise<any | null> {
+    try {
+      const scenarioPath = join(componentPath, `${componentName}.component.json`);
+      if (!existsSync(scenarioPath)) {
+        return null; // Scenario file doesn't exist - use fallback
+      }
+      
+      const scenarioJson = await import('fs/promises').then(fs => fs.readFile(scenarioPath, 'utf-8'));
+      return JSON.parse(scenarioJson);
+    } catch (error) {
+      // Error reading/parsing scenario - use fallback
+      return null;
+    }
+  }
+
+  /**
    * Dynamically load any component class (Web4TSComponent, PDCA, Unit, etc.)
    * 
    * DYNAMIC LOADING: Enables on() to work with ANY component type:
@@ -326,7 +358,13 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
     version: string,
     componentPath: string
   ): Promise<Component> {
-    const modulePath = join(componentPath, 'dist', 'ts', 'layer2', `Default${componentName}.js`);
+    // ✅ Read component scenario to get implementationClassName
+    // Web4 Principle 1: "Everything is a Scenario" - no hardcoded patterns
+    // @pdca 2025-11-27-UTC-1950.iteration-01.20-dynamic-implementation-loading.pdca.md
+    const scenario = await this.componentScenarioRead(componentPath, componentName);
+    const implementationClassName = scenario?.model?.implementationClassName || `Default${componentName}`;
+    
+    const modulePath = join(componentPath, 'dist', 'ts', 'layer2', `${implementationClassName}.js`);
     
     if (!existsSync(modulePath)) {
       throw new Error(`Component module not found: ${modulePath}`);
@@ -334,10 +372,10 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
     
     // ✅ Dynamic import (works for ANY component type!)
     const module = await import(modulePath);
-    const ComponentClass = module[`Default${componentName}`];
+    const ComponentClass = module[implementationClassName];
     
     if (!ComponentClass) {
-      throw new Error(`Component class not found: Default${componentName} in ${modulePath}`);
+      throw new Error(`Component class not found: ${implementationClassName} in ${modulePath}`);
     }
     
     // ✅ CLI is Path Authority - provide ALL paths to component (OOP!)
