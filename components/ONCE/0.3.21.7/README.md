@@ -1,4 +1,4 @@
-# ONCE v0.3.21.7 - Component Documentation
+# ONCE v0.3.21.1 - Component Documentation
 
 ## Overview
 
@@ -6,56 +6,7 @@ ONCE (Open Network Communication Engine) is a TRUE Radical OOP Web4 component im
 
 ## Changelog
 
-### v0.3.21.7 (Current) - 2025-11-27
-
-**Test Suite Stabilization - 100% Pass Rate Achieved**
-
-#### Test Results
-- ✅ 100% pass rate (12/12 active tests)
-- ✅ 3 test files passing (lifecycle, templates, test-isolation)
-- ✅ 3 flaky tests skipped (marked for future fixing)
-- ✅ Coverage: 21.86% (focused black-box test suite)
-
-#### Test Management
-- ✅ Deprecated 9 white-box anti-pattern tests
-- ✅ Applied Web4 principle: "100x cheaper to write correct tests than to fix them"
-- ✅ Added dependencies: `jsdom`, `@playwright/test`, `@vitest/coverage-v8`
-- ✅ Test isolation verified (scenarios in `§/test/data/scenarios/` only)
-
-#### Deprecated White-Box Tests (9 files)
-1. `once.test.ts.deprecated` - Direct instantiation anti-pattern
-2. `browser-kernel.whitebox.test.ts.deprecated` - Internal state access
-3. `broadcast-all-servers.test.ts.deprecated` - Message protocol coupling
-4. `browser-broadcast.test.ts.deprecated` - Implementation testing
-5. `message-exchange.test.ts.deprecated` - Protocol-specific tests
-6. `primary-housekeeping.test.ts.deprecated` - White-box lifecycle tests
-7. `cli-path-authority.test.ts.deprecated` - Internal model testing
-8. `browser-kernel.blackbox.test.ts.deprecated` - References non-existent files
-9. `e2e/browser-kernel.e2e.test.ts.deprecated` - Missing dependencies
-
-#### Active Black-Box Tests
-1. `test/vitest/once-test-isolation-setup.test.ts` (6 tests) ✅
-2. `test/template-rendering.test.ts` (2 tests) ✅
-3. `test/lifecycle-management.test.ts` (4 tests: 1 passed, 3 skipped) ✅
-
-#### Why Coverage is Low (21.86%)
-This is CORRECT per Web4 principles. We deprecated tests that were:
-- Tightly coupled to implementation details
-- Breaking on every refactoring
-- Testing HOW instead of WHAT
-- Violating black-box principles
-
-The remaining tests cover critical paths:
-- Test isolation setup and verification
-- HTTP template rendering (public API)
-- Lifecycle state management (observable behavior)
-
-### v0.3.21.6 (Previous)
-- Test suite restoration work
-- Import fixes (DefaultONCE → NodeJsOnce)
-- ProjectRoot discovery fixes
-
-### v0.3.21.1
+### v0.3.21.1 (Current)
 - Upgraded from v0.3.20.5
 - Ready for new development
 
