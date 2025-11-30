@@ -1,0 +1,31 @@
+{
+  "ior": {
+    "uuid": "bc70c31c-764d-44f3-94ea-ae73044d3bab",
+    "component": "PDCA",
+    "version": "0.3.20.0"
+  },
+  "owner": "eyJpb3IiOnsidXVpZCI6ImJjNzBjMzFjLTc2NGQtNDRmMy05NGVhLWFlNzMwNDRkM2JhYiIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4wLjAuMCIsInRpbWVzdGFtcCI6IjIwMjUtMTEtMzBUMTY6NDY6MTQuNjMyWiJ9LCJvd25lciI6IiIsIm1vZGVsIjp7InVzZXIiOiJkb25nZXMiLCJob3N0bmFtZSI6ImxvY2FsaG9zdCIsInV1aWQiOiJiYzcwYzMxYy03NjRkLTQ0ZjMtOTRlYS1hZTczMDQ0ZDNiYWIiLCJjb21wb25lbnQiOiJQRENBIiwidmVyc2lvbiI6IjAuMy4yMC4wIn19",
+  "model": {
+    "uuid": "bc70c31c-764d-44f3-94ea-ae73044d3bab",
+    "name": "",
+    "origin": "",
+    "definition": "",
+    "createdAt": "2025-11-30T16:46:14.362Z",
+    "updatedAt": "2025-11-30T16:46:14.363Z",
+    "component": "PDCA",
+    "version": "0.3.20.0",
+    "componentRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/PDCA/0.3.20.1",
+    "targetDirectory": "/Users/Shared/Workspaces/2cuGitHub/UpDown",
+    "projectRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown",
+    "componentsDir": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components",
+    "scriptsDir": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scripts",
+    "scriptsVersionDir": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scripts/versions",
+    "testDataDir": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/PDCA/0.3.20.1/test/data",
+    "contextComponent": "PDCA",
+    "contextVersion": "0.3.20.1",
+    "contextPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/PDCA/0.3.20.1",
+    "componentsDirectory": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components",
+    "isTestIsolation": false,
+    "implementationClassName": "DefaultPDCA"
+  }
+}

@@ -259,7 +259,11 @@ export class DefaultPDCA implements PDCA {
         version: '0.3.20.0'
       },
       owner: ownerData,
-      model: this.model
+      model: (() => {
+        // Exclude context to prevent circular reference during JSON serialization
+        const { context, ...modelWithoutContext } = this.model;
+        return modelWithoutContext;
+      })()
     };
   }
 
