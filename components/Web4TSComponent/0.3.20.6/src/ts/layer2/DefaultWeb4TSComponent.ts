@@ -4734,6 +4734,31 @@ ${'='.repeat(80)}
         console.log(`   Definition:   ${targetModel.definition || 'N/A'}`);
         console.log();
         
+        // Component Descriptor Status & Implementation Class
+        const componentName = targetModel.component;
+        const componentRoot = isContextMode ? this.model.targetComponentRoot : this.model.componentRoot;
+        if (componentName && componentRoot) {
+          const descriptorPath = path.join(componentRoot, `${componentName}.component.json`);
+          const descriptorExists = existsSync(descriptorPath);
+          
+          console.log(`🔧 Implementation:`);
+          console.log(`   Descriptor:   ${descriptorExists ? '✅ exists' : '❌ missing'}`);
+          
+          if (descriptorExists) {
+            try {
+              const descriptorContent = await fs.readFile(descriptorPath, 'utf-8');
+              const descriptor = JSON.parse(descriptorContent);
+              const implClassName = descriptor?.model?.implementationClassName;
+              if (implClassName) {
+                console.log(`   Class Name:   ${implClassName}`);
+              }
+            } catch (error) {
+              // Silently fail if can't read descriptor
+            }
+          }
+          console.log();
+        }
+        
         // Upgrade/Target Info
         if (targetModel.toVersion || targetModel.targetComponentRoot) {
           console.log(`🎯 Target/Upgrade Info:`);
