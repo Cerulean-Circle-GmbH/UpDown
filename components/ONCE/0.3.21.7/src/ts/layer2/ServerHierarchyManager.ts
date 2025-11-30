@@ -25,6 +25,7 @@ import { ScenarioTypeGuard } from '../layer1/ScenarioTypeGuard.js';
 import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { HostnameParser } from '../layer1/HostnameParser.js';
+import { IORMethodRouter } from './IORMethodRouter.js';
 
 /**
  * Server registry entry for primary server
@@ -50,12 +51,14 @@ export class ServerHierarchyManager {
     private primaryServerConnection?: WebSocket;
     private browserClients: Set<WebSocket> = new Set(); // Track browser WebSocket connections
     private infrastructure: NodeOSInfrastructure; // ✅ Layer 1 infrastructure injection
+    private iorRouter: IORMethodRouter; // ✅ IOR method router for Web4 routing
     component?: any; // Backward link to DefaultONCE for path authority
     version: string; // ✅ Self-discovered version (ALWAYS set, never undefined)
 
     constructor() {
         this.portManager = PortManager.getInstance();
         this.infrastructure = new NodeOSInfrastructure(); // ✅ Create infrastructure
+        this.iorRouter = new IORMethodRouter(); // ✅ Create IOR router (kernel injected later)
         
         // ✅ Self-discover version from own location (ALWAYS set in constructor)
         // This ensures version is NEVER undefined, eliminating need for fallbacks
@@ -263,6 +266,57 @@ export class ServerHierarchyManager {
     private async handleHttpRequest(req: any, res: any): Promise<void> {
         const url = new URL(req.url, `http://${req.headers.host}`);
         
+        // ✅ **Phase 1: IOR Method Invocation Routing (Web4 Principle 12)**
+        // Check if URL matches IOR pattern: /{component}/{version}/{uuid}/{method}
+        // @pdca 2025-11-30-UTC-1724.iteration-05-httprouter-ior-routing.pdca.md
+        const iorMethodCall = this.iorRouter.parseIorUrl(url.pathname);
+        if (iorMethodCall) {
+            console.log(`[ServerHierarchyManager] IOR method invocation: ${iorMethodCall.componentName}.${iorMethodCall.methodName}()`);
+            
+            // Initialize IOR router with ONCE kernel if not already done
+            if (!this.iorRouter.model.uuid) {
+                this.iorRouter.init(undefined, this.component);
+            }
+            
+            // Read request body for POST/PUT
+            let body: any = undefined;
+            if (req.method === 'POST' || req.method === 'PUT') {
+                body = await new Promise((resolve) => {
+                    let data = '';
+                    req.on('data', (chunk: Buffer) => { data += chunk.toString(); });
+                    req.on('end', () => {
+                        try {
+                            resolve(JSON.parse(data));
+                        } catch {
+                            resolve(data); // Not JSON, return as string
+                        }
+                    });
+                });
+            }
+            
+            // Route to IOR method
+            try {
+                const result = await this.iorRouter.route(url.pathname, body);
+                res.writeHead(200, { 
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify(result));
+                return; // Exit early - IOR routing handled
+            } catch (error: any) {
+                res.writeHead(500, { 
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ 
+                    error: error.message,
+                    ior: url.pathname 
+                }));
+                return; // Exit early - error handled
+            }
+        }
+        
+        // ✅ **Phase 2: Static Route Handling (Legacy/HTML pages)**
         if (url.pathname === '/') {
             // ✅ RADICAL OOP: Delegate to DefaultONCE.serveStatus()
             // @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
