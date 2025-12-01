@@ -26,6 +26,11 @@ import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { HostnameParser } from '../layer1/HostnameParser.js';
 import { IORMethodRouter } from './IORMethodRouter.js';
+import { HTTPServer } from './HTTPServer.js';
+import { HTTPRouter } from './HTTPRouter.js';
+import { HTMLRoute } from './HTMLRoute.js';
+import { ScenarioRoute } from './ScenarioRoute.js';
+import { HttpMethod } from '../layer3/HttpMethod.enum.js';
 
 /**
  * Server registry entry for primary server
@@ -44,7 +49,8 @@ export interface ServerRegistryEntry {
  */
 export class ServerHierarchyManager {
     private serverModel: ONCEServerModel;
-    private httpServer?: Server;
+    private httpServer?: HTTPServer; // ✅ Web4 Radical OOP HTTPServer
+    private httpRouter: HTTPRouter; // ✅ Web4 Radical OOP HTTPRouter
     private wsServer?: WebSocketServer;
     private portManager: PortManager;
     private serverRegistry: Map<string, ServerRegistryEntry> = new Map();
@@ -59,6 +65,7 @@ export class ServerHierarchyManager {
         this.portManager = PortManager.getInstance();
         this.infrastructure = new NodeOSInfrastructure(); // ✅ Create infrastructure
         this.iorRouter = new IORMethodRouter(); // ✅ Create IOR router (kernel injected later)
+        this.httpRouter = new HTTPRouter(); // ✅ Create HTTP router (routes registered later)
         
         // ✅ Self-discover version from own location (ALWAYS set in constructor)
         // This ensures version is NEVER undefined, eliminating need for fallbacks
@@ -157,6 +164,118 @@ export class ServerHierarchyManager {
     public getInfrastructure(): NodeOSInfrastructure {
         return this.infrastructure;
     }
+    
+    /**
+     * Register all HTTP routes
+     * 
+     * Web4 Pattern:
+     * - Routes registered with priorities
+     * - IOR routes have highest priority (10)
+     * - HTML routes have medium priority (50)
+     * - Scenario routes have normal priority (100)
+     * 
+     * @pdca 2025-12-01-UTC-0950.iteration-05-phase5-7-httpserver-router-refactoring.pdca.md
+     */
+    private registerRoutes(): void {
+        // ✅ Route 1: Home page ("/")
+        const homeRoute = new HTMLRoute();
+        homeRoute.model.uuid = uuidv4();
+        homeRoute.setPattern('/', HttpMethod.GET);
+        homeRoute.setProvider(() => this.component!.serveStatus());
+        homeRoute.model.priority = 50;
+        this.httpRouter.registerRoute(homeRoute);
+        
+        // ✅ Route 2: Demo Hub ("/demo")
+        const demoRoute = new HTMLRoute();
+        demoRoute.model.uuid = uuidv4();
+        demoRoute.setPattern('/demo', HttpMethod.GET);
+        demoRoute.setProvider(() => this.component!.serveDemoHub());
+        demoRoute.model.priority = 50;
+        this.httpRouter.registerRoute(demoRoute);
+        
+        // ✅ Route 3: Demo Hub with trailing slash ("/demo/")
+        const demoRoute2 = new HTMLRoute();
+        demoRoute2.model.uuid = uuidv4();
+        demoRoute2.setPattern('/demo/', HttpMethod.GET);
+        demoRoute2.setProvider(() => this.component!.serveDemoHub());
+        demoRoute2.model.priority = 50;
+        this.httpRouter.registerRoute(demoRoute2);
+        
+        // ✅ Route 4: ONCE Minimal ("/once")
+        const onceRoute = new HTMLRoute();
+        onceRoute.model.uuid = uuidv4();
+        onceRoute.setPattern('/once', HttpMethod.GET);
+        onceRoute.setProvider(() => this.component!.serveOnceMinimal());
+        onceRoute.model.priority = 50;
+        this.httpRouter.registerRoute(onceRoute);
+        
+        // ✅ Route 5: ONCE Minimal with trailing slash ("/once/")
+        const onceRoute2 = new HTMLRoute();
+        onceRoute2.model.uuid = uuidv4();
+        onceRoute2.setPattern('/once/', HttpMethod.GET);
+        onceRoute2.setProvider(() => this.component!.serveOnceMinimal());
+        onceRoute2.model.priority = 50;
+        this.httpRouter.registerRoute(onceRoute2);
+        
+        // ✅ Route 6: Communication Log ("/onceCommunicationLog")
+        const logRoute = new HTMLRoute();
+        logRoute.model.uuid = uuidv4();
+        logRoute.setPattern('/onceCommunicationLog', HttpMethod.GET);
+        logRoute.setProvider(() => this.component!.serveOnceCommunicationLog());
+        logRoute.model.priority = 50;
+        this.httpRouter.registerRoute(logRoute);
+        
+        // ✅ Route 7: Communication Log with trailing slash ("/onceCommunicationLog/")
+        const logRoute2 = new HTMLRoute();
+        logRoute2.model.uuid = uuidv4();
+        logRoute2.setPattern('/onceCommunicationLog/', HttpMethod.GET);
+        logRoute2.setProvider(() => this.component!.serveOnceCommunicationLog());
+        logRoute2.model.priority = 50;
+        this.httpRouter.registerRoute(logRoute2);
+        
+        // ✅ Route 8: Health endpoint ("/health") - Returns Scenario
+        const healthRoute = new ScenarioRoute();
+        healthRoute.model.uuid = uuidv4();
+        healthRoute.setPattern('/health', HttpMethod.GET);
+        healthRoute.setProvider(async () => {
+            const health = this.component!.getHealth();
+            // Convert to proper Scenario<T> format
+            return {
+                ior: {
+                    uuid: this.serverModel.uuid,
+                    component: 'ONCE',
+                    version: this.version
+                },
+                owner: 'system',
+                model: health
+            };
+        });
+        healthRoute.model.priority = 100;
+        this.httpRouter.registerRoute(healthRoute);
+        
+        // ✅ Route 9: Servers list ("/servers") - Returns Scenario (Primary only)
+        if (this.serverModel.isPrimaryServer) {
+            const serversRoute = new ScenarioRoute();
+            serversRoute.model.uuid = uuidv4();
+            serversRoute.setPattern('/servers', HttpMethod.GET);
+            serversRoute.setProvider(async () => {
+                const serverList = this.component!.getServers();
+                return {
+                    ior: {
+                        uuid: this.serverModel.uuid,
+                        component: 'ONCE',
+                        version: this.version
+                    },
+                    owner: 'system',
+                    model: serverList
+                };
+            });
+            serversRoute.model.priority = 100;
+            this.httpRouter.registerRoute(serversRoute);
+        }
+        
+        console.log(`📍 Registered ${this.httpRouter.model.routes.length} routes in HTTPRouter`);
+    }
 
     /**
      * Start server with automatic port management and hierarchy
@@ -215,34 +334,37 @@ export class ServerHierarchyManager {
     }
 
     /**
-     * Start HTTP server
+     * Start HTTP server on specified port
+     * 
+     * ✅ Web4 Radical OOP: Uses HTTPServer + HTTPRouter classes
+     * @pdca 2025-12-01-UTC-0950.iteration-05-phase5-7-httpserver-router-refactoring.pdca.md
      */
     private async startHttpServer(port: number): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this.httpServer = createServer((req, res) => {
-                this.handleHttpRequest(req, res);
-            });
-
-            this.httpServer.listen(port, () => {
-                console.log(`🌐 HTTP server listening on port ${port}`);
-                resolve();
-            });
-
-            this.httpServer.on('error', (error) => {
-                reject(error);
-            });
-        });
+        // Register all routes
+        this.registerRoutes();
+        
+        // Create HTTPServer instance
+        this.httpServer = new HTTPServer();
+        this.httpServer.model.uuid = uuidv4();
+        this.httpServer.model.port = port;
+        this.httpServer.model.host = this.serverModel.host;
+        this.httpServer.router = this.httpRouter;
+        
+        // Start the server
+        await this.httpServer.start(port, this.serverModel.host);
+        
+        console.log(`🌐 HTTP server started on ${this.serverModel.host}:${port}`);
     }
 
     /**
      * Start WebSocket server
      */
     private async startWebSocketServer(): Promise<void> {
-        if (!this.httpServer) {
+        if (!this.httpServer || !this.httpServer.server) {
             throw new Error('HTTP server must be started first');
         }
 
-        this.wsServer = new WebSocketServer({ server: this.httpServer });
+        this.wsServer = new WebSocketServer({ server: this.httpServer.server });
         
         // Add WebSocket capability
         const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
@@ -1886,33 +2008,23 @@ export class ServerHierarchyManager {
         }
 
         if (this.httpServer) {
-            return new Promise((resolve) => {
-                // Force close all HTTP connections to prevent hanging
-                this.httpServer!.closeAllConnections?.();
+            try {
+                await this.httpServer.stop();
+                console.log('🛑 HTTP server stopped');
+                this.serverModel.state = LifecycleState.SHUTDOWN;
                 
-                this.httpServer!.close(async () => {
-                    console.log('🛑 Server stopped');
-                    this.serverModel.state = LifecycleState.SHUTDOWN;
-                    
-                    // Update scenario to SHUTDOWN state for housekeeping
-                    await this.updateScenarioState(LifecycleState.SHUTDOWN);
-                    
-                    resolve();
-                    
-                    // Exit process after cleanup (for client servers)
-                    // Don't exit in test environment
-                    if (!this.serverModel.isPrimaryServer && process.env.NODE_ENV !== 'test' && !process.env.VITEST) {
-                        setTimeout(() => process.exit(0), 100);
-                    }
-                });
+                // Update scenario to SHUTDOWN state for housekeeping
+                await this.updateScenarioState(LifecycleState.SHUTDOWN);
                 
-                // Timeout fallback in case close() never completes
-                setTimeout(() => {
-                    console.warn('⚠️  Force closing HTTP server after timeout');
-                    this.serverModel.state = LifecycleState.SHUTDOWN;
-                    resolve();
-                }, 3000);
-            });
+                // Exit process after cleanup (for client servers)
+                // Don't exit in test environment
+                if (!this.serverModel.isPrimaryServer && process.env.NODE_ENV !== 'test' && !process.env.VITEST) {
+                    setTimeout(() => process.exit(0), 100);
+                }
+            } catch (error) {
+                console.error('❌ Error stopping HTTP server:', error);
+                this.serverModel.state = LifecycleState.SHUTDOWN;
+            }
         }
     }
     

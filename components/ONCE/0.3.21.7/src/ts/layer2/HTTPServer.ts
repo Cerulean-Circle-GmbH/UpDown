@@ -13,6 +13,7 @@ import { createServer, Server, IncomingMessage, ServerResponse } from 'http';
 import { HTTPServerModel } from '../layer3/HTTPServerModel.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { LifecycleState } from '../layer3/LifecycleState.enum.js';
+import { Reference } from '../layer3/Reference.interface.js';
 
 /**
  * HTTPServer
@@ -33,12 +34,13 @@ import { LifecycleState } from '../layer3/LifecycleState.enum.js';
  */
 export class HTTPServer {
     public model: HTTPServerModel;
-    private server?: Server;
+    public server: Reference<Server>; // ✅ Web4 Pattern: Reference<T> for nullable references
     public router: any; // HTTPRouter (to be injected)
     
     constructor() {
         // Empty constructor - Web4 Principle 6
         const now = new Date().toISOString();
+        this.server = null; // ✅ Web4 Pattern: Initialize Reference<T> to null
         this.model = {
             uuid: '', // Set by init()
             name: 'HTTPServer',
