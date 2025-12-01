@@ -45,9 +45,14 @@ export class HTTPServer {
             uuid: '', // Set by init()
             name: 'HTTPServer',
             port: 0, // Set by init()
-            host: 'localhost',
+            bindInterface: '0.0.0.0', // ✅ Web4 Principle 19: Bind to all interfaces by default
+            urlHost: 'localhost', // ✅ Web4 Principle 19: Default URL host
             state: LifecycleState.CREATED,
             routerUuid: '',
+            defaultHeaders: {
+                'Access-Control-Allow-Origin': '*', // ✅ Web4 Principle 8: DRY default headers
+                'Content-Type': 'application/json'
+            },
             statistics: {
                 totalOperations: 0,
                 successCount: 0,
@@ -79,23 +84,25 @@ export class HTTPServer {
     /**
      * Start HTTP server
      * 
+     * Web4 Principle 19: Use bindInterface for server.listen(), urlHost for URLs
+     * 
      * @param port - Port to listen on
-     * @param host - Host to bind to (default: 'localhost')
+     * @param bindInterface - Interface to bind to (default: '0.0.0.0')
      * @returns this (method chaining)
      */
-    public async start(port: number, host: string = 'localhost'): Promise<this> {
+    public async start(port: number, bindInterface: string = '0.0.0.0'): Promise<this> {
         this.model.state = LifecycleState.STARTING;
         this.model.port = port;
-        this.model.host = host;
+        this.model.bindInterface = bindInterface;
         
         return new Promise((resolve, reject) => {
             this.server = createServer((req, res) => {
                 this.handleRequest(req, res);
             });
             
-            this.server.listen(port, host, () => {
+            this.server.listen(port, bindInterface, () => {
                 this.model.state = LifecycleState.RUNNING;
-                console.log(`✅ HTTPServer listening on ${host}:${port}`);
+                console.log(`✅ HTTPServer listening on ${bindInterface}:${port} (URLs use: ${this.model.urlHost}:${port})`);
                 resolve(this);
             });
             

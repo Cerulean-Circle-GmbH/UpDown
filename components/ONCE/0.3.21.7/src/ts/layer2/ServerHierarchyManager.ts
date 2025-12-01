@@ -351,6 +351,7 @@ export class ServerHierarchyManager {
      * Start HTTP server on specified port
      * 
      * ✅ Web4 Radical OOP: Uses HTTPServer + HTTPRouter classes
+     * ✅ Web4 Principle 19: Separate bindInterface from urlHost
      * @pdca 2025-12-01-UTC-0950.iteration-05-phase5-7-httpserver-router-refactoring.pdca.md
      */
     private async startHttpServer(port: number): Promise<void> {
@@ -361,13 +362,14 @@ export class ServerHierarchyManager {
         this.httpServer = new HTTPServer();
         this.httpServer.model.uuid = uuidv4();
         this.httpServer.model.port = port;
-        this.httpServer.model.host = this.serverModel.host;
+        this.httpServer.model.bindInterface = '0.0.0.0'; // ✅ Bind to all interfaces
+        this.httpServer.model.urlHost = this.serverModel.host; // ✅ FQDN for URLs
         this.httpServer.router = this.httpRouter;
         
-        // Start the server
-        await this.httpServer.start(port, this.serverModel.host);
+        // Start the server (bind to 0.0.0.0)
+        await this.httpServer.start(port, '0.0.0.0');
         
-        console.log(`🌐 HTTP server started on ${this.serverModel.host}:${port}`);
+        console.log(`🌐 HTTP server started on 0.0.0.0:${port} (URLs use: ${this.serverModel.host}:${port})`);
     }
 
     /**

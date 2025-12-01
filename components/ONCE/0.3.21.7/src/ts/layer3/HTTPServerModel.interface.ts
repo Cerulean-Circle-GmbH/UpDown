@@ -20,16 +20,24 @@ import { LifecycleState } from './LifecycleState.enum.js';
  * Web4 Pattern: Server is a component with state
  * 
  * @property port - Port number server is listening on
- * @property host - Hostname/IP address
+ * @property bindInterface - Interface to bind to (e.g., '0.0.0.0', '127.0.0.1')
+ * @property urlHost - Host for URLs/IORs (FQDN like 'mcdonges-3.fritz.box')
  * @property state - Server lifecycle state (use LifecycleState enum)
  * @property routerUuid - UUID of associated HTTPRouter
+ * @property defaultHeaders - Default headers applied to all responses
  * @property statistics - DRY statistics for request handling
+ * 
+ * Web4 Principle 19: Separate "bind interface" from "URL host"
+ * - bindInterface: Where server.listen() binds (0.0.0.0, IP address)
+ * - urlHost: What appears in URLs/IORs (FQDN, hostname)
  */
 export interface HTTPServerModel extends Model {
     port: number;
-    host: string;
+    bindInterface: string;
+    urlHost: string;
     state: LifecycleState;
     routerUuid: string;
+    defaultHeaders: Record<string, string>;
     statistics: StatisticsModel;
 }
 
