@@ -12,6 +12,7 @@
 import { Loader } from '../layer3/Loader.interface.js';
 import { LoaderModel } from '../layer3/LoaderModel.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
+import { createStatistics, recordSuccess, recordError } from '../layer3/StatisticsModel.interface.js';
 
 /**
  * IOR Profile
@@ -39,11 +40,7 @@ export class HTTPSLoader implements Loader {
             uuid: '',  // Set by init()
             name: 'HTTPSLoader',
             protocol: 'https',
-            loadCount: 0,
-            saveCount: 0,
-            errorCount: 0,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            statistics: createStatistics()
         };
     }
     
@@ -77,8 +74,7 @@ export class HTTPSLoader implements Loader {
                 
                 const body = await response.text();
                 
-                this.model.loadCount++;
-                this.model.updatedAt = new Date().toISOString();
+                recordSuccess(this.model.statistics);
                 
                 console.log(`✅ HTTPSLoader: Success with profile ${profile.host}:${profile.port}`);
                 return body;
@@ -88,8 +84,7 @@ export class HTTPSLoader implements Loader {
                 
                 // If this was the last profile, throw error
                 if (i === profiles.length - 1) {
-                    this.model.errorCount++;
-                    this.model.updatedAt = new Date().toISOString();
+                    recordError(this.model.statistics);
                     throw new Error(`All IOR profiles exhausted for: ${ior}`);
                 }
                 
@@ -123,8 +118,7 @@ export class HTTPSLoader implements Loader {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
                 
-                this.model.saveCount++;
-                this.model.updatedAt = new Date().toISOString();
+                recordSuccess(this.model.statistics);
                 
                 return; // Success
                 
@@ -132,8 +126,7 @@ export class HTTPSLoader implements Loader {
                 console.warn(`⚠️  HTTPSLoader: Save failed on ${profile.host}:${profile.port}: ${error.message}`);
                 
                 if (i === profiles.length - 1) {
-                    this.model.errorCount++;
-                    this.model.updatedAt = new Date().toISOString();
+                    recordError(this.model.statistics);
                     throw new Error(`All IOR profiles exhausted for save: ${ior}`);
                 }
             }

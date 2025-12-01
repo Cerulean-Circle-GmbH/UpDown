@@ -9,6 +9,7 @@
 
 import { Model } from './Model.interface.js';
 import { HttpMethod } from './HttpMethod.enum.js';
+import { StatisticsModel } from './StatisticsModel.interface.js';
 import { IncomingMessage, ServerResponse } from 'http';
 
 /**
@@ -27,15 +28,14 @@ export type RouteHandler = (req: IncomingMessage, res: ServerResponse) => Promis
  * @property method - HTTP method (GET, POST, etc.)
  * @property handler - Async function to handle requests
  * @property priority - Route priority (higher = checked first, default: 50)
- * @property hitCount - Number of times route was matched
- * @property createdAt - Route creation timestamp
+ * @property statistics - DRY statistics for route hits/errors
  */
 export interface RouteModel extends Model {
     pattern: string;
     method: HttpMethod;
     handler: RouteHandler;
     priority: number;
-    hitCount: number;
-    createdAt: string;
+    statistics: StatisticsModel;
 }
+
 

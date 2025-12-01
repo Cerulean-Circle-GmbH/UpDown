@@ -13,6 +13,7 @@ import { Loader } from '../layer3/Loader.interface.js';
 import { LoaderModel } from '../layer3/LoaderModel.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { HttpMethod } from '../layer3/HttpMethod.enum.js';
+import { createStatistics, recordSuccess, recordError } from '../layer3/StatisticsModel.interface.js';
 
 /**
  * RESTLoader
@@ -33,11 +34,7 @@ export class RESTLoader implements Loader {
             uuid: '',  // Set by init()
             name: 'RESTLoader',
             protocol: 'REST',
-            loadCount: 0,
-            saveCount: 0,
-            errorCount: 0,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            statistics: createStatistics()
         };
         
         this.nextLoaderRegistry = new Map();
@@ -81,13 +78,11 @@ export class RESTLoader implements Loader {
             // Delegate to transport loader (HTTPS, WSS, etc.)
             const responseBody = await nextLoader.load(ior, restOptions);
             
-            this.model.loadCount++;
-            this.model.updatedAt = new Date().toISOString();
+            recordSuccess(this.model.statistics);
             
             return responseBody;
         } catch (error: any) {
-            this.model.errorCount++;
-            this.model.updatedAt = new Date().toISOString();
+            recordError(this.model.statistics);
             throw new Error(`RESTLoader.load() failed: ${error.message}`);
         }
     }
@@ -122,11 +117,9 @@ export class RESTLoader implements Loader {
             // Delegate to transport loader
             await nextLoader.save(data, ior, restOptions);
             
-            this.model.saveCount++;
-            this.model.updatedAt = new Date().toISOString();
+            recordSuccess(this.model.statistics);
         } catch (error: any) {
-            this.model.errorCount++;
-            this.model.updatedAt = new Date().toISOString();
+            recordError(this.model.statistics);
             throw new Error(`RESTLoader.save() failed: ${error.message}`);
         }
     }

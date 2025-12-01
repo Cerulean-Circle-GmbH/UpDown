@@ -23,6 +23,7 @@
 import { Loader } from '../layer3/Loader.interface.js';
 import { LoaderModel } from '../layer3/LoaderModel.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
+import { createStatistics, recordSuccess, recordError } from '../layer3/StatisticsModel.interface.js';
 
 /**
  * ScenarioLoader
@@ -43,11 +44,7 @@ export class ScenarioLoader implements Loader {
             uuid: '',  // Set by init()
             name: 'ScenarioLoader',
             protocol: 'scenario',
-            loadCount: 0,
-            saveCount: 0,
-            errorCount: 0,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            statistics: createStatistics()
         };
         
         this.nextLoaderRegistry = new Map();
@@ -83,13 +80,13 @@ export class ScenarioLoader implements Loader {
             // Parse JSON to Scenario<T>
             const scenario = JSON.parse(jsonString) as Scenario<any>;
             
-            this.model.loadCount++;
-            this.model.updatedAt = new Date().toISOString();
+            // Record success
+            recordSuccess(this.model.statistics);
             
             return scenario;
         } catch (error: any) {
-            this.model.errorCount++;
-            this.model.updatedAt = new Date().toISOString();
+            // Record error
+            recordError(this.model.statistics);
             throw new Error(`ScenarioLoader.load() failed: ${error.message}`);
         }
     }
@@ -115,12 +112,12 @@ export class ScenarioLoader implements Loader {
             
             // Delegate to next loader
             await nextLoader.save(jsonString, ior, options);
-            
-            this.model.saveCount++;
-            this.model.updatedAt = new Date().toISOString();
+
+            // Record success
+            recordSuccess(this.model.statistics);
         } catch (error: any) {
-            this.model.errorCount++;
-            this.model.updatedAt = new Date().toISOString();
+            // Record error
+            recordError(this.model.statistics);
             throw new Error(`ScenarioLoader.save() failed: ${error.message}`);
         }
     }
