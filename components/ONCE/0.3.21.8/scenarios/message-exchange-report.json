@@ -1,0 +1,39 @@
+{
+  "timestamp": "2025-12-01T12:30:58.235Z",
+  "configuration": {
+    "primary": {
+      "uuid": "af0fdbec-9a51-4b53-b4fd-7bbdb5dd1631",
+      "port": 42777
+    },
+    "clients": []
+  },
+  "messages": [
+    {
+      "uuid": "98a16041-c6fa-4aab-a049-d29479ed31d0",
+      "objectType": "ONCEMessage",
+      "version": "0.3.21.7",
+      "state": {
+        "type": "broadcast",
+        "from": {
+          "uuid": "af0fdbec-9a51-4b53-b4fd-7bbdb5dd1631",
+          "port": 42777
+        },
+        "to": "all",
+        "content": "Broadcast message from primary to all clients",
+        "timestamp": "2025-12-01T12:30:54.233Z",
+        "sequence": 1
+      },
+      "metadata": {
+        "created": "2025-12-01T12:30:54.233Z",
+        "modified": "2025-12-01T12:30:54.233Z",
+        "creator": "ONCE-demoMessages",
+        "description": "Broadcast pattern demo message"
+      }
+    }
+  ],
+  "patterns": {
+    "broadcast": 1,
+    "relay": 0,
+    "p2p": 0
+  }
+}
