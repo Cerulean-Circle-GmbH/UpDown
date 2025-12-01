@@ -13,7 +13,6 @@ import { Loader } from '../layer3/Loader.interface.js';
 import { LoaderModel } from '../layer3/LoaderModel.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { HttpMethod } from '../layer3/HttpMethod.enum.js';
-import { createStatistics, recordSuccess, recordError } from '../layer3/StatisticsModel.interface.js';
 
 /**
  * RESTLoader
@@ -30,11 +29,20 @@ export class RESTLoader implements Loader {
     
     constructor() {
         // Empty constructor - UUID provided by ONCE kernel via init()
+        const now = new Date().toISOString();
         this.model = {
             uuid: '',  // Set by init()
             name: 'RESTLoader',
             protocol: 'REST',
-            statistics: createStatistics()
+            statistics: {
+                totalOperations: 0,
+                successCount: 0,
+                errorCount: 0,
+                lastOperationAt: '',
+                lastErrorAt: '',
+                createdAt: now,
+                updatedAt: now
+            }
         };
         
         this.nextLoaderRegistry = new Map();
@@ -56,6 +64,11 @@ export class RESTLoader implements Loader {
      * Returns: Response body (JSON string)
      */
     public async load(ior: string, options?: any): Promise<string> {
+        const now = new Date().toISOString();
+        this.model.statistics.totalOperations++;
+        this.model.statistics.lastOperationAt = now;
+        this.model.statistics.updatedAt = now;
+        
         try {
             // Extract next protocol (https, wss, etc.)
             const nextProtocol = this.extractNextProtocol(ior);
@@ -78,11 +91,12 @@ export class RESTLoader implements Loader {
             // Delegate to transport loader (HTTPS, WSS, etc.)
             const responseBody = await nextLoader.load(ior, restOptions);
             
-            recordSuccess(this.model.statistics);
+            this.model.statistics.successCount++;
             
             return responseBody;
         } catch (error: any) {
-            recordError(this.model.statistics);
+            this.model.statistics.errorCount++;
+            this.model.statistics.lastErrorAt = now;
             throw new Error(`RESTLoader.load() failed: ${error.message}`);
         }
     }
@@ -94,6 +108,11 @@ export class RESTLoader implements Loader {
      * Delegates to: HTTPSLoader
      */
     public async save(data: string, ior: string, options?: any): Promise<void> {
+        const now = new Date().toISOString();
+        this.model.statistics.totalOperations++;
+        this.model.statistics.lastOperationAt = now;
+        this.model.statistics.updatedAt = now;
+        
         try {
             // Extract next protocol
             const nextProtocol = this.extractNextProtocol(ior);
@@ -117,9 +136,10 @@ export class RESTLoader implements Loader {
             // Delegate to transport loader
             await nextLoader.save(data, ior, restOptions);
             
-            recordSuccess(this.model.statistics);
+            this.model.statistics.successCount++;
         } catch (error: any) {
-            recordError(this.model.statistics);
+            this.model.statistics.errorCount++;
+            this.model.statistics.lastErrorAt = now;
             throw new Error(`RESTLoader.save() failed: ${error.message}`);
         }
     }

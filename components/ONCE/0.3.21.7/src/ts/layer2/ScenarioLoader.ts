@@ -9,21 +9,9 @@
  * Chain: ScenarioLoader → RESTLoader → HTTPSLoader
  */
 
-/**
- * ScenarioLoader.ts
- * 
- * Web4 Scenario Loader
- * Loads/saves scenarios in JSON format
- * 
- * Protocol: 'scenario'
- * Purpose: JSON ↔ Scenario<T> conversion
- * Chain: ScenarioLoader → RESTLoader → HTTPSLoader
- */
-
 import { Loader } from '../layer3/Loader.interface.js';
 import { LoaderModel } from '../layer3/LoaderModel.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
-import { createStatistics, recordSuccess, recordError } from '../layer3/StatisticsModel.interface.js';
 
 /**
  * ScenarioLoader
@@ -40,11 +28,20 @@ export class ScenarioLoader implements Loader {
     
     constructor() {
         // Empty constructor - UUID provided by ONCE kernel
+        const now = new Date().toISOString();
         this.model = {
             uuid: '',  // Set by init()
             name: 'ScenarioLoader',
             protocol: 'scenario',
-            statistics: createStatistics()
+            statistics: {
+                totalOperations: 0,
+                successCount: 0,
+                errorCount: 0,
+                lastOperationAt: '',
+                lastErrorAt: '',
+                createdAt: now,
+                updatedAt: now
+            }
         };
         
         this.nextLoaderRegistry = new Map();
@@ -65,6 +62,11 @@ export class ScenarioLoader implements Loader {
      * Returns: Scenario<T>
      */
     public async load(ior: string, options?: any): Promise<Scenario<any>> {
+        const now = new Date().toISOString();
+        this.model.statistics.totalOperations++;
+        this.model.statistics.lastOperationAt = now;
+        this.model.statistics.updatedAt = now;
+        
         try {
             // Extract next protocol from IOR
             const nextProtocol = this.extractNextProtocol(ior);
@@ -81,12 +83,13 @@ export class ScenarioLoader implements Loader {
             const scenario = JSON.parse(jsonString) as Scenario<any>;
             
             // Record success
-            recordSuccess(this.model.statistics);
+            this.model.statistics.successCount++;
             
             return scenario;
         } catch (error: any) {
             // Record error
-            recordError(this.model.statistics);
+            this.model.statistics.errorCount++;
+            this.model.statistics.lastErrorAt = now;
             throw new Error(`ScenarioLoader.load() failed: ${error.message}`);
         }
     }
@@ -98,6 +101,11 @@ export class ScenarioLoader implements Loader {
      * Delegates to: RESTLoader
      */
     public async save(scenario: Scenario<any>, ior: string, options?: any): Promise<void> {
+        const now = new Date().toISOString();
+        this.model.statistics.totalOperations++;
+        this.model.statistics.lastOperationAt = now;
+        this.model.statistics.updatedAt = now;
+        
         try {
             // Convert scenario to JSON string
             const jsonString = JSON.stringify(scenario, null, 2);
@@ -114,10 +122,11 @@ export class ScenarioLoader implements Loader {
             await nextLoader.save(jsonString, ior, options);
 
             // Record success
-            recordSuccess(this.model.statistics);
+            this.model.statistics.successCount++;
         } catch (error: any) {
             // Record error
-            recordError(this.model.statistics);
+            this.model.statistics.errorCount++;
+            this.model.statistics.lastErrorAt = now;
             throw new Error(`ScenarioLoader.save() failed: ${error.message}`);
         }
     }

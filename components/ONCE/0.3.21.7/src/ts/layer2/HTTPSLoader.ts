@@ -12,7 +12,6 @@
 import { Loader } from '../layer3/Loader.interface.js';
 import { LoaderModel } from '../layer3/LoaderModel.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
-import { createStatistics, recordSuccess, recordError } from '../layer3/StatisticsModel.interface.js';
 
 /**
  * IOR Profile
@@ -36,11 +35,20 @@ export class HTTPSLoader implements Loader {
     
     constructor() {
         // Empty constructor - UUID provided by ONCE kernel via init()
+        const now = new Date().toISOString();
         this.model = {
             uuid: '',  // Set by init()
             name: 'HTTPSLoader',
             protocol: 'https',
-            statistics: createStatistics()
+            statistics: {
+                totalOperations: 0,
+                successCount: 0,
+                errorCount: 0,
+                lastOperationAt: '',
+                lastErrorAt: '',
+                createdAt: now,
+                updatedAt: now
+            }
         };
     }
     
@@ -52,6 +60,11 @@ export class HTTPSLoader implements Loader {
      * Returns: Response body (string)
      */
     public async load(ior: string, options?: any): Promise<string> {
+        const now = new Date().toISOString();
+        this.model.statistics.totalOperations++;
+        this.model.statistics.lastOperationAt = now;
+        this.model.statistics.updatedAt = now;
+        
         const profiles = this.extractProfiles(ior);
         
         // Try each profile in order (failover)
@@ -74,7 +87,7 @@ export class HTTPSLoader implements Loader {
                 
                 const body = await response.text();
                 
-                recordSuccess(this.model.statistics);
+                this.model.statistics.successCount++;
                 
                 console.log(`✅ HTTPSLoader: Success with profile ${profile.host}:${profile.port}`);
                 return body;
@@ -84,7 +97,8 @@ export class HTTPSLoader implements Loader {
                 
                 // If this was the last profile, throw error
                 if (i === profiles.length - 1) {
-                    recordError(this.model.statistics);
+                    this.model.statistics.errorCount++;
+                    this.model.statistics.lastErrorAt = now;
                     throw new Error(`All IOR profiles exhausted for: ${ior}`);
                 }
                 
@@ -99,6 +113,11 @@ export class HTTPSLoader implements Loader {
      * Save via HTTPS with profile failover
      */
     public async save(data: string, ior: string, options?: any): Promise<void> {
+        const now = new Date().toISOString();
+        this.model.statistics.totalOperations++;
+        this.model.statistics.lastOperationAt = now;
+        this.model.statistics.updatedAt = now;
+        
         const profiles = this.extractProfiles(ior);
         
         // Try each profile in order
@@ -118,7 +137,7 @@ export class HTTPSLoader implements Loader {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
                 
-                recordSuccess(this.model.statistics);
+                this.model.statistics.successCount++;
                 
                 return; // Success
                 
@@ -126,7 +145,8 @@ export class HTTPSLoader implements Loader {
                 console.warn(`⚠️  HTTPSLoader: Save failed on ${profile.host}:${profile.port}: ${error.message}`);
                 
                 if (i === profiles.length - 1) {
-                    recordError(this.model.statistics);
+                    this.model.statistics.errorCount++;
+                    this.model.statistics.lastErrorAt = now;
                     throw new Error(`All IOR profiles exhausted for save: ${ior}`);
                 }
             }
