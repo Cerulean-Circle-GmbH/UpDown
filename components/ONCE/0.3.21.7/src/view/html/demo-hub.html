@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ONCE v0.3.21.6 Demo Hub - P2P Network Visualization</title>
+    <title>ONCE v0.3.21.7 Demo Hub - IOR-based Lifecycle Management</title>
     <style>
         body { 
             font-family: 'Courier New', monospace; 
@@ -121,6 +121,62 @@
             cursor: not-allowed;
         }
         
+        .lifecycle-btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            margin: 10px;
+        }
+        
+        .start-btn {
+            background: #0a0;
+            border: 2px solid #0f0;
+        }
+        
+        .start-btn:hover:not(:disabled) {
+            background: #0f0;
+        }
+        
+        .start-btn:disabled {
+            background: #333;
+            border-color: #666;
+        }
+        
+        .shutdown-btn {
+            background: #a00;
+            border: 2px solid #f00;
+            color: #fff;
+        }
+        
+        .shutdown-btn:hover {
+            background: #f00;
+        }
+        
+        .discover-btn {
+            background: #066;
+            border: 2px solid #0ff;
+        }
+        
+        .discover-btn:hover {
+            background: #0ff;
+        }
+        
+        .peer-btn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px;
+            font-size: 0.9em;
+        }
+        
+        .stop-btn {
+            background: #a00;
+            border: 2px solid #f00;
+            color: #fff;
+        }
+        
+        .stop-btn:hover {
+            background: #f00;
+        }
+        
         .controls {
             text-align: center;
             margin: 20px 0;
@@ -146,8 +202,8 @@
 </head>
 <body>
     <div class="demo-header">
-        <h1>🎭 ONCE v0.3.21.6 Demo Hub</h1>
-        <p>P2P Network Visualization - Unified Kernel Architecture</p>
+        <h1>🎭 ONCE v0.3.21.7 Demo Hub</h1>
+        <p>IOR-based Lifecycle Management - Web4 Principle 12</p>
         <div class="connection-status" id="connectionStatus">🔴 Initializing...</div>
     </div>
     
@@ -173,6 +229,13 @@
     <div class="controls">
         <button id="refreshBtn">🔄 Refresh Peers</button>
         <button id="clearLogBtn">🗑️ Clear Log</button>
+    </div>
+    
+    <h2>🎮 Lifecycle Management</h2>
+    <div class="controls">
+        <button id="startNextBtn" class="lifecycle-btn start-btn">➕ Start Next Server</button>
+        <button id="discoverBtn" class="lifecycle-btn discover-btn">🔍 Discover Servers</button>
+        <button id="shutdownAllBtn" class="lifecycle-btn shutdown-btn">🛑 Shutdown All</button>
     </div>
     
     <h2>📡 Connected Peers</h2>
@@ -238,10 +301,11 @@
                 const state = peer.model?.state?.state || 'UNKNOWN';
                 const port = peer.model?.state?.capabilities?.find(c => c.capability === 'httpPort')?.port || 'N/A';
                 const version = peer.ior?.version || peer.model?.version || 'N/A';
+                const isPrimary = peer.model?.isPrimaryServer || false;
                 
                 return `
                     <div class="peer-card ${state === 'RUNNING' ? 'running' : 'stopped'}">
-                        <h3>Peer ${uuid.substring(0, 8)}</h3>
+                        <h3>Peer ${uuid.substring(0, 8)}${isPrimary ? ' (Primary)' : ''}</h3>
                         <div class="peer-info">
                             <strong>State:</strong> 
                             <span class="peer-state state-${state}">${state}</span>
@@ -249,6 +313,9 @@
                         <div class="peer-info"><strong>Port:</strong> ${port}</div>
                         <div class="peer-info"><strong>Version:</strong> ${version}</div>
                         <div class="peer-info"><strong>UUID:</strong> ${uuid}</div>
+                        ${state === 'RUNNING' && !isPrimary ? `
+                            <button onclick="stopServer('${uuid}')" class="peer-btn stop-btn">🛑 Stop Server</button>
+                        ` : ''}
                     </div>
                 `;
             }).join('');
@@ -274,6 +341,117 @@
             document.getElementById('updatesReceived').textContent = updatesCount;
         }, 1000);
         
+        // ✅ **IOR-BASED LIFECYCLE MANAGEMENT** (Web4 Principle 12)
+        // Get primary server UUID from kernel model
+        const primaryUUID = kernel.model.uuid;
+        
+        // Start next client server via IOR method invocation
+        async function startNextServer() {
+            const btn = document.getElementById('startNextBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Starting...';
+            
+            try {
+                const ior = `http://${peerHost}/ONCE/0.3.21.7/${primaryUUID}/startClientServer`;
+                addLog('lifecycle', `📡 IOR Call: ${ior}`);
+                
+                const response = await fetch(ior, { method: 'POST' });
+                const scenario = await response.json();
+                
+                if (scenario.ior) {
+                    addLog('lifecycle', `✅ Server starting: ${scenario.ior.uuid.substring(0, 8)}`);
+                    setTimeout(() => {
+                        updatePeerDisplay();
+                        btn.disabled = false;
+                        btn.textContent = '➕ Start Next Server';
+                    }, 2000);
+                } else if (scenario.error) {
+                    addLog('error', `❌ Error: ${scenario.error}`);
+                    btn.disabled = false;
+                    btn.textContent = '❌ Failed';
+                    setTimeout(() => btn.textContent = '➕ Start Next Server', 2000);
+                }
+            } catch (error) {
+                addLog('error', `❌ Failed to start server: ${error.message}`);
+                btn.disabled = false;
+                btn.textContent = '❌ Failed';
+                setTimeout(() => btn.textContent = '➕ Start Next Server', 2000);
+            }
+        }
+        
+        // Stop specific server via IOR method invocation
+        window.stopServer = async function(uuid) {
+            try {
+                const ior = `http://${peerHost}/ONCE/0.3.21.7/${uuid}/stopServer`;
+                addLog('lifecycle', `📡 IOR Call: ${ior}`);
+                
+                const response = await fetch(ior, { method: 'POST' });
+                const scenario = await response.json();
+                
+                addLog('lifecycle', `🛑 Stopped server: ${uuid.substring(0, 8)}`);
+                setTimeout(updatePeerDisplay, 1000);
+            } catch (error) {
+                addLog('error', `❌ Failed to stop server: ${error.message}`);
+            }
+        };
+        
+        // Discover servers (housekeeping) via IOR
+        async function discoverServers() {
+            const btn = document.getElementById('discoverBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Discovering...';
+            
+            try {
+                const ior = `http://${peerHost}/ONCE/0.3.21.7/${primaryUUID}/discoverServers`;
+                addLog('lifecycle', `📡 IOR Call: ${ior}`);
+                
+                const response = await fetch(ior, { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.model) {
+                    const discovered = result.model.discovered || 0;
+                    const deleted = result.model.deleted || 0;
+                    addLog('lifecycle', `🔍 Discovery complete: ${discovered} found, ${deleted} removed`);
+                } else {
+                    addLog('lifecycle', '🔍 Discovery complete');
+                }
+                
+                setTimeout(() => {
+                    updatePeerDisplay();
+                    btn.disabled = false;
+                    btn.textContent = '🔍 Discover Servers';
+                }, 1000);
+            } catch (error) {
+                addLog('error', `❌ Discovery failed: ${error.message}`);
+                btn.disabled = false;
+                btn.textContent = '🔍 Discover Servers';
+            }
+        }
+        
+        // Shutdown all servers via IOR
+        async function shutdownAll() {
+            if (!confirm('⚠️  Shutdown ALL servers?\n\nThis will:\n- Stop the primary server\n- Stop all client servers\n- Exit all processes')) {
+                return;
+            }
+            
+            try {
+                const ior = `http://${peerHost}/ONCE/0.3.21.7/${primaryUUID}/shutdownAll`;
+                addLog('lifecycle', `📡 IOR Call: ${ior}`);
+                addLog('lifecycle', '🛑 Shutdown initiated...');
+                
+                // Fire and forget - server will shut down before responding
+                fetch(ior, { method: 'POST' }).catch(() => {});
+                
+                setTimeout(() => {
+                    alert('✅ Shutdown complete\n\nAll servers have been stopped.');
+                    window.location.reload();
+                }, 3000);
+            } catch (error) {
+                addLog('lifecycle', '🛑 Shutdown in progress...');
+                setTimeout(() => window.location.reload(), 3000);
+            }
+        }
+        
         // Button handlers
         document.getElementById('refreshBtn').addEventListener('click', function() {
             addLog('update', '🔄 Refreshing peer list...');
@@ -284,6 +462,11 @@
             document.getElementById('activityLog').innerHTML = '';
             addLog('connection', '🗑️ Log cleared');
         });
+        
+        // Lifecycle button handlers (IOR-based)
+        document.getElementById('startNextBtn').addEventListener('click', startNextServer);
+        document.getElementById('discoverBtn').addEventListener('click', discoverServers);
+        document.getElementById('shutdownAllBtn').addEventListener('click', shutdownAll);
         
         // Initial display
         updatePeerDisplay();
