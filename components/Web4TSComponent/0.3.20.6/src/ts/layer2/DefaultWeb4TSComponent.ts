@@ -1500,6 +1500,140 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
   }
 
   /**
+   * Read component descriptor (component.json → scenario)
+   * Returns scenario with implementationClassName for dynamic loading
+   * 
+   * Usage: web4tscomponent componentDescriptorRead <Component> <Version>
+   * 
+   * Web4 Principles:
+   * - Principle 1: "Everything is a Scenario" - descriptors are scenarios
+   * - Principle 16: Object-Action naming - componentDescriptorRead() groups with componentDescriptor* methods
+   * 
+   * @pdca 2025-12-01-UTC-1500.iteration-01.21-component-start-and-descriptor-read.pdca.md
+   * @param componentName Component name (e.g., "ONCE", "Unit")
+   * @param version Component version (e.g., "0.3.21.7")
+   * @returns Scenario<T> or null if no descriptor exists
+   * @cliSyntax componentName version
+   */
+  async componentDescriptorRead(componentName: string, version: string): Promise<any> {
+    // Resolve component path (respects delegation context)
+    const projectRoot = this.model.context?.model?.projectRoot || this.model.projectRoot;
+    const componentPath = path.join(projectRoot, 'components', componentName, version);
+    const descriptorPath = path.join(componentPath, `${componentName}.component.json`);
+    
+    // Check if descriptor exists
+    if (!existsSync(descriptorPath)) {
+      console.log(`⚠️  No component.json for ${componentName}/${version}`);
+      return null;
+    }
+    
+    // Read descriptor (component.json is symlink to scenario file)
+    try {
+      const fs = await import('fs');
+      const descriptorContent = fs.readFileSync(descriptorPath, 'utf-8');
+      const descriptor = JSON.parse(descriptorContent);
+      console.log(`📋 Loaded descriptor for ${componentName}/${version}`);
+      if (descriptor.model?.implementationClassName) {
+        console.log(`   Implementation: ${descriptor.model.implementationClassName}`);
+      }
+      return descriptor;
+    } catch (error: any) {
+      console.error(`❌ Failed to read descriptor:`, error.message);
+      throw new Error(`Failed to read descriptor for ${componentName}/${version}: ${error.message}`);
+    }
+  }
+
+  /**
+   * Start a component (ensures it's built and ready for import)
+   * Does NOT run npm start script (that would call usage())
+   * Just ensures: dist/ exists, dependencies installed, TypeScript compiled
+   * 
+   * Usage: web4tscomponent componentStart <Component> <Version>
+   * 
+   * Web4 Principles:
+   * - Principle 17: Component Instance Pattern - components must be built before import
+   * - Principle 16: Object-Action naming - componentStart() is clear action
+   * 
+   * @pdca 2025-12-01-UTC-1500.iteration-01.21-component-start-and-descriptor-read.pdca.md
+   * @param componentName Component name (e.g., "Unit", "ONCE")
+   * @param version Component version (e.g., "0.3.19.1")
+   * @throws Error if component not found
+   * @cliSyntax componentName version
+   */
+  async componentStart(componentName: string, version: string): Promise<this> {
+    // Resolve component path (respects delegation context)
+    const projectRoot = this.model.context?.model?.projectRoot || this.model.projectRoot;
+    const componentPath = path.join(projectRoot, 'components', componentName, version);
+    
+    // 1. Check if component exists
+    if (!existsSync(componentPath)) {
+      throw new Error(`Component not found: ${componentName}/${version} at ${componentPath}`);
+    }
+    
+    // 2. Check if already built
+    const distPath = path.join(componentPath, 'dist');
+    if (existsSync(distPath)) {
+      console.log(`✅ ${componentName}/${version} already built`);
+      return this;
+    }
+    
+    console.log(`🔨 Building ${componentName}/${version}...`);
+    
+    // 3. Install dependencies if needed
+    const nodeModulesPath = path.join(componentPath, 'node_modules');
+    if (!existsSync(nodeModulesPath)) {
+      console.log(`📦 Installing dependencies for ${componentName}/${version}...`);
+      await this.dependenciesInstall(componentPath);
+    }
+    
+    // 4. Compile TypeScript
+    console.log(`🔨 Compiling TypeScript for ${componentName}/${version}...`);
+    await this.compile(componentPath);
+    
+    console.log(`✅ ${componentName}/${version} built and ready for import`);
+    
+    return this;
+  }
+
+  /**
+   * Install dependencies in component directory
+   * @param componentPath Full path to component
+   */
+  private async dependenciesInstall(componentPath: string): Promise<void> {
+    const { exec } = await import('child_process');
+    return new Promise((resolve, reject) => {
+      exec(`cd ${componentPath} && npm install`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`❌ npm install failed:`, stderr);
+          reject(new Error(`npm install failed: ${stderr}`));
+        } else {
+          console.log(`✅ Dependencies installed`);
+          resolve();
+        }
+      });
+    });
+  }
+
+  /**
+   * Compile TypeScript in component directory
+   * @param componentPath Full path to component
+   */
+  private async compile(componentPath: string): Promise<void> {
+    const { exec } = await import('child_process');
+    return new Promise((resolve, reject) => {
+      exec(`cd ${componentPath} && npx tsc`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`❌ TypeScript compilation failed:`, stderr);
+          reject(new Error(`tsc failed: ${stderr}`));
+        } else {
+          console.log(`✅ TypeScript compiled`);
+          resolve();
+        }
+      });
+    });
+  }
+
+  /**
    * @TODO needs 0.3.18.3 review still
    * Set component property or generate CLI script
    * Maps to generate-cli functionality for backward compatibility
