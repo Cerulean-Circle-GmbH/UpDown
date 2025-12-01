@@ -254,33 +254,90 @@ web4tscomponent on ONCE latest upgrade nextPatch
 
 ## 🧪 Testing
 
-### **Run Tests**
+### **Test Isolation Pattern**
+
+ONCE uses **Test Isolation** to ensure tests run in a completely isolated environment (`test/data/`) without affecting production files.
+
+#### **Path Authority**
+
+The component **auto-detects** its execution context using the **Path Authority** pattern:
+
+1. **Production Mode** (running from `components/ONCE/0.3.21.8/`):
+   ```bash
+   once info
+   # 🔍 [PATH DISCOVERY] projectRoot=/Users/.../UpDown
+   #                     isTestIsolation=false
+   ```
+
+2. **Test Isolation Mode** (running from `test/data/`):
+   ```bash
+   once test shell  # Enter isolated shell
+   once info        # Inside test shell
+   # 🔍 [PATH DISCOVERY] projectRoot=/Users/.../ONCE/0.3.21.8/test/data
+   #                     isTestIsolation=true
+   #    ⚠️  TEST ISOLATION MODE
+   ```
+
+**Key Principle**: The component checks if the current path contains `/test/data` and automatically scopes all operations (scenarios, components, file writes) to the detected project root, ensuring **complete isolation**.
+
+#### **Test Shell**
+
+Enter an interactive test isolation shell for debugging and black-box testing:
 
 ```bash
-# Run test by file
+# From production component
+once test shell
+
+# You're now in test/data with:
+# ✅ Fresh environment (components/, scenarios/, scripts/)
+# ✅ Isolated PATH (only test/data/scripts)
+# ✅ Special PS1 prompt: [TEST ISOLATION ONCE 0.3.21.8]
+# ✅ All operations scoped to test/data
+
+# Verify isolation
+once info  # Shows test/data as projectRoot
+
+# Test server lifecycle
+once startServer &
+curl http://localhost:42777/health
+
+# Exit when done
+exit
+```
+
+**Why Test Shell?**
+- **Safety**: Never touches production files
+- **Repeatability**: Fresh environment for each test run  
+- **Debugging**: Interactive shell for test investigation
+- **Black-Box Testing**: Test via IOR calls, not protocol-specific code
+
+### **Running Tests**
+
+```bash
+# Run test by file (all tests in a file)
 once test file
 
-# Run test by describe block
+# Run test by describe block (specific test suite)
 once test describe
 
-# Run test by it case
+# Run test by it case (specific test)
 once test itCase
 ```
 
-### **Manual Testing**
+### **Black-Box Testing**
+
+ONCE 0.3.21.8+ focuses on **black-box testing** using IOR-based method invocation:
 
 ```bash
-# Start server
-once startServer &
+# NOT THIS (white-box, protocol-specific):
+curl -X POST http://localhost:42777/start-server
 
-# Test routes
-curl http://localhost:42777/health
-curl http://localhost:42777/
-curl http://localhost:42777/demo
-
-# Test component loading
-once componentLoad ONCE 0.3.21.8
+# BUT THIS (black-box, IOR-based):
+once startServer  # Method invocation via CLI
+# or via IORRoute (future)
 ```
+
+See Phase 8.4 PDCA for lifecycle test restoration plan.
 
 ---
 
