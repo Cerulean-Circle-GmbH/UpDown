@@ -2424,4 +2424,99 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   async setCICDVersion(targetVersion: string, version: string = 'current'): Promise<this> {
     return this.delegateToWeb4TS('setCICDVersion', targetVersion, version);
   }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 🎯 Component Loading & Dynamic Import (Web4 Principle 17)
+  // @pdca 2025-12-01-UTC-1400.iteration-05-phase8.3-route-component-pattern-unit-integration.pdca.md
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // Cache for loaded components (avoid redundant builds/imports)
+  private loadedComponents: Map<string, any> = new Map();
+
+  /**
+   * Load a component (builds if needed, then imports class)
+   * After this, you can: const unit = new Unit().init()
+   * 
+   * Web4 Pattern: Delegates to Web4TSComponent for build/descriptor logic (DRY)
+   * ONCE's responsibility: Dynamic import and instance caching
+   * 
+   * @pdca 2025-12-01-UTC-1400.iteration-05-phase8.3-route-component-pattern-unit-integration.pdca.md
+   * @pdca 2025-12-01-UTC-1500.iteration-01.21-component-start-and-descriptor-read.pdca.md (Web4TSComponent)
+   * 
+   * @param componentName Component name (e.g., "Unit", "GameDemoSystem")
+   * @param version Component version (e.g., "0.3.19.1")
+   * @returns Component class (ready for new ComponentClass().init())
+   * @cliSyntax componentName version
+   */
+  async componentLoad(componentName: string, version: string): Promise<any> {
+    const componentKey = `${componentName}/${version}`;
+    
+    // Check cache first
+    if (this.loadedComponents.has(componentKey)) {
+      console.log(`✅ ${componentKey} already loaded (cached)`);
+      return this.loadedComponents.get(componentKey);
+    }
+    
+    // ✅ DELEGATE to Web4TSComponent (DRY pattern, like info())
+    const web4ts = await this.getWeb4TSComponent();
+    web4ts.model.context = this;  // Set delegation context
+    
+    // 1. Ensure component is built and ready for import
+    // Delegates to web4tscomponent.componentStart()
+    console.log(`🔨 Ensuring ${componentKey} is built...`);
+    await web4ts.componentStart(componentName, version);
+    
+    // 2. Read component descriptor to get implementationClassName
+    // Delegates to web4tscomponent.componentDescriptorRead()
+    const descriptor = await web4ts.componentDescriptorRead(componentName, version);
+    const implementationClassName = descriptor?.model?.implementationClassName || componentName;
+    
+    console.log(`📋 Loading ${componentKey} (implementation: ${implementationClassName})`);
+    
+    // 3. Dynamic import (ONCE's unique responsibility)
+    if (!this.model.projectRoot) {
+      throw new Error('projectRoot not set in ONCE model. Call init() first.');
+    }
+    
+    const componentPath = path.join(this.model.projectRoot, 'components', componentName, version);
+    const possiblePaths = [
+      path.join(componentPath, 'dist/ts/layer2', `${implementationClassName}.js`),
+      path.join(componentPath, 'dist/ts/layer1', `${implementationClassName}.js`),
+      path.join(componentPath, 'dist/ts/layer3', `${implementationClassName}.js`)
+    ];
+    
+    let mainFile: string | null = null;
+    for (const filePath of possiblePaths) {
+      const fs = await import('fs');
+      if (fs.existsSync(filePath)) {
+        mainFile = filePath;
+        break;
+      }
+    }
+    
+    if (!mainFile) {
+      throw new Error(
+        `Implementation class file not found for ${implementationClassName}. ` +
+        `Tried: ${possiblePaths.join(', ')}`
+      );
+    }
+    
+    // Convert to file:// URL for dynamic import
+    const fileUrl = `file://${mainFile}`;
+    const componentModule = await import(fileUrl);
+    const ComponentClass = componentModule[implementationClassName];
+    
+    if (!ComponentClass) {
+      throw new Error(
+        `Class ${implementationClassName} not exported from ${mainFile}. ` +
+        `Available exports: ${Object.keys(componentModule).join(', ')}`
+      );
+    }
+    
+    // 4. Cache and return
+    this.loadedComponents.set(componentKey, ComponentClass);
+    console.log(`✅ ${componentKey} loaded and ready for instantiation`);
+    
+    return ComponentClass;
+  }
 }
