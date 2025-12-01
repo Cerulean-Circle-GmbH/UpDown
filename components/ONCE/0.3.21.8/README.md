@@ -257,19 +257,21 @@ web4tscomponent on ONCE latest upgrade nextPatch
 ### **Run Tests**
 
 ```bash
-# All tests
-./scripts/versions/once-v0.3.21.8 test
+# Run test by file
+once test file
 
-# Specific test suite
-./scripts/versions/once-v0.3.21.8 test server
-./scripts/versions/once-v0.3.21.8 test hierarchy
+# Run test by describe block
+once test describe
+
+# Run test by it case
+once test itCase
 ```
 
 ### **Manual Testing**
 
 ```bash
 # Start server
-./scripts/versions/once-v0.3.21.8 startServer &
+once startServer &
 
 # Test routes
 curl http://localhost:42777/health
@@ -277,7 +279,7 @@ curl http://localhost:42777/
 curl http://localhost:42777/demo
 
 # Test component loading
-./scripts/versions/once-v0.3.21.8 componentLoad ONCE 0.3.21.8
+once componentLoad ONCE 0.3.21.8
 ```
 
 ---
