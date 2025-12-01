@@ -10,7 +10,8 @@ import { PortManager } from './PortManager.js';
 import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
 import { LifecycleState } from '../layer3/LifecycleEvents.js';
 import { IOR, iorToUrl } from '../layer3/IOR.js';
-import { v4 as uuidv4 } from 'uuid';
+import { IDProvider } from '../layer3/IDProvider.interface.js';
+import { UUIDProvider } from './UUIDProvider.js';
 import * as fs from 'fs';
 import { fileURLToPath } from 'url';
 import { realpathSync } from 'fs';
@@ -59,10 +60,12 @@ export class ServerHierarchyManager {
     private browserClients: Set<WebSocket> = new Set(); // Track browser WebSocket connections
     private infrastructure: NodeOSInfrastructure; // ✅ Layer 1 infrastructure injection
     private iorRouter: IORMethodRouter; // ✅ IOR method router for Web4 routing
+    private idProvider: IDProvider; // ✅ Web4 Principle 20: Radical OOP ID generation
     component?: any; // Backward link to DefaultONCE for path authority
     version: string; // ✅ Self-discovered version (ALWAYS set, never undefined)
 
-    constructor() {
+    constructor(idProvider: IDProvider = new UUIDProvider()) {
+        this.idProvider = idProvider; // ✅ Inject ID provider (testable, replaceable)
         this.portManager = PortManager.getInstance();
         this.infrastructure = new NodeOSInfrastructure(); // ✅ Create infrastructure
         this.iorRouter = new IORMethodRouter(); // ✅ Create IOR router (kernel injected later)
@@ -80,7 +83,7 @@ export class ServerHierarchyManager {
         
         // Initialize peer model with defaults (inlined from ONCEServerModel.ts)
         this.serverModel = {
-            uuid: uuidv4(),
+            uuid: this.idProvider.create(), // ✅ Web4 Principle 20: Radical OOP ID generation
             pid: process.pid,
             state: LifecycleState.CREATED,
             platform: this.detectEnvironment(),
@@ -185,7 +188,7 @@ export class ServerHierarchyManager {
         }
         
         const iorRoute = new IORRoute(this.iorRouter);
-        iorRoute.model.uuid = uuidv4();
+        iorRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         iorRoute.model.pattern = '/{component}/{version}/{uuid}/{method}'; // Documentation only
         iorRoute.model.method = HttpMethod.GET; // Accepts all methods
         iorRoute.model.priority = 10; // Highest priority
@@ -193,7 +196,7 @@ export class ServerHierarchyManager {
         
         // ✅ Route 1: Home page ("/")
         const homeRoute = new HTMLRoute();
-        homeRoute.model.uuid = uuidv4();
+        homeRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         homeRoute.setPattern('/', HttpMethod.GET);
         homeRoute.setProvider(() => this.component!.serveStatus());
         homeRoute.model.priority = 50;
@@ -201,7 +204,7 @@ export class ServerHierarchyManager {
         
         // ✅ Route 2: Demo Hub ("/demo")
         const demoRoute = new HTMLRoute();
-        demoRoute.model.uuid = uuidv4();
+        demoRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         demoRoute.setPattern('/demo', HttpMethod.GET);
         demoRoute.setProvider(() => this.component!.serveDemoHub());
         demoRoute.model.priority = 50;
@@ -209,7 +212,7 @@ export class ServerHierarchyManager {
         
         // ✅ Route 3: Demo Hub with trailing slash ("/demo/")
         const demoRoute2 = new HTMLRoute();
-        demoRoute2.model.uuid = uuidv4();
+        demoRoute2.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         demoRoute2.setPattern('/demo/', HttpMethod.GET);
         demoRoute2.setProvider(() => this.component!.serveDemoHub());
         demoRoute2.model.priority = 50;
@@ -217,7 +220,7 @@ export class ServerHierarchyManager {
         
         // ✅ Route 4: ONCE Minimal ("/once")
         const onceRoute = new HTMLRoute();
-        onceRoute.model.uuid = uuidv4();
+        onceRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         onceRoute.setPattern('/once', HttpMethod.GET);
         onceRoute.setProvider(() => this.component!.serveOnceMinimal());
         onceRoute.model.priority = 50;
@@ -225,7 +228,7 @@ export class ServerHierarchyManager {
         
         // ✅ Route 5: ONCE Minimal with trailing slash ("/once/")
         const onceRoute2 = new HTMLRoute();
-        onceRoute2.model.uuid = uuidv4();
+        onceRoute2.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         onceRoute2.setPattern('/once/', HttpMethod.GET);
         onceRoute2.setProvider(() => this.component!.serveOnceMinimal());
         onceRoute2.model.priority = 50;
@@ -233,7 +236,7 @@ export class ServerHierarchyManager {
         
         // ✅ Route 6: Communication Log ("/onceCommunicationLog")
         const logRoute = new HTMLRoute();
-        logRoute.model.uuid = uuidv4();
+        logRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         logRoute.setPattern('/onceCommunicationLog', HttpMethod.GET);
         logRoute.setProvider(() => this.component!.serveOnceCommunicationLog());
         logRoute.model.priority = 50;
@@ -241,7 +244,7 @@ export class ServerHierarchyManager {
         
         // ✅ Route 7: Communication Log with trailing slash ("/onceCommunicationLog/")
         const logRoute2 = new HTMLRoute();
-        logRoute2.model.uuid = uuidv4();
+        logRoute2.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         logRoute2.setPattern('/onceCommunicationLog/', HttpMethod.GET);
         logRoute2.setProvider(() => this.component!.serveOnceCommunicationLog());
         logRoute2.model.priority = 50;
@@ -249,7 +252,7 @@ export class ServerHierarchyManager {
         
         // ✅ Route 8: Health endpoint ("/health") - Returns Scenario
         const healthRoute = new ScenarioRoute();
-        healthRoute.model.uuid = uuidv4();
+        healthRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         healthRoute.setPattern('/health', HttpMethod.GET);
         healthRoute.setProvider(async () => {
             const health = this.component!.getHealth();
@@ -270,7 +273,7 @@ export class ServerHierarchyManager {
         // ✅ Route 9: Servers list ("/servers") - Returns Scenario (Primary only)
         if (this.serverModel.isPrimaryServer) {
             const serversRoute = new ScenarioRoute();
-            serversRoute.model.uuid = uuidv4();
+            serversRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
             serversRoute.setPattern('/servers', HttpMethod.GET);
             serversRoute.setProvider(async () => {
                 const serverList = this.component!.getServers();
@@ -360,7 +363,7 @@ export class ServerHierarchyManager {
         
         // Create HTTPServer instance
         this.httpServer = new HTTPServer();
-        this.httpServer.model.uuid = uuidv4();
+        this.httpServer.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         this.httpServer.model.port = port;
         this.httpServer.model.bindInterface = '0.0.0.0'; // ✅ Bind to all interfaces
         this.httpServer.model.urlHost = this.serverModel.host; // ✅ FQDN for URLs
@@ -764,7 +767,7 @@ export class ServerHierarchyManager {
         
         // Send acknowledgment as proper Scenario
         const ackScenario: any = {
-            uuid: uuidv4(),
+            uuid: this.idProvider.create(), // ✅ Web4 Principle 20
             objectType: 'ONCEMessage',
             version: this.versionFromComponent, // ✅ Use dynamic version
             state: {

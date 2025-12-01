@@ -30,6 +30,8 @@ import { User } from '../layer3/User.interface.js';
 import { MethodSignature } from '../layer3/MethodSignature.interface.js';
 import { DefaultUser } from './DefaultUser.js';
 import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
+import { IDProvider } from '../layer3/IDProvider.interface.js';
+import { UUIDProvider } from './UUIDProvider.js';
 import * as path from 'path';  // For version extraction from directory path
 import * as crypto from 'crypto';  // For UUID generation
 import { realpathSync } from 'fs';  // For symlink resolution
@@ -49,6 +51,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   private web4ts?: any; // Lazy-initialized Web4TSComponent for delegation (dynamic import, no static dependency)
   private user?: User; // Optional User service (lazy initialization)
   private methods: Map<string, MethodSignature> = new Map();
+  private idProvider: IDProvider; // ✅ Web4 Principle 20: Radical OOP ID generation
   
   // Enhanced managers for v0.2.0.0+ domain logic
   private serverHierarchyManager: ServerHierarchyManager;
@@ -65,6 +68,9 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
     super(); // AbstractONCEKernel (unified architecture)
     
     // ✅ Web4 Pattern: Minimal constructor
+    
+    // ✅ Web4 Principle 20: Initialize ID provider (testable, replaceable)
+    this.idProvider = new UUIDProvider();
     
     // Minimal model initialization
     this.model = {
@@ -99,7 +105,8 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
     this.discoverPathsFromFilesystem();
     
     // Initialize managers (domain logic from 0.2.0.0)
-    this.serverHierarchyManager = new ServerHierarchyManager();
+    // ✅ Web4 Principle 20: Inject IDProvider into managers
+    this.serverHierarchyManager = new ServerHierarchyManager(this.idProvider);
     this.serverHierarchyManager.component = this; // Backward link for path authority
     this.scenarioManager = new ScenarioManager();
     this.scenarioManager.component = this; // Backward link for path authority
@@ -2177,7 +2184,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
     console.log('📡 Pattern 1: Broadcast (Primary → All Clients)');
     const { v4: uuidv4 } = await import('uuid');
     const broadcastScenario: any = {
-      uuid: uuidv4(),
+      uuid: this.idProvider.create(), // ✅ Web4 Principle 20
       objectType: 'ONCEMessage',
       version: this.model.version || 'unknown', // ✅ Use dynamic version
       state: {
@@ -2209,7 +2216,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       const client1Model = clients[0].getServerModel();
       const client2Model = clients[1].getServerModel();
       const relayScenario: any = {
-        uuid: uuidv4(),
+        uuid: this.idProvider.create(), // ✅ Web4 Principle 20
         objectType: 'ONCEMessage',
         version: this.model.version || 'unknown', // ✅ Use dynamic version
         state: {
@@ -2248,7 +2255,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       const client2Model = clients[1].getServerModel();
       const p2pPort = client2Model.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0;
       const p2pScenario: any = {
-        uuid: uuidv4(),
+        uuid: this.idProvider.create(), // ✅ Web4 Principle 20
         objectType: 'ONCEMessage',
         version: this.model.version || 'unknown', // ✅ Use dynamic version
         state: {
