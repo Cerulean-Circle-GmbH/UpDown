@@ -1,18 +1,18 @@
 {
   "ior": {
-    "uuid": "8e914877-f2e6-4acc-859d-6c62cc196a1b",
+    "uuid": "7bbf0c87-a69a-4423-992e-90e5f4bdc4e2",
     "component": "ONCE",
     "version": "0.3.21.7"
   },
-  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkxTFRFeUxUQXhWREE1T2pNMk9qRTRMamsxTVZvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwibmFtZSI6ImRvbmdlcyIsInVzZXJuYW1lIjoic3lzdGVtIiwiaG9zdG5hbWUiOiJNY0Rvbmdlcy0zLmZyaXR6LmJveCJ9fQ==",
+  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkxTFRFeUxUQXhWREUzT2pFMU9qTXhMakExTjFvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwibmFtZSI6ImRvbmdlcyIsInVzZXJuYW1lIjoic3lzdGVtIiwiaG9zdG5hbWUiOiJNY0Rvbmdlcy0zLmZyaXR6LmJveCJ9fQ==",
   "model": {
-    "uuid": "8e914877-f2e6-4acc-859d-6c62cc196a1b",
+    "uuid": "7bbf0c87-a69a-4423-992e-90e5f4bdc4e2",
     "name": "McDonges-3",
     "objectType": "ONCE",
     "version": "0.3.21.7",
     "state": {
-      "uuid": "8e914877-f2e6-4acc-859d-6c62cc196a1b",
-      "pid": 69136,
+      "uuid": "7bbf0c87-a69a-4423-992e-90e5f4bdc4e2",
+      "pid": 25796,
       "state": "running",
       "platform": {
         "platform": "node",
@@ -41,8 +41,8 @@
       "isPrimaryServer": true
     },
     "metadata": {
-      "created": "2025-12-01T09:36:18.947Z",
-      "modified": "2025-12-01T09:36:18.952Z",
+      "created": "2025-12-01T17:15:31.052Z",
+      "modified": "2025-12-01T17:15:31.058Z",
       "creator": "ONCE-v0.3.21.7",
       "description": "ONCE server Primary server instance",
       "tags": [
