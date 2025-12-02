@@ -2296,16 +2296,74 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
       return;
     }
     
-    console.log(`📄 Test File: ${testFile}`);
+    console.log(`📄 Test File: ${testFile}\n`);
     
-    // TODO: Load Tootsie component dynamically
-    // TODO: Initialize quality oracle
+    // Load Tootsie component dynamically
+    console.log(`📦 Loading Tootsie component...`);
+    const tootsie = await this.loadTootsieComponent();
+    
+    if (!tootsie) {
+      console.log(`❌ Failed to load Tootsie component\n`);
+      return;
+    }
+    
+    console.log(`✅ Tootsie loaded: ${tootsie.constructor.name}\n`);
+    
     // TODO: Execute tests with evidence collection
     // TODO: Quality oracle judges and learns
     
-    console.log(`\n⚠️  Full Tootsie execution pending...`);
-    console.log(`   For now, use: once test ${scope} ${references.join(' ')}`);
-    console.log(`   Full integration coming next\n`);
+    console.log(`⚠️  Test execution pending...`);
+    console.log(`   Next: Execute test file with evidence collection\n`);
+  }
+  
+  /**
+   * Load Tootsie component dynamically
+   * Uses context's componentLoad() if available (for ONCE delegation)
+   * @cliHide
+   */
+  private async loadTootsieComponent(): Promise<any> {
+    const context = this.model.context;
+    
+    // Try to use context's componentLoad() (ONCE delegation pattern)
+    if (context && typeof (context as any).componentLoad === 'function') {
+      try {
+        console.log(`   Using context.componentLoad() for Tootsie`);
+        const tootsie = await (context as any).componentLoad('Tootsie', '0.3.20.6');
+        return tootsie;
+      } catch (error) {
+        console.log(`   ⚠️  Context componentLoad() failed: ${error}`);
+        console.log(`   Falling back to direct import`);
+      }
+    }
+    
+    // Fallback: Direct import of Tootsie
+    try {
+      const componentRoot = this.model.componentRoot || this.model.targetComponentRoot;
+      if (!componentRoot) {
+        throw new Error('Component root not set');
+      }
+      
+      // Calculate Tootsie path (componentRoot is already .../components/ONCE/0.3.21.8)
+      const componentsDir = path.dirname(path.dirname(componentRoot)); // Go up two levels to components/
+      const tootsiePath = path.join(componentsDir, 'Tootsie', '0.3.20.6', 'dist', 'ts', 'layer2', 'DefaultTootsie.js');
+      
+      console.log(`   Direct import: ${tootsiePath}`);
+      
+      const tootsieModule = await import(tootsiePath);
+      const TootsieClass = tootsieModule.DefaultTootsie;
+      
+      if (!TootsieClass) {
+        throw new Error('DefaultTootsie class not found in module');
+      }
+      
+      const tootsie = new TootsieClass();
+      await tootsie.init();
+      
+      return tootsie;
+    } catch (error) {
+      console.log(`   ❌ Failed to load Tootsie: ${error}`);
+      return null;
+    }
   }
   
   /**
