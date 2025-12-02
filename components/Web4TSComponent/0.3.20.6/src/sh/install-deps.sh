@@ -86,10 +86,37 @@ if [ ! -d "$PROJECT_ROOT/node_modules" ]; then
     echo "   ✅ Web4 project initialized"
 fi
 
-echo "📦 Installing component dependencies..."
+# ✅ Web4 DRY Principle: Install to shared location, then symlink
+# npm install must run from PROJECT_ROOT to install into shared node_modules
+# Then we create symlink from component to shared location
+
+echo "📦 Installing component dependencies into shared location..."
+# Save current directory
+COMPONENT_DIR=$(pwd)
+
+# Merge component dependencies into project root (install to shared location)
+cd "$PROJECT_ROOT"
+
+node -e "
+const fs = require('fs');
+const componentPkg = JSON.parse(fs.readFileSync('$COMPONENT_DIR/package.json', 'utf8'));
+const rootPkg = JSON.parse(fs.readFileSync('$PROJECT_ROOT/package.json', 'utf8'));
+
+// Merge dependencies
+rootPkg.dependencies = {...(rootPkg.dependencies || {}), ...(componentPkg.dependencies || {})};
+rootPkg.devDependencies = {...(rootPkg.devDependencies || {}), ...(componentPkg.devDependencies || {})};
+
+fs.writeFileSync('$PROJECT_ROOT/package.json', JSON.stringify(rootPkg, null, 2));
+"
+
+# Install all deps to shared node_modules
 npm install
 
-echo "🔗 Replacing with symlink to shared node_modules (DRY principle)..."
+# Return to component directory
+cd "$COMPONENT_DIR"
+
+echo "🔗 Creating symlink to shared node_modules (DRY principle)..."
 rm -rf node_modules
 ln -sf ../../../node_modules node_modules
+
 echo "✅ Component uses globally shared dependencies"

@@ -87,6 +87,9 @@
 
 - [ ] No duplicated code
 - [ ] Reference existing implementations
+- [ ] **Shared node_modules** - components install to project root, then symlink
+
+**Example (shared deps):** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/src/sh/install-deps.sh) | [§/components/ONCE/0.3.21.8/src/sh/install-deps.sh](../src/sh/install-deps.sh) (Lines 94-115)
 
 ---
 
