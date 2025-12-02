@@ -11,8 +11,8 @@ import { TestScenario, TestExecutionScenario, EvidenceScenario } from '../layer3
  * Follows Web4 principles: empty constructor, scenario initialization, hibernation
  */
 export class DefaultWeb4TestCase implements Web4TestCase {
-  private scenario?: TestScenario;
-  private evidence: EvidenceScenario[] = [];
+  protected scenario?: TestScenario;
+  protected evidence: EvidenceScenario[] = [];
 
   /**
    * Web4 empty constructor principle - no dependencies
@@ -204,7 +204,7 @@ export class DefaultWeb4TestCase implements Web4TestCase {
   /**
    * Record evidence during test execution
    */
-  private recordEvidence(type: EvidenceScenario['type'], description: string, data: any): void {
+  protected recordEvidence(type: EvidenceScenario['type'], description: string, data: any): void {
     this.evidence.push({
       uuid: this.generateUUID(),
       type,

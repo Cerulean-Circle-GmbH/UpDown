@@ -12,9 +12,9 @@
  */
 
 import { ONCETestCase } from './ONCETestCase.js';
-import { TestScenario } from '../../../../Web4Test/0.1.0.0/src/ts/layer3/TestScenario.js';
-import { existsSync } from 'fs';
-import { join } from 'path';
+import { TestScenario } from '../../../../Web4Test/0.3.20.6/src/ts/layer3/TestScenario.js';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export class Test01_PathAuthorityAndProjectRootDetection extends ONCETestCase {
   
@@ -51,11 +51,11 @@ export class Test01_PathAuthorityAndProjectRootDetection extends ONCETestCase {
       const componentRoot = model.componentRoot || '';
 
       const pathValidation = {
-        projectRootExists: projectRoot.length > 0 && existsSync(projectRoot),
-        componentRootExists: componentRoot.length > 0 && existsSync(componentRoot),
+        projectRootExists: projectRoot.length > 0 && fs.existsSync(projectRoot),
+        componentRootExists: componentRoot.length > 0 && fs.existsSync(componentRoot),
         componentRootWithinProject: componentRoot.startsWith(projectRoot),
-        projectRootHasComponents: existsSync(join(projectRoot, 'components')),
-        projectRootHasScenarios: existsSync(join(projectRoot, 'scenarios')),
+        projectRootHasComponents: fs.existsSync(path.join(projectRoot, 'components')),
+        projectRootHasScenarios: fs.existsSync(path.join(projectRoot, 'scenarios')),
         projectRootIsAbsolute: projectRoot.startsWith('/'),
         componentRootIsAbsolute: componentRoot.startsWith('/')
       };
