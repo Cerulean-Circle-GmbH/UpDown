@@ -341,6 +341,104 @@ See Phase 8.4 PDCA for lifecycle test restoration plan.
 
 ---
 
+### **🎯 Tootsie Testing - Quality Consciousness** ✨
+
+**Tootsie (Total Object-Oriented Testing Suite)** is Web4's revolutionary testing paradigm where **quality itself is an object**. Unlike traditional test runners, Tootsie treats tests as living, hibernatable objects with quality consciousness.
+
+#### **Core Concepts**
+
+- **Quality Oracle**: An intelligent judge that learns from test outcomes
+- **Evidence-Based**: Complete audit trail of every test execution
+- **Hibernation**: Tests save their state and can resume
+- **IOR-Traceable**: Tests communicate through object references
+- **Test Isolation**: Automatically runs in `test/data/` (never pollutes production)
+
+#### **Running Tootsie Tests**
+
+```bash
+# Run test by file number
+once tootsie file 1
+
+# Run test by name
+once tootsie file PathAuthority
+
+# Run specific describe block (future)
+once tootsie describe 1a
+
+# Run specific test case (future)
+once tootsie itCase 1a2
+```
+
+#### **Test Isolation (Automatic)** 🔒
+
+Tootsie **automatically enforces** test isolation - you CANNOT pollute production:
+
+```bash
+./once tootsie file 1
+
+# Output:
+🔒 [TOOTSIE TEST ISOLATION] Enforcing test/data isolation
+   Production Root: /Users/.../UpDown
+   Test Data Root: .../ONCE/0.3.21.8/test/data
+   ⚠️  Tests will ONLY run in isolated environment
+   ⚠️  Production files CANNOT be affected
+   
+   Switched to Test Isolation Mode ✅
+```
+
+**What's Protected:**
+- ✅ `/scenarios/` - Production scenarios never touched
+- ✅ `/components/` - Component metadata safe
+- ✅ `/package.json` - Build config safe
+- ✅ All other production files - Completely safe
+
+**Where Tests Run:**
+- All test operations scoped to `test/data/`
+- Evidence saved to `test/data/.tootsie/evidence/`
+- Test state hibernates in `test/data/.tootsie/state/`
+- Quality Oracle wisdom in `test/data/.tootsie/oracle/`
+
+#### **Test Organization**
+
+```
+test/
+├── tootsie/                      # Tootsie-powered tests
+│   ├── ONCETestCase.ts          # Base class for ONCE tests
+│   ├── Test01_PathAuthority...ts # Lifecycle test 01
+│   ├── Test13_Environment...ts   # Lifecycle test 13
+│   └── ...
+├── data/                         # Test isolation environment
+│   ├── .tootsie/                # Quality consciousness data
+│   │   ├── evidence/           # Test evidence trails
+│   │   ├── state/              # Hibernated test objects
+│   │   └── oracle/             # Quality Oracle wisdom
+│   ├── components/             # Test-scoped components
+│   └── scenarios/              # Test-scoped scenarios
+└── vitest/                       # Traditional unit tests
+    └── *.test.ts
+```
+
+#### **Evidence & Quality Oracle** (Sub-Iteration 10.6)
+
+Future features:
+- 📊 Complete evidence trail (input → steps → assertions → output)
+- 🧠 Quality Oracle learns from test patterns
+- 💾 Hibernation for long-running test suites
+- 🔍 Test archaeology (browse historical evidence)
+
+#### **Tootsie vs Traditional Testing**
+
+| Feature | Traditional (Vitest) | Tootsie |
+|---------|---------------------|---------|
+| **Philosophy** | Tests are scripts | Tests are objects |
+| **State** | Stateless | Hibernatable |
+| **Evidence** | Console logs | Complete audit trail |
+| **Quality** | Pass/Fail | Oracle learns & judges |
+| **Isolation** | Manual mocking | Automatic test/data scoping |
+| **Traceability** | Stack traces | IOR-based references |
+
+---
+
 ## 📖 API Reference
 
 ### **Core Methods**
