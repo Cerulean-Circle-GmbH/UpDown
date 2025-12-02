@@ -11,6 +11,7 @@
 
 import { DefaultWeb4TestCase } from '../../../../Web4Test/0.3.20.6/src/ts/layer2/DefaultWeb4TestCase.js';
 import { TestScenario } from '../../../../Web4Test/0.3.20.6/src/ts/layer3/TestScenario.js';
+import { SemanticVersion } from '../../../../Web4TSComponent/latest/src/ts/layer2/SemanticVersion.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
@@ -60,13 +61,13 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
   // ═══════════════════════════════════════════════════════════════
 
   /**
-   * Get ONCE version from file location using Version Authority pattern
-   * ✅ VERSION-AGNOSTIC: Detects version from directory name (single source of truth)
-   * ✅ Pattern from Web4TSComponent init() - version is in the path
+   * Get ONCE version using SemanticVersion component (DRY - don't reimplement!)
+   * ✅ VERSION-AGNOSTIC: Uses Version Authority pattern from Web4TSComponent
+   * ✅ RADICAL OOP: Version is an object with behavior, not string manipulation
    * Tests copied forward with 'upgrade nextBuild' continue to work
    */
-  protected getONCEVersion(): string {
-    // Version Authority: directory name IS the version
+  protected getONCEVersion(): SemanticVersion {
+    // Version Authority: directory name IS the version (single source of truth)
     const currentFileUrl = new URL(import.meta.url);
     const currentFilePath = fileURLToPath(currentFileUrl);
     // From: /components/ONCE/X.Y.Z.W/test/lifecycle-management/TestXX.ts
@@ -75,13 +76,8 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     const versionDir = path.dirname(testRoot);             // X.Y.Z.W
     const versionString = path.basename(versionDir);       // "0.3.21.8" or "0.3.21.9"
     
-    // Validate it's a version directory
-    const isVersionDir = /^\d+\.\d+\.\d+\.\d+$/.test(versionString);
-    if (!isVersionDir) {
-      throw new Error(`Test not in valid version directory. Got: ${versionString}`);
-    }
-    
-    return versionString;
+    // ✅ USE SemanticVersion component (don't reimplement!)
+    return SemanticVersion.fromString(versionString);
   }
 
   /**
@@ -89,7 +85,7 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
    */
   protected getComponentRoot(): string {
     const version = this.getONCEVersion();
-    return path.join(this.projectRoot, 'components', 'ONCE', version);
+    return path.join(this.projectRoot, 'components', 'ONCE', version.toString());
   }
 
   // ═══════════════════════════════════════════════════════════════
