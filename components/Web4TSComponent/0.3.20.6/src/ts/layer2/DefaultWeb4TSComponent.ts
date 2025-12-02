@@ -2217,6 +2217,20 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
    * - test describe 1a → tootsie describe 1a (hierarchical references)
    * - test itCase 1a2 → tootsie itCase 1a2 (individual test cases)
    */
+  /**
+   * Run tests with Tootsie quality consciousness framework
+   * Enforces test isolation - all tests run in test/data environment
+   * 
+   * @param scope Test scope: 'all', 'file', 'describe', or 'itCase'
+   * @param references Test file numbers or name patterns to execute
+   * 
+   * @cliSyntax <?scope:'all'> <references>
+   * @cliValues scope all file describe itCase
+   * @cliExample once tootsie
+   * @cliExample once tootsie file 1
+   * @cliExample once tootsie file 1 2 3
+   * @cliExample web4tscomponent tootsie file Test01
+   */
   async tootsie(scope: string = 'all', ...references: string[]): Promise<this> {
     // ═══════════════════════════════════════════════════════════════
     // 🔒 SECURITY: Enforce Test Isolation (Path Authority)
@@ -2411,12 +2425,6 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
    * - discoverTestFile('itCase', ['1a2']) → Test01_*.ts (filters to itCase 2 in describe 'a')
    */
   private async discoverTestFile(scope: string, references: string[]): Promise<string | null> {
-    if (references.length === 0) {
-      console.log(`⚠️  No test reference provided`);
-      return null;
-    }
-    
-    const reference = references[0]; // First reference is file identifier
     const componentRoot = this.model.componentRoot || this.model.targetComponentRoot;
     
     if (!componentRoot) {
@@ -2433,6 +2441,33 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
       console.log(`❌ Test directory not found: ${testDir}`);
       return null;
     }
+    
+    // If no references provided and scope is 'file', list available files
+    if (references.length === 0 && scope === 'file') {
+      console.log(`⚠️  No test reference provided`);
+      console.log(`\n📋 Available test files:\n`);
+      
+      const files = await fs.readdir(testDir);
+      const testFiles = files.filter((f: string) => f.startsWith('Test') && f.endsWith('.ts')).sort();
+      
+      testFiles.forEach((file, index) => {
+        const num = file.match(/Test(\d+)_/)?.[1] || (index + 1);
+        const name = file.replace(/Test\d+_/, '').replace('.ts', '');
+        console.log(`   ${num}: ${name}`);
+      });
+      
+      console.log(`\n💡 Usage: once tootsie file <number>`);
+      console.log(`   Example: once tootsie file 1\n`);
+      
+      return null;
+    }
+    
+    if (references.length === 0) {
+      console.log(`⚠️  No test reference provided`);
+      return null;
+    }
+    
+    const reference = references[0]; // First reference is file identifier
     
     // Read all test files
     const files = await fs.readdir(testDir);
