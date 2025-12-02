@@ -11,9 +11,10 @@
 
 import { DefaultWeb4TestCase } from '../../../../Web4Test/0.1.0.0/src/ts/layer2/DefaultWeb4TestCase.js';
 import { TestScenario } from '../../../../Web4Test/0.1.0.0/src/ts/layer3/TestScenario.js';
-import { readFileSync, existsSync, watch } from 'fs';
-import { join } from 'path';
+import { readFileSync, existsSync, watch, writeFileSync, unlinkSync } from 'fs';
+import { join, dirname, basename } from 'path';
 import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
 
 /**
  * ONCETestCase - Base test case for ONCE component lifecycle tests
@@ -28,7 +29,8 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
    */
   constructor() {
     super();
-    this.projectRoot = '/Users/Shared/Workspaces/2cuGitHub/UpDown';
+    // ✅ Auto-detect project root from import.meta.url (ESM compliant)
+    this.projectRoot = this.detectProjectRootFromImportMeta();
     this.testDataRoot = join(this.projectRoot, 'test/data');
   }
 
@@ -37,6 +39,11 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
    */
   init(scenario: TestScenario): this {
     super.init(scenario);
+    
+    // ✅ Path Authority: Override from scenario if provided
+    if ((scenario as any).testDataScenario?.projectRoot) {
+      this.projectRoot = (scenario as any).testDataScenario.projectRoot;
+    }
     
     // Detect test isolation environment
     const isTestIsolation = process.cwd().includes('test/data');
@@ -60,7 +67,7 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     const fullPath = join(this.projectRoot, scenarioPath);
     
     if (!existsSync(fullPath)) {
-      this.recordEvidence('step', 'Scenario file not found', { scenarioPath: fullPath });
+      this.logEvidence('step', 'Scenario file not found', { scenarioPath: fullPath });
       return null;
     }
 
@@ -68,7 +75,7 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
       const content = readFileSync(fullPath, 'utf8');
       const scenario = JSON.parse(content);
       
-      this.recordEvidence('step', 'Scenario file read', {
+      this.logEvidence('step', 'Scenario file read', {
         scenarioPath: fullPath,
         scenarioUUID: scenario.uuid || 'N/A',
         timestamp: scenario.model?.timestamp || 'N/A'
@@ -76,7 +83,7 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
 
       return scenario;
     } catch (error) {
-      this.recordEvidence('error', 'Failed to read scenario file', {
+      this.logEvidence('error', 'Failed to read scenario file', {
         scenarioPath: fullPath,
         error: error instanceof Error ? error.message : String(error)
       });
@@ -106,7 +113,7 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
           const newContent = readFileSync(fullPath, 'utf8');
           
           if (newContent !== initialMtime) {
-            this.recordEvidence('step', 'Scenario file changed (WebSocket effect observed)', {
+            this.logEvidence('step', 'Scenario file changed (WebSocket effect observed)', {
               scenarioPath: fullPath,
               eventType
             });
@@ -118,7 +125,7 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
 
       setTimeout(() => {
         if (!changeDetected) {
-          this.recordEvidence('step', 'Scenario change timeout', {
+          this.logEvidence('step', 'Scenario change timeout', {
             scenarioPath: fullPath,
             timeoutMs
           });
@@ -133,15 +140,11 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
    * Compare two scenario states (black-box verification)
    */
   protected compareScenarios(before: any, after: any, fieldPath: string): boolean {
-    const getField = (obj: any, path: string): any => {
-      return path.split('.').reduce((acc, part) => acc?.[part], obj);
-    };
-
-    const beforeValue = getField(before, fieldPath);
-    const afterValue = getField(after, fieldPath);
+    const beforeValue = this.getFieldByPath(before, fieldPath);
+    const afterValue = this.getFieldByPath(after, fieldPath);
     const changed = beforeValue !== afterValue;
 
-    this.recordEvidence('assertion', 'Scenario comparison', {
+    this.logEvidence('assertion', 'Scenario comparison', {
       fieldPath,
       beforeValue,
       afterValue,
@@ -149,6 +152,13 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     });
 
     return changed;
+  }
+
+  /**
+   * Get nested field value by dot-notation path (Radical OOP - method, not function)
+   */
+  private getFieldByPath(obj: any, path: string): any {
+    return path.split('.').reduce((acc, part) => acc?.[part], obj);
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -178,7 +188,7 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
       const pidMatch = output.match(/PID:\s*(\d+)/);
       const pid = pidMatch ? parseInt(pidMatch[1]) : 0;
 
-      this.recordEvidence('step', 'ONCE server started via CLI', {
+      this.logEvidence('step', 'ONCE server started via CLI', {
         componentName,
         version,
         pid,
@@ -190,7 +200,7 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
 
       return pid;
     } catch (error) {
-      this.recordEvidence('error', 'Failed to start ONCE server', {
+      this.logEvidence('error', 'Failed to start ONCE server', {
         error: error instanceof Error ? error.message : String(error)
       });
       throw error;
@@ -204,14 +214,14 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     try {
       if (pid && pid > 0) {
         execSync(`kill ${pid}`, { encoding: 'utf8' });
-        this.recordEvidence('step', 'ONCE server stopped via PID', { pid });
+        this.logEvidence('step', 'ONCE server stopped via PID', { pid });
       } else {
         // Fallback: find and kill by port
         execSync('pkill -f "once.sh startServer" || true', { encoding: 'utf8' });
-        this.recordEvidence('step', 'ONCE server stopped via pkill', {});
+        this.logEvidence('step', 'ONCE server stopped via pkill', {});
       }
     } catch (error) {
-      this.recordEvidence('error', 'Failed to stop ONCE server', {
+      this.logEvidence('error', 'Failed to stop ONCE server', {
         error: error instanceof Error ? error.message : String(error),
         pid
       });
@@ -235,14 +245,14 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
         cwd: oncePath
       });
 
-      this.recordEvidence('step', 'ONCE CLI invocation', {
+      this.logEvidence('step', 'ONCE CLI invocation', {
         command,
         output: output.substring(0, 500) // Limit output size
       });
 
       return output;
     } catch (error) {
-      this.recordEvidence('error', 'ONCE CLI invocation failed', {
+      this.logEvidence('error', 'ONCE CLI invocation failed', {
         command,
         error: error instanceof Error ? error.message : String(error)
       });
@@ -269,19 +279,16 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
    * @param newNumber Optional new number (if not provided, keeps current number)
    */
   rename(newName: string, newNumber?: number): this {
-    const fs = require('fs');
-    const path = require('path');
-    
-    // Get current file path
-    const currentFile = __filename;
-    const currentDir = path.dirname(currentFile);
+    // ✅ ESM way to get current file path
+    const currentFilePath = fileURLToPath(import.meta.url);
+    const currentDir = dirname(currentFilePath);
     
     // Extract current test info from filename
-    const filename = path.basename(currentFile);
-    const match = filename.match(/Test(\d+)_(.+)\.ts$/);
+    const currentFileName = basename(currentFilePath);
+    const match = currentFileName.match(/Test(\d+)_(.+)\.ts$/);
     
     if (!match) {
-      throw new Error(`Cannot extract test info from filename: ${filename}`);
+      throw new Error(`Cannot extract test info from filename: ${currentFileName}`);
     }
     
     const oldNumber = match[1];
@@ -290,10 +297,10 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     
     // Generate new filename
     const newFilename = `Test${finalNumber}_${newName}.ts`;
-    const newFilePath = path.join(currentDir, newFilename);
+    const newFilePath = join(currentDir, newFilename);
     
     // Read current file content
-    let content = fs.readFileSync(currentFile, 'utf8');
+    let content = readFileSync(currentFilePath, 'utf8');
     
     // Update all references in content
     // 1. Class name
@@ -323,17 +330,17 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     );
     
     // Write updated content to new file
-    fs.writeFileSync(newFilePath, content, 'utf8');
+    writeFileSync(newFilePath, content, 'utf8');
     
     // Delete old file if different
-    if (currentFile !== newFilePath) {
-      fs.unlinkSync(currentFile);
+    if (currentFilePath !== newFilePath) {
+      unlinkSync(currentFilePath);
     }
     
     console.log(`✅ Test renamed:`);
     console.log(`   From: Test${oldNumber}_${oldName}`);
     console.log(`   To:   Test${finalNumber}_${newName}`);
-    console.log(`   File: ${filename} → ${newFilename}`);
+    console.log(`   File: ${currentFileName} → ${newFilename}`);
     
     return this;
   }
@@ -343,15 +350,12 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
    * Updates filename, class name, function names, and UUIDs
    */
   renumber(newNumber: number): this {
-    const fs = require('fs');
-    const path = require('path');
-    
-    // Extract current name
-    const filename = path.basename(__filename);
-    const match = filename.match(/Test\d+_(.+)\.ts$/);
+    // ✅ ESM way to get current filename
+    const currentFileName = basename(fileURLToPath(import.meta.url));
+    const match = currentFileName.match(/Test\d+_(.+)\.ts$/);
     
     if (!match) {
-      throw new Error(`Cannot extract test name from filename: ${filename}`);
+      throw new Error(`Cannot extract test name from filename: ${currentFileName}`);
     }
     
     const currentName = match[1];
@@ -373,7 +377,7 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
       const scenario = this.readScenario(bootstrapPath);
       
       if (scenario?.model?.serverReady === true) {
-        this.recordEvidence('step', 'ONCE server ready', {
+        this.logEvidence('step', 'ONCE server ready', {
           bootstrapPath,
           waitTimeMs: Date.now() - startTime
         });
@@ -385,6 +389,24 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     }
 
     throw new Error(`Server not ready after ${maxWaitMs}ms`);
+  }
+
+  /**
+   * Detect project root from import.meta.url (ESM compliant)
+   * Path Authority principle - auto-detect from file location
+   */
+  private detectProjectRootFromImportMeta(): string {
+    // ✅ ESM way:
+    const currentFilePath = fileURLToPath(import.meta.url);
+    // From: components/ONCE/0.3.21.8/test/lifecycle-management/ONCETestCase.ts
+    // Navigate up to project root
+    const testDir = dirname(currentFilePath);         // test/lifecycle-management
+    const testRoot = dirname(testDir);                 // test
+    const versionRoot = dirname(testRoot);             // 0.3.21.8
+    const componentRoot = dirname(versionRoot);        // ONCE
+    const componentsRoot = dirname(componentRoot);     // components
+    const projectRoot = dirname(componentsRoot);       // UpDown (project root)
+    return projectRoot;
   }
 
   /**
@@ -403,22 +425,21 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
   }
 
   /**
-   * Record evidence during test execution
-   * Overrides parent to add ONCE-specific context
+   * Log test evidence (ONCE-specific)
+   * Note: Parent's recordEvidence is private, so we log separately
    */
-  protected recordEvidence(type: string, description: string, data: any): void {
+  private logEvidence(type: string, description: string, data: any): void {
     const timestamp = new Date().toISOString();
     
-    // Add ONCE context to all evidence
+    // Add ONCE context
     const enhancedData = {
       ...data,
       testIsolation: process.cwd().includes('test/data'),
       projectRoot: this.projectRoot
     };
 
-    // Call parent's recordEvidence (if available)
-    // Otherwise, log directly
     console.log(`[${timestamp}][${type.toUpperCase()}] ${description}:`, enhancedData);
   }
+
 }
 
