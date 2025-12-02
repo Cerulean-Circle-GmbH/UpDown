@@ -2,7 +2,15 @@
 
 **Purpose:** CHECK BEFORE EVERY COMMIT during fractal PDCA execution.
 
-**Usage:** Reference this file in every PDCA CHECK section. REREAD before each commit.
+**Usage:** 
+1. Reference this file in every PDCA CHECK section
+2. REREAD DEEPLY before each commit (not just skim!)
+3. When you find a good example of a principle, ADD a dual link here (lazy update)
+
+**Lazy Update Protocol:**
+- When you encounter a perfect example of any principle → add dual link here
+- Use `pdca getDualLink <file>` to generate correct format
+- This checklist grows with good examples over time
 
 ---
 
@@ -14,7 +22,7 @@
 - [ ] No separate config objects (like `ONCE_DEFAULT_CONFIG`)
 - [ ] All state stored as scenarios with IOR + owner + model
 
-**Example:** [GitHub](https://github.com/2cuGitHub/UpDown/blob/main/components/ONCE/0.3.21.2/session/2025-11-19-UTC-1745.component-refactor-final.pdca.md) | [§/components/ONCE/0.3.21.2/session/2025-11-19-UTC-1745.component-refactor-final.pdca.md](../../../0.3.21.2/session/2025-11-19-UTC-1745.component-refactor-final.pdca.md) (Lines 277-307)
+**Example:** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.2/session/2025-11-19-UTC-1745.component-refactor-final.pdca.md) | [§/components/ONCE/0.3.21.2/session/2025-11-19-UTC-1745.component-refactor-final.pdca.md](../../../0.3.21.2/session/2025-11-19-UTC-1745.component-refactor-final.pdca.md) (Lines 277-307)
 
 ---
 
@@ -24,7 +32,7 @@
 - [ ] No switch/case statements for type dispatch
 - [ ] Direct method invocation via naming convention
 
-**Example:** [GitHub](https://github.com/2cuGitHub/UpDown/blob/main/components/Web4TSComponent/0.3.20.6/src/ts/layer2/DefaultWeb4TSComponent.ts) | [§/components/Web4TSComponent/0.3.20.6/src/ts/layer2/DefaultWeb4TSComponent.ts](../../../../Web4TSComponent/0.3.20.6/src/ts/layer2/DefaultWeb4TSComponent.ts)
+**Example:** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/Web4TSComponent/0.3.20.6/src/ts/layer2/DefaultWeb4TSComponent.ts) | [§/components/Web4TSComponent/0.3.20.6/src/ts/layer2/DefaultWeb4TSComponent.ts](../../../../Web4TSComponent/0.3.20.6/src/ts/layer2/DefaultWeb4TSComponent.ts)
 
 ---
 
@@ -60,7 +68,7 @@
 - [ ] All initialization via `init(scenario)`
 - [ ] No factory methods needed
 
-**Example:** [GitHub](https://github.com/2cuGitHub/UpDown/blob/main/components/Web4Test/0.3.20.6/src/ts/layer2/DefaultWeb4TestCase.ts) | [§/components/Web4Test/0.3.20.6/src/ts/layer2/DefaultWeb4TestCase.ts](../../../../Web4Test/0.3.20.6/src/ts/layer2/DefaultWeb4TestCase.ts)
+**Example:** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/Web4Test/0.3.20.6/src/ts/layer2/DefaultWeb4TestCase.ts) | [§/components/Web4Test/0.3.20.6/src/ts/layer2/DefaultWeb4TestCase.ts](../../../../Web4Test/0.3.20.6/src/ts/layer2/DefaultWeb4TestCase.ts)
 
 ---
 
@@ -145,7 +153,7 @@
 - [ ] Tests don't know about HTTP/WS internals
 - [ ] Test via public interfaces only
 
-**Example:** [GitHub](https://github.com/2cuGitHub/UpDown/blob/main/components/ONCE/0.3.21.8/test/tootsie/Test01_PathAuthorityAndProjectRootDetection.ts) | [§/components/ONCE/0.3.21.8/test/tootsie/Test01_PathAuthorityAndProjectRootDetection.ts](../test/tootsie/Test01_PathAuthorityAndProjectRootDetection.ts)
+**Example:** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/test/tootsie/Test01_PathAuthorityAndProjectRootDetection.ts) | [§/components/ONCE/0.3.21.8/test/tootsie/Test01_PathAuthorityAndProjectRootDetection.ts](../test/tootsie/Test01_PathAuthorityAndProjectRootDetection.ts)
 
 ---
 
@@ -155,7 +163,7 @@
 - [ ] No inline interfaces in class files
 - [ ] No multiple exports per file
 
-**Example:** [GitHub](https://github.com/2cuGitHub/UpDown/blob/main/components/Tootsie/0.3.20.6/src/ts/layer3/TestRunnerScenario.interface.ts) | [§/components/Tootsie/0.3.20.6/src/ts/layer3/TestRunnerScenario.interface.ts](../../../../Tootsie/0.3.20.6/src/ts/layer3/TestRunnerScenario.interface.ts)
+**Example:** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/Tootsie/0.3.20.6/src/ts/layer3/TestRunnerScenario.interface.ts) | [§/components/Tootsie/0.3.20.6/src/ts/layer3/TestRunnerScenario.interface.ts](../../../../Tootsie/0.3.20.6/src/ts/layer3/TestRunnerScenario.interface.ts)
 
 ---
 
