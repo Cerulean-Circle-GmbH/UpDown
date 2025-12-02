@@ -13,7 +13,7 @@ import { DefaultColors } from '../layer4/DefaultColors.js';
 import { SemanticVersion } from './SemanticVersion.js';
 import { MethodSignature } from '../layer3/MethodSignature.interface.js';
 import * as fs from 'fs/promises';
-import { existsSync, readdirSync, statSync, lstatSync, readlinkSync, realpathSync, mkdirSync } from 'fs';
+import { existsSync, readdirSync, statSync, lstatSync, readlinkSync, realpathSync, mkdirSync, readFileSync } from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 import { randomUUID } from 'crypto';
@@ -2321,22 +2321,23 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
   }
   
   /**
-   * Execute a test file dynamically
+   * Execute a test file by importing and instantiating it as an object
+   * ✅ RADICAL OOP: Test is an OBJECT, not a script!
+   * Uses TSX for TypeScript execution (interim solution until tests are compiled)
    * @cliHide
    */
   private async executeTestFile(testFilePath: string, scope: string, references: string[]): Promise<void> {
     console.log(`   Loading test class from: ${testFilePath}`);
     
-    // Convert .ts to .js for import (assume tests are in source, not dist)
-    // For now, use tsx to run TypeScript directly
+    // ✅ INTERIM: Use tsx to execute TypeScript
+    // TODO: Pre-compile tests to pure ESM for direct import()
     const { execSync } = await import('child_process');
     
     try {
-      // Run test with tsx (TypeScript execution)
       const command = `npx tsx ${testFilePath}`;
-      console.log(`   Executing: ${command}\n`);
+      console.log(`   Executing (via tsx): ${command}\n`);
       
-      const output = execSync(command, {
+      execSync(command, {
         cwd: this.model.projectRoot || process.cwd(),
         encoding: 'utf-8',
         stdio: 'inherit'
@@ -2344,9 +2345,8 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
       
       console.log(`\n   ✅ Test PASSED`);
     } catch (error: any) {
-      // Test failure
       console.log(`\n   ❌ Test FAILED (exit code: ${error.status})`);
-      throw error; // Re-throw to indicate failure
+      throw error;
     }
   }
   
