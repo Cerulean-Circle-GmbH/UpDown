@@ -2303,14 +2303,24 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
     console.log(`   Project Root: ${this.model.projectRoot}\n`);
     
     // Discover test file based on scope and references
-    const testFile = await this.discoverTestFile(scope, references);
+    // Returns null in two cases:
+    // 1. Listed available files (user needs to provide reference) - NO ERROR
+    // 2. Could not find matching file - SHOW ERROR
+    const discoveryResult = await this.discoverTestFile(scope, references);
     
-    if (!testFile) {
-      console.log(`❌ No test file found for: ${scope} ${references.join(' ')}\n`);
+    if (!discoveryResult) {
+      // Only show error if we didn't list files (i.e., references were provided but not found)
+      if (references.length > 0 || scope !== 'file') {
+        console.log(`❌ No test file found for: ${scope} ${references.join(' ')}\n`);
+      }
+      // If we listed files (references.length === 0 && scope === 'file'), 
+      // discoverTestFile already printed the list - just return silently
       return;
     }
     
+    const testFile = discoveryResult;
     console.log(`📄 Test File: ${testFile}\n`);
+
     
     // Load Tootsie component dynamically
     console.log(`📦 Loading Tootsie component...`);
