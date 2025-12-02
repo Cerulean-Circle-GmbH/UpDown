@@ -56,6 +56,33 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
   }
 
   // ═══════════════════════════════════════════════════════════════
+  // VERSION-AGNOSTIC HELPERS (Regression Test Support)
+  // ═══════════════════════════════════════════════════════════════
+
+  /**
+   * Get ONCE version dynamically from test file location
+   * ✅ VERSION-AGNOSTIC: Works in ANY version (0.3.21.8, 0.3.21.9, etc.)
+   * Tests copied forward with 'upgrade nextBuild' continue to work
+   */
+  protected getONCEVersion(): string {
+    // From: /components/ONCE/X.Y.Z.W/test/lifecycle-management/TestXX.ts
+    const testFile = fileURLToPath(import.meta.url);
+    const testDir = path.dirname(testFile);           // test/lifecycle-management
+    const testRoot = path.dirname(testDir);           // test
+    const versionDir = path.dirname(testRoot);        // X.Y.Z.W
+    const version = path.basename(versionDir);        // "0.3.21.8" or "0.3.21.9"
+    return version;
+  }
+
+  /**
+   * Get component root dynamically (version-agnostic)
+   */
+  protected getComponentRoot(): string {
+    const version = this.getONCEVersion();
+    return path.join(this.projectRoot, 'components', 'ONCE', version);
+  }
+
+  // ═══════════════════════════════════════════════════════════════
   // SCENARIO OBSERVATION HELPERS (Black-Box Pattern)
   // ═══════════════════════════════════════════════════════════════
 
@@ -167,14 +194,18 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
 
   /**
    * Start ONCE server via CLI (black-box control)
+   * ✅ VERSION-AGNOSTIC: Uses dynamic version detection
    * Returns PID for cleanup
    */
   protected async startONCEServer(
     componentName: string = 'ONCE',
-    version: string = '0.3.21.8'
+    version?: string  // ✅ Optional - defaults to current test version
   ): Promise<number> {
+    // ✅ Dynamic version if not provided
+    const actualVersion = version || this.getONCEVersion();
+    
     try {
-      const oncePath = path.join(this.projectRoot, 'components', componentName, version);
+      const oncePath = path.join(this.projectRoot, 'components', componentName, actualVersion);
       const onceExec = path.join(oncePath, 'once.sh');
 
       // Start server in background
@@ -190,7 +221,7 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
 
       this.logEvidence('step', 'ONCE server started via CLI', {
         componentName,
-        version,
+        version: actualVersion,
         pid,
         command: cmd
       });
@@ -230,27 +261,50 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
 
   /**
    * Invoke ONCE CLI command (black-box interaction)
+   * ✅ VERSION-AGNOSTIC: Uses 'once' command via PATH or dynamic version
    */
   protected invokeONCECLI(
     command: string,
     componentName: string = 'ONCE',
-    version: string = '0.3.21.8'
+    version?: string  // ✅ Optional - defaults to current test version
   ): string {
+    // ✅ Dynamic version if not provided
+    const actualVersion = version || this.getONCEVersion();
+    
     try {
-      const oncePath = path.join(this.projectRoot, 'components', componentName, version);
-      const cmd = `cd ${oncePath} && ./once.sh ${command}`;
-      
-      const output = execSync(cmd, { 
-        encoding: 'utf8',
-        cwd: oncePath
-      });
+      // ✅ Try using 'once' command first (via PATH)
+      let cmd: string;
+      try {
+        cmd = `once ${command}`;
+        const output = execSync(cmd, { 
+          encoding: 'utf8',
+          cwd: this.projectRoot
+        });
+        
+        this.logEvidence('step', 'ONCE CLI invocation (via PATH)', {
+          command,
+          output: output.substring(0, 500)
+        });
+        
+        return output;
+      } catch {
+        // Fallback to direct execution
+        const oncePath = path.join(this.projectRoot, 'components', componentName, actualVersion);
+        cmd = `cd ${oncePath} && ./once.sh ${command}`;
+        
+        const output = execSync(cmd, { 
+          encoding: 'utf8',
+          cwd: oncePath
+        });
 
-      this.logEvidence('step', 'ONCE CLI invocation', {
-        command,
-        output: output.substring(0, 500) // Limit output size
-      });
+        this.logEvidence('step', 'ONCE CLI invocation (direct)', {
+          command,
+          version: actualVersion,
+          output: output.substring(0, 500)
+        });
 
-      return output;
+        return output;
+      }
     } catch (error) {
       this.logEvidence('error', 'ONCE CLI invocation failed', {
         command,
