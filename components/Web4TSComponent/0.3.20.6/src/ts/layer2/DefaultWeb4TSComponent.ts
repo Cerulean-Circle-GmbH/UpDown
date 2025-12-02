@@ -2192,6 +2192,48 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
   }
 
   /**
+   * Tootsie: Quality consciousness testing with evidence-based assessment
+   * Modern Web4 testing that replaces traditional test runners with living quality objects
+   * 
+   * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
+   * 
+   * @param scope Test scope: 'file' | 'describe' | 'itCase' | 'oracle' | 'assess' | etc.
+   * @param references Test references (file numbers, hierarchical tokens, etc.)
+   * 
+   * @cliSyntax scope references
+   * @cliDefault scope all
+   * @cliValues scope file describe itCase oracle assess compare report hibernate restore
+   * 
+   * @cliExample web4tscomponent tootsie file 1
+   * @cliExample web4tscomponent tootsie describe 1a
+   * @cliExample web4tscomponent tootsie itCase 1a2
+   * @cliExample web4tscomponent tootsie oracle evolve
+   * 
+   * Mimics test() command structure but with Tootsie quality consciousness:
+   * - test file 1 → tootsie file 1 (same pattern, quality oracle assessment)
+   * - test describe 1a → tootsie describe 1a (hierarchical references)
+   * - test itCase 1a2 → tootsie itCase 1a2 (individual test cases)
+   */
+  async tootsie(scope: string = 'all', ...references: string[]): Promise<this> {
+    console.log(`🎯 Tootsie: Quality consciousness testing for ${this.model.component}...`);
+    console.log(`   Scope: ${scope}`);
+    if (references.length > 0) {
+      console.log(`   References: ${references.join(', ')}`);
+    }
+    
+    // TODO: Load Tootsie component dynamically
+    // TODO: Initialize quality oracle
+    // TODO: Execute tests with evidence collection
+    // TODO: Quality oracle judges and learns
+    
+    console.log(`\n⚠️  Tootsie implementation pending...`);
+    console.log(`   For now, use: once test ${scope} ${references.join(' ')}`);
+    console.log(`   Full Tootsie integration coming in Sub-Iteration 10.5\n`);
+    
+    return this;
+  }
+
+  /**
    * Run comprehensive TAB completion test suite
    * Executes all end-to-end shell tests for completion integration
    * Works on current context (this.model reflects target after updateModelPaths())
