@@ -2342,17 +2342,11 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
         stdio: 'inherit'
       });
       
-      console.log(`\n   Test output complete`);
+      console.log(`\n   ✅ Test PASSED`);
     } catch (error: any) {
       // Test failure
-      console.log(`\n   ⚠️  Test execution had errors (exit code: ${error.status})`);
-      
-      // Don't throw - let Quality Oracle assess
-      console.log(`   📊 Quality Oracle will assess the outcome...\n`);
-      
-      // TODO: Collect evidence from execution
-      // TODO: Quality Oracle judges the failure
-      // TODO: Determine if it's a true failure or learning opportunity
+      console.log(`\n   ❌ Test FAILED (exit code: ${error.status})`);
+      throw error; // Re-throw to indicate failure
     }
   }
   

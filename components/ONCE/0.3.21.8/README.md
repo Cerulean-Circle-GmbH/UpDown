@@ -345,29 +345,48 @@ See Phase 8.4 PDCA for lifecycle test restoration plan.
 
 **Tootsie (Total Object-Oriented Testing Suite)** is Web4's revolutionary testing paradigm where **quality itself is an object**. Unlike traditional test runners, Tootsie treats tests as living, hibernatable objects with quality consciousness.
 
-#### **Core Concepts**
+#### **Current Status: Practical Testing with Pass/Fail**
 
-- **Quality Oracle**: An intelligent judge that learns from test outcomes
-- **Evidence-Based**: Complete audit trail of every test execution
-- **Hibernation**: Tests save their state and can resume
-- **IOR-Traceable**: Tests communicate through object references
-- **Test Isolation**: Automatically runs in `test/data/` (never pollutes production)
-
-#### **Running Tootsie Tests**
+The current implementation provides **practical, Vitest-like testing** with automatic test isolation:
 
 ```bash
 # Run test by file number
 once tootsie file 1
 
-# Run test by name
-once tootsie file PathAuthority
-
-# Run specific describe block (future)
-once tootsie describe 1a
-
-# Run specific test case (future)
-once tootsie itCase 1a2
+# Output:
+🔒 Test Isolation Enforced
+📄 Test File: Test01_PathAuthority...ts
+📦 Tootsie loaded
+🧪 Executing test...
+   ✅ Test PASSED
 ```
+
+#### **Test Results**
+
+Tootsie provides simple pass/fail status:
+- ✅ **PASSED** - All test expectations met
+- ❌ **FAILED** - Test threw error or assertion failed
+
+Failed tests can be recalled manually for debugging:
+```bash
+# Re-run failed test
+once tootsie file 1
+
+# Check test isolation environment
+once test shell
+ls test/data/  # Inspect test state
+```
+
+#### **Future: Quality Oracle & Evidence (Deferred)** 🔮
+
+Advanced features planned for future sub-iterations:
+- 🧠 **Quality Oracle** - Intelligent judge that learns from patterns
+- 📊 **Evidence Trail** - Complete audit trail (input → steps → output)
+- 💾 **Hibernation** - Save/restore test state
+- 🔍 **Test Archaeology** - Browse historical evidence
+- 📈 **Learning** - Oracle accumulates wisdom
+
+**For now**: Focus on practical testing with automatic isolation.
 
 #### **Test Isolation (Automatic)** 🔒
 
@@ -394,9 +413,9 @@ Tootsie **automatically enforces** test isolation - you CANNOT pollute productio
 
 **Where Tests Run:**
 - All test operations scoped to `test/data/`
-- Evidence saved to `test/data/.tootsie/evidence/`
-- Test state hibernates in `test/data/.tootsie/state/`
-- Quality Oracle wisdom in `test/data/.tootsie/oracle/`
+- Future evidence will save to `test/data/.tootsie/evidence/`
+- Future state hibernates in `test/data/.tootsie/state/`
+- Future oracle wisdom in `test/data/.tootsie/oracle/`
 
 #### **Test Organization**
 
@@ -408,34 +427,23 @@ test/
 │   ├── Test13_Environment...ts   # Lifecycle test 13
 │   └── ...
 ├── data/                         # Test isolation environment
-│   ├── .tootsie/                # Quality consciousness data
-│   │   ├── evidence/           # Test evidence trails
-│   │   ├── state/              # Hibernated test objects
-│   │   └── oracle/             # Quality Oracle wisdom
-│   ├── components/             # Test-scoped components
-│   └── scenarios/              # Test-scoped scenarios
+│   ├── components/              # Test-scoped components
+│   └── scenarios/               # Test-scoped scenarios
+│   # Future: .tootsie/ for evidence/state/oracle
 └── vitest/                       # Traditional unit tests
     └── *.test.ts
 ```
 
-#### **Evidence & Quality Oracle** (Sub-Iteration 10.6)
-
-Future features:
-- 📊 Complete evidence trail (input → steps → assertions → output)
-- 🧠 Quality Oracle learns from test patterns
-- 💾 Hibernation for long-running test suites
-- 🔍 Test archaeology (browse historical evidence)
-
 #### **Tootsie vs Traditional Testing**
 
-| Feature | Traditional (Vitest) | Tootsie |
-|---------|---------------------|---------|
-| **Philosophy** | Tests are scripts | Tests are objects |
-| **State** | Stateless | Hibernatable |
-| **Evidence** | Console logs | Complete audit trail |
-| **Quality** | Pass/Fail | Oracle learns & judges |
-| **Isolation** | Manual mocking | Automatic test/data scoping |
-| **Traceability** | Stack traces | IOR-based references |
+| Feature | Traditional (Vitest) | Tootsie (Current) | Tootsie (Future) |
+|---------|---------------------|-------------------|------------------|
+| **Philosophy** | Tests are scripts | Tests are objects | Tests are objects |
+| **State** | Stateless | Stateless | Hibernatable 🔮 |
+| **Evidence** | Console logs | Console output | Complete audit trail 🔮 |
+| **Quality** | Pass/Fail | Pass/Fail | Oracle learns 🔮 |
+| **Isolation** | Manual mocking | Automatic test/data scoping | + Evidence scoping 🔮 |
+| **Results** | Text summary | Pass/Fail status | Quality assessment 🔮 |
 
 ---
 
