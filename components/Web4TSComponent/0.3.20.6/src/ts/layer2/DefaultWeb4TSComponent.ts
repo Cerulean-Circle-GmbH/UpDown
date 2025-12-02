@@ -2288,14 +2288,100 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
     console.log(`   Test Isolation: ${this.model.isTestIsolation ? '✅ ENABLED' : '❌ DISABLED'}`);
     console.log(`   Project Root: ${this.model.projectRoot}\n`);
     
+    // Discover test file based on scope and references
+    const testFile = await this.discoverTestFile(scope, references);
+    
+    if (!testFile) {
+      console.log(`❌ No test file found for: ${scope} ${references.join(' ')}\n`);
+      return;
+    }
+    
+    console.log(`📄 Test File: ${testFile}`);
+    
     // TODO: Load Tootsie component dynamically
     // TODO: Initialize quality oracle
     // TODO: Execute tests with evidence collection
     // TODO: Quality oracle judges and learns
     
-    console.log(`⚠️  Tootsie implementation pending...`);
+    console.log(`\n⚠️  Full Tootsie execution pending...`);
     console.log(`   For now, use: once test ${scope} ${references.join(' ')}`);
-    console.log(`   Full Tootsie integration coming in Sub-Iteration 10.5\n`);
+    console.log(`   Full integration coming next\n`);
+  }
+  
+  /**
+   * Discover test file by number, name, or hierarchical token
+   * @cliHide
+   * 
+   * Examples:
+   * - discoverTestFile('file', ['1']) → Test01_*.ts
+   * - discoverTestFile('file', ['Test01']) → Test01_*.ts
+   * - discoverTestFile('describe', ['1a']) → Test01_*.ts (filters to describe 'a')
+   * - discoverTestFile('itCase', ['1a2']) → Test01_*.ts (filters to itCase 2 in describe 'a')
+   */
+  private async discoverTestFile(scope: string, references: string[]): Promise<string | null> {
+    if (references.length === 0) {
+      console.log(`⚠️  No test reference provided`);
+      return null;
+    }
+    
+    const reference = references[0]; // First reference is file identifier
+    const componentRoot = this.model.componentRoot || this.model.targetComponentRoot;
+    
+    if (!componentRoot) {
+      console.log(`❌ Component root not set`);
+      return null;
+    }
+    
+    const testDir = path.join(componentRoot, 'test', 'tootsie');
+    
+    // Check if test directory exists
+    try {
+      await fs.access(testDir);
+    } catch {
+      console.log(`❌ Test directory not found: ${testDir}`);
+      return null;
+    }
+    
+    // Read all test files
+    const files = await fs.readdir(testDir);
+    const testFiles = files.filter((f: string) => f.startsWith('Test') && f.endsWith('.ts'));
+    
+    // Try to match by number (e.g., '1' → 'Test01_*.ts')
+    if (/^\d+$/.test(reference)) {
+      const fileNumber = reference.padStart(2, '0');
+      const pattern = `Test${fileNumber}_`;
+      const match = testFiles.find((f: string) => f.startsWith(pattern));
+      
+      if (match) {
+        return path.join(testDir, match);
+      }
+    }
+    
+    // Try to match by name prefix (e.g., 'Test01' or 'PathAuthority')
+    const match = testFiles.find((f: string) => 
+      f.toLowerCase().includes(reference.toLowerCase())
+    );
+    
+    if (match) {
+      return path.join(testDir, match);
+    }
+    
+    // Try hierarchical token (e.g., '1a' → file 1, describe a)
+    if (/^\d+[a-z]\d*$/.test(reference)) {
+      const fileNumber = reference.match(/^\d+/)?.[0].padStart(2, '0');
+      if (fileNumber) {
+        const pattern = `Test${fileNumber}_`;
+        const hierarchicalMatch = testFiles.find((f: string) => f.startsWith(pattern));
+        
+        if (hierarchicalMatch) {
+          return path.join(testDir, hierarchicalMatch);
+        }
+      }
+    }
+    
+    console.log(`❌ No test file found matching: ${reference}`);
+    console.log(`   Available tests: ${testFiles.join(', ')}`);
+    return null;
   }
 
   /**
