@@ -133,7 +133,7 @@ export class ONCECLI extends DefaultCLI {
 
   /**
    * Override shCompletion to ensure component is initialized for method discovery
-   * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
+   * @pdca 2025-12-02-UTC-1830.pdca.md - Fix: Component needs initialization before listing methods
    */
   async shCompletion(cword: string, ...words: string[]): Promise<void> {
     // CRITICAL: Initialize component before completion (dynamic method discovery)
@@ -143,6 +143,59 @@ export class ONCECLI extends DefaultCLI {
     
     // Call parent implementation
     await super.shCompletion(cword, ...words);
+  }
+
+  /**
+   * Override listMethods to include delegated methods for completion
+   * @pdca 2025-12-02-UTC-1830.pdca.md - ROOT CAUSE FIX
+   * Parent's getValidCompletionValues() calls this.component.listMethods() which only returns
+   * NodeJsOnce methods, NOT delegated Web4TSComponent methods like 'tootsie', 'test', etc.
+   * Solution: Override listMethods() at CLI level to aggregate ALL methods
+   */
+  listMethods(): string[] {
+    const methods = new Set<string>();
+    
+    // Add component's own methods (if component exists)
+    if (this.component && typeof this.component.listMethods === 'function') {
+      this.component.listMethods().forEach((m: string) => methods.add(m));
+    }
+    
+    // Add ALL discovered methods from our methodSignatures Map
+    // This includes both own methods AND delegated methods
+    for (const methodName of this.methodSignatures.keys()) {
+      methods.add(methodName);
+    }
+    
+    return Array.from(methods).sort();
+  }
+
+  /**
+   * Override to include delegated methods in completion
+   * @pdca 2025-12-02-UTC-1830.pdca.md - FIX: Delegated methods weren't showing in completion
+   */
+  protected async getValidCompletionValues(): Promise<string[]> {
+    // Get base completion values (includes CLI, context, and component methods)
+    const values = await super.getValidCompletionValues();
+    
+    // If completing methods, add delegated method names from our discovered signatures
+    if (this.model.completionIsCompletingMethod) {
+      const filterPrefix = this.model.completionCurrentWord || "";
+      
+      // Add delegated methods that aren't already in the list
+      for (const [methodName, signature] of this.methodSignatures) {
+        if ((signature as any).isDelegated && 
+            !values.includes(methodName) &&
+            methodName.startsWith(filterPrefix) &&
+            !methodName.endsWith("ParameterCompletion")) {
+          values.push(methodName);
+        }
+      }
+      
+      // Re-sort after adding delegated methods
+      values.sort();
+    }
+    
+    return values;
   }
 
   /**
