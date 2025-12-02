@@ -1,0 +1,39 @@
+{
+  "uuid": "test:uuid:once-lifecycle-02-descriptor-validation",
+  "name": "Test 02: Component Descriptor Validation",
+  "description": "Validates ONCE component descriptor is well-formed with required fields",
+  "requirementIORs": [
+    "requirement:uuid:once-component-descriptor-001",
+    "requirement:uuid:once-metadata-001"
+  ],
+  "componentIORs": [
+    "component:once:0.3.21.8"
+  ],
+  "testDataScenario": {
+    "componentName": "ONCE",
+    "version": "0.3.21.8"
+  },
+  "executionContextScenario": {
+    "timeout": 10000,
+    "cleanup": false,
+    "tags": ["lifecycle", "descriptor", "metadata", "validation"]
+  },
+  "expectedResultScenario": {
+    "success": true,
+    "validation": {
+      "descriptorExists": true,
+      "hasUUID": true,
+      "hasModel": true,
+      "hasImplementationClassName": true,
+      "implementationClassCorrect": true,
+      "hasComponentName": true,
+      "componentNameCorrect": true,
+      "hasVersion": true,
+      "versionCorrect": true,
+      "hasDescription": true
+    }
+  },
+  "createdAt": "2025-12-02T18:00:00.000Z",
+  "modifiedAt": "2025-12-02T18:00:00.000Z"
+}
+
