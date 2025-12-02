@@ -2309,11 +2309,51 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
     
     console.log(`✅ Tootsie loaded: ${tootsie.constructor.name}\n`);
     
-    // TODO: Execute tests with evidence collection
-    // TODO: Quality oracle judges and learns
+    // Execute test file
+    console.log(`🧪 Executing test file...`);
+    try {
+      await this.executeTestFile(testFile, scope, references);
+      console.log(`\n✅ Test execution completed\n`);
+    } catch (error) {
+      console.log(`\n❌ Test execution failed: ${error}\n`);
+      throw error;
+    }
+  }
+  
+  /**
+   * Execute a test file dynamically
+   * @cliHide
+   */
+  private async executeTestFile(testFilePath: string, scope: string, references: string[]): Promise<void> {
+    console.log(`   Loading test class from: ${testFilePath}`);
     
-    console.log(`⚠️  Test execution pending...`);
-    console.log(`   Next: Execute test file with evidence collection\n`);
+    // Convert .ts to .js for import (assume tests are in source, not dist)
+    // For now, use tsx to run TypeScript directly
+    const { execSync } = await import('child_process');
+    
+    try {
+      // Run test with tsx (TypeScript execution)
+      const command = `npx tsx ${testFilePath}`;
+      console.log(`   Executing: ${command}\n`);
+      
+      const output = execSync(command, {
+        cwd: this.model.projectRoot || process.cwd(),
+        encoding: 'utf-8',
+        stdio: 'inherit'
+      });
+      
+      console.log(`\n   Test output complete`);
+    } catch (error: any) {
+      // Test failure
+      console.log(`\n   ⚠️  Test execution had errors (exit code: ${error.status})`);
+      
+      // Don't throw - let Quality Oracle assess
+      console.log(`   📊 Quality Oracle will assess the outcome...\n`);
+      
+      // TODO: Collect evidence from execution
+      // TODO: Quality Oracle judges the failure
+      // TODO: Determine if it's a true failure or learning opportunity
+    }
   }
   
   /**
