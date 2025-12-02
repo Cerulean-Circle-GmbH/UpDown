@@ -258,6 +258,62 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
   }
 
   // ═══════════════════════════════════════════════════════════════
+  // TEST MANAGEMENT (Radical OOP - Tests manage themselves!)
+  // ═══════════════════════════════════════════════════════════════
+
+  /**
+   * Rename this test to a new number (Radical OOP - test renames itself!)
+   * Updates filename, class name, function names, and UUIDs
+   */
+  renumber(newNumber: number): this {
+    const fs = require('fs');
+    const path = require('path');
+    
+    // Get current file path by inspecting the call stack
+    const currentFile = __filename;
+    const currentDir = path.dirname(currentFile);
+    
+    // Extract current test number from filename
+    const filename = path.basename(currentFile);
+    const match = filename.match(/Test(\d+)_(.+)\.ts$/);
+    
+    if (!match) {
+      throw new Error(`Cannot extract test number from filename: ${filename}`);
+    }
+    
+    const oldNumber = match[1];
+    const testName = match[2];
+    const newFilename = `Test${String(newNumber).padStart(2, '0')}_${testName}.ts`;
+    const newFilePath = path.join(currentDir, newFilename);
+    
+    // Read current file content
+    let content = fs.readFileSync(currentFile, 'utf8');
+    
+    // Update all references in content
+    content = content.replace(new RegExp(`Test ${oldNumber}:`, 'g'), `Test ${newNumber}:`);
+    content = content.replace(new RegExp(`Test${oldNumber}_`, 'g'), `Test${newNumber}_`);
+    content = content.replace(new RegExp(`createTest${oldNumber}Scenario`, 'g'), `createTest${newNumber}Scenario`);
+    content = content.replace(
+      new RegExp(`test:uuid:once-lifecycle-${oldNumber}-`, 'g'), 
+      `test:uuid:once-lifecycle-${newNumber}-`
+    );
+    
+    // Write updated content to new file
+    fs.writeFileSync(newFilePath, content, 'utf8');
+    
+    // Delete old file if different
+    if (currentFile !== newFilePath) {
+      fs.unlinkSync(currentFile);
+    }
+    
+    console.log(`✅ Test renumbered: ${oldNumber} → ${newNumber}`);
+    console.log(`   Old: ${filename}`);
+    console.log(`   New: ${newFilename}`);
+    
+    return this;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
   // HELPER METHODS
   // ═══════════════════════════════════════════════════════════════
 
