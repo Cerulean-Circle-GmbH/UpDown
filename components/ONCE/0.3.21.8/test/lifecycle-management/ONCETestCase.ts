@@ -262,40 +262,64 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
   // ═══════════════════════════════════════════════════════════════
 
   /**
-   * Rename this test to a new number (Radical OOP - test renames itself!)
+   * Rename this test to a new name (Radical OOP - test renames itself!)
    * Updates filename, class name, function names, and UUIDs
+   * 
+   * @param newName New test name (e.g., "ServerStartup" or "PathAuthority")
+   * @param newNumber Optional new number (if not provided, keeps current number)
    */
-  renumber(newNumber: number): this {
+  rename(newName: string, newNumber?: number): this {
     const fs = require('fs');
     const path = require('path');
     
-    // Get current file path by inspecting the call stack
+    // Get current file path
     const currentFile = __filename;
     const currentDir = path.dirname(currentFile);
     
-    // Extract current test number from filename
+    // Extract current test info from filename
     const filename = path.basename(currentFile);
     const match = filename.match(/Test(\d+)_(.+)\.ts$/);
     
     if (!match) {
-      throw new Error(`Cannot extract test number from filename: ${filename}`);
+      throw new Error(`Cannot extract test info from filename: ${filename}`);
     }
     
     const oldNumber = match[1];
-    const testName = match[2];
-    const newFilename = `Test${String(newNumber).padStart(2, '0')}_${testName}.ts`;
+    const oldName = match[2];
+    const finalNumber = newNumber !== undefined ? String(newNumber).padStart(2, '0') : oldNumber;
+    
+    // Generate new filename
+    const newFilename = `Test${finalNumber}_${newName}.ts`;
     const newFilePath = path.join(currentDir, newFilename);
     
     // Read current file content
     let content = fs.readFileSync(currentFile, 'utf8');
     
     // Update all references in content
-    content = content.replace(new RegExp(`Test ${oldNumber}:`, 'g'), `Test ${newNumber}:`);
-    content = content.replace(new RegExp(`Test${oldNumber}_`, 'g'), `Test${newNumber}_`);
-    content = content.replace(new RegExp(`createTest${oldNumber}Scenario`, 'g'), `createTest${newNumber}Scenario`);
+    // 1. Class name
     content = content.replace(
-      new RegExp(`test:uuid:once-lifecycle-${oldNumber}-`, 'g'), 
-      `test:uuid:once-lifecycle-${newNumber}-`
+      new RegExp(`Test${oldNumber}_${oldName}`, 'g'), 
+      `Test${finalNumber}_${newName}`
+    );
+    
+    // 2. Test title in comments
+    content = content.replace(
+      new RegExp(`Test ${oldNumber}:`, 'g'), 
+      `Test ${finalNumber}:`
+    );
+    
+    // 3. Scenario factory function name
+    content = content.replace(
+      new RegExp(`createTest${oldNumber}Scenario`, 'g'), 
+      `createTest${finalNumber}Scenario`
+    );
+    
+    // 4. UUID references
+    const oldUuidPart = oldName.replace(/([A-Z])/g, '-$1').toLowerCase().substring(1);
+    const newUuidPart = newName.replace(/([A-Z])/g, '-$1').toLowerCase().substring(1);
+    content = content.replace(
+      new RegExp(`test:uuid:once-lifecycle-${oldNumber}-${oldUuidPart}`, 'g'), 
+      `test:uuid:once-lifecycle-${finalNumber}-${newUuidPart}`
     );
     
     // Write updated content to new file
@@ -306,11 +330,32 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
       fs.unlinkSync(currentFile);
     }
     
-    console.log(`✅ Test renumbered: ${oldNumber} → ${newNumber}`);
-    console.log(`   Old: ${filename}`);
-    console.log(`   New: ${newFilename}`);
+    console.log(`✅ Test renamed:`);
+    console.log(`   From: Test${oldNumber}_${oldName}`);
+    console.log(`   To:   Test${finalNumber}_${newName}`);
+    console.log(`   File: ${filename} → ${newFilename}`);
     
     return this;
+  }
+
+  /**
+   * Renumber this test to a new number (Radical OOP - test renames itself!)
+   * Updates filename, class name, function names, and UUIDs
+   */
+  renumber(newNumber: number): this {
+    const fs = require('fs');
+    const path = require('path');
+    
+    // Extract current name
+    const filename = path.basename(__filename);
+    const match = filename.match(/Test\d+_(.+)\.ts$/);
+    
+    if (!match) {
+      throw new Error(`Cannot extract test name from filename: ${filename}`);
+    }
+    
+    const currentName = match[1];
+    return this.rename(currentName, newNumber);
   }
 
   // ═══════════════════════════════════════════════════════════════
