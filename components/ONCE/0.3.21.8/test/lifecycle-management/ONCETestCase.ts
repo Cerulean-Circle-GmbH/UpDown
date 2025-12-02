@@ -11,8 +11,8 @@
 
 import { DefaultWeb4TestCase } from '../../../../Web4Test/0.1.0.0/src/ts/layer2/DefaultWeb4TestCase.js';
 import { TestScenario } from '../../../../Web4Test/0.1.0.0/src/ts/layer3/TestScenario.js';
-import { readFileSync, existsSync, watch, writeFileSync, unlinkSync } from 'fs';
-import { join, dirname, basename } from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
@@ -31,7 +31,7 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     super();
     // ✅ Auto-detect project root from import.meta.url (ESM compliant)
     this.projectRoot = this.detectProjectRootFromImportMeta();
-    this.testDataRoot = join(this.projectRoot, 'test/data');
+    this.testDataRoot = path.join(this.projectRoot, 'test/data');
   }
 
   /**
@@ -64,15 +64,15 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
    * This is how we observe WebSocket broadcast side effects!
    */
   protected readScenario(scenarioPath: string): any {
-    const fullPath = join(this.projectRoot, scenarioPath);
+    const fullPath = path.join(this.projectRoot, scenarioPath);
     
-    if (!existsSync(fullPath)) {
+    if (!fs.existsSync(fullPath)) {
       this.logEvidence('step', 'Scenario file not found', { scenarioPath: fullPath });
       return null;
     }
 
     try {
-      const content = readFileSync(fullPath, 'utf8');
+      const content = fs.readFileSync(fullPath, 'utf8');
       const scenario = JSON.parse(content);
       
       this.logEvidence('step', 'Scenario file read', {
@@ -99,18 +99,18 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     scenarioPath: string,
     timeoutMs: number = 5000
   ): Promise<boolean> {
-    const fullPath = join(this.projectRoot, scenarioPath);
+    const fullPath = path.join(this.projectRoot, scenarioPath);
     
     return new Promise((resolve) => {
-      const initialMtime = existsSync(fullPath) 
-        ? readFileSync(fullPath, 'utf8') 
+      const initialMtime = fs.existsSync(fullPath) 
+        ? fs.readFileSync(fullPath, 'utf8') 
         : null;
 
       let changeDetected = false;
-      const watcher = watch(fullPath, (eventType) => {
+      const watcher = fs.watch(fullPath, (eventType) => {
         if (eventType === 'change' && !changeDetected) {
           changeDetected = true;
-          const newContent = readFileSync(fullPath, 'utf8');
+          const newContent = fs.readFileSync(fullPath, 'utf8');
           
           if (newContent !== initialMtime) {
             this.logEvidence('step', 'Scenario file changed (WebSocket effect observed)', {
@@ -174,8 +174,8 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     version: string = '0.3.21.8'
   ): Promise<number> {
     try {
-      const oncePath = join(this.projectRoot, 'components', componentName, version);
-      const onceExec = join(oncePath, 'once.sh');
+      const oncePath = path.join(this.projectRoot, 'components', componentName, version);
+      const onceExec = path.join(oncePath, 'once.sh');
 
       // Start server in background
       const cmd = `cd ${oncePath} && ./once.sh startServer &`;
@@ -237,7 +237,7 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     version: string = '0.3.21.8'
   ): string {
     try {
-      const oncePath = join(this.projectRoot, 'components', componentName, version);
+      const oncePath = path.join(this.projectRoot, 'components', componentName, version);
       const cmd = `cd ${oncePath} && ./once.sh ${command}`;
       
       const output = execSync(cmd, { 
@@ -281,10 +281,10 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
   rename(newName: string, newNumber?: number): this {
     // ✅ ESM way to get current file path
     const currentFilePath = fileURLToPath(import.meta.url);
-    const currentDir = dirname(currentFilePath);
+    const currentDir = path.dirname(currentFilePath);
     
     // Extract current test info from filename
-    const currentFileName = basename(currentFilePath);
+    const currentFileName = path.basename(currentFilePath);
     const match = currentFileName.match(/Test(\d+)_(.+)\.ts$/);
     
     if (!match) {
@@ -297,10 +297,10 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     
     // Generate new filename
     const newFilename = `Test${finalNumber}_${newName}.ts`;
-    const newFilePath = join(currentDir, newFilename);
+    const newFilePath = path.join(currentDir, newFilename);
     
     // Read current file content
-    let content = readFileSync(currentFilePath, 'utf8');
+    let content = fs.readFileSync(currentFilePath, 'utf8');
     
     // Update all references in content
     // 1. Class name
@@ -330,11 +330,11 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     );
     
     // Write updated content to new file
-    writeFileSync(newFilePath, content, 'utf8');
+    fs.writeFileSync(newFilePath, content, 'utf8');
     
     // Delete old file if different
     if (currentFilePath !== newFilePath) {
-      unlinkSync(currentFilePath);
+      fs.unlinkSync(currentFilePath);
     }
     
     console.log(`✅ Test renamed:`);
@@ -351,7 +351,7 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
    */
   renumber(newNumber: number): this {
     // ✅ ESM way to get current filename
-    const currentFileName = basename(fileURLToPath(import.meta.url));
+    const currentFileName = path.basename(fileURLToPath(import.meta.url));
     const match = currentFileName.match(/Test\d+_(.+)\.ts$/);
     
     if (!match) {
@@ -400,12 +400,12 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     const currentFilePath = fileURLToPath(import.meta.url);
     // From: components/ONCE/0.3.21.8/test/lifecycle-management/ONCETestCase.ts
     // Navigate up to project root
-    const testDir = dirname(currentFilePath);         // test/lifecycle-management
-    const testRoot = dirname(testDir);                 // test
-    const versionRoot = dirname(testRoot);             // 0.3.21.8
-    const componentRoot = dirname(versionRoot);        // ONCE
-    const componentsRoot = dirname(componentRoot);     // components
-    const projectRoot = dirname(componentsRoot);       // UpDown (project root)
+    const testDir = path.dirname(currentFilePath);         // test/lifecycle-management
+    const testRoot = path.dirname(testDir);                 // test
+    const versionRoot = path.dirname(testRoot);             // 0.3.21.8
+    const componentRoot = path.dirname(versionRoot);        // ONCE
+    const componentsRoot = path.dirname(componentRoot);     // components
+    const projectRoot = path.dirname(componentsRoot);       // UpDown (project root)
     return projectRoot;
   }
 
