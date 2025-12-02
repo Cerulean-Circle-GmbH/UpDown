@@ -9,8 +9,8 @@
  * - IOR-based component references (Web4 Principle 8)
  */
 
-import { DefaultWeb4TestCase } from '../../../../Web4Test/0.1.0.0/src/ts/layer2/DefaultWeb4TestCase.js';
-import { TestScenario } from '../../../../Web4Test/0.1.0.0/src/ts/layer3/TestScenario.js';
+import { DefaultWeb4TestCase } from '../../../../Web4Test/0.3.20.6/src/ts/layer2/DefaultWeb4TestCase.js';
+import { TestScenario } from '../../../../Web4Test/0.3.20.6/src/ts/layer3/TestScenario.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
