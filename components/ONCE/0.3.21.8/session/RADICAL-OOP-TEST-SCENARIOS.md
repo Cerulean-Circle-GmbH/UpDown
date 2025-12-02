@@ -1,0 +1,226 @@
+# Radical OOP: Test Scenarios as Hibernated Objects
+
+**Issue Identified**: Tests using functional factory pattern (anti-pattern)
+**Solution**: External scenario files (hibernated objects)
+
+---
+
+## ❌ BEFORE: Functional Factory (Anti-Pattern)
+
+```typescript
+// Test file has functional factory
+export function createTest01Scenario(): TestScenario {
+  return {
+    uuid: 'test:uuid:once-lifecycle-01-path-authority',
+    name: 'Test 01: Path Authority...',
+    // ... more config
+  };
+}
+
+// Test uses factory
+const scenario = createTest01Scenario(); // ❌ Functional shit
+```
+
+**Problems**:
+- Scenario is created by a FUNCTION
+- Cannot be versioned independently
+- Cannot be edited without code changes
+- Not a hibernated object
+- Violates Radical OOP
+
+---
+
+## ✅ AFTER: External Hibernated Scenario (Radical OOP)
+
+### Structure
+
+```
+/test/tootsie/
+├── scenarios/                    # ← Hibernated test scenarios
+│   ├── test-01-path-authority.scenario.json
+│   ├── test-02-component-descriptor.scenario.json
+│   └── test-03-environment.scenario.json
+├── Test01_PathAuthority...ts     # Loads scenario from file
+├── Test02_ComponentDescriptor...ts
+└── Test03_Environment...ts
+```
+
+### Scenario File (Hibernated Object)
+
+`test/tootsie/scenarios/test-01-path-authority.scenario.json`:
+```json
+{
+  "uuid": "test:uuid:once-lifecycle-01-path-authority",
+  "name": "Test 01: Path Authority and Project Root Detection",
+  "description": "Validates ONCE correctly detects project root",
+  "requirementIORs": [
+    "requirement:uuid:once-path-authority-001"
+  ],
+  "componentIORs": [
+    "component:once:0.3.21.8"
+  ],
+  "testDataScenario": {
+    "componentName": "ONCE",
+    "version": "0.3.21.8"
+  },
+  "executionContextScenario": {
+    "timeout": 15000,
+    "cleanup": true,
+    "tags": ["lifecycle", "path-authority"]
+  },
+  "expectedResultScenario": {
+    "success": true,
+    "validation": {
+      "scenarioExists": true,
+      "hasProjectRoot": true,
+      "hasComponentRoot": true
+    }
+  }
+}
+```
+
+### Test Code (Loads Hibernated Object)
+
+```typescript
+export class Test01_PathAuthorityAndProjectRootDetection extends ONCETestCase {
+  
+  /**
+   * ✅ RADICAL OOP: Load test scenario from external hibernated file
+   * Scenarios are THINGS (files), not functions!
+   */
+  private async loadTestScenario(): Promise<TestScenario> {
+    const scenarioPath = path.join(
+      this.getComponentRoot(),
+      'test',
+      'tootsie',
+      'scenarios',
+      'test-01-path-authority.scenario.json'
+    );
+    
+    const scenarioData = fs.readFileSync(scenarioPath, 'utf-8');
+    return JSON.parse(scenarioData);  // ✅ Hibernated object awakens!
+  }
+
+  async execute(): Promise<any> {
+    // Load hibernated scenario
+    const scenario = await this.loadTestScenario();
+    
+    // Use scenario for test
+    console.log(`🧪 ${scenario.name}`);
+    // ... test logic
+  }
+}
+```
+
+---
+
+## Benefits of External Scenarios
+
+### 1. **Scenarios are THINGS (Objects), not Functions**
+- Scenario exists as a file on disk
+- Can be versioned independently
+- True hibernation (persists between runs)
+
+### 2. **Editable Without Code Changes**
+```bash
+# Change test configuration
+vi test/tootsie/scenarios/test-01-path-authority.scenario.json
+# No code recompilation needed!
+```
+
+### 3. **Version Control Friendly**
+```bash
+git diff test/tootsie/scenarios/
+# Clear changes to test scenarios
+# Separate from test logic changes
+```
+
+### 4. **Reusable Across Tests**
+```typescript
+// Multiple tests can load the same scenario
+const scenario = await this.loadScenario('test-01-path-authority.scenario.json');
+```
+
+### 5. **True Hibernation Pattern**
+```
+Scenario created → Hibernated to disk → Test awakens it → Test runs → Results hibernated
+```
+
+---
+
+## Migration Path for Remaining Tests
+
+**Status**: Test01 complete ✅  
+**Remaining**: Test02-15 need conversion
+
+### Quick Migration
+
+For each test file (Test02-15):
+
+1. **Extract scenario to JSON**:
+   ```bash
+   # Copy the return value from createTestXXScenario()
+   # Save to: test/tootsie/scenarios/test-XX-name.scenario.json
+   ```
+
+2. **Add loadTestScenario() method**:
+   ```typescript
+   private async loadTestScenario(): Promise<TestScenario> {
+     const scenarioPath = path.join(
+       this.getComponentRoot(),
+       'test',
+       'tootsie',
+       'scenarios',
+       'test-XX-name.scenario.json'
+     );
+     const scenarioData = fs.readFileSync(scenarioPath, 'utf-8');
+     return JSON.parse(scenarioData);
+   }
+   ```
+
+3. **Replace factory call**:
+   ```typescript
+   // BEFORE:
+   const scenario = createTestXXScenario(); // ❌
+
+   // AFTER:
+   const scenario = await this.loadTestScenario(); // ✅
+   ```
+
+4. **Delete functional factory**:
+   ```typescript
+   // DELETE:
+   export function createTestXXScenario(): TestScenario { ... }
+   ```
+
+---
+
+## Web4 Principle: Scenarios are Hibernated Objects
+
+**Principle**: In Radical OOP, configuration is not generated by functions, but loaded from hibernated objects (files).
+
+**Examples**:
+- ✅ Load scenario from JSON file
+- ✅ Load model from scenario file  
+- ✅ Load IOR from file
+- ❌ Factory function that returns config
+- ❌ Builder pattern that constructs config
+- ❌ Any functional configuration generation
+
+**Reasoning**: 
+- Objects exist independently
+- Objects can hibernate (persist to disk)
+- Objects can be versioned
+- Objects are not created by functions
+
+---
+
+## Summary
+
+**Fixed**: Test01 now uses external scenario file ✅  
+**Pattern**: Scenario file (hibernated object) loaded by test  
+**Benefits**: True Radical OOP, version control friendly, editable  
+**Next**: Convert Test02-15 to same pattern
+
+**Command**: `once tootsie file 1` ✅ Still works!
+
