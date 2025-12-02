@@ -62,13 +62,16 @@
 ---
 
 ### **Principle 6: Empty Constructor Makes Factories Obsolete**
-> Empty constructor + init(scenario) pattern.
+> Empty constructor + init(scenario) pattern. init() is responsible for COMPLETE initialization.
 
 - [ ] Constructor has NO parameters
 - [ ] All initialization via `init(scenario)`
 - [ ] No factory methods needed
+- [ ] **init() generates UUID if not provided** (don't patch afterwards!)
 
-**Example:** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/Web4Test/0.3.20.6/src/ts/layer2/DefaultWeb4TestCase.ts) | [§/components/Web4Test/0.3.20.6/src/ts/layer2/DefaultWeb4TestCase.ts](../../../../Web4Test/0.3.20.6/src/ts/layer2/DefaultWeb4TestCase.ts)
+**Example 1:** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/Web4Test/0.3.20.6/src/ts/layer2/DefaultWeb4TestCase.ts) | [§/components/Web4Test/0.3.20.6/src/ts/layer2/DefaultWeb4TestCase.ts](../../../../Web4Test/0.3.20.6/src/ts/layer2/DefaultWeb4TestCase.ts)
+
+**Example 2 (UUID in init):** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/src/ts/layer2/IORMethodRouter.ts) | [§/components/ONCE/0.3.21.8/src/ts/layer2/IORMethodRouter.ts](../src/ts/layer2/IORMethodRouter.ts) (Lines 74-91)
 
 ---
 

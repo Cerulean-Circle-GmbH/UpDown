@@ -182,15 +182,11 @@ export class ServerHierarchyManager {
      */
     private registerRoutes(): void {
         // ✅ Route 0: IOR Method Invocation (HIGHEST PRIORITY)
-        // Initialize IOR router with ONCE kernel
-        console.log(`[DEBUG registerRoutes] iorRouter.model.uuid=${this.iorRouter.model.uuid}, this.component=${this.component?.constructor?.name}`);
+        // Initialize IOR router with ONCE kernel and ID provider
         if (!this.iorRouter.model.uuid) {
-            console.log(`[DEBUG] Calling iorRouter.init() with component=${this.component?.constructor?.name}`);
-            this.iorRouter.init(undefined, this.component);
-        } else {
-            console.log(`[DEBUG] SKIPPED iorRouter.init() - UUID already set!`);
+            // ✅ Web4 Principle 6: init() handles complete initialization including UUID
+            this.iorRouter.init(undefined, this.component, this.idProvider);
         }
-        console.log(`[DEBUG after init] iorRouter.onceKernel=${(this.iorRouter as any).onceKernel?.constructor?.name}`);
         
         const iorRoute = new IORRoute(this.iorRouter);
         iorRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20

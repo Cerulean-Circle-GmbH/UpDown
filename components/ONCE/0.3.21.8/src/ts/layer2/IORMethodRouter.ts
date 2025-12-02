@@ -16,6 +16,8 @@
 
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { Model } from '../layer3/Model.interface.js';
+import { IDProvider } from '../layer3/IDProvider.interface.js';
+import { UUIDProvider } from './UUIDProvider.js';
 
 /**
  * Parsed IOR Method Call
@@ -68,12 +70,26 @@ export class IORMethodRouter {
     /**
      * Initialize router with ONCE kernel reference
      * 
+     * Web4 Principle 6: init() is responsible for complete initialization
+     * - Restores state from scenario if provided
+     * - Generates UUID if not provided (using idProvider)
+     * - Sets kernel reference for component lookup
+     * 
      * @param scenario - Optional scenario to restore state
      * @param kernel - ONCE kernel instance for component lookup
+     * @param idProvider - Optional ID provider (defaults to UUIDProvider)
      */
-    public init(scenario: Scenario<any> | undefined, kernel: any): this {
+    public init(
+        scenario: Scenario<any> | undefined, 
+        kernel: any,
+        idProvider: IDProvider = new UUIDProvider()
+    ): this {
         if (scenario?.model) {
             Object.assign(this.model, scenario.model);
+        }
+        // ✅ Web4 Principle 6: init() generates UUID if not provided
+        if (!this.model.uuid) {
+            this.model.uuid = idProvider.create();
         }
         this.onceKernel = kernel;
         return this;
