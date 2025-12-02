@@ -18,8 +18,24 @@ import * as path from 'path';
 
 export class Test01_PathAuthorityAndProjectRootDetection extends ONCETestCase {
   
+  /**
+   * ✅ RADICAL OOP: Load hibernated scenario from file
+   */
+  private async loadTestScenario(): Promise<TestScenario> {
+    const scenarioPath = path.join(
+      this.getComponentRoot(),
+      'test',
+      'tootsie',
+      'scenarios',
+      'test-01-path-authority.scenario.json'
+    );
+    return JSON.parse(fs.readFileSync(scenarioPath, 'utf-8'));
+  }
+
   protected async executeTestLogic(): Promise<any> {
-    const testData = this.scenario?.testDataScenario;
+    // Load hibernated scenario
+    const scenario = await this.loadTestScenario();
+    const testData = scenario.testDataScenario;
     
     this.recordEvidence('input', 'Path authority test input', {
       componentName: testData?.componentName || 'ONCE',
