@@ -108,44 +108,12 @@ export class Test01_PathAuthorityAndProjectRootDetection extends ONCETestCase {
   }
 }
 
-/**
- * Create test scenario for path authority validation
- */
-export function createTest01Scenario(): TestScenario {
-  return {
-    uuid: 'test:uuid:once-lifecycle-01-path-authority',
-    name: 'Test 01: Path Authority and Project Root Detection (FOUNDATION)',
-    description: 'Validates ONCE correctly detects project root and manages path hierarchy',
-    requirementIORs: [
-      'requirement:uuid:once-path-authority-001',
-      'requirement:uuid:once-test-isolation-001'
-    ],
-    componentIORs: [
-      'component:once:0.3.21.8'
-    ],
-    testDataScenario: {
-      componentName: 'ONCE',
-      version: '0.3.21.8'
-    },
-    executionContextScenario: {
-      timeout: 15000,
-      cleanup: true,
-      tags: ['lifecycle', 'path-authority', 'configuration', 'test-isolation']
-    },
-    expectedResultScenario: {
-      success: true,
-      validation: {
-        scenarioExists: true,
-        hasProjectRoot: true,
-        hasComponentRoot: true,
-        projectRootValid: true,
-        componentRootValid: true,
-        pathsAreAbsolute: true,
-        pathHierarchyCorrect: true
-      }
-    },
-    createdAt: new Date().toISOString(),
-    modifiedAt: new Date().toISOString()
-  };
+// ═══════════════════════════════════════════════════════════════
+// ✅ RADICAL OOP: Self-Executing Test (if run directly)
+// ═══════════════════════════════════════════════════════════════
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const test = new Test01_PathAuthorityAndProjectRootDetection();
+  test.init().then(() => test.execute());
 }
 
