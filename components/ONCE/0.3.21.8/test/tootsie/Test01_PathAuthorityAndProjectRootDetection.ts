@@ -124,13 +124,3 @@ export class Test01_PathAuthorityAndProjectRootDetection extends ONCETestCase {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════
-// ✅ RADICAL OOP: Self-Executing Test (if run directly)
-// ═══════════════════════════════════════════════════════════════
-
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const test = new Test01_PathAuthorityAndProjectRootDetection();
-  test.init();
-  test.execute();
-}
-
