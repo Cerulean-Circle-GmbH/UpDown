@@ -51,6 +51,9 @@
 - [ ] No standalone functions (wrap in classes)
 - [ ] No functional factories
 - [ ] State belongs to objects, not closures
+- [ ] **Wrap libraries like Chai in OOP methods** (e.g., `this.expect()`, `this.assert()`)
+
+**Example (Chai in OOP):** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/test/tootsie/ONCETestCase.ts) | [§/components/ONCE/0.3.21.8/test/tootsie/ONCETestCase.ts](../test/tootsie/ONCETestCase.ts) (Lines 199-237)
 
 ---
 

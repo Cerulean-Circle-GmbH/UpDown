@@ -1,126 +1,148 @@
 /**
- * Test 01: Path Authority and Project Root Detection (FOUNDATION TEST)
+ * Test 01: Path Authority and Project Root Detection
  * 
- * Validates that ONCE correctly detects project root in various contexts.
- * Tests the path authority pattern crucial for test isolation.
+ * ✅ REGRESSION TEST from 0.3.21.5: cli-path-authority.test.ts
  * 
- * Black-Box Approach:
- * - Start server and read bootstrap scenario
- * - Verify projectRoot is correctly detected
- * - Verify componentRoot is relative to projectRoot
- * - Check path consistency across contexts
+ * Verifies that ONCE correctly auto-detects:
+ * - isTestIsolation (true in test/data, false in production)
+ * - projectRoot (UpDown in production, test/data in isolation)
+ * - componentRoot (correct component path in both contexts)
+ * 
+ * Black-Box: Runs `once info` and parses output
  */
 
 import { ONCETestCase } from './ONCETestCase.js';
-import { TestScenario } from '../../../../Web4Test/0.3.20.6/src/ts/layer3/TestScenario.js';
-import * as fs from 'fs';
-import * as path from 'path';
 
 export class Test01_PathAuthorityAndProjectRootDetection extends ONCETestCase {
-  
-  /**
-   * ✅ RADICAL OOP: Load hibernated scenario from file
-   */
-  private async loadTestScenario(): Promise<TestScenario> {
-    const scenarioPath = path.join(
-      this.getComponentRoot(),
-      'test',
-      'tootsie',
-      'scenarios',
-      'test-01-path-authority.scenario.json'
-    );
-    return JSON.parse(fs.readFileSync(scenarioPath, 'utf-8'));
-  }
 
   protected async executeTestLogic(): Promise<any> {
-    // Load hibernated scenario
-    const scenario = await this.loadTestScenario();
-    const testData = scenario.testDataScenario;
+    const componentRoot = this.getComponentRoot();
+    const version = this.getONCEVersion();
+    const testDataDir = this.getTestDataDir();
     
-    this.recordEvidence('input', 'Path authority test input', {
-      componentName: testData?.componentName || 'ONCE',
-      version: testData?.version || '0.3.21.8',
-      currentWorkingDir: process.cwd()
+    this.logEvidence('input', 'Path authority regression test', {
+      componentRoot,
+      version,
+      testDataDir
     });
 
-    // Step 1: Start ONCE server
-    const pid = await this.startONCEServer(
-      testData?.componentName,
-      testData?.version
+    // ═══════════════════════════════════════════════════════════════
+    // TEST 1: Production Context - isTestIsolation should be FALSE
+    // ═══════════════════════════════════════════════════════════════
+    
+    this.logEvidence('step', 'Testing production context');
+    
+    const productionOutput = this.runOnceCLI('info');
+    
+    // Parse PATH DISCOVERY line
+    const productionMatch = productionOutput.match(
+      /\[PATH DISCOVERY\] componentRoot=([^\s]+) projectRoot=([^\s]+) isTestIsolation=(true|false)/
     );
-
-    try {
-      const scenarioPath = `scenarios/ONCE/${testData?.version || '0.3.21.8'}/bootstrap.scenario.json`;
-
-      // Step 2: Read bootstrap scenario
-      const scenario = this.readScenario(scenarioPath);
-      const model = scenario?.model || {};
-
-      this.recordEvidence('step', 'Bootstrap scenario paths extracted', {
-        projectRoot: model.projectRoot,
-        componentRoot: model.componentRoot,
-        scenarioUUID: scenario?.uuid
-      });
-
-      // Step 3: Validate paths exist and are consistent
-      const projectRoot = model.projectRoot || '';
-      const componentRoot = model.componentRoot || '';
-
-      const pathValidation = {
-        projectRootExists: projectRoot.length > 0 && fs.existsSync(projectRoot),
-        componentRootExists: componentRoot.length > 0 && fs.existsSync(componentRoot),
-        componentRootWithinProject: componentRoot.startsWith(projectRoot),
-        projectRootHasComponents: fs.existsSync(path.join(projectRoot, 'components')),
-        projectRootHasScenarios: fs.existsSync(path.join(projectRoot, 'scenarios')),
-        projectRootIsAbsolute: projectRoot.startsWith('/'),
-        componentRootIsAbsolute: componentRoot.startsWith('/')
-      };
-
-      this.recordEvidence('step', 'Path validation checks performed', pathValidation);
-
-      // Step 4: Validate path authority pattern
-      const validation = {
-        scenarioExists: scenario !== null,
-        hasProjectRoot: projectRoot.length > 0,
-        hasComponentRoot: componentRoot.length > 0,
-        projectRootValid: pathValidation.projectRootExists && 
-                         pathValidation.projectRootHasComponents,
-        componentRootValid: pathValidation.componentRootExists && 
-                           pathValidation.componentRootWithinProject,
-        pathsAreAbsolute: pathValidation.projectRootIsAbsolute && 
-                         pathValidation.componentRootIsAbsolute,
-        pathHierarchyCorrect: pathValidation.componentRootWithinProject
-      };
-
-      this.recordEvidence('assertion', 'Path authority validation', {
-        ...validation,
-        projectRoot,
-        componentRoot,
-        pathValidation
-      });
-
-      // Step 5: Verify all validations passed
-      const allValid = Object.values(validation).every(v => v === true);
-
-      if (!allValid) {
-        const failures = Object.entries(validation)
-          .filter(([_, v]) => v !== true)
-          .map(([k, _]) => k);
-        throw new Error(`Path authority validation failed: ${failures.join(', ')}`);
-      }
-
-      return {
-        success: true,
-        pid,
-        validation,
-        projectRoot,
-        componentRoot
-      };
-
-    } finally {
-      // Cleanup: Stop server
-      this.stopONCEServer(pid);
+    
+    if (!productionMatch) {
+      throw new Error('Could not parse PATH DISCOVERY from production once info');
     }
+    
+    const prodComponentRoot = productionMatch[1];
+    const prodProjectRoot = productionMatch[2];
+    const prodIsTestIsolation = productionMatch[3] === 'true';
+    
+    this.logEvidence('output', 'Production context detected', {
+      componentRoot: prodComponentRoot,
+      projectRoot: prodProjectRoot,
+      isTestIsolation: prodIsTestIsolation
+    });
+    
+    // Assertions for production using Chai expect syntax
+    this.assert('Production isTestIsolation is false', () => {
+      this.expect(prodIsTestIsolation).to.be.false;
+    });
+    
+    this.assert('Production projectRoot ends with /UpDown', () => {
+      this.expect(prodProjectRoot).to.match(/\/UpDown$/);
+    });
+    
+    this.assert('Production componentRoot matches expected', () => {
+      this.expect(prodComponentRoot).to.equal(componentRoot);
+    });
+    
+    this.assert('Production paths are absolute', () => {
+      this.expect(prodProjectRoot).to.match(/^\//);
+      this.expect(prodComponentRoot).to.match(/^\//);
+    });
+    
+    const productionValid = {
+      isTestIsolationFalse: true,
+      projectRootIsUpDown: true,
+      componentRootCorrect: true,
+      pathsAreAbsolute: true
+    };
+    
+    // ═══════════════════════════════════════════════════════════════
+    // TEST 2: Test Isolation Context - isTestIsolation should be TRUE
+    // ═══════════════════════════════════════════════════════════════
+    
+    this.logEvidence('step', 'Testing test isolation context');
+    
+    // Ensure test isolation is set up
+    await this.ensureTestIsolation();
+    
+    // Run once info from test/data
+    const testIsolationOutput = this.runOnceCLIInTestIsolation('info');
+    
+    // Parse PATH DISCOVERY line
+    const testMatch = testIsolationOutput.match(
+      /\[PATH DISCOVERY\] componentRoot=([^\s]+) projectRoot=([^\s]+) isTestIsolation=(true|false)/
+    );
+    
+    if (!testMatch) {
+      throw new Error('Could not parse PATH DISCOVERY from test isolation once info');
+    }
+    
+    const testComponentRoot = testMatch[1];
+    const testProjectRoot = testMatch[2];
+    const testIsTestIsolation = testMatch[3] === 'true';
+    
+    this.logEvidence('output', 'Test isolation context detected', {
+      componentRoot: testComponentRoot,
+      projectRoot: testProjectRoot,
+      isTestIsolation: testIsTestIsolation
+    });
+    
+    // Assertions for test isolation using Chai expect syntax
+    this.assert('Test isolation isTestIsolation is true', () => {
+      this.expect(testIsTestIsolation).to.be.true;
+    });
+    
+    this.assert('Test isolation projectRoot is test/data', () => {
+      this.expect(testProjectRoot).to.equal(testDataDir);
+    });
+    
+    this.assert('Test isolation componentRoot is in test/data', () => {
+      this.expect(testComponentRoot).to.include('/test/data/components/');
+    });
+    
+    this.assert('Test isolation paths are absolute', () => {
+      this.expect(testProjectRoot).to.match(/^\//);
+      this.expect(testComponentRoot).to.match(/^\//);
+    });
+    
+    this.assert('Test isolation warning is shown', () => {
+      this.expect(testIsolationOutput).to.include('TEST ISOLATION MODE');
+    });
+    
+    const testIsolationValid = {
+      isTestIsolationTrue: true,
+      projectRootIsTestData: true,
+      componentRootInTestData: true,
+      pathsAreAbsolute: true,
+      testIsolationWarningShown: true
+    };
+    
+    return {
+      success: true,
+      production: { projectRoot: prodProjectRoot, componentRoot: prodComponentRoot, isTestIsolation: prodIsTestIsolation, validation: productionValid },
+      testIsolation: { projectRoot: testProjectRoot, componentRoot: testComponentRoot, isTestIsolation: testIsTestIsolation, validation: testIsolationValid }
+    };
   }
 }
-
