@@ -2,38 +2,40 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
+    // Test environment
     environment: 'node',
-    globals: true,
-    include: ['test/**/*.test.ts'],
-    exclude: [
-      'test/data/**',
-      'test/logs/**', 
-      '**/node_modules/**',
-      // Exclude deprecated white-box tests
-      'test/**/*.deprecated.test.ts',
-      'test/**/*.whitebox.test.ts.deprecated'
-    ],
-    testTimeout: 180000,   // 180s per test (3 minutes) - standardized timeout
-    hookTimeout: 180000,   // 180s for setup/teardown (increased from 30s to handle slow tests)
-    teardownTimeout: 30000, // 30s for cleanup
-    // CRITICAL: Run tests sequentially to prevent race conditions
-    pool: 'forks',
-    poolOptions: {
-      forks: {
-        singleFork: true,
-        isolate: false  // Reduce IPC overhead that causes "onTaskUpdate" timeout
-      }
+    
+    // Test isolation
+    isolate: true,
+    
+    // Timeouts
+    testTimeout: 30000,
+    hookTimeout: 10000,
+    
+    // Reporter
+    reporters: ['verbose'],
+    
+    // Coverage (optional)
+    coverage: {
+      enabled: false,
+      provider: 'c8',
+      reporter: ['text', 'html'],
+      include: ['src/**/*.ts'],
+      exclude: ['src/**/*.test.ts', 'src/**/*.spec.ts']
     },
-    // Run tests in sequence, not parallel
-    fileParallelism: false,
-    maxConcurrency: 1,
-    // Multi-reporter: console + JSON for structured output
-    reporters: ['default', 'json'],
-    outputFile: './test/test-results.json'
+    
+    // Include test files
+    include: [
+      'test/lifecycle-management/**/*.test.ts',
+      'test/lifecycle-management/**/*.spec.ts'
+    ],
+    
+    // Globals
+    globals: true
   },
+  
+  // Resolve configuration
   resolve: {
-    alias: {
-      '@': '/src'
-    }
+    extensions: ['.ts', '.js', '.json']
   }
 });
