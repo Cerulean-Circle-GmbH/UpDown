@@ -4,10 +4,15 @@
  * ✅ Minimal base class for Tootsie-based regression tests
  * ✅ Version-agnostic using path-based version detection
  * ✅ Tests existing functionality - does NOT reimplement
+ * ✅ Radical OOP: Uses Web4Requirement for acceptance criteria (not arrow functions)
+ * 
+ * @pdca 2025-12-02-UTC-2115.web4requirement-integration.pdca.md
  */
 
-import { DefaultWeb4TestCase } from '../../../../Web4Test/0.3.20.6/src/ts/layer2/DefaultWeb4TestCase.js';
-import { TestScenario } from '../../../../Web4Test/0.3.20.6/src/ts/layer3/TestScenario.js';
+import { DefaultWeb4TestCase } from '../../../../Web4Test/0.3.20.6/dist/ts/layer2/DefaultWeb4TestCase.js';
+import { TestScenario } from '../../../../Web4Test/0.3.20.6/dist/ts/layer3/TestScenario.js';
+import { DefaultWeb4Requirement } from '../../../../Web4Requirement/0.3.20.6/dist/ts/layer2/DefaultWeb4Requirement.js';
+import { Web4Requirement } from '../../../../Web4Requirement/0.3.20.6/dist/ts/layer3/Web4Requirement.interface.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as http from 'http';
@@ -196,16 +201,66 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // RADICAL OOP CHAI ASSERTIONS
+  // RADICAL OOP WEB4REQUIREMENT
+  // ═══════════════════════════════════════════════════════════════
+  // 
+  // ✅ Replaces arrow function assertions with Web4Requirement objects
+  // ✅ Acceptance criteria are objects, not functions
+  // 
+  // Usage:
+  //   const req = this.requirement('Path Authority', 'Verify path detection');
+  //   req.addCriterion('AC-01', 'isTestIsolation is false in production');
+  //   req.addCriterion('AC-02', 'projectRoot ends with /UpDown');
+  //   req.validateCriterion('AC-01', isTestIsolation === false);
+  //   req.validateCriterion('AC-02', projectRoot.endsWith('/UpDown'));
+  //   if (!req.allCriteriaPassed()) throw new Error(req.generateReport());
+
+  /**
+   * Create a Web4Requirement for acceptance criteria validation
+   * 
+   * @example
+   * const req = this.requirement('Path Authority', 'Verify path detection');
+   * req.addCriterion('AC-01', 'isTestIsolation is false');
+   * req.validateCriterion('AC-01', isTestIsolation === false, { actual: isTestIsolation });
+   */
+  protected requirement(name: string, description: string): Web4Requirement {
+    const req = new DefaultWeb4Requirement();
+    req.model.name = name;
+    req.model.description = description;
+    req.model.uuid = crypto.randomUUID();
+    this.logEvidence('requirement', `📋 ${name}: ${description}`);
+    return req;
+  }
+
+  /**
+   * Validate a requirement and throw if any criteria failed
+   * Logs the full report as evidence
+   */
+  protected validateRequirement(req: Web4Requirement): void {
+    const report = req.generateReport();
+    this.logEvidence('requirement-report', report);
+    
+    if (!req.allCriteriaPassed()) {
+      const failed = req.getFailedCriteria();
+      throw new Error(`Requirement failed: ${failed.map(c => `${c.id}: ${c.description}`).join(', ')}`);
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // RADICAL OOP CHAI ASSERTIONS (Legacy Support)
   // ═══════════════════════════════════════════════════════════════
   // 
   // Wraps Chai's expect() in Radical OOP pattern with evidence logging.
   // Usage: this.expect(value).to.equal(expected)
   // 
   // The assertion is logged as evidence for Tootsie quality tracking.
+  //
+  // ⚠️ DEPRECATED: Prefer Web4Requirement for new tests
 
   /**
    * Radical OOP expect() - Chai syntax with evidence logging
+   * 
+   * @deprecated Use this.requirement() for Radical OOP acceptance criteria
    * 
    * @example
    * this.expect(isTestIsolation).to.be.false;
@@ -222,6 +277,8 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
 
   /**
    * Radical OOP assertion with automatic evidence logging
+   * 
+   * @deprecated Use this.requirement() for Radical OOP acceptance criteria
    * 
    * @example
    * this.assert('Production isTestIsolation is false', () => {

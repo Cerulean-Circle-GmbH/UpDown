@@ -1,0 +1,40 @@
+{
+  "ior": {
+    "uuid": "28d8c974-3a76-4c50-a4d1-c5a3d36a6956",
+    "component": "Web4Requirement",
+    "version": "0.3.20.6"
+  },
+  "owner": "eyJpb3IiOnsidXVpZCI6IjI4ZDhjOTc0LTNhNzYtNGM1MC1hNGQxLWM1YTNkMzZhNjk1NiIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4wLjAuMCIsInRpbWVzdGFtcCI6IjIwMjUtMTItMDJUMjE6MTk6MzUuMDI4WiJ9LCJvd25lciI6IiIsIm1vZGVsIjp7InVzZXIiOiJkb25nZXMiLCJob3N0bmFtZSI6ImxvY2FsaG9zdCIsInV1aWQiOiIyOGQ4Yzk3NC0zYTc2LTRjNTAtYTRkMS1jNWEzZDM2YTY5NTYiLCJjb21wb25lbnQiOiJXZWI0UmVxdWlyZW1lbnQiLCJ2ZXJzaW9uIjoiMC4zLjIwLjYifX0=",
+  "model": {
+    "uuid": "28d8c974-3a76-4c50-a4d1-c5a3d36a6956",
+    "name": "",
+    "origin": "",
+    "definition": "",
+    "component": "Web4Requirement",
+    "version": {
+      "model": {
+        "uuid": "3039fd53-73fa-48d3-aae9-8c89244b3644",
+        "name": "version",
+        "origin": "system",
+        "definition": "Semantic version",
+        "major": 0,
+        "minor": 3,
+        "patch": 20,
+        "revision": 6,
+        "versionString": "0.3.20.6"
+      }
+    },
+    "componentRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.20.6",
+    "projectRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown",
+    "targetDirectory": "/Users/Shared/Workspaces/2cuGitHub/UpDown",
+    "componentsDirectory": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components",
+    "isTestIsolation": false,
+    "displayName": "Web4TSComponent",
+    "displayVersion": "0.3.20.6",
+    "isDelegation": false,
+    "targetComponentRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.20.6",
+    "componentPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.20.6",
+    "toVersion": "0.3.20.6",
+    "implementationClassName": "DefaultWeb4TSComponent"
+  }
+}

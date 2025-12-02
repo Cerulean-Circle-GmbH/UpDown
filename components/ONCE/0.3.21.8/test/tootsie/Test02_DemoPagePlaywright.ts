@@ -2,11 +2,14 @@
  * Test 02: Demo Page with Playwright
  * 
  * ✅ REGRESSION TEST: Verifies /demo route works in real browser
+ * ✅ RADICAL OOP: Uses Web4Requirement for acceptance criteria
  * 
  * This is the FOUNDATION test - if /demo doesn't load, nothing else matters.
  * Uses Playwright for real browser testing, not just HTTP requests.
  * 
  * Black-Box: Browser navigates to /demo, verifies page loads
+ * 
+ * @pdca 2025-12-02-UTC-2115.web4requirement-integration.pdca.md
  */
 
 import { ONCETestCase } from './ONCETestCase.js';
@@ -29,6 +32,22 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       version,
       demoUrl
     });
+
+    // ═══════════════════════════════════════════════════════════════
+    // REQUIREMENT: Demo Page Loads Correctly
+    // ═══════════════════════════════════════════════════════════════
+    
+    const demoReq = this.requirement(
+      'Demo Page Functionality',
+      'ONCE /demo route loads correctly in browser'
+    );
+    
+    demoReq.addCriterion('DEMO-01', 'Server responds with HTTP 200 OK');
+    demoReq.addCriterion('DEMO-02', 'Page has a title');
+    demoReq.addCriterion('DEMO-03', 'Page title contains ONCE');
+    demoReq.addCriterion('DEMO-04', 'Page has valid HTML structure');
+    demoReq.addCriterion('DEMO-05', 'Page contains demo content');
+    demoReq.addCriterion('DEMO-06', 'No critical JavaScript errors');
 
     // ═══════════════════════════════════════════════════════════════
     // SETUP: Ensure server is running
@@ -82,13 +101,13 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
         timeout: 10000 
       });
       
-      const navigationValid = {
-        responseOK: response?.ok() ?? false,
-        statusCode: response?.status() ?? 0,
-        url: this.page.url()
-      };
+      const responseOK = response?.ok() ?? false;
+      const statusCode = response?.status() ?? 0;
       
-      this.logEvidence('output', 'Navigation result', navigationValid);
+      this.logEvidence('output', 'Navigation result', { responseOK, statusCode });
+      
+      // Validate criterion DEMO-01
+      demoReq.validateCriterion('DEMO-01', responseOK, { statusCode });
 
       // ═══════════════════════════════════════════════════════════════
       // TEST 3: Verify Page Content
@@ -99,18 +118,19 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       const pageTitle = await this.page.title();
       const bodyContent = await this.page.content();
       
-      const contentValid = {
-        hasTitle: pageTitle.length > 0,
-        titleContainsONCE: pageTitle.includes('ONCE'),
-        hasHTML: bodyContent.includes('<!DOCTYPE') || bodyContent.includes('<html'),
-        hasBody: bodyContent.includes('<body'),
-        hasDemoContent: bodyContent.includes('Demo') || bodyContent.includes('demo')
-      };
+      const hasTitle = pageTitle.length > 0;
+      const titleContainsONCE = pageTitle.includes('ONCE');
+      const hasHTML = bodyContent.includes('<!DOCTYPE') || bodyContent.includes('<html');
+      const hasBody = bodyContent.includes('<body');
+      const hasDemoContent = bodyContent.includes('Demo') || bodyContent.includes('demo');
       
-      this.logEvidence('assertion', 'Page content validation', {
-        pageTitle,
-        ...contentValid
-      });
+      this.logEvidence('output', 'Page content', { pageTitle, hasTitle, titleContainsONCE, hasHTML, hasBody, hasDemoContent });
+      
+      // Validate criteria DEMO-02 through DEMO-05
+      demoReq.validateCriterion('DEMO-02', hasTitle, { pageTitle });
+      demoReq.validateCriterion('DEMO-03', titleContainsONCE, { pageTitle });
+      demoReq.validateCriterion('DEMO-04', hasHTML && hasBody, { hasHTML, hasBody });
+      demoReq.validateCriterion('DEMO-05', hasDemoContent, { hasDemoContent });
 
       // ═══════════════════════════════════════════════════════════════
       // TEST 4: Take Screenshot as Evidence
@@ -145,27 +165,22 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       await this.page.reload({ waitUntil: 'domcontentloaded' });
       await this.sleep(1000);  // Wait for any async errors
       
-      const jsValid = {
-        noErrors: consoleErrors.length === 0,
-        errorCount: consoleErrors.length,
-        errors: consoleErrors.slice(0, 5)  // First 5 errors only
-      };
+      const noErrors = consoleErrors.length === 0;
       
-      this.logEvidence('assertion', 'JavaScript validation', jsValid);
+      this.logEvidence('output', 'JavaScript validation', { noErrors, errorCount: consoleErrors.length, errors: consoleErrors.slice(0, 5) });
+      
+      // Validate criterion DEMO-06
+      demoReq.validateCriterion('DEMO-06', noErrors, { consoleErrors: consoleErrors.slice(0, 5) });
 
       // ═══════════════════════════════════════════════════════════════
-      // FINAL: Aggregate Results
+      // FINAL: Validate Requirement
       // ═══════════════════════════════════════════════════════════════
       
-      const allValid = navigationValid.responseOK && 
-                      contentValid.hasTitle && 
-                      contentValid.hasHTML;
+      this.validateRequirement(demoReq);
       
       return {
-        success: allValid,
-        navigation: navigationValid,
-        content: contentValid,
-        javascript: jsValid,
+        success: demoReq.allCriteriaPassed(),
+        requirements: demoReq.getCriteria(),
         screenshot: screenshotPath,
         startedByTest
       };

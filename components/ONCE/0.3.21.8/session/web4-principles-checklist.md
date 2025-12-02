@@ -52,8 +52,11 @@
 - [ ] No functional factories
 - [ ] State belongs to objects, not closures
 - [ ] **Wrap libraries like Chai in OOP methods** (e.g., `this.expect()`, `this.assert()`)
+- [ ] **Use Web4Requirement for acceptance criteria** (not arrow functions!)
 
-**Example (Chai in OOP):** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/test/tootsie/ONCETestCase.ts) | [§/components/ONCE/0.3.21.8/test/tootsie/ONCETestCase.ts](../test/tootsie/ONCETestCase.ts) (Lines 199-237)
+**Example 1 (Chai in OOP):** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/test/tootsie/ONCETestCase.ts) | [§/components/ONCE/0.3.21.8/test/tootsie/ONCETestCase.ts](../test/tootsie/ONCETestCase.ts) (Lines 199-237)
+
+**Example 2 (Web4Requirement):** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/Web4Requirement/0.3.20.6/src/ts/layer2/DefaultWeb4Requirement.ts) | [§/components/Web4Requirement/0.3.20.6/src/ts/layer2/DefaultWeb4Requirement.ts](../../../../Web4Requirement/0.3.20.6/src/ts/layer2/DefaultWeb4Requirement.ts) (Lines 75-145)
 
 ---
 
