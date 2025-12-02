@@ -208,7 +208,7 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     version?: string  // ✅ Optional - defaults to current test version
   ): Promise<number> {
     // ✅ Dynamic version if not provided
-    const actualVersion = version || this.getONCEVersion();
+    const actualVersion = version || this.getONCEVersion().toString();
     
     try {
       const oncePath = path.join(this.projectRoot, 'components', componentName, actualVersion);
@@ -275,7 +275,7 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     version?: string  // ✅ Optional - defaults to current test version
   ): string {
     // ✅ Dynamic version if not provided
-    const actualVersion = version || this.getONCEVersion();
+    const actualVersion = version || this.getONCEVersion().toString();
     
     try {
       // ✅ Try using 'once' command first (via PATH)
