@@ -81,49 +81,19 @@ export class Test12_ComponentDescriptorValidation extends ONCETestCase {
       implementationClassName: model.implementationClassName
     };
   }
-}
 
-/**
- * Create test scenario for component descriptor validation
- */
-export function createTest12Scenario(): TestScenario {
-  return {
-    uuid: 'test:uuid:once-lifecycle-12-descriptor-validation',
-    name: 'Test 12: Component Descriptor Validation',
-    description: 'Validates ONCE component descriptor is well-formed with required fields',
-    requirementIORs: [
-      'requirement:uuid:once-component-descriptor-001',
-      'requirement:uuid:once-metadata-001'
-    ],
-    componentIORs: [
-      'component:once:0.3.21.8'
-    ],
-    testDataScenario: {
-      componentName: 'ONCE',
-      version: '0.3.21.8'
-    },
-    executionContextScenario: {
-      timeout: 10000,
-      cleanup: false,
-      tags: ['lifecycle', 'descriptor', 'metadata', 'validation']
-    },
-    expectedResultScenario: {
-      success: true,
-      validation: {
-        descriptorExists: true,
-        hasUUID: true,
-        hasModel: true,
-        hasImplementationClassName: true,
-        implementationClassCorrect: true,
-        hasComponentName: true,
-        componentNameCorrect: true,
-        hasVersion: true,
-        versionCorrect: true,
-        hasDescription: true
-      }
-    },
-    createdAt: new Date().toISOString(),
-    modifiedAt: new Date().toISOString()
-  };
+  /**
+   * ✅ RADICAL OOP: Load hibernated scenario from file
+   */
+  private async loadTestScenario(): Promise<TestScenario> {
+    const scenarioPath = path.join(
+      this.getComponentRoot(),
+      'test',
+      'tootsie',
+      'scenarios',
+      'test-02-component-descriptor.scenario.json'
+    );
+    return JSON.parse(fs.readFileSync(scenarioPath, 'utf-8'));
+  }
 }
 
