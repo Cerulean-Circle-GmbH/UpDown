@@ -1871,18 +1871,6 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
     return this.delegateToWeb4TS('info', topic);
   }
 
-  /**
-   * Run component tests with hierarchical selection or full suite with auto-promotion
-   * @param scope Test scope: 'all' (full suite with promotion) or 'file'/'describe'/'itCase' (selective, no promotion)
-   * @param references Test references for selective testing
-   * @cliSyntax scope references
-   * @cliDefault scope all
-   * @cliValues file describe itCase
-   */
-  async test(scope: string = 'all', ...references: string[]): Promise<this> {
-    return this.delegateToWeb4TS('test', scope, ...references);
-  }
-
   // ============================================================================
   // MICRO KERNEL METHODS - Route Handler Delegation
   // @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
