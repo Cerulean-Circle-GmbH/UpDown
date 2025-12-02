@@ -2195,6 +2195,9 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
    * Tootsie: Quality consciousness testing with evidence-based assessment
    * Modern Web4 testing that replaces traditional test runners with living quality objects
    * 
+   * 🔒 SECURITY: ALWAYS runs in test isolation (test/data as projectRoot)
+   * Tests CANNOT pollute production project root - enforced by Path Authority
+   * 
    * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
    * 
    * @param scope Test scope: 'file' | 'describe' | 'itCase' | 'oracle' | 'assess' | etc.
@@ -2215,22 +2218,84 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
    * - test itCase 1a2 → tootsie itCase 1a2 (individual test cases)
    */
   async tootsie(scope: string = 'all', ...references: string[]): Promise<this> {
+    // ═══════════════════════════════════════════════════════════════
+    // 🔒 SECURITY: Enforce Test Isolation (Path Authority)
+    // ═══════════════════════════════════════════════════════════════
+    
+    const componentRoot = this.model.componentRoot || this.model.targetComponentRoot;
+    
+    if (!componentRoot) {
+      throw new Error('Component root not set - cannot determine test isolation path');
+    }
+    
+    // Calculate test isolation path
+    const testDataRoot = path.join(componentRoot, 'test', 'data');
+    
+    // Check if we're ALREADY in test isolation
+    const alreadyInTestIsolation = this.model.projectRoot?.includes('/test/data') || false;
+    
+    if (alreadyInTestIsolation) {
+      console.log(`🔒 [TOOTSIE TEST ISOLATION] Already in test/data environment`);
+      console.log(`   Project Root: ${this.model.projectRoot}`);
+    } else {
+      console.log(`🔒 [TOOTSIE TEST ISOLATION] Enforcing test/data isolation`);
+      console.log(`   Production Root: ${this.model.projectRoot}`);
+      console.log(`   Test Data Root: ${testDataRoot}`);
+      console.log(`   ⚠️  Tests will ONLY run in isolated environment`);
+      console.log(`   ⚠️  Production files CANNOT be affected\n`);
+      
+      // 🚨 CRITICAL: Tootsie MUST run in test isolation
+      // Switch context to test/data before executing
+      const originalProjectRoot = this.model.projectRoot;
+      const originalIsTestIsolation = this.model.isTestIsolation;
+      
+      try {
+        // Temporarily switch to test isolation context
+        this.model.projectRoot = testDataRoot;
+        this.model.isTestIsolation = true;
+        this.model.testIsolationContext = `${this.model.component} v${this.model.version?.toString()}`;
+        
+        console.log(`   Switched to Test Isolation Mode ✅`);
+        console.log(`   All operations scoped to: ${testDataRoot}\n`);
+        
+        // Execute in test isolation context
+        await this.executeTootsieInIsolation(scope, references);
+        
+      } finally {
+        // Restore original context
+        this.model.projectRoot = originalProjectRoot;
+        this.model.isTestIsolation = originalIsTestIsolation;
+      }
+      
+      return this;
+    }
+    
+    // Already in test isolation - execute directly
+    await this.executeTootsieInIsolation(scope, references);
+    return this;
+  }
+  
+  /**
+   * Execute Tootsie tests in test isolation context
+   * @cliHide
+   */
+  private async executeTootsieInIsolation(scope: string, references: string[]): Promise<void> {
     console.log(`🎯 Tootsie: Quality consciousness testing for ${this.model.component}...`);
     console.log(`   Scope: ${scope}`);
     if (references.length > 0) {
       console.log(`   References: ${references.join(', ')}`);
     }
+    console.log(`   Test Isolation: ${this.model.isTestIsolation ? '✅ ENABLED' : '❌ DISABLED'}`);
+    console.log(`   Project Root: ${this.model.projectRoot}\n`);
     
     // TODO: Load Tootsie component dynamically
     // TODO: Initialize quality oracle
     // TODO: Execute tests with evidence collection
     // TODO: Quality oracle judges and learns
     
-    console.log(`\n⚠️  Tootsie implementation pending...`);
+    console.log(`⚠️  Tootsie implementation pending...`);
     console.log(`   For now, use: once test ${scope} ${references.join(' ')}`);
     console.log(`   Full Tootsie integration coming in Sub-Iteration 10.5\n`);
-    
-    return this;
   }
 
   /**
