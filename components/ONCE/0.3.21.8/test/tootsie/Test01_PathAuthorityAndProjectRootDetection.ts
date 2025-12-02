@@ -130,16 +130,7 @@ export class Test01_PathAuthorityAndProjectRootDetection extends ONCETestCase {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const test = new Test01_PathAuthorityAndProjectRootDetection();
-  // Load scenario first, then init with it
-  const scenarioPath = path.join(
-    path.dirname(path.dirname(path.dirname(new URL(import.meta.url).pathname))),
-    'test',
-    'tootsie',
-    'scenarios',
-    'test-01-path-authority.scenario.json'
-  );
-  const scenario = JSON.parse(fs.readFileSync(scenarioPath, 'utf-8'));
-  test.init(scenario);
+  test.init();
   test.execute();
 }
 
