@@ -3,25 +3,26 @@
 /**
  * ONCECLI - ONCE CLI implementation with chaining support
  * Web4 pattern: Dependency-free CLI with component creation and chaining
+ * 
+ * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
+ * Upgraded to use DelegationProxy for automatic method delegation (modern Web4 pattern)
  */
 
 import { DefaultCLI } from '../layer2/DefaultCLI.js';
 import { NodeJsOnce } from '../layer2/NodeJsOnce.js';
+import { DelegationProxy } from '../layer2/DelegationProxy.js';
 import { MethodSignature } from '../layer3/MethodSignature.interface.js';
 
 export class ONCECLI extends DefaultCLI {
-  // @pdca 2025-11-03-1105-component-template-bugs.pdca.md - Use declare to override component type
-  // @pdca 2025-11-10-UTC-1830.migrate-once-to-0.3.20.0.pdca.md - Cast to any to avoid Scenario type conflicts
-  protected declare component: any;
+  // Component is initialized asynchronously in initComponent()
+  // Type is handled by base DefaultCLI
+  // @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
   protected methodSignatures: Map<string, MethodSignature> = new Map();
 
   /**
    * Empty constructor (Web4 radical OOP pattern)
    * @pdca 2025-10-30-UTC-1011.pdca.md - Path Authority architecture
-   * @pdca 2025-10-31-UTC-1230.test-isolation-violation-fix.pdca.md - Pass targetDirectory
-   * @pdca 2025-10-31-UTC-1208.cli-model-duplication-cleanup.pdca.md - Remove useless tempComponent
-   * @pdca 2025-11-03-1105-component-template-bugs.pdca.md - Create component immediately for discovery
-   * @pdca 2025-11-10-UTC-1830.migrate-once-to-0.3.20.0.pdca.md - init() is now async
+   * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md - Wrap in DelegationProxy
    */
   constructor() {
     super(); // Call empty parent constructor
@@ -29,27 +30,65 @@ export class ONCECLI extends DefaultCLI {
     // Initialize CLI (Path Authority - calculates projectRoot, sets paths)
     this.init();
     
-    // Create component - it discovers its own componentRoot and version in constructor
-    // @pdca 2025-11-21-UTC-1630.test-isolation-path-violation.pdca.md - Follow Web4TSComponent pattern
-    this.component = new NodeJsOnce();
+    // Component will be initialized asynchronously in initComponent()
+    // (because init() now needs to await Web4TSComponent method discovery)
+  }
+  
+  /**
+   * Initialize component asynchronously (Radical OOP)
+   * Called by start() before executing commands
+   * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
+   * ✅ RADICAL OOP: Separate discovery of own methods vs delegated methods
+   */
+  async initComponent(): Promise<void> {
+    // ✅ STEP 1: Create component (knows its OWN methods)
+    const component = new NodeJsOnce();
     
-    // ✅ Path Authority: CLI overrides projectRoot and other CLI-specific paths
-    // Component already set: componentRoot, version (from its own constructor via discoverPathsFromFilesystem())
-    // CLI provides: projectRoot, targetDirectory, isTestIsolation
-    this.component.model.projectRoot = this.model.projectRoot;
-    this.component.model.targetDirectory = this.model.projectRoot;
-    this.component.model.isTestIsolation = this.model.projectRoot?.includes('/test/data') || false;
+    // ✅ STEP 2: Set Path Authority (CLI provides these paths)
+    (component as any).model.projectRoot = this.model.projectRoot;
+    (component as any).model.targetDirectory = this.model.projectRoot;
+    (component as any).model.isTestIsolation = this.model.projectRoot?.includes('/test/data') || false;
     
-    // Discover methods from CLI (walks CLI prototype chain)
+    // ✅ STEP 3: Pre-load Web4TSComponent (for delegation to work at call-time)
+    await (component as any).getWeb4TSComponent();
+    
+    // ✅ STEP 4: Wrap with DelegationProxy (transparent delegation)
+    // @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
+    // Proxy intercepts missing methods and delegates them to Web4TSComponent
+    // CRITICAL: await start() to ensure Web4TSComponent is loaded before getDelegationTarget()
+    this.component = await DelegationProxy.start(component as any) as any;
+    
+    // ✅ STEP 5: Discover CLI's own methods
     this.discoverMethods();
     
-    // Copy component methods to methodSignatures for test/completion discovery
-    // @pdca 2025-11-05-UTC-2301.dry-shell-libraries.pdca.md - Populate methodSignatures from component
-    const componentMethods = this.component.listMethods();
-    for (const methodName of componentMethods) {
-      const signature = this.component.getMethodSignature(methodName);
-      if (signature) {
-        this.methodSignatures.set(methodName, signature);
+    // ✅ STEP 6: Discover component's OWN methods
+    // @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
+    // RADICAL OOP: Component knows ONLY its own methods
+    if (this.component) {
+      const ownMethods = this.component.listMethods();
+      for (const methodName of ownMethods) {
+        const signature = this.component.getMethodSignature(methodName);
+        if (signature) {
+          this.methodSignatures.set(methodName, signature);
+        }
+      }
+    }
+    
+    // ✅ STEP 7: Discover DELEGATED methods (if delegation exists)
+    // @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
+    // RADICAL OOP: Query delegation target separately via metadata
+    if (this.component && (this.component as any).hasDelegation && (this.component as any).hasDelegation()) {
+      const delegationTarget = (this.component as any).getDelegationTarget();
+      if (delegationTarget) {
+        const delegatedMethods = delegationTarget.listMethods();
+        for (const methodName of delegatedMethods) {
+          const signature = delegationTarget.getMethodSignature(methodName);
+          if (signature) {
+            // Mark as delegated for help display
+            signature.isDelegated = true;
+            this.methodSignatures.set(methodName, signature);
+          }
+        }
       }
     }
   }
@@ -57,18 +96,17 @@ export class ONCECLI extends DefaultCLI {
   /**
    * Override init() to support test scenarios
    * @pdca 2025-11-21-UTC-1630.test-isolation-path-violation.pdca.md
+   * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
    */
   init(scenario?: any): this {
     // Call parent init
     super.init(scenario);
     
-    // ✅ Path Authority: Update component with CLI-specific paths
+    // ✅ Path Authority: Update component with CLI-specific paths (if already initialized)
     if (this.component) {
-      // Component already has componentRoot and version from its own init()
-      // CLI only overrides projectRoot and isTestIsolation
-      this.component.model.projectRoot = this.model.projectRoot;
-      this.component.model.targetDirectory = this.model.projectRoot;
-      this.component.model.isTestIsolation = scenario?.model?.isTestIsolation || 
+      (this.component as any).model.projectRoot = this.model.projectRoot;
+      (this.component as any).model.targetDirectory = this.model.projectRoot;
+      (this.component as any).model.isTestIsolation = scenario?.model?.isTestIsolation || 
                                              this.model.projectRoot?.includes('/test/data') || 
                                              false;
     }
@@ -78,9 +116,11 @@ export class ONCECLI extends DefaultCLI {
 
   /**
    * Static start method - Web4 radical OOP entry point
+   * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
    */
   static async start(args: string[]): Promise<void> {
     const cli = new ONCECLI();
+    await cli.initComponent(); // Initialize component asynchronously
     await cli.execute(args);
   }
 
@@ -89,6 +129,20 @@ export class ONCECLI extends DefaultCLI {
    */
   showUsage(): void {
     console.log(this.generateStructuredUsage());
+  }
+
+  /**
+   * Override shCompletion to ensure component is initialized for method discovery
+   * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
+   */
+  async shCompletion(cword: string, ...words: string[]): Promise<void> {
+    // CRITICAL: Initialize component before completion (dynamic method discovery)
+    if (!this.component) {
+      await this.initComponent();
+    }
+    
+    // Call parent implementation
+    await super.shCompletion(cword, ...words);
   }
 
   /**
