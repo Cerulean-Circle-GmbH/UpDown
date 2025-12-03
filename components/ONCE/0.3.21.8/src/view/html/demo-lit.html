@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONCE Demo Hub - Web4 MVC</title>
+    <!-- Web4 Principle 19: External CSS -->
+    <link rel="stylesheet" href="../../dist/ts/layer5/views/css/themeBase.css">
+</head>
+<body>
+    <!-- 
+        Web4 MVC Architecture:
+        - OnceOverView is a Lit component that replaces demo-hub.html
+        - CSS is loaded from external files via AbstractWebBean
+        - Model updates via UcpController/ModelProxy (future: WebSocket scenarios)
+    -->
+    <once-over-view id="mainView"></once-over-view>
+    
+    <script type="module">
+        // Import ONCE kernel
+        import { ONCE } from '../../dist/ts/layer1/ONCE.js';
+        
+        // Import Lit components (they self-register via @customElement)
+        import '../../dist/ts/layer5/views/OnceOverView.js';
+        import '../../dist/ts/layer5/views/ItemView.js';
+        
+        // Get peer host from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const peerHost = urlParams.get('peer') || window.location.host;
+        
+        // Boot kernel
+        const kernel = await ONCE.start({ peerHost });
+        
+        console.log('✅ ONCE Kernel booted:', kernel.model?.version);
+        
+        // Get the OnceOverView component
+        const mainView = document.getElementById('mainView');
+        
+        // Set model and kernel reference
+        mainView.model = kernel.model;
+        mainView.kernel = kernel;
+        
+        // Future: WebSocket scenario updates will auto-update via ModelProxy
+        // For now, manual polling
+        setInterval(function() {
+            mainView.model = kernel.model;
+            mainView.update();
+        }, 1000);
+        
+        console.log('✅ ONCE Demo Hub (Lit) initialized');
+    </script>
+</body>
+</html>
+
