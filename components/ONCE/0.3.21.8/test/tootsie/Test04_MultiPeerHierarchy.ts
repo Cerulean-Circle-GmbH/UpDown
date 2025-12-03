@@ -27,103 +27,168 @@ export class Test04_MultiPeerHierarchy extends ONCETestCase {
     return 'Multi-peer hierarchy with 3+ peers and cascade shutdown';
   }
   
-  async execute(): Promise<void> {
+  protected async executeTestLogic(): Promise<any> {
     const PRIMARY_PORT = 42777;
     const CLIENT_PORT_1 = 8080;
     const CLIENT_PORT_2 = 8081;
     
-    // Step 1: Start primary server
-    console.log('[STEP] Starting primary server on 42777');
+    // Create Web4Requirement for acceptance criteria
+    const peerReq = this.requirement(
+      'Multi-Peer Hierarchy',
+      'Test ONCE multi-peer hierarchy with primary + 2 client servers'
+    );
+    
+    // Define acceptance criteria
+    peerReq.addCriterion('MPEER-01', 'Primary server starts and responds to /health');
+    peerReq.addCriterion('MPEER-02', 'Client server 1 starts and registers with primary');
+    peerReq.addCriterion('MPEER-03', 'Client server 2 starts and registers with primary');
+    peerReq.addCriterion('MPEER-04', '/servers returns at least 2 client servers');
+    peerReq.addCriterion('MPEER-05', 'Client server 1 /health returns correct version');
+    peerReq.addCriterion('MPEER-06', 'Client server 2 /health returns correct version');
+    peerReq.addCriterion('MPEER-07', 'peerStopAll cascade stops all servers');
+    
+    // ═══════════════════════════════════════════════════════════════
+    // TEST 1: Start Primary Server
+    // ═══════════════════════════════════════════════════════════════
+    
+    this.logEvidence('step', 'Starting primary server on 42777');
     this.serverStart();
     await this.waitForServer(PRIMARY_PORT, 15000);
     
-    // Step 2: Verify primary is running
-    console.log('[STEP] Verifying primary server health');
     const primaryResponse = await this.httpGet(`http://localhost:${PRIMARY_PORT}/health`);
     const primaryHealth = JSON.parse(primaryResponse.body);
-    this.assert('Primary server version matches', () => {
-      this.expect(primaryHealth.ior?.version).to.equal('0.3.21.8');
+    const primaryVersionCorrect = primaryHealth.ior?.version === '0.3.21.8';
+    
+    peerReq.validateCriterion('MPEER-01', primaryVersionCorrect, {
+      version: primaryHealth.ior?.version,
+      uuid: primaryHealth.ior?.uuid
     });
     
-    // Step 3: Start client server 1
-    console.log('[STEP] Starting client server 1 on 8080');
+    // ═══════════════════════════════════════════════════════════════
+    // TEST 2: Start Client Server 1
+    // ═══════════════════════════════════════════════════════════════
+    
+    this.logEvidence('step', 'Starting client server 1 on 8080');
     await this.startClientServer();
     await this.waitForServer(CLIENT_PORT_1, 15000);
     await this.sleep(2000); // Allow registration to complete
     
-    // Step 4: Verify first client is registered
-    console.log('[STEP] Checking first client server registered');
     let serversResponse = await this.httpGet(`http://localhost:${PRIMARY_PORT}/servers`);
     let serversData = JSON.parse(serversResponse.body);
-    console.log(`Servers after client 1: ${serversData.model?.servers?.length || 0} registered`);
+    const client1Registered = (serversData.model?.servers?.length || 0) >= 1;
     
-    // Step 5: Start client server 2
-    console.log('[STEP] Starting client server 2 on 8081');
+    peerReq.validateCriterion('MPEER-02', client1Registered, {
+      serversCount: serversData.model?.servers?.length || 0
+    });
+    
+    // ═══════════════════════════════════════════════════════════════
+    // TEST 3: Start Client Server 2
+    // ═══════════════════════════════════════════════════════════════
+    
+    this.logEvidence('step', 'Starting client server 2 on 8081');
     await this.startClientServer();
     await this.waitForServer(CLIENT_PORT_2, 15000);
     await this.sleep(2000); // Allow registration to complete
     
-    // Step 6: Verify /servers shows all peers
-    console.log('[STEP] Checking /servers returns all registered peers');
     serversResponse = await this.httpGet(`http://localhost:${PRIMARY_PORT}/servers`);
     serversData = JSON.parse(serversResponse.body);
-    console.log(`Servers response: ${JSON.stringify(serversData, null, 2)}`);
+    const client2Registered = (serversData.model?.servers?.length || 0) >= 2;
     
-    const servers = serversData.model?.servers || [];
-    this.assert('At least 1 client server registered', () => {
-      this.expect(servers.length).to.be.at.least(1);
+    peerReq.validateCriterion('MPEER-03', client2Registered, {
+      serversCount: serversData.model?.servers?.length || 0
     });
     
-    // Step 7: Verify each client server is healthy
-    console.log('[STEP] Verifying client server 1 health');
+    // ═══════════════════════════════════════════════════════════════
+    // TEST 4: Verify /servers Returns All Peers
+    // ═══════════════════════════════════════════════════════════════
+    
+    this.logEvidence('step', 'Checking /servers returns all registered peers');
+    const servers = serversData.model?.servers || [];
+    const hasMinimumPeers = servers.length >= 2;
+    
+    peerReq.validateCriterion('MPEER-04', hasMinimumPeers, {
+      expectedMinimum: 2,
+      actual: servers.length,
+      serverUUIDs: servers.map((s: any) => s.ior?.uuid)
+    });
+    
+    // ═══════════════════════════════════════════════════════════════
+    // TEST 5: Verify Client Server 1 Health
+    // ═══════════════════════════════════════════════════════════════
+    
+    this.logEvidence('step', 'Verifying client server 1 health');
     const client1Response = await this.httpGet(`http://localhost:${CLIENT_PORT_1}/health`);
     const client1Health = JSON.parse(client1Response.body);
-    this.assert('Client 1 version matches', () => {
-      this.expect(client1Health.ior?.version).to.equal('0.3.21.8');
+    const client1VersionCorrect = client1Health.ior?.version === '0.3.21.8';
+    
+    peerReq.validateCriterion('MPEER-05', client1VersionCorrect, {
+      version: client1Health.ior?.version,
+      uuid: client1Health.ior?.uuid,
+      port: CLIENT_PORT_1
     });
     
-    console.log('[STEP] Verifying client server 2 health');
+    // ═══════════════════════════════════════════════════════════════
+    // TEST 6: Verify Client Server 2 Health
+    // ═══════════════════════════════════════════════════════════════
+    
+    this.logEvidence('step', 'Verifying client server 2 health');
     const client2Response = await this.httpGet(`http://localhost:${CLIENT_PORT_2}/health`);
     const client2Health = JSON.parse(client2Response.body);
-    this.assert('Client 2 version matches', () => {
-      this.expect(client2Health.ior?.version).to.equal('0.3.21.8');
+    const client2VersionCorrect = client2Health.ior?.version === '0.3.21.8';
+    
+    peerReq.validateCriterion('MPEER-06', client2VersionCorrect, {
+      version: client2Health.ior?.version,
+      uuid: client2Health.ior?.uuid,
+      port: CLIENT_PORT_2
     });
     
-    // Step 8: Test peerStopAll cascade
-    console.log('[STEP] Testing peerStopAll cascade shutdown');
+    // ═══════════════════════════════════════════════════════════════
+    // TEST 7: peerStopAll Cascade
+    // ═══════════════════════════════════════════════════════════════
+    
+    this.logEvidence('step', 'Testing peerStopAll cascade shutdown');
     await this.callPeerStopAll(PRIMARY_PORT);
     await this.sleep(5000); // Allow cascade to complete
     
-    // Step 9: Verify all servers are stopped
-    console.log('[STEP] Verifying all servers stopped');
     const primaryStopped = await this.isPortFree(PRIMARY_PORT);
     const client1Stopped = await this.isPortFree(CLIENT_PORT_1);
     const client2Stopped = await this.isPortFree(CLIENT_PORT_2);
+    const allStopped = primaryStopped && client1Stopped && client2Stopped;
     
-    this.assert('Primary server stopped', () => {
-      this.expect(primaryStopped).to.be.true;
-    });
-    this.assert('Client server 1 stopped', () => {
-      this.expect(client1Stopped).to.be.true;
-    });
-    this.assert('Client server 2 stopped', () => {
-      this.expect(client2Stopped).to.be.true;
+    peerReq.validateCriterion('MPEER-07', allStopped, {
+      primaryStopped,
+      client1Stopped,
+      client2Stopped
     });
     
-    console.log('✅ Multi-peer hierarchy test passed');
+    // ═══════════════════════════════════════════════════════════════
+    // VALIDATE REQUIREMENT
+    // ═══════════════════════════════════════════════════════════════
+    
+    this.validateRequirement(peerReq);
+    
+    return {
+      testName: this.testName,
+      passed: peerReq.allCriteriaPassed(),
+      serversResponse: serversData
+    };
   }
   
   /**
    * Start a client server using CLI (runs in background)
    */
   private async startClientServer(): Promise<void> {
-    const { exec } = await import('child_process');
+    const { spawn } = await import('child_process');
     
-    // Start client server in background
-    exec(`cd ${this.componentRoot} && ./once peerStart`, { 
+    // Start client server in background using spawn (supports detached)
+    const child = spawn('./once', ['peerStart'], {
+      cwd: this.componentRoot,
       detached: true,
       stdio: 'ignore'
     });
+    
+    // Prevent parent from waiting for child
+    child.unref();
   }
   
   /**
@@ -142,7 +207,7 @@ export class Test04_MultiPeerHierarchy extends ONCETestCase {
       }
     } catch (error) {
       // Server might already be stopping
-      console.log(`peerStopAll response: ${error}`);
+      this.logEvidence('info', `peerStopAll response: ${error}`);
     }
   }
   
@@ -160,4 +225,3 @@ export class Test04_MultiPeerHierarchy extends ONCETestCase {
 }
 
 // Radical OOP: Test is an object, executed via Tootsie CLI
-
