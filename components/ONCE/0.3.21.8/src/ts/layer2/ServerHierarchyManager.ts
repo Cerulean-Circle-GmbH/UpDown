@@ -32,6 +32,7 @@ import { HTTPRouter } from './HTTPRouter.js';
 import { HTMLRoute } from './HTMLRoute.js';
 import { ScenarioRoute } from './ScenarioRoute.js';
 import { IORRoute } from './IORRoute.js';
+import { StaticFileRoute } from './StaticFileRoute.js';
 import { HttpMethod } from '../layer3/HttpMethod.enum.js';
 
 /**
@@ -181,7 +182,15 @@ export class ServerHierarchyManager {
      * @pdca 2025-12-01-UTC-0950.iteration-05-phase5-7-httpserver-router-refactoring.pdca.md
      */
     private registerRoutes(): void {
-        // ✅ Route 0: IOR Method Invocation (HIGHEST PRIORITY)
+        // ✅ Route 0: Static Files (HIGHEST PRIORITY)
+        // Serves .js, .css, .html, etc. with correct MIME types
+        // Priority 5 - higher than IOR (10) to prevent mismatching file paths
+        const staticRoute = new StaticFileRoute();
+        staticRoute.model.uuid = this.idProvider.create();
+        staticRoute.componentRootSet(this.component!.model.componentRoot || '');
+        this.httpRouter.registerRoute(staticRoute);
+        
+        // ✅ Route 1: IOR Method Invocation
         // Initialize IOR router with ONCE kernel and ID provider
         if (!this.iorRouter.model.uuid) {
             // ✅ Web4 Principle 6: init() handles complete initialization including UUID
@@ -195,7 +204,7 @@ export class ServerHierarchyManager {
         iorRoute.model.priority = 10; // Highest priority
         this.httpRouter.registerRoute(iorRoute);
         
-        // ✅ Route 1: Home page ("/")
+        // ✅ Route 2: Home page ("/")
         const homeRoute = new HTMLRoute();
         homeRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         homeRoute.setPattern('/', HttpMethod.GET);
@@ -203,7 +212,7 @@ export class ServerHierarchyManager {
         homeRoute.model.priority = 50;
         this.httpRouter.registerRoute(homeRoute);
         
-        // ✅ Route 2: Demo Hub ("/demo")
+        // ✅ Route 3: Demo Hub ("/demo")
         const demoRoute = new HTMLRoute();
         demoRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         demoRoute.setPattern('/demo', HttpMethod.GET);
