@@ -130,15 +130,15 @@ export class UcpController<TModel extends object> implements Controller<TModel> 
    * Uses method reference (not arrow function) per Principle 4.
    */
   viewsUpdateAll(): void {
-    this.registeredViews.forEach(this.viewUpdate.bind(this));
+    this.registeredViews.forEach(this.viewRefresh.bind(this));
   }
   
   /**
    * Update a single view - called via method reference
    * @param view View to update
    */
-  private viewUpdate(view: View<TModel>): void {
-    view.update();  // SYNCHRONOUS
+  private viewRefresh(view: View<TModel>): void {
+    view.refresh();  // SYNCHRONOUS
   }
 }
 

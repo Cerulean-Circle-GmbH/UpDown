@@ -35,12 +35,14 @@ export interface View<TModel = any> {
   get model(): TModel;
   
   /**
-   * Update view when model changes - SYNCHRONOUS!
+   * Refresh view when model changes - SYNCHRONOUS!
    * Called by ModelProxy.viewsNotify() from Layer 2.
+   * 
+   * Note: Named 'refresh' because Lit's 'update' is protected.
    * 
    * Web4 Principle 7: Layer 5 is synchronous
    */
-  update(): void;
+  refresh(): void;
   
   /**
    * Add child view - Web4 pattern instead of appendChild()

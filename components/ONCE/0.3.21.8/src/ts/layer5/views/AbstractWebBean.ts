@@ -44,10 +44,19 @@ export abstract class AbstractWebBean<TModel = any> extends UcpView<TModel> {
   abstract get viewName(): string;
   
   /**
-   * Get CSS path for this view
-   * Uses PascalCase naming convention
+   * Lit lifecycle: Ensure parent connectedCallback is called
+   * This triggers UcpView.applyCachedStyles()
    */
-  protected get cssPath(): string {
+  connectedCallback(): void {
+    super.connectedCallback();  // Calls UcpView.connectedCallback → applyCachedStyles
+    console.log(`[AbstractWebBean] ${this.viewName} connected`);
+  }
+  
+  /**
+   * Get CSS path for this view (instance method)
+   * Note: Static cssPath is used by UcpView.applyCachedStyles()
+   */
+  protected get cssPathInstance(): string {
     return `./css/${this.viewName}.css`;
   }
   
@@ -105,10 +114,11 @@ export abstract class AbstractWebBean<TModel = any> extends UcpView<TModel> {
   /**
    * Initialize view - load CSS and template
    * Called after construction, before first render
+   * @deprecated Use CSSLoader preloading instead
    */
   async viewInit(): Promise<void> {
     await Promise.all([
-      this.cssLoad(this.cssPath),
+      this.cssLoad(this.cssPathInstance),
       this.templateLoad(this.templatePath)
     ]);
   }

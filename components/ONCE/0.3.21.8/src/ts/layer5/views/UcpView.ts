@@ -54,8 +54,13 @@ export abstract class UcpView<TModel = any> extends LitElement implements View<T
    * Applies preloaded CSS from CSSLoader cache
    */
   connectedCallback(): void {
-    super.connectedCallback();
-    this.applyCachedStyles();
+    console.log(`[UcpView] connectedCallback for ${this.constructor.name}`);
+    try {
+      super.connectedCallback();
+      this.applyCachedStyles();
+    } catch (e) {
+      console.error(`[UcpView] Error in connectedCallback:`, e);
+    }
   }
   
   /**
@@ -64,26 +69,33 @@ export abstract class UcpView<TModel = any> extends LitElement implements View<T
    */
   private applyCachedStyles(): void {
     const cssPath = (this.constructor as typeof UcpView).cssPath;
+    console.log(`[UcpView] applyCachedStyles for ${this.constructor.name}, cssPath=${cssPath}`);
+    
     if (!cssPath) {
+      console.log(`[UcpView] No CSS path defined for ${this.constructor.name}`);
       return;  // No CSS path defined for this view
     }
     
     const sheet = CSSLoader.get(cssPath);
+    console.log(`[UcpView] CSSLoader.get(${cssPath}) returned:`, sheet ? 'CSSStyleSheet' : 'null');
+    
     if (sheet && this.shadowRoot) {
       this.shadowRoot.adoptedStyleSheets = [sheet];
       console.log(`[UcpView] ✅ Applied styles from ${cssPath}`);
     } else if (!sheet) {
       console.warn(`[UcpView] ⚠️ CSS not preloaded: ${cssPath}`);
+    } else if (!this.shadowRoot) {
+      console.warn(`[UcpView] ⚠️ No shadowRoot yet for ${this.constructor.name}`);
     }
   }
   
   /**
    * Model setter - TypeScript accessor (NOT modelConnect!)
-   * Triggers update() when model is set.
+   * Triggers requestUpdate() when model is set.
    */
   set model(model: TModel) {
     this.modelRef = model;
-    this.update();
+    this.requestUpdate();  // Let Lit handle the update lifecycle
   }
   
   /**
@@ -105,16 +117,16 @@ export abstract class UcpView<TModel = any> extends LitElement implements View<T
   }
   
   /**
-   * Update view when model changes - SYNCHRONOUS!
+   * Refresh view when model changes - SYNCHRONOUS!
    * 
    * Called by: UcpController.viewsUpdateAll() from Layer 2
    * This is the entry point from Layer 2 into Layer 5.
    * 
    * Web4 Principle 7: Layer 5 is synchronous
    * 
-   * Override for custom behavior, but always call super.update()
+   * Note: Named 'refresh' to avoid conflict with Lit's internal update()
    */
-  update(): void {
+  refresh(): void {
     this.requestUpdate();  // Lit schedules re-render (sync call)
   }
   
@@ -122,8 +134,10 @@ export abstract class UcpView<TModel = any> extends LitElement implements View<T
    * Add child view - Web4 pattern instead of appendChild()
    * @param childView View to add as child
    */
-  add(childView: UcpView<any>): void {
-    this.childViews.push(childView);
+  add(childView: View<any>): void {
+    if (childView instanceof UcpView) {
+      this.childViews.push(childView);
+    }
     // Subclass decides where to append in DOM
   }
   
@@ -132,7 +146,8 @@ export abstract class UcpView<TModel = any> extends LitElement implements View<T
    * (Named childRemove to avoid conflict with LitElement.remove())
    * @param childView View to remove
    */
-  childRemove(childView: UcpView<any>): void {
+  childRemove(childView: View<any>): void {
+    if (!(childView instanceof UcpView)) return;
     const index = this.childViews.indexOf(childView);
     if (index > -1) {
       this.childViews.splice(index, 1);

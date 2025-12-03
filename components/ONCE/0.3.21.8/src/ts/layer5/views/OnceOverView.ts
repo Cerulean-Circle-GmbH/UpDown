@@ -16,7 +16,7 @@
  * @pdca 2025-12-03-UTC-1200.mvc-lit3-views.pdca.md
  */
 
-import { html, TemplateResult, css } from 'lit';
+import { html, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { AbstractWebBean } from './AbstractWebBean.js';
 import { ItemView } from './ItemView.js';
@@ -67,73 +67,9 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
     return 'OnceOverView';
   }
   
-  /**
-   * Static styles - TEMPORARY inline until build step inlines from css/OnceOverView.css
-   * Source of truth: css/OnceOverView.css
-   */
-  static styles = css`
-    :host {
-      display: block;
-      font-family: var(--font-family, 'Courier New', monospace);
-      background: var(--bg-primary, #1a1a1a);
-      color: var(--color-primary, #0f0);
-      padding: var(--spacing-lg, 20px);
-      min-height: 100vh;
-    }
-    .header {
-      border: 2px solid var(--border-color, #0f0);
-      padding: var(--spacing-lg, 20px);
-      margin-bottom: var(--spacing-lg, 20px);
-      text-align: center;
-      background: var(--bg-highlight, rgba(0, 255, 0, 0.1));
-    }
-    h1 { margin: 0 0 10px 0; color: var(--color-primary, #0f0); }
-    h2 { color: var(--color-accent, #ff0); margin: var(--spacing-lg, 20px) 0 10px 0; }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 10px;
-      margin: var(--spacing-lg, 20px) 0;
-    }
-    .stat-box {
-      border: 1px solid var(--border-color, #0f0);
-      padding: 15px;
-      background: var(--bg-highlight, rgba(0, 255, 0, 0.05));
-      text-align: center;
-    }
-    .stat-value {
-      font-size: var(--font-size-xxl, 2em);
-      font-weight: bold;
-      color: var(--color-accent, #ff0);
-      display: block;
-      margin: 10px 0;
-    }
-    .controls { text-align: center; margin: var(--spacing-lg, 20px) 0; }
-    .peer-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 15px;
-      margin: var(--spacing-lg, 20px) 0;
-    }
-    button {
-      background: var(--btn-primary-bg, #0f0);
-      color: var(--btn-primary-color, #000);
-      border: none;
-      padding: 10px 20px;
-      margin: 5px;
-      cursor: pointer;
-      font-family: inherit;
-      font-weight: bold;
-    }
-    button:hover { background: var(--btn-primary-hover, #ff0); }
-    button:disabled { background: var(--text-muted, #666); cursor: not-allowed; }
-    .start-btn { background: #0a0; border: 2px solid var(--color-primary, #0f0); }
-    .start-btn:hover:not(:disabled) { background: var(--color-primary, #0f0); }
-    .discover-btn { background: var(--btn-secondary-bg, #066); border: 2px solid var(--color-secondary, #0ff); }
-    .discover-btn:hover { background: var(--color-secondary, #0ff); }
-    .shutdown-btn { background: var(--btn-danger-bg, #a00); border: 2px solid var(--color-danger, #f00); color: var(--btn-danger-color, #fff); }
-    .shutdown-btn:hover { background: var(--color-danger, #f00); }
-  `;
+  // CSS loaded via adoptedStyleSheets from CSSLoader cache
+  // Source: css/OnceOverView.css (preloaded before component import)
+  // @pdca 2025-12-03-UTC-1400.lit-css-preload.pdca.md
   
   /**
    * Render the overview
@@ -225,13 +161,8 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
     `);
   }
   
-  /**
-   * Update view - SYNCHRONOUS
-   * Re-renders peer grid when model changes
-   */
-  update(): void {
-    super.update();
-  }
+  // Removed update() override - use Lit's built-in update mechanism
+  // Call requestUpdate() to trigger re-render
   
   // ═══════════════════════════════════════════════════════════════
   // Action Handlers - These call kernel methods via IOR
@@ -248,7 +179,7 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
     
     // Call kernel method (will make IOR call)
     await this.kernel.startClientServer?.();
-    this.update();
+    this.requestUpdate();
   }
   
   /**
@@ -261,7 +192,7 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
     }
     
     await this.kernel.peersDiscover?.();
-    this.update();
+    this.requestUpdate();
   }
   
   /**

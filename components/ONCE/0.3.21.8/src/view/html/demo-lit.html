@@ -31,7 +31,7 @@
         
         @pdca 2025-12-03-UTC-1400.lit-css-preload.pdca.md
     -->
-    <once-over-view id="mainView"></once-over-view>
+    <div id="appContainer"></div>
     
     <script type="module">
         // ═══════════════════════════════════════════════════════════════
@@ -103,8 +103,14 @@
         
         console.log('[demo-lit] ✅ ONCE Kernel booted:', kernel.model?.version);
         
-        // Get the OnceOverView component
-        const mainView = document.getElementById('mainView');
+        // Import the OnceOverView class for type checking
+        const { OnceOverView } = await import('../../dist/ts/layer5/views/OnceOverView.js');
+        
+        // Create the view element dynamically AFTER component is registered
+        console.log('[demo-lit] 📦 Creating OnceOverView element...');
+        const mainView = document.createElement('once-over-view');
+        document.getElementById('appContainer').appendChild(mainView);
+        console.log('[demo-lit] ✅ OnceOverView element created');
         
         // Set model and kernel reference
         mainView.model = kernel.model;
@@ -118,10 +124,17 @@
         // For now, manual polling
         setInterval(function() {
             mainView.model = kernel.model;
-            mainView.update();
+            mainView.requestUpdate();
         }, 1000);
         
         console.log('[demo-lit] ✅ ONCE Demo Hub (Lit) initialized');
+        
+        // Debug: Check if custom element is registered
+        const ceCheck = customElements.get('once-over-view');
+        console.log('[demo-lit] Custom element registered:', ceCheck ? 'YES' : 'NO');
+        console.log('[demo-lit] mainView element:', mainView);
+        console.log('[demo-lit] mainView tagName:', mainView?.tagName);
+        console.log('[demo-lit] mainView shadowRoot:', mainView?.shadowRoot);
     </script>
 </body>
 </html>
