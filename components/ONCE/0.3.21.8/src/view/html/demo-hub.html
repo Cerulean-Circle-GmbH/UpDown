@@ -280,7 +280,8 @@
         // Update UI with current peers
         function updatePeerDisplay() {
             const peers = kernel.model.peers || [];
-            const runningPeers = peers.filter(p => {
+            // ✅ FIXED: Use function instead of arrow function
+            const runningPeers = peers.filter(function(p) {
                 const state = p.model?.state?.state;
                 return state === 'RUNNING' || state === 'INITIALIZED';
             });
@@ -303,10 +304,13 @@
                 return;
             }
             
-            grid.innerHTML = peers.map(peer => {
+            // ✅ FIXED: Use function instead of arrow function
+            grid.innerHTML = peers.map(function(peer) {
                 const uuid = peer.ior?.uuid || peer.model?.uuid || 'unknown';
                 const state = peer.model?.state?.state || 'UNKNOWN';
-                const port = peer.model?.state?.capabilities?.find(c => c.capability === 'httpPort')?.port || 'N/A';
+                // ✅ FIXED: Use function instead of arrow function for find
+                const portCap = peer.model?.state?.capabilities?.find(function(c) { return c.capability === 'httpPort'; });
+                const port = portCap?.port || 'N/A';
                 const version = peer.ior?.version || peer.model?.version || 'N/A';
                 const isPrimary = peer.model?.isPrimaryServer || false;
                 
@@ -339,10 +343,18 @@
             log.scrollTop = log.scrollHeight;
         }
         
-        // Listen for peer updates (via original WebSocket onmessage in BrowserOnce)
-        // The kernel already handles WebSocket updates internally
-        // We just need to poll the model periodically
-        setInterval(() => {
+        // ⚠️ TEMPORARY: Polling until WebSocket scenario replication + ModelProxy
+        // 
+        // CURRENT (WORKAROUND): setInterval polling every 1s
+        // 
+        // FUTURE (Web4 MVC):
+        //   1. WebSocket receives RAW SCENARIOS (not protocol messages!)
+        //   2. ModelProxy detects model changes automatically
+        //   3. ModelProxy calls view.update() on registered views
+        //   4. NO POLLING NEEDED - views update reactively
+        //
+        // See: 2025-12-03-UTC-1200.mvc-lit3-views.pdca.md Phase 2
+        setInterval(function() {
             updatePeerDisplay();
             updatesCount++;
             document.getElementById('updatesReceived').textContent = updatesCount;
@@ -355,12 +367,16 @@
         const primaryUUID = kernel.model.peerUUID;
         
         // Start next client server via IOR method invocation
+        // ✅ FIXED: Uses finally block for button re-enable, adds scenario to peers
+        // Note: startClientServer SPAWNS a new client (different from peerStart which starts SELF)
         async function startNextServer() {
             const btn = document.getElementById('startNextBtn');
             btn.disabled = true;
             btn.textContent = '⏳ Starting...';
             
             try {
+                // startClientServer = spawn NEW client server from primary
+                // peerStart = start SELF as a peer
                 const ior = `http://${peerHost}/ONCE/${onceVersion}/${primaryUUID}/startClientServer`;
                 addLog('lifecycle', `📡 IOR Call: ${ior}`);
                 
@@ -368,50 +384,57 @@
                 const scenario = await response.json();
                 
                 if (scenario.ior) {
-                    addLog('lifecycle', `✅ Server starting: ${scenario.ior.uuid.substring(0, 8)}`);
-                    setTimeout(() => {
-                        updatePeerDisplay();
-                        btn.disabled = false;
-                        btn.textContent = '➕ Start Next Server';
-                    }, 2000);
+                    // ✅ FIXED: Add scenario to kernel.model.peers
+                    kernel.model.peers = kernel.model.peers || [];
+                    kernel.model.peers.push(scenario);
+                    
+                    addLog('lifecycle', `✅ Server started: ${scenario.ior.uuid.substring(0, 8)} on port ${scenario.model?.state?.capabilities?.find(c => c.capability === 'httpPort')?.port || 'N/A'}`);
+                    updatePeerDisplay();
                 } else if (scenario.error) {
                     addLog('error', `❌ Error: ${scenario.error}`);
-                    btn.disabled = false;
-                    btn.textContent = '❌ Failed';
-                    setTimeout(() => btn.textContent = '➕ Start Next Server', 2000);
                 }
             } catch (error) {
                 addLog('error', `❌ Failed to start server: ${error.message}`);
+            } finally {
+                // ✅ FIXED: ALWAYS re-enable button in finally block
                 btn.disabled = false;
-                btn.textContent = '❌ Failed';
-                setTimeout(() => btn.textContent = '➕ Start Next Server', 2000);
+                btn.textContent = '➕ Start Next Server';
             }
         }
         
         // Stop specific server via IOR method invocation
+        // ✅ FIXED: Use peerStop (not stopServer)
         window.stopServer = async function(uuid) {
             try {
-                const ior = `http://${peerHost}/ONCE/${onceVersion}/${uuid}/stopServer`;
+                // ✅ Use new method name: peerStop
+                const ior = `http://${peerHost}/ONCE/${onceVersion}/${uuid}/peerStop`;
                 addLog('lifecycle', `📡 IOR Call: ${ior}`);
                 
                 const response = await fetch(ior, { method: 'POST' });
                 const scenario = await response.json();
                 
+                // ✅ FIXED: Remove stopped peer from kernel.model.peers
+                if (kernel.model.peers) {
+                    kernel.model.peers = kernel.model.peers.filter(p => p.ior?.uuid !== uuid);
+                }
+                
                 addLog('lifecycle', `🛑 Stopped server: ${uuid.substring(0, 8)}`);
-                setTimeout(updatePeerDisplay, 1000);
+                updatePeerDisplay();
             } catch (error) {
                 addLog('error', `❌ Failed to stop server: ${error.message}`);
             }
         };
         
         // Discover servers (housekeeping) via IOR
+        // ✅ FIXED: Use peersDiscover (not discoverServers)
         async function discoverServers() {
             const btn = document.getElementById('discoverBtn');
             btn.disabled = true;
             btn.textContent = '⏳ Discovering...';
             
             try {
-                const ior = `http://${peerHost}/ONCE/${onceVersion}/${primaryUUID}/discoverServers`;
+                // ✅ Use new method name: peersDiscover
+                const ior = `http://${peerHost}/ONCE/${onceVersion}/${primaryUUID}/peersDiscover`;
                 addLog('lifecycle', `📡 IOR Call: ${ior}`);
                 
                 const response = await fetch(ior, { method: 'POST' });
@@ -421,43 +444,52 @@
                     const discovered = result.model.discovered || 0;
                     const deleted = result.model.deleted || 0;
                     addLog('lifecycle', `🔍 Discovery complete: ${discovered} found, ${deleted} removed`);
+                    
+                    // ✅ FIXED: Update kernel.model.peers with discovered peers
+                    if (result.model.peers) {
+                        kernel.model.peers = result.model.peers;
+                    }
                 } else {
                     addLog('lifecycle', '🔍 Discovery complete');
                 }
                 
-                setTimeout(() => {
-                    updatePeerDisplay();
-                    btn.disabled = false;
-                    btn.textContent = '🔍 Discover Servers';
-                }, 1000);
+                updatePeerDisplay();
             } catch (error) {
                 addLog('error', `❌ Discovery failed: ${error.message}`);
+            } finally {
+                // ✅ FIXED: Always re-enable button in finally
                 btn.disabled = false;
                 btn.textContent = '🔍 Discover Servers';
             }
         }
         
         // Shutdown all servers via IOR
+        // ✅ FIXED: Use peerStopAll (not shutdownAll)
         async function shutdownAll() {
             if (!confirm('⚠️  Shutdown ALL servers?\n\nThis will:\n- Stop the primary server\n- Stop all client servers\n- Exit all processes')) {
                 return;
             }
             
             try {
-                const ior = `http://${peerHost}/ONCE/${onceVersion}/${primaryUUID}/shutdownAll`;
+                // ✅ Use new method name: peerStopAll
+                const ior = `http://${peerHost}/ONCE/${onceVersion}/${primaryUUID}/peerStopAll`;
                 addLog('lifecycle', `📡 IOR Call: ${ior}`);
                 addLog('lifecycle', '🛑 Shutdown initiated...');
                 
                 // Fire and forget - server will shut down before responding
-                fetch(ior, { method: 'POST' }).catch(() => {});
+                fetch(ior, { method: 'POST' }).catch(function() {});
                 
-                setTimeout(() => {
+                // ✅ Clear peers immediately since server is shutting down
+                kernel.model.peers = [];
+                updatePeerDisplay();
+                
+                setTimeout(function() {
                     alert('✅ Shutdown complete\n\nAll servers have been stopped.');
                     window.location.reload();
                 }, 3000);
             } catch (error) {
                 addLog('lifecycle', '🛑 Shutdown in progress...');
-                setTimeout(() => window.location.reload(), 3000);
+                setTimeout(function() { window.location.reload(); }, 3000);
             }
         }
         
