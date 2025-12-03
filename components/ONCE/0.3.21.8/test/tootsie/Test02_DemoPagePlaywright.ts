@@ -49,6 +49,7 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
     demoReq.addCriterion('DEMO-05', 'Page contains demo content');
     demoReq.addCriterion('DEMO-06', 'No critical JavaScript errors');
     demoReq.addCriterion('DEMO-07', 'ONCE kernel booted in browser (window.ONCE exists)');
+    demoReq.addCriterion('DEMO-08', 'IOR version matches component version (0.3.21.8)');
 
     // ═══════════════════════════════════════════════════════════════
     // SETUP: Ensure server is running
@@ -238,6 +239,42 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       
       // Validate criterion DEMO-07
       demoReq.validateCriterion('DEMO-07', onceBooted, onceBootStatus);
+
+      // ═══════════════════════════════════════════════════════════════
+      // TEST 6: Verify IOR Version in Page Functions
+      // ═══════════════════════════════════════════════════════════════
+      
+      this.logEvidence('step', 'Checking IOR version in page functions');
+      
+      // Get the onceVersion variable and verify IOR patterns use correct version
+      const iorVersionCheck = await this.page.evaluate(() => {
+        const kernel = (window as any).ONCE;
+        const kernelVersion = kernel?.model?.version || 'unknown';
+        
+        // Check if IOR calls would use the correct version
+        // The HTML uses onceVersion for IOR URLs like:
+        // `http://${peerHost}/ONCE/${onceVersion}/${primaryUUID}/shutdownAll`
+        
+        // Get the onceVersion from the page's JavaScript context
+        // It should match the kernel version
+        const pageTitle = document.title;
+        const versionFromTitle = pageTitle.match(/v(\d+\.\d+\.\d+\.\d+)/)?.[1] || 'unknown';
+        
+        return {
+          kernelVersion,
+          versionFromTitle,
+          versionsMatch: kernelVersion === versionFromTitle,
+          expectedVersion: '0.3.21.8'  // The component version we're testing
+        };
+      });
+      
+      this.logEvidence('output', 'IOR version verification', iorVersionCheck);
+      
+      // IOR version should match the current component version (0.3.21.8)
+      const iorVersionCorrect = iorVersionCheck.kernelVersion === '0.3.21.8' && 
+                                iorVersionCheck.versionsMatch;
+      
+      demoReq.validateCriterion('DEMO-08', iorVersionCorrect, iorVersionCheck);
 
       // ═══════════════════════════════════════════════════════════════
       // FINAL: Validate Requirement

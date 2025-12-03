@@ -468,7 +468,7 @@ export class BrowserOnce extends DefaultOnceKernel {
             ior: {
                 uuid: this.generateUUID(),
                 component: 'ONCEMessage',
-                version: '0.3.21.6'
+                version: this.model.version  // ✅ Dynamic version
             },
             owner: this.model.uuid,
             model: {
@@ -507,7 +507,7 @@ export class BrowserOnce extends DefaultOnceKernel {
             ior: {
                 uuid: this.generateUUID(),
                 component: 'ONCEMessage',
-                version: '0.3.21.6'
+                version: this.model.version  // ✅ Dynamic version
             },
             owner: this.model.uuid,
             model: {
@@ -542,7 +542,7 @@ export class BrowserOnce extends DefaultOnceKernel {
             ior: {
                 uuid: this.generateUUID(),
                 component: 'ONCEMessage',
-                version: '0.3.21.6'
+                version: this.model.version  // ✅ Dynamic version
             },
             owner: this.model.uuid,
             model: {
@@ -576,7 +576,7 @@ export class BrowserOnce extends DefaultOnceKernel {
             ior: {
                 uuid: this.generateUUID(),
                 component: 'ONCEAcknowledgment',
-                version: '0.3.21.6'
+                version: this.model.version  // ✅ Dynamic version
             },
             owner: this.model.uuid,
             model: {
