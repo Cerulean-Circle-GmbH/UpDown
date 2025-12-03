@@ -186,6 +186,7 @@ export class ServerHierarchyManager {
         // Serves .js, .css, .html, etc. with correct MIME types
         // Priority 5 - higher than IOR (10) to prevent mismatching file paths
         const staticRoute = new StaticFileRoute();
+        staticRoute.routeInit(); // Web4 Principle 6: init after empty constructor
         staticRoute.model.uuid = this.idProvider.create();
         staticRoute.componentRootSet(this.component!.model.componentRoot || '');
         this.httpRouter.registerRoute(staticRoute);

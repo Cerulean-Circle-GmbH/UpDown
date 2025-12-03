@@ -16,66 +16,18 @@
  * 
  * @layer2
  * @pattern Radical OOP - Preconfigured MIME type headers
+ * @pattern Web4 Principle 6 - Empty constructor + init()
+ * @pattern Web4 Principle 16 - Object-Action naming (nameVerb)
+ * @pattern Web4 Principle 19 - One file one type (MIME_TYPES in separate file)
  * @pdca session/2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
  */
 
 import { Route } from './Route.js';
 import { IncomingMessage, ServerResponse } from 'http';
 import { HttpMethod } from '../layer3/HttpMethod.enum.js';
+import { MIME_TYPES, STATIC_FILE_EXTENSIONS } from '../layer3/MIMETypes.js';
 import * as fs from 'fs';
 import * as path from 'path';
-
-/**
- * Preconfigured MIME types for static files
- * Web4 Pattern: Configuration objects over hardcoded strings
- */
-const MIME_TYPES: Record<string, string> = {
-    // JavaScript (ESM)
-    '.js': 'application/javascript',
-    '.mjs': 'application/javascript',
-    
-    // TypeScript (for development/source maps)
-    '.ts': 'application/typescript',
-    '.mts': 'application/typescript',
-    
-    // CSS
-    '.css': 'text/css',
-    
-    // HTML
-    '.html': 'text/html',
-    '.htm': 'text/html',
-    
-    // JSON
-    '.json': 'application/json',
-    
-    // Images
-    '.png': 'image/png',
-    '.jpg': 'image/jpeg',
-    '.jpeg': 'image/jpeg',
-    '.gif': 'image/gif',
-    '.svg': 'image/svg+xml',
-    '.ico': 'image/x-icon',
-    '.webp': 'image/webp',
-    
-    // Fonts
-    '.woff': 'font/woff',
-    '.woff2': 'font/woff2',
-    '.ttf': 'font/ttf',
-    '.eot': 'application/vnd.ms-fontobject',
-    
-    // Other
-    '.txt': 'text/plain',
-    '.xml': 'application/xml',
-    '.pdf': 'application/pdf',
-    '.zip': 'application/zip',
-    '.map': 'application/json',  // Source maps
-};
-
-/**
- * File extensions that StaticFileRoute handles
- * Used for matching - if path ends with one of these, it's a static file
- */
-const STATIC_FILE_EXTENSIONS = Object.keys(MIME_TYPES);
 
 /**
  * StaticFileRoute
@@ -85,19 +37,41 @@ const STATIC_FILE_EXTENSIONS = Object.keys(MIME_TYPES);
  * Priority: 5 (higher than IORRoute's 10)
  * - Checks before IOR pattern matching
  * - Prevents IOR from misinterpreting file paths
+ * 
+ * Web4 Principles Applied:
+ * - Principle 6: Empty constructor (init via componentRootSet)
+ * - Principle 16: Object-Action naming (extensionGet, pathResolve)
+ * - Principle 19: MIME_TYPES in separate file
+ * - Principle 21: `import * as fs/path`
  */
 export class StaticFileRoute extends Route {
     private componentRoot: string = '';
     
+    /**
+     * Empty constructor - Web4 Principle 6
+     * Configuration via componentRootSet() method
+     */
     constructor() {
         super();
+        // Empty - Web4 Principle 6
+    }
+    
+    /**
+     * Initialize route with default values
+     * Called after construction, before use
+     * 
+     * @returns this (method chaining)
+     */
+    public routeInit(): this {
         this.model.name = 'StaticFileRoute';
         this.model.pattern = '/static'; // Informational - actual matching uses extension
         this.model.priority = 5; // Higher priority than IORRoute (10)
+        return this;
     }
     
     /**
      * Set component root for serving files
+     * Web4 Principle 16: Object-Action naming (componentRoot + Set)
      * 
      * @param componentRoot - Root directory for serving files
      * @returns this (method chaining)
@@ -105,6 +79,14 @@ export class StaticFileRoute extends Route {
     public componentRootSet(componentRoot: string): this {
         this.componentRoot = componentRoot;
         return this;
+    }
+    
+    /**
+     * Get component root
+     * Web4 Principle 16: TypeScript getter
+     */
+    public get root(): string {
+        return this.componentRoot;
     }
     
     /**
@@ -122,17 +104,18 @@ export class StaticFileRoute extends Route {
         }
         
         // Check if path ends with a known file extension
-        const ext = this.getExtension(urlPath);
+        const ext = this.extensionFrom(urlPath);
         return STATIC_FILE_EXTENSIONS.includes(ext);
     }
     
     /**
-     * Get file extension from path
+     * Extract file extension from URL path
+     * Private helper - extracts extension for MIME type lookup
      * 
      * @param urlPath - URL path
      * @returns File extension (e.g., '.js') or empty string
      */
-    private getExtension(urlPath: string): string {
+    private extensionFrom(urlPath: string): string {
         // Remove query string
         const pathWithoutQuery = urlPath.split('?')[0];
         const lastDot = pathWithoutQuery.lastIndexOf('.');
@@ -158,7 +141,7 @@ export class StaticFileRoute extends Route {
         
         try {
             // Resolve file path
-            const filePath = this.resolvePath(urlPath);
+            const filePath = this.pathResolve(urlPath);
             
             // Security check: must be within component root
             if (!filePath.startsWith(this.componentRoot)) {
@@ -177,7 +160,7 @@ export class StaticFileRoute extends Route {
             }
             
             // Get MIME type
-            const ext = this.getExtension(urlPath);
+            const ext = this.extensionFrom(urlPath);
             const mimeType = MIME_TYPES[ext] || 'application/octet-stream';
             
             // Read and serve file
@@ -203,11 +186,12 @@ export class StaticFileRoute extends Route {
     /**
      * Resolve URL path to file system path
      * Prevents directory traversal attacks
+     * Web4 Principle 16: Object-Action naming (path + Resolve)
      * 
      * @param urlPath - URL path (e.g., '/dist/ts/layer1/ONCE.js')
      * @returns Absolute file system path
      */
-    private resolvePath(urlPath: string): string {
+    private pathResolve(urlPath: string): string {
         // Normalize path (removes ../, etc.)
         const normalized = path.normalize(urlPath);
         
@@ -218,4 +202,3 @@ export class StaticFileRoute extends Route {
         return path.join(this.componentRoot, relativePath);
     }
 }
-
