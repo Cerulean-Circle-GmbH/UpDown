@@ -601,6 +601,11 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       // Store server model in our model
       this.model.serverModel = this.serverHierarchyManager.getServerModel();
       
+      // ✅ CRITICAL: Sync kernel UUID with server UUID for IOR routing
+      // IOR URLs use the server's UUID, so the kernel must have the same UUID
+      // for IORMethodRouter.lookupComponent() to match correctly
+      this.model.uuid = this.model.serverModel.uuid;
+      
       // Save current state as scenario (Web4 Standard format)
       // @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
       const web4Scenario = await this.toScenario();
