@@ -170,6 +170,22 @@ export interface ONCE {
      * Get all registered peer instances (only available on primary peer)
      */
     getRegisteredServers(): ONCEServerModel[];
+    
+    /**
+     * Register a listener for model changes
+     * ✅ Web4 Observer Pattern - views register to receive updates
+     * Called when peer state changes (WebSocket scenario received)
+     * @param listener - Callback to invoke on model change
+     * @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
+     */
+    onModelChange?(listener: () => void): void;
+    
+    /**
+     * Unregister a model change listener
+     * @param listener - Previously registered listener
+     * @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
+     */
+    offModelChange?(listener: () => void): void;
 }
 
 /**

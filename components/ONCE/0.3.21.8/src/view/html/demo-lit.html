@@ -117,15 +117,29 @@
         mainView.kernel = kernel;
         
         // ═══════════════════════════════════════════════════════════════
-        // PHASE 4: Polling (temporary until WebSocket + ModelProxy)
+        // PHASE 4: WebSocket Scenario Updates (No Polling!)
         // ═══════════════════════════════════════════════════════════════
         
-        // Future: WebSocket scenario updates will auto-update via ModelProxy
-        // For now, manual polling
-        setInterval(function() {
+        // ✅ Register for model changes via WebSocket scenario updates
+        // @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
+        function handleModelUpdate() {
+            console.log('[demo-lit] 📡 Model update received via WebSocket');
             mainView.model = kernel.model;
             mainView.requestUpdate();
-        }, 1000);
+        }
+        
+        // ✅ Register listener with kernel (if available)
+        if (typeof kernel.onModelChange === 'function') {
+            kernel.onModelChange(handleModelUpdate);
+            console.log('[demo-lit] ✅ Registered for WebSocket model updates');
+        } else {
+            console.warn('[demo-lit] ⚠️ kernel.onModelChange not available - using fallback polling');
+            // Fallback to polling for older kernel versions
+            setInterval(function() {
+                mainView.model = kernel.model;
+                mainView.requestUpdate();
+            }, 2000);
+        }
         
         console.log('[demo-lit] ✅ ONCE Demo Hub (Lit) initialized');
         

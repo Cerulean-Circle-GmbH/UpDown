@@ -28,9 +28,54 @@ export class BrowserOnce extends DefaultOnceKernel {
     // ✅ Type the model properly
     protected declare model: BrowserOnceModel;
     
+    /**
+     * Registered model change listeners
+     * ✅ Web4 Observer Pattern (no arrow functions)
+     * @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
+     */
+    private modelListeners: Array<() => void> = [];
+    
     constructor() {
         // ✅ Empty constructor (Radical OOP)
         super();
+    }
+    
+    /**
+     * Register a listener for model changes
+     * ✅ Web4 Observer Pattern
+     * Called by views to receive update notifications
+     * @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
+     */
+    onModelChange(listener: () => void): void {
+        this.modelListeners.push(listener);
+        console.log(`[BrowserOnce] Model listener registered (total: ${this.modelListeners.length})`);
+    }
+    
+    /**
+     * Unregister a model change listener
+     */
+    offModelChange(listener: () => void): void {
+        const index = this.modelListeners.indexOf(listener);
+        if (index > -1) {
+            this.modelListeners.splice(index, 1);
+        }
+    }
+    
+    /**
+     * Notify all registered listeners of model change
+     * ✅ Web4 Principle 4: No arrow functions
+     * @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
+     */
+    private notifyModelListeners(): void {
+        console.log(`[BrowserOnce] Notifying ${this.modelListeners.length} listeners`);
+        this.modelListeners.forEach(this.invokeListener);
+    }
+    
+    /**
+     * Invoke a single listener - called via method reference
+     */
+    private invokeListener(listener: () => void): void {
+        listener();
     }
     
     async init(scenario?: any): Promise<this> {
@@ -299,7 +344,11 @@ export class BrowserOnce extends DefaultOnceKernel {
             this.handleMessageScenario(scenario);
         }
         
-        // ✅ Update UI
+        // ✅ Notify registered listeners (for Lit views)
+        // @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
+        this.notifyModelListeners();
+        
+        // ✅ Update legacy UI (for demo-hub.html)
         this.updatePeersDisplay();
         this.updateStatsDisplay();
     }
