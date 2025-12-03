@@ -2172,16 +2172,143 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
    * Stop all peers gracefully (Primary only)
    * Web4 Principle 16: {noun}{verb} naming pattern
    * 
+   * When called from CLI without a running server, this method:
+   * 1. Discovers the primary peer from scenarios
+   * 2. Sends an IOR HTTP request to shut it down
+   * 
    * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/peerStopAll
    * @cliSyntax peerStopAll
    */
   async peerStopAll(): Promise<void> {
-    if (!this.serverHierarchyManager) {
-      throw new Error('Peer not initialized. Call peerStart() first.');
+    // If we have a running server (started via peerStart), use direct shutdown
+    const serverModel = this.serverHierarchyManager?.getServerModel?.();
+    const isServerRunning = serverModel?.state === LifecycleState.RUNNING || 
+                            serverModel?.state === LifecycleState.PRIMARY_SERVER ||
+                            serverModel?.state === LifecycleState.CLIENT_SERVER;
+    
+    if (isServerRunning) {
+      console.log('🛑 Graceful shutdown of all peers initiated (direct)');
+      await this.serverHierarchyManager!.shutdownAllServers();
+      return;
     }
 
-    console.log('🛑 Graceful shutdown of all peers initiated');
-    await this.serverHierarchyManager.shutdownAllServers();
+    // CLI mode: Find primary peer and send IOR request
+    console.log('🔍 Looking for primary peer...');
+    const primaryPeer = await this.discoverPrimaryPeer();
+    
+    if (!primaryPeer) {
+      console.log('ℹ️  No primary peer found - nothing to stop');
+      // Exit cleanly when called from CLI
+      setTimeout(() => process.exit(0), 100);
+      return;
+    }
+
+    console.log(`📡 Found primary peer: ${primaryPeer.uuid} on port ${primaryPeer.port}`);
+    console.log('🛑 Sending shutdown request via IOR...');
+    
+    // Send IOR request to primary peer with abort controller for timeout
+    const iorUrl = `http://localhost:${primaryPeer.port}/ONCE/${this.model.version}/${primaryPeer.uuid}/peerStopAll`;
+    
+    try {
+      // Use AbortController for timeout - the server may close connection during shutdown
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout
+      
+      const response = await fetch(iorUrl, { 
+        method: 'GET',
+        signal: controller.signal 
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (response.ok) {
+        console.log('✅ Shutdown request sent successfully');
+        console.log('🛑 All peers should be shutting down...');
+      } else {
+        console.error(`❌ Shutdown request failed: ${response.status} ${response.statusText}`);
+      }
+    } catch (error: any) {
+      // Connection refused likely means server already stopped
+      // Abort errors are expected - server may close connection during shutdown
+      if (error.code === 'ECONNREFUSED') {
+        console.log('ℹ️  Primary peer is not responding (may already be stopped)');
+      } else if (error.name === 'AbortError') {
+        // Timeout - but shutdown was likely triggered
+        console.log('✅ Shutdown request sent (server may be shutting down)');
+      } else if (error.cause?.code === 'ECONNRESET') {
+        // Connection reset - server closed during request (expected during shutdown)
+        console.log('✅ Shutdown request sent (server is shutting down)');
+      } else {
+        console.error(`❌ Failed to send shutdown request: ${error.message}`);
+      }
+    }
+    
+    // Exit cleanly when called from CLI (no server running)
+    process.exit(0);
+  }
+
+  /**
+   * Discover the primary peer from scenario files
+   * Looks for a peer on port 42777 that is in RUNNING state
+   * 
+   * @returns Primary peer info or null if not found
+   * @internal
+   */
+  private async discoverPrimaryPeer(): Promise<{ uuid: string; port: number } | null> {
+    const fs = await import('fs');
+    const path = await import('path');
+    
+    const projectRoot = this.model.projectRoot || process.cwd();
+    const scenariosDir = path.join(projectRoot, 'scenarios');
+    
+    if (!fs.existsSync(scenariosDir)) {
+      return null;
+    }
+    
+    // Walk through scenarios directory looking for ONCE scenarios with port 42777
+    const walkDir = (dir: string): { uuid: string; port: number } | null => {
+      if (!fs.existsSync(dir)) return null;
+      
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        
+        if (entry.isDirectory()) {
+          const result = walkDir(fullPath);
+          if (result) return result;
+        } else if (entry.name.endsWith('.scenario.json')) {
+          try {
+            const content = fs.readFileSync(fullPath, 'utf-8');
+            const scenario = JSON.parse(content);
+            
+            // Check if this is a primary server (port 42777, not shutdown)
+            // Scenario format: { ior, owner, model: { state: { capabilities, state } } }
+            const serverState = scenario.model?.state || scenario.state;
+            const httpCapability = serverState?.capabilities?.find(
+              (c: any) => c.capability === 'httpPort'
+            );
+            const port = httpCapability?.port;
+            const state = serverState?.state;
+            
+            // Only match running servers (not shutdown, stopped, stopping, error)
+            const isRunning = state === 'running' || 
+                              state === LifecycleState.RUNNING ||
+                              state === LifecycleState.PRIMARY_SERVER ||
+                              state === LifecycleState.CLIENT_SERVER;
+            
+            if (port === 42777 && isRunning) {
+              const uuid = scenario.ior?.uuid || scenario.model?.uuid || scenario.uuid || entry.name.replace('.scenario.json', '');
+              return { uuid, port };
+            }
+          } catch (error) {
+            // Skip invalid scenario files
+          }
+        }
+      }
+      return null;
+    };
+    
+    return walkDir(scenariosDir);
   }
 
   /**
