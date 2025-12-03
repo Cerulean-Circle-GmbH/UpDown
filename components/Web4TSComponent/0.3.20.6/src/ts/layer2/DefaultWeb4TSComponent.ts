@@ -341,74 +341,91 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // PATH AUTHORITY ACCESSORS
+  // PATH AUTHORITY ACCESSORS (TypeScript getters)
   // ═══════════════════════════════════════════════════════════════
   // 
   // @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
-  // Web4 Principle: DefaultCLI calculates paths ONCE, components access via these methods
+  // Web4 Principle: DefaultCLI calculates paths ONCE, components access via these getters
   // NO recalculation - single source of truth
   //
   // Usage by generated components:
-  //   const projectRoot = this.web4ts.getProjectRoot();
-  //   const componentRoot = this.web4ts.getComponentRoot();
-  //   if (this.web4ts.isTestIsolation()) { ... }
+  //   const projectRoot = this.web4ts.projectRoot;
+  //   const componentRoot = this.web4ts.componentRoot;
+  //   if (this.web4ts.testIsolation) { ... }
 
   /**
-   * Get project root path (Path Authority - single source of truth)
+   * Project root path (Path Authority - single source of truth)
    * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
    */
-  getProjectRoot(): string {
+  get projectRoot(): string {
     return this.model.projectRoot;
   }
 
   /**
-   * Get component root path for THIS component
+   * Component root path for THIS component
    * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
    */
-  getComponentRoot(): string {
+  get componentRoot(): string {
     return this.model.componentRoot;
   }
 
   /**
-   * Get target component root path (for delegation context)
+   * Target component root path (for delegation context)
    * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
    */
-  getTargetComponentRoot(): string {
+  get targetComponentRoot(): string {
     return this.model.targetComponentRoot || this.model.componentRoot;
   }
 
   /**
-   * Check if running in test isolation mode
+   * Test isolation mode flag
    * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
    */
-  isTestIsolation(): boolean {
+  get testIsolation(): boolean {
     return this.model.isTestIsolation;
   }
 
   /**
-   * Get test data directory (test/data under component root)
+   * Test data directory (test/data under component root)
    * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
    */
-  getTestDataDir(): string {
-    return path.join(this.getComponentRoot(), 'test', 'data');
+  get testDataDir(): string {
+    return path.join(this.componentRoot, 'test', 'data');
   }
 
   /**
-   * Get components directory path
+   * Components directory path
    * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
    */
-  getComponentsDirectory(): string {
+  get componentsDirectory(): string {
     return this.model.componentsDirectory;
   }
 
   /**
    * Set component dependencies that must be built before this component
+   * @deprecated Use `set dependencies(value)` or `this.model.dependencies = value` instead (Web4 Principle 16)
    * @param dependencies Array of component dependencies
    * @cliHide
    */
   setDependencies(dependencies: ComponentDependency[]): this {
     this.model.dependencies = dependencies;
     return this;
+  }
+
+  /**
+   * Component dependencies (TypeScript setter - Web4 Principle 16)
+   * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   */
+  set dependencies(value: ComponentDependency[]) {
+    this.model.dependencies = value;
+  }
+
+  /**
+   * Component dependencies (TypeScript getter - Web4 Principle 16)
+   * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   */
+  get dependencies(): ComponentDependency[] {
+    return this.model.dependencies || [];
   }
 
   /**

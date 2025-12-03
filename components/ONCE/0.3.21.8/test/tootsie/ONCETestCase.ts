@@ -27,13 +27,17 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // VERSION-AGNOSTIC HELPERS
+  // PATH AUTHORITY (TypeScript getters)
   // ═══════════════════════════════════════════════════════════════
+  // 
+  // @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+  // Note: These calculate EXPECTED values for path authority tests.
+  // Production code should use Web4TSComponent.projectRoot etc.
 
   /**
-   * Get ONCE version from file location (Version Authority pattern)
+   * ONCE version from file location (Version Authority pattern)
    */
-  protected getONCEVersion(): string {
+  protected get onceVersion(): string {
     const currentFilePath = fileURLToPath(import.meta.url);
     const testDir = path.dirname(currentFilePath);
     const testRoot = path.dirname(testDir);
@@ -42,9 +46,9 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
   }
 
   /**
-   * Get component root dynamically
+   * Component root path (derived from test file location)
    */
-  protected getComponentRoot(): string {
+  protected get componentRoot(): string {
     const currentFilePath = fileURLToPath(import.meta.url);
     const testDir = path.dirname(currentFilePath);
     const testRoot = path.dirname(testDir);
@@ -52,10 +56,10 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
   }
 
   /**
-   * Get test data directory
+   * Test data directory path
    */
-  protected getTestDataDir(): string {
-    return path.join(this.getComponentRoot(), 'test', 'data');
+  protected get testDataDir(): string {
+    return path.join(this.componentRoot, 'test', 'data');
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -66,9 +70,8 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
    * Run once CLI command and return output
    */
   protected runOnceCLI(command: string, options?: { cwd?: string }): string {
-    const componentRoot = this.getComponentRoot();
-    const onceExec = path.join(componentRoot, 'once');
-    const cwd = options?.cwd || componentRoot;
+    const onceExec = path.join(this.componentRoot, 'once');
+    const cwd = options?.cwd || this.componentRoot;
     
     return execSync(`"${onceExec}" ${command} 2>&1`, {
       encoding: 'utf8',
@@ -80,12 +83,11 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
    * Run once CLI from test/data (test isolation context)
    */
   protected runOnceCLIInTestIsolation(command: string): string {
-    const testDataDir = this.getTestDataDir();
-    const onceExec = path.join(testDataDir, 'scripts', 'once');
+    const onceExec = path.join(this.testDataDir, 'scripts', 'once');
     
     return execSync(`"${onceExec}" ${command} 2>&1`, {
       encoding: 'utf8',
-      cwd: testDataDir
+      cwd: this.testDataDir
     });
   }
 
@@ -93,8 +95,7 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
    * Ensure test isolation is set up
    */
   protected async ensureTestIsolation(): Promise<void> {
-    const testDataDir = this.getTestDataDir();
-    const scriptsOnce = path.join(testDataDir, 'scripts', 'once');
+    const scriptsOnce = path.join(this.testDataDir, 'scripts', 'once');
     
     if (!fs.existsSync(scriptsOnce)) {
       this.logEvidence('step', 'Setting up test isolation');

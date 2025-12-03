@@ -22,8 +22,8 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
   private page: Page | null = null;
 
   protected async executeTestLogic(): Promise<any> {
-    const componentRoot = this.getComponentRoot();
-    const version = this.getONCEVersion();
+    const componentRoot = this.componentRoot;
+    const version = this.onceVersion;
     const primaryPort = 42777;
     const demoUrl = `http://localhost:${primaryPort}/demo`;
     

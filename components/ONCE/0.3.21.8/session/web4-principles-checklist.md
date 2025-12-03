@@ -143,11 +143,26 @@
 
 ---
 
-### **Principle 16: Object-Action Method Naming**
-> Pattern: `{noun}{verb}()` groups methods by domain object.
+### **Principle 16: Object-Action Method Naming + TypeScript Accessors**
+> Pattern: `{noun}{verb}()` groups methods by domain object. Use TypeScript getters/setters.
 
+**Method Naming:**
 - [ ] `componentDescriptorUpdate()` NOT `updateComponentDescriptor()`
+- [ ] `thisAndThatCreate()` NOT `createThisAndThat()`
 - [ ] Methods grouped by object they operate on
+
+**TypeScript Accessors:**
+- [ ] Use `get propertyName()` NOT `getPropertyName()`
+- [ ] Use `set propertyName(value)` NOT `setPropertyName(value)`
+- [ ] Properties accessed as `this.propertyName` NOT `this.getPropertyName()`
+
+**Deprecated Patterns** (mark for refactoring when encountered):
+- `getXxx()` → `get xxx()`
+- `setXxx(value)` → `set xxx(value)`
+- `createXxx()` → `xxxCreate()`
+- `updateXxx()` → `xxxUpdate()`
+
+**Example (Path Authority getters):** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/Web4TSComponent/0.3.20.6/src/ts/layer2/DefaultWeb4TSComponent.ts) | [§/components/Web4TSComponent/0.3.20.6/src/ts/layer2/DefaultWeb4TSComponent.ts](../../../../Web4TSComponent/0.3.20.6/src/ts/layer2/DefaultWeb4TSComponent.ts) (Lines 343-398)
 
 ---
 

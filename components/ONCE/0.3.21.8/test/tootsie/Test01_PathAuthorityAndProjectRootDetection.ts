@@ -19,9 +19,9 @@ import { ONCETestCase } from './ONCETestCase.js';
 export class Test01_PathAuthorityAndProjectRootDetection extends ONCETestCase {
 
   protected async executeTestLogic(): Promise<any> {
-    const componentRoot = this.getComponentRoot();
-    const version = this.getONCEVersion();
-    const testDataDir = this.getTestDataDir();
+    const componentRoot = this.componentRoot;
+    const version = this.onceVersion;
+    const testDataDir = this.testDataDir;
     
     this.logEvidence('input', 'Path authority regression test', {
       componentRoot,
