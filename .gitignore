@@ -38,3 +38,6 @@ npm-debug.log*
 # Test artifacts
 test/data/
 **/test/data/
+
+# Tootsie test screenshots
+**/test/tootsie/screenshots/

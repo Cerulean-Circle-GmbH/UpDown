@@ -2345,21 +2345,32 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
   }
   
   /**
-   * Execute a test file by importing and instantiating it as an object
-   * ✅ RADICAL OOP: Test is an OBJECT, not a script!
-   * Uses TSX for TypeScript execution (interim solution until tests are compiled)
+   * Execute a test file by using TootsieTestRunner component
+   * ✅ RADICAL OOP: Test execution delegated to dedicated component
+   * ✅ Web4 Separation of Concerns: No inline code generation
    * @cliHide
    */
   private async executeTestFile(testFilePath: string, scope: string, references: string[]): Promise<void> {
     console.log(`   Loading test class from: ${testFilePath}`);
     
-    // ✅ INTERIM: Use tsx to execute TypeScript
-    // TODO: Pre-compile tests to pure ESM for direct import()
     const { execSync } = await import('child_process');
     
+    // Use TootsieTestRunner component (Web4 Separation of Concerns)
+    const tootsieRunnerPath = path.join(
+      this.model.componentsDirectory || path.join(this.model.projectRoot || '', 'components'),
+      'Tootsie',
+      '0.3.20.6',
+      'src',
+      'ts',
+      'layer4',
+      'TootsieTestRunner.ts'
+    );
+    
+    console.log(`   Using Tootsie runner: ${tootsieRunnerPath}\n`);
+    
     try {
-      const command = `npx tsx ${testFilePath}`;
-      console.log(`   Executing (via tsx): ${command}\n`);
+      // Execute test via TootsieTestRunner
+      const command = `npx tsx ${tootsieRunnerPath} ${testFilePath}`;
       
       execSync(command, {
         cwd: this.model.projectRoot || process.cwd(),

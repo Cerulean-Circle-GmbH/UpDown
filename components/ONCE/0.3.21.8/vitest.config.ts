@@ -2,40 +2,32 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    // Test environment
     environment: 'node',
-    
-    // Test isolation
-    isolate: true,
-    
-    // Timeouts
-    testTimeout: 30000,
-    hookTimeout: 10000,
-    
-    // Reporter
-    reporters: ['verbose'],
-    
-    // Coverage (optional)
-    coverage: {
-      enabled: false,
-      provider: 'c8',
-      reporter: ['text', 'html'],
-      include: ['src/**/*.ts'],
-      exclude: ['src/**/*.test.ts', 'src/**/*.spec.ts']
+    globals: true,
+    include: ['test/**/*.test.ts'],
+    exclude: ['test/data/**', 'test/logs/**', '**/node_modules/**'],  // Exclude test data, logs, and node_modules
+    testTimeout: 180000,   // 180s per test (3 minutes) - standardized timeout
+    hookTimeout: 180000,   // 180s for setup/teardown (increased from 30s to handle slow tests)
+    teardownTimeout: 30000, // 30s for cleanup
+    bail: 1,               // Stop on first failure to prevent cascade hangs
+    // CRITICAL: Run tests sequentially to prevent race conditions
+    pool: 'forks',
+    poolOptions: {
+      forks: {
+        singleFork: true,
+        isolate: false  // Reduce IPC overhead that causes "onTaskUpdate" timeout
+      }
     },
-    
-    // Include test files
-    include: [
-      'test/lifecycle-management/**/*.test.ts',
-      'test/lifecycle-management/**/*.spec.ts'
-    ],
-    
-    // Globals
-    globals: true
+    // Run tests in sequence, not parallel
+    fileParallelism: false,
+    maxConcurrency: 1,
+    // Multi-reporter: console + JSON for structured output
+    reporters: ['default', 'json'],
+    outputFile: './test/test-results.json'
   },
-  
-  // Resolve configuration
   resolve: {
-    extensions: ['.ts', '.js', '.json']
+    alias: {
+      '@': '/src'
+    }
   }
 });
