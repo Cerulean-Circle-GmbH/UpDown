@@ -224,6 +224,30 @@
 
 ---
 
+### **Principle 22: Collection<T> for Arrays**
+> Use Collection<T> interface instead of raw arrays `T[]`.
+
+Like `Reference<T>` wraps nullable single values, `Collection<T>` wraps arrays with type-safe operations.
+
+- [ ] No raw arrays `peers: Scenario[]` → use `peers: Collection<Scenario>`
+- [ ] Collection provides: `add()`, `remove()`, `find()`, `forEach()`, `map()`, `filter()`
+- [ ] Elements accessed via `at(index)` return `Reference<T>`
+
+```typescript
+// ❌ WRONG - raw array
+private peers: Scenario[] = [];
+const peers = this.model?.peers || [];
+
+// ✅ CORRECT - Collection<T>
+private peers: Collection<Scenario<ONCEModel>>;
+const peers: Collection<Scenario<ONCEModel>> = this.model.peers;
+peers.forEach(peer => { /* ... */ });
+```
+
+**Example:** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/session/2025-12-03-UTC-1200.mvc-lit3-views.pdca.md) | [§/components/ONCE/0.3.21.8/session/2025-12-03-UTC-1200.mvc-lit3-views.pdca.md](./2025-12-03-UTC-1200.mvc-lit3-views.pdca.md) (Collection.interface.ts section)
+
+---
+
 ## How to Use
 
 1. **BEFORE every git commit:** Open this file and check ALL principles
