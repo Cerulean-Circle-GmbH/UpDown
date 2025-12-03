@@ -10,7 +10,8 @@
 
 import { Web4Requirement } from '../layer3/Web4Requirement.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
-import { Web4RequirementModel, AcceptanceCriterion } from '../layer3/Web4RequirementModel.interface.js';
+import { Web4RequirementModel } from '../layer3/Web4RequirementModel.interface.js';
+import { AcceptanceCriterion } from '../layer3/AcceptanceCriterion.interface.js';
 import { User } from '../layer3/User.interface.js';
 import { MethodSignature } from '../layer3/MethodSignature.interface.js';
 import { existsSync, lstatSync, readlinkSync, readdirSync, statSync } from 'fs';
@@ -26,6 +27,7 @@ export class DefaultWeb4Requirement implements Web4Requirement {
   constructor() {
     // Empty constructor - Web4 pattern
     // @pdca 2025-11-03-1105-component-template-bugs.pdca.md - Initialize with component name for CLI display
+    // @pdca 2025-12-02-UTC-2145.fix-web4-principle-violations.pdca.md - Use Reference<T> (null) for nullable
     this.model = {
       uuid: crypto.randomUUID(),
       name: '',
@@ -39,7 +41,14 @@ export class DefaultWeb4Requirement implements Web4Requirement {
       acceptanceCriteria: [],        // ✅ Radical OOP: Acceptance criteria as objects
       status: 'pending',
       testCaseIORs: [],
-      traceabilityChain: []
+      traceabilityChain: [],
+      // Reference<T> pattern for nullable fields (Principle 5)
+      componentRoot: null,
+      projectRoot: null,
+      targetDirectory: null,
+      targetComponentRoot: null,
+      context: null,
+      isTestIsolation: null
     };
   }
 
@@ -284,10 +293,14 @@ export class DefaultWeb4Requirement implements Web4Requirement {
    * @param description Human-readable description
    */
   addCriterion(id: string, description: string): this {
+    // @pdca 2025-12-02-UTC-2145.fix-web4-principle-violations.pdca.md - Use Reference<T> (null) for nullable
     const criterion: AcceptanceCriterion = {
       id,
       description,
-      status: 'pending'
+      status: 'pending',
+      validatedAt: null,
+      evidence: null,
+      errorMessage: null
     };
     this.model.acceptanceCriteria.push(criterion);
     this.model.updatedAt = new Date().toISOString();

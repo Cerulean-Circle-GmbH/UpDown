@@ -11,7 +11,8 @@
  */
 
 import { Scenario } from './Scenario.interface.js';
-import { Web4RequirementModel, AcceptanceCriterion } from './Web4RequirementModel.interface.js';
+import { Web4RequirementModel } from './Web4RequirementModel.interface.js';
+import { AcceptanceCriterion } from './AcceptanceCriterion.interface.js';
 
 export interface Web4Requirement {
   // Core Web4 methods
