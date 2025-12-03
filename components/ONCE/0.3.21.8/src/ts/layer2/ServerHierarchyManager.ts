@@ -381,12 +381,19 @@ export class ServerHierarchyManager {
                 console.log(`🔵 Started as CLIENT SERVER on port ${boundPort}`);
                 console.log(`📋 Server UUID: ${this.serverModel.uuid}`);
                 
-                // Register with primary peer
+                // Register with primary peer (sends initial STARTING state)
                 await this.registerWithPrimaryServer();
                 this.serverModel.state = LifecycleState.CLIENT_SERVER;
             }
 
             this.serverModel.state = LifecycleState.RUNNING;
+            
+            // ✅ FIX: Notify primary of RUNNING state (for registry acceptance)
+            // @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
+            if (!this.serverModel.isPrimaryServer) {
+                this.notifyPrimaryOfStateChange();
+                console.log(`📤 Notified primary of RUNNING state`);
+            }
             
             // Try to load existing scenario first, then save if needed
             await this.loadOrCreateScenario();
