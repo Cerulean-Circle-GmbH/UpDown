@@ -50,6 +50,7 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
     demoReq.addCriterion('DEMO-06', 'No critical JavaScript errors');
     demoReq.addCriterion('DEMO-07', 'ONCE kernel booted in browser (window.ONCE exists)');
     demoReq.addCriterion('DEMO-08', 'IOR version matches component version (0.3.21.8)');
+    demoReq.addCriterion('DEMO-09', 'Shutdown button sends IOR with correct version');
 
     // ═══════════════════════════════════════════════════════════════
     // SETUP: Ensure server is running
@@ -275,6 +276,56 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
                                 iorVersionCheck.versionsMatch;
       
       demoReq.validateCriterion('DEMO-08', iorVersionCorrect, iorVersionCheck);
+
+      // ═══════════════════════════════════════════════════════════════
+      // TEST 7: Click Shutdown Button and Verify IOR URL Version
+      // ═══════════════════════════════════════════════════════════════
+      
+      this.logEvidence('step', 'Testing Shutdown All button IOR URL');
+      
+      // Set up request interception to capture IOR URL
+      let capturedIorUrl: string | null = null;
+      
+      // Listen for the IOR request
+      this.page.on('request', (request) => {
+        const url = request.url();
+        if (url.includes('/shutdownAll')) {
+          capturedIorUrl = url;
+        }
+      });
+      
+      // Override confirm to auto-accept
+      await this.page.evaluate(() => {
+        (window as any).confirm = () => true;
+      });
+      
+      // Click the shutdown button (we'll catch the request but not let it complete)
+      // Use page.route to intercept and abort the actual request
+      await this.page.route('**/shutdownAll', route => {
+        capturedIorUrl = route.request().url();
+        route.abort();  // Don't actually shutdown the server
+      });
+      
+      // Click the shutdown button
+      await this.page.click('#shutdownAllBtn');
+      
+      // Wait a bit for the request to be captured
+      await this.sleep(500);
+      
+      // Verify the captured URL contains the correct version
+      const shutdownIorEvidence = {
+        capturedUrl: capturedIorUrl,
+        containsCorrectVersion: capturedIorUrl?.includes('/0.3.21.8/') || false,
+        containsOldVersion: capturedIorUrl?.includes('/0.3.21.6/') || false,
+        expectedPattern: '/ONCE/0.3.21.8/{uuid}/shutdownAll'
+      };
+      
+      this.logEvidence('output', 'Shutdown button IOR URL', shutdownIorEvidence);
+      
+      const shutdownVersionCorrect = shutdownIorEvidence.containsCorrectVersion && 
+                                     !shutdownIorEvidence.containsOldVersion;
+      
+      demoReq.validateCriterion('DEMO-09', shutdownVersionCorrect, shutdownIorEvidence);
 
       // ═══════════════════════════════════════════════════════════════
       // FINAL: Validate Requirement
