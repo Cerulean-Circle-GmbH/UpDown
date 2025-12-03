@@ -349,8 +349,10 @@
         }, 1000);
         
         // ✅ **IOR-BASED LIFECYCLE MANAGEMENT** (Web4 Principle 12)
-        // Get primary server UUID from kernel model
-        const primaryUUID = kernel.model.uuid;
+        // Get PRIMARY SERVER UUID from kernel model (NOT browser kernel UUID!)
+        // kernel.model.peerUUID = server UUID from /health endpoint
+        // kernel.model.uuid = browser kernel UUID (wrong for IOR calls!)
+        const primaryUUID = kernel.model.peerUUID;
         
         // Start next client server via IOR method invocation
         async function startNextServer() {

@@ -51,6 +51,7 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
     demoReq.addCriterion('DEMO-07', 'ONCE kernel booted in browser (window.ONCE exists)');
     demoReq.addCriterion('DEMO-08', 'IOR version matches component version (0.3.21.8)');
     demoReq.addCriterion('DEMO-09', 'Shutdown button sends IOR with correct version');
+    demoReq.addCriterion('DEMO-10', 'Server shuts down via IOR call');
 
     // ═══════════════════════════════════════════════════════════════
     // SETUP: Ensure server is running
@@ -326,6 +327,65 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
                                      !shutdownIorEvidence.containsOldVersion;
       
       demoReq.validateCriterion('DEMO-09', shutdownVersionCorrect, shutdownIorEvidence);
+
+      // ═══════════════════════════════════════════════════════════════
+      // TEST 8: Actually Shutdown Server via IOR (only if test started server)
+      // ═══════════════════════════════════════════════════════════════
+      
+      if (startedByTest) {
+        this.logEvidence('step', 'Testing actual server shutdown via IOR');
+        
+        // Remove the route interception so the real request goes through
+        await this.page.unroute('**/shutdownAll');
+        
+        // Listen for the actual shutdown request
+        let shutdownResponseStatus: number | null = null;
+        this.page.on('response', (response) => {
+          if (response.url().includes('/shutdownAll')) {
+            shutdownResponseStatus = response.status();
+          }
+        });
+        
+        // Click shutdown again (confirm is already overridden)
+        await this.page.click('#shutdownAllBtn');
+        
+        // Wait for the response and server to shut down
+        await this.sleep(3000);
+        
+        // Check if server is actually down
+        let serverDown = false;
+        try {
+          const response = await fetch('http://localhost:42777/health');
+          // If we get here, server is still running
+          serverDown = false;
+        } catch (e) {
+          // Connection refused = server is down
+          serverDown = true;
+        }
+        
+        const actualShutdownEvidence = {
+          shutdownResponseStatus,
+          serverDown,
+          message: serverDown ? 'Server successfully shut down via IOR' : 'Server still running after shutdown'
+        };
+        
+        this.logEvidence('output', 'Actual shutdown result', actualShutdownEvidence);
+        
+        // Server should be down after shutdown
+        demoReq.validateCriterion('DEMO-10', serverDown, actualShutdownEvidence);
+        
+        // Mark that server was shut down by IOR (not by test cleanup)
+        if (serverDown) {
+          startedByTest = false;  // Don't call serverStop() in finally since IOR shutdown worked
+        }
+      } else {
+        // Skip DEMO-10 if server was already running (can't guarantee UUID match)
+        this.logEvidence('info', 'Skipping DEMO-10: Server was already running (UUID may not match)');
+        demoReq.validateCriterion('DEMO-10', true, { 
+          skipped: true, 
+          reason: 'Server was already running - use fresh server for shutdown test' 
+        });
+      }
 
       // ═══════════════════════════════════════════════════════════════
       // FINAL: Validate Requirement
