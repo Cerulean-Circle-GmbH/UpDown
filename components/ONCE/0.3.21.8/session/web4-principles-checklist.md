@@ -146,9 +146,10 @@
 ### **Principle 16: Object-Action Method Naming + TypeScript Accessors**
 > Pattern: `{noun}{verb}()` groups methods by domain object. Use TypeScript getters/setters.
 
-**Method Naming:**
+**Method Naming (nameVerb pattern):**
 - [ ] `componentDescriptorUpdate()` NOT `updateComponentDescriptor()`
 - [ ] `thisAndThatCreate()` NOT `createThisAndThat()`
+- [ ] `dependenciesBuild()` NOT `buildDependencies()`
 - [ ] Methods grouped by object they operate on
 
 **TypeScript Accessors:**
@@ -156,11 +157,23 @@
 - [ ] Use `set propertyName(value)` NOT `setPropertyName(value)`
 - [ ] Properties accessed as `this.propertyName` NOT `this.getPropertyName()`
 
-**Deprecated Patterns** (mark for refactoring when encountered):
-- `getXxx()` → `get xxx()`
-- `setXxx(value)` → `set xxx(value)`
-- `createXxx()` → `xxxCreate()`
-- `updateXxx()` → `xxxUpdate()`
+**Deprecated Patterns** (mark `@deprecated` for lazy migration when encountered):
+| Old Pattern | New Pattern | Migration |
+|-------------|-------------|-----------|
+| `getXxx()` | `get xxx()` | Add getter, deprecate method |
+| `setXxx(value)` | `set xxx(value)` | Add setter, deprecate method |
+| `createXxx()` | `xxxCreate()` | Rename method |
+| `updateXxx()` | `xxxUpdate()` | Rename method |
+| `buildXxx()` | `xxxBuild()` | Rename method |
+| `loadXxx()` | `xxxLoad()` | Rename method |
+| `saveXxx()` | `xxxSave()` | Rename method |
+| `deleteXxx()` | `xxxDelete()` | Rename method |
+
+**Lazy Migration Protocol:**
+1. When encountering old pattern → add `@deprecated` JSDoc with migration hint
+2. Add new pattern alongside (for getters/setters)
+3. Update callers incrementally over time
+4. Remove deprecated method when all callers migrated
 
 **Example (Path Authority getters):** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/Web4TSComponent/0.3.20.6/src/ts/layer2/DefaultWeb4TSComponent.ts) | [§/components/Web4TSComponent/0.3.20.6/src/ts/layer2/DefaultWeb4TSComponent.ts](../../../../Web4TSComponent/0.3.20.6/src/ts/layer2/DefaultWeb4TSComponent.ts) (Lines 343-398)
 

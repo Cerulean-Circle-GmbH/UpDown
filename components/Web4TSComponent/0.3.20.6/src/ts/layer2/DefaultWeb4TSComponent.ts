@@ -432,6 +432,7 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
    * @TODO needs 0.3.18.3 review still
    * Build all component dependencies before building this component
    * Recursively builds dependencies in correct order
+   * @deprecated Use `dependenciesBuild()` instead (Web4 Principle 16: nameVerb pattern)
    * @param componentName Name of component whose dependencies to build
    * @param version Version of component to build (defaults to latest)
    * @cliHide
