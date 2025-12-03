@@ -73,6 +73,11 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       this.logEvidence('step', 'Server already running');
     }
 
+    // Collect ALL console errors from the start
+    const consoleErrors: string[] = [];
+    const pageErrors: string[] = [];
+    const failedResources: string[] = [];
+
     try {
       // ═══════════════════════════════════════════════════════════════
       // TEST 1: Launch Browser with Playwright
@@ -85,7 +90,22 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       });
       this.page = await this.browser.newPage();
       
-      this.logEvidence('step', 'Browser launched successfully');
+      // ✅ Set up error listeners BEFORE navigation to capture ALL errors
+      this.page.on('console', msg => {
+        if (msg.type() === 'error') {
+          consoleErrors.push(msg.text());
+        }
+      });
+      
+      this.page.on('pageerror', error => {
+        pageErrors.push(error.message);
+      });
+      
+      this.page.on('requestfailed', request => {
+        failedResources.push(`${request.url()}: ${request.failure()?.errorText || 'unknown'}`);
+      });
+      
+      this.logEvidence('step', 'Browser launched, error listeners attached');
 
       // ═══════════════════════════════════════════════════════════════
       // TEST 2: Navigate to /demo
@@ -94,8 +114,8 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       this.logEvidence('step', 'Navigating to demo page', { url: demoUrl });
       
       const response = await this.page.goto(demoUrl, { 
-        waitUntil: 'domcontentloaded',
-        timeout: 10000 
+        waitUntil: 'networkidle',  // Wait for all network activity to settle
+        timeout: 30000  // Longer timeout for full load
       });
       
       const responseOK = response?.ok() ?? false;
@@ -146,28 +166,33 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       this.logEvidence('output', 'Screenshot saved', { path: screenshotPath });
 
       // ═══════════════════════════════════════════════════════════════
-      // TEST 5: Check for JavaScript Errors
+      // TEST 5: Check for JavaScript Errors (collected since page load)
       // ═══════════════════════════════════════════════════════════════
       
-      this.logEvidence('step', 'Checking for console errors');
+      this.logEvidence('step', 'Checking for console errors (collected during load)');
       
-      const consoleErrors: string[] = [];
-      this.page.on('console', msg => {
-        if (msg.type() === 'error') {
-          consoleErrors.push(msg.text());
-        }
+      // Wait a bit more for any async errors
+      await this.sleep(2000);
+      
+      const totalErrors = consoleErrors.length + pageErrors.length + failedResources.length;
+      const noErrors = totalErrors === 0;
+      
+      this.logEvidence('output', 'JavaScript validation', { 
+        noErrors, 
+        consoleErrorCount: consoleErrors.length,
+        pageErrorCount: pageErrors.length,
+        failedResourceCount: failedResources.length,
+        consoleErrors: consoleErrors.slice(0, 5),
+        pageErrors: pageErrors.slice(0, 5),
+        failedResources: failedResources.slice(0, 5)
       });
       
-      // Reload to capture any errors
-      await this.page.reload({ waitUntil: 'domcontentloaded' });
-      await this.sleep(1000);  // Wait for any async errors
-      
-      const noErrors = consoleErrors.length === 0;
-      
-      this.logEvidence('output', 'JavaScript validation', { noErrors, errorCount: consoleErrors.length, errors: consoleErrors.slice(0, 5) });
-      
       // Validate criterion DEMO-06
-      demoReq.validateCriterion('DEMO-06', noErrors, { consoleErrors: consoleErrors.slice(0, 5) });
+      demoReq.validateCriterion('DEMO-06', noErrors, { 
+        consoleErrors: consoleErrors.slice(0, 5),
+        pageErrors: pageErrors.slice(0, 5),
+        failedResources: failedResources.slice(0, 5)
+      });
 
       // ═══════════════════════════════════════════════════════════════
       // TEST 6: Check if ONCE Kernel Booted
