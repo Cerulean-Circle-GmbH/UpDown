@@ -37,6 +37,12 @@ export class BrowserOnce extends DefaultOnceKernel {
         // ✅ Transition to INITIALIZING state
         this.transitionTo(LifecycleState.INITIALIZING, LifecycleEventType.BEFORE_INIT);
         
+        // ✅ Extract version from script URL (Web4 Path Authority pattern)
+        // URL: .../components/ONCE/0.3.21.8/dist/ts/layer2/BrowserOnce.js
+        const scriptUrl = import.meta.url;
+        const versionMatch = scriptUrl.match(/\/(\d+\.\d+\.\d+\.\d+)\//);
+        const detectedVersion = versionMatch ? versionMatch[1] : '0.0.0.0';
+        
         // ✅ Initialize with scenario
         this.model = {
             // Base model properties (from Model interface)
@@ -44,7 +50,7 @@ export class BrowserOnce extends DefaultOnceKernel {
             name: 'BrowserONCEKernel',
             
             // Kernel properties (from ONCEKernelModel)
-            version: '0.3.21.6',
+            version: detectedVersion,  // ✅ Dynamic from URL, not hardcoded!
             state: LifecycleState.INITIALIZING, // Current lifecycle state
             environment: DefaultEnvironmentInfo.createBrowserEnvironment(
                 navigator.userAgent
@@ -171,9 +177,15 @@ export class BrowserOnce extends DefaultOnceKernel {
         try {
             const health = await this.getHealth();
             
-            if (health.status === 'healthy') {
-                this.model.peerUUID = health.uuid;
-                this.model.peerVersion = health.version || 'unknown';
+            // ✅ Health is successful if we have an IOR (Web4 pattern)
+            if (health.ior || health.status === 'healthy') {
+                // ✅ Get version from IOR (Web4 pattern) or fallback to health.version
+                const serverVersion = health.ior?.version || health.version;
+                this.model.peerUUID = health.ior?.uuid || health.uuid;
+                this.model.peerVersion = serverVersion || 'unknown';
+                // ✅ Update kernel version from server (Path Authority pattern)
+                // Browser kernel uses server's version for IOR calls
+                this.model.version = serverVersion || this.model.version;
                 this.model.isConnected = true;
                 this.model.connectionTime = new Date();
                 

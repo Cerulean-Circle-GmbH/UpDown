@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ONCE v0.3.21.7 Demo Hub - IOR-based Lifecycle Management</title>
+    <title>ONCE Demo Hub - IOR-based Lifecycle Management</title>
     <style>
         body { 
             font-family: 'Courier New', monospace; 
@@ -202,7 +202,7 @@
 </head>
 <body>
     <div class="demo-header">
-        <h1>🎭 ONCE v0.3.21.7 Demo Hub</h1>
+        <h1 id="pageTitle">🎭 ONCE Demo Hub</h1>
         <p>IOR-based Lifecycle Management - Web4 Principle 12</p>
         <div class="connection-status" id="connectionStatus">🔴 Initializing...</div>
     </div>
@@ -261,9 +261,16 @@
         // Boot kernel
         const kernel = await ONCE.start({ peerHost });
         
+        // Get version from kernel (dynamic, not hardcoded!)
+        const onceVersion = kernel.model?.version || '0.3.x.x';
+        
+        // Update page with actual version
+        document.title = `ONCE v${onceVersion} Demo Hub - IOR-based Lifecycle Management`;
+        document.getElementById('pageTitle').textContent = `🎭 ONCE v${onceVersion} Demo Hub`;
+        
         // Update connection status
         document.getElementById('connectionStatus').textContent = '🟢 Connected to P2P Network';
-        addLog('connection', '✅ ONCE Kernel booted');
+        addLog('connection', `✅ ONCE Kernel v${onceVersion} booted`);
         addLog('connection', `📡 Connected to: ${peerHost}`);
         
         // Statistics
@@ -352,7 +359,7 @@
             btn.textContent = '⏳ Starting...';
             
             try {
-                const ior = `http://${peerHost}/ONCE/0.3.21.7/${primaryUUID}/startClientServer`;
+                const ior = `http://${peerHost}/ONCE/${onceVersion}/${primaryUUID}/startClientServer`;
                 addLog('lifecycle', `📡 IOR Call: ${ior}`);
                 
                 const response = await fetch(ior, { method: 'POST' });
@@ -382,7 +389,7 @@
         // Stop specific server via IOR method invocation
         window.stopServer = async function(uuid) {
             try {
-                const ior = `http://${peerHost}/ONCE/0.3.21.7/${uuid}/stopServer`;
+                const ior = `http://${peerHost}/ONCE/${onceVersion}/${uuid}/stopServer`;
                 addLog('lifecycle', `📡 IOR Call: ${ior}`);
                 
                 const response = await fetch(ior, { method: 'POST' });
@@ -402,7 +409,7 @@
             btn.textContent = '⏳ Discovering...';
             
             try {
-                const ior = `http://${peerHost}/ONCE/0.3.21.7/${primaryUUID}/discoverServers`;
+                const ior = `http://${peerHost}/ONCE/${onceVersion}/${primaryUUID}/discoverServers`;
                 addLog('lifecycle', `📡 IOR Call: ${ior}`);
                 
                 const response = await fetch(ior, { method: 'POST' });
@@ -435,7 +442,7 @@
             }
             
             try {
-                const ior = `http://${peerHost}/ONCE/0.3.21.7/${primaryUUID}/shutdownAll`;
+                const ior = `http://${peerHost}/ONCE/${onceVersion}/${primaryUUID}/shutdownAll`;
                 addLog('lifecycle', `📡 IOR Call: ${ior}`);
                 addLog('lifecycle', '🛑 Shutdown initiated...');
                 
