@@ -48,6 +48,7 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
     demoReq.addCriterion('DEMO-04', 'Page has valid HTML structure');
     demoReq.addCriterion('DEMO-05', 'Page contains demo content');
     demoReq.addCriterion('DEMO-06', 'No critical JavaScript errors');
+    demoReq.addCriterion('DEMO-07', 'ONCE kernel booted in browser (window.ONCE exists)');
 
     // ═══════════════════════════════════════════════════════════════
     // SETUP: Ensure server is running
@@ -167,6 +168,51 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       
       // Validate criterion DEMO-06
       demoReq.validateCriterion('DEMO-06', noErrors, { consoleErrors: consoleErrors.slice(0, 5) });
+
+      // ═══════════════════════════════════════════════════════════════
+      // TEST 6: Check if ONCE Kernel Booted
+      // ═══════════════════════════════════════════════════════════════
+      
+      this.logEvidence('step', 'Checking if ONCE kernel booted in browser');
+      
+      // Wait for ONCE to boot (it's async)
+      await this.sleep(2000);
+      
+      // Check if window.ONCE exists (it's the kernel instance, not the class)
+      // In browser: window.ONCE = kernel (the booted instance)
+      const onceBootStatus = await this.page.evaluate(() => {
+        const kernel = (window as any).ONCE;
+        const hasWindowOnce = typeof kernel !== 'undefined' && kernel !== null;
+        
+        // Check if it's actually a kernel instance (has model with uuid)
+        let isKernelInstance = false;
+        let kernelUuid: string | null = null;
+        
+        if (hasWindowOnce) {
+          try {
+            // Kernel should have model.uuid
+            isKernelInstance = typeof kernel.model === 'object' && 
+                              typeof kernel.model.uuid === 'string';
+            kernelUuid = kernel.model?.uuid || null;
+          } catch (e) {
+            // Not a valid kernel
+          }
+        }
+        
+        return {
+          hasWindowOnce,
+          isKernelInstance,
+          kernelUuid,
+          connectionStatus: document.getElementById('connectionStatus')?.textContent || ''
+        };
+      });
+      
+      const onceBooted = onceBootStatus.hasWindowOnce && onceBootStatus.isKernelInstance;
+      
+      this.logEvidence('output', 'ONCE kernel boot status', onceBootStatus);
+      
+      // Validate criterion DEMO-07
+      demoReq.validateCriterion('DEMO-07', onceBooted, onceBootStatus);
 
       // ═══════════════════════════════════════════════════════════════
       // FINAL: Validate Requirement
