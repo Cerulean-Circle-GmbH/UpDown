@@ -2110,28 +2110,57 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   /**
    * Start a new client server dynamically
    * @throws Error if component not initialized
+   * @returns Scenario with pending state (actual status via WebSocket later)
    * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/startClientServer
    * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
    */
-  async startClientServer(): Promise<void> {
-    const { exec } = await import('child_process');
+  async startClientServer(): Promise<Scenario<any>> {
+    const { spawn } = await import('child_process');
     const componentDir = this.model.componentRoot;
 
     if (!componentDir) {
       throw new Error('Component not initialized');
     }
 
-    return new Promise((resolve, reject) => {
-      exec(`cd ${componentDir} && ./once startServer &`, (error) => {
-        if (error) {
-          console.error('❌ Failed to start server:', error);
-          reject(error);
-        } else {
-          console.log('✅ Server starting in background...');
-          resolve();
-        }
-      });
+    // Generate UUID for new client server
+    const newUUID = this.idProvider.create();
+    
+    console.log(`🚀 Spawning new client server (UUID: ${newUUID.substring(0, 8)}...)...`);
+    
+    // Fire and forget - spawn process without waiting
+    // Use spawn with detached:true so it survives parent exit
+    const child = spawn('./once', ['peerStart'], {
+      cwd: componentDir,
+      detached: true,
+      stdio: 'ignore'  // Don't wait for output
     });
+    
+    // Unref so parent doesn't wait for child
+    child.unref();
+    
+    console.log(`✅ Client server process spawned (PID: ${child.pid})`);
+    
+    // Return a scenario indicating server is starting
+    // Real status will come via WebSocket scenario replication (Phase 2)
+    const pendingScenario: Scenario<any> = {
+      ior: {
+        uuid: newUUID,
+        component: 'ONCE',
+        version: this.model.version || '0.3.21.8'
+      },
+      owner: 'system',
+      model: {
+        state: {
+          state: 'STARTING',
+          capabilities: []
+        },
+        isPrimaryServer: false,
+        spawnedAt: new Date().toISOString(),
+        spawnedBy: this.model.uuid
+      }
+    };
+    
+    return pendingScenario;
   }
 
   /**
