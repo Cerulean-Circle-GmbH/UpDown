@@ -53,6 +53,11 @@
 - [ ] State belongs to objects, not closures
 - [ ] **Wrap libraries like Chai in OOP methods** (e.g., `this.expect()`, `this.assert()`)
 - [ ] **Use Web4Requirement for acceptance criteria** (not arrow functions!)
+- [ ] **No arrow function callbacks** - pass method references instead:
+  ```typescript
+  // ❌ WRONG: peers.forEach(peer => { this.render(peer); });
+  // ✅ CORRECT: peers.forEach(this.peerRender.bind(this));
+  ```
 
 **Example 1 (Chai in OOP):** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/test/tootsie/ONCETestCase.ts) | [§/components/ONCE/0.3.21.8/test/tootsie/ONCETestCase.ts](../test/tootsie/ONCETestCase.ts) (Lines 199-237)
 
@@ -241,7 +246,13 @@ const peers = this.model?.peers || [];
 // ✅ CORRECT - Collection<T>
 private peers: Collection<Scenario<ONCEModel>>;
 const peers: Collection<Scenario<ONCEModel>> = this.model.peers;
-peers.forEach(peer => { /* ... */ });
+
+// ❌ WRONG - arrow function callback
+peers.forEach(peer => { this.peerRender(peer); });
+
+// ✅ CORRECT - method reference (no arrow functions needed!)
+peers.forEach(this.peerRender);  // Pass method directly
+peers.forEach(this.peerRender.bind(this));  // If 'this' context needed
 ```
 
 **Example:** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/session/2025-12-03-UTC-1200.mvc-lit3-views.pdca.md) | [§/components/ONCE/0.3.21.8/session/2025-12-03-UTC-1200.mvc-lit3-views.pdca.md](./2025-12-03-UTC-1200.mvc-lit3-views.pdca.md) (Collection.interface.ts section)
