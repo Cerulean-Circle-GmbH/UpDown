@@ -12,7 +12,7 @@
  * @pdca 2025-12-03-UTC-1200.mvc-lit3-views.pdca.md
  */
 
-import { html, TemplateResult, css } from 'lit';
+import { html, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { AbstractWebBean } from './AbstractWebBean.js';
 import { Action } from '../../layer3/Action.interface.js';
@@ -27,6 +27,8 @@ import { Reference } from '../../layer3/Reference.interface.js';
  * - Peer UUID (truncated)
  * - Port
  * - Stop action button (for non-primary peers)
+ * 
+ * Web4 Principle 19: CSS in external file (css/ItemView.css)
  */
 @customElement('once-item-view')
 export class ItemView extends AbstractWebBean<any> {
@@ -39,58 +41,8 @@ export class ItemView extends AbstractWebBean<any> {
     return 'ItemView';
   }
   
-  /**
-   * Static styles - inline for now, will load from CSS file
-   * TODO: Load from ItemView.css via AbstractWebBean
-   */
-  static styles = css`
-    :host {
-      display: flex;
-      align-items: center;
-      padding: 12px 16px;
-      border: 1px solid var(--border-color, #0f0);
-      background: var(--item-bg, rgba(0, 255, 0, 0.05));
-      margin-bottom: 8px;
-      cursor: grab;
-      touch-action: pan-y;
-      user-select: none;
-    }
-    
-    :host(:active) {
-      cursor: grabbing;
-      background: var(--highlight-bg, rgba(0, 255, 0, 0.15));
-    }
-    
-    .status-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-right: 12px;
-    }
-    
-    .status-dot.running { background: var(--color-running, #0f0); }
-    .status-dot.stopped { background: var(--color-stopped, #666); }
-    .status-dot.starting { background: var(--color-starting, #ff0); }
-    
-    .item-info { flex: 1; }
-    .item-title { font-weight: bold; color: var(--text-primary, #0f0); }
-    .item-subtitle { font-size: 0.85em; color: var(--text-secondary, #888); }
-    
-    .action-zone { display: flex; gap: 8px; }
-    
-    button {
-      background: var(--btn-danger-bg, #a00);
-      color: var(--btn-danger-color, #fff);
-      border: 1px solid var(--btn-danger-border, #f00);
-      padding: 4px 12px;
-      cursor: pointer;
-      font-family: inherit;
-    }
-    
-    button:hover {
-      background: var(--btn-danger-hover, #f00);
-    }
-  `;
+  // CSS loaded from external file: css/ItemView.css
+  // See AbstractWebBean.cssLoad()
   
   /**
    * Render the item view

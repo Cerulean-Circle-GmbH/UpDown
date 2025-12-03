@@ -16,7 +16,7 @@
  * @pdca 2025-12-03-UTC-1200.mvc-lit3-views.pdca.md
  */
 
-import { html, TemplateResult, css } from 'lit';
+import { html, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { AbstractWebBean } from './AbstractWebBean.js';
 import { ItemView } from './ItemView.js';
@@ -36,11 +36,15 @@ interface ONCEModel {
 /**
  * OnceOverView - Overview of all ONCE peers
  * 
+ * This is the Web4 OOP replacement for demo-hub.html.
+ * Shows a list of ONCE peers using ItemView components.
+ * 
  * Shows:
- * - Stats grid (total peers, running peers, connection time)
+ * - Stats grid (total peers, running peers)
  * - Action buttons (Start, Discover, Shutdown All)
  * - Peer grid with ItemView for each peer
- * - Activity log
+ * 
+ * Web4 Principle 19: CSS in external file (css/OnceOverView.css)
  */
 @customElement('once-over-view')
 export class OnceOverView extends AbstractWebBean<ONCEModel> {
@@ -56,87 +60,8 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
     return 'OnceOverView';
   }
   
-  /**
-   * Static styles
-   */
-  static styles = css`
-    :host {
-      display: block;
-      font-family: 'Courier New', monospace;
-      background: #1a1a1a;
-      color: #0f0;
-      padding: 20px;
-      min-height: 100vh;
-    }
-    
-    .header {
-      border: 2px solid #0f0;
-      padding: 20px;
-      margin-bottom: 20px;
-      text-align: center;
-      background: rgba(0, 255, 0, 0.1);
-    }
-    
-    h1 { margin: 0 0 10px 0; color: #0f0; }
-    h2 { color: #ff0; margin: 20px 0 10px 0; }
-    
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 10px;
-      margin: 20px 0;
-    }
-    
-    .stat-box {
-      border: 1px solid #0f0;
-      padding: 15px;
-      background: rgba(0, 255, 0, 0.05);
-      text-align: center;
-    }
-    
-    .stat-value {
-      font-size: 2em;
-      font-weight: bold;
-      color: #ff0;
-      display: block;
-      margin: 10px 0;
-    }
-    
-    .controls {
-      text-align: center;
-      margin: 20px 0;
-    }
-    
-    .peer-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 15px;
-      margin: 20px 0;
-    }
-    
-    button {
-      background: #0f0;
-      color: #000;
-      border: none;
-      padding: 10px 20px;
-      margin: 5px;
-      cursor: pointer;
-      font-family: inherit;
-      font-weight: bold;
-    }
-    
-    button:hover { background: #ff0; }
-    button:disabled { background: #666; cursor: not-allowed; }
-    
-    .start-btn { background: #0a0; border: 2px solid #0f0; }
-    .start-btn:hover:not(:disabled) { background: #0f0; }
-    
-    .discover-btn { background: #066; border: 2px solid #0ff; }
-    .discover-btn:hover { background: #0ff; }
-    
-    .shutdown-btn { background: #a00; border: 2px solid #f00; color: #fff; }
-    .shutdown-btn:hover { background: #f00; }
-  `;
+  // CSS loaded from external file: css/OnceOverView.css
+  // See AbstractWebBean.cssLoad()
   
   /**
    * Render the overview
