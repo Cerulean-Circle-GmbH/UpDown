@@ -16,7 +16,7 @@ import { Web4Requirement } from '../../../../Web4Requirement/0.3.20.6/dist/ts/la
 import * as fs from 'fs';
 import * as path from 'path';
 import * as http from 'http';
-import { execSync } from 'child_process';
+import { execSync, spawn, ChildProcess } from 'child_process';
 import { fileURLToPath } from 'url';
 import { expect as chaiExpect } from 'chai';
 
@@ -100,6 +100,73 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     if (!fs.existsSync(scriptsOnce)) {
       this.logEvidence('step', 'Setting up test isolation');
       this.runOnceCLI('test shell');
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // SERVER LIFECYCLE HELPERS
+  // ═══════════════════════════════════════════════════════════════
+
+  private serverProcess: ChildProcess | null = null;
+
+  /**
+   * Start ONCE server as background process (non-blocking)
+   * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   */
+  protected serverStart(): ChildProcess {
+    const onceExec = path.join(this.componentRoot, 'once');
+    
+    this.logEvidence('step', 'Starting server as background process');
+    
+    this.serverProcess = spawn(onceExec, ['startServer'], {
+      cwd: this.componentRoot,
+      detached: true,
+      stdio: ['ignore', 'pipe', 'pipe']
+    });
+    
+    // Log server output for debugging
+    this.serverProcess.stdout?.on('data', (data) => {
+      console.log(`[SERVER] ${data.toString().trim()}`);
+    });
+    
+    this.serverProcess.stderr?.on('data', (data) => {
+      console.error(`[SERVER ERROR] ${data.toString().trim()}`);
+    });
+    
+    this.serverProcess.on('error', (err) => {
+      console.error(`[SERVER SPAWN ERROR] ${err.message}`);
+    });
+    
+    return this.serverProcess;
+  }
+
+  /**
+   * Stop server if started by test
+   * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   */
+  protected async serverStop(): Promise<void> {
+    if (this.serverProcess) {
+      this.logEvidence('step', 'Stopping server process');
+      
+      // Try graceful shutdown first
+      try {
+        await this.httpPost('http://localhost:42777/shutdown-all');
+        await this.sleep(1000);
+      } catch (e) {
+        // Server might already be stopped
+      }
+      
+      // Force kill if still running
+      if (this.serverProcess && !this.serverProcess.killed) {
+        this.serverProcess.kill('SIGTERM');
+        await this.sleep(500);
+        
+        if (!this.serverProcess.killed) {
+          this.serverProcess.kill('SIGKILL');
+        }
+      }
+      
+      this.serverProcess = null;
     }
   }
 

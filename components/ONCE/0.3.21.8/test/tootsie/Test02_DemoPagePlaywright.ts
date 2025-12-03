@@ -59,16 +59,12 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
     let startedByTest = false;
     
     if (!serverRunning) {
-      this.logEvidence('step', 'Starting server');
-      try {
-        this.runOnceCLI('startServer &');
-      } catch (e) {
-        // Expected - background process
-      }
+      this.serverStart();
       
       const serverReady = await this.waitForServer(primaryPort, 15000);
       if (!serverReady) {
-        throw new Error('Could not start server for demo test');
+        await this.serverStop();
+        throw new Error('Could not start server for demo test (timeout after 15s)');
       }
       startedByTest = true;
       this.logEvidence('step', 'Server started by test');
@@ -186,7 +182,7 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       };
 
     } finally {
-      // Cleanup
+      // Cleanup browser
       if (this.page) {
         await this.page.close();
       }
@@ -196,12 +192,7 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       
       // Stop server if we started it
       if (startedByTest) {
-        this.logEvidence('step', 'Stopping server');
-        try {
-          await this.httpPost(`http://localhost:${primaryPort}/shutdown-all`);
-        } catch (e) {
-          // Already stopped
-        }
+        await this.serverStop();
       }
     }
   }
