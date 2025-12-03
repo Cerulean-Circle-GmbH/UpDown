@@ -309,28 +309,41 @@ export class ServerHierarchyManager {
         this.httpRouter.registerRoute(healthRoute);
         this.httpRouter.registerRoute(assetManifestRoute);
         
-        // ✅ Route 10: Servers list ("/servers") - Returns Scenario (Primary only)
-        if (this.serverModel.isPrimaryServer) {
-            const serversRoute = new ScenarioRoute();
-            serversRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
-            serversRoute.setPattern('/servers', HttpMethod.GET);
-            serversRoute.setProvider(async () => {
-                const serverList = this.component!.getServers();
-                return {
-                    ior: {
-                        uuid: this.serverModel.uuid,
-                        component: 'ONCE',
-                        version: this.version
-                    },
-                    owner: 'system',
-                    model: serverList
-                };
-            });
-            serversRoute.model.priority = 100;
-            this.httpRouter.registerRoute(serversRoute);
-        }
+        // Note: /servers route registered after port is bound (see registerPrimaryOnlyRoutes)
         
         console.log(`📍 Registered ${this.httpRouter.model.routes.length} routes in HTTPRouter`);
+    }
+    
+    /**
+     * Register routes that are only available on primary server
+     * Called AFTER port binding determines isPrimaryServer status
+     * @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
+     */
+    private registerPrimaryOnlyRoutes(): void {
+        if (!this.serverModel.isPrimaryServer) {
+            return;
+        }
+        
+        // ✅ Route: Servers list ("/servers") - Returns Scenario (Primary only)
+        const serversRoute = new ScenarioRoute();
+        serversRoute.model.uuid = this.idProvider.create();
+        serversRoute.setPattern('/servers', HttpMethod.GET);
+        serversRoute.setProvider(async () => {
+            const serverList = this.component!.getServers();
+            return {
+                ior: {
+                    uuid: this.serverModel.uuid,
+                    component: 'ONCE',
+                    version: this.version
+                },
+                owner: 'system',
+                model: serverList
+            };
+        });
+        serversRoute.model.priority = 100;
+        this.httpRouter.registerRoute(serversRoute);
+        
+        console.log(`📍 Registered /servers route (Primary only)`);
     }
 
     /**
@@ -354,6 +367,9 @@ export class ServerHierarchyManager {
             await this.startWebSocketServer();
             
             if (this.serverModel.isPrimaryServer) {
+                // ✅ Register primary-only routes after port is bound
+                this.registerPrimaryOnlyRoutes();
+                
                 console.log(`🟢 Started as PRIMARY SERVER on port ${boundPort}`);
                 console.log(`📋 Server UUID: ${this.serverModel.uuid}`);
                 console.log(`🏠 Domain: ${this.serverModel.domain}`);
