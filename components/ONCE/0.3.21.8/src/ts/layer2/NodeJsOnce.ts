@@ -2095,6 +2095,20 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   }
 
   /**
+   * Serve demo Lit MVC page (Web4 MVC Architecture)
+   * @returns Rendered HTML for Lit-based demo page
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/serveDemoLit
+   * @pdca 2025-12-03-UTC-1200.mvc-lit3-views.pdca.md
+   */
+  serveDemoLit(): string {
+    if (!this.serverHierarchyManager) {
+      throw new Error('Server not initialized. Call startServer() first.');
+    }
+    
+    return this.serverHierarchyManager.getDemoLitHTML();
+  }
+
+  /**
    * Serve server status HTML
    * @returns Rendered HTML for server status
    * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/serveStatus

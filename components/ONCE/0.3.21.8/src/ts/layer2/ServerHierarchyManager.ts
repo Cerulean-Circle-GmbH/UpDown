@@ -221,13 +221,21 @@ export class ServerHierarchyManager {
         demoRoute.model.priority = 50;
         this.httpRouter.registerRoute(demoRoute);
         
-        // ✅ Route 3: Demo Hub with trailing slash ("/demo/")
+        // ✅ Route 3b: Demo Hub with trailing slash ("/demo/")
         const demoRoute2 = new HTMLRoute();
         demoRoute2.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         demoRoute2.setPattern('/demo/', HttpMethod.GET);
         demoRoute2.setProvider(() => this.component!.serveDemoHub());
         demoRoute2.model.priority = 50;
         this.httpRouter.registerRoute(demoRoute2);
+        
+        // ✅ Route 3c: Demo Lit MVC ("/demo-lit") - Web4 MVC Architecture
+        const demoLitRoute = new HTMLRoute();
+        demoLitRoute.model.uuid = this.idProvider.create();
+        demoLitRoute.setPattern('/demo-lit', HttpMethod.GET);
+        demoLitRoute.setProvider(() => this.component!.serveDemoLit());
+        demoLitRoute.model.priority = 50;
+        this.httpRouter.registerRoute(demoLitRoute);
         
         // ✅ Route 4: ONCE Minimal ("/once")
         const onceRoute = new HTMLRoute();
@@ -645,6 +653,20 @@ export class ServerHierarchyManager {
         
         // Replace all hardcoded version strings with dynamic version
         return html.replace(/0\.3\.20\.[0-9]/g, this.versionFromComponent);
+    }
+    
+    /**
+     * Get demo Lit MVC HTML (for /demo-lit endpoint)
+     * Web4 MVC Architecture with Lit 3 components
+     * @pdca 2025-12-03-UTC-1200.mvc-lit3-views.pdca.md
+     */
+    getDemoLitHTML(): string {
+        if (!this.component?.model.componentRoot) {
+            throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
+        }
+        const fullPath = path.join(this.component.model.componentRoot, 'src/view/html/demo-lit.html');
+        const html = fs.readFileSync(fullPath, 'utf-8');
+        return html;
     }
 
     /**
