@@ -50,9 +50,10 @@ export interface View<TModel = any> {
   
   /**
    * Remove child view
+   * (Named childRemove to avoid conflict with LitElement.remove())
    * @param childView View to remove
    */
-  remove(childView: View<any>): void;
+  childRemove(childView: View<any>): void;
   
   /**
    * Render the view
