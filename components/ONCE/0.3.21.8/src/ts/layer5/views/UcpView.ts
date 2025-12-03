@@ -2,7 +2,7 @@
  * UcpView.ts - Base class for all Web4 Views
  * 
  * Base class extending LitElement for all Web4 views.
- * Provides model binding and child view management.
+ * Provides model binding, child view management, and CSS preloading.
  * 
  * Web4 Principles:
  * - P4: Radical OOP (no arrow functions)
@@ -10,18 +10,23 @@
  * - P6: Empty constructor (Lit compatibility via delegation if needed)
  * - P7: All methods are SYNCHRONOUS (Layer 5)
  * - P16: TypeScript accessors
+ * - P19: External CSS via adoptedStyleSheets
  * - P22: Collection<T> for child views
  * 
- * Note: If LitElement isn't compatible with empty constructors,
- * use delegation pattern - see AbstractWebBean.
+ * CSS Loading Pattern:
+ *   1. CSSLoader.preloadAll() called before component import
+ *   2. connectedCallback() applies cached CSSStyleSheet
+ *   3. No FOUC (Flash of Unstyled Content)
  * 
  * @ior ior:esm:/ONCE/{version}/UcpView
  * @pdca 2025-12-03-UTC-1200.mvc-lit3-views.pdca.md
+ * @pdca 2025-12-03-UTC-1400.lit-css-preload.pdca.md
  */
 
 import { LitElement } from 'lit';
 import { View } from '../../layer3/View.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
+import { CSSLoader } from '../../layer2/CSSLoader.js';
 
 /**
  * UcpView - Base class for all Web4 Views
@@ -32,11 +37,45 @@ import { Reference } from '../../layer3/Reference.interface.js';
  */
 export abstract class UcpView<TModel = any> extends LitElement implements View<TModel> {
   
+  /**
+   * CSS path for this view - override in subclass
+   * Example: '/dist/ts/layer5/views/css/ItemView.css'
+   */
+  static cssPath: string = '';
+  
   /** Model reference - Use Reference<T>, NOT | null */
   private modelRef: Reference<TModel> = null;
   
   /** Child views collection */
   protected childViews: UcpView<any>[] = [];
+  
+  /**
+   * Lit lifecycle: Called when element is added to DOM
+   * Applies preloaded CSS from CSSLoader cache
+   */
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.applyCachedStyles();
+  }
+  
+  /**
+   * Apply cached CSS from CSSLoader
+   * Called in connectedCallback to ensure styles are applied
+   */
+  private applyCachedStyles(): void {
+    const cssPath = (this.constructor as typeof UcpView).cssPath;
+    if (!cssPath) {
+      return;  // No CSS path defined for this view
+    }
+    
+    const sheet = CSSLoader.get(cssPath);
+    if (sheet && this.shadowRoot) {
+      this.shadowRoot.adoptedStyleSheets = [sheet];
+      console.log(`[UcpView] ✅ Applied styles from ${cssPath}`);
+    } else if (!sheet) {
+      console.warn(`[UcpView] ⚠️ CSS not preloaded: ${cssPath}`);
+    }
+  }
   
   /**
    * Model setter - TypeScript accessor (NOT modelConnect!)

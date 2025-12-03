@@ -287,9 +287,29 @@ export class ServerHierarchyManager {
             };
         });
         healthRoute.model.priority = 100;
-        this.httpRouter.registerRoute(healthRoute);
         
-        // ✅ Route 9: Servers list ("/servers") - Returns Scenario (Primary only)
+        // ✅ Route 9: Asset Manifest ("/asset-manifest") - CSS and HTML template discovery
+        // @pdca 2025-12-03-UTC-1400.lit-css-preload.pdca.md
+        const assetManifestRoute = new ScenarioRoute();
+        assetManifestRoute.model.uuid = this.idProvider.create();
+        assetManifestRoute.setPattern('/asset-manifest', HttpMethod.GET);
+        assetManifestRoute.setProvider(async () => {
+            const manifest = await this.component!.getAssetManifest();
+            return {
+                ior: {
+                    uuid: this.serverModel.uuid,
+                    component: 'ONCE',
+                    version: this.version
+                },
+                owner: 'system',
+                model: manifest
+            };
+        });
+        assetManifestRoute.model.priority = 100;
+        this.httpRouter.registerRoute(healthRoute);
+        this.httpRouter.registerRoute(assetManifestRoute);
+        
+        // ✅ Route 10: Servers list ("/servers") - Returns Scenario (Primary only)
         if (this.serverModel.isPrimaryServer) {
             const serversRoute = new ScenarioRoute();
             serversRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20

@@ -50,6 +50,12 @@ interface ONCEModel {
 @customElement('once-over-view')
 export class OnceOverView extends AbstractWebBean<ONCEModel> {
   
+  /** CSS path for adoptedStyleSheets */
+  static cssPath = '/dist/ts/layer5/views/css/OnceOverView.css';
+  
+  /** HTML template path */
+  static templatePath = '/dist/ts/layer5/views/webBeans/OnceOverView.html';
+  
   /** Child ItemViews for peers */
   private peerViews: ItemView[] = [];
   

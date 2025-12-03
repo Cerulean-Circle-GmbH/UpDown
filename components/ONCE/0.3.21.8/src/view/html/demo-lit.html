@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ONCE Demo Hub - Web4 MVC</title>
     
-    <!-- Web4 Principle 19: External CSS -->
+    <!-- Web4 Principle 19: External CSS Variables (global) -->
     <link rel="stylesheet" href="../../dist/ts/layer5/views/css/themeBase.css">
     
     <!-- Import Map for Lit (Browser Module Resolution) -->
@@ -25,18 +25,74 @@
     <!-- 
         Web4 MVC Architecture:
         - OnceOverView is a Lit component that replaces demo-hub.html
-        - CSS is loaded from external files via AbstractWebBean
+        - CSS is preloaded via CSSLoader before component registration
+        - HTML templates preloaded via HTMLTemplateLoader
         - Model updates via UcpController/ModelProxy (future: WebSocket scenarios)
+        
+        @pdca 2025-12-03-UTC-1400.lit-css-preload.pdca.md
     -->
     <once-over-view id="mainView"></once-over-view>
     
     <script type="module">
+        // ═══════════════════════════════════════════════════════════════
+        // PHASE 1: Preload Assets BEFORE importing Lit components
+        // ═══════════════════════════════════════════════════════════════
+        
+        // Import asset loaders
+        import { CSSLoader } from '../../dist/ts/layer2/CSSLoader.js';
+        import { HTMLTemplateLoader } from '../../dist/ts/layer2/HTMLTemplateLoader.js';
+        
+        console.log('[demo-lit] 📦 Fetching asset manifest...');
+        
+        // Fetch asset manifest from server
+        let manifest = { css: [], templates: [] };
+        try {
+            const response = await fetch('/asset-manifest');
+            const data = await response.json();
+            manifest = data.model || { css: [], templates: [] };
+            console.log('[demo-lit] 📋 Asset manifest:', manifest);
+        } catch (e) {
+            console.warn('[demo-lit] ⚠️ Failed to fetch asset manifest, using defaults');
+            // Fallback to known assets
+            manifest = {
+                css: [
+                    '/dist/ts/layer5/views/css/ItemView.css',
+                    '/dist/ts/layer5/views/css/OnceOverView.css'
+                ],
+                templates: [
+                    '/dist/ts/layer5/views/webBeans/ItemView.html',
+                    '/dist/ts/layer5/views/webBeans/OnceOverView.html'
+                ]
+            };
+        }
+        
+        // Preload all assets in parallel
+        console.log('[demo-lit] ⏳ Preloading assets...');
+        await Promise.all([
+            CSSLoader.preloadAll(manifest.css),
+            HTMLTemplateLoader.preloadAll(manifest.templates)
+        ]);
+        console.log('[demo-lit] ✅ Assets preloaded');
+        
+        // ═══════════════════════════════════════════════════════════════
+        // PHASE 2: Import Lit components (CSS is already cached)
+        // ═══════════════════════════════════════════════════════════════
+        
+        console.log('[demo-lit] 📦 Importing Lit components...');
+        
         // Import ONCE kernel
-        import { ONCE } from '../../dist/ts/layer1/ONCE.js';
+        const { ONCE } = await import('../../dist/ts/layer1/ONCE.js');
         
         // Import Lit components (they self-register via @customElement)
-        import '../../dist/ts/layer5/views/OnceOverView.js';
-        import '../../dist/ts/layer5/views/ItemView.js';
+        // CSS will be applied via adoptedStyleSheets in connectedCallback
+        await import('../../dist/ts/layer5/views/OnceOverView.js');
+        await import('../../dist/ts/layer5/views/ItemView.js');
+        
+        console.log('[demo-lit] ✅ Components imported');
+        
+        // ═══════════════════════════════════════════════════════════════
+        // PHASE 3: Boot ONCE kernel and connect to view
+        // ═══════════════════════════════════════════════════════════════
         
         // Get peer host from URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -45,7 +101,7 @@
         // Boot kernel
         const kernel = await ONCE.start({ peerHost });
         
-        console.log('✅ ONCE Kernel booted:', kernel.model?.version);
+        console.log('[demo-lit] ✅ ONCE Kernel booted:', kernel.model?.version);
         
         // Get the OnceOverView component
         const mainView = document.getElementById('mainView');
@@ -54,6 +110,10 @@
         mainView.model = kernel.model;
         mainView.kernel = kernel;
         
+        // ═══════════════════════════════════════════════════════════════
+        // PHASE 4: Polling (temporary until WebSocket + ModelProxy)
+        // ═══════════════════════════════════════════════════════════════
+        
         // Future: WebSocket scenario updates will auto-update via ModelProxy
         // For now, manual polling
         setInterval(function() {
@@ -61,8 +121,7 @@
             mainView.update();
         }, 1000);
         
-        console.log('✅ ONCE Demo Hub (Lit) initialized');
+        console.log('[demo-lit] ✅ ONCE Demo Hub (Lit) initialized');
     </script>
 </body>
 </html>
-

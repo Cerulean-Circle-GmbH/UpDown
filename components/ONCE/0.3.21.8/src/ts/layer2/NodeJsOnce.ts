@@ -34,6 +34,7 @@ import { IDProvider } from '../layer3/IDProvider.interface.js';
 import { UUIDProvider } from './UUIDProvider.js';
 import * as path from 'path';  // For version extraction from directory path
 import * as crypto from 'crypto';  // For UUID generation
+import * as fs from 'fs';  // For file system operations
 import { realpathSync } from 'fs';  // For symlink resolution
 
 /**
@@ -2021,6 +2022,56 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       primaryServer: primaryInfo,
       message: `ONCE v${this.model.version} Server - Micro Kernel`
     };
+  }
+
+  /**
+   * Get asset manifest for CSS and HTML template preloading
+   * Returns list of CSS files and HTML templates in layer5/views/
+   * @returns Asset manifest with css and templates arrays
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/getAssetManifest
+   * @pdca 2025-12-03-UTC-1400.lit-css-preload.pdca.md
+   */
+  async getAssetManifest(): Promise<{ css: string[]; templates: string[] }> {
+    const componentRoot = this.model.componentRoot;
+    if (!componentRoot) {
+      return { css: [], templates: [] };
+    }
+    
+    const cssDir = path.join(componentRoot, 'dist/ts/layer5/views/css');
+    const templatesDir = path.join(componentRoot, 'dist/ts/layer5/views/webBeans');
+    
+    const css: string[] = [];
+    const templates: string[] = [];
+    
+    // Scan CSS directory
+    try {
+      const cssFiles = fs.readdirSync(cssDir);
+      cssFiles.forEach(function(file: string) {
+        if (file.endsWith('.css')) {
+          css.push(`/dist/ts/layer5/views/css/${file}`);
+        }
+      });
+    } catch (e) {
+      // Directory may not exist yet
+      console.log('[AssetManifest] No CSS directory found');
+    }
+    
+    // Scan templates directory
+    try {
+      const templateFiles = fs.readdirSync(templatesDir);
+      templateFiles.forEach(function(file: string) {
+        if (file.endsWith('.html')) {
+          templates.push(`/dist/ts/layer5/views/webBeans/${file}`);
+        }
+      });
+    } catch (e) {
+      // Directory may not exist yet
+      console.log('[AssetManifest] No templates directory found');
+    }
+    
+    console.log(`[AssetManifest] Found ${css.length} CSS files, ${templates.length} templates`);
+    
+    return { css, templates };
   }
 
   /**

@@ -33,6 +33,12 @@ import { Reference } from '../../layer3/Reference.interface.js';
 @customElement('once-item-view')
 export class ItemView extends AbstractWebBean<any> {
   
+  /** CSS path for adoptedStyleSheets */
+  static cssPath = '/dist/ts/layer5/views/css/ItemView.css';
+  
+  /** HTML template path */
+  static templatePath = '/dist/ts/layer5/views/webBeans/ItemView.html';
+  
   /** Touch/drag support enabled */
   @property({ type: Boolean }) touchEnabled = true;
   
@@ -40,9 +46,6 @@ export class ItemView extends AbstractWebBean<any> {
   get viewName(): string {
     return 'ItemView';
   }
-  
-  // CSS loaded from external file: css/ItemView.css
-  // See AbstractWebBean.cssLoad()
   
   /**
    * Render the item view
