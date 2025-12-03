@@ -574,11 +574,33 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   }
 
   /**
+   * Start peer with automatic port detection (42777 → 8080+)
+   * Web4 Principle 16: {noun}{verb} naming pattern
+   * 
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/peerStart
+   * @cliSyntax peerStart [scenario]
+   */
+  async peerStart(scenario?: string | LegacyONCEScenario): Promise<void> {
+    console.log('🚀 Starting ONCE peer...');
+    return this._startPeerInternal(scenario);
+  }
+
+  /**
+   * @deprecated Use peerStart() instead - Web4 Principle 16 naming convention
    * Start server with automatic port management (domain logic from 0.2.0.0)
    * @cliSyntax scenario
    */
   async startServer(scenario?: string | LegacyONCEScenario): Promise<void> {
+    console.warn('⚠️  startServer() is deprecated, use peerStart() instead');
     console.log('🚀 Starting ONCE server...');
+    return this._startPeerInternal(scenario);
+  }
+
+  /**
+   * Internal peer start implementation
+   * @internal
+   */
+  private async _startPeerInternal(scenario?: string | LegacyONCEScenario): Promise<void> {
     
     try {
       // Initialize if not already initialized
@@ -809,6 +831,22 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   }
 
   /**
+   * Stop peer gracefully
+   * Web4 Principle 16: {noun}{verb} naming pattern
+   * 
+   * WITHOUT scenario: Stops the current peer (self)
+   * WITH scenario: Loads scenario and sends graceful shutdown message to that peer
+   * 
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/peerStop
+   * @param scenario Optional scenario UUID or path to stop a specific peer
+   * @cliSyntax peerStop [scenario]
+   */
+  async peerStop(scenario?: string): Promise<void> {
+    return this._stopPeerInternal(scenario);
+  }
+
+  /**
+   * @deprecated Use peerStop() instead - Web4 Principle 16 naming convention
    * Stop server gracefully (domain logic from 0.2.0.0)
    * WITHOUT scenario: Stops the current server (self)
    * WITH scenario: Loads scenario and sends graceful shutdown message to that server
@@ -817,6 +855,15 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
    * @cliSyntax scenario
    */
   async stopServer(scenario?: string): Promise<void> {
+    console.warn('⚠️  stopServer() is deprecated, use peerStop() instead');
+    return this._stopPeerInternal(scenario);
+  }
+
+  /**
+   * Internal peer stop implementation
+   * @internal
+   */
+  private async _stopPeerInternal(scenario?: string): Promise<void> {
     if (scenario) {
       // Stop a specific server by scenario
       console.log(`🛑 Stopping server from scenario: ${scenario}`);
@@ -2088,17 +2135,19 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   }
 
   /**
-   * Discover servers via housekeeping
+   * Discover peers via housekeeping
+   * Web4 Principle 16: {noun}{verb} naming pattern
+   * 
    * @returns Discovery result with deleted and discovered counts
-   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/discoverServers
-   * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/peersDiscover
+   * @cliSyntax peersDiscover
    */
-  async discoverServers(): Promise<import('../layer3/DiscoveryResult.interface.js').DiscoveryResult> {
+  async peersDiscover(): Promise<import('../layer3/DiscoveryResult.interface.js').DiscoveryResult> {
     if (!this.serverHierarchyManager) {
-      throw new Error('Server not initialized. Call startServer() first.');
+      throw new Error('Peer not initialized. Call peerStart() first.');
     }
 
-    console.log('🔍 Manual discovery triggered');
+    console.log('🔍 Peer discovery triggered');
     const result = await this.serverHierarchyManager.performHousekeeping();
     
     return {
@@ -2108,17 +2157,42 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   }
 
   /**
+   * @deprecated Use peersDiscover() instead - Web4 Principle 16 naming convention
+   * Discover servers via housekeeping
+   * @returns Discovery result with deleted and discovered counts
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/discoverServers
+   * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+   */
+  async discoverServers(): Promise<import('../layer3/DiscoveryResult.interface.js').DiscoveryResult> {
+    console.warn('⚠️  discoverServers() is deprecated, use peersDiscover() instead');
+    return this.peersDiscover();
+  }
+
+  /**
+   * Stop all peers gracefully (Primary only)
+   * Web4 Principle 16: {noun}{verb} naming pattern
+   * 
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/peerStopAll
+   * @cliSyntax peerStopAll
+   */
+  async peerStopAll(): Promise<void> {
+    if (!this.serverHierarchyManager) {
+      throw new Error('Peer not initialized. Call peerStart() first.');
+    }
+
+    console.log('🛑 Graceful shutdown of all peers initiated');
+    await this.serverHierarchyManager.shutdownAllServers();
+  }
+
+  /**
+   * @deprecated Use peerStopAll() instead - Web4 Principle 16 naming convention
    * Shutdown all servers gracefully (Primary only)
    * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/shutdownAll
    * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
    */
   async shutdownAll(): Promise<void> {
-    if (!this.serverHierarchyManager) {
-      throw new Error('Server not initialized. Call startServer() first.');
-    }
-
-    console.log('🛑 Graceful shutdown of all servers initiated');
-    await this.serverHierarchyManager.shutdownAllServers();
+    console.warn('⚠️  shutdownAll() is deprecated, use peerStopAll() instead');
+    return this.peerStopAll();
   }
 
   // ============================================================================

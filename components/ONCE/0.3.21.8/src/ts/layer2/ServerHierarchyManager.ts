@@ -307,6 +307,10 @@ export class ServerHierarchyManager {
 
     /**
      * Start server with automatic port management and hierarchy
+     * 
+     * ✅ Web4 Principle: Retry on EADDRINUSE to handle race conditions
+     * The PortManager.isPortAvailable() has a TOCTOU race where the port
+     * check closes the test server before the real server binds.
      */
     async startServer(): Promise<void> {
         this.serverModel.state = LifecycleState.STARTING;
@@ -315,25 +319,14 @@ export class ServerHierarchyManager {
             // ✅ FIX: Detect hostname/domain/IP before starting peer kernel
             await this.detectAndSetEnvironment();
             
-            // Get next available port (42777 or 8080+)
-            const portResult = await this.portManager.getNextAvailablePort();
-            
-            this.serverModel.isPrimaryServer = portResult.isPrimary;
-            
-            // Add HTTP capability
-            this.serverModel.capabilities.push({
-                capability: 'httpPort',
-                port: portResult.port
-            });
-
-            // Start HTTP peer endpoint
-            await this.startHttpServer(portResult.port);
+            // Try to find and bind to an available port with retry logic
+            const boundPort = await this.findAndBindPort();
             
             // Start WebSocket peer communication
             await this.startWebSocketServer();
             
             if (this.serverModel.isPrimaryServer) {
-                console.log(`🟢 Started as PRIMARY SERVER on port ${portResult.port}`);
+                console.log(`🟢 Started as PRIMARY SERVER on port ${boundPort}`);
                 console.log(`📋 Server UUID: ${this.serverModel.uuid}`);
                 console.log(`🏠 Domain: ${this.serverModel.domain}`);
                 this.serverModel.state = LifecycleState.PRIMARY_SERVER;
@@ -341,7 +334,7 @@ export class ServerHierarchyManager {
                 // Perform housekeeping: discover existing peers, cleanup shutdown scenarios
                 await this.performHousekeeping();
             } else {
-                console.log(`🔵 Started as CLIENT SERVER on port ${portResult.port}`);
+                console.log(`🔵 Started as CLIENT SERVER on port ${boundPort}`);
                 console.log(`📋 Server UUID: ${this.serverModel.uuid}`);
                 
                 // Register with primary peer
@@ -359,6 +352,57 @@ export class ServerHierarchyManager {
             console.error('❌ Failed to start server:', error);
             throw error;
         }
+    }
+
+    /**
+     * Find and bind to an available port with retry logic
+     * 
+     * Handles TOCTOU race condition: PortManager.isPortAvailable() closes
+     * the test server before the real server binds, so another process
+     * might grab the port in between. This method retries on EADDRINUSE.
+     * 
+     * @returns The port that was successfully bound
+     */
+    private async findAndBindPort(): Promise<number> {
+        const PRIMARY_PORT = 42777;
+        const FALLBACK_PORT_START = 8080;
+        const MAX_RETRIES = 100;
+        
+        // First try primary port 42777
+        try {
+            await this.startHttpServer(PRIMARY_PORT);
+            this.serverModel.isPrimaryServer = true;
+            this.serverModel.capabilities.push({
+                capability: 'httpPort',
+                port: PRIMARY_PORT
+            });
+            return PRIMARY_PORT;
+        } catch (error: any) {
+            if (error.code !== 'EADDRINUSE') {
+                throw error;
+            }
+            // Primary port is in use, fall through to fallback
+        }
+        
+        // Try fallback ports 8080, 8081, 8082...
+        for (let port = FALLBACK_PORT_START; port < FALLBACK_PORT_START + MAX_RETRIES; port++) {
+            try {
+                await this.startHttpServer(port);
+                this.serverModel.isPrimaryServer = false;
+                this.serverModel.capabilities.push({
+                    capability: 'httpPort',
+                    port
+                });
+                return port;
+            } catch (error: any) {
+                if (error.code !== 'EADDRINUSE') {
+                    throw error;
+                }
+                // Port is in use, try next one
+            }
+        }
+        
+        throw new Error(`No available ports found in range ${FALLBACK_PORT_START}-${FALLBACK_PORT_START + MAX_RETRIES}`);
     }
 
     /**
