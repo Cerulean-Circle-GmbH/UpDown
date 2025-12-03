@@ -1821,19 +1821,64 @@ export class ServerHierarchyManager {
      * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
      */
     async shutdownAllServers(): Promise<void> {
-        // Shutdown all client servers first
+        console.log('🛑 Initiating graceful shutdown of all peers...');
+        
+        // ✅ Web4 Principle 11: Use IOR calls, NOT protocol messages!
+        // Send peerStop IOR to each registered client server
+        const shutdownPromises: Promise<void>[] = [];
+        
         for (const [uuid, entry] of this.serverRegistry.entries()) {
-            if (entry.websocket && entry.websocket.readyState === WebSocket.OPEN) {
-                console.log(`🛑 Sending shutdown to client: ${uuid}`);
-                entry.websocket.send(JSON.stringify({ type: 'shutdown-command' }));
+            // Extract port from scenario capabilities
+            const capabilities = entry.scenario?.model?.state?.capabilities || [];
+            const portCap = capabilities.find(function(c: any) { return c.capability === 'httpPort'; });
+            const port = portCap?.port;
+            if (!port) {
+                console.log(`⚠️  No port found for client ${uuid.substring(0, 8)}, skipping`);
+                continue;
             }
+            
+            console.log(`🛑 Sending peerStop IOR to client: ${uuid.substring(0, 8)} on port ${port}`);
+            
+            // Fire-and-forget IOR call with timeout
+            const shutdownPromise = this.sendPeerStopIOR(uuid, port).catch(function(error) {
+                console.log(`⚠️  Client ${uuid.substring(0, 8)} may already be stopped: ${error.message}`);
+            });
+            
+            shutdownPromises.push(shutdownPromise);
         }
         
-        // Give clients time to shutdown
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Wait for all shutdown requests (with overall timeout)
+        await Promise.race([
+            Promise.allSettled(shutdownPromises),
+            this.sleep(3000)  // Max 3s for all clients
+        ]);
+        
+        console.log('🛑 All client shutdown requests sent, stopping primary...');
         
         // Shutdown self
         await this.stopServer();
+    }
+    
+    /**
+     * Send peerStop IOR to a client server
+     * @param uuid Client server UUID
+     * @param port Client server port
+     */
+    private async sendPeerStopIOR(uuid: string, port: number): Promise<void> {
+        const version = this.component?.model?.version || '0.3.21.8';
+        const iorUrl = `http://localhost:${port}/ONCE/${version}/${uuid}/peerStop`;
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(function() { controller.abort(); }, 2000);
+        
+        try {
+            await fetch(iorUrl, { 
+                method: 'POST',
+                signal: controller.signal 
+            });
+        } finally {
+            clearTimeout(timeoutId);
+        }
     }
 
     /**

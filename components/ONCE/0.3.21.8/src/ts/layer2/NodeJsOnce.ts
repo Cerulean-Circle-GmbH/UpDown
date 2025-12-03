@@ -864,7 +864,8 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
    * @internal
    */
   private async _stopPeerInternal(scenario?: string): Promise<void> {
-    if (scenario) {
+    // Only process if scenario is a non-empty string
+    if (scenario && typeof scenario === 'string' && scenario.trim().length > 0) {
       // Stop a specific server by scenario
       console.log(`🛑 Stopping server from scenario: ${scenario}`);
       
