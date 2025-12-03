@@ -340,7 +340,66 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
     // else: Display properties already set by delegating component (Radical OOP!)
   }
 
-    
+  // ═══════════════════════════════════════════════════════════════
+  // PATH AUTHORITY ACCESSORS
+  // ═══════════════════════════════════════════════════════════════
+  // 
+  // @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+  // Web4 Principle: DefaultCLI calculates paths ONCE, components access via these methods
+  // NO recalculation - single source of truth
+  //
+  // Usage by generated components:
+  //   const projectRoot = this.web4ts.getProjectRoot();
+  //   const componentRoot = this.web4ts.getComponentRoot();
+  //   if (this.web4ts.isTestIsolation()) { ... }
+
+  /**
+   * Get project root path (Path Authority - single source of truth)
+   * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   */
+  getProjectRoot(): string {
+    return this.model.projectRoot;
+  }
+
+  /**
+   * Get component root path for THIS component
+   * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   */
+  getComponentRoot(): string {
+    return this.model.componentRoot;
+  }
+
+  /**
+   * Get target component root path (for delegation context)
+   * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   */
+  getTargetComponentRoot(): string {
+    return this.model.targetComponentRoot || this.model.componentRoot;
+  }
+
+  /**
+   * Check if running in test isolation mode
+   * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   */
+  isTestIsolation(): boolean {
+    return this.model.isTestIsolation;
+  }
+
+  /**
+   * Get test data directory (test/data under component root)
+   * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   */
+  getTestDataDir(): string {
+    return path.join(this.getComponentRoot(), 'test', 'data');
+  }
+
+  /**
+   * Get components directory path
+   * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   */
+  getComponentsDirectory(): string {
+    return this.model.componentsDirectory;
+  }
 
   /**
    * Set component dependencies that must be built before this component
