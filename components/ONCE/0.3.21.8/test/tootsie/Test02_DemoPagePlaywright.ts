@@ -34,6 +34,20 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
     });
 
     // ═══════════════════════════════════════════════════════════════
+    // SETUP: Shutdown ALL existing servers first (clean slate)
+    // ═══════════════════════════════════════════════════════════════
+    
+    this.logEvidence('step', 'Shutting down all existing servers for clean slate');
+    
+    try {
+      await this.serverStopAll();
+      await this.sleep(2000);  // Wait for processes to terminate
+      this.logEvidence('step', 'All existing servers shut down');
+    } catch (e) {
+      this.logEvidence('step', 'No servers were running or shutdown completed');
+    }
+
+    // ═══════════════════════════════════════════════════════════════
     // REQUIREMENT: Demo Page Loads Correctly
     // ═══════════════════════════════════════════════════════════════
     
@@ -54,27 +68,20 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
     demoReq.addCriterion('DEMO-10', 'Server shuts down via IOR call');
 
     // ═══════════════════════════════════════════════════════════════
-    // SETUP: Ensure server is running
+    // SETUP: Start fresh server
     // ═══════════════════════════════════════════════════════════════
     
-    this.logEvidence('step', 'Checking if server is running');
+    this.logEvidence('step', 'Starting fresh server');
     
-    const serverRunning = await this.checkServerHealth(primaryPort);
-    let startedByTest = false;
+    this.serverStart();
     
-    if (!serverRunning) {
-      this.serverStart();
-      
-      const serverReady = await this.waitForServer(primaryPort, 15000);
-      if (!serverReady) {
-        await this.serverStop();
-        throw new Error('Could not start server for demo test (timeout after 15s)');
-      }
-      startedByTest = true;
-      this.logEvidence('step', 'Server started by test');
-    } else {
-      this.logEvidence('step', 'Server already running');
+    const serverReady = await this.waitForServer(primaryPort, 15000);
+    if (!serverReady) {
+      await this.serverStop();
+      throw new Error('Could not start server for demo test (timeout after 15s)');
     }
+    let startedByTest = true;
+    this.logEvidence('step', 'Fresh server started by test');
 
     // Collect ALL console errors from the start
     const consoleErrors: string[] = [];
@@ -287,10 +294,11 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       // Set up request interception to capture IOR URL
       let capturedIorUrl: string | null = null;
       
-      // Listen for the IOR request
+      // Listen for ALL requests to capture IOR calls
       this.page.on('request', (request) => {
         const url = request.url();
-        if (url.includes('/shutdownAll')) {
+        // Capture peerStopAll IOR call (the actual method name)
+        if (url.includes('/peerStopAll') || url.includes('/shutdownAll')) {
           capturedIorUrl = url;
         }
       });
@@ -300,25 +308,24 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
         (window as any).confirm = () => true;
       });
       
-      // Click the shutdown button (we'll catch the request but not let it complete)
-      // Use page.route to intercept and abort the actual request
-      await this.page.route('**/shutdownAll', route => {
+      // Use page.route to intercept and capture the actual request URL
+      await this.page.route('**/peerStopAll', route => {
         capturedIorUrl = route.request().url();
-        route.abort();  // Don't actually shutdown the server
+        route.continue();  // Let it complete (don't abort)
       });
       
       // Click the shutdown button
       await this.page.click('#shutdownAllBtn');
       
-      // Wait a bit for the request to be captured
-      await this.sleep(500);
+      // Wait for the request to be captured and processed
+      await this.sleep(1000);
       
       // Verify the captured URL contains the correct version
       const shutdownIorEvidence = {
         capturedUrl: capturedIorUrl,
         containsCorrectVersion: capturedIorUrl?.includes('/0.3.21.8/') || false,
         containsOldVersion: capturedIorUrl?.includes('/0.3.21.6/') || false,
-        expectedPattern: '/ONCE/0.3.21.8/{uuid}/shutdownAll'
+        expectedPattern: '/ONCE/0.3.21.8/{uuid}/peerStopAll'
       };
       
       this.logEvidence('output', 'Shutdown button IOR URL', shutdownIorEvidence);

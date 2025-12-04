@@ -259,6 +259,42 @@ peers.forEach(this.peerRender.bind(this));  // If 'this' context needed
 
 ---
 
+### **Principle 23: EAMD.ucp Virtual Root (Static Asset Serving)**
+> All static assets served via virtual `/EAMD.ucp/` root path for absolute imports.
+
+The browser needs predictable, absolute URLs for importing JavaScript modules, CSS, and other assets. The `/EAMD.ucp/` virtual route maps to the project root filesystem:
+
+- `/EAMD.ucp/components/...` → `{projectRoot}/components/...`
+- `/EAMD.ucp/scenarios/...` → `{projectRoot}/scenarios/...`
+
+This enables:
+1. **Absolute imports in browser** - No relative path hell (`../../dist/...`)
+2. **Component-agnostic paths** - Works from any HTML page
+3. **Consistent with filesystem** - Same structure as disk layout
+4. **Future: Physical symlink** - Eventually `EAMD.ucp` becomes a real directory
+
+```html
+<!-- ✅ CORRECT - Absolute import via EAMD.ucp virtual root -->
+<script type="module">
+import { ONCE } from '/EAMD.ucp/components/ONCE/0.3.21.8/dist/ts/layer1/ONCE.js';
+import { CSSLoader } from '/EAMD.ucp/components/ONCE/0.3.21.8/dist/ts/layer2/CSSLoader.js';
+</script>
+
+<!-- ❌ WRONG - Relative paths break depending on where HTML is served -->
+<script type="module">
+import { ONCE } from '../../dist/ts/layer1/ONCE.js';  // Breaks!
+</script>
+```
+
+- [ ] StaticFileRoute serves `/EAMD.ucp/components/**` as static files
+- [ ] StaticFileRoute serves `/EAMD.ucp/scenarios/**` as static files
+- [ ] HTML pages use absolute `/EAMD.ucp/...` imports
+- [ ] FUTURE: Create physical `EAMD.ucp` symlink directory
+
+**PDCA Reference:** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/session/2025-12-04-UTC-1400.self-orientation-asset-serving.pdca.md) | [§/components/ONCE/0.3.21.8/session/2025-12-04-UTC-1400.self-orientation-asset-serving.pdca.md](./2025-12-04-UTC-1400.self-orientation-asset-serving.pdca.md)
+
+---
+
 ## How to Use
 
 1. **BEFORE every git commit:** Open this file and check ALL principles

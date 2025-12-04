@@ -170,6 +170,30 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     }
   }
 
+  /**
+   * Stop ALL running ONCE server processes (clean slate for testing)
+   * Uses pkill to terminate any node processes running ONCE
+   */
+  protected async serverStopAll(): Promise<void> {
+    this.logEvidence('step', 'Stopping ALL ONCE server processes');
+    
+    return new Promise((resolve) => {
+      // Kill all node processes running "once" commands
+      const pkill = spawn('pkill', ['-f', 'node.*once'], {
+        stdio: 'ignore'
+      });
+      
+      pkill.on('close', () => {
+        resolve();
+      });
+      
+      pkill.on('error', () => {
+        // pkill may not find any processes - that's OK
+        resolve();
+      });
+    });
+  }
+
   // ═══════════════════════════════════════════════════════════════
   // HTTP HELPERS (Black-Box Testing)
   // ═══════════════════════════════════════════════════════════════
