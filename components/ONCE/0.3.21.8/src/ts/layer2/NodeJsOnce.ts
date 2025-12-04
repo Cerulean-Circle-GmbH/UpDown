@@ -2033,12 +2033,16 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
    */
   async getAssetManifest(): Promise<{ css: string[]; templates: string[] }> {
     const componentRoot = this.model.componentRoot;
-    if (!componentRoot) {
+    const version = this.model.version;
+    if (!componentRoot || !version) {
       return { css: [], templates: [] };
     }
     
-    const cssDir = path.join(componentRoot, 'dist/ts/layer5/views/css');
-    const templatesDir = path.join(componentRoot, 'dist/ts/layer5/views/webBeans');
+    // URL Pattern: /{Component}/{version}/src/ts/layer5/views/css/*.css
+    // Served by StaticFileRoute which resolves to: {projectRoot}/components/{Component}/{version}/...
+    // @pdca 2025-12-03-UTC-1400.lit-css-preload.pdca.md
+    const cssDir = path.join(componentRoot, 'src/ts/layer5/views/css');
+    const templatesDir = path.join(componentRoot, 'src/ts/layer5/views/webBeans');
     
     const css: string[] = [];
     const templates: string[] = [];
@@ -2048,7 +2052,8 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       const cssFiles = fs.readdirSync(cssDir);
       cssFiles.forEach(function(file: string) {
         if (file.endsWith('.css')) {
-          css.push(`/dist/ts/layer5/views/css/${file}`);
+          // URL: /ONCE/0.3.21.8/src/ts/layer5/views/css/ItemView.css
+          css.push(`/ONCE/${version}/src/ts/layer5/views/css/${file}`);
         }
       });
     } catch (e) {
@@ -2061,7 +2066,8 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       const templateFiles = fs.readdirSync(templatesDir);
       templateFiles.forEach(function(file: string) {
         if (file.endsWith('.html')) {
-          templates.push(`/dist/ts/layer5/views/webBeans/${file}`);
+          // URL: /ONCE/0.3.21.8/src/ts/layer5/views/webBeans/ItemView.html
+          templates.push(`/ONCE/${version}/src/ts/layer5/views/webBeans/${file}`);
         }
       });
     } catch (e) {

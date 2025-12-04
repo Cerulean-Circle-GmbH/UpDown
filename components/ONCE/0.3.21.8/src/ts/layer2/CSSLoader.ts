@@ -9,9 +9,14 @@
  * - P6: Empty constructor
  * - P19: Enables external CSS (separation of concerns)
  * 
+ * Cache Keys:
+ * - Full URL: /ONCE/0.3.21.8/src/ts/layer5/views/css/ItemView.css
+ * - Filename: ItemView.css
+ * This allows components to use simple filenames while loading uses full URLs.
+ * 
  * Usage:
- *   await CSSLoader.preloadAll(['/css/ItemView.css', '/css/OnceOverView.css']);
- *   const sheet = CSSLoader.get('/css/ItemView.css');
+ *   await CSSLoader.preloadAll(['/ONCE/0.3.21.8/src/.../ItemView.css']);
+ *   const sheet = CSSLoader.get('ItemView.css'); // Works with filename!
  *   element.shadowRoot.adoptedStyleSheets = [sheet];
  * 
  * @ior ior:esm:/ONCE/{version}/CSSLoader
@@ -26,12 +31,14 @@ import { Reference } from '../layer3/Reference.interface.js';
  * Fetches CSS files and creates CSSStyleSheet objects that can be
  * applied to shadow roots via adoptedStyleSheets.
  * 
+ * Caches by both full path AND filename for flexible lookup.
+ * 
  * This enables Web4 Principle 19 (external CSS) while still
  * working with Lit's shadow DOM encapsulation.
  */
 export class CSSLoader {
   
-  /** Cache of loaded stylesheets */
+  /** Cache of loaded stylesheets (keyed by full path AND filename) */
   private static cache: Map<string, CSSStyleSheet> = new Map();
   
   /** Loading promises to prevent duplicate fetches */
@@ -69,7 +76,13 @@ export class CSSLoader {
     
     try {
       const sheet = await loadPromise;
+      // Cache by full path
       this.cache.set(cssPath, sheet);
+      // Also cache by filename for easy component lookup
+      const filename = this.extractFilename(cssPath);
+      if (filename) {
+        this.cache.set(filename, sheet);
+      }
       return sheet;
     } finally {
       this.loading.delete(cssPath);
@@ -151,6 +164,15 @@ export class CSSLoader {
    */
   static get cachedPaths(): string[] {
     return Array.from(this.cache.keys());
+  }
+  
+  /**
+   * Extract filename from path
+   * /ONCE/0.3.21.8/src/ts/.../ItemView.css → ItemView.css
+   */
+  private static extractFilename(cssPath: string): string {
+    const parts = cssPath.split('/');
+    return parts[parts.length - 1];
   }
 }
 

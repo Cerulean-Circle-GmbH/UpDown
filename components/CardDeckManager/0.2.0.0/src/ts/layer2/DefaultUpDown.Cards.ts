@@ -82,7 +82,7 @@ export class DefaultCardDeckManager implements CardDeckManager {
     }
     
     if (shuffle === 'true') {
-      this.shuffleDeck(deck);
+      this.shuffleDeckArray(deck);
     }
     
     this.model.deck = deck;
@@ -100,7 +100,7 @@ export class DefaultCardDeckManager implements CardDeckManager {
       return this;
     }
     
-    this.shuffleDeck(this.model.deck);
+    this.shuffleDeckArray(this.model.deck);
     this.model.updatedAt = new Date().toISOString();
     console.log(`🔀 Deck shuffled`);
     return this;
@@ -401,7 +401,7 @@ export class DefaultCardDeckManager implements CardDeckManager {
   /**
    * @cliHide
    */
-  private shuffleDeck(deck: Card[]): void {
+  private shuffleDeckArray(deck: Card[]): void {
     for (let i = deck.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [deck[i], deck[j]] = [deck[j], deck[i]];

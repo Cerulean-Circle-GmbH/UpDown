@@ -34,7 +34,7 @@ import { Reference } from '../../layer3/Reference.interface.js';
 export class ItemView extends AbstractWebBean<any> {
   
   /** CSS path for adoptedStyleSheets */
-  static cssPath = '/dist/ts/layer5/views/css/ItemView.css';
+  static cssPath = 'ItemView.css'; // CSSLoader caches by filename
   
   /** HTML template path */
   static templatePath = '/dist/ts/layer5/views/webBeans/ItemView.html';

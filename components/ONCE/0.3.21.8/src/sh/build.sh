@@ -66,6 +66,23 @@ elif [ ! -f "dist/ts/layer5/ONCECLI.js" ] || find src -name "*.ts" -newer "dist/
     else
         npx tsc 2>&1 | grep -v "^$" >&2
     fi
+    
+    # Copy CSS and HTML assets (not processed by TypeScript)
+    # @pdca 2025-12-03-UTC-1400.lit-css-preload.pdca.md
+    if [ -d "src/ts/layer5/views/css" ]; then
+        mkdir -p dist/ts/layer5/views/css
+        cp src/ts/layer5/views/css/*.css dist/ts/layer5/views/css/ 2>/dev/null || true
+        if [ "$VERBOSE" = "true" ]; then
+            echo "📄 Copied CSS assets to dist/"
+        fi
+    fi
+    if [ -d "src/ts/layer5/views/webBeans" ]; then
+        mkdir -p dist/ts/layer5/views/webBeans
+        cp src/ts/layer5/views/webBeans/*.html dist/ts/layer5/views/webBeans/ 2>/dev/null || true
+        if [ "$VERBOSE" = "true" ]; then
+            echo "📄 Copied HTML templates to dist/"
+        fi
+    fi
 else
     if [ "$VERBOSE" = "true" ]; then
         echo "✅ ONCE is up to date, no build needed"

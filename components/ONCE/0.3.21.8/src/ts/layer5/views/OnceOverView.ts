@@ -51,7 +51,7 @@ interface ONCEModel {
 export class OnceOverView extends AbstractWebBean<ONCEModel> {
   
   /** CSS path for adoptedStyleSheets */
-  static cssPath = '/dist/ts/layer5/views/css/OnceOverView.css';
+  static cssPath = 'OnceOverView.css'; // CSSLoader caches by filename
   
   /** HTML template path */
   static templatePath = '/dist/ts/layer5/views/webBeans/OnceOverView.html';
