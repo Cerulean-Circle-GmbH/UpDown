@@ -22,29 +22,38 @@ import { ActionMetadata } from '../../layer3/ActionMetadata.interface.js';
 import { ActionStyle } from '../../layer3/ActionStyle.enum.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 import { Collection } from '../../layer3/Collection.interface.js';
+import { LifecycleState } from '../../layer3/LifecycleState.enum.js';
+
+/**
+ * Capability - Server capability descriptor
+ */
+export interface PeerCapability {
+  capability: string;
+  port?: number;
+}
 
 /**
  * OncePeerModel - Model for ONCE peer items
- * Extends ItemViewModel with peer-specific fields
+ * ✅ Web4: Flat model design - no nested state.state
  */
 export interface OncePeerModel {
-  // ItemViewModel fields
+  // Identity
+  uuid: string;
+  
+  // Lifecycle - direct enum, not nested
+  lifecycleState: LifecycleState;
+  
+  // Capabilities - flat array
+  capabilities: PeerCapability[];
+  
+  // Role
+  isPrimaryServer: boolean;
+  
+  // Optional display overrides (ItemViewModel)
   name?: string;
   description?: string;
   badge?: Reference<string | number>;
   icon?: string;
-  
-  // Peer-specific fields
-  uuid?: string;
-  state?: {
-    uuid?: string;
-    state?: string;
-    capabilities?: Array<{
-      capability: string;
-      port?: number;
-    }>;
-  };
-  isPrimaryServer?: boolean;
 }
 
 /**
@@ -110,24 +119,24 @@ export class OncePeerItemView extends DefaultItemView<OncePeerModel> {
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Get peer UUID
+   * Get peer UUID - ✅ Web4: Direct access, no nested state
    */
   protected get peerUuid(): string {
-    return this.model?.uuid || this.model?.state?.uuid || '???';
+    return this.model?.uuid || '???';
   }
   
   /**
-   * Get peer state
+   * Get peer state - ✅ Web4: Direct LifecycleState enum
    */
-  protected get peerState(): string {
-    return this.model?.state?.state || 'UNKNOWN';
+  protected get peerState(): LifecycleState {
+    return this.model?.lifecycleState || LifecycleState.ERROR;
   }
   
   /**
-   * Get peer port
+   * Get peer port - ✅ Web4: Flat capabilities array
    */
   protected get peerPort(): string {
-    const portCap = this.model?.state?.capabilities?.find(
+    const portCap = this.model?.capabilities?.find(
       function(c) { return c.capability === 'httpPort'; }
     );
     return portCap?.port?.toString() || 'N/A';

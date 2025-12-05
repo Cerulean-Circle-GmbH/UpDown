@@ -28,6 +28,7 @@ import { OncePeerItemView, OncePeerModel } from './OncePeerItemView.js';
 import { ActionMetadata } from '../../layer3/ActionMetadata.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 import { Collection } from '../../layer3/Collection.interface.js';
+import { LifecycleState } from '../../layer3/LifecycleState.enum.js';
 
 /**
  * ONCEModel - Model for ONCE kernel
@@ -165,18 +166,18 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
    * Count running peers - uses function (not arrow)
    */
   private runningPeersCount(peers: OncePeerModel[]): number {
-    let count = 0;
-    peers.forEach(this.peerCountIfRunning.bind(this, { count }));
-    return count;
+    const counter = { count: 0 };
+    peers.forEach(this.peerCountIfRunning.bind(this, counter));
+    return counter.count;
   }
   
   /**
    * Count helper - called via method reference
+   * ✅ Web4 P4: Use LifecycleState enum, flat model design
    */
   private peerCountIfRunning(counter: { count: number }, peer: OncePeerModel): void {
-    const model = (peer as any).model || peer;
-    const state = model?.state?.state;
-    if (state === 'RUNNING' || state === 'INITIALIZED') {
+    const state = peer.lifecycleState;
+    if (state === LifecycleState.RUNNING || state === LifecycleState.INITIALIZED) {
       counter.count++;
     }
   }
@@ -269,7 +270,8 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
     console.log(`Action: ${action.method} on ${uuid}`);
     
     const host = window.location.hostname;
-    const port = model?.state?.capabilities?.find(
+    // ✅ Web4: Flat model - capabilities directly on model
+    const port = model?.capabilities?.find(
       function(c) { return c.capability === 'httpPort'; }
     )?.port || 42777;
     
@@ -398,13 +400,11 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
       function(c: any) { return c.capability === 'httpPort'; }
     )?.port;
     
+    // ✅ Web4: Flat model design - no nested state.state
     const peerModel: OncePeerModel = {
       uuid: serverModel.uuid,
-      state: {
-        uuid: serverModel.uuid,
-        state: 'RUNNING',
-        capabilities: serverModel.capabilities || [{ capability: 'httpPort', port }]
-      },
+      lifecycleState: LifecycleState.RUNNING,
+      capabilities: serverModel.capabilities || [{ capability: 'httpPort', port }],
       isPrimaryServer: port === 42777
     };
     
@@ -422,13 +422,14 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
   
   /**
    * Handle server-stopped event
+   * ✅ Web4: Flat model update
    */
   private serverStoppedHandle(data: { uuid: string }): void {
     console.log('🛑 Server stopped:', data.uuid);
     
     this.localPeers = this.localPeers.map(function(p) {
-      if (p.uuid === data.uuid && p.state) {
-        return { ...p, state: { ...p.state, state: 'STOPPED' } };
+      if (p.uuid === data.uuid) {
+        return { ...p, lifecycleState: LifecycleState.STOPPED };
       }
       return p;
     });
@@ -468,6 +469,7 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
   
   /**
    * Fetch initial server list
+   * ✅ Web4: Flat model design - maps API response to OncePeerModel
    */
   private async serversFetch(): Promise<void> {
     const host = window.location.hostname;
@@ -477,30 +479,29 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
       const response = await fetch(`http://${host}:${port}/servers`);
       const data = await response.json();
       
-      // Add primary server
+      // Add primary server - ✅ Web4: Flat model
       const primaryModel: OncePeerModel = {
         uuid: 'primary',
-        state: {
-          uuid: 'primary',
-          state: 'RUNNING',
-          capabilities: [{ capability: 'httpPort', port: 42777 }]
-        },
+        lifecycleState: LifecycleState.RUNNING,
+        capabilities: [{ capability: 'httpPort', port: 42777 }],
         isPrimaryServer: true
       };
       
-      // Map registered clients
-      const clients = (data.servers || []).map(function(s: any) {
-        const clientPort = s.capabilities?.find(
+      // Map registered clients from data.model.servers (scenario format)
+      const serverList = data.model?.servers || data.servers || [];
+      const clients = serverList.map(function(s: any) {
+        // Access nested API structure: s.model.state or s.state
+        const serverModel = s.model || s;
+        const serverState = serverModel?.state || {};
+        const clientPort = serverState.capabilities?.find(
           function(c: any) { return c.capability === 'httpPort'; }
         )?.port;
         
+        // ✅ Web4: Flat model - no nested state.state
         return {
-          uuid: s.uuid,
-          state: {
-            uuid: s.uuid,
-            state: 'RUNNING',
-            capabilities: s.capabilities || [{ capability: 'httpPort', port: clientPort }]
-          },
+          uuid: serverModel.uuid || s.ior?.uuid || 'unknown',
+          lifecycleState: LifecycleState.RUNNING,
+          capabilities: serverState.capabilities || [{ capability: 'httpPort', port: clientPort }],
           isPrimaryServer: false
         } as OncePeerModel;
       });
