@@ -314,8 +314,9 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
         route.continue();  // Let it complete (don't abort)
       });
       
-      // Click the shutdown button
-      await this.page.click('#shutdownAllBtn');
+      // Click the shutdown button (inside shadow DOM of once-over-view)
+      // ✅ Web4: Lit components use shadow DOM, need >> to pierce
+      await this.page.click('once-over-view >> .shutdown-btn');
       
       // Wait for the request to be captured and processed
       await this.sleep(1000);
@@ -354,7 +355,8 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
         });
         
         // Click shutdown again (confirm is already overridden)
-        await this.page.click('#shutdownAllBtn');
+        // ✅ Web4: Pierce shadow DOM to reach button
+        await this.page.click('once-over-view >> .shutdown-btn');
         
         // Wait for the response and server to shut down
         await this.sleep(3000);
