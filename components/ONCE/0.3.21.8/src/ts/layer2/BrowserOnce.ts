@@ -23,10 +23,20 @@ import { EnvironmentType } from '../layer3/EnvironmentType.enum.js';
 import { DefaultEnvironmentInfo } from './DefaultEnvironmentInfo.js';
 import { LifecycleState } from '../layer3/LifecycleState.enum.js';
 import { LifecycleEventType } from '../layer3/LifecycleEventType.enum.js';
+import { CSSLoader } from './CSSLoader.js';
+import { HTMLTemplateLoader } from './HTMLTemplateLoader.js';
+import type { LitElement } from 'lit';
+import type { Reference } from '../layer3/Reference.interface.js';
 
 export class BrowserOnce extends DefaultOnceKernel {
     // ✅ Type the model properly
     protected declare model: BrowserOnceModel;
+    
+    /**
+     * Main view element (set by appRender)
+     * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
+     */
+    private mainView: Reference<LitElement> = null;
     
     /**
      * Registered model change listeners
@@ -38,6 +48,142 @@ export class BrowserOnce extends DefaultOnceKernel {
     constructor() {
         // ✅ Empty constructor (Radical OOP)
         super();
+    }
+    
+    // ========================================
+    // SPA ENTRY POINT - View Discovery
+    // @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
+    // ========================================
+    
+    /**
+     * Default view for this component
+     * Used by appRender() to determine what to show
+     * Override in subclass if needed
+     */
+    get defaultView(): Reference<string> {
+        return 'once-over-view';
+    }
+    
+    /**
+     * App entry view (alternative to defaultView)
+     * If set, takes precedence over defaultView
+     * Override in subclass if needed
+     */
+    get appEntryView(): Reference<string> {
+        return null;
+    }
+    
+    /**
+     * Render the app into a container
+     * Called by once.html after kernel boot
+     * 
+     * Responsibilities:
+     * - Preload CSS assets
+     * - Import view components
+     * - Create and mount view (defaultView or appEntryView)
+     * - Set model and kernel references on view
+     * 
+     * @param container Element to render into (usually document.body)
+     * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
+     */
+    async appRender(container: Element): Promise<void> {
+        console.log('[BrowserOnce] appRender() starting...');
+        
+        // 1. Determine which view to create
+        const viewTag = this.appEntryView || this.defaultView;
+        if (!viewTag) {
+            console.error('[BrowserOnce] No defaultView or appEntryView defined');
+            return;
+        }
+        console.log(`[BrowserOnce] View tag: <${viewTag}>`);
+        
+        // 2. Preload CSS assets
+        await this.assetsPreload();
+        
+        // 3. Import view components
+        await this.viewsImport();
+        
+        // 4. Create main view element
+        console.log(`[BrowserOnce] Creating view: <${viewTag}>`);
+        this.mainView = document.createElement(viewTag) as LitElement;
+        
+        // 5. Set model and kernel references
+        (this.mainView as any).model = this.model;
+        (this.mainView as any).kernel = this;
+        
+        // 6. Mount to container
+        container.appendChild(this.mainView);
+        
+        // 7. Register for model updates (already done in init via listenForScenarioUpdates)
+        // The notifyModelListeners() will call modelChangeHandle()
+        this.onModelChange(this.modelChangeHandle.bind(this));
+        
+        console.log('[BrowserOnce] appRender() complete');
+    }
+    
+    /**
+     * Preload CSS and HTML template assets
+     * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
+     */
+    private async assetsPreload(): Promise<void> {
+        console.log('[BrowserOnce] Preloading assets...');
+        
+        // Fetch asset manifest from server
+        let manifest: { css: string[], templates: string[] } = { css: [], templates: [] };
+        try {
+            const response = await fetch('/asset-manifest');
+            const data = await response.json();
+            manifest = data.model || { css: [], templates: [] };
+            console.log('[BrowserOnce] Asset manifest:', manifest);
+        } catch (e) {
+            console.warn('[BrowserOnce] Failed to fetch asset manifest, using defaults');
+            // Fallback to known assets
+            manifest = {
+                css: [
+                    '/EAMD.ucp/components/ONCE/0.3.21.8/src/ts/layer5/views/css/OnceOverView.css',
+                    '/EAMD.ucp/components/ONCE/0.3.21.8/src/ts/layer5/views/css/OncePeerItemView.css',
+                    '/EAMD.ucp/components/ONCE/0.3.21.8/src/ts/layer5/views/css/DefaultItemView.css'
+                ],
+                templates: []
+            };
+        }
+        
+        // Preload all assets in parallel
+        await Promise.all([
+            CSSLoader.preloadAll(manifest.css),
+            HTMLTemplateLoader.preloadAll(manifest.templates)
+        ]);
+        
+        console.log('[BrowserOnce] Assets preloaded');
+    }
+    
+    /**
+     * Import view components dynamically
+     * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
+     */
+    private async viewsImport(): Promise<void> {
+        console.log('[BrowserOnce] Importing view components...');
+        
+        const basePath = '/EAMD.ucp/components/ONCE/0.3.21.8/dist/ts/layer5/views';
+        
+        // Import Lit components (they self-register via @customElement)
+        await import(`${basePath}/OnceOverView.js`);
+        await import(`${basePath}/DefaultItemView.js`);
+        await import(`${basePath}/OncePeerItemView.js`);
+        
+        console.log('[BrowserOnce] View components imported');
+    }
+    
+    /**
+     * Handle model change - update view
+     * Called when model is updated via WebSocket scenario
+     * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
+     */
+    private modelChangeHandle(): void {
+        if (this.mainView) {
+            (this.mainView as any).model = this.model;
+            this.mainView.requestUpdate();
+        }
     }
     
     /**

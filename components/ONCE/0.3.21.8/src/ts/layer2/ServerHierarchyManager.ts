@@ -246,6 +246,15 @@ export class ServerHierarchyManager {
         demoLegacyRoute.model.priority = 50;
         this.httpRouter.registerRoute(demoLegacyRoute);
         
+        // ✅ Route 3e: ONCE App ("/app") - Minimal SPA entry point
+        // @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
+        const appRoute = new HTMLRoute();
+        appRoute.model.uuid = this.idProvider.create();
+        appRoute.setPattern('/app', HttpMethod.GET);
+        appRoute.setProvider(() => this.component!.serveOnceApp());
+        appRoute.model.priority = 50;
+        this.httpRouter.registerRoute(appRoute);
+        
         // ✅ Route 4: ONCE Minimal ("/once")
         const onceRoute = new HTMLRoute();
         onceRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
@@ -717,6 +726,20 @@ export class ServerHierarchyManager {
             throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
         }
         const fullPath = path.join(this.component.model.componentRoot, 'src/view/html/demo-lit.html');
+        const html = fs.readFileSync(fullPath, 'utf-8');
+        return html;
+    }
+
+    /**
+     * Get ONCE App HTML (for /app endpoint)
+     * Minimal SPA entry point - ALL logic in classes
+     * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
+     */
+    getOnceAppHTML(): string {
+        if (!this.component?.model.componentRoot) {
+            throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
+        }
+        const fullPath = path.join(this.component.model.componentRoot, 'src/ts/layer5/views/once.html');
         const html = fs.readFileSync(fullPath, 'utf-8');
         return html;
     }

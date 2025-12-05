@@ -2166,6 +2166,21 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   }
 
   /**
+   * Serve ONCE App - Minimal SPA entry point
+   * ALL logic in classes, NO floating functional code
+   * @returns Rendered HTML for minimal SPA bootstrap
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/serveOnceApp
+   * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
+   */
+  serveOnceApp(): string {
+    if (!this.serverHierarchyManager) {
+      throw new Error('Server not initialized. Call startServer() first.');
+    }
+    
+    return this.serverHierarchyManager.getOnceAppHTML();
+  }
+
+  /**
    * Serve server status HTML
    * @returns Rendered HTML for server status
    * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/serveStatus

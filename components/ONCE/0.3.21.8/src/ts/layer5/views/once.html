@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONCE</title>
+    
+    <!-- Web4 Principle 23: EAMD.ucp Virtual Root for base CSS -->
+    <link rel="stylesheet" href="/EAMD.ucp/components/ONCE/0.3.21.8/src/ts/layer5/views/css/themeBase.css">
+    
+    <!-- Lit Import Map (Browser Module Resolution) -->
+    <script type="importmap">
+    {
+        "imports": {
+            "lit": "https://esm.run/lit@3.3.1",
+            "lit/": "https://esm.run/lit@3.3.1/",
+            "lit/decorators.js": "https://esm.run/lit@3.3.1/decorators.js",
+            "@lit/reactive-element": "https://esm.run/@lit/reactive-element@2.0.0",
+            "lit-html": "https://esm.run/lit-html@3.0.0"
+        }
+    }
+    </script>
+</head>
+<body>
+    <!-- 
+        Web4 SPA Bootstrap - Minimal Entry Point
+        ═══════════════════════════════════════════════════════════════
+        
+        This is THE ONLY HTML entry point for all ONCE apps.
+        ALL logic is in classes - NO floating functional code here!
+        
+        The kernel checks for:
+        - component.appEntryView (takes precedence)
+        - component.defaultView (fallback)
+        
+        And renders the appropriate view into document.body.
+        
+        @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
+    -->
+    
+    <script type="module">
+        // ═══════════════════════════════════════════════════════════════
+        // Web4 SPA Bootstrap - ALL logic in classes, NO floating functions
+        // @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
+        // ═══════════════════════════════════════════════════════════════
+        
+        // Import ONCE kernel via EAMD.ucp virtual root
+        import { ONCE } from '/EAMD.ucp/components/ONCE/0.3.21.8/dist/ts/layer1/ONCE.js';
+        
+        // Get peer host from URL (optional query param)
+        const urlParams = new URLSearchParams(window.location.search);
+        const peerHost = urlParams.get('peer') || window.location.host;
+        
+        // Boot kernel - BrowserOnce handles everything
+        const kernel = await ONCE.start({ peerHost: peerHost });
+        
+        // Component decides what to render via defaultView/appEntryView
+        // This is the ONLY logic in the HTML - everything else is in classes
+        await kernel.appRender(document.body);
+    </script>
+</body>
+</html>
+
