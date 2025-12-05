@@ -19,8 +19,9 @@
 import { html, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { AbstractWebBean } from './AbstractWebBean.js';
-import { ItemView } from './ItemView.js';
+import { OncePeerItemView, OncePeerModel } from './OncePeerItemView.js';
 import { Reference } from '../../layer3/Reference.interface.js';
+import { Collection } from '../../layer3/Collection.interface.js';
 
 /**
  * ONCEModel - Model for ONCE kernel
@@ -28,7 +29,7 @@ import { Reference } from '../../layer3/Reference.interface.js';
 interface ONCEModel {
   uuid: string;
   version: string;
-  peers: any[];
+  peers: Collection<OncePeerModel>;
   peerUUID: Reference<string>;
   peerHost: string;
 }
@@ -57,7 +58,7 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
   static templatePath = '/dist/ts/layer5/views/webBeans/OnceOverView.html';
   
   /** Child ItemViews for peers */
-  private peerViews: ItemView[] = [];
+  private peerViews: Collection<OncePeerItemView> = [];
   
   /** Reference to kernel for IOR calls */
   @property({ type: Object }) kernel: Reference<any> = null;
@@ -76,7 +77,8 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
    */
   render(): TemplateResult {
     const model = this.hasModel ? this.model : { peers: [], version: '0.3.x.x' };
-    const peers = model.peers || [];
+    const peersCollection = model.peers || [];
+    const peers = Array.from(peersCollection);
     const runningCount = this.runningPeersCount(peers);
     
     return html`
@@ -119,7 +121,7 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
   /**
    * Count running peers - uses function (not arrow)
    */
-  private runningPeersCount(peers: any[]): number {
+  private runningPeersCount(peers: OncePeerModel[]): number {
     let count = 0;
     peers.forEach(this.peerCountIfRunning.bind(this, { count }));
     return count;
@@ -128,8 +130,9 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
   /**
    * Count helper - called via method reference
    */
-  private peerCountIfRunning(counter: { count: number }, peer: any): void {
-    const state = peer.model?.state?.state || peer.state?.state;
+  private peerCountIfRunning(counter: { count: number }, peer: OncePeerModel): void {
+    const model = (peer as any).model || peer;
+    const state = model?.state?.state;
     if (state === 'RUNNING' || state === 'INITIALIZED') {
       counter.count++;
     }
@@ -138,7 +141,7 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
   /**
    * Render peer ItemViews
    */
-  private peersRender(peers: any[]): TemplateResult {
+  private peersRender(peers: OncePeerModel[]): TemplateResult {
     if (peers.length === 0) {
       return html`<div style="color: #666; text-align: center;">No peers connected yet...</div>`;
     }
@@ -149,15 +152,15 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
   }
   
   /**
-   * Create ItemView for peer - called via method reference
+   * Create OncePeerItemView for peer - called via method reference
    */
-  private peerItemCreate(items: TemplateResult[], peer: any): void {
-    const model = peer.model || peer;
+  private peerItemCreate(items: TemplateResult[], peer: OncePeerModel): void {
+    const model = (peer as any).model || peer;
     items.push(html`
-      <once-item-view
+      <once-peer-item-view
         .model=${model}
         @action-invoke=${this.actionInvokeHandler.bind(this)}
-      ></once-item-view>
+      ></once-peer-item-view>
     `);
   }
   
