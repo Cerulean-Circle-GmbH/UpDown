@@ -1,0 +1,177 @@
+/*
+ * OncePeerItemView.css - ONCE Peer Item Styles
+ * 
+ * Styles for OncePeerItemView component.
+ * Matrix-inspired theme for ONCE peers.
+ * 
+ * Web4 Principle 19: Separation of Concerns
+ * 
+ * @pdca 2025-12-05-UTC-1600.phase-a1-oncepeeritemview-relatedobjects.pdca.md
+ */
+
+:host {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color, #0f0);
+  background: var(--item-bg, rgba(0, 255, 0, 0.05));
+  margin-bottom: var(--spacing-sm, 8px);
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  transition: var(--transition-fast, 0.15s ease);
+}
+
+:host(:active) {
+  cursor: grabbing;
+  background: var(--highlight-bg, rgba(0, 255, 0, 0.15));
+}
+
+:host(:hover) {
+  border-color: var(--color-accent, #ff0);
+  background: var(--item-hover-bg, rgba(0, 255, 0, 0.1));
+}
+
+/* Status Indicator */
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.status-dot.running {
+  background: var(--color-running, #0f0);
+  box-shadow: 0 0 8px var(--color-running, #0f0);
+}
+
+.status-dot.stopped {
+  background: var(--color-stopped, #666);
+}
+
+.status-dot.starting {
+  background: var(--color-starting, #ff0);
+  animation: pulse 1s infinite;
+}
+
+.status-dot.stopping {
+  background: var(--color-stopping, #f80);
+  animation: pulse 0.5s infinite;
+}
+
+.status-dot.unknown {
+  background: var(--text-muted, #666);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Peer Icon */
+.peer-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-size: 1.2em;
+  color: var(--color-primary, #0f0);
+}
+
+/* Peer Content */
+.peer-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.peer-name {
+  font-weight: bold;
+  color: var(--text-primary, #0f0);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-mono, monospace);
+}
+
+.peer-description {
+  font-size: var(--font-size-sm, 0.85em);
+  color: var(--text-secondary, #888);
+  font-family: var(--font-mono, monospace);
+}
+
+/* Peer Badge */
+.peer-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: var(--font-size-xs, 0.75em);
+  font-weight: bold;
+  margin-right: 12px;
+  text-transform: uppercase;
+}
+
+.peer-badge.primary {
+  background: var(--color-primary, #0f0);
+  color: var(--bg-primary, #000);
+}
+
+/* Action Zone */
+.action-zone {
+  display: flex;
+  gap: var(--spacing-sm, 8px);
+  flex-shrink: 0;
+}
+
+/* Action Buttons */
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 1px solid;
+  cursor: pointer;
+  font-family: var(--font-mono, monospace);
+  font-size: var(--font-size-sm, 0.85em);
+  transition: var(--transition-fast, 0.15s ease);
+}
+
+.action-btn i {
+  font-size: 0.9em;
+}
+
+/* Button Variants */
+.btn-primary {
+  background: var(--btn-primary-bg, #0a0);
+  color: var(--btn-primary-color, #fff);
+  border-color: var(--btn-primary-border, #0f0);
+}
+
+.btn-primary:hover {
+  background: var(--btn-primary-hover, #0c0);
+  box-shadow: 0 0 8px var(--btn-primary-border, #0f0);
+}
+
+.btn-danger {
+  background: var(--btn-danger-bg, #a00);
+  color: var(--btn-danger-color, #fff);
+  border-color: var(--btn-danger-border, #f00);
+}
+
+.btn-danger:hover {
+  background: var(--btn-danger-hover, #c00);
+  box-shadow: 0 0 8px var(--btn-danger-border, #f00);
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+}
+
+/* Loading State */
+.loading {
+  color: var(--text-muted, #666);
+  font-style: italic;
+  padding: 12px;
+}
+
