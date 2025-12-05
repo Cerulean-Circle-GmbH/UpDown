@@ -419,9 +419,10 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
    * @pdca 2025-11-10-UTC-1830.migrate-once-to-0.3.20.0.pdca.md - CLI infrastructure from 0.3.20.0
    * @pdca 2025-11-10-UTC-1830.migrate-once-to-0.3.20.0.pdca.md - Domain logic from 0.2.0.0
    * @pdca 2025-11-21-UTC-1630.test-isolation-path-violation.pdca.md - Paths already discovered in constructor
+   * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md - B.6 UcpComponent base
    * @cliHide
    */
-  async init(scenario?: Scenario<any> | LegacyONCEScenario): Promise<NodeJsOnce> {
+  async init(scenario?: Scenario<any> | LegacyONCEScenario): Promise<this> {
     // Paths already discovered in constructor via _discoverPaths()
     
     // ✅ Always transition to INITIALIZING (even without scenario)

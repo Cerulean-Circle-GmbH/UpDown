@@ -1,6 +1,11 @@
 /**
  * DefaultOnceKernel - Base class for all ONCE kernel implementations
  * 
+ * Extends UcpComponent for Web4 compliance:
+ * - View management via UcpController
+ * - RelatedObjects registry
+ * - Scenario serialization
+ * 
  * Provides common functionality for:
  * - Node.js (NodeJsOnce)
  * - Browser (BrowserOnce)
@@ -18,8 +23,9 @@
  * Only provides shared helper methods and lifecycle management
  * 
  * @layer2
- * @pattern Abstract Base Class + Observer Pattern
+ * @pattern Abstract Base Class + Observer Pattern + UcpComponent
  * @pdca session/2025-11-26-UTC-0000.iteration-01.13-lifecycle-events-radical-oop.pdca.md
+ * @pdca session/2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md - B.6
  */
 
 import type { Reference } from '../layer3/Reference.interface.js';
@@ -28,13 +34,18 @@ import type { LifecycleObserver } from '../layer3/LifecycleObserver.interface.js
 import type { LifecycleManager } from '../layer3/LifecycleManager.interface.js';
 import { LifecycleEventType } from '../layer3/LifecycleEventType.enum.js';
 import { LifecycleState } from '../layer3/LifecycleState.enum.js';
+import { UcpComponent } from './UcpComponent.js';
 
-export abstract class DefaultOnceKernel implements LifecycleManager {
-    /**
-     * Model storage (Radical OOP)
-     * Each subclass defines its own model type
-     */
-    protected model: Reference<Model> = null;
+/**
+ * OnceKernelModel - Extended model for ONCE kernels
+ * Includes lifecycle state for observer pattern
+ */
+export interface OnceKernelModel extends Model {
+    state?: LifecycleState;
+}
+
+export abstract class DefaultOnceKernel extends UcpComponent<OnceKernelModel> implements LifecycleManager {
+    // model is inherited from UcpComponent
     
     /**
      * Lifecycle observers (Observer Pattern)
@@ -46,25 +57,45 @@ export abstract class DefaultOnceKernel implements LifecycleManager {
      * Current lifecycle state
      * Stored here for quick access, also reflected in model.state when model exists
      */
-    private state: LifecycleState = LifecycleState.CREATED;
+    private lifecycleState: LifecycleState = LifecycleState.CREATED;
     
     /**
      * Empty constructor (Radical OOP)
      * All initialization happens in init()
+     * @pdca B.6 - Now extends UcpComponent
      */
     constructor() {
-        // ✅ Empty constructor - no logic here
+        super();  // ✅ Initialize UcpComponent (controller, model = null)
         // State initialized to CREATED
     }
     
     /**
+     * Default model for ONCE kernels
+     * Subclasses should override with specific model
+     * @pdca B.6 - Required by UcpComponent
+     */
+    protected modelDefault(): OnceKernelModel {
+        return {
+            uuid: this.generateUUID(),
+            name: 'OnceKernel',
+            state: LifecycleState.CREATED
+        };
+    }
+    
+    /**
      * Initialize kernel with scenario
-     * Subclasses should implement this
+     * Override UcpComponent.init() - subclasses should call super.init()
+     * Accepts any scenario format for backwards compatibility
      * 
-     * @param scenario - Initialization scenario
+     * @param scenario - Initialization scenario (any format)
      * @returns Promise<this> - Fluent API
      */
-    abstract init(scenario?: any): Promise<any>;
+    async init(scenario?: any): Promise<this> {
+        // Extract model from scenario if present (various formats)
+        const modelScenario = scenario?.model ? { model: scenario.model } : undefined;
+        await super.init(modelScenario);  // ✅ UcpComponent initialization
+        return this;
+    }
     
     /**
      * Get kernel health status
@@ -132,7 +163,7 @@ export abstract class DefaultOnceKernel implements LifecycleManager {
      * @returns Current lifecycle state
      */
     public getLifecycleState(): LifecycleState {
-        return this.state;
+        return this.lifecycleState;
     }
     
     /**
@@ -142,7 +173,7 @@ export abstract class DefaultOnceKernel implements LifecycleManager {
      * @returns true if transition is valid
      */
     public canTransitionTo(targetState: LifecycleState): boolean {
-        const currentState = this.state;
+        const currentState = this.lifecycleState;
         
         // ERROR state can be reached from any state
         if (targetState === LifecycleState.ERROR) {
@@ -191,16 +222,16 @@ export abstract class DefaultOnceKernel implements LifecycleManager {
         // Validate transition
         if (!this.canTransitionTo(targetState)) {
             throw new Error(
-                `[DefaultOnceKernel] Invalid state transition: ${this.state} → ${targetState}`
+                `[DefaultOnceKernel] Invalid state transition: ${this.lifecycleState} → ${targetState}`
             );
         }
         
         // Update state
-        this.state = targetState;
+        this.lifecycleState = targetState;
         
         // Update model if it exists (after init)
         if (this.model && 'state' in this.model) {
-            (this.model as any).state = targetState;
+            (this.model as OnceKernelModel).state = targetState;
         }
         
         // Notify observers

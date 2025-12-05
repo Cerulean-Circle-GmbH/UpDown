@@ -33,8 +33,8 @@ import { Reference } from '../layer3/Reference.interface.js';
  */
 export abstract class UcpComponent<TModel extends object> {
   
-  /** Component model state */
-  model: Reference<TModel> = null;
+  /** Component model state - protected for subclass access */
+  protected model: Reference<TModel> = null;
   
   /** Controller for view management */
   protected controller: UcpController<TModel>;
@@ -107,13 +107,14 @@ export abstract class UcpComponent<TModel extends object> {
   
   /**
    * Hibernate component to scenario
+   * Subclasses can override with more specific types
    * @returns Scenario representing current state
    */
-  async toScenario(): Promise<{ ior: any; owner: string; model: TModel }> {
+  async toScenario(): Promise<any> {
     return {
       ior: this.iorGet(),
       owner: 'system',
-      model: this.model as TModel
+      model: this.model
     };
   }
   
