@@ -18,6 +18,7 @@ import { AbstractWebBean } from './AbstractWebBean.js';
 import { Action } from '../../layer3/Action.interface.js';
 import { ActionStyle } from '../../layer3/ActionStyle.enum.js';
 import { Reference } from '../../layer3/Reference.interface.js';
+import { Collection } from '../../layer3/Collection.interface.js';
 
 /**
  * ItemView - Compact peer item for list/grid display
@@ -88,9 +89,11 @@ export class ItemView extends AbstractWebBean<any> {
     
     const actions = this.actionsDiscover();
     
-    // Use method reference binding for forEach
+    // Iterate with for...of (Collection<T> extends Iterable<T>)
     const buttons: TemplateResult[] = [];
-    actions.forEach(this.actionButtonCreate.bind(this, buttons));
+    for (const action of actions) {
+      this.actionButtonCreate(buttons, action);
+    }
     
     return html`${buttons}`;
   }
@@ -112,14 +115,16 @@ export class ItemView extends AbstractWebBean<any> {
    * Discover available actions
    * Returns actions with no required parameters
    */
-  actionsDiscover(): Action[] {
+  actionsDiscover(): Collection<Action> {
     return [{
+      component: 'ONCE',
+      action: 'PEER_STOP',
       method: 'peerStop',
       label: 'Stop',
       icon: '🛑',
       style: ActionStyle.DANGER,
       shortcut: null,
-      confirmRequired: null,
+      confirmRequired: false,
       confirmMessage: null
     }];
   }
