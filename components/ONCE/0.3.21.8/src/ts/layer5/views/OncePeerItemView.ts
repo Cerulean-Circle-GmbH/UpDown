@@ -181,13 +181,10 @@ export class OncePeerItemView extends DefaultItemView<OncePeerModel> {
   }
   
   /**
-   * Render actions - only for non-primary servers
+   * Render actions - different for primary vs client
    */
   protected actionsRender(): TemplateResult {
-    if (this.isPrimary) {
-      return html``;  // No stop button for primary
-    }
-    
+    // Both primary and client get their own actions
     return super.actionsRender();
   }
   
@@ -197,20 +194,62 @@ export class OncePeerItemView extends DefaultItemView<OncePeerModel> {
   
   /**
    * Discover peer actions
+   * Returns different actions for primary vs client servers
    */
   actionsDiscover(): Collection<ActionMetadata> {
-    // Return stop action for non-primary peers
-    return [{
-      component: 'ONCE',
-      action: 'PEER_STOP',
-      method: 'peerStop',
-      label: 'Stop',
-      icon: 'fa-stop',
-      style: ActionStyle.DANGER,
-      shortcut: null,
-      confirmRequired: false,
-      confirmMessage: null
-    }];
+    if (this.isPrimary) {
+      // Primary server actions
+      return [
+        {
+          component: 'ONCE',
+          action: 'PEER_DISCOVER',
+          method: 'peersDiscover',
+          label: 'Discover',
+          icon: 'fa-search',
+          style: ActionStyle.SECONDARY,
+          shortcut: null,
+          confirmRequired: false,
+          confirmMessage: null
+        },
+        {
+          component: 'ONCE',
+          action: 'PEER_STOP_ALL',
+          method: 'peerStopAll',
+          label: 'End All',
+          icon: 'fa-power-off',
+          style: ActionStyle.DANGER,
+          shortcut: null,
+          confirmRequired: true,
+          confirmMessage: 'Shutdown ALL servers?'
+        }
+      ];
+    }
+    
+    // Client server actions
+    return [
+      {
+        component: 'ONCE',
+        action: 'HEALTH_CHECK',
+        method: 'healthCheck',
+        label: 'Health',
+        icon: 'fa-heartbeat',
+        style: ActionStyle.SECONDARY,
+        shortcut: null,
+        confirmRequired: false,
+        confirmMessage: null
+      },
+      {
+        component: 'ONCE',
+        action: 'PEER_STOP',
+        method: 'peerStop',
+        label: 'Stop',
+        icon: 'fa-stop',
+        style: ActionStyle.DANGER,
+        shortcut: null,
+        confirmRequired: false,
+        confirmMessage: null
+      }
+    ];
   }
   
   /**

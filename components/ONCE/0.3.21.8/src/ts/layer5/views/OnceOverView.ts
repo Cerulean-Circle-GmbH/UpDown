@@ -4,6 +4,11 @@
  * This is the Web4 OOP replacement for demo-hub.html.
  * Shows a list of ONCE peers using ItemView components.
  * 
+ * Features:
+ * - Real-time WebSocket updates (server-registered, server-stopped)
+ * - IOR action invocation (peerStop, healthCheck, peersDiscover, peerStopAll)
+ * - Stats grid with live counts
+ * 
  * Naming Convention: {Component}OverView.ts
  * 
  * Web4 Principles:
@@ -13,13 +18,14 @@
  * - P22: Collection<T> for peer list
  * 
  * @ior ior:esm:/ONCE/{version}/OnceOverView
- * @pdca 2025-12-03-UTC-1200.mvc-lit3-views.pdca.md
+ * @pdca 2025-12-05-UTC-1600.phase-a1-oncepeeritemview-relatedobjects.pdca.md
  */
 
 import { html, TemplateResult } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { AbstractWebBean } from './AbstractWebBean.js';
 import { OncePeerItemView, OncePeerModel } from './OncePeerItemView.js';
+import { ActionMetadata } from '../../layer3/ActionMetadata.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 import { Collection } from '../../layer3/Collection.interface.js';
 
@@ -52,7 +58,7 @@ interface ONCEModel {
 export class OnceOverView extends AbstractWebBean<ONCEModel> {
   
   /** CSS path for adoptedStyleSheets */
-  static cssPath = 'OnceOverView.css'; // CSSLoader caches by filename
+  static cssPath = 'OnceOverView.css';
   
   /** HTML template path */
   static templatePath = '/dist/ts/layer5/views/webBeans/OnceOverView.html';
@@ -63,23 +69,52 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
   /** Reference to kernel for IOR calls */
   @property({ type: Object }) kernel: Reference<any> = null;
   
+  /** WebSocket connection for real-time updates */
+  private ws: Reference<WebSocket> = null;
+  
+  /** WebSocket reconnect attempts */
+  private reconnectAttempts = 0;
+  private readonly MAX_RECONNECT_ATTEMPTS = 5;
+  
+  /** Local peer data (for real-time updates) */
+  @state() private localPeers: OncePeerModel[] = [];
+  
+  /** Last update timestamp */
+  @state() private lastUpdate: Reference<string> = null;
+  
   /** View name for CSS/template paths */
   get viewName(): string {
     return 'OnceOverView';
   }
   
-  // CSS loaded via adoptedStyleSheets from CSSLoader cache
-  // Source: css/OnceOverView.css (preloaded before component import)
-  // @pdca 2025-12-03-UTC-1400.lit-css-preload.pdca.md
+  // ═══════════════════════════════════════════════════════════════
+  // LIFECYCLE
+  // ═══════════════════════════════════════════════════════════════
+  
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.webSocketConnect();
+    this.serversFetch();
+  }
+  
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.webSocketDisconnect();
+  }
   
   /**
    * Render the overview
    */
   render(): TemplateResult {
-    const model = this.hasModel ? this.model : { peers: [], version: '0.3.x.x' };
-    const peersCollection = model.peers || [];
-    const peers = Array.from(peersCollection);
+    const model = this.hasModel ? this.model : { peers: [], version: '0.3.21.8' };
+    
+    // Use localPeers (from WebSocket) if available, else model.peers
+    const peers = this.localPeers.length > 0 
+      ? this.localPeers 
+      : Array.from(model.peers || []);
+    
     const runningCount = this.runningPeersCount(peers);
+    const stoppedCount = peers.length - runningCount;
     
     return html`
       <div class="header">
@@ -92,11 +127,19 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
           <strong>Total Peers</strong>
           <span class="stat-value">${peers.length}</span>
         </div>
-        <div class="stat-box">
-          <strong>Running Peers</strong>
+        <div class="stat-box running">
+          <strong>🟢 Running</strong>
           <span class="stat-value">${runningCount}</span>
         </div>
+        <div class="stat-box stopped">
+          <strong>⚪ Stopped</strong>
+          <span class="stat-value">${stoppedCount}</span>
+        </div>
       </div>
+      
+      ${this.lastUpdate ? html`
+        <div class="last-updated">Last updated: ${this.lastUpdate}</div>
+      ` : ''}
       
       <h2>🎮 Lifecycle Management</h2>
       <div class="controls">
@@ -215,15 +258,259 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
   
   /**
    * Handle action-invoke event from ItemView
+   * Makes IOR call based on action.method
    */
   private async actionInvokeHandler(event: CustomEvent): Promise<void> {
-    const { action, uuid } = event.detail;
+    const { action, uuid, model } = event.detail as { 
+      action: ActionMetadata; 
+      uuid: string; 
+      model: OncePeerModel;
+    };
     console.log(`Action: ${action.method} on ${uuid}`);
     
-    // TODO: Make IOR call to invoke action
-    // For now, dispatch to kernel if available
-    if (this.kernel && action.method === 'peerStop') {
-      // Would call: kernel.peerStop(uuid)
+    const host = window.location.hostname;
+    const port = model?.state?.capabilities?.find(
+      function(c) { return c.capability === 'httpPort'; }
+    )?.port || 42777;
+    
+    switch (action.method) {
+      case 'peerStop':
+        await this.iorCall(host, port, 'peerStop', uuid);
+        break;
+      case 'healthCheck':
+        await this.healthCheckOpen(host, port);
+        break;
+      case 'peersDiscover':
+        await this.peersDiscoverHandler();
+        break;
+      case 'peerStopAll':
+        await this.peerStopAllHandler();
+        break;
+      default:
+        console.warn(`Unknown action: ${action.method}`);
+    }
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // WEBSOCKET - Real-time peer updates
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Connect to WebSocket for real-time updates
+   */
+  private webSocketConnect(): void {
+    const host = window.location.hostname;
+    const port = 42777;
+    
+    try {
+      this.ws = new WebSocket(`ws://${host}:${port}`);
+      
+      this.ws.onopen = this.webSocketOnOpen.bind(this);
+      this.ws.onmessage = this.webSocketOnMessage.bind(this);
+      this.ws.onerror = this.webSocketOnError.bind(this);
+      this.ws.onclose = this.webSocketOnClose.bind(this);
+    } catch (error) {
+      console.error('❌ Failed to connect WebSocket:', error);
+    }
+  }
+  
+  /**
+   * Disconnect WebSocket
+   */
+  private webSocketDisconnect(): void {
+    if (this.ws) {
+      this.ws.close();
+      this.ws = null;
+    }
+  }
+  
+  /**
+   * WebSocket open handler
+   */
+  private webSocketOnOpen(): void {
+    console.log('✅ WebSocket connected to primary server');
+    this.reconnectAttempts = 0;
+  }
+  
+  /**
+   * WebSocket message handler
+   */
+  private webSocketOnMessage(event: MessageEvent): void {
+    try {
+      const message = JSON.parse(event.data);
+      this.serverEventHandle(message);
+    } catch (error) {
+      console.error('❌ Failed to parse WebSocket message:', error);
+    }
+  }
+  
+  /**
+   * WebSocket error handler
+   */
+  private webSocketOnError(error: Event): void {
+    console.error('❌ WebSocket error:', error);
+  }
+  
+  /**
+   * WebSocket close handler - attempt reconnect
+   */
+  private webSocketOnClose(): void {
+    console.log('📡 WebSocket connection closed');
+    this.ws = null;
+    
+    if (this.reconnectAttempts < this.MAX_RECONNECT_ATTEMPTS) {
+      this.reconnectAttempts++;
+      console.log(`🔄 Reconnecting... (attempt ${this.reconnectAttempts}/${this.MAX_RECONNECT_ATTEMPTS})`);
+      setTimeout(this.webSocketConnect.bind(this), 2000 * this.reconnectAttempts);
+    }
+  }
+  
+  /**
+   * Handle server events from WebSocket
+   */
+  private serverEventHandle(message: { type: string; data: any }): void {
+    console.log('📨 Received event:', message.type);
+    
+    switch (message.type) {
+      case 'server-registered':
+        this.serverRegisteredHandle(message.data);
+        break;
+      case 'server-stopped':
+        this.serverStoppedHandle(message.data);
+        break;
+      default:
+        // Ignore other message types
+        break;
+    }
+  }
+  
+  /**
+   * Handle server-registered event
+   */
+  private serverRegisteredHandle(serverModel: any): void {
+    console.log('🟢 Server registered:', serverModel.uuid);
+    
+    const existingIndex = this.localPeers.findIndex(
+      function(p) { return p.uuid === serverModel.uuid; }
+    );
+    
+    const port = serverModel.capabilities?.find(
+      function(c: any) { return c.capability === 'httpPort'; }
+    )?.port;
+    
+    const peerModel: OncePeerModel = {
+      uuid: serverModel.uuid,
+      state: {
+        uuid: serverModel.uuid,
+        state: 'RUNNING',
+        capabilities: serverModel.capabilities || [{ capability: 'httpPort', port }]
+      },
+      isPrimaryServer: port === 42777
+    };
+    
+    if (existingIndex === -1) {
+      this.localPeers = [...this.localPeers, peerModel];
+    } else {
+      this.localPeers = this.localPeers.map(function(p, i) {
+        return i === existingIndex ? peerModel : p;
+      });
+    }
+    
+    this.lastUpdate = new Date().toLocaleTimeString();
+    this.requestUpdate();
+  }
+  
+  /**
+   * Handle server-stopped event
+   */
+  private serverStoppedHandle(data: { uuid: string }): void {
+    console.log('🛑 Server stopped:', data.uuid);
+    
+    this.localPeers = this.localPeers.map(function(p) {
+      if (p.uuid === data.uuid && p.state) {
+        return { ...p, state: { ...p.state, state: 'STOPPED' } };
+      }
+      return p;
+    });
+    
+    this.lastUpdate = new Date().toLocaleTimeString();
+    this.requestUpdate();
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // IOR CALLS
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Make IOR call to server
+   */
+  private async iorCall(host: string, port: number, method: string, uuid?: string): Promise<void> {
+    const url = uuid 
+      ? `http://${host}:${port}/ONCE/0.3.21.8/${uuid}/${method}`
+      : `http://${host}:${port}/${method}`;
+    
+    try {
+      const response = await fetch(url, { method: 'GET' });
+      if (!response.ok) {
+        console.error(`❌ IOR call failed: ${response.status}`);
+      }
+    } catch (error) {
+      console.error(`❌ IOR call error:`, error);
+    }
+  }
+  
+  /**
+   * Open health check in new window
+   */
+  private async healthCheckOpen(host: string, port: number): Promise<void> {
+    window.open(`http://${host}:${port}/health`, '_blank');
+  }
+  
+  /**
+   * Fetch initial server list
+   */
+  private async serversFetch(): Promise<void> {
+    const host = window.location.hostname;
+    const port = 42777;
+    
+    try {
+      const response = await fetch(`http://${host}:${port}/servers`);
+      const data = await response.json();
+      
+      // Add primary server
+      const primaryModel: OncePeerModel = {
+        uuid: 'primary',
+        state: {
+          uuid: 'primary',
+          state: 'RUNNING',
+          capabilities: [{ capability: 'httpPort', port: 42777 }]
+        },
+        isPrimaryServer: true
+      };
+      
+      // Map registered clients
+      const clients = (data.servers || []).map(function(s: any) {
+        const clientPort = s.capabilities?.find(
+          function(c: any) { return c.capability === 'httpPort'; }
+        )?.port;
+        
+        return {
+          uuid: s.uuid,
+          state: {
+            uuid: s.uuid,
+            state: 'RUNNING',
+            capabilities: s.capabilities || [{ capability: 'httpPort', port: clientPort }]
+          },
+          isPrimaryServer: false
+        } as OncePeerModel;
+      });
+      
+      this.localPeers = [primaryModel, ...clients];
+      this.lastUpdate = new Date().toLocaleTimeString();
+      this.requestUpdate();
+      
+    } catch (error) {
+      console.error('❌ Failed to fetch servers:', error);
     }
   }
 }
