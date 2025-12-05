@@ -356,49 +356,57 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
   /**
    * Project root path (Path Authority - single source of truth)
    * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   * Note: Returns '' if model not yet initialized (during discoverMethods)
    */
   get projectRoot(): string {
-    return this.model.projectRoot;
+    return this.model?.projectRoot ?? '';
   }
 
   /**
    * Component root path for THIS component
    * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   * Note: Returns '' if model not yet initialized (during discoverMethods)
    */
   get componentRoot(): string {
-    return this.model.componentRoot;
+    return this.model?.componentRoot ?? '';
   }
 
   /**
    * Target component root path (for delegation context)
    * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   * Note: Returns '' if model not yet initialized (during discoverMethods)
    */
   get targetComponentRoot(): string {
+    if (!this.model) return '';
     return this.model.targetComponentRoot || this.model.componentRoot;
   }
 
   /**
    * Test isolation mode flag
    * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   * Note: Returns false if model not yet initialized (during discoverMethods)
    */
   get testIsolation(): boolean {
-    return this.model.isTestIsolation;
+    return this.model?.isTestIsolation ?? false;
   }
 
   /**
    * Test data directory (test/data under component root)
    * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   * Note: Returns '' if model not yet initialized (during discoverMethods)
    */
   get testDataDir(): string {
+    if (!this.model) return '';
     return path.join(this.componentRoot, 'test', 'data');
   }
 
   /**
    * Components directory path
    * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   * Note: Returns '' if model not yet initialized (during discoverMethods)
    */
   get componentsDirectory(): string {
-    return this.model.componentsDirectory;
+    return this.model?.componentsDirectory ?? '';
   }
 
   /**
@@ -417,15 +425,18 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
    * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
    */
   set dependencies(value: ComponentDependency[]) {
-    this.model.dependencies = value;
+    if (this.model) {
+      this.model.dependencies = value;
+    }
   }
 
   /**
    * Component dependencies (TypeScript getter - Web4 Principle 16)
    * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   * Note: Returns [] if model not yet initialized (during discoverMethods)
    */
   get dependencies(): ComponentDependency[] {
-    return this.model.dependencies || [];
+    return this.model?.dependencies ?? [];
   }
 
   /**
