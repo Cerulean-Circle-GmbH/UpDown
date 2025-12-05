@@ -217,13 +217,14 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
       }
     }
     
+    // @pdca 2025-11-07-UTC-0000.eliminate-path-duplication-all-cases.pdca.md
+    // ✅ Calculate ALL paths FIRST (before discoverMethods triggers getters)
+    this.updateModelPaths();
+    
     // ✅ Self-discovery: Component discovers ITSELF when created
     // @pdca 2025-11-05-UTC-1158.pdca.md - Event-driven, not batch
+    // NOTE: Must come AFTER updateModelPaths() - getters are triggered during discovery
     this.discoverMethods();
-    
-    // @pdca 2025-11-07-UTC-0000.eliminate-path-duplication-all-cases.pdca.md
-    // ✅ Calculate ALL paths ONCE at the end (after scenario merge, single source of truth)
-    this.updateModelPaths();
     
     return this;
   }
