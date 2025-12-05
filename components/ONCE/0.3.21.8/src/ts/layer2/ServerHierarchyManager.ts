@@ -213,29 +213,38 @@ export class ServerHierarchyManager {
         homeRoute.model.priority = 50;
         this.httpRouter.registerRoute(homeRoute);
         
-        // ✅ Route 3: Demo Hub ("/demo")
+        // ✅ Route 3: Demo Hub ("/demo") - NOW serves Lit MVC view
+        // @pdca 2025-12-05-UTC-1600.phase-a1-oncepeeritemview-relatedobjects.pdca.md - A.3
         const demoRoute = new HTMLRoute();
-        demoRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
+        demoRoute.model.uuid = this.idProvider.create();
         demoRoute.setPattern('/demo', HttpMethod.GET);
-        demoRoute.setProvider(() => this.component!.serveDemoHub());
+        demoRoute.setProvider(() => this.component!.serveDemoLit()); // ✅ Now serves Lit view
         demoRoute.model.priority = 50;
         this.httpRouter.registerRoute(demoRoute);
         
         // ✅ Route 3b: Demo Hub with trailing slash ("/demo/")
         const demoRoute2 = new HTMLRoute();
-        demoRoute2.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
+        demoRoute2.model.uuid = this.idProvider.create();
         demoRoute2.setPattern('/demo/', HttpMethod.GET);
-        demoRoute2.setProvider(() => this.component!.serveDemoHub());
+        demoRoute2.setProvider(() => this.component!.serveDemoLit()); // ✅ Now serves Lit view
         demoRoute2.model.priority = 50;
         this.httpRouter.registerRoute(demoRoute2);
         
-        // ✅ Route 3c: Demo Lit MVC ("/demo-lit") - Web4 MVC Architecture
+        // ✅ Route 3c: Demo Lit MVC ("/demo-lit") - Alias for /demo
         const demoLitRoute = new HTMLRoute();
         demoLitRoute.model.uuid = this.idProvider.create();
         demoLitRoute.setPattern('/demo-lit', HttpMethod.GET);
         demoLitRoute.setProvider(() => this.component!.serveDemoLit());
         demoLitRoute.model.priority = 50;
         this.httpRouter.registerRoute(demoLitRoute);
+        
+        // ✅ Route 3d: Legacy demo-hub ("/demo-legacy") - Old demo-hub.html
+        const demoLegacyRoute = new HTMLRoute();
+        demoLegacyRoute.model.uuid = this.idProvider.create();
+        demoLegacyRoute.setPattern('/demo-legacy', HttpMethod.GET);
+        demoLegacyRoute.setProvider(() => this.component!.serveDemoHub()); // Old demo
+        demoLegacyRoute.model.priority = 50;
+        this.httpRouter.registerRoute(demoLegacyRoute);
         
         // ✅ Route 4: ONCE Minimal ("/once")
         const onceRoute = new HTMLRoute();

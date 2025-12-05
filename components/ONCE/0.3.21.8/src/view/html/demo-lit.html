@@ -89,7 +89,8 @@
         // Import Lit components (they self-register via @customElement)
         // CSS will be applied via adoptedStyleSheets in connectedCallback
         await import('/EAMD.ucp/components/ONCE/0.3.21.8/dist/ts/layer5/views/OnceOverView.js');
-        await import('/EAMD.ucp/components/ONCE/0.3.21.8/dist/ts/layer5/views/ItemView.js');
+        await import('/EAMD.ucp/components/ONCE/0.3.21.8/dist/ts/layer5/views/DefaultItemView.js');
+        await import('/EAMD.ucp/components/ONCE/0.3.21.8/dist/ts/layer5/views/OncePeerItemView.js');
         
         console.log('[demo-lit] ✅ Components imported');
         
