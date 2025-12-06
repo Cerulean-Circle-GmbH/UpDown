@@ -25,6 +25,7 @@ import { LifecycleState } from '../layer3/LifecycleState.enum.js';
 import { LifecycleEventType } from '../layer3/LifecycleEventType.enum.js';
 import { CSSLoader } from './CSSLoader.js';
 import { HTMLTemplateLoader } from './HTMLTemplateLoader.js';
+import { BrowserOnceOrchestrator } from '../layer4/BrowserOnceOrchestrator.js';
 import type { LitElement } from 'lit';
 import type { Reference } from '../layer3/Reference.interface.js';
 
@@ -33,7 +34,14 @@ export class BrowserOnce extends DefaultOnceKernel {
     protected declare model: BrowserOnceModel;
     
     /**
-     * Main view element (set by appRender)
+     * Layer 4 Orchestrator - handles ALL async operations
+     * ✅ Web4 Architecture: Async separated from domain logic
+     * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
+     */
+    private orchestratorInstance: Reference<BrowserOnceOrchestrator> = null;
+    
+    /**
+     * Main view element (set by orchestrator)
      * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
      */
     private mainView: Reference<LitElement> = null;
@@ -48,6 +56,25 @@ export class BrowserOnce extends DefaultOnceKernel {
     constructor() {
         // ✅ Empty constructor (Radical OOP)
         super();
+    }
+    
+    /**
+     * Get the orchestrator (lazy creation)
+     * ✅ Web4: Async operations delegated to Layer 4
+     */
+    get orchestrator(): BrowserOnceOrchestrator {
+        if (!this.orchestratorInstance) {
+            this.orchestratorInstance = new BrowserOnceOrchestrator(this);
+        }
+        return this.orchestratorInstance;
+    }
+    
+    /**
+     * Get the browser model - public access for orchestrator
+     * ✅ Web4: TypeScript getter (P16)
+     */
+    get browserModel(): BrowserOnceModel {
+        return this.model;
     }
     
     // ========================================
@@ -77,45 +104,18 @@ export class BrowserOnce extends DefaultOnceKernel {
      * Render the app into a container
      * Called by once.html after kernel boot
      * 
-     * Responsibilities:
-     * - Preload CSS assets
-     * - Import view components
-     * - Create and mount view (defaultView or appEntryView)
-     * - Set model and kernel references on view
+     * ✅ Web4: Delegates ALL async operations to Layer 4 Orchestrator
      * 
      * @param container Element to render into (usually document.body)
      * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
      */
     async appRender(container: Element): Promise<void> {
-        console.log('[BrowserOnce] appRender() starting...');
+        console.log('[BrowserOnce] appRender() delegating to orchestrator...');
         
-        // 1. Determine which view to create
-        const viewTag = this.appEntryView || this.defaultView;
-        if (!viewTag) {
-            console.error('[BrowserOnce] No defaultView or appEntryView defined');
-            return;
-        }
-        console.log(`[BrowserOnce] View tag: <${viewTag}>`);
+        // ✅ Web4: Delegate async to Layer 4 Orchestrator
+        await this.orchestrator.appRender(container);
         
-        // 2. Preload CSS assets
-        await this.assetsPreload();
-        
-        // 3. Import view components
-        await this.viewsImport();
-        
-        // 4. Create main view element
-        console.log(`[BrowserOnce] Creating view: <${viewTag}>`);
-        this.mainView = document.createElement(viewTag) as LitElement;
-        
-        // 5. Set model and kernel references
-        (this.mainView as any).model = this.model;
-        (this.mainView as any).kernel = this;
-        
-        // 6. Mount to container
-        container.appendChild(this.mainView);
-        
-        // 7. Register for model updates (already done in init via listenForScenarioUpdates)
-        // The notifyModelListeners() will call modelChangeHandle()
+        // Register for model updates
         this.onModelChange(this.modelChangeHandle.bind(this));
         
         console.log('[BrowserOnce] appRender() complete');
