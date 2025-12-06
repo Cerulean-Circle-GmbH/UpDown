@@ -80,10 +80,14 @@ export class BrowserOnceOrchestrator {
     (this.mainView as any).kernel = this.component;
     container.appendChild(this.mainView);
     
-    // 5. Connect WebSocket for real-time updates
+    // 5. Listen for action events from views
+    // ✅ Web4: Layer 4 handles async, Layer 5 dispatches events
+    this.mainView.addEventListener('action-request', this.actionRequestHandle.bind(this) as unknown as EventListener);
+    
+    // 6. Connect WebSocket for real-time updates
     this.webSocketConnect();
     
-    // 6. Initial data fetch
+    // 7. Initial data fetch
     await this.serversFetch();
     
     console.log('[Orchestrator] appRender() complete');
@@ -305,6 +309,55 @@ export class BrowserOnceOrchestrator {
       console.log(`[Orchestrator] Navigation requested: ${path}`);
       // For now, simple URL change - UcpRouter will handle this later
       window.history.pushState({}, '', path);
+    }
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // ACTION HANDLING (Layer 4 handles all async from Layer 5 events)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Handle action requests from views
+   * ✅ Web4: Layer 4 handles all async operations
+   */
+  async actionRequestHandle(event: CustomEvent): Promise<void> {
+    const { action, host, port, uuid } = event.detail;
+    console.log(`[Orchestrator] Action request: ${action}`);
+    
+    switch (action) {
+      case 'peerStart':
+        await this.peerStartAction();
+        break;
+      case 'peersDiscover':
+        await this.serversFetch();
+        break;
+      case 'peerStopAll':
+        await this.iorCall(host, port, 'peerStopAll', uuid);
+        break;
+      case 'peerStop':
+        await this.iorCall(host, port, 'peerStop', uuid);
+        break;
+      case 'healthCheck':
+        window.open(`http://${host}:${port}/health`, '_blank');
+        break;
+      default:
+        console.warn(`[Orchestrator] Unknown action: ${action}`);
+    }
+    
+    // Refresh view after action
+    this.viewRefresh();
+  }
+  
+  /**
+   * Start a new peer server
+   */
+  private async peerStartAction(): Promise<void> {
+    // Call kernel method if available
+    const kernel = this.component as any;
+    if (typeof kernel.startClientServer === 'function') {
+      await kernel.startClientServer();
+    } else {
+      console.warn('[Orchestrator] startClientServer not available on kernel');
     }
   }
   

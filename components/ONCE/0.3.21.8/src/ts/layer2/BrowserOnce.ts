@@ -122,6 +122,7 @@ export class BrowserOnce extends DefaultOnceKernel {
     }
     
     /**
+     * @deprecated Use orchestrator.assetsPreload() instead
      * Preload CSS and HTML template assets
      * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
      */
@@ -158,6 +159,7 @@ export class BrowserOnce extends DefaultOnceKernel {
     }
     
     /**
+     * @deprecated Use orchestrator.viewsImport() instead
      * Import view components dynamically
      * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
      */

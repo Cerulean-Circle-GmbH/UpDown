@@ -217,55 +217,58 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
   
   /**
    * Start a new peer server
+   * ✅ Web4 Layer 5: Dispatches event - orchestrator handles async
    */
-  private async peerStartHandler(): Promise<void> {
-    if (!this.kernel) {
-      console.error('Kernel not available');
-      return;
-    }
-    
-    // Call kernel method (will make IOR call)
-    await this.kernel.startClientServer?.();
-    this.requestUpdate();
+  private peerStartHandler(): void {
+    this.dispatchActionRequest('peerStart');
   }
   
   /**
    * Discover peer servers
+   * ✅ Web4 Layer 5: Dispatches event - orchestrator handles async
    */
-  private async peersDiscoverHandler(): Promise<void> {
-    if (!this.kernel) {
-      console.error('Kernel not available');
-      return;
-    }
-    
-    await this.kernel.peersDiscover?.();
-    this.requestUpdate();
+  private peersDiscoverHandler(): void {
+    this.dispatchActionRequest('peersDiscover');
   }
   
   /**
    * Shutdown all peer servers
-   * Makes direct IOR call to primary server's peerStopAll endpoint
+   * ✅ Web4 Layer 5: Dispatches event - orchestrator handles async
    */
-  private async peerStopAllHandler(): Promise<void> {
+  private peerStopAllHandler(): void {
     const confirmed = confirm('⚠️  Shutdown ALL servers?');
     if (!confirmed) return;
     
-    // ✅ Web4: peerHost already includes port (e.g., "localhost:42777")
-    // Use window.location for base URL construction
-    const host = window.location.hostname;
-    const port = window.location.port ? parseInt(window.location.port) : 42777;
     // ✅ Web4: Use server's UUID (peerUUID), not browser kernel UUID
     const serverUuid = this.model?.peerUUID;
+    this.dispatchActionRequest('peerStopAll', { uuid: serverUuid });
+  }
+  
+  /**
+   * Dispatch action request event to orchestrator
+   * ✅ Web4 Layer 5: SYNC event dispatch, no async
+   */
+  private dispatchActionRequest(action: string, detail?: Record<string, any>): void {
+    const host = window.location.hostname;
+    const port = window.location.port ? parseInt(window.location.port) : 42777;
     
-    // Make IOR call to peerStopAll using server's UUID
-    await this.iorCall(host, port, 'peerStopAll', serverUuid || undefined);
+    this.dispatchEvent(new CustomEvent('action-request', {
+      bubbles: true,
+      composed: true,
+      detail: {
+        action,
+        host,
+        port,
+        ...detail
+      }
+    }));
   }
   
   /**
    * Handle action-invoke event from ItemView
-   * Makes IOR call based on action.method
+   * ✅ Web4 Layer 5: SYNC - dispatches to orchestrator for async handling
    */
-  private async actionInvokeHandler(event: CustomEvent): Promise<void> {
+  private actionInvokeHandler(event: CustomEvent): void {
     const { action, uuid, model } = event.detail as { 
       action: ActionMetadata; 
       uuid: string; 
@@ -273,28 +276,13 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
     };
     console.log(`Action: ${action.method} on ${uuid}`);
     
-    const host = window.location.hostname;
     // ✅ Web4: Flat model - capabilities directly on model
     const port = model?.capabilities?.find(
       function(c) { return c.capability === 'httpPort'; }
     )?.port || 42777;
     
-    switch (action.method) {
-      case 'peerStop':
-        await this.iorCall(host, port, 'peerStop', uuid);
-        break;
-      case 'healthCheck':
-        await this.healthCheckOpen(host, port);
-        break;
-      case 'peersDiscover':
-        await this.peersDiscoverHandler();
-        break;
-      case 'peerStopAll':
-        await this.peerStopAllHandler();
-        break;
-      default:
-        console.warn(`Unknown action: ${action.method}`);
-    }
+    // Dispatch to orchestrator - SYNC operation
+    this.dispatchActionRequest(action.method, { uuid, port });
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -447,6 +435,7 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
   // ═══════════════════════════════════════════════════════════════
   
   /**
+   * @deprecated Use orchestrator.iorCall() instead - views should dispatch events
    * Make IOR call to server
    */
   private async iorCall(host: string, port: number, method: string, uuid?: string): Promise<void> {
@@ -465,6 +454,7 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
   }
   
   /**
+   * @deprecated Use orchestrator action handling instead
    * Open health check in new window
    */
   private async healthCheckOpen(host: string, port: number): Promise<void> {

@@ -107,52 +107,17 @@
         
         console.log('[demo-lit] ✅ ONCE Kernel booted:', kernel.model?.version);
         
-        // Import the OnceOverView class for type checking
-        const { OnceOverView } = await import('/EAMD.ucp/components/ONCE/0.3.21.8/dist/ts/layer5/views/OnceOverView.js');
-        
-        // Create the view element dynamically AFTER component is registered
-        console.log('[demo-lit] 📦 Creating OnceOverView element...');
-        const mainView = document.createElement('once-over-view');
-        document.getElementById('appContainer').appendChild(mainView);
-        console.log('[demo-lit] ✅ OnceOverView element created');
-        
-        // Set model and kernel reference
-        mainView.model = kernel.model;
-        mainView.kernel = kernel;
-        
         // ═══════════════════════════════════════════════════════════════
-        // PHASE 4: WebSocket Scenario Updates (No Polling!)
+        // PHASE 4: Render app via orchestrator
         // ═══════════════════════════════════════════════════════════════
         
-        // ✅ Register for model changes via WebSocket scenario updates
-        // @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
-        function handleModelUpdate() {
-            console.log('[demo-lit] 📡 Model update received via WebSocket');
-            mainView.model = kernel.model;
-            mainView.requestUpdate();
-        }
+        // ✅ Web4 Architecture: Use appRender() which delegates to orchestrator
+        // Orchestrator handles: view creation, event listeners, WebSocket, model sync
+        // @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
+        const appContainer = document.getElementById('appContainer');
+        await kernel.appRender(appContainer);
         
-        // ✅ Register listener with kernel (if available)
-        if (typeof kernel.onModelChange === 'function') {
-            kernel.onModelChange(handleModelUpdate);
-            console.log('[demo-lit] ✅ Registered for WebSocket model updates');
-        } else {
-            console.warn('[demo-lit] ⚠️ kernel.onModelChange not available - using fallback polling');
-            // Fallback to polling for older kernel versions
-            setInterval(function() {
-                mainView.model = kernel.model;
-                mainView.requestUpdate();
-            }, 2000);
-        }
-        
-        console.log('[demo-lit] ✅ ONCE Demo Hub (Lit) initialized');
-        
-        // Debug: Check if custom element is registered
-        const ceCheck = customElements.get('once-over-view');
-        console.log('[demo-lit] Custom element registered:', ceCheck ? 'YES' : 'NO');
-        console.log('[demo-lit] mainView element:', mainView);
-        console.log('[demo-lit] mainView tagName:', mainView?.tagName);
-        console.log('[demo-lit] mainView shadowRoot:', mainView?.shadowRoot);
+        console.log('[demo-lit] ✅ ONCE Demo Hub (Lit) initialized via orchestrator');
     </script>
 </body>
 </html>
