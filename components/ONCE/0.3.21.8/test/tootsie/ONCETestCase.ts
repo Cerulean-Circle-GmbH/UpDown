@@ -178,8 +178,8 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
     this.logEvidence('step', 'Stopping ALL ONCE server processes');
     
     return new Promise((resolve) => {
-      // Kill all node processes running "once" commands
-      const pkill = spawn('pkill', ['-f', 'node.*once'], {
+      // Kill all node processes running ONCE CLI (correct pattern for ONCECLI.js)
+      const pkill = spawn('pkill', ['-f', 'ONCECLI.js'], {
         stdio: 'ignore'
       });
       

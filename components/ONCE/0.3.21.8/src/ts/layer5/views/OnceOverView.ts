@@ -244,17 +244,21 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
   
   /**
    * Shutdown all peer servers
+   * Makes direct IOR call to primary server's peerStopAll endpoint
    */
   private async peerStopAllHandler(): Promise<void> {
     const confirmed = confirm('⚠️  Shutdown ALL servers?');
     if (!confirmed) return;
     
-    if (!this.kernel) {
-      console.error('Kernel not available');
-      return;
-    }
+    // ✅ Web4: peerHost already includes port (e.g., "localhost:42777")
+    // Use window.location for base URL construction
+    const host = window.location.hostname;
+    const port = window.location.port ? parseInt(window.location.port) : 42777;
+    // ✅ Web4: Use server's UUID (peerUUID), not browser kernel UUID
+    const serverUuid = this.model?.peerUUID;
     
-    await this.kernel.peerStopAll?.();
+    // Make IOR call to peerStopAll using server's UUID
+    await this.iorCall(host, port, 'peerStopAll', serverUuid || undefined);
   }
   
   /**
