@@ -2434,12 +2434,31 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
    * Execute a test file by using TootsieTestRunner component
    * ✅ RADICAL OOP: Test execution delegated to dedicated component
    * ✅ Web4 Separation of Concerns: No inline code generation
+   * ✅ Web4: Ensures component is built before running tests
    * @cliHide
    */
   private async executeTestFile(testFilePath: string, scope: string, references: string[]): Promise<void> {
     console.log(`   Loading test class from: ${testFilePath}`);
     
     const { execSync } = await import('child_process');
+    
+    // ✅ STEP 0: Ensure component is built (test files import .js)
+    // Tests import from ./ONCETestCase.js which requires compilation
+    const componentRoot = this.model.componentRoot || this.model.targetComponentRoot;
+    if (componentRoot) {
+      console.log(`🔨 Ensuring component is built before tests...`);
+      try {
+        execSync('npx tsc --build', {
+          cwd: componentRoot,
+          encoding: 'utf-8',
+          stdio: 'inherit'
+        });
+        console.log(`✅ Component built\n`);
+      } catch (buildError: any) {
+        console.error(`❌ Build failed - tests may fail due to missing .js files`);
+        // Continue anyway - maybe the files exist from a previous build
+      }
+    }
     
     // Use TootsieTestRunner component (Web4 Separation of Concerns)
     const tootsieRunnerPath = path.join(
