@@ -8,11 +8,13 @@
  * ✅ Web4 Principle 1: Everything is a Scenario
  * ✅ Web4 Principle 6: Empty Constructor + init()
  * ✅ Web4 Principle 19: One File One Type
+ * ✅ Web4 Principle 24: Implements PersistenceManager for RelatedObjects lookup
  * 
  * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
  */
 
-import type { Storage, ScenarioQuery } from '../layer3/Storage.interface.js';
+import type { Storage } from '../layer3/Storage.interface.js';
+import type { PersistenceManager, ScenarioQuery } from '../layer3/PersistenceManager.interface.js';
 import type { StorageScenario } from '../layer3/StorageScenario.interface.js';
 import type { StorageModel } from '../layer3/StorageModel.interface.js';
 import type { Scenario } from '../layer3/Scenario.interface.js';
@@ -27,6 +29,9 @@ import * as crypto from 'crypto';
 /**
  * UcpStorage - UUID index-based scenario storage
  * 
+ * Implements both Storage and PersistenceManager interfaces.
+ * Register in RelatedObjects for lookup by any component.
+ * 
  * Storage Structure:
  * ```
  * scenarios/
@@ -34,6 +39,16 @@ import * as crypto from 'crypto';
  * ├── type/{Component}/{version}/...                   # SYMLINKS
  * ├── domain/{domain}/{Component}/{version}/...        # SYMLINKS
  * └── capability/{type}/{value}/...                    # SYMLINKS
+ * ```
+ * 
+ * Usage with RelatedObjects:
+ * ```typescript
+ * // Register
+ * import { PersistenceManager } from '../layer3/PersistenceManager.interface.js';
+ * controller.relatedObjectRegister(PersistenceManager, storage);
+ * 
+ * // Lookup
+ * const pm = controller.relatedObjectLookup(PersistenceManager);
  * ```
  */
 export class UcpStorage implements Storage {
@@ -161,6 +176,50 @@ export class UcpStorage implements Storage {
     }
     
     return results;
+  }
+  
+  /**
+   * Delete scenario from storage
+   * Removes index file and optionally all symlinks
+   */
+  async scenarioDelete(uuid: string, removeSymlinks: boolean = true): Promise<void> {
+    const scenarioPath = this.scenarioIndexPathGet(uuid);
+    
+    // Load scenario to get symlink paths
+    if (removeSymlinks) {
+      try {
+        const scenario = await this.scenarioLoad(uuid);
+        const symlinkPaths = (scenario.model as any)?.symlinkPaths || [];
+        
+        // Remove symlinks
+        for (const linkPath of symlinkPaths) {
+          try {
+            await fs.unlink(linkPath);
+            console.log(`[UcpStorage] Removed symlink: ${linkPath}`);
+          } catch {
+            // Ignore if already deleted
+          }
+        }
+      } catch {
+        // Scenario doesn't exist or can't be loaded
+      }
+    }
+    
+    // Remove index file
+    try {
+      await fs.unlink(scenarioPath);
+      console.log(`[UcpStorage] Deleted scenario: ${scenarioPath}`);
+    } catch {
+      // Ignore if already deleted
+    }
+  }
+  
+  /**
+   * Check if scenario exists in storage
+   */
+  async scenarioExists(uuid: string): Promise<boolean> {
+    const scenarioPath = this.scenarioIndexPathGet(uuid);
+    return existsSync(scenarioPath);
   }
   
   /**
