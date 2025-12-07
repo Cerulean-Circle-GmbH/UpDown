@@ -5,8 +5,8 @@
  * 
  * Every UcpComponent has a registry of related infrastructure objects
  * (views, persistence managers, routers, CLI instances). Objects register
- * themselves AND all interfaces they implement. Lookup by interface returns
- * all matching instances.
+ * themselves AND all interfaces they implement. Lookup by interface or
+ * symbol returns all matching instances.
  * 
  * Web4 Principles:
  * - P5: Reference<T> for nullable
@@ -16,9 +16,10 @@
  * 
  * @ior ior:esm:/ONCE/{version}/RelatedObjects
  * @pdca 2025-12-05-UTC-1800.a1-1-core-interfaces.pdca.md
+ * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
  */
 
-import { InterfaceConstructor } from './InterfaceConstructor.type.js';
+import { InterfaceKey } from './InterfaceConstructor.type.js';
 import { Reference } from './Reference.interface.js';
 
 /**
@@ -32,9 +33,14 @@ import { Reference } from './Reference.interface.js';
  * // - ItemView
  * // - View
  * 
+ * // Registration via Symbol
+ * import { PersistenceManager } from './PersistenceManager.interface.js';
+ * controller.relatedObjectRegister(PersistenceManager, storageInstance);
+ * 
  * // Lookup - returns all matching instances
  * const views = controller.relatedObjectLookup(View);        // All views
  * const itemViews = controller.relatedObjectLookup(ItemView); // All ItemViews
+ * const storage = controller.relatedObjectLookupFirst(PersistenceManager); // Storage
  * ```
  */
 export interface RelatedObjects {
@@ -42,31 +48,32 @@ export interface RelatedObjects {
   /**
    * Register a related object
    * 
-   * Implementations SHOULD also register the instance for all interfaces
+   * For constructor keys: Also registers the instance for all interfaces
    * in its prototype chain automatically.
+   * For symbol keys: Registers only under the symbol.
    * 
-   * @param interfaceType The interface/class type to register under
+   * @param interfaceKey The interface/class type or symbol to register under
    * @param instance The object instance
    */
-  relatedObjectRegister<T>(interfaceType: InterfaceConstructor<T>, instance: T): void;
+  relatedObjectRegister<T>(interfaceKey: InterfaceKey<T>, instance: T): void;
   
   /**
-   * Lookup all objects implementing an interface
+   * Lookup all objects implementing an interface or registered under a symbol
    * 
-   * @param interfaceType The interface/class type to lookup
+   * @param interfaceKey The interface/class type or symbol to lookup
    * @returns Array of all matching instances (empty if none)
    */
-  relatedObjectLookup<T>(interfaceType: InterfaceConstructor<T>): T[];
+  relatedObjectLookup<T>(interfaceKey: InterfaceKey<T>): T[];
   
   /**
-   * Lookup single object implementing an interface
+   * Lookup single object implementing an interface or registered under a symbol
    * 
    * Returns the first registered instance, or null if none found.
    * 
-   * @param interfaceType The interface/class type to lookup
+   * @param interfaceKey The interface/class type or symbol to lookup
    * @returns First matching instance or null (Reference<T>)
    */
-  relatedObjectLookupFirst<T>(interfaceType: InterfaceConstructor<T>): Reference<T>;
+  relatedObjectLookupFirst<T>(interfaceKey: InterfaceKey<T>): Reference<T>;
   
   /**
    * Unregister a related object from all interfaces

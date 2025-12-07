@@ -1,8 +1,9 @@
 /**
- * InterfaceConstructor.type.ts - Type alias for constructor functions
+ * InterfaceConstructor.type.ts - Type alias for constructor functions and symbols
  * 
  * Web4 Principles:
  * - P19: One File One Type
+ * - P24: RelatedObjects Registry - supports both constructors and symbols
  * - NO 'any' - uses 'unknown' for truly unknown types
  * 
  * Used by RelatedObjects registry for interface-based lookup.
@@ -19,4 +20,11 @@
  */
 export type InterfaceConstructor<T = unknown> = new (...args: unknown[]) => T;
 
-
+/**
+ * Interface Key - Either a constructor or a symbol
+ * 
+ * Allows registration/lookup by:
+ * - Class constructor: `relatedObjectRegister(UcpStorage, instance)`
+ * - Symbol: `relatedObjectRegister(PersistenceManager, instance)`
+ */
+export type InterfaceKey<T = unknown> = InterfaceConstructor<T> | symbol;

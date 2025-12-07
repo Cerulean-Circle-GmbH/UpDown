@@ -32,6 +32,9 @@ import { DefaultUser } from './DefaultUser.js';
 import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
 import { IDProvider } from '../layer3/IDProvider.interface.js';
 import { UUIDProvider } from './UUIDProvider.js';
+import { UcpStorage } from './UcpStorage.js';
+import { PersistenceManager } from '../layer3/PersistenceManager.interface.js';
+import type { StorageScenario } from '../layer3/StorageScenario.interface.js';
 import * as path from 'path';  // For version extraction from directory path
 import * as crypto from 'crypto';  // For UUID generation
 import * as fs from 'fs';  // For file system operations
@@ -53,6 +56,9 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   private user?: User; // Optional User service (lazy initialization)
   private methods: Map<string, MethodSignature> = new Map();
   private idProvider: IDProvider; // ✅ Web4 Principle 20: Radical OOP ID generation
+  
+  // ✅ Web4 Principle 24: PersistenceManager for RelatedObjects lookup
+  private scenarioStorage: UcpStorage | null = null;
   
   // Enhanced managers for v0.2.0.0+ domain logic
   private serverHierarchyManager: ServerHierarchyManager;
@@ -450,6 +456,9 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
     // Update model paths (TRUE Radical OOP)
     await this.updateModelPaths();
 
+    // ✅ Web4 Principle 24: Initialize PersistenceManager and register in RelatedObjects
+    await this.storageInitialize();
+
     // Initialize ONCE kernel if scenario provided (domain logic from 0.2.0.0)
     if (this.model.scenario && !this.model.initialized) {
       const startTime = Date.now();
@@ -553,6 +562,67 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       owner: ownerData,  // ✅ Full User scenario (or fallback)
       model: legacyScenario  // ✅ ENTIRE legacy scenario
     };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 📦 STORAGE & PERSISTENCE - Web4 Principle 24: RelatedObjects Registry
+  // @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Initialize UcpStorage and register in RelatedObjects
+   * 
+   * ✅ Web4 Principle 24: PersistenceManager lookup via RelatedObjects
+   * ✅ Web4 Principle 6: Empty constructor + init()
+   * 
+   * @cliHide
+   */
+  private async storageInitialize(): Promise<void> {
+    const projectRoot = this.model.projectRoot;
+    if (!projectRoot) {
+      console.warn('[NodeJsOnce] Cannot initialize storage: projectRoot not set');
+      return;
+    }
+
+    const indexBaseDir = path.join(projectRoot, 'scenarios', 'index');
+    
+    // Create storage scenario
+    const storageScenario: StorageScenario = {
+      ior: {
+        uuid: crypto.randomUUID(),
+        component: 'UcpStorage',
+        version: this.model.version || '0.3.21.8'
+      },
+      owner: 'system',
+      model: {
+        uuid: crypto.randomUUID(),
+        projectRoot,
+        indexBaseDir,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    };
+
+    // Initialize storage
+    this.scenarioStorage = new UcpStorage().init(storageScenario);
+    
+    // ✅ Register in RelatedObjects for lookup
+    if (this.controller) {
+      this.controller.relatedObjectRegister(PersistenceManager, this.scenarioStorage);
+      console.log('[NodeJsOnce] ✅ PersistenceManager registered in RelatedObjects');
+    }
+  }
+
+  /**
+   * Get PersistenceManager from RelatedObjects
+   * 
+   * @returns UcpStorage instance or null
+   */
+  persistenceManagerGet(): UcpStorage | null {
+    if (this.controller) {
+      return this.controller.relatedObjectLookupFirst(PersistenceManager) as UcpStorage | null;
+    }
+    return this.scenarioStorage;
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
