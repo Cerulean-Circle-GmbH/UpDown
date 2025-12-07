@@ -1098,6 +1098,7 @@ export class ServerHierarchyManager {
     /**
      * Save scenario to PersistenceManager (UcpStorage)
      * ✅ Web4 Principle 24: RelatedObjects Registry
+     * ✅ Uses PersistenceManager path builders for consistent paths
      * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
      */
     private async scenarioSaveToStorage(uuid: string, scenario: any, port?: number): Promise<void> {
@@ -1108,20 +1109,28 @@ export class ServerHierarchyManager {
                 return;
             }
             
-            // Build symlink paths for type and capability indexes
-            const symlinkPaths: string[] = [];
-            
-            // Type symlink: type/ONCE/{version}
             const version = scenario.ior?.version || scenario.version || this.version;
-            symlinkPaths.push(`type/ONCE/${version}`);
+            const component = 'ONCE';
+            const domainParts = this.getDetectDomainPath(); // ['box', 'fritz']
+            const hostname = this.serverModel.hostname;      // 'McDonges'
             
-            // Domain symlink: domain/{domain}/ONCE/{version}
-            const domain = this.serverModel.domain || 'local';
-            symlinkPaths.push(`domain/${domain}/ONCE/${version}`);
+            // Build symlink paths using PersistenceManager's path builders
+            const symlinkPaths: string[] = [
+                // Type index: type/ONCE/0.3.21.8
+                persistenceManager.typePathBuild(component, version),
+                
+                // Domain index: domain/box/fritz/McDonges/ONCE/0.3.21.8
+                persistenceManager.domainPathBuild(domainParts, hostname, component, version)
+            ];
             
-            // Capability symlink: capability/httpPort/{port}
+            // Capability index under domain: domain/box/fritz/McDonges/ONCE/0.3.21.8/capability/httpPort/42777
             if (port) {
-                symlinkPaths.push(`capability/httpPort/${port}`);
+                symlinkPaths.push(
+                    persistenceManager.capabilityPathBuild(
+                        domainParts, hostname, component, version,
+                        'httpPort', String(port)
+                    )
+                );
             }
             
             await persistenceManager.scenarioSave(uuid, scenario, symlinkPaths);

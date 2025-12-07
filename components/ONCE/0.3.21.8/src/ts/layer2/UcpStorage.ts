@@ -392,12 +392,56 @@ export class UcpStorage implements Storage {
   }
   
   // ═══════════════════════════════════════════════════════════════
-  // Symlink Path Generators (convenience methods)
+  // Symlink Path Builders (PersistenceManager interface)
+  // Returns RELATIVE paths for use with scenarioSave()
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Generate type symlink path
-   * @returns Path like: scenarios/type/{component}/{version}/{uuid}.scenario.json
+   * Build type symlink path (relative)
+   * @returns Relative path like: type/ONCE/0.3.21.8
+   */
+  typePathBuild(component: string, version: string): string {
+    return join('type', component, version);
+  }
+  
+  /**
+   * Build domain symlink path with hostname (relative)
+   * @param domainParts Array like ['box', 'fritz']
+   * @param hostname Hostname like 'McDonges'
+   * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.8
+   */
+  domainPathBuild(domainParts: string[], hostname: string, component: string, version: string): string {
+    return join('domain', ...domainParts, hostname, component, version);
+  }
+  
+  /**
+   * Build capability symlink path under domain (relative)
+   * @param domainParts Array like ['box', 'fritz']
+   * @param hostname Hostname like 'McDonges'
+   * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.8/capability/httpPort/42777
+   */
+  capabilityPathBuild(
+    domainParts: string[], 
+    hostname: string, 
+    component: string, 
+    version: string,
+    capabilityType: string, 
+    capabilityValue: string
+  ): string {
+    return join(
+      'domain', ...domainParts, hostname, component, version,
+      'capability', capabilityType, capabilityValue
+    );
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Legacy Full Path Generators (for backward compatibility)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Generate type symlink full path
+   * @deprecated Use typePathBuild() with scenarioSave()
+   * @returns Full path like: {projectRoot}/scenarios/type/{component}/{version}/{uuid}.scenario.json
    */
   typeLinkPathGenerate(component: string, version: string, uuid: string): string {
     return join(
@@ -407,8 +451,9 @@ export class UcpStorage implements Storage {
   }
   
   /**
-   * Generate domain symlink path
-   * @returns Path like: scenarios/domain/{domain}/{component}/{version}/{uuid}.scenario.json
+   * Generate domain symlink full path
+   * @deprecated Use domainPathBuild() with scenarioSave()
+   * @returns Full path like: {projectRoot}/scenarios/domain/{domain}/{component}/{version}/{uuid}.scenario.json
    */
   domainLinkPathGenerate(domain: string, component: string, version: string, uuid: string): string {
     return join(
@@ -418,8 +463,9 @@ export class UcpStorage implements Storage {
   }
   
   /**
-   * Generate capability symlink path
-   * @returns Path like: scenarios/capability/{type}/{value}/{uuid}.scenario.json
+   * Generate capability symlink full path
+   * @deprecated Use capabilityPathBuild() with scenarioSave()
+   * @returns Full path like: {projectRoot}/scenarios/capability/{type}/{value}/{uuid}.scenario.json
    */
   capabilityLinkPathGenerate(capabilityType: string, capabilityValue: string, uuid: string): string {
     return join(

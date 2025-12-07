@@ -93,6 +93,39 @@ export interface PersistenceManager {
    * @param uuid Scenario UUID to check
    */
   scenarioExists(uuid: string): Promise<boolean>;
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Symlink Path Builders
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Build type symlink path
+   * @returns Relative path like: type/ONCE/0.3.21.8
+   */
+  typePathBuild(component: string, version: string): string;
+  
+  /**
+   * Build domain symlink path with hostname
+   * @param domainParts Array like ['box', 'fritz']
+   * @param hostname Hostname like 'McDonges'
+   * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.8
+   */
+  domainPathBuild(domainParts: string[], hostname: string, component: string, version: string): string;
+  
+  /**
+   * Build capability symlink path under domain
+   * @param domainParts Array like ['box', 'fritz']
+   * @param hostname Hostname like 'McDonges'
+   * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.8/capability/httpPort/42777
+   */
+  capabilityPathBuild(
+    domainParts: string[], 
+    hostname: string, 
+    component: string, 
+    version: string,
+    capabilityType: string, 
+    capabilityValue: string
+  ): string;
 }
 
 /**
