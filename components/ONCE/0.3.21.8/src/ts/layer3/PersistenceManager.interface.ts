@@ -2,7 +2,7 @@
  * PersistenceManager Interface - Common storage interface for all platforms
  * 
  * ✅ Web4 Principle 24: RelatedObjects Registry
- * ✅ Web4 Principle 19: One File One Type
+ * ✅ Web4 Principle 19: One File One Type (ScenarioQuery extracted)
  * 
  * Both NodeJS (filesystem) and Browser (IndexedDB) implement this interface.
  * Can be looked up from RelatedObjects registry by any component.
@@ -22,22 +22,10 @@
 
 import type { Scenario } from './Scenario.interface.js';
 import type { Model } from './Model.interface.js';
+import type { ScenarioQuery } from './ScenarioQuery.interface.js';
 
-/**
- * Query interface for finding scenarios
- */
-export interface ScenarioQuery {
-  /** Filter by component type */
-  component?: string;
-  /** Filter by version */
-  version?: string;
-  /** Filter by domain */
-  domain?: string;
-  /** Filter by capability type */
-  capabilityType?: string;
-  /** Filter by capability value */
-  capabilityValue?: string;
-}
+// Re-export for backward compatibility
+export type { ScenarioQuery } from './ScenarioQuery.interface.js';
 
 /**
  * PersistenceManager - Platform-agnostic scenario storage interface
