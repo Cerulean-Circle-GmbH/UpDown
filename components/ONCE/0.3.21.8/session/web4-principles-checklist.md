@@ -295,6 +295,129 @@ import { ONCE } from '../../dist/ts/layer1/ONCE.js';  // Breaks!
 
 ---
 
+### **Principle 24: RelatedObjects Registry**
+> UcpController registry for discovering related infrastructure objects by interface.
+
+- [ ] Register component instances: `controller.relatedObjectRegister(InterfaceType, instance)`
+- [ ] Auto-registers parent interfaces (OncePeerItemView → ItemView → View)
+- [ ] Lookup returns all matching: `controller.relatedObjectLookup(View)` → all views
+
+```typescript
+// Registration
+controller.relatedObjectRegister(OncePeerItemView, viewInstance);
+
+// Lookup (polymorphic)
+const views = controller.relatedObjectLookup(View);       // All views
+const items = controller.relatedObjectLookup(ItemView);   // All ItemViews
+```
+
+**PDCA Reference:** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/session/2025-12-05-UTC-1600.phase-a1-oncepeeritemview-relatedobjects.pdca.md) | [§Phase A.1](./2025-12-05-UTC-1600.phase-a1-oncepeeritemview-relatedobjects.pdca.md)
+
+---
+
+### **Principle 25: Tootsie Tests Only**
+> No Vitest/Jest functional tests. Only Radical OOP Tootsie tests.
+
+- [ ] Tests are classes extending `ONCETestCase` or `DefaultWeb4TestCase`
+- [ ] No `describe()` / `it()` functional patterns
+- [ ] Tests are scenarios (hibernatable, discoverable)
+
+```typescript
+// ✅ CORRECT - Radical OOP Test
+class Test05 extends ONCETestCase {
+  async executeTestLogic(): Promise<any> {
+    // test implementation
+  }
+}
+
+// ❌ WRONG - Functional test
+describe('Test05', () => {
+  it('should work', () => { ... });
+});
+```
+
+**PDCA Reference:** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/session/2025-12-05-UTC-1600.phase-a1-oncepeeritemview-relatedobjects.pdca.md) | [§Phase A.1](./2025-12-05-UTC-1600.phase-a1-oncepeeritemview-relatedobjects.pdca.md)
+
+---
+
+### **Principle 26: No Factory Functions - Class + init() Only**
+> Factory functions violate Radical OOP. Always use `new Class().init(scenario)`.
+
+- [ ] No `createXyz()` factory functions
+- [ ] All instantiation via `new Class().init(scenario)`
+- [ ] Constructor handles defaults, init() handles async setup
+
+```typescript
+// ❌ WRONG - Factory function (functional programming)
+const route = routeScenarioCreate('/', 'view-tag');
+
+// ✅ CORRECT - Radical OOP
+const route = await new Route().init({
+  model: { pattern: '/', viewTag: 'view-tag' }
+});
+```
+
+**PDCA Reference:** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/session/2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md) | [§SPA Cleanup](./2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md)
+
+---
+
+### **Principle 27: Web Components ARE Radical OOP**
+> HTML declarative syntax IS object instantiation. No impedance mismatch.
+
+**Tag = Class Instantiation:**
+```html
+<my-view name="Dashboard" count="5"></my-view>
+```
+```typescript
+// Is IDENTICAL to:
+const view = await new MyView().init({ model: { name: 'Dashboard', count: 5 } });
+```
+
+**Nesting = Composition via add():**
+```html
+<parent-view>
+  <child-view name="Item1"></child-view>
+</parent-view>
+```
+```typescript
+// Is IDENTICAL to:
+const parent = await new ParentView().init({});
+const child = await new ChildView().init({ model: { name: 'Item1' } });
+parent.add(child);  // Web4 API (not childAdd)
+```
+
+**Tag → Implementation Mapping:**
+- `<tag>` instantiates `DefaultTag` (or configured implementationClass)
+- `<once>` → `NodeJsOnce` (server) / `BrowserOnce` (browser)
+
+**View Naming Convention:**
+| Pattern | Purpose | Contains |
+|---------|---------|----------|
+| `<tag-item-view>` | Single item | Model visualization |
+| `<tag-default-view>` | Default/detail | Full model details |
+| `<tag-over-view>` | Overview | `Collection<ItemView>` |
+
+**Adapter Pattern:**
+- Web4 API: `add()` / `remove()` - framework-agnostic
+- Implementation adapts to Lit/React/Vue/vanilla DOM
+
+```typescript
+// UcpView.add() - Web4 interface
+add(child: UcpView): void {
+  this.renderRoot.appendChild(child);  // Adapter to Lit/DOM
+  this.items.add(child);               // Track in collection
+}
+```
+
+- [ ] Use `add(item)` for composition (not `childAdd`)
+- [ ] `<tag-over-view>` contains `Collection<ItemView>`
+- [ ] Attributes map to `model.{attributeName}`
+- [ ] `connectedCallback()` = `init()` completion
+
+**PDCA Reference:** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/session/2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md) | [§SPA Cleanup](./2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md)
+
+---
+
 ## How to Use
 
 1. **BEFORE every git commit:** Open this file and check ALL principles
