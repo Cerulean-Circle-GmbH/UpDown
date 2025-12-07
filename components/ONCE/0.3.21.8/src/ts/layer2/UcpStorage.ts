@@ -291,24 +291,48 @@ export class UcpStorage implements Storage {
   
   /**
    * Create symbolic link from index to view path
+   * ✅ Handles existing symlinks gracefully
    */
   private async symlinkCreate(indexPath: string, symlinkPath: string): Promise<void> {
     // Ensure target directory exists
     await fs.mkdir(dirname(symlinkPath), { recursive: true });
     
-    // Remove existing symlink if it exists
-    try {
-      await fs.unlink(symlinkPath);
-    } catch {
-      // Ignore if file doesn't exist
-    }
-
     // Create relative path for symbolic link
     const relativePath = relative(dirname(symlinkPath), indexPath);
     
+    // Check if symlink already exists with correct target
+    try {
+      const existingTarget = await fs.readlink(symlinkPath);
+      if (existingTarget === relativePath) {
+        // Symlink already exists with correct target - no action needed
+        return;
+      }
+      // Symlink exists but points to wrong target - remove it
+      await fs.unlink(symlinkPath);
+    } catch (error: any) {
+      if (error.code !== 'ENOENT') {
+        // If it's a regular file (not symlink), remove it
+        try {
+          await fs.unlink(symlinkPath);
+        } catch {
+          // Ignore unlink errors
+        }
+      }
+      // ENOENT means file doesn't exist - that's fine, we'll create it
+    }
+
     // Create symbolic link
-    await fs.symlink(relativePath, symlinkPath);
-    console.log(`[UcpStorage] Created symlink: ${symlinkPath} → ${relativePath}`);
+    try {
+      await fs.symlink(relativePath, symlinkPath);
+      console.log(`[UcpStorage] Created symlink: ${symlinkPath} → ${relativePath}`);
+    } catch (error: any) {
+      if (error.code === 'EEXIST') {
+        // Race condition - another process created the symlink
+        console.log(`[UcpStorage] Symlink already exists: ${symlinkPath}`);
+      } else {
+        throw error;
+      }
+    }
   }
   
   // ═══════════════════════════════════════════════════════════════

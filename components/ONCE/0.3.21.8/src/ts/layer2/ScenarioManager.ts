@@ -72,8 +72,8 @@ export class ScenarioManager {
 
     /**
      * Save scenario to organized directory structure
-     * /scenarios/{domain-parts}/{hostname}/component/version/uuid.scenario.json
-     * ✅ Accepts both legacy and Web4 formats
+     * ✅ Uses PersistenceManager for index-based storage (symlinks)
+     * ✅ Falls back to legacy direct write if PersistenceManager unavailable
      * @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
      */
     async saveScenario(scenario: LegacyONCEScenario | Scenario<LegacyONCEScenario>): Promise<string> {
@@ -91,40 +91,101 @@ export class ScenarioManager {
             legacyData = guard.asLegacy()!;
         }
         
-        const component = legacyData.objectType;
+        const componentType = legacyData.objectType;
         const version = legacyData.version;
         const uuid = legacyData.uuid;
         
         // Extract domain and hostname from metadata
-        const fullDomain = legacyData.metadata.domain || 'local.once';
         const fqdn = legacyData.metadata.host || 'localhost';
+        const { domainPath, hostname } = this.parseFqdnToDomainPath(fqdn);
         
-        // Parse domain into path components
-        let domainPath: string[];
-        let hostname: string;
+        // Extract port for logging
+        const httpCapability = legacyData.state.capabilities?.find((c: any) => c.capability === 'httpPort');
+        const port = httpCapability?.port || legacyData.state.httpPort || 'unknown';
+
+        // ✅ Try to use PersistenceManager (index-based storage with symlinks)
+        const persistenceManager = this.component?.persistenceManagerGet?.();
+        if (persistenceManager) {
+            try {
+                // Update modified timestamp
+                legacyData.metadata.modified = new Date().toISOString();
+                
+                // Build Web4 scenario if not already
+                const web4Scenario = guard.isWeb4() 
+                    ? scenario as Scenario<LegacyONCEScenario>
+                    : {
+                        ior: { uuid, component: componentType, version },
+                        owner: 'system',
+                        model: legacyData
+                    };
+                
+                // Build symlink paths using PersistenceManager's path builders
+                const symlinkPaths: string[] = [
+                    persistenceManager.typePathBuild(componentType, version),
+                    persistenceManager.domainPathBuild(domainPath, hostname, componentType, version)
+                ];
+                
+                if (port && port !== 'unknown') {
+                    symlinkPaths.push(
+                        persistenceManager.capabilityPathBuild(
+                            domainPath, hostname, componentType, version,
+                            'httpPort', String(port)
+                        )
+                    );
+                }
+                
+                await persistenceManager.scenarioSave(uuid, web4Scenario, symlinkPaths);
+                const indexPath = join(this.projectRoot, 'scenarios', 'index');
+                console.log(`📝 [PERSISTENCE] ScenarioManager saved ${uuid} via PersistenceManager`);
+                logAction('💾', uuid, 'Scenario saved (index)', `${serverIdentity(hostname, Number(port) || 0)}`);
+                return indexPath; // Return index location
+            } catch (error) {
+                console.warn(`⚠️ PersistenceManager failed, falling back to legacy: ${error}`);
+            }
+        }
         
+        // ✅ Fallback: Legacy direct file write
+        return this.saveScenarioLegacy(scenario, legacyData, componentType, version, uuid, domainPath, hostname, port);
+    }
+    
+    /**
+     * Parse FQDN into domain path array and hostname
+     */
+    private parseFqdnToDomainPath(fqdn: string): { domainPath: string[], hostname: string } {
         if (fqdn === 'localhost') {
-            domainPath = ['local', 'once'];
-            hostname = 'localhost';
+            return { domainPath: ['local', 'once'], hostname: 'localhost' };
         } else if (fqdn.includes('.')) {
             const parts = fqdn.split('.');
-            hostname = parts[0]; // First part is hostname
-            const domainParts = parts.slice(1); // Rest is domain
-            domainPath = domainParts.reverse(); // Reverse for proper hierarchy
+            const hostname = parts[0];
+            const domainParts = parts.slice(1);
+            return { domainPath: domainParts.reverse(), hostname };
         } else {
-            // Simple hostname
-            domainPath = ['local', fqdn];
-            hostname = fqdn;
+            return { domainPath: ['local', fqdn], hostname: fqdn };
         }
-
+    }
+    
+    /**
+     * Legacy save method (fallback when PersistenceManager not available)
+     * @deprecated Use PersistenceManager when available
+     */
+    private saveScenarioLegacy(
+        scenario: LegacyONCEScenario | Scenario<LegacyONCEScenario>,
+        legacyData: LegacyONCEScenario,
+        componentType: string,
+        version: string,
+        uuid: string,
+        domainPath: string[],
+        hostname: string,
+        port: string | number
+    ): string {
         // Create organized path: scenarios/domain/{domain-parts}/{hostname}/ONCE/version
         const scenarioDir = join(
             this.projectRoot,
             'scenarios',
-            'domain',           // ✅ Added domain/ prefix for consistency
+            'domain',
             ...domainPath,
             hostname,
-            component,
+            componentType,
             version
         );
 
@@ -140,13 +201,9 @@ export class ScenarioManager {
 
         // Save the ORIGINAL format (preserve what was passed in)
         writeFileSync(scenarioPath, JSON.stringify(scenario, null, 2));
-        console.log(`📝 [WRITE] ScenarioManager.saveScenario() projectRoot=${this.projectRoot} → ${scenarioPath}`);
+        console.log(`📝 [WRITE] ScenarioManager.saveScenarioLegacy() projectRoot=${this.projectRoot} → ${scenarioPath}`);
         
-        // Extract port from capabilities for logging (httpPort might not be in state)
-        const httpCapability = legacyData.state.capabilities?.find((c: any) => c.capability === 'httpPort');
-        const port = httpCapability?.port || legacyData.state.httpPort || 'unknown';
-        
-        logAction('💾', legacyData.uuid, 'Scenario saved', `${serverIdentity(legacyData.state.hostname, port)} → ${basename(scenarioPath)}`);
+        logAction('💾', uuid, 'Scenario saved (legacy)', `${serverIdentity(hostname, Number(port) || 0)} → ${basename(scenarioPath)}`);
         return scenarioPath;
     }
 
