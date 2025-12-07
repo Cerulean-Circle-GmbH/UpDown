@@ -7,12 +7,20 @@
  * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
  */
 
-import type { IOR } from './IOR.interface.js';
 import type { StorageModel } from './StorageModel.interface.js';
 
+/**
+ * Simplified IOR for storage scenarios
+ */
+export interface StorageIOR {
+  uuid: string;
+  component: string;
+  version: string;
+}
+
 export interface StorageScenario {
-  /** Internet Object Reference */
-  ior: IOR;
+  /** Internet Object Reference (simplified) */
+  ior: StorageIOR;
   /** Owner metadata as JSON string */
   owner: string;
   /** Storage model state */
