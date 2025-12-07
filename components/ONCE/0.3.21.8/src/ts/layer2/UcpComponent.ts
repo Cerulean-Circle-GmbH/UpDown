@@ -3,6 +3,7 @@
  * 
  * All generated Web4 components extend this base class.
  * Provides lifecycle management and view delegation via UcpController.
+ * Integrates with Unit for scenario storage.
  * 
  * Web4 Principles:
  * - P4: Radical OOP
@@ -12,14 +13,16 @@
  * - P16: TypeScript accessors
  * 
  * @ior ior:esm:/ONCE/{version}/UcpComponent
- * @pdca 2025-12-03-UTC-1200.mvc-lit3-views.pdca.md
+ * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
  */
 
 import { UcpController } from './UcpController.js';
 import { View } from '../layer3/View.interface.js';
-// Note: Using 'any' for Scenario to avoid circular dependency
-// import { Scenario } from '../layer3/Scenario.interface.js';
 import { Reference } from '../layer3/Reference.interface.js';
+import type { Model } from '../layer3/Model.interface.js';
+import type { UnitModel } from '../layer3/UnitModel.interface.js';
+import type { UnitReference } from '../layer3/UnitReference.interface.js';
+import type { Storage } from '../layer3/Storage.interface.js';
 
 /**
  * UcpComponent - Abstract base class for all Web4 components
@@ -30,14 +33,20 @@ import { Reference } from '../layer3/Reference.interface.js';
  * - Lifecycle management (init, start, stop, hibernate)
  * - View delegation via UcpController
  * - Scenario serialization
+ * - Unit-based scenario storage integration
+ * 
+ * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
  */
-export abstract class UcpComponent<TModel extends object> {
+export abstract class UcpComponent<TModel extends Model> {
   
   /** Component model state - protected for subclass access */
   protected model: Reference<TModel> = null;
   
   /** Controller for view management */
   protected controller: UcpController<TModel>;
+  
+  /** Storage instance for scenario persistence */
+  protected storage: Reference<Storage> = null;
   
   /**
    * Empty constructor - Web4 Principle 6
@@ -62,6 +71,36 @@ export abstract class UcpComponent<TModel extends object> {
    * Called when no scenario provided to init()
    */
   protected abstract modelDefault(): TModel;
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Unit Integration - Scenario Storage
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Set storage instance for scenario persistence
+   * @param storage Storage implementation
+   */
+  storageSet(storage: Storage): void {
+    this.storage = storage;
+  }
+  
+  /**
+   * Get index path for this component's scenario
+   * Returns null if model doesn't extend UnitModel
+   */
+  get indexPath(): Reference<string> {
+    const unitModel = this.model as unknown as UnitModel;
+    return unitModel?.indexPath || null;
+  }
+  
+  /**
+   * Get references for this component's scenario
+   * Returns empty array if model doesn't extend UnitModel
+   */
+  get references(): UnitReference[] {
+    const unitModel = this.model as unknown as UnitModel;
+    return unitModel?.references || [];
+  }
   
   // ═══════════════════════════════════════════════════════════════
   // View Management - Delegated to UcpController
@@ -116,6 +155,42 @@ export abstract class UcpComponent<TModel extends object> {
       owner: 'system',
       model: this.model
     };
+  }
+  
+  /**
+   * Hibernate component to storage
+   * Saves scenario to index with symlinks
+   * @param symlinkPaths Paths for symlinks (type/domain/capability)
+   */
+  async hibernate(symlinkPaths: string[] = []): Promise<void> {
+    if (!this.storage) {
+      console.warn('[UcpComponent] No storage configured, skipping hibernate');
+      return;
+    }
+    
+    const scenario = await this.toScenario();
+    const uuid = scenario.ior?.uuid;
+    
+    if (!uuid) {
+      console.error('[UcpComponent] Cannot hibernate: missing UUID in scenario');
+      return;
+    }
+    
+    await this.storage.scenarioSave(uuid, scenario, symlinkPaths);
+  }
+  
+  /**
+   * Restore component from storage
+   * Loads scenario from index by UUID
+   * @param uuid UUID of scenario to restore
+   */
+  async restore(uuid: string): Promise<this> {
+    if (!this.storage) {
+      throw new Error('[UcpComponent] No storage configured');
+    }
+    
+    const scenario = await this.storage.scenarioLoad<TModel>(uuid);
+    return this.init(scenario as { model?: TModel });
   }
   
   /**
