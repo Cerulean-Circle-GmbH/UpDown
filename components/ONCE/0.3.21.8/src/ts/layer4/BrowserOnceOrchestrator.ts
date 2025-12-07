@@ -98,18 +98,41 @@ export class BrowserOnceOrchestrator {
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Preload CSS assets from manifest
+   * Preload CSS assets from component.json units or fallback to /asset-manifest
+   * Phase F: Unit Integration - assets tracked in component.json
+   * @pdca 2025-11-19-UTC-1800.iteration-tracking.pdca.md Phase F
    */
   private async assetsPreload(): Promise<void> {
     console.log('[Orchestrator] Preloading assets...');
     
     try {
-      const response = await fetch('/asset-manifest');
-      const data = await response.json();
-      const cssFiles = data.model?.css || data.css || [];
+      let cssFiles: string[] = [];
+      const version = this.component.browserModel.version || '0.3.21.8';
+      const basePath = `/EAMD.ucp/components/ONCE/${version}`;
+      
+      // Try component.json first (Web4 Unit integration)
+      try {
+        const componentResponse = await fetch(`${basePath}/ONCE.component.json`);
+        if (componentResponse.ok) {
+          const componentJson = await componentResponse.json();
+          const cssUnits = componentJson.model?.units?.css || [];
+          cssFiles = cssUnits.map((unit: { path: string }) => `${basePath}/${unit.path}`);
+          console.log(`[Orchestrator] Using component.json units: ${cssFiles.length} CSS files`);
+        }
+      } catch (e) {
+        console.log('[Orchestrator] component.json not available, trying asset-manifest');
+      }
+      
+      // Fallback to /asset-manifest
+      if (cssFiles.length === 0) {
+        const response = await fetch('/asset-manifest');
+        const data = await response.json();
+        cssFiles = data.model?.css || data.css || [];
+        console.log(`[Orchestrator] Using asset-manifest: ${cssFiles.length} CSS files`);
+      }
       
       if (cssFiles.length === 0) {
-        console.warn('[Orchestrator] No CSS files in manifest');
+        console.warn('[Orchestrator] No CSS files found');
         return;
       }
       

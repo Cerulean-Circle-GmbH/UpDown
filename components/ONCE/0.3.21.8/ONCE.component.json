@@ -1,1 +1,72 @@
-../../../scenarios/ONCE/0.3.21.7/85e24cce-7da1-4535-9d2f-0ea379c97e0c.scenario.json
+{
+  "ior": {
+    "uuid": "once-0.3.21.8-component",
+    "component": "Web4TSComponent",
+    "version": "0.3.20.6"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "once-0.3.21.8-component",
+    "name": "ONCE",
+    "version": "0.3.21.8",
+    "description": "Open Network Compute Environment - Web4 Kernel",
+    "layer2Implementation": "NodeJsOnce",
+    "entryPoints": {
+      "cli": "src/ts/layer5/ONCECLI.ts",
+      "node": "dist/ts/layer2/NodeJsOnce.js",
+      "browser": "dist/ts/layer2/BrowserOnce.js"
+    },
+    "units": {
+      "css": [
+        {
+          "uuid": "css-onceoverview",
+          "name": "OnceOverView.css",
+          "path": "src/ts/layer5/views/css/OnceOverView.css",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "css-oncepeeritemview",
+          "name": "OncePeerItemView.css",
+          "path": "src/ts/layer5/views/css/OncePeerItemView.css",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "css-defaultitemview",
+          "name": "DefaultItemView.css",
+          "path": "src/ts/layer5/views/css/DefaultItemView.css",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "css-itemview",
+          "name": "ItemView.css",
+          "path": "src/ts/layer5/views/css/ItemView.css",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "css-themebase",
+          "name": "themeBase.css",
+          "path": "src/ts/layer5/views/css/themeBase.css",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "css-oncepeerdefaultview",
+          "name": "OncePeerDefaultView.css",
+          "path": "src/ts/layer5/views/css/OncePeerDefaultView.css",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "css-routeoverview",
+          "name": "RouteOverView.css",
+          "path": "src/ts/layer5/views/css/RouteOverView.css",
+          "mimetype": "text/css"
+        }
+      ],
+      "templates": []
+    },
+    "dependencies": {
+      "lit": "^3.2.0",
+      "typescript": "^5.0.0"
+    }
+  }
+}
+
