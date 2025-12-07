@@ -1068,6 +1068,9 @@ export class ServerHierarchyManager {
                 this.serverRegistry.delete(uuid);
                 console.log(`🗑️  Server ${uuid} deregistered (state: ${state})`);
                 
+                // ✅ Web4 P24: Remove from PersistenceManager
+                this.scenarioRemoveFromStorage(uuid);
+                
                 // ✅ Protocol-less: Broadcast scenario with updated state
                 // Browser peers will detect STOPPED/SHUTDOWN state and remove from UI
                 this.broadcastToBrowserClients(scenario);
@@ -1084,8 +1087,66 @@ export class ServerHierarchyManager {
             const action = wasRegistered ? 'updated' : 'registered';
             console.log(`📡 Server ${uuid} ${action} (state: ${state}, port: ${port})`);
             
+            // ✅ Web4 P24: Save to PersistenceManager
+            this.scenarioSaveToStorage(uuid, scenario, port);
+            
             // ✅ Protocol-less: Broadcast scenario (browser detects from state)
             this.broadcastToBrowserClients(scenario);
+        }
+    }
+    
+    /**
+     * Save scenario to PersistenceManager (UcpStorage)
+     * ✅ Web4 Principle 24: RelatedObjects Registry
+     * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
+     */
+    private async scenarioSaveToStorage(uuid: string, scenario: any, port?: number): Promise<void> {
+        try {
+            const persistenceManager = this.component?.persistenceManagerGet?.();
+            if (!persistenceManager) {
+                console.log('[ServerHierarchyManager] No PersistenceManager available (skipping storage)');
+                return;
+            }
+            
+            // Build symlink paths for type and capability indexes
+            const symlinkPaths: string[] = [];
+            
+            // Type symlink: type/ONCE/{version}
+            const version = scenario.ior?.version || scenario.version || this.version;
+            symlinkPaths.push(`type/ONCE/${version}`);
+            
+            // Domain symlink: domain/{domain}/ONCE/{version}
+            const domain = this.serverModel.domain || 'local';
+            symlinkPaths.push(`domain/${domain}/ONCE/${version}`);
+            
+            // Capability symlink: capability/httpPort/{port}
+            if (port) {
+                symlinkPaths.push(`capability/httpPort/${port}`);
+            }
+            
+            await persistenceManager.scenarioSave(uuid, scenario, symlinkPaths);
+            console.log(`[ServerHierarchyManager] ✅ Scenario ${uuid} saved to storage`);
+        } catch (error) {
+            console.warn(`[ServerHierarchyManager] Failed to save scenario: ${error}`);
+        }
+    }
+    
+    /**
+     * Remove scenario from PersistenceManager
+     * ✅ Web4 Principle 24: RelatedObjects Registry
+     * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
+     */
+    private async scenarioRemoveFromStorage(uuid: string): Promise<void> {
+        try {
+            const persistenceManager = this.component?.persistenceManagerGet?.();
+            if (!persistenceManager) {
+                return;
+            }
+            
+            await persistenceManager.scenarioDelete(uuid, true);
+            console.log(`[ServerHierarchyManager] ✅ Scenario ${uuid} removed from storage`);
+        } catch (error) {
+            console.warn(`[ServerHierarchyManager] Failed to remove scenario: ${error}`);
         }
     }
 

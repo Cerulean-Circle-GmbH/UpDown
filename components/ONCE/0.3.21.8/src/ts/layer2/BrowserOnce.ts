@@ -572,7 +572,9 @@ export class BrowserOnce extends DefaultOnceKernel {
      * Update peer state in model (protocol-less state transfer)
      * ✅ Adds new peers or updates existing
      * ✅ Removes peers with STOPPED/SHUTDOWN state
+     * ✅ Saves/removes from PersistenceManager (Web4 P24)
      * @pdca 2025-11-26-UTC-0215.iteration-01.14-websocket-state-transfer-completion.pdca.md
+     * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
      */
     private updatePeerState(scenario: any): void {
         const uuid = scenario.ior?.uuid || scenario.model?.uuid;
@@ -587,6 +589,9 @@ export class BrowserOnce extends DefaultOnceKernel {
             if (removeIndex >= 0) {
                 this.model.peers.splice(removeIndex, 1);
                 console.log(`🗑️  Peer removed: ${uuid} (${state})`);
+                
+                // ✅ Web4 P24: Remove from IndexedDB storage
+                this.scenarioRemoveFromStorage(uuid);
             }
             return;
         }
@@ -602,6 +607,52 @@ export class BrowserOnce extends DefaultOnceKernel {
         } else {
             this.model.peers.push(scenario);
             console.log(`➕ Peer added: ${uuid}`);
+        }
+        
+        // ✅ Web4 P24: Save to IndexedDB storage
+        this.scenarioSaveToStorage(uuid, scenario);
+    }
+    
+    /**
+     * Save scenario to IndexedDB via PersistenceManager
+     * ✅ Web4 Principle 24: RelatedObjects Registry
+     * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
+     */
+    private async scenarioSaveToStorage(uuid: string, scenario: any): Promise<void> {
+        try {
+            const persistenceManager = this.persistenceManagerGet();
+            if (!persistenceManager) {
+                return; // Storage not initialized yet
+            }
+            
+            // Build symlink paths
+            const symlinkPaths: string[] = [];
+            const version = scenario.ior?.version || this.model.version;
+            symlinkPaths.push(`type/ONCE/${version}`);
+            
+            await persistenceManager.scenarioSave(uuid, scenario, symlinkPaths);
+            console.log(`[BrowserOnce] ✅ Peer scenario ${uuid} saved to IndexedDB`);
+        } catch (error) {
+            console.warn(`[BrowserOnce] Failed to save scenario: ${error}`);
+        }
+    }
+    
+    /**
+     * Remove scenario from IndexedDB via PersistenceManager
+     * ✅ Web4 Principle 24: RelatedObjects Registry
+     * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
+     */
+    private async scenarioRemoveFromStorage(uuid: string): Promise<void> {
+        try {
+            const persistenceManager = this.persistenceManagerGet();
+            if (!persistenceManager) {
+                return;
+            }
+            
+            await persistenceManager.scenarioDelete(uuid, true);
+            console.log(`[BrowserOnce] ✅ Peer scenario ${uuid} removed from IndexedDB`);
+        } catch (error) {
+            console.warn(`[BrowserOnce] Failed to remove scenario: ${error}`);
         }
     }
     
