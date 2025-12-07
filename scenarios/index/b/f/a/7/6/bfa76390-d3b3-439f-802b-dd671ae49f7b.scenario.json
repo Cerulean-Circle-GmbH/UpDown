@@ -1,0 +1,55 @@
+{
+  "ior": {
+    "protocol": "https",
+    "host": "McDonges.fritz.box",
+    "port": 8080,
+    "path": "/ONCE/0.3.21.8/bfa76390-d3b3-439f-802b-dd671ae49f7b",
+    "uuid": "bfa76390-d3b3-439f-802b-dd671ae49f7b",
+    "iorString": "ior:https://McDonges.fritz.box:8080/ONCE/0.3.21.8/bfa76390-d3b3-439f-802b-dd671ae49f7b"
+  },
+  "owner": {
+    "userId": "system",
+    "timestamp": "2025-12-07T17:19:15.175Z"
+  },
+  "model": {
+    "uuid": "bfa76390-d3b3-439f-802b-dd671ae49f7b",
+    "version": "0.3.21.8",
+    "state": {
+      "uuid": "bfa76390-d3b3-439f-802b-dd671ae49f7b",
+      "pid": 82958,
+      "state": "running",
+      "platform": {
+        "platform": "node",
+        "version": "v22.20.0",
+        "capabilities": [
+          "server",
+          "websocket",
+          "p2p"
+        ],
+        "isOnline": true
+      },
+      "domain": "box.fritz",
+      "hostname": "McDonges",
+      "host": "McDonges.fritz.box",
+      "ip": "192.168.178.49",
+      "capabilities": [
+        {
+          "capability": "httpPort",
+          "port": 8080
+        },
+        {
+          "capability": "wsPort",
+          "port": 8080
+        }
+      ],
+      "isPrimaryServer": false
+    },
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/b/f/a/7/6/bfa76390-d3b3-439f-802b-dd671ae49f7b.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.21.8",
+      "domain/box.fritz/ONCE/0.3.21.8",
+      "capability/httpPort/8080"
+    ],
+    "updatedAt": "2025-12-07T17:19:15.189Z"
+  }
+}

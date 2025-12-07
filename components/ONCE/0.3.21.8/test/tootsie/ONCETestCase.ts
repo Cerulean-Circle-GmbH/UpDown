@@ -141,6 +141,38 @@ export abstract class ONCETestCase extends DefaultWeb4TestCase {
   }
 
   /**
+   * Start ONCE server in TEST ISOLATION (from test/data)
+   * ✅ Web4 Path Authority: Uses testDataDir, not componentRoot
+   * Scenarios will be stored in test/data/scenarios/
+   */
+  protected serverStartInTestIsolation(): ChildProcess {
+    const onceExec = path.join(this.testDataDir, 'scripts', 'once');
+    
+    this.logEvidence('step', 'Starting server in test isolation (from test/data)');
+    
+    this.serverProcess = spawn(onceExec, ['startServer'], {
+      cwd: this.testDataDir,  // ✅ Test isolation: run from test/data
+      detached: true,
+      stdio: ['ignore', 'pipe', 'pipe']
+    });
+    
+    // Log server output for debugging
+    this.serverProcess.stdout?.on('data', (data) => {
+      console.log(`[SERVER-ISO] ${data.toString().trim()}`);
+    });
+    
+    this.serverProcess.stderr?.on('data', (data) => {
+      console.error(`[SERVER-ISO ERROR] ${data.toString().trim()}`);
+    });
+    
+    this.serverProcess.on('error', (err) => {
+      console.error(`[SERVER-ISO SPAWN ERROR] ${err.message}`);
+    });
+    
+    return this.serverProcess;
+  }
+
+  /**
    * Stop server if started by test
    * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
    */
