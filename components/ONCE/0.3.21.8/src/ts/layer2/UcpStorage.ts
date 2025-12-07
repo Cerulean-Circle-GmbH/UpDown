@@ -78,9 +78,16 @@ export class UcpStorage implements Storage {
     if (scenario.model) {
       this.model = scenario.model;
     }
-    // Set up storage paths
-    this.model.projectRoot = this.projectRootFind();
-    this.model.indexBaseDir = join(this.model.projectRoot, 'scenarios', 'index');
+    
+    // Only discover paths if not provided in scenario
+    // This allows tests to provide custom paths
+    if (!this.model.projectRoot) {
+      this.model.projectRoot = this.projectRootFind();
+    }
+    if (!this.model.indexBaseDir) {
+      this.model.indexBaseDir = join(this.model.projectRoot, 'scenarios', 'index');
+    }
+    
     this.model.updatedAt = new Date().toISOString();
     return this;
   }
@@ -115,9 +122,16 @@ export class UcpStorage implements Storage {
     await fs.writeFile(scenarioPath, JSON.stringify(scenarioWithStorage, null, 2), 'utf-8');
     console.log(`[UcpStorage] Saved scenario to: ${scenarioPath}`);
 
-    // Create symbolic links
+    // Create symbolic links - linkPath is relative like "type/Component/version"
+    // Full path: {projectRoot}/scenarios/{linkPath}/{uuid}.scenario.json
     for (const linkPath of symlinkPaths) {
-      await this.symlinkCreate(scenarioPath, linkPath);
+      const fullLinkPath = join(
+        this.model.projectRoot, 
+        'scenarios', 
+        linkPath, 
+        `${uuid}.scenario.json`
+      );
+      await this.symlinkCreate(scenarioPath, fullLinkPath);
     }
   }
   
