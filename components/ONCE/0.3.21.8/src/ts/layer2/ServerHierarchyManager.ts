@@ -1264,120 +1264,121 @@ export class ServerHierarchyManager {
     }
 
     /**
-     * Load existing scenario or create new one with organized directory structure
-     * ✅ Fixed: Uses domain/ prefix for consistent storage paths
+     * Load existing scenario or create new one using PersistenceManager
+     * ✅ Fixed: Uses PersistenceManager for consistent index-based storage
+     * ✅ Primary file in scenarios/index/, symlinks in type/domain/capability
      */
     private async loadOrCreateScenario(): Promise<void> {
         const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
         if (!httpCapability) return;
 
-        // Use detected domain/hostname for scenario path
-        // Structure: scenarios/domain/{domain-parts}/{hostname}/ONCE/{version}
-        const domainParts = this.getDetectDomainPath(); // e.g., ['box', 'fritz']
-        const hostname = this.serverModel.hostname; // e.g., "McDonges-3"
+        const uuid = this.serverModel.uuid;
         
-        // Main scenario file location - NOW with domain/ prefix
-        const mainScenarioDir = path.join(
-            this.projectRoot, 
-            'scenarios',
-            'domain',           // ✅ Added domain/ prefix
-            ...domainParts,     // Spread domain parts as separate directories
-            hostname,
-            'ONCE',
-            this.versionFromComponent
-        );
-        const mainScenarioPath = path.join(mainScenarioDir, `${this.serverModel.uuid}.scenario.json`);
-        
-        // Capability symlink location (nested under domain path)
-        const capabilityDir = path.join(
-            this.projectRoot,
-            'scenarios',
-            'domain',           // ✅ Added domain/ prefix
-            ...domainParts,
-            hostname,
-            'ONCE',
-            this.versionFromComponent,
-            'capability',
-            'httpPort',
-            httpCapability.port.toString()
-        );
-        const capabilitySymlink = path.join(capabilityDir, `${this.serverModel.uuid}.scenario.json`);
-        
-        console.log(`🔍 [PATH] ServerHierarchyManager.loadOrCreateScenario() projectRoot=${this.projectRoot} scenario=${mainScenarioPath}`);
-        
-        try {
-            // Try to load existing scenario first
-            const fs = await import('fs');
-            const path = await import('path');
-            
-            if (fs.existsSync(mainScenarioPath)) {
-                console.log(`📂 Loading existing scenario: ${mainScenarioPath}`);
-                const scenarioData = JSON.parse(fs.readFileSync(mainScenarioPath, 'utf8'));
-                
-                // Restore configuration from scenario
-                if (scenarioData.state) {
-                    console.log(`✅ Scenario restored from ${mainScenarioPath}`);
-                    
-                    // Ensure capability symlink exists
-                    this.ensureCapabilitySymlink(capabilityDir, capabilitySymlink, mainScenarioPath);
+        // Try to load existing scenario from PersistenceManager
+        const persistenceManager = this.component?.persistenceManagerGet?.();
+        if (persistenceManager) {
+            try {
+                const exists = await persistenceManager.scenarioExists(uuid);
+                if (exists) {
+                    const scenario = await persistenceManager.scenarioLoad(uuid);
+                    console.log(`📂 Loaded existing scenario from index: ${uuid}`);
                     return;
                 }
+            } catch (error) {
+                console.log(`⚠️ Could not load existing scenario: ${error instanceof Error ? error.message : String(error)}`);
             }
-        } catch (error) {
-            console.log(`⚠️ Could not load existing scenario: ${error instanceof Error ? error.message : String(error)}`);
         }
 
-        // Create new scenario if none exists or loading failed
-        await this.saveScenario(mainScenarioDir, mainScenarioPath, capabilityDir, capabilitySymlink);
+        // Create new scenario using PersistenceManager
+        await this.saveScenarioViaPersistenceManager();
     }
 
     /**
-     * Ensure capability symlink exists pointing to main scenario file (DRY principle)
+     * Save server scenario using PersistenceManager
+     * ✅ Primary file → scenarios/index/{uuid-folders}/
+     * ✅ Symlinks → type/, domain/, capability/
      */
-    private async ensureCapabilitySymlink(capabilityDir: string, symlinkPath: string, targetPath: string): Promise<void> {
+    private async saveScenarioViaPersistenceManager(): Promise<void> {
+        const persistenceManager = this.component?.persistenceManagerGet?.();
+        if (!persistenceManager) {
+            console.log('[ServerHierarchyManager] No PersistenceManager available - using legacy save');
+            await this.saveScenarioLegacy();
+            return;
+        }
+
         try {
-            const fs = await import('fs');
-            const path = await import('path');
+            const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
+            const uuid = this.serverModel.uuid;
+            const version = this.versionFromComponent;
+            const component = 'ONCE';
+            const domainParts = this.getDetectDomainPath();
+            const hostname = this.serverModel.hostname;
+            const port = httpCapability?.port;
             
-            // Ensure capability directory exists
-            if (!fs.existsSync(capabilityDir)) {
-                fs.mkdirSync(capabilityDir, { recursive: true });
-            }
-            
-            // Remove existing file/symlink if it exists
-            if (fs.existsSync(symlinkPath)) {
-                const stats = fs.lstatSync(symlinkPath);
-                if (!stats.isSymbolicLink()) {
-                    // It's a regular file - remove it (we'll replace with symlink)
-                    fs.unlinkSync(symlinkPath);
-                    console.log(`🔄 Removed duplicate file, creating symlink: ${symlinkPath}`);
-                } else {
-                    // Already a symlink - no action needed
-                    return;
+            // Build Web4 Standard scenario
+            const scenario = {
+                ior: {
+                    uuid,
+                    component,
+                    version
+                },
+                owner: 'system',
+                model: {
+                    ...this.serverModel,
+                    name: `ONCE-${hostname}`,
+                    created: new Date().toISOString()
                 }
-            }
+            };
+
+            // Build symlink paths using PersistenceManager's path builders
+            const symlinkPaths: string[] = [
+                persistenceManager.typePathBuild(component, version),
+                persistenceManager.domainPathBuild(domainParts, hostname, component, version)
+            ];
             
-            // Create relative symlink from capability dir to main file
-            const relativePath = path.relative(capabilityDir, targetPath);
-            fs.symlinkSync(relativePath, symlinkPath);
-            console.log(`🔗 Created capability symlink: ${symlinkPath} -> ${relativePath}`);
+            if (port) {
+                symlinkPaths.push(
+                    persistenceManager.capabilityPathBuild(
+                        domainParts, hostname, component, version,
+                        'httpPort', String(port)
+                    )
+                );
+            }
+
+            await persistenceManager.scenarioSave(uuid, scenario, symlinkPaths);
+            console.log(`📝 [PERSISTENCE] ServerHierarchyManager saved scenario ${uuid} via PersistenceManager`);
         } catch (error) {
-            console.error(`⚠️  Failed to create capability symlink: ${error instanceof Error ? error.message : String(error)}`);
+            console.error(`❌ Failed to save scenario via PersistenceManager: ${error instanceof Error ? error.message : String(error)}`);
+            // Fallback to legacy
+            await this.saveScenarioLegacy();
         }
     }
 
     /**
-     * Save server scenario to organized directory structure
+     * Legacy save method (fallback when PersistenceManager not available)
+     * @deprecated Use saveScenarioViaPersistenceManager() instead
      */
-    private async saveScenario(mainScenarioDir: string, mainScenarioPath: string, capabilityDir: string, capabilitySymlink: string): Promise<void> {
+    private async saveScenarioLegacy(): Promise<void> {
         try {
-            const fs = await import('fs');
-            const path = await import('path');
+            const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
+            if (!httpCapability) return;
+
+            const domainParts = this.getDetectDomainPath();
+            const hostname = this.serverModel.hostname;
+            
+            const mainScenarioDir = path.join(
+                this.projectRoot, 
+                'scenarios',
+                'domain',
+                ...domainParts,
+                hostname,
+                'ONCE',
+                this.versionFromComponent
+            );
+            const mainScenarioPath = path.join(mainScenarioDir, `${this.serverModel.uuid}.scenario.json`);
             
             // Ensure main directory exists
             fs.mkdirSync(mainScenarioDir, { recursive: true });
-            
-            const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
             
             const scenario = {
                 uuid: this.serverModel.uuid,
@@ -1400,14 +1401,10 @@ export class ServerHierarchyManager {
                 }
             };
 
-            // Save main scenario file
             fs.writeFileSync(mainScenarioPath, JSON.stringify(scenario, null, 2));
-            console.log(`📝 [WRITE] ServerHierarchyManager.saveScenario() → ${mainScenarioPath}`);
-            
-            // Create capability symlink pointing to main file
-            this.ensureCapabilitySymlink(capabilityDir, capabilitySymlink, mainScenarioPath);
+            console.log(`📝 [WRITE] ServerHierarchyManager.saveScenarioLegacy() → ${mainScenarioPath}`);
         } catch (error) {
-            console.error(`❌ Failed to save scenario: ${error instanceof Error ? error.message : String(error)}`);
+            console.error(`❌ Failed to save scenario (legacy): ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
