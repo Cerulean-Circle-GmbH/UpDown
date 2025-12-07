@@ -414,6 +414,32 @@ add(child: UcpView): void {
 - [ ] Attributes map to `model.{attributeName}`
 - [ ] `connectedCallback()` = `init()` completion
 
+```
+Web4 API vs Implementation
+┌─────────────────────────────────────────────┐
+│  Web4 Consumer Code                         │
+│  parent.add(child)  ← Framework-agnostic    │
+└─────────────────────────────────────────────┘
+                    │
+                    ▼ Adapter Pattern
+┌────────────────────────────────────────────────┐
+│  UcpView Implementation                        │
+│  add(child: UcpView): void {                   │
+│    this.renderRoot.appendChild(child); // Lit  │
+│    this.items.add(child);              // Track│
+│  }                                             │
+└────────────────────────────────────────────────┘
+                    │
+        ┌───────────┼───────────┐
+        ▼           ▼           ▼
+       Lit        React        Vue
+    appendChild  children     slots
+```
+Key Insight
+Web4 API: add() / remove() - what consumers use
+Implementation: Adapts to underlying framework
+Benefit: Same Web4 code works with any UI framework
+
 **PDCA Reference:** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/session/2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md) | [§SPA Cleanup](./2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md)
 
 ---
