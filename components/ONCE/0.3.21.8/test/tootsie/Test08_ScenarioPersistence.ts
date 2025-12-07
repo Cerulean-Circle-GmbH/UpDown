@@ -168,10 +168,14 @@ export class Test08_ScenarioPersistence extends ONCETestCase {
     const deleted = !(await this.testModel.storage!.scenarioExists(this.testModel.testScenarioUUID));
     deleteReq.validateCriterion('DEL-01', deleted, { actual: deleted });
     
-    // DEL-02: Cleanup
+    // DEL-02: Cleanup test scenarios
     this.cleanupTestDirectory();
-    const cleaned = !fs.existsSync(this.testModel.projectRoot);
-    deleteReq.validateCriterion('DEL-02', cleaned, { actual: cleaned });
+    const indexClean = !fs.existsSync(path.join(this.testModel.projectRoot, 'scenarios', 'index'));
+    const typeClean = !fs.existsSync(path.join(this.testModel.projectRoot, 'scenarios', 'type'));
+    const cleaned = indexClean && typeClean;
+    deleteReq.validateCriterion('DEL-02', cleaned, { 
+      actual: cleaned ? 'Cleaned' : `index=${indexClean}, type=${typeClean}` 
+    });
     
     if (!deleteReq.allCriteriaPassed()) {
       throw new Error(deleteReq.generateReport());
@@ -184,19 +188,17 @@ export class Test08_ScenarioPersistence extends ONCETestCase {
   
   /**
    * Initialize test environment
+   * Uses test/data/scenarios for proper test isolation verification
    */
   private async initializeTestEnvironment(): Promise<void> {
-    // Use /tmp for truly isolated temp directory 
-    this.testModel.projectRoot = path.join(
-      '/tmp',
-      'test-scenarios-' + Date.now()
-    );
+    // Use test/data as project root for test isolation
+    // This ensures symlinks are created in test/data/scenarios/type/, etc.
+    this.testModel.projectRoot = path.join(this.componentRoot, 'test', 'data');
     
-    // Create the directories
-    fs.mkdirSync(this.testModel.projectRoot, { recursive: true });
+    // Create the directories (scenarios/index for UUID storage)
     fs.mkdirSync(path.join(this.testModel.projectRoot, 'scenarios', 'index'), { recursive: true });
     
-    this.logEvidence('step', `Test directory created: ${this.testModel.projectRoot}`);
+    this.logEvidence('step', `Test directory: ${this.testModel.projectRoot}`);
   }
   
   /**
@@ -386,14 +388,24 @@ export class Test08_ScenarioPersistence extends ONCETestCase {
   }
   
   /**
-   * Cleanup test directory
+   * Cleanup test-created files (not entire test/data)
    */
   private cleanupTestDirectory(): void {
     try {
-      fs.rmSync(this.testModel.projectRoot, { recursive: true, force: true });
-      this.logEvidence('step', 'Test directory cleaned up');
+      const scenariosDir = path.join(this.testModel.projectRoot, 'scenarios');
+      
+      // Remove test-created symlink directories
+      const dirsToClean = ['type', 'domain', 'capability', 'index'];
+      for (const dir of dirsToClean) {
+        const dirPath = path.join(scenariosDir, dir);
+        if (fs.existsSync(dirPath)) {
+          fs.rmSync(dirPath, { recursive: true, force: true });
+        }
+      }
+      
+      this.logEvidence('step', 'Test scenarios cleaned up');
     } catch {
-      this.logEvidence('step', 'Cleanup warning: directory may still exist');
+      this.logEvidence('step', 'Cleanup warning: some files may remain');
     }
   }
   
