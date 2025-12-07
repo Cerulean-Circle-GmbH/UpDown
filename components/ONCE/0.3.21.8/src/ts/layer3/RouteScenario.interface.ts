@@ -3,6 +3,7 @@
  * 
  * ✅ Web4 Principle 1: Everything is a Scenario
  * ✅ Web4 Principle 19: One File One Type
+ * ✅ Web4 Principle 26: No Factory Functions
  * 
  * Routes are scenarios that define navigation targets.
  * They can be serialized, persisted, and discovered.
@@ -50,61 +51,8 @@ export interface RouteModel extends Model {
 
 /**
  * RouteScenario - A route as a Web4 Scenario
- * 
- * Usage:
- * ```typescript
- * const route: RouteScenario = {
- *   ior: { uuid: 'route-dashboard', component: 'ONCE', version: '0.3.21.8' },
- *   owner: 'system',
- *   model: {
- *     pattern: '/',
- *     viewTag: 'once-over-view',
- *     title: 'ONCE Dashboard',
- *     serverRoute: false,
- *     currentPath: '',
- *     params: {},
- *     query: {},
- *     isActive: false,
- *     viewProps: {}
- *   }
- * };
- * ```
  */
 export interface RouteScenario extends Scenario<RouteModel> {
   // Inherits ior, owner, model from Scenario<RouteModel>
-}
-
-/**
- * Create a new RouteScenario with defaults
- */
-export function routeScenarioCreate(
-  pattern: string,
-  viewTag: string,
-  options?: Partial<RouteModel>
-): RouteScenario {
-  const routeId = `route-${pattern.replace(/[^a-z0-9]/gi, '-')}`;
-  return {
-    ior: {
-      uuid: routeId,
-      component: 'ONCE',
-      version: '0.3.21.8'
-    },
-    owner: 'system',
-    model: {
-      // Model base properties
-      uuid: routeId,
-      name: options?.title || `Route: ${pattern}`,
-      // Route-specific properties
-      pattern,
-      viewTag,
-      title: options?.title || viewTag,
-      serverRoute: options?.serverRoute || false,
-      currentPath: '',
-      params: {},
-      query: {},
-      isActive: false,
-      viewProps: options?.viewProps || {}
-    }
-  };
 }
 

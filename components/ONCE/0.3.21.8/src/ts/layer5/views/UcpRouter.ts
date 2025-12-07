@@ -16,7 +16,7 @@ import { LitElement, html, TemplateResult, css } from 'lit';
 import { customElement, state, property } from 'lit/decorators.js';
 import type { Reference } from '../../layer3/Reference.interface.js';
 import type { RouteScenario, RouteModel } from '../../layer3/RouteScenario.interface.js';
-import { routeScenarioCreate } from '../../layer3/RouteScenario.interface.js';
+import { Route } from '../../layer3/Route.js';
 
 /**
  * UcpRouter - Web4 compliant SPA router
@@ -78,11 +78,11 @@ export class UcpRouter extends LitElement {
   /** Currently rendered view element */
   @state() private currentView: Reference<HTMLElement> = null;
   
-  /** Current active route scenario */
-  @state() private activeRoute: Reference<RouteScenario> = null;
+  /** Current active route - ✅ Web4 P26: Route class not factory */
+  @state() private activeRoute: Reference<Route> = null;
   
-  /** Registered route scenarios - ✅ Web4 P1: Routes are Scenarios */
-  private routes: Map<string, RouteScenario> = new Map();
+  /** Registered routes - ✅ Web4 P1: Routes are Scenarios, P26: Classes */
+  private routes: Map<string, Route> = new Map();
   
   /** Kernel reference for model/server integration */
   @property({ attribute: false }) kernel: Reference<any> = null;
@@ -112,26 +112,30 @@ export class UcpRouter extends LitElement {
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Register a route scenario
+   * Register a route - async because Route.init() is async
    * ✅ Web4 P1: Routes are Scenarios
+   * ✅ Web4 P26: No Factory Functions - uses new Route().init()
    * 
    * @param pattern URL pattern (e.g., '/', '/peer/:uuid')
    * @param viewTag Custom element tag name (e.g., 'once-over-view')
    * @param options Additional route options
    */
-  routeRegister(pattern: string, viewTag: string, options?: Partial<RouteModel>): void {
-    const routeScenario = routeScenarioCreate(pattern, viewTag, options);
-    this.routes.set(pattern, routeScenario);
-    console.log(`[UcpRouter] Registered route scenario: ${pattern} → <${viewTag}>`);
+  async routeRegister(pattern: string, viewTag: string, options?: Partial<RouteModel>): Promise<Route> {
+    const route = await new Route().init({
+      model: { pattern, viewTag, ...options }
+    });
+    this.routes.set(pattern, route);
+    console.log(`[UcpRouter] Registered route: ${pattern} → <${viewTag}>`);
+    return route;
   }
   
   /**
-   * Register a route from an existing scenario
-   * ✅ Web4 P1: Routes are Scenarios
+   * Register an existing Route instance
+   * ✅ Web4 P26: Route is a class
    */
-  routeScenarioRegister(routeScenario: RouteScenario): void {
-    this.routes.set(routeScenario.model.pattern, routeScenario);
-    console.log(`[UcpRouter] Registered route scenario: ${routeScenario.model.pattern} → <${routeScenario.model.viewTag}>`);
+  routeInstanceRegister(route: Route): void {
+    this.routes.set(route.pattern, route);
+    console.log(`[UcpRouter] Registered route: ${route.pattern} → <${route.viewTag}>`);
   }
   
   /**
@@ -142,17 +146,17 @@ export class UcpRouter extends LitElement {
   }
   
   /**
-   * Get all registered route scenarios
-   * ✅ Web4 P1: Routes are Scenarios
+   * Get all registered routes
+   * ✅ Web4 P26: Returns Route classes
    */
-  routesGet(): Map<string, RouteScenario> {
+  routesGet(): Map<string, Route> {
     return new Map(this.routes);
   }
   
   /**
-   * Get the currently active route scenario
+   * Get the currently active route
    */
-  activeRouteGet(): Reference<RouteScenario> {
+  activeRouteGet(): Reference<Route> {
     return this.activeRoute;
   }
   
@@ -202,7 +206,7 @@ export class UcpRouter extends LitElement {
   
   /**
    * Resolve path to a view
-   * ✅ Web4 P1: Works with RouteScenario
+   * ✅ Web4 P26: Works with Route class
    */
   private routeResolve(path: string): void {
     console.log(`[UcpRouter] Resolving: ${path}`);
@@ -210,45 +214,43 @@ export class UcpRouter extends LitElement {
     
     // Deactivate previous route
     if (this.activeRoute) {
-      this.activeRoute.model.isActive = false;
+      this.activeRoute.deactivate();
     }
     
     // Try exact match first
-    let routeScenario = this.routes.get(path);
+    let route = this.routes.get(path);
     let params: Record<string, string> = {};
     
     // Try pattern matching if no exact match
-    if (!routeScenario) {
-      for (const [pattern, scenario] of this.routes) {
-        const match = this.patternMatch(pattern, path);
+    if (!route) {
+      for (const [pattern, routeInstance] of this.routes) {
+        const match = routeInstance.pathMatch(path);
         if (match) {
-          routeScenario = scenario;
+          route = routeInstance;
           params = match;
           break;
         }
       }
     }
     
-    if (routeScenario) {
-      // Update route scenario state
-      routeScenario.model.currentPath = path;
-      routeScenario.model.params = params;
-      routeScenario.model.query = this.queryParamsToObject(window.location.search);
-      routeScenario.model.isActive = true;
+    if (route) {
+      // Activate route with path and params
+      const query = this.queryParamsToObject(window.location.search);
+      route.activate(path, params, query);
       
       // Store active route
-      this.activeRoute = routeScenario;
+      this.activeRoute = route;
       
       // Update page title if specified
-      if (routeScenario.model.title) {
-        document.title = routeScenario.model.title;
+      if (route.title) {
+        document.title = route.title;
       }
       
       // Create view element
-      this.viewCreate(routeScenario);
+      this.viewCreate(route);
       
       // Notify server if configured
-      if (routeScenario.model.serverRoute) {
+      if (route.serverRoute) {
         this.serverRouteNotify(path);
       }
     } else {
@@ -278,46 +280,19 @@ export class UcpRouter extends LitElement {
     result[key] = value;
   }
   
-  /**
-   * Match URL path against pattern with :segments
-   */
-  private patternMatch(pattern: string, path: string): Record<string, string> | null {
-    const patternParts = pattern.split('/');
-    const pathParts = path.split('/');
-    
-    if (patternParts.length !== pathParts.length) {
-      return null;
-    }
-    
-    const params: Record<string, string> = {};
-    
-    for (let i = 0; i < patternParts.length; i++) {
-      const patternPart = patternParts[i];
-      const pathPart = pathParts[i];
-      
-      if (patternPart.startsWith(':')) {
-        // Dynamic segment - extract parameter
-        params[patternPart.slice(1)] = pathPart;
-      } else if (patternPart !== pathPart) {
-        // Static segment doesn't match
-        return null;
-      }
-    }
-    
-    return params;
-  }
-  
+  // ═══════════════════════════════════════════════════════════════
+  // NOTE: Pattern matching moved to Route.pathMatch() (Web4 P26)
   // ═══════════════════════════════════════════════════════════════
   // VIEW MANAGEMENT
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Create view element for route scenario
-   * ✅ Web4 P1: Works with RouteScenario
+   * Create view element for route
+   * ✅ Web4 P26: Works with Route class
    */
-  private viewCreate(routeScenario: RouteScenario): void {
+  private viewCreate(route: Route): void {
     // Create the view element
-    const view = document.createElement(routeScenario.model.viewTag);
+    const view = document.createElement(route.viewTag);
     
     // Set model if available
     if (this.model) {
@@ -329,18 +304,18 @@ export class UcpRouter extends LitElement {
       (view as any).kernel = this.kernel;
     }
     
-    // Set route scenario reference (Web4: pass the whole scenario)
-    (view as any).routeScenario = routeScenario;
+    // Set route reference (Web4 P26: pass the Route class instance)
+    (view as any).route = route;
     
     // Set additional view props if specified
-    if (routeScenario.model.viewProps) {
-      Object.entries(routeScenario.model.viewProps).forEach(
+    if (route.viewProps) {
+      Object.entries(route.viewProps).forEach(
         this.viewPropSet.bind(this, view)
       );
     }
     
     this.currentView = view;
-    console.log(`[UcpRouter] Created view: <${routeScenario.model.viewTag}>`);
+    console.log(`[UcpRouter] Created view: <${route.viewTag}>`);
   }
   
   /**
@@ -357,7 +332,7 @@ export class UcpRouter extends LitElement {
   
   /**
    * Notify server of route change (for SSR/analytics)
-   * ✅ Web4 P1: Sends RouteScenario in event
+   * ✅ Web4 P26: Sends Route instance in event
    */
   private serverRouteNotify(path: string): void {
     // Dispatch event for orchestrator to handle
@@ -366,7 +341,8 @@ export class UcpRouter extends LitElement {
       composed: true,
       detail: {
         path,
-        routeScenario: this.activeRoute
+        route: this.activeRoute,
+        scenario: this.activeRoute?.toScenario()
       }
     }));
   }
@@ -394,7 +370,8 @@ export class UcpRouter extends LitElement {
 }
 
 // Export for use by other modules
-// ✅ Web4 P1: Export RouteScenario from layer3
+// ✅ Web4 P1: Routes are Scenarios
+// ✅ Web4 P26: Route is a class (not factory)
 export type { RouteScenario, RouteModel } from '../../layer3/RouteScenario.interface.js';
-export { routeScenarioCreate } from '../../layer3/RouteScenario.interface.js';
+export { Route } from '../../layer3/Route.js';
 

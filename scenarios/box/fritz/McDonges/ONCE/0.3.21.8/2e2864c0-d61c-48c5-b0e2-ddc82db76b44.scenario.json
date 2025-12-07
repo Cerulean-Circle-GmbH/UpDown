@@ -1,18 +1,18 @@
 {
   "ior": {
-    "uuid": "41429398-008d-4422-9b8d-2c24c7d8326f",
+    "uuid": "2e2864c0-d61c-48c5-b0e2-ddc82db76b44",
     "component": "ONCE",
     "version": "0.3.21.8"
   },
-  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkxTFRFeUxUQTJWREU0T2pBMU9qRTBMamt6TlZvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwibmFtZSI6ImRvbmdlcyIsInVzZXJuYW1lIjoic3lzdGVtIiwiaG9zdG5hbWUiOiJNY0Rvbmdlcy5mcml0ei5ib3gifX0=",
+  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkxTFRFeUxUQTNWREV5T2pNMk9qSTVMamd5TjFvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwibmFtZSI6ImRvbmdlcyIsInVzZXJuYW1lIjoic3lzdGVtIiwiaG9zdG5hbWUiOiJNY0Rvbmdlcy5mcml0ei5ib3gifX0=",
   "model": {
-    "uuid": "41429398-008d-4422-9b8d-2c24c7d8326f",
+    "uuid": "2e2864c0-d61c-48c5-b0e2-ddc82db76b44",
     "name": "McDonges",
     "objectType": "ONCE",
     "version": "0.3.21.8",
     "state": {
-      "uuid": "41429398-008d-4422-9b8d-2c24c7d8326f",
-      "pid": 67331,
+      "uuid": "2e2864c0-d61c-48c5-b0e2-ddc82db76b44",
+      "pid": 89991,
       "state": "shutdown",
       "platform": {
         "platform": "node",
@@ -41,8 +41,8 @@
       "isPrimaryServer": true
     },
     "metadata": {
-      "created": "2025-12-06T18:05:14.931Z",
-      "modified": "2025-12-06T18:05:28.105Z",
+      "created": "2025-12-07T12:36:29.823Z",
+      "modified": "2025-12-07T12:36:43.222Z",
       "creator": "ONCE-v0.3.21.8",
       "description": "ONCE server Primary server instance",
       "tags": [
