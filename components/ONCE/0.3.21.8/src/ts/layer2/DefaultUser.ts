@@ -165,10 +165,11 @@ export class DefaultUser implements User {
     // Use infrastructure to calculate path components (DRY)
     const { domainPath, hostname } = this.infrastructure.getScenarioPathComponents(this.model.hostname);
     
-    // Same structure as ONCE: scenarios/{domain}/{hostname}/User/{version}
+    // Same structure as ONCE: scenarios/domain/{domain}/{hostname}/User/{version}
     const scenarioDir = path.join(
       projectRoot,
       'scenarios',
+      'domain',           // ✅ Added domain/ prefix for consistency
       ...domainPath,
       hostname,
       'User',

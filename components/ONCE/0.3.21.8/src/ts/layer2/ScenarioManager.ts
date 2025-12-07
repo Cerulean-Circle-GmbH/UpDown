@@ -117,10 +117,11 @@ export class ScenarioManager {
             hostname = fqdn;
         }
 
-        // Create organized path: scenarios/{domain-parts}/{hostname}/ONCE/version
+        // Create organized path: scenarios/domain/{domain-parts}/{hostname}/ONCE/version
         const scenarioDir = join(
             this.projectRoot,
             'scenarios',
+            'domain',           // ✅ Added domain/ prefix for consistency
             ...domainPath,
             hostname,
             component,
@@ -264,6 +265,7 @@ export class ScenarioManager {
         const scenarioPath = join(
             this.projectRoot,
             'scenarios',
+            'domain',           // ✅ Added domain/ prefix for consistency
             ...domainPath,
             hostname,
             component,

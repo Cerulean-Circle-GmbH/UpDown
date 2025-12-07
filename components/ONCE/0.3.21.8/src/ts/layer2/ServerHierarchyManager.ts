@@ -1265,32 +1265,35 @@ export class ServerHierarchyManager {
 
     /**
      * Load existing scenario or create new one with organized directory structure
+     * ✅ Fixed: Uses domain/ prefix for consistent storage paths
      */
     private async loadOrCreateScenario(): Promise<void> {
         const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
         if (!httpCapability) return;
 
         // Use detected domain/hostname for scenario path
-        // New structure: scenarios/{domain-parts}/{hostname}/ONCE/{version}
-        const domainPath = this.getDetectDomainPath(); // e.g., ['box', 'fritz']
+        // Structure: scenarios/domain/{domain-parts}/{hostname}/ONCE/{version}
+        const domainParts = this.getDetectDomainPath(); // e.g., ['box', 'fritz']
         const hostname = this.serverModel.hostname; // e.g., "McDonges-3"
         
-        // Main scenario file location
+        // Main scenario file location - NOW with domain/ prefix
         const mainScenarioDir = path.join(
             this.projectRoot, 
             'scenarios',
-            ...domainPath,      // Spread domain parts as separate directories
+            'domain',           // ✅ Added domain/ prefix
+            ...domainParts,     // Spread domain parts as separate directories
             hostname,
             'ONCE',
             this.versionFromComponent
         );
         const mainScenarioPath = path.join(mainScenarioDir, `${this.serverModel.uuid}.scenario.json`);
         
-        // Capability symlink location (for discovery by port)
+        // Capability symlink location (nested under domain path)
         const capabilityDir = path.join(
             this.projectRoot,
             'scenarios',
-            ...domainPath,
+            'domain',           // ✅ Added domain/ prefix
+            ...domainParts,
             hostname,
             'ONCE',
             this.versionFromComponent,
@@ -1611,12 +1614,13 @@ export class ServerHierarchyManager {
         console.log('🧹 Performing primary server housekeeping...');
         
         try {
-            const domainPath = this.getDetectDomainPath();
+            const domainParts = this.getDetectDomainPath();
             const hostname = this.serverModel.hostname;
             const onceBaseDir = path.join(
                 this.projectRoot,
                 'scenarios',
-                ...domainPath,
+                'domain',           // ✅ Added domain/ prefix
+                ...domainParts,
                 hostname,
                 'ONCE'
             );
@@ -1940,14 +1944,15 @@ export class ServerHierarchyManager {
             const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
             if (!httpCapability) return;
             
-            const domainPath = this.getDetectDomainPath();
+            const domainParts = this.getDetectDomainPath();
             const hostname = this.serverModel.hostname;
             
             // Update main scenario file (not the symlink)
             const mainScenarioPath = path.join(
                 this.projectRoot,
                 'scenarios',
-                ...domainPath,
+                'domain',           // ✅ Added domain/ prefix
+                ...domainParts,
                 hostname,
                 'ONCE',
                 this.versionFromComponent,
