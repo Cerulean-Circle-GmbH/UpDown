@@ -26,6 +26,9 @@ import { LifecycleEventType } from '../layer3/LifecycleEventType.enum.js';
 import { CSSLoader } from './CSSLoader.js';
 import { HTMLTemplateLoader } from './HTMLTemplateLoader.js';
 import { BrowserOnceOrchestrator } from '../layer4/BrowserOnceOrchestrator.js';
+import { BrowserScenarioStorage } from './BrowserScenarioStorage.js';
+import { PersistenceManager } from '../layer3/PersistenceManager.interface.js';
+import type { StorageScenario } from '../layer3/StorageScenario.interface.js';
 import type { LitElement } from 'lit';
 import type { Reference } from '../layer3/Reference.interface.js';
 
@@ -45,6 +48,13 @@ export class BrowserOnce extends DefaultOnceKernel {
      * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
      */
     private mainView: Reference<LitElement> = null;
+    
+    /**
+     * ✅ Web4 Principle 24: PersistenceManager for RelatedObjects lookup
+     * IndexedDB-based scenario storage for browser
+     * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
+     */
+    private scenarioStorage: Reference<BrowserScenarioStorage> = null;
     
     /**
      * Registered model change listeners
@@ -282,6 +292,9 @@ export class BrowserOnce extends DefaultOnceKernel {
             messages: []
         };
         
+        // 0. Initialize scenario storage (Web4 Principle 24)
+        await this.storageInitialize();
+        
         // 1. Initialize UI elements
         this.initializeUIElements();
         
@@ -304,6 +317,60 @@ export class BrowserOnce extends DefaultOnceKernel {
         this.transitionTo(LifecycleState.INITIALIZED, LifecycleEventType.AFTER_INIT);
         
         return this;
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
+    // 📦 STORAGE & PERSISTENCE - Web4 Principle 24: RelatedObjects
+    // @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
+    // ═══════════════════════════════════════════════════════════════
+    
+    /**
+     * Initialize BrowserScenarioStorage and register in RelatedObjects
+     * 
+     * ✅ Web4 Principle 24: PersistenceManager lookup via RelatedObjects
+     * ✅ Web4 Principle 6: Empty constructor + init()
+     */
+    private async storageInitialize(): Promise<void> {
+        // Generate unique ID for this browser storage instance
+        const storageUUID = this.generateUUID();
+        
+        // Create storage scenario
+        const storageScenario: StorageScenario = {
+            ior: {
+                uuid: storageUUID,
+                component: 'BrowserScenarioStorage',
+                version: this.model.version || '0.3.21.8'
+            },
+            owner: 'browser',
+            model: {
+                uuid: storageUUID,
+                projectRoot: window.location.origin,
+                indexBaseDir: 'indexeddb://once-scenarios',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            }
+        };
+        
+        // Initialize storage
+        this.scenarioStorage = new BrowserScenarioStorage().init(storageScenario);
+        
+        // ✅ Register in RelatedObjects for lookup
+        if (this.controller) {
+            this.controller.relatedObjectRegister(PersistenceManager, this.scenarioStorage);
+            console.log('[BrowserOnce] ✅ PersistenceManager registered in RelatedObjects');
+        }
+    }
+    
+    /**
+     * Get PersistenceManager from RelatedObjects
+     * 
+     * @returns BrowserScenarioStorage instance or null
+     */
+    persistenceManagerGet(): BrowserScenarioStorage | null {
+        if (this.controller) {
+            return this.controller.relatedObjectLookupFirst(PersistenceManager) as BrowserScenarioStorage | null;
+        }
+        return this.scenarioStorage;
     }
     
     async getHealth(): Promise<any> {
