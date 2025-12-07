@@ -522,9 +522,10 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       const env = await infrastructure.detectEnvironment();
       const username = 'system';  // ✅ Fallback - no process.env in production code
       
-      // ✅ Pass projectRoot to ensure User saves in correct location
+      // ✅ Pass projectRoot and PersistenceManager to ensure User saves correctly
       const projectRoot = this.serverHierarchyManager.getProjectRoot();
-      const user = await DefaultUser.create(username, infrastructure, projectRoot);
+      const persistenceManager = this.persistenceManagerGet();
+      const user = await DefaultUser.create(username, infrastructure, projectRoot, persistenceManager || undefined);
       
       // User is now saved at: scenarios/{domain}/{hostname}/User/0.3.21.1/{uuid}.scenario.json
       const userScenario = await user.toScenario();
@@ -2263,6 +2264,80 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
     }
     
     return this.serverHierarchyManager.getServerStatusHTML();
+  }
+  
+  /**
+   * Serve default view HTML (Lit-based OncePeerDefaultView + RouteOverView)
+   * @returns HTML page with Web4 Lit components
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/serveDefaultView
+   * @pdca 2025-11-19-UTC-1800.iteration-tracking.pdca.md
+   */
+  serveDefaultView(): string {
+    if (!this.serverHierarchyManager) {
+      throw new Error('Server not initialized. Call startServer() first.');
+    }
+    
+    const version = this.model.version || '0.3.21.8';
+    const uuid = this.serverHierarchyManager.getServerModel().uuid;
+    const hostname = this.serverHierarchyManager.getServerModel().hostname || 'localhost';
+    const domain = this.serverHierarchyManager.getServerModel().domain || 'local.once';
+    const isPrimary = this.serverHierarchyManager.isPrimaryServer();
+    const capabilities = this.serverHierarchyManager.getServerModel().capabilities || [];
+    const httpCap = capabilities.find((c: any) => c.capability === 'httpPort');
+    const peerHost = `${hostname}:${httpCap?.port || 42777}`;
+    const peerCount = this.serverHierarchyManager.getRegisteredServers()?.length || 0;
+    
+    // Build capabilities JSON
+    const capsJson = JSON.stringify(capabilities);
+    
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ONCE Server v${version}</title>
+  <script type="importmap">
+  {
+    "imports": {
+      "lit": "https://cdn.jsdelivr.net/gh/nickmessing/cdn@main/lit.js",
+      "lit/": "https://cdn.jsdelivr.net/npm/lit@3.2.0/",
+      "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3.2.0/lit-html.js",
+      "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3.2.0/",
+      "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2.0.4/reactive-element.js",
+      "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4.1.0/lit-element.js"
+    }
+  }
+  </script>
+  <style>
+    body { margin: 0; padding: 0; }
+  </style>
+</head>
+<body>
+  <once-peer-default-view id="defaultView"></once-peer-default-view>
+  
+  <script type="module">
+    // Import components via EAMD.ucp virtual root
+    await import('/EAMD.ucp/components/ONCE/${version}/dist/ts/layer5/views/UcpView.js');
+    await import('/EAMD.ucp/components/ONCE/${version}/dist/ts/layer5/views/OncePeerDefaultView.js');
+    await import('/EAMD.ucp/components/ONCE/${version}/dist/ts/layer5/views/RouteOverView.js');
+    
+    // Set model on the default view
+    const view = document.getElementById('defaultView');
+    view.model = {
+      uuid: '${uuid}',
+      name: 'ONCE Server',
+      version: '${version}',
+      hostname: '${hostname}',
+      domain: '${domain}',
+      lifecycleState: 'running',
+      isPrimaryServer: ${isPrimary},
+      capabilities: ${capsJson},
+      peerCount: ${peerCount},
+      peerHost: '${peerHost}'
+    };
+  </script>
+</body>
+</html>`;
   }
 
   /**

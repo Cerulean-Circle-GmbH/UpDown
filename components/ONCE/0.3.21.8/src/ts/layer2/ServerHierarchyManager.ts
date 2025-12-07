@@ -205,11 +205,12 @@ export class ServerHierarchyManager {
         iorRoute.model.priority = 10; // Highest priority
         this.httpRouter.registerRoute(iorRoute);
         
-        // ✅ Route 2: Home page ("/")
+        // ✅ Route 2: Home page ("/") - Lit-based OncePeerDefaultView
+        // @pdca 2025-11-19-UTC-1800.iteration-tracking.pdca.md
         const homeRoute = new HTMLRoute();
         homeRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         homeRoute.setPattern('/', HttpMethod.GET);
-        homeRoute.setProvider(() => this.component!.serveStatus());
+        homeRoute.setProvider(() => this.component!.serveDefaultView());
         homeRoute.model.priority = 50;
         this.httpRouter.registerRoute(homeRoute);
         

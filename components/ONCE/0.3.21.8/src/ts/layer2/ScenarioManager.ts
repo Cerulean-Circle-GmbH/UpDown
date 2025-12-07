@@ -250,8 +250,9 @@ export class ScenarioManager {
             const env = await infrastructure.detectEnvironment();
             const username = 'system';  // ✅ Fallback - no process.env in production code
             
-            // Pass projectRoot to ensure User saves in correct location
-            const user = await DefaultUser.create(username, infrastructure, this.projectRoot);
+            // Pass projectRoot and PersistenceManager to ensure User saves correctly
+            const persistenceManager = this.component?.persistenceManagerGet?.();
+            const user = await DefaultUser.create(username, infrastructure, this.projectRoot, persistenceManager || undefined);
             const userScenario = await user.toScenario();
             const ownerJson = JSON.stringify(userScenario);
             ownerData = Buffer.from(ownerJson).toString('base64');
