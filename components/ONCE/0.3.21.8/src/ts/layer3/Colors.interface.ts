@@ -1,7 +1,12 @@
 /**
- * Colors interface for terminal ANSI color codes
- * Web4 pattern: Single source of truth for all color definitions
+ * Colors - Terminal ANSI color codes interface
+ * 
+ * Web4 Principle 19: One File One Type
+ * Migrated from Web4TSComponent/0.3.20.6
+ * 
+ * @pdca 2025-12-08-UTC-1400.web4tscomponent-migration.pdca.md
  */
+
 export interface Colors {
   // Basic colors
   reset: string;
@@ -16,13 +21,12 @@ export interface Colors {
   white: string;
   orange: string;
   
-  // Semantic colors for CLI (context-specific usage)
-  toolName: string;      // Component/tool name display
-  version: string;       // Version numbers
-  commands: string;      // Command names
-  parameters: string;    // Parameter names
-  descriptions: string;  // Documentation and help text
-  examples: string;      // Example values
-  sections: string;      // Section headers
+  // Semantic colors for CLI
+  toolName: string;
+  version: string;
+  commands: string;
+  parameters: string;
+  descriptions: string;
+  examples: string;
+  sections: string;
 }
-

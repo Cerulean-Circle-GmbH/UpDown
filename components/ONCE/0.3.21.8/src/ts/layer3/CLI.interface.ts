@@ -1,29 +1,22 @@
 /**
- * CLI Interface - Base CLI component interface with static start pattern
- * Web4 principle: Single interface per file, radical OOP static methods
- * Purpose: Foundation interface for all CLI implementations with Scenario pattern
+ * CLI - Base CLI component interface
+ * 
+ * Web4 Principle 19: One File One Type
+ * Migrated from Web4TSComponent/0.3.20.6
+ * 
+ * @pdca 2025-12-08-UTC-1400.web4tscomponent-migration.pdca.md
  */
 
-import { Scenario } from './Scenario.interface.js';
-import { CLIModel } from './CLIModel.interface.js';
+import type { Scenario } from './Scenario.interface.js';
+import type { CLIModel } from './CLIModel.interface.js';
 
 export interface CLI {
-  // Note: Static methods cannot be in TypeScript interfaces
-  // Static start() method implemented directly in classes
-  
-  /**
-   * Initialize CLI with Scenario
-   * Web4 pattern: Components ALWAYS init with Scenario
-   */
+  /** Initialize CLI with Scenario */
   init(scenario: Scenario<CLIModel>): this;
   
-  /**
-   * Execute CLI commands
-   */
+  /** Execute CLI commands */
   execute(args: string[]): Promise<void>;
   
-  /**
-   * Show usage information
-   */
+  /** Show usage information */
   showUsage(): void;
 }
