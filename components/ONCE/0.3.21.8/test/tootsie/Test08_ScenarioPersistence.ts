@@ -181,8 +181,25 @@ export class Test08_ScenarioPersistence extends ONCETestCase {
       throw new Error(deleteReq.generateReport());
     }
     
+    // ═══════════════════════════════════════════════════════════════
+    // REQUIREMENT 5: Path Authority - No Scenarios in Component Dir
+    // ═══════════════════════════════════════════════════════════════
+    const pathReq = this.requirement('Path Authority', 'Scenarios must NOT be in component directory');
+    pathReq.addCriterion('PATH-01', 'No scenarios in component/ONCE/0.3.21.8/scenarios/');
+    
+    // PATH-01: Check no misplaced scenarios
+    const noMisplacedScenarios = this.checkNoScenariosInComponentDir();
+    pathReq.validateCriterion('PATH-01', noMisplacedScenarios, {
+      expected: 'No scenarios in component directory',
+      actual: noMisplacedScenarios ? 'Clean' : 'MISPLACED SCENARIOS FOUND - check logs'
+    });
+    
+    if (!pathReq.allCriteriaPassed()) {
+      throw new Error(pathReq.generateReport());
+    }
+    
     this.logEvidence('output', 'All scenario persistence tests passed', {
-      requirements: ['Storage Initialization', 'Save and Verify', 'Load and Query', 'Delete and Cleanup']
+      requirements: ['Storage Initialization', 'Save and Verify', 'Load and Query', 'Delete and Cleanup', 'Path Authority']
     });
   }
   
@@ -385,6 +402,57 @@ export class Test08_ScenarioPersistence extends ONCETestCase {
     );
     
     this.logEvidence('step', 'Scenario deleted');
+  }
+  
+  /**
+   * Check that no scenarios exist in the component directory
+   * Scenarios should ONLY be in the project-level scenarios/ directory
+   * @pdca 2025-12-07-UTC-2000.scenario-cleanup-and-test-isolation.pdca.md
+   */
+  private checkNoScenariosInComponentDir(): boolean {
+    const componentScenariosDir = path.join(this.componentRoot, 'scenarios');
+    
+    if (!fs.existsSync(componentScenariosDir)) {
+      return true; // Good - no scenarios directory in component
+    }
+    
+    // Check if it has any .json files (recursively)
+    const hasScenarioFiles = this.findJsonFilesRecursive(componentScenariosDir);
+    
+    if (hasScenarioFiles.length > 0) {
+      console.error(`❌ MISPLACED SCENARIOS FOUND in component directory:`);
+      hasScenarioFiles.forEach(f => console.error(`   - ${f}`));
+      console.error(`\nScenarios should be in: ${path.join(this.projectRoot, 'scenarios')}`);
+      console.error(`NOT in: ${componentScenariosDir}`);
+      return false;
+    }
+    
+    return true;
+  }
+  
+  /**
+   * Find all .json files recursively in a directory
+   */
+  private findJsonFilesRecursive(dir: string): string[] {
+    const results: string[] = [];
+    
+    try {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        
+        if (entry.isDirectory()) {
+          results.push(...this.findJsonFilesRecursive(fullPath));
+        } else if (entry.isFile() && entry.name.endsWith('.json')) {
+          results.push(fullPath);
+        }
+      }
+    } catch {
+      // Ignore read errors
+    }
+    
+    return results;
   }
   
   /**
