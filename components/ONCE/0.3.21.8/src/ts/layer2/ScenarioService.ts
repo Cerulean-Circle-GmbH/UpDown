@@ -21,8 +21,15 @@ import type { ScenarioUnit } from '../layer3/ScenarioUnit.interface.js';
 import type { UnitReference } from '../layer3/UnitReference.interface.js';
 import type { PersistenceManager } from '../layer3/PersistenceManager.interface.js';
 import type { Reference } from '../layer3/Reference.interface.js';
+import type { UcpComponent } from './UcpComponent.js';
 import { SyncStatus } from '../layer3/SyncStatus.enum.js';
 import { SCENARIO_SCHEMA_VERSION, SCENARIO_SCHEMA_VERSION_LEGACY } from '../layer3/ScenarioUnit.interface.js';
+
+/**
+ * Migration method signature for convention-based upgrades
+ * Method name: upgradeScenarioFromX_Y_Z where X_Y_Z is the source version
+ */
+export type ScenarioMigrationMethod<T extends Model = Model> = (scenario: Scenario<T>) => Scenario<T>;
 
 /**
  * ScenarioService - Centralized scenario management
@@ -32,11 +39,19 @@ import { SCENARIO_SCHEMA_VERSION, SCENARIO_SCHEMA_VERSION_LEGACY } from '../laye
  * - Scenario saving with reference tracking
  * - Scenario loading with auto-migration
  * - Reference synchronization
+ * 
+ * Migration Convention (Radical OOP):
+ * - NO central SchemaMigrator class
+ * - Each component version implements: upgradeScenarioFromX_Y_Z()
+ * - Chain: 0.3.21.5 → 0.3.21.6 → 0.3.21.7 → 0.3.21.8
  */
 export class ScenarioService {
   
   /** Persistence manager instance (set via init) */
   private persistenceManager: Reference<PersistenceManager> = null;
+  
+  /** Component instance for convention-based migrations */
+  private component: Reference<UcpComponent<Model>> = null;
   
   /** Component name for created scenarios */
   private componentName: string = 'ONCE';
@@ -50,14 +65,16 @@ export class ScenarioService {
   constructor() {}
   
   /**
-   * Initialize service with persistence manager
+   * Initialize service with persistence manager and component
    */
   init(config: {
     persistenceManager: PersistenceManager;
+    component?: UcpComponent<Model>;
     componentName?: string;
     componentVersion?: string;
   }): this {
     this.persistenceManager = config.persistenceManager;
+    this.component = config.component ?? null;
     if (config.componentName) this.componentName = config.componentName;
     if (config.componentVersion) this.componentVersion = config.componentVersion;
     return this;
@@ -177,34 +194,78 @@ export class ScenarioService {
   }
   
   // ═══════════════════════════════════════════════════════════════
-  // Schema Migration
+  // Schema Migration (Convention-Based)
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Migrate scenario to current schema version
+   * Migrate scenario to current version using convention-based methods
+   * 
+   * Convention: Component implements upgradeScenarioFromX_Y_Z()
+   * Example: upgradeScenarioFrom0_3_21_7() for migrating from 0.3.21.7
+   * 
    * Called automatically on load
    */
   scenarioMigrate<T extends Model>(scenario: Scenario<T>): Scenario<T> {
-    // Check if migration needed
-    if (scenario.unit?.schemaVersion === SCENARIO_SCHEMA_VERSION) {
+    // Get source version from scenario
+    const sourceVersion = scenario.ior.version;
+    
+    // Already at current version?
+    if (sourceVersion === this.componentVersion) {
+      // Still ensure unit metadata exists
+      if (!scenario.unit) {
+        return this.unitAdd(scenario);
+      }
       return scenario;
     }
     
-    // No unit = legacy schema
+    // No unit = legacy schema, add unit first
     if (!scenario.unit) {
-      return this.migrateFromLegacy(scenario);
+      scenario = this.unitAdd(scenario);
     }
     
-    // Future: Add version-specific migrations here
-    // if (scenario.unit.schemaVersion === '1.1.0') { ... }
+    // Try convention-based migration
+    const migrated = this.migrateViaConvention(scenario, sourceVersion);
     
+    // Update version in IOR
+    migrated.ior.version = this.componentVersion;
+    migrated.unit!.updatedAt = new Date().toISOString();
+    
+    return migrated;
+  }
+  
+  /**
+   * Try to migrate via convention-based method on component
+   * Looks for: upgradeScenarioFromX_Y_Z() where X_Y_Z is the source version
+   */
+  private migrateViaConvention<T extends Model>(
+    scenario: Scenario<T>,
+    sourceVersion: string
+  ): Scenario<T> {
+    if (!this.component) {
+      // No component provided, return as-is with unit metadata
+      return scenario;
+    }
+    
+    // Build method name: upgradeScenarioFrom0_3_21_7 for version 0.3.21.7
+    const methodName = `upgradeScenarioFrom${sourceVersion.replace(/\./g, '_')}`;
+    
+    // Check if component has this method
+    const migrationMethod = (this.component as unknown as Record<string, ScenarioMigrationMethod<T>>)[methodName];
+    
+    if (typeof migrationMethod === 'function') {
+      console.log(`ScenarioService: Migrating scenario via ${methodName}()`);
+      return migrationMethod.call(this.component, scenario);
+    }
+    
+    // No migration method found - log warning but continue
+    console.warn(`ScenarioService: No migration method ${methodName}() found on component`);
     return scenario;
   }
   
   /**
-   * Migrate from legacy (no unit) to current schema
+   * Add unit metadata to legacy scenario (no unit field)
    */
-  private migrateFromLegacy<T extends Model>(scenario: Scenario<T>): Scenario<T> {
+  private unitAdd<T extends Model>(scenario: Scenario<T>): Scenario<T> {
     const now = new Date().toISOString();
     
     return {
