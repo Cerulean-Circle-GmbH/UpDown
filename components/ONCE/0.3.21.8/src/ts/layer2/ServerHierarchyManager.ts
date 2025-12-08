@@ -1097,16 +1097,16 @@ export class ServerHierarchyManager {
     }
     
     /**
-     * Save scenario to PersistenceManager (UcpStorage)
+     * Save scenario to ScenarioService (single point of truth)
      * ✅ Web4 Principle 24: RelatedObjects Registry
-     * ✅ Uses PersistenceManager path builders for consistent paths
-     * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
+     * ✅ Uses ScenarioService for unit metadata and reference tracking
+     * @pdca 2025-12-08-UTC-1000.scenario-unit-unification.pdca.md
      */
     private async scenarioSaveToStorage(uuid: string, scenario: any, port?: number): Promise<void> {
         try {
-            const persistenceManager = this.component?.persistenceManagerGet?.();
-            if (!persistenceManager) {
-                console.log('[ServerHierarchyManager] No PersistenceManager available (skipping storage)');
+            const scenarioService = this.component?.scenarioServiceGet?.();
+            if (!scenarioService) {
+                console.log('[ServerHierarchyManager] No ScenarioService available (skipping storage)');
                 return;
             }
             
@@ -1115,46 +1115,46 @@ export class ServerHierarchyManager {
             const domainParts = this.getDetectDomainPath(); // ['box', 'fritz']
             const hostname = this.serverModel.hostname;      // 'McDonges'
             
-            // Build symlink paths using PersistenceManager's path builders
+            // Build symlink paths using ScenarioService's path builders
             const symlinkPaths: string[] = [
                 // Type index: type/ONCE/0.3.21.8
-                persistenceManager.typePathBuild(component, version),
+                scenarioService.typePathBuild(component, version),
                 
                 // Domain index: domain/box/fritz/McDonges/ONCE/0.3.21.8
-                persistenceManager.domainPathBuild(domainParts, hostname, component, version)
+                scenarioService.domainPathBuild(domainParts, hostname, component, version)
             ];
             
             // Capability index under domain: domain/box/fritz/McDonges/ONCE/0.3.21.8/capability/httpPort/42777
             if (port) {
                 symlinkPaths.push(
-                    persistenceManager.capabilityPathBuild(
+                    scenarioService.capabilityPathBuild(
                         domainParts, hostname, component, version,
                         'httpPort', String(port)
                     )
                 );
             }
             
-            await persistenceManager.scenarioSave(uuid, scenario, symlinkPaths);
-            console.log(`[ServerHierarchyManager] ✅ Scenario ${uuid} saved to storage`);
+            await scenarioService.scenarioSave(scenario, symlinkPaths);
+            console.log(`[ServerHierarchyManager] ✅ Scenario ${uuid} saved via ScenarioService`);
         } catch (error) {
             console.warn(`[ServerHierarchyManager] Failed to save scenario: ${error}`);
         }
     }
     
     /**
-     * Remove scenario from PersistenceManager
+     * Remove scenario from ScenarioService
      * ✅ Web4 Principle 24: RelatedObjects Registry
-     * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
+     * @pdca 2025-12-08-UTC-1000.scenario-unit-unification.pdca.md
      */
     private async scenarioRemoveFromStorage(uuid: string): Promise<void> {
         try {
-            const persistenceManager = this.component?.persistenceManagerGet?.();
-            if (!persistenceManager) {
+            const scenarioService = this.component?.scenarioServiceGet?.();
+            if (!scenarioService) {
                 return;
             }
             
-            await persistenceManager.scenarioDelete(uuid, true);
-            console.log(`[ServerHierarchyManager] ✅ Scenario ${uuid} removed from storage`);
+            await scenarioService.scenarioDelete(uuid, true);
+            console.log(`[ServerHierarchyManager] ✅ Scenario ${uuid} removed via ScenarioService`);
         } catch (error) {
             console.warn(`[ServerHierarchyManager] Failed to remove scenario: ${error}`);
         }
@@ -1265,9 +1265,10 @@ export class ServerHierarchyManager {
     }
 
     /**
-     * Load existing scenario or create new one using PersistenceManager
-     * ✅ Fixed: Uses PersistenceManager for consistent index-based storage
+     * Load existing scenario or create new one using ScenarioService
+     * ✅ Uses ScenarioService for unit metadata and migration
      * ✅ Primary file in scenarios/index/, symlinks in type/domain/capability
+     * @pdca 2025-12-08-UTC-1000.scenario-unit-unification.pdca.md
      */
     private async loadOrCreateScenario(): Promise<void> {
         const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
@@ -1275,13 +1276,13 @@ export class ServerHierarchyManager {
 
         const uuid = this.serverModel.uuid;
         
-        // Try to load existing scenario from PersistenceManager
-        const persistenceManager = this.component?.persistenceManagerGet?.();
-        if (persistenceManager) {
+        // Try to load existing scenario from ScenarioService
+        const scenarioService = this.component?.scenarioServiceGet?.();
+        if (scenarioService) {
             try {
-                const exists = await persistenceManager.scenarioExists(uuid);
+                const exists = await scenarioService.scenarioExists(uuid);
                 if (exists) {
-                    const scenario = await persistenceManager.scenarioLoad(uuid);
+                    const scenario = await scenarioService.scenarioLoad(uuid);
                     console.log(`📂 Loaded existing scenario from index: ${uuid}`);
                     return;
                 }
@@ -1290,19 +1291,21 @@ export class ServerHierarchyManager {
             }
         }
 
-        // Create new scenario using PersistenceManager
-        await this.saveScenarioViaPersistenceManager();
+        // Create new scenario using ScenarioService
+        await this.saveScenarioViaScenarioService();
     }
 
     /**
-     * Save server scenario using PersistenceManager
+     * Save server scenario using ScenarioService (single point of truth)
      * ✅ Primary file → scenarios/index/{uuid-folders}/
      * ✅ Symlinks → type/, domain/, capability/
+     * ✅ Unit metadata added automatically
+     * @pdca 2025-12-08-UTC-1000.scenario-unit-unification.pdca.md
      */
-    private async saveScenarioViaPersistenceManager(): Promise<void> {
-        const persistenceManager = this.component?.persistenceManagerGet?.();
-        if (!persistenceManager) {
-            console.log('[ServerHierarchyManager] No PersistenceManager available - using legacy save');
+    private async saveScenarioViaScenarioService(): Promise<void> {
+        const scenarioService = this.component?.scenarioServiceGet?.();
+        if (!scenarioService) {
+            console.log('[ServerHierarchyManager] No ScenarioService available - using legacy save');
             await this.saveScenarioLegacy();
             return;
         }
@@ -1331,25 +1334,25 @@ export class ServerHierarchyManager {
                 }
             };
 
-            // Build symlink paths using PersistenceManager's path builders
+            // Build symlink paths using ScenarioService's path builders
             const symlinkPaths: string[] = [
-                persistenceManager.typePathBuild(component, version),
-                persistenceManager.domainPathBuild(domainParts, hostname, component, version)
+                scenarioService.typePathBuild(component, version),
+                scenarioService.domainPathBuild(domainParts, hostname, component, version)
             ];
             
             if (port) {
                 symlinkPaths.push(
-                    persistenceManager.capabilityPathBuild(
+                    scenarioService.capabilityPathBuild(
                         domainParts, hostname, component, version,
                         'httpPort', String(port)
                     )
                 );
             }
 
-            await persistenceManager.scenarioSave(uuid, scenario, symlinkPaths);
-            console.log(`📝 [PERSISTENCE] ServerHierarchyManager saved scenario ${uuid} via PersistenceManager`);
+            await scenarioService.scenarioSave(scenario, symlinkPaths);
+            console.log(`📝 [PERSISTENCE] ServerHierarchyManager saved scenario ${uuid} via ScenarioService`);
         } catch (error) {
-            console.error(`❌ Failed to save scenario via PersistenceManager: ${error instanceof Error ? error.message : String(error)}`);
+            console.error(`❌ Failed to save scenario via ScenarioService: ${error instanceof Error ? error.message : String(error)}`);
             // Fallback to legacy
             await this.saveScenarioLegacy();
         }

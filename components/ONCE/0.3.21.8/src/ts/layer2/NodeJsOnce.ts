@@ -33,6 +33,7 @@ import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
 import { IDProvider } from '../layer3/IDProvider.interface.js';
 import { UUIDProvider } from './UUIDProvider.js';
 import { UcpStorage } from './UcpStorage.js';
+import { ScenarioService } from './ScenarioService.js';
 import { PersistenceManager } from '../layer3/PersistenceManager.interface.js';
 import type { StorageScenario } from '../layer3/StorageScenario.interface.js';
 import * as path from 'path';  // For version extraction from directory path
@@ -59,6 +60,9 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
   
   // ✅ Web4 Principle 24: PersistenceManager for RelatedObjects lookup
   private scenarioStorage: UcpStorage | null = null;
+  
+  // ✅ ScenarioService: Single point of truth for scenario operations
+  private scenarioServiceInstance: ScenarioService | null = null;
   
   // Enhanced managers for v0.2.0.0+ domain logic
   private serverHierarchyManager: ServerHierarchyManager;
@@ -522,10 +526,11 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       const env = await infrastructure.detectEnvironment();
       const username = 'system';  // ✅ Fallback - no process.env in production code
       
-      // ✅ Pass projectRoot and PersistenceManager to ensure User saves correctly
+      // ✅ Pass projectRoot and ScenarioService to ensure User saves correctly
+      // @pdca 2025-12-08-UTC-1000.scenario-unit-unification.pdca.md
       const projectRoot = this.serverHierarchyManager.getProjectRoot();
-      const persistenceManager = this.persistenceManagerGet();
-      const user = await DefaultUser.create(username, infrastructure, projectRoot, persistenceManager || undefined);
+      const scenarioService = this.scenarioServiceGet();
+      const user = await DefaultUser.create(username, infrastructure, projectRoot, scenarioService || undefined);
       
       // User is now saved at: scenarios/{domain}/{hostname}/User/0.3.21.1/{uuid}.scenario.json
       const userScenario = await user.toScenario();
@@ -612,6 +617,15 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       this.controller.relatedObjectRegister(PersistenceManager, this.scenarioStorage);
       console.log('[NodeJsOnce] ✅ PersistenceManager registered in RelatedObjects');
     }
+    
+    // ✅ Initialize ScenarioService (single point of truth)
+    this.scenarioServiceInstance = new ScenarioService().init({
+      persistenceManager: this.scenarioStorage,
+      component: this as any,
+      componentName: 'ONCE',
+      componentVersion: this.model.version || '0.3.21.8',
+    });
+    console.log('[NodeJsOnce] ✅ ScenarioService initialized');
   }
 
   /**
@@ -624,6 +638,15 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       return this.controller.relatedObjectLookupFirst(PersistenceManager) as UcpStorage | null;
     }
     return this.scenarioStorage;
+  }
+  
+  /**
+   * Get ScenarioService (single point of truth for scenario operations)
+   * 
+   * @returns ScenarioService instance or null
+   */
+  scenarioServiceGet(): ScenarioService | null {
+    return this.scenarioServiceInstance;
   }
 
   // ═══════════════════════════════════════════════════════════════════════════

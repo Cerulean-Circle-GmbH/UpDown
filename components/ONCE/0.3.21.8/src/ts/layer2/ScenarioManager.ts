@@ -72,9 +72,9 @@ export class ScenarioManager {
 
     /**
      * Save scenario to organized directory structure
-     * ✅ Uses PersistenceManager for index-based storage (symlinks)
-     * ✅ Falls back to legacy direct write if PersistenceManager unavailable
-     * @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
+     * ✅ Uses ScenarioService (single point of truth) for storage
+     * ✅ Falls back to legacy direct write if ScenarioService unavailable
+     * @pdca 2025-12-08-UTC-1000.scenario-unit-unification.pdca.md
      */
     async saveScenario(scenario: LegacyONCEScenario | Scenario<LegacyONCEScenario>): Promise<string> {
         // Use type guard to extract legacy data
@@ -103,9 +103,9 @@ export class ScenarioManager {
         const httpCapability = legacyData.state.capabilities?.find((c: any) => c.capability === 'httpPort');
         const port = httpCapability?.port || legacyData.state.httpPort || 'unknown';
 
-        // ✅ Try to use PersistenceManager (index-based storage with symlinks)
-        const persistenceManager = this.component?.persistenceManagerGet?.();
-        if (persistenceManager) {
+        // ✅ Try to use ScenarioService (single point of truth)
+        const scenarioService = this.component?.scenarioServiceGet?.();
+        if (scenarioService) {
             try {
                 // Update modified timestamp
                 legacyData.metadata.modified = new Date().toISOString();
@@ -119,28 +119,28 @@ export class ScenarioManager {
                         model: legacyData
                     };
                 
-                // Build symlink paths using PersistenceManager's path builders
+                // Build symlink paths using ScenarioService's path builders
                 const symlinkPaths: string[] = [
-                    persistenceManager.typePathBuild(componentType, version),
-                    persistenceManager.domainPathBuild(domainPath, hostname, componentType, version)
+                    scenarioService.typePathBuild(componentType, version),
+                    scenarioService.domainPathBuild(domainPath, hostname, componentType, version)
                 ];
                 
                 if (port && port !== 'unknown') {
                     symlinkPaths.push(
-                        persistenceManager.capabilityPathBuild(
+                        scenarioService.capabilityPathBuild(
                             domainPath, hostname, componentType, version,
                             'httpPort', String(port)
                         )
                     );
                 }
                 
-                await persistenceManager.scenarioSave(uuid, web4Scenario, symlinkPaths);
+                await scenarioService.scenarioSave(web4Scenario, symlinkPaths);
                 const indexPath = join(this.projectRoot, 'scenarios', 'index');
-                console.log(`📝 [PERSISTENCE] ScenarioManager saved ${uuid} via PersistenceManager`);
+                console.log(`📝 [PERSISTENCE] ScenarioManager saved ${uuid} via ScenarioService`);
                 logAction('💾', uuid, 'Scenario saved (index)', `${serverIdentity(hostname, Number(port) || 0)}`);
                 return indexPath; // Return index location
             } catch (error) {
-                console.warn(`⚠️ PersistenceManager failed, falling back to legacy: ${error}`);
+                console.warn(`⚠️ ScenarioService failed, falling back to legacy: ${error}`);
             }
         }
         

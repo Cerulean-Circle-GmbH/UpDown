@@ -13,11 +13,13 @@ import { Scenario } from '../layer3/Scenario.interface.js';
 import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
 import { EnvironmentModel } from '../layer3/EnvironmentModel.interface.js';
 import type { PersistenceManager } from '../layer3/PersistenceManager.interface.js';
+import type { ScenarioService } from './ScenarioService.js';
 
 export class DefaultUser implements User {
   private model: UserModel;
   private infrastructure: NodeOSInfrastructure;
   private persistenceManagerRef: PersistenceManager | null = null;
+  private scenarioServiceRef: ScenarioService | null = null;
 
   /**
    * Create User instance - JavaBean pattern: empty constructor
@@ -87,9 +89,18 @@ export class DefaultUser implements User {
   
   /**
    * Set PersistenceManager for index-based storage
+   * @deprecated Use setScenarioService() instead
    */
   public setPersistenceManager(pm: PersistenceManager): void {
     this.persistenceManagerRef = pm;
+  }
+  
+  /**
+   * Set ScenarioService (single point of truth for scenarios)
+   * @pdca 2025-12-08-UTC-1000.scenario-unit-unification.pdca.md
+   */
+  public setScenarioService(ss: ScenarioService): void {
+    this.scenarioServiceRef = ss;
   }
 
   /**
@@ -139,20 +150,21 @@ export class DefaultUser implements User {
   
   /**
    * Static factory method to create and initialize User
-   * @param persistenceManager Optional PersistenceManager for index-based storage
+   * @param scenarioService Optional ScenarioService for index-based storage
+   * @pdca 2025-12-08-UTC-1000.scenario-unit-unification.pdca.md
    */
   public static async create(
     username?: string,
     infrastructure?: NodeOSInfrastructure,
     projectRoot?: string,
-    persistenceManager?: PersistenceManager
+    scenarioService?: ScenarioService
   ): Promise<DefaultUser> {
     const user = new DefaultUser();
     if (infrastructure) {
       user.setInfrastructure(infrastructure);
     }
-    if (persistenceManager) {
-      user.setPersistenceManager(persistenceManager);
+    if (scenarioService) {
+      user.setScenarioService(scenarioService);
     }
     user.init(); // Initialize with auto-detected values
     user.model.username = username || process.env.USER || 'unknown';
@@ -160,7 +172,7 @@ export class DefaultUser implements User {
     await user.detectEnvironment();
     
     // ✅ Auto-save if projectRoot provided
-    // @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
+    // @pdca 2025-12-08-UTC-1000.scenario-unit-unification.pdca.md
     if (projectRoot) {
       await user.saveScenario(projectRoot);
     }
@@ -195,9 +207,9 @@ export class DefaultUser implements User {
   
   /**
    * Save User scenario
-   * ✅ Uses PersistenceManager for index-based storage when available
+   * ✅ Uses ScenarioService (single point of truth) when available
    * ✅ Falls back to legacy direct write
-   * @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
+   * @pdca 2025-12-08-UTC-1000.scenario-unit-unification.pdca.md
    */
   public async saveScenario(projectRoot: string): Promise<string> {
     const path = await import('path');
@@ -209,21 +221,21 @@ export class DefaultUser implements User {
     // Get path components for symlinks
     const { domainPath, hostname } = this.infrastructure.getScenarioPathComponents(this.model.hostname);
     
-    // ✅ Try PersistenceManager first (index-based storage with symlinks)
-    if (this.persistenceManagerRef) {
+    // ✅ Try ScenarioService first (single point of truth)
+    if (this.scenarioServiceRef) {
       try {
         // Build symlink paths
         const symlinkPaths: string[] = [
-          this.persistenceManagerRef.typePathBuild('User', '0.3.21.1'),
-          this.persistenceManagerRef.domainPathBuild(domainPath, hostname, 'User', '0.3.21.1')
+          this.scenarioServiceRef.typePathBuild('User', '0.3.21.1'),
+          this.scenarioServiceRef.domainPathBuild(domainPath, hostname, 'User', '0.3.21.1')
         ];
         
-        await this.persistenceManagerRef.scenarioSave(uuid, scenario, symlinkPaths);
-        console.log(`📝 [PERSISTENCE] DefaultUser saved ${uuid} via PersistenceManager`);
+        await this.scenarioServiceRef.scenarioSave(scenario, symlinkPaths);
+        console.log(`📝 [PERSISTENCE] DefaultUser saved ${uuid} via ScenarioService`);
         console.log(`💾 User scenario saved (index): ${uuid}`);
         return path.join(projectRoot, 'scenarios', 'index');
       } catch (error) {
-        console.warn(`⚠️ PersistenceManager failed for User, falling back to legacy: ${error}`);
+        console.warn(`⚠️ ScenarioService failed for User, falling back to legacy: ${error}`);
       }
     }
     

@@ -124,6 +124,49 @@ export class ScenarioService {
   }
   
   // ═══════════════════════════════════════════════════════════════
+  // Path Builders (delegate to PersistenceManager)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Build type symlink path
+   */
+  typePathBuild(component: string, version: string): string {
+    if (!this.persistenceManager) {
+      throw new Error('ScenarioService: persistenceManager not initialized');
+    }
+    return this.persistenceManager.typePathBuild(component, version);
+  }
+  
+  /**
+   * Build domain symlink path
+   */
+  domainPathBuild(domainParts: string[], hostname: string, component: string, version: string): string {
+    if (!this.persistenceManager) {
+      throw new Error('ScenarioService: persistenceManager not initialized');
+    }
+    return this.persistenceManager.domainPathBuild(domainParts, hostname, component, version);
+  }
+  
+  /**
+   * Build capability symlink path
+   */
+  capabilityPathBuild(
+    domainParts: string[],
+    hostname: string,
+    component: string,
+    version: string,
+    capabilityType: string,
+    capabilityValue: string
+  ): string {
+    if (!this.persistenceManager) {
+      throw new Error('ScenarioService: persistenceManager not initialized');
+    }
+    return this.persistenceManager.capabilityPathBuild(
+      domainParts, hostname, component, version, capabilityType, capabilityValue
+    );
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
   // Scenario Persistence
   // ═══════════════════════════════════════════════════════════════
   
