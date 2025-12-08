@@ -186,7 +186,7 @@ export class Test08_ScenarioPersistence extends ONCETestCase {
     // ═══════════════════════════════════════════════════════════════
     const pathReq = this.requirement('Path Authority', 'Scenarios must follow correct structure');
     pathReq.addCriterion('PATH-01', 'No scenarios in component/ONCE/0.3.21.8/scenarios/');
-    pathReq.addCriterion('PATH-02', 'Production scenarios/ only has index/type/domain/capability');
+    pathReq.addCriterion('PATH-02', 'Production scenarios/ only has index/type/domain');
     
     // PATH-01: Check no misplaced scenarios in component
     const noMisplacedScenarios = this.checkNoScenariosInComponentDir();
@@ -198,7 +198,7 @@ export class Test08_ScenarioPersistence extends ONCETestCase {
     // PATH-02: Check production scenarios structure
     const validProdStructure = this.checkProductionScenariosStructure();
     pathReq.validateCriterion('PATH-02', validProdStructure, {
-      expected: 'Only index/, type/, domain/, capability/ at scenarios root',
+      expected: 'Only index/, type/, domain/ at scenarios root',
       actual: validProdStructure ? 'Valid structure' : 'INVALID STRUCTURE - check logs'
     });
     
@@ -452,7 +452,9 @@ export class Test08_ScenarioPersistence extends ONCETestCase {
       return true; // No production scenarios yet
     }
     
-    const allowedDirs = ['index', 'type', 'domain', 'capability'];
+    // Only index, type, domain are allowed at root
+    // capability/ should be NESTED within domain/, not at root!
+    const allowedDirs = ['index', 'type', 'domain'];
     const entries = fs.readdirSync(prodScenariosDir, { withFileTypes: true });
     const violations: string[] = [];
     
@@ -471,7 +473,7 @@ export class Test08_ScenarioPersistence extends ONCETestCase {
     
     if (violations.length > 0) {
       console.error(`❌ INVALID PRODUCTION SCENARIOS STRUCTURE:`);
-      console.error(`   Only index/, type/, domain/, capability/ should exist at:`);
+      console.error(`   Only index/, type/, domain/ should exist at root:`);
       console.error(`   ${prodScenariosDir}`);
       console.error(`\n   Violations found:`);
       violations.forEach(v => console.error(`   - ${v}`));
