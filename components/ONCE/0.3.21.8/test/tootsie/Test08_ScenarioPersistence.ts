@@ -182,16 +182,24 @@ export class Test08_ScenarioPersistence extends ONCETestCase {
     }
     
     // ═══════════════════════════════════════════════════════════════
-    // REQUIREMENT 5: Path Authority - No Scenarios in Component Dir
+    // REQUIREMENT 5: Path Authority - Correct Scenarios Structure
     // ═══════════════════════════════════════════════════════════════
-    const pathReq = this.requirement('Path Authority', 'Scenarios must NOT be in component directory');
+    const pathReq = this.requirement('Path Authority', 'Scenarios must follow correct structure');
     pathReq.addCriterion('PATH-01', 'No scenarios in component/ONCE/0.3.21.8/scenarios/');
+    pathReq.addCriterion('PATH-02', 'Production scenarios/ only has index/type/domain/capability');
     
-    // PATH-01: Check no misplaced scenarios
+    // PATH-01: Check no misplaced scenarios in component
     const noMisplacedScenarios = this.checkNoScenariosInComponentDir();
     pathReq.validateCriterion('PATH-01', noMisplacedScenarios, {
       expected: 'No scenarios in component directory',
       actual: noMisplacedScenarios ? 'Clean' : 'MISPLACED SCENARIOS FOUND - check logs'
+    });
+    
+    // PATH-02: Check production scenarios structure
+    const validProdStructure = this.checkProductionScenariosStructure();
+    pathReq.validateCriterion('PATH-02', validProdStructure, {
+      expected: 'Only index/, type/, domain/, capability/ at scenarios root',
+      actual: validProdStructure ? 'Valid structure' : 'INVALID STRUCTURE - check logs'
     });
     
     if (!pathReq.allCriteriaPassed()) {
@@ -424,6 +432,49 @@ export class Test08_ScenarioPersistence extends ONCETestCase {
       hasScenarioFiles.forEach(f => console.error(`   - ${f}`));
       console.error(`\nScenarios should be in: ${path.join(this.projectRoot, 'scenarios')}`);
       console.error(`NOT in: ${componentScenariosDir}`);
+      return false;
+    }
+    
+    return true;
+  }
+  
+  /**
+   * Check production scenarios directory structure
+   * Only index/, type/, domain/, capability/ should exist at root level
+   * @pdca 2025-12-07-UTC-2000.scenario-cleanup-and-test-isolation.pdca.md
+   */
+  private checkProductionScenariosStructure(): boolean {
+    // Use the REAL project root, not test isolation
+    const realProjectRoot = path.resolve(this.componentRoot, '..', '..', '..');
+    const prodScenariosDir = path.join(realProjectRoot, 'scenarios');
+    
+    if (!fs.existsSync(prodScenariosDir)) {
+      return true; // No production scenarios yet
+    }
+    
+    const allowedDirs = ['index', 'type', 'domain', 'capability'];
+    const entries = fs.readdirSync(prodScenariosDir, { withFileTypes: true });
+    const violations: string[] = [];
+    
+    for (const entry of entries) {
+      if (entry.isDirectory() && !allowedDirs.includes(entry.name)) {
+        // Check if this directory has any .json files
+        const dirPath = path.join(prodScenariosDir, entry.name);
+        const files = this.findJsonFilesRecursive(dirPath);
+        if (files.length > 0) {
+          violations.push(`${entry.name}/ (${files.length} scenarios)`);
+        }
+      } else if (entry.isFile() && entry.name.endsWith('.json')) {
+        violations.push(entry.name);
+      }
+    }
+    
+    if (violations.length > 0) {
+      console.error(`❌ INVALID PRODUCTION SCENARIOS STRUCTURE:`);
+      console.error(`   Only index/, type/, domain/, capability/ should exist at:`);
+      console.error(`   ${prodScenariosDir}`);
+      console.error(`\n   Violations found:`);
+      violations.forEach(v => console.error(`   - ${v}`));
       return false;
     }
     
