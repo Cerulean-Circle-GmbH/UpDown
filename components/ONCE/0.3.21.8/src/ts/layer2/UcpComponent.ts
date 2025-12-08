@@ -17,6 +17,7 @@
  */
 
 import { UcpController } from './UcpController.js';
+import { TypeDescriptor } from '../layer3/TypeDescriptor.js';
 import { View } from '../layer3/View.interface.js';
 import { Reference } from '../layer3/Reference.interface.js';
 import type { Model } from '../layer3/Model.interface.js';
@@ -38,6 +39,30 @@ import type { Storage } from '../layer3/Storage.interface.js';
  * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
  */
 export abstract class UcpComponent<TModel extends Model> {
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Static Type Descriptor - MDA MOF Runtime Metadata
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Static type descriptor - runtime metadata about this class
+   * Set by TypeRegistry or static start() when class is loaded
+   */
+  static type: TypeDescriptor;
+  
+  /**
+   * Static start method - called when class is loaded
+   * Initializes type descriptor and registers with TypeRegistry
+   */
+  static start(): void {
+    if (!this.type) {
+      this.type = new TypeDescriptor().init({ name: this.name });
+    }
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Instance Properties
+  // ═══════════════════════════════════════════════════════════════
   
   /** Component model state - protected for subclass access */
   protected model: Reference<TModel> = null;
