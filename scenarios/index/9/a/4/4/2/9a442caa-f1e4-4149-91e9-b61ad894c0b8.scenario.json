@@ -1,0 +1,36 @@
+{
+  "ior": {
+    "uuid": "9a442caa-f1e4-4149-91e9-b61ad894c0b8",
+    "component": "Unit",
+    "version": "0.3.21.8"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "9a442caa-f1e4-4149-91e9-b61ad894c0b8",
+    "name": "RouteOverView.css",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/src/ts/layer5/views/css/RouteOverView.css",
+    "definition": "CSS stylesheet for RouteOverView",
+    "filePath": "src/ts/layer5/views/css/RouteOverView.css",
+    "mimetype": "text/css",
+    "createdAt": "2025-12-08T15:40:33.220Z",
+    "updatedAt": "2025-12-08T15:40:33.221Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/9/a/4/4/2/9a442caa-f1e4-4149-91e9-b61ad894c0b8.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.21.8",
+      "components/ONCE/0.3.21.8/src/ts/layer5/views/css/RouteOverView.css.unit"
+    ]
+  },
+  "unit": {
+    "indexPath": "9/a/4/4/2/9a442caa-f1e4-4149-91e9-b61ad894c0b8.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.21.8",
+      "components/ONCE/0.3.21.8/src/ts/layer5/views/css/RouteOverView.css.unit"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.21.8",
+    "createdAt": "2025-12-08T15:40:33.220Z",
+    "updatedAt": "2025-12-08T15:40:33.220Z"
+  }
+}

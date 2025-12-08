@@ -1,47 +1,24 @@
 /**
- * Test14_CSSUnitCreation - Create CSS Unit scenarios through ScenarioService
+ * Test14_CSSUnitCreation - Create CSS Unit scenarios through UnitDiscoveryService
  * 
  * ✅ Web4 Principle 25: Tootsie Tests Only
- * ✅ Creates units properly via ScenarioService (not manually)
- * ✅ Stores scenarios in index/ with symlinks
+ * ✅ Creates units properly via UnitDiscoveryService (not manually)
+ * ✅ Stores scenarios in scenarios/index/ with symlinks
  * ✅ Fails if creation fails, succeeds if files already exist
  * 
- * @pdca 2025-12-08-UTC-1000.scenario-unit-unification.pdca.md
+ * @pdca 2025-12-08-UTC-1200.unit-manifest-generation.pdca.md
  */
 
 import { ONCETestCase } from './ONCETestCase.js';
+import { UnitDiscoveryService } from '../../src/ts/layer2/UnitDiscoveryService.js';
 import { ScenarioService } from '../../src/ts/layer2/ScenarioService.js';
 import { UcpStorage } from '../../src/ts/layer2/UcpStorage.js';
-import type { Scenario } from '../../src/ts/layer3/Scenario.interface.js';
+import type { UnitFilePattern } from '../../src/ts/layer3/UnitDefinition.interface.js';
 import type { StorageScenario } from '../../src/ts/layer3/StorageScenario.interface.js';
 import { TypeM3 } from '../../src/ts/layer3/TypeM3.enum.js';
 import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
-
-/**
- * CSS Unit Model - extends base Model with CSS-specific fields
- */
-interface CSSUnitModel {
-  uuid: string;
-  name: string;
-  typeM3: TypeM3;
-  origin: string;
-  definition: string;
-  cssPath: string;
-  mimetype: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-/**
- * CSS file definition for unit creation
- */
-interface CSSFileDefinition {
-  filename: string;
-  relativePath: string;
-  description: string;
-}
 
 /**
  * Test model
@@ -51,14 +28,13 @@ interface Test14Model {
   projectRoot: string;
   scenariosDir: string;
   cssDir: string;
-  cssFiles: CSSFileDefinition[];
   createdUnits: Map<string, string>; // filename -> uuid
 }
 
 /**
  * Test14_CSSUnitCreation
  * 
- * Creates CSS unit scenarios through ScenarioService.
+ * Creates CSS unit scenarios through UnitDiscoveryService.
  * - If unit doesn't exist: creates it (test passes)
  * - If unit already exists: verifies it (test passes)
  * - If creation fails: test fails
@@ -70,53 +46,21 @@ export class Test14_CSSUnitCreation extends ONCETestCase {
     projectRoot: '',
     scenariosDir: '',
     cssDir: '',
-    cssFiles: [],
     createdUnits: new Map(),
   };
   
+  discoveryService: UnitDiscoveryService | null = null;
   scenarioService: ScenarioService | null = null;
   storage: UcpStorage | null = null;
   
-  /**
-   * CSS files to create units for
-   */
-  private readonly CSS_FILES: CSSFileDefinition[] = [
-    {
-      filename: 'OnceOverView.css',
-      relativePath: 'src/ts/layer5/views/css/OnceOverView.css',
-      description: 'CSS stylesheet for OnceOverView Lit component - main dashboard grid layout'
-    },
-    {
-      filename: 'OncePeerItemView.css',
-      relativePath: 'src/ts/layer5/views/css/OncePeerItemView.css',
-      description: 'CSS stylesheet for OncePeerItemView Lit component - peer card styling'
-    },
-    {
-      filename: 'DefaultItemView.css',
-      relativePath: 'src/ts/layer5/views/css/DefaultItemView.css',
-      description: 'CSS stylesheet for DefaultItemView Lit component - base item card styling'
-    },
-    {
-      filename: 'ItemView.css',
-      relativePath: 'src/ts/layer5/views/css/ItemView.css',
-      description: 'CSS stylesheet for ItemView interface - shared item styling'
-    },
-    {
-      filename: 'themeBase.css',
-      relativePath: 'src/ts/layer5/views/css/themeBase.css',
-      description: 'CSS stylesheet for base theme variables and shared styles'
-    },
-    {
-      filename: 'OncePeerDefaultView.css',
-      relativePath: 'src/ts/layer5/views/css/OncePeerDefaultView.css',
-      description: 'CSS stylesheet for OncePeerDefaultView Lit component - full page peer view'
-    },
-    {
-      filename: 'RouteOverView.css',
-      relativePath: 'src/ts/layer5/views/css/RouteOverView.css',
-      description: 'CSS stylesheet for RouteOverView Lit component - route listing view'
-    }
-  ];
+  /** CSS file pattern */
+  private readonly CSS_PATTERN: UnitFilePattern = {
+    glob: '**/*.css',
+    typeM3: TypeM3.ATTRIBUTE,
+    mimetype: 'text/css',
+    recursive: true,
+    excludeDirs: ['node_modules', 'dist', '.git', 'coverage']
+  };
   
   /**
    * Test execution
@@ -127,28 +71,30 @@ export class Test14_CSSUnitCreation extends ONCETestCase {
     this.testModel.projectRoot = path.dirname(path.dirname(path.dirname(this.componentRoot))); // UpDown root
     this.testModel.scenariosDir = path.join(this.testModel.projectRoot, 'scenarios');
     this.testModel.cssDir = path.join(this.componentRoot, 'src', 'ts', 'layer5', 'views', 'css');
-    this.testModel.cssFiles = this.CSS_FILES;
     
-    // Initialize storage and service
+    // Initialize services
     await this.initializeServices();
     
+    // Discover CSS files
+    const cssDefinitions = await this.discoverCSSUnits();
+    
     // Create or verify each CSS unit
-    for (const cssFile of this.testModel.cssFiles) {
-      await this.createOrVerifyCSSUnit(cssFile);
+    for (const definition of cssDefinitions) {
+      await this.createOrVerifyCSSUnit(definition);
     }
     
-    // Verify all units were created/verified
-    await this.verifyAllUnitsExist();
+    // Update manifest
+    await this.updateManifest();
     
-    // Update ONCE.component.json with actual UUIDs
-    await this.updateComponentJson();
+    // Final verification
+    this.verifyResults();
   }
   
   /**
-   * Initialize storage and ScenarioService
+   * Initialize services
    */
   private async initializeServices(): Promise<void> {
-    this.logEvidence('step', 'INIT-01: Initializing ScenarioService');
+    this.logEvidence('step', 'INIT-01: Initializing services');
     
     const indexBaseDir = path.join(this.testModel.scenariosDir, 'index');
     
@@ -180,155 +126,89 @@ export class Test14_CSSUnitCreation extends ONCETestCase {
       componentVersion: this.onceVersion,
     });
     
-    this.logEvidence('INIT-01', 'ScenarioService initialized');
+    this.discoveryService = new UnitDiscoveryService().init({
+      scenarioService: this.scenarioService,
+      componentRoot: this.testModel.componentRoot,
+      componentName: 'ONCE',
+      componentVersion: this.onceVersion,
+      projectRoot: this.testModel.projectRoot,
+    });
+    
+    this.logEvidence('INIT-01', 'Services initialized');
   }
   
   /**
-   * Create or verify a CSS unit scenario
+   * Discover CSS files
    */
-  private async createOrVerifyCSSUnit(cssFile: CSSFileDefinition): Promise<void> {
-    const unitLinkPath = path.join(this.testModel.cssDir, `${cssFile.filename}.unit`);
+  private async discoverCSSUnits(): Promise<any[]> {
+    this.logEvidence('step', 'DISCOVER: Finding CSS files');
     
-    this.logEvidence('step', `UNIT-CREATE: ${cssFile.filename}`);
+    const definitions = await this.discoveryService!.unitsDiscover(
+      this.testModel.cssDir,
+      this.CSS_PATTERN
+    );
     
-    // Check if unit symlink already exists
-    if (fs.existsSync(unitLinkPath)) {
-      // Verify it's a valid symlink
-      try {
-        const stats = await fs.promises.lstat(unitLinkPath);
-        if (stats.isSymbolicLink()) {
-          const target = await fs.promises.readlink(unitLinkPath);
-          this.logEvidence(`UNIT-${cssFile.filename}`, `Already exists as symlink → ${target}`);
-          
-          // Extract UUID from target path
-          const uuidMatch = target.match(/([0-9a-f-]{36})\.scenario\.json/);
-          if (uuidMatch) {
-            this.testModel.createdUnits.set(cssFile.filename, uuidMatch[1]);
-          }
-          return;
-        }
-      } catch (error) {
-        // Not a symlink or broken, recreate
-        await fs.promises.unlink(unitLinkPath);
-      }
+    this.logEvidence('DISCOVER', `Found ${definitions.length} CSS files`);
+    
+    for (const def of definitions) {
+      this.logEvidence('FILE', `${def.filename} (${def.existingUuid ? 'existing: ' + def.existingUuid.substring(0, 8) + '...' : 'new'})`);
+    }
+    
+    return definitions;
+  }
+  
+  /**
+   * Create or verify a CSS unit
+   */
+  private async createOrVerifyCSSUnit(definition: any): Promise<void> {
+    this.logEvidence('step', `UNIT: ${definition.filename}`);
+    
+    if (definition.existingUuid) {
+      // Unit already exists
+      this.testModel.createdUnits.set(definition.filename, definition.existingUuid);
+      this.logEvidence(`UNIT-${definition.filename}`, `Exists: ${definition.existingUuid}`);
+      return;
     }
     
     // Create new unit
-    const uuid = crypto.randomUUID();
-    const now = new Date().toISOString();
+    const result = await this.discoveryService!.unitCreate(definition);
+    await this.discoveryService!.unitSave(result);
     
-    const unitModel: CSSUnitModel = {
-      uuid,
-      name: cssFile.filename,
-      typeM3: TypeM3.ATTRIBUTE,
-      origin: `ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/${this.onceVersion}/${cssFile.relativePath}`,
-      definition: cssFile.description,
-      cssPath: cssFile.relativePath,
-      mimetype: 'text/css',
-      createdAt: now,
-      updatedAt: now,
-    };
-    
-    // Create scenario via ScenarioService
-    const scenario = this.scenarioService!.scenarioCreate<CSSUnitModel>({
-      uuid,
-      model: unitModel,
-      owner: 'system',
-      symlinkPaths: [
-        `type/Unit/${this.onceVersion}/css`,
-      ],
-    });
-    
-    // Build symlink path to CSS directory
-    const cssUnitSymlinkPath = `components/ONCE/${this.onceVersion}/src/ts/layer5/views/css/${cssFile.filename}.unit`;
-    
-    // Save scenario with symlinks
-    await this.scenarioService!.scenarioSave(scenario, [
-      this.scenarioService!.typePathBuild('Unit', this.onceVersion),
-      cssUnitSymlinkPath,
-    ]);
-    
-    // Create symlink in CSS directory pointing to the scenario
-    const scenarioIndexPath = path.join(
-      this.testModel.scenariosDir,
-      'index',
-      this.scenarioService!.indexPathBuild(uuid)
-    );
-    
-    // Calculate relative path from CSS dir to scenario
-    const relativePath = path.relative(this.testModel.cssDir, scenarioIndexPath);
-    
-    // Create symlink
-    await fs.promises.symlink(relativePath, unitLinkPath);
-    
-    this.testModel.createdUnits.set(cssFile.filename, uuid);
-    this.logEvidence(`UNIT-${cssFile.filename}`, `Created: ${uuid} → ${unitLinkPath}`);
+    this.testModel.createdUnits.set(definition.filename, result.uuid);
+    this.logEvidence(`UNIT-${definition.filename}`, `Created: ${result.uuid}`);
   }
   
   /**
-   * Verify all units exist
+   * Update component manifest
    */
-  private async verifyAllUnitsExist(): Promise<void> {
-    this.logEvidence('step', 'VERIFY: Checking all CSS units exist');
+  private async updateManifest(): Promise<void> {
+    this.logEvidence('step', 'MANIFEST: Updating ONCE.component.json');
     
-    let allExist = true;
+    const manifestPath = path.join(this.testModel.componentRoot, 'ONCE.component.json');
+    await this.discoveryService!.manifestUpdate(manifestPath);
     
-    for (const cssFile of this.testModel.cssFiles) {
-      const unitLinkPath = path.join(this.testModel.cssDir, `${cssFile.filename}.unit`);
-      const exists = fs.existsSync(unitLinkPath);
-      
-      if (!exists) {
-        this.logEvidence(`VERIFY-${cssFile.filename}`, 'MISSING!');
-        allExist = false;
-      } else {
-        const uuid = this.testModel.createdUnits.get(cssFile.filename);
-        this.logEvidence(`VERIFY-${cssFile.filename}`, `OK (${uuid})`);
-      }
-    }
-    
-    if (!allExist) {
-      throw new Error('VERIFY FAILED: Not all CSS units exist');
-    }
-    
-    console.log(`✅ All ${this.testModel.cssFiles.length} CSS unit scenarios verified`);
+    this.logEvidence('MANIFEST', 'Updated with real UUIDs');
   }
   
   /**
-   * Update ONCE.component.json with actual UUIDs
+   * Verify all units were created
    */
-  private async updateComponentJson(): Promise<void> {
-    this.logEvidence('step', 'UPDATE: Updating ONCE.component.json with UUIDs');
+  private verifyResults(): void {
+    this.logEvidence('step', 'VERIFY: Checking results');
     
-    const componentJsonPath = path.join(this.testModel.componentRoot, 'ONCE.component.json');
+    const count = this.testModel.createdUnits.size;
     
-    try {
-      const content = await fs.promises.readFile(componentJsonPath, 'utf-8');
-      const componentJson = JSON.parse(content);
-      
-      // Update CSS units with actual UUIDs
-      if (componentJson.model?.units?.css) {
-        for (const cssUnit of componentJson.model.units.css) {
-          const uuid = this.testModel.createdUnits.get(cssUnit.name);
-          if (uuid) {
-            cssUnit.uuid = uuid;
-            cssUnit.unitPath = `src/ts/layer5/views/css/${cssUnit.name}.unit`;
-          }
-        }
-        
-        // Write back
-        await fs.promises.writeFile(
-          componentJsonPath,
-          JSON.stringify(componentJson, null, 2) + '\n'
-        );
-        
-        this.logEvidence('UPDATE-JSON', `Updated ${this.testModel.createdUnits.size} UUIDs`);
-      }
-    } catch (error) {
-      this.logEvidence('UPDATE-JSON', `Warning: Could not update component.json: ${error}`);
+    if (count === 0) {
+      throw new Error('VERIFY FAILED: No CSS units were created/found');
+    }
+    
+    console.log(`\n✅ Test14_CSSUnitCreation: ${count} CSS units created/verified`);
+    
+    for (const [filename, uuid] of this.testModel.createdUnits) {
+      console.log(`   📄 ${filename} → ${uuid}`);
     }
   }
 }
 
 // Export for Tootsie
 export default Test14_CSSUnitCreation;
-
