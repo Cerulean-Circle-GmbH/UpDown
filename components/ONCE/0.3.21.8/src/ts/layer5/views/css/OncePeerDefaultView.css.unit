@@ -1,0 +1,46 @@
+{
+  "ior": {
+    "uuid": "a1b2c3d4-0006-4000-8000-000000000006",
+    "component": "Unit",
+    "version": "0.3.21.8"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "a1b2c3d4-0006-4000-8000-000000000006",
+    "name": "OncePeerDefaultView.css",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/src/ts/layer5/views/css/OncePeerDefaultView.css",
+    "definition": "CSS stylesheet for OncePeerDefaultView Lit component - full page peer view",
+    "indexPath": "a/1/b/2/c/a1b2c3d4-0006-4000-8000-000000000006.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.21.8/css/OncePeerDefaultView.css.unit"
+    ],
+    "references": [
+      {
+        "linkLocation": "ior:local:ln:file:/components/ONCE/0.3.21.8/src/ts/layer5/views/css/OncePeerDefaultView.css.unit",
+        "linkTarget": "ior:unit:a1b2c3d4-0006-4000-8000-000000000006",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2025-12-08T10:00:00.000Z",
+    "updatedAt": "2025-12-08T10:00:00.000Z"
+  },
+  "unit": {
+    "indexPath": "a/1/b/2/c/a1b2c3d4-0006-4000-8000-000000000006.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.21.8/css/OncePeerDefaultView.css.unit"
+    ],
+    "references": [
+      {
+        "linkLocation": "ior:local:ln:file:/components/ONCE/0.3.21.8/src/ts/layer5/views/css/OncePeerDefaultView.css.unit",
+        "linkTarget": "ior:unit:a1b2c3d4-0006-4000-8000-000000000006",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "schemaVersion": "1.1.0",
+    "createdBy": "ONCE/0.3.21.8",
+    "createdAt": "2025-12-08T10:00:00.000Z",
+    "updatedAt": "2025-12-08T10:00:00.000Z"
+  }
+}
+
