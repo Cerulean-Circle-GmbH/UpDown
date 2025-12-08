@@ -56,7 +56,10 @@ export class SemanticVersion implements Version {
     return this;
   }
 
-  /** Factory method: Create from version string */
+  /**
+   * Factory method: Create from version string
+   * @deprecated Web4 P26: Use `new SemanticVersion().init().parse(version)` instead
+   */
   static fromString(version: string): SemanticVersion {
     const v = new SemanticVersion().init();
     v.parse(version);
