@@ -1,0 +1,36 @@
+{
+  "ior": {
+    "uuid": "e0320d06-8d3d-4e3f-981d-8049e3c89687",
+    "component": "Unit",
+    "version": "0.3.21.8"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "e0320d06-8d3d-4e3f-981d-8049e3c89687",
+    "name": "demo-lit.html",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/src/view/html/demo-lit.html",
+    "definition": "HTML template demo-lit",
+    "filePath": "src/view/html/demo-lit.html",
+    "mimetype": "text/html",
+    "createdAt": "2025-12-08T15:44:24.341Z",
+    "updatedAt": "2025-12-08T15:44:24.342Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/e/0/3/2/0/e0320d06-8d3d-4e3f-981d-8049e3c89687.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.21.8",
+      "components/ONCE/0.3.21.8/src/view/html/demo-lit.html.unit"
+    ]
+  },
+  "unit": {
+    "indexPath": "e/0/3/2/0/e0320d06-8d3d-4e3f-981d-8049e3c89687.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.21.8",
+      "components/ONCE/0.3.21.8/src/view/html/demo-lit.html.unit"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.21.8",
+    "createdAt": "2025-12-08T15:44:24.341Z",
+    "updatedAt": "2025-12-08T15:44:24.341Z"
+  }
+}

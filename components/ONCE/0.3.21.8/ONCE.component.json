@@ -75,7 +75,50 @@
           "mimetype": "text/css"
         }
       ],
-      "templates": [],
+      "templates": [
+        {
+          "uuid": "02688037-0c01-4336-8205-ce52444865ce",
+          "name": "demo-hub.html",
+          "path": "src/view/html/demo-hub.html",
+          "unitPath": "src/view/html/demo-hub.html.unit",
+          "mimetype": "text/html"
+        },
+        {
+          "uuid": "e0320d06-8d3d-4e3f-981d-8049e3c89687",
+          "name": "demo-lit.html",
+          "path": "src/view/html/demo-lit.html",
+          "unitPath": "src/view/html/demo-lit.html.unit",
+          "mimetype": "text/html"
+        },
+        {
+          "uuid": "54262628-bcf7-49cd-9c9f-5f1b17c4c54a",
+          "name": "index.html",
+          "path": "src/view/html/index.html",
+          "unitPath": "src/view/html/index.html.unit",
+          "mimetype": "text/html"
+        },
+        {
+          "uuid": "01c429df-69f5-4ad1-996e-db4160f8135a",
+          "name": "once-client.html",
+          "path": "src/view/html/once-client.html",
+          "unitPath": "src/view/html/once-client.html.unit",
+          "mimetype": "text/html"
+        },
+        {
+          "uuid": "89d2e918-99c3-4346-b3ee-b5177461a8cb",
+          "name": "once-minimal.html",
+          "path": "src/view/html/once-minimal.html",
+          "unitPath": "src/view/html/once-minimal.html.unit",
+          "mimetype": "text/html"
+        },
+        {
+          "uuid": "938486d5-42b9-4fe7-8e5e-92c7a29a5757",
+          "name": "server-status.html",
+          "path": "src/view/html/server-status.html",
+          "unitPath": "src/view/html/server-status.html.unit",
+          "mimetype": "text/html"
+        }
+      ],
       "typescript": []
     },
     "dependencies": {
