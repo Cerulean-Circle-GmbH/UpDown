@@ -227,6 +227,15 @@ export class Test19_Web4LazyMigrationScan extends ONCETestCase {
     this.testModel.sourceDir = path.join(this.componentRoot, 'src', 'ts');
     this.initPatterns();
     
+    // Output dual link to Web4 principles reference
+    this.logEvidence('step', '═══════════════════════════════════════════════════════════════');
+    this.logEvidence('step', '📚 WEB4 PRINCIPLES REFERENCE');
+    this.logEvidence('step', '═══════════════════════════════════════════════════════════════');
+    this.logEvidence('evidence', 'GitHub: https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/session/web4-principles-checklist.md');
+    this.logEvidence('evidence', 'Local:  §/components/ONCE/0.3.21.8/session/web4-principles-checklist.md');
+    this.logEvidence('step', '═══════════════════════════════════════════════════════════════');
+    this.logEvidence('step', '');
+    
     this.logEvidence('step', 'SCAN-01: Initializing Web4 lazy migration scan');
     this.logEvidence('evidence', `Scanning directory: ${this.testModel.sourceDir}`);
     this.logEvidence('evidence', `Patterns to check: ${this.testModel.scanPatterns.length}`);
