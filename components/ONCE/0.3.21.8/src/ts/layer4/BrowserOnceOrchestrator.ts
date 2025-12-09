@@ -18,6 +18,7 @@
 import { LitElement } from 'lit';
 import { Reference } from '../layer3/Reference.interface.js';
 import type { BrowserOnce } from '../layer2/BrowserOnce.js';
+import type { UcpRouter } from '../layer5/views/UcpRouter.js';
 
 /**
  * BrowserOnceOrchestrator
@@ -32,6 +33,9 @@ export class BrowserOnceOrchestrator {
   
   /** The main Lit view element */
   private mainView: Reference<LitElement> = null;
+  
+  /** UcpRouter for SPA routing */
+  private router: Reference<UcpRouter> = null;
   
   /** WebSocket connection */
   private ws: Reference<WebSocket> = null;
@@ -51,10 +55,11 @@ export class BrowserOnceOrchestrator {
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Render the application
+   * Render the application using UcpRouter
    * Called from once.html after kernel boot
    * 
    * @param container - DOM element to render into
+   * @pdca 2025-12-09-UTC-1800.ucpview-framework-independence.pdca.md Phase H.0
    */
   async appRender(container: Element): Promise<void> {
     console.log('[Orchestrator] appRender() starting...');
@@ -63,34 +68,75 @@ export class BrowserOnceOrchestrator {
     // 1. Preload CSS assets
     await this.assetsPreload();
     
-    // 2. Import view components
+    // 2. Import view components (including UcpRouter)
     await this.viewsImport();
     
-    // 3. Determine which view to create
-    const viewTag = this.component.appEntryView || this.component.defaultView;
-    if (!viewTag) {
-      console.error('[Orchestrator] No defaultView or appEntryView defined');
-      return;
-    }
+    // 3. Create UcpRouter as main view
+    console.log('[Orchestrator] Creating UcpRouter...');
+    await import('../layer5/views/UcpRouter.js');
+    this.router = document.createElement('ucp-router') as UcpRouter;
+    (this.router as any).kernel = this.component;
+    (this.router as any).model = this.component.browserModel;
+    container.appendChild(this.router);
+    this.mainView = this.router;
     
-    // 4. Create main view
-    console.log(`[Orchestrator] Creating view: <${viewTag}>`);
-    this.mainView = document.createElement(viewTag) as LitElement;
-    (this.mainView as any).model = this.component.browserModel;
-    (this.mainView as any).kernel = this.component;
-    container.appendChild(this.mainView);
+    // 4. Register routes
+    await this.routesRegister();
     
-    // 5. Listen for action events from views
+    // 5. Navigate to current URL
+    const currentPath = window.location.pathname;
+    console.log(`[Orchestrator] Navigating to: ${currentPath}`);
+    (this.router as any).navigateTo(currentPath, true);  // replace=true to not add history entry
+    
+    // 6. Listen for action events from views
     // ✅ Web4: Layer 4 handles async, Layer 5 dispatches events
-    this.mainView.addEventListener('action-request', this.actionRequestHandle.bind(this) as unknown as EventListener);
+    this.router.addEventListener('action-request', this.actionRequestHandle.bind(this) as unknown as EventListener);
     
-    // 6. Connect WebSocket for real-time updates
+    // 7. Connect WebSocket for real-time updates
     this.webSocketConnect();
     
-    // 7. Initial data fetch
+    // 8. Initial data fetch
     await this.serversFetch();
     
     console.log('[Orchestrator] appRender() complete');
+  }
+  
+  /**
+   * Register routes with UcpRouter
+   * Maps URL paths to Lit view components
+   * 
+   * @pdca 2025-12-09-UTC-1800.ucpview-framework-independence.pdca.md Phase H.0
+   */
+  async routesRegister(): Promise<void> {
+    if (!this.router) {
+      console.error('[Orchestrator] Router not initialized');
+      return;
+    }
+    
+    console.log('[Orchestrator] Registering routes...');
+    
+    // Main dashboard - shows RouteOverView (regression to 0.3.21.5)
+    await (this.router as any).routeRegister('/', 'once-over-view', { 
+      title: 'ONCE Dashboard' 
+    });
+    
+    // Demo route - peer grid
+    await (this.router as any).routeRegister('/demo', 'once-over-view', { 
+      title: 'Peer Overview' 
+    });
+    
+    // TODO: Add these routes when views are created
+    // await (this.router as any).routeRegister('/onceCommunicationLog', 'lit-once-logger-view', { 
+    //   title: 'Communication Log' 
+    // });
+    // await (this.router as any).routeRegister('/server-status', 'lit-once-server-status-view', { 
+    //   title: 'Server Status' 
+    // });
+    // await (this.router as any).routeRegister('/peer/:uuid', 'lit-once-peer-default-view', { 
+    //   title: 'Peer Details' 
+    // });
+    
+    console.log('[Orchestrator] ✅ Routes registered');
   }
   
   // ═══════════════════════════════════════════════════════════════

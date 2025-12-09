@@ -29,13 +29,13 @@
         This is THE ONLY HTML entry point for all ONCE apps.
         ALL logic is in classes - NO floating functional code here!
         
-        The kernel checks for:
-        - component.appEntryView (takes precedence)
-        - component.defaultView (fallback)
+        The orchestrator:
+        1. Creates <ucp-router> as the main view
+        2. Registers routes (/, /demo, /onceCommunicationLog, etc.)
+        3. Navigates to current URL path
+        4. UcpRouter renders the appropriate view
         
-        And renders the appropriate view into document.body.
-        
-        @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
+        @pdca 2025-12-09-UTC-1800.ucpview-framework-independence.pdca.md
     -->
     
     <script type="module">
