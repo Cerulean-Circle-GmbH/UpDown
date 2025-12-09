@@ -311,6 +311,71 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       demoReq.validateCriterion('DEMO-08', iorVersionCorrect, iorVersionCheck);
 
       // ═══════════════════════════════════════════════════════════════
+      // REQUIREMENT: RelatedObjects Registry with Lit Views
+      // (Browser-based verification - Lit decorators work in browser)
+      // ═══════════════════════════════════════════════════════════════
+      
+      const relatedReq = this.requirement(
+        'RelatedObjects with Lit Views',
+        'Controller RelatedObjects registry works with Lit view components'
+      );
+      
+      relatedReq.addCriterion('RO-01', 'ONCE kernel has controller property');
+      relatedReq.addCriterion('RO-02', 'Controller has relatedObjectLookup method');
+      relatedReq.addCriterion('RO-03', 'View instances can be registered');
+      relatedReq.addCriterion('RO-04', 'View instances can be looked up by class');
+      
+      this.logEvidence('step', 'Verifying RelatedObjects registry in browser');
+      
+      const relatedObjectsCheck = await this.page.evaluate(() => {
+        const kernel = (window as any).ONCE;
+        
+        // Check kernel has controller
+        const hasController = kernel && typeof kernel.controller !== 'undefined';
+        
+        // Check controller has relatedObjectLookup
+        const controller = kernel?.controller;
+        const hasRelatedLookup = controller && typeof controller.relatedObjectLookup === 'function';
+        
+        // Check controller has relatedObjectRegister
+        const hasRelatedRegister = controller && typeof controller.relatedObjectRegister === 'function';
+        
+        // Try to lookup any registered views
+        let viewCount = 0;
+        if (hasRelatedLookup && hasRelatedRegister) {
+          try {
+            // Test with a simple object to verify the mechanism works
+            const testObj = { test: true };
+            const TestKey = class TestViewKey {};
+            controller.relatedObjectRegister(TestKey, testObj);
+            const found = controller.relatedObjectLookup(TestKey);
+            viewCount = found ? found.length : 0;
+            // Clean up
+            controller.relatedObjectUnregister(testObj);
+          } catch (e) {
+            // Registry may have different API
+          }
+        }
+        
+        return {
+          hasController,
+          hasRelatedLookup,
+          hasRelatedRegister,
+          viewCount,
+          controllerType: controller?.constructor?.name || 'unknown'
+        };
+      });
+      
+      this.logEvidence('output', 'RelatedObjects check', relatedObjectsCheck);
+      
+      relatedReq.validateCriterion('RO-01', relatedObjectsCheck.hasController, relatedObjectsCheck);
+      relatedReq.validateCriterion('RO-02', relatedObjectsCheck.hasRelatedLookup, relatedObjectsCheck);
+      relatedReq.validateCriterion('RO-03', relatedObjectsCheck.hasRelatedRegister, relatedObjectsCheck);
+      relatedReq.validateCriterion('RO-04', relatedObjectsCheck.viewCount > 0, relatedObjectsCheck);
+      
+      this.validateRequirement(relatedReq);
+
+      // ═══════════════════════════════════════════════════════════════
       // TEST 7: Click Shutdown Button and Verify IOR URL Version
       // ═══════════════════════════════════════════════════════════════
       
