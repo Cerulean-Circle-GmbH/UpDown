@@ -395,6 +395,7 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
     // ✅ Web4: Flat model design - no nested state.state
     const peerModel: OncePeerModel = {
       uuid: serverModel.uuid,
+      name: `ONCE Peer ${serverModel.uuid.substring(0, 8)}`,
       lifecycleState: LifecycleState.RUNNING,
       capabilities: serverModel.capabilities || [{ capability: 'httpPort', port }],
       isPrimaryServer: port === 42777
@@ -476,6 +477,7 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
       // Add primary server - ✅ Web4: Flat model
       const primaryModel: OncePeerModel = {
         uuid: 'primary',
+        name: 'ONCE Primary Server',
         lifecycleState: LifecycleState.RUNNING,
         capabilities: [{ capability: 'httpPort', port: 42777 }],
         isPrimaryServer: true

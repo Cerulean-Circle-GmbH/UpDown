@@ -23,6 +23,7 @@ import { ActionStyle } from '../../layer3/ActionStyle.enum.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 import { Collection } from '../../layer3/Collection.interface.js';
 import { LifecycleState } from '../../layer3/LifecycleState.enum.js';
+import type { ItemViewModel } from '../../layer3/ItemViewModel.interface.js';
 
 /**
  * Capability - Server capability descriptor
@@ -36,9 +37,11 @@ export interface PeerCapability {
  * OncePeerModel - Model for ONCE peer items
  * ✅ Web4: Flat model design - no nested state.state
  */
-export interface OncePeerModel {
-  // Identity
-  uuid: string;
+export interface OncePeerModel extends ItemViewModel {
+  // Identity - uuid inherited from Model
+  
+  // Required name - inherited from Model
+  // Computed as `ONCE Peer ${uuid.substring(0, 8)}`
   
   // Lifecycle - direct enum, not nested
   lifecycleState: LifecycleState;
@@ -50,10 +53,7 @@ export interface OncePeerModel {
   isPrimaryServer: boolean;
   
   // Optional display overrides (ItemViewModel)
-  name?: string;
-  description?: string;
-  badge?: Reference<string | number>;
-  icon?: string;
+  // description, badge, icon already in ItemViewModel
 }
 
 /**
