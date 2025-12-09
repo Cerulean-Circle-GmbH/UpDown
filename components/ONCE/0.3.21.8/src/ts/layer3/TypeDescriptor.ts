@@ -153,41 +153,42 @@ export class TypeDescriptor implements FeatureDescriptor {
   // ❌ NO fromClass() - runtime reflection violates DRY principle
   
   // ═══════════════════════════════════════════════════════════════
-  // Feature Getters (return Reference<T> - nullable)
+  // Feature Lookups (return Reference<T> - nullable)
+  // Web4 P16: parameterized lookup uses xyzLookup/xyzFrom naming
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Get attribute by name
+   * Lookup attribute by name
    */
-  attributeGet(name: string): Reference<AttributeDescriptor> {
+  attributeLookup(name: string): Reference<AttributeDescriptor> {
     return this.attributes.get(name) ?? null;
   }
   
   /**
-   * Get property by name
+   * Lookup property by name
    */
-  propertyGet(name: string): Reference<PropertyDescriptor> {
+  propertyLookup(name: string): Reference<PropertyDescriptor> {
     return this.properties.get(name) ?? null;
   }
   
   /**
-   * Get reference by name
+   * Lookup reference descriptor by name
    */
-  referenceGet(name: string): Reference<ReferenceDescriptor> {
+  referenceLookup(name: string): Reference<ReferenceDescriptor> {
     return this.references.get(name) ?? null;
   }
   
   /**
-   * Get collection by name
+   * Lookup collection by name
    */
-  collectionGet(name: string): Reference<CollectionDescriptor> {
+  collectionLookup(name: string): Reference<CollectionDescriptor> {
     return this.collections.get(name) ?? null;
   }
   
   /**
-   * Get method by name
+   * Lookup method by name
    */
-  methodGet(name: string): Reference<MethodDescriptor> {
+  methodLookup(name: string): Reference<MethodDescriptor> {
     return this.methods.get(name) ?? null;
   }
   
@@ -210,9 +211,9 @@ export class TypeDescriptor implements FeatureDescriptor {
   }
   
   /**
-   * Get all implementing classes
+   * Get all implementing classes (TypeScript getter - no parameter)
    */
-  implementationsGet(): InterfaceConstructor[] {
+  get implementations(): InterfaceConstructor[] {
     return Array.from(this.implementingClasses);
   }
   

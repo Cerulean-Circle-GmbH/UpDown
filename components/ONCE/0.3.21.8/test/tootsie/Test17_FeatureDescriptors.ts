@@ -298,18 +298,19 @@ export class Test17_FeatureDescriptors extends ONCETestCase {
       throw new Error(`Expected 2 methods, got ${descriptor.methods.size}`);
     }
     
-    // Test getters return Reference<T> (nullable)
-    const existingAttr = descriptor.attributeGet('uuid');
-    const missingAttr = descriptor.attributeGet('nonexistent');
+    // Test lookups return Reference<T> (nullable)
+    // Web4 P16: parameterized lookup uses xyzLookup naming
+    const existingAttr = descriptor.attributeLookup('uuid');
+    const missingAttr = descriptor.attributeLookup('nonexistent');
     
-    this.logEvidence('evidence', `attributeGet('uuid'): ${existingAttr?.name ?? 'null'}`);
-    this.logEvidence('evidence', `attributeGet('nonexistent'): ${missingAttr ?? 'null'}`);
+    this.logEvidence('evidence', `attributeLookup('uuid'): ${existingAttr?.name ?? 'null'}`);
+    this.logEvidence('evidence', `attributeLookup('nonexistent'): ${missingAttr ?? 'null'}`);
     
     if (!existingAttr) {
-      throw new Error('attributeGet should return existing attribute');
+      throw new Error('attributeLookup should return existing attribute');
     }
     if (missingAttr !== null) {
-      throw new Error('attributeGet should return null for missing attribute');
+      throw new Error('attributeLookup should return null for missing attribute');
     }
     
     this.logEvidence('status', 'PASS: TypeDescriptor.fromASTData() works');

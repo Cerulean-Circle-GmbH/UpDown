@@ -34,16 +34,16 @@ export class TypeRegistry {
   // Singleton Instance
   // ═══════════════════════════════════════════════════════════════
   
-  private static instance: Reference<TypeRegistry> = null;
+  private static instanceField: Reference<TypeRegistry> = null;
   
   /**
-   * Get singleton instance
+   * Get singleton instance (TypeScript getter - Web4 P16)
    */
-  static instanceGet(): TypeRegistry {
-    if (!TypeRegistry.instance) {
-      TypeRegistry.instance = new TypeRegistry();
+  static get instance(): TypeRegistry {
+    if (!TypeRegistry.instanceField) {
+      TypeRegistry.instanceField = new TypeRegistry();
     }
-    return TypeRegistry.instance;
+    return TypeRegistry.instanceField;
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -144,33 +144,34 @@ export class TypeRegistry {
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Get TypeDescriptor for a class
+   * Lookup TypeDescriptor for a class
+   * Web4 P16: parameterized lookup uses xyzLookup/xyzFrom naming
    */
-  typeGet(classConstructor: InterfaceConstructor): Reference<TypeDescriptor> {
+  typeLookup(classConstructor: InterfaceConstructor): Reference<TypeDescriptor> {
     return this.typeMap.get(classConstructor) ?? null;
   }
   
   /**
-   * Get class constructor by name
+   * Lookup class constructor by name
    */
-  classByName(name: string): Reference<InterfaceConstructor> {
+  classFromName(name: string): Reference<InterfaceConstructor> {
     return this.nameMap.get(name) ?? null;
   }
   
   /**
-   * Get class constructor by IOR
+   * Lookup class constructor by IOR
    */
-  classByIOR(ior: string): Reference<InterfaceConstructor> {
+  classFromIOR(ior: string): Reference<InterfaceConstructor> {
     return this.iorMap.get(ior) ?? null;
   }
   
   /**
-   * Get all implementations of an interface
+   * Lookup all implementations of an interface
    */
-  implementationsGet(interfaceType: InterfaceConstructor): InterfaceConstructor[] {
+  implementationsLookup(interfaceType: InterfaceConstructor): InterfaceConstructor[] {
     const descriptor = this.typeMap.get(interfaceType);
     if (descriptor) {
-      return descriptor.implementationsGet();
+      return descriptor.implementations;
     }
     return [];
   }

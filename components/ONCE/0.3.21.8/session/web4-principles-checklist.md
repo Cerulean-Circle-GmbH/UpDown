@@ -157,16 +157,41 @@
 - [ ] `dependenciesBuild()` NOT `buildDependencies()`
 - [ ] Methods grouped by object they operate on
 
-**TypeScript Accessors:**
-- [ ] Use `get propertyName()` NOT `getPropertyName()`
-- [ ] Use `set propertyName(value)` NOT `setPropertyName(value)`
+**TypeScript Accessors (no parameter = getter/setter):**
+- [ ] Use `get propertyName()` NOT `getPropertyName()` or `propertyNameGet()`
+- [ ] Use `set propertyName(value)` NOT `setPropertyName(value)` or `propertyNameSet(value)`
 - [ ] Properties accessed as `this.propertyName` NOT `this.getPropertyName()`
+
+**Parameterized Lookups (with parameter = lookup method):**
+- [ ] Use `xyzLookup(param)` when searching by a key/parameter
+- [ ] Use `xyzFrom(param)` when converting/deriving from a source
+- [ ] **NOT** `xyzGet(param)` - that's a getter disguised as a method!
+
+```typescript
+// ❌ WRONG: Looks like a getter but has parameter
+attributeGet(name: string): Reference<AttributeDescriptor>
+typeGet(classConstructor: InterfaceConstructor): Reference<TypeDescriptor>
+
+// ✅ CORRECT: Lookup methods with parameter
+attributeLookup(name: string): Reference<AttributeDescriptor>
+typeLookup(classConstructor: InterfaceConstructor): Reference<TypeDescriptor>
+classFromName(name: string): Reference<InterfaceConstructor>
+classFromIOR(ior: string): Reference<InterfaceConstructor>
+
+// ✅ CORRECT: Getters without parameter
+get implementations(): InterfaceConstructor[]
+get size(): number
+static get instance(): TypeRegistry
+```
 
 **Deprecated Patterns** (mark `@deprecated` for lazy migration when encountered):
 | Old Pattern | New Pattern | Migration |
 |-------------|-------------|-----------|
 | `getXxx()` | `get xxx()` | Add getter, deprecate method |
+| `xxxGet()` | `get xxx()` | Add getter, deprecate method |
+| `xxxGet(param)` | `xxxLookup(param)` or `xxxFrom(param)` | Rename method |
 | `setXxx(value)` | `set xxx(value)` | Add setter, deprecate method |
+| `xxxSet(value)` | `set xxx(value)` | Add setter, deprecate method |
 | `createXxx()` | `xxxCreate()` | Rename method |
 | `updateXxx()` | `xxxUpdate()` | Rename method |
 | `buildXxx()` | `xxxBuild()` | Rename method |
@@ -181,6 +206,8 @@
 4. Remove deprecated method when all callers migrated
 
 **Example (Path Authority getters):** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/Web4TSComponent/0.3.20.6/src/ts/layer2/DefaultWeb4TSComponent.ts) | [§/components/Web4TSComponent/0.3.20.6/src/ts/layer2/DefaultWeb4TSComponent.ts](../../../../Web4TSComponent/0.3.20.6/src/ts/layer2/DefaultWeb4TSComponent.ts) (Lines 343-398)
+
+**Example (Lookup methods):** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/src/ts/layer2/TypeRegistry.ts) | [§/components/ONCE/0.3.21.8/src/ts/layer2/TypeRegistry.ts](../src/ts/layer2/TypeRegistry.ts) (typeLookup, classFromName, classFromIOR)
 
 ---
 

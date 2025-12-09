@@ -24,8 +24,8 @@
  *   }
  * }
  * 
- * // Lookup implementations
- * const implementations = PersistenceManager.implementationsGet();
+ * // Lookup implementations (Web4 P16: getter, no parameter)
+ * const impls = PersistenceManager.implementations;
  * ```
  * 
  * @pdca session/2025-12-08-UTC-1100.jsinterface-type-descriptors.pdca.md
@@ -48,16 +48,16 @@ export abstract class JsInterface {
    * Type descriptor - runtime metadata about this interface
    * Initialized lazily on first access
    */
-  static type: TypeDescriptor;
+  private static typeField: TypeDescriptor;
   
   /**
-   * Get or create the type descriptor for this interface
+   * Get or create the type descriptor for this interface (Web4 P16: getter)
    */
-  static typeGet(): TypeDescriptor {
-    if (!this.type) {
-      this.type = new TypeDescriptor().init({ name: this.name });
+  static get type(): TypeDescriptor {
+    if (!this.typeField) {
+      this.typeField = new TypeDescriptor().init({ name: this.name });
     }
-    return this.type;
+    return this.typeField;
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -68,21 +68,21 @@ export abstract class JsInterface {
    * Register a class as implementing this interface
    */
   static implementationRegister(implementingClass: InterfaceConstructor): void {
-    this.typeGet().implementationAdd(implementingClass);
+    this.type.implementationAdd(implementingClass);
   }
   
   /**
-   * Get all classes implementing this interface
+   * Get all classes implementing this interface (Web4 P16: getter, no parameter)
    */
-  static implementationsGet(): InterfaceConstructor[] {
-    return this.typeGet().implementationsGet();
+  static get implementations(): InterfaceConstructor[] {
+    return this.type.implementations;
   }
   
   /**
    * Check if a class implements this interface
    */
   static implementationCheck(implementingClass: InterfaceConstructor): boolean {
-    return this.typeGet().implementationCheck(implementingClass);
+    return this.type.implementationCheck(implementingClass);
   }
 }
 

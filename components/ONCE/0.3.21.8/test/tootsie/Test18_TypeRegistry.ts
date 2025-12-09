@@ -112,8 +112,9 @@ export class Test18_TypeRegistry extends ONCETestCase {
   private async testSingleton(): Promise<void> {
     this.logEvidence('step', 'TEST-01: TypeRegistry singleton');
     
-    const instance1 = TypeRegistry.instanceGet();
-    const instance2 = TypeRegistry.instanceGet();
+    // Web4 P16: static getter (no parameter)
+    const instance1 = TypeRegistry.instance;
+    const instance2 = TypeRegistry.instance;
     
     this.logEvidence('requirement', 'REQ-01: TypeRegistry is a singleton');
     this.logEvidence('evidence', `instance1 === instance2: ${instance1 === instance2}`);
@@ -171,18 +172,19 @@ export class Test18_TypeRegistry extends ONCETestCase {
     
     const registry = this.testModel.registry!;
     
-    const descriptor = registry.typeGet(MockComponent as unknown as new (...args: unknown[]) => unknown);
-    const missing = registry.typeGet(class Unknown {} as unknown as new (...args: unknown[]) => unknown);
+    // Web4 P16: parameterized lookup uses xyzLookup naming
+    const descriptor = registry.typeLookup(MockComponent as unknown as new (...args: unknown[]) => unknown);
+    const missing = registry.typeLookup(class Unknown {} as unknown as new (...args: unknown[]) => unknown);
     
-    this.logEvidence('requirement', 'REQ-03: typeGet(class) returns TypeDescriptor or null');
-    this.logEvidence('evidence', `typeGet(MockComponent): ${descriptor?.name ?? 'null'}`);
-    this.logEvidence('evidence', `typeGet(Unknown): ${missing ?? 'null'}`);
+    this.logEvidence('requirement', 'REQ-03: typeLookup(class) returns TypeDescriptor or null');
+    this.logEvidence('evidence', `typeLookup(MockComponent): ${descriptor?.name ?? 'null'}`);
+    this.logEvidence('evidence', `typeLookup(Unknown): ${missing ?? 'null'}`);
     
     if (!descriptor) {
-      throw new Error('typeGet should return descriptor for registered class');
+      throw new Error('typeLookup should return descriptor for registered class');
     }
     if (missing !== null) {
-      throw new Error('typeGet should return null for unregistered class');
+      throw new Error('typeLookup should return null for unregistered class');
     }
     
     this.logEvidence('status', 'PASS: Lookup by class works');
@@ -196,18 +198,19 @@ export class Test18_TypeRegistry extends ONCETestCase {
     
     const registry = this.testModel.registry!;
     
-    const found = registry.classByName('MockComponent');
-    const missing = registry.classByName('NonExistent');
+    // Web4 P16: xyzFrom for deriving from a source
+    const found = registry.classFromName('MockComponent');
+    const missing = registry.classFromName('NonExistent');
     
-    this.logEvidence('requirement', 'REQ-04: classByName returns constructor or null');
-    this.logEvidence('evidence', `classByName('MockComponent'): ${found ? 'found' : 'null'}`);
-    this.logEvidence('evidence', `classByName('NonExistent'): ${missing ?? 'null'}`);
+    this.logEvidence('requirement', 'REQ-04: classFromName returns constructor or null');
+    this.logEvidence('evidence', `classFromName('MockComponent'): ${found ? 'found' : 'null'}`);
+    this.logEvidence('evidence', `classFromName('NonExistent'): ${missing ?? 'null'}`);
     
     if (!found) {
-      throw new Error('classByName should find registered class');
+      throw new Error('classFromName should find registered class');
     }
     if (missing !== null) {
-      throw new Error('classByName should return null for unregistered name');
+      throw new Error('classFromName should return null for unregistered name');
     }
     
     this.logEvidence('status', 'PASS: Lookup by name works');
@@ -222,13 +225,14 @@ export class Test18_TypeRegistry extends ONCETestCase {
     const registry = this.testModel.registry!;
     
     // MockComponent implements MockInterface (in AST data)
-    const implementations = registry.implementationsGet(MockInterface as unknown as new (...args: unknown[]) => unknown);
+    // Web4 P16: xyzLookup for parameterized lookup
+    const implementations = registry.implementationsLookup(MockInterface as unknown as new (...args: unknown[]) => unknown);
     
-    this.logEvidence('requirement', 'REQ-05: implementationsGet returns all implementations of interface');
+    this.logEvidence('requirement', 'REQ-05: implementationsLookup returns all implementations of interface');
     this.logEvidence('evidence', `Implementations of MockInterface: ${implementations.length}`);
     
     // Check MockComponent is registered as implementation of MockInterface
-    const mockInterfaceDescriptor = registry.typeGet(MockInterface as unknown as new (...args: unknown[]) => unknown);
+    const mockInterfaceDescriptor = registry.typeLookup(MockInterface as unknown as new (...args: unknown[]) => unknown);
     const hasImplementation = mockInterfaceDescriptor?.implementationCheck(MockComponent as unknown as new (...args: unknown[]) => unknown);
     
     this.logEvidence('evidence', `MockInterface.implementationCheck(MockComponent): ${hasImplementation}`);
@@ -318,11 +322,11 @@ export class Test18_TypeRegistry extends ONCETestCase {
     registry.unregister(MockComponent as unknown as new (...args: unknown[]) => unknown);
     
     const sizeAfter = registry.size;
-    const lookup = registry.classByName('MockComponent');
+    const lookup = registry.classFromName('MockComponent');
     
     this.logEvidence('requirement', 'REQ-08: unregister removes class from registry');
     this.logEvidence('evidence', `Size before: ${sizeBefore}, after: ${sizeAfter}`);
-    this.logEvidence('evidence', `classByName('MockComponent') after unregister: ${lookup ?? 'null'}`);
+    this.logEvidence('evidence', `classFromName('MockComponent') after unregister: ${lookup ?? 'null'}`);
     
     if (sizeAfter >= sizeBefore) {
       throw new Error('Size should decrease after unregister');
