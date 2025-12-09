@@ -22,10 +22,10 @@
  */
 
 import { Controller } from '../layer3/Controller.interface.js';
-import { View } from '../layer3/View.interface.js';
-import { Reference } from '../layer3/Reference.interface.js';
-import { RelatedObjects } from '../layer3/RelatedObjects.interface.js';
-import { InterfaceConstructor, InterfaceKey } from '../layer3/InterfaceConstructor.type.js';
+import type { View } from '../layer3/View.interface.js';
+import type { Reference } from '../layer3/Reference.interface.js';
+import type { RelatedObjects } from '../layer3/RelatedObjects.interface.js';
+import { InterfaceKey } from '../layer3/InterfaceConstructor.type.js';
 
 /**
  * UcpController - Base class for Web4 MVC Controllers
@@ -38,7 +38,7 @@ import { InterfaceConstructor, InterfaceKey } from '../layer3/InterfaceConstruct
  * 
  * All methods are SYNCHRONOUS (Layer 2).
  */
-export class UcpController<TModel extends object> implements Controller<TModel>, RelatedObjects {
+export class UcpController<TModel extends object> extends Controller<TModel> implements RelatedObjects {
   
   /** Registered views - notified on model changes */
   private registeredViews: Set<View<TModel>> = new Set();
@@ -60,9 +60,19 @@ export class UcpController<TModel extends object> implements Controller<TModel>,
   private instanceToInterfaces: Map<unknown, Set<InterfaceKey<unknown>>> = new Map();
   
   /**
+   * Static start - Register as Controller implementation
+   * 
+   * @pdca 2025-12-08-UTC-1100.jsinterface-type-descriptors.pdca.md
+   */
+  static start(): void {
+    Controller.implementationRegister(UcpController);
+  }
+  
+  /**
    * Empty constructor - Web4 Principle 6
    */
   constructor() {
+    super();
     // Empty - initialization via init()
   }
   
