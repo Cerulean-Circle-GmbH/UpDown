@@ -3,6 +3,11 @@
  * 
  * Base interface for all MVC views in Web4.
  * 
+ * Note: Kept as interface (not JsInterface class) because Lit views
+ * need to extend LitElement. TypeScript doesn't support multiple inheritance.
+ * 
+ * For JsInterface-style registration, use ViewRegistry in Layer 2.
+ * 
  * Web4 Principles:
  * - P7: Layer 5 is SYNCHRONOUS (update() is sync)
  * - P16: TypeScript accessors (set model(), get model())
@@ -11,15 +16,17 @@
  * 
  * @ior ior:esm:/ONCE/{version}/View
  * @pdca 2025-12-03-UTC-1200.mvc-lit3-views.pdca.md
+ * @pdca 2025-12-08-UTC-1100.jsinterface-type-descriptors.pdca.md
  */
-
-import { Reference } from './Reference.interface.js';
 
 /**
  * Web4 View Interface
  * 
  * All views implement this for consistent rendering and model binding.
  * Views are Layer 5 components - all methods are SYNCHRONOUS.
+ * 
+ * Note: This is an interface (not JsInterface) because views must extend LitElement.
+ * Use RelatedObjects registry with concrete view classes for lookup.
  */
 export interface View<TModel = any> {
   
@@ -64,4 +71,3 @@ export interface View<TModel = any> {
    */
   render(): any;
 }
-

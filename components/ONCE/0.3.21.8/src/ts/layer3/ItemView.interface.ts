@@ -7,20 +7,24 @@
  * - badge: Count indicator (e.g., children count)
  * - icon: Icon identifier (FontAwesome or Lit-compatible)
  * 
+ * Note: Kept as interface (not JsInterface class) because Lit views
+ * need to extend LitElement. TypeScript doesn't support multiple inheritance.
+ * 
  * Web4 Principles:
  * - P5: Reference<T> for nullable badge
  * - P16: TypeScript accessors for attribute mapping
  * - P19: One File One Type
- * - P24: RelatedObjects (implementations registered by interface)
+ * - P24: RelatedObjects (use concrete view classes for lookup)
  * - NO 'any' - use ItemViewModel
  * 
  * @ior ior:esm:/ONCE/{version}/ItemView
  * @pdca 2025-12-05-UTC-1800.a1-1-core-interfaces.pdca.md
+ * @pdca 2025-12-08-UTC-1100.jsinterface-type-descriptors.pdca.md
  */
 
-import { View } from './View.interface.js';
-import { ItemViewModel } from './ItemViewModel.interface.js';
-import { Reference } from './Reference.interface.js';
+import type { View } from './View.interface.js';
+import type { ItemViewModel } from './ItemViewModel.interface.js';
+import type { Reference } from './Reference.interface.js';
 
 /**
  * ItemView - Interface for compact item display
@@ -31,6 +35,7 @@ import { Reference } from './Reference.interface.js';
  * Implementations: DefaultItemView (generic), OncePeerItemView (specific)
  * 
  * Note: TModel must extend ItemViewModel for proper typing.
+ * Use concrete classes (DefaultItemView, OncePeerItemView) for RelatedObjects lookup.
  */
 export interface ItemView<TModel extends ItemViewModel = ItemViewModel> extends View<TModel> {
   
@@ -82,5 +87,3 @@ export interface ItemView<TModel extends ItemViewModel = ItemViewModel> extends 
    */
   get viewName(): string;
 }
-
-
