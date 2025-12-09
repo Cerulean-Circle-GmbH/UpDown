@@ -3,14 +3,15 @@
  * 
  * ✅ Web4 Principle 24: RelatedObjects Registry
  * ✅ Web4 Principle 19: One File One Type (ScenarioQuery extracted)
+ * ✅ Web4 JsInterface: Runtime-existing interface for type introspection
  * 
  * Both NodeJS (filesystem) and Browser (IndexedDB) implement this interface.
  * Can be looked up from RelatedObjects registry by any component.
  * 
  * Usage:
  * ```typescript
- * // Register in init()
- * controller.relatedObjectRegister(PersistenceManager, storage);
+ * // Register in static start()
+ * PersistenceManager.implementationRegister(UcpStorage);
  * 
  * // Lookup from anywhere
  * const storage = controller.relatedObjectLookup(PersistenceManager);
@@ -18,11 +19,13 @@
  * ```
  * 
  * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
+ * @pdca 2025-12-09-UTC-1500.jsinterface-migration-persistence-manager.pdca.md
  */
 
 import type { Scenario } from './Scenario.interface.js';
 import type { Model } from './Model.interface.js';
 import type { ScenarioQuery } from './ScenarioQuery.interface.js';
+import { JsInterface } from './JsInterface.js';
 
 // Re-export for backward compatibility
 export type { ScenarioQuery } from './ScenarioQuery.interface.js';
@@ -30,13 +33,15 @@ export type { ScenarioQuery } from './ScenarioQuery.interface.js';
 /**
  * PersistenceManager - Platform-agnostic scenario storage interface
  * 
+ * Extends JsInterface for runtime type introspection and registration.
+ * 
  * Implementations:
- * - NodeJsScenarioStorage: Filesystem with UUID index + symlinks
+ * - UcpStorage: Filesystem with UUID index + symlinks (NodeJS)
  * - BrowserScenarioStorage: IndexedDB with same logical structure
  * 
  * @interface
  */
-export interface PersistenceManager {
+export abstract class PersistenceManager extends JsInterface {
   
   /**
    * Save scenario to storage
@@ -45,7 +50,7 @@ export interface PersistenceManager {
    * @param scenario Scenario to save
    * @param symlinkPaths Array of symlink paths (type/domain/capability)
    */
-  scenarioSave<T extends Model>(
+  abstract scenarioSave<T extends Model>(
     uuid: string, 
     scenario: Scenario<T>, 
     symlinkPaths: string[]
@@ -57,7 +62,7 @@ export interface PersistenceManager {
    * @param uuid Scenario UUID to load
    * @returns Scenario or throws if not found
    */
-  scenarioLoad<T extends Model>(uuid: string): Promise<Scenario<T>>;
+  abstract scenarioLoad<T extends Model>(uuid: string): Promise<Scenario<T>>;
   
   /**
    * Find scenarios by query
@@ -65,7 +70,7 @@ export interface PersistenceManager {
    * @param query Query with optional filters
    * @returns Array of matching scenarios
    */
-  scenarioFind<T extends Model>(query: ScenarioQuery): Promise<Scenario<T>[]>;
+  abstract scenarioFind<T extends Model>(query: ScenarioQuery): Promise<Scenario<T>[]>;
   
   /**
    * Delete scenario from storage
@@ -73,14 +78,14 @@ export interface PersistenceManager {
    * @param uuid Scenario UUID to delete
    * @param removeSymlinks Also remove symlinks (default true)
    */
-  scenarioDelete(uuid: string, removeSymlinks?: boolean): Promise<void>;
+  abstract scenarioDelete(uuid: string, removeSymlinks?: boolean): Promise<void>;
   
   /**
    * Check if scenario exists
    * 
    * @param uuid Scenario UUID to check
    */
-  scenarioExists(uuid: string): Promise<boolean>;
+  abstract scenarioExists(uuid: string): Promise<boolean>;
   
   // ═══════════════════════════════════════════════════════════════
   // Symlink Path Builders
@@ -90,7 +95,7 @@ export interface PersistenceManager {
    * Build type symlink path
    * @returns Relative path like: type/ONCE/0.3.21.8
    */
-  typePathBuild(component: string, version: string): string;
+  abstract typePathBuild(component: string, version: string): string;
   
   /**
    * Build domain symlink path with hostname
@@ -98,7 +103,7 @@ export interface PersistenceManager {
    * @param hostname Hostname like 'McDonges'
    * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.8
    */
-  domainPathBuild(domainParts: string[], hostname: string, component: string, version: string): string;
+  abstract domainPathBuild(domainParts: string[], hostname: string, component: string, version: string): string;
   
   /**
    * Build capability symlink path under domain
@@ -106,7 +111,7 @@ export interface PersistenceManager {
    * @param hostname Hostname like 'McDonges'
    * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.8/capability/httpPort/42777
    */
-  capabilityPathBuild(
+  abstract capabilityPathBuild(
     domainParts: string[], 
     hostname: string, 
     component: string, 
@@ -115,10 +120,3 @@ export interface PersistenceManager {
     capabilityValue: string
   ): string;
 }
-
-/**
- * Symbol for RelatedObjects registry lookup
- * Use: controller.relatedObjectRegister(PersistenceManager, instance)
- */
-export const PersistenceManager = Symbol('PersistenceManager');
-

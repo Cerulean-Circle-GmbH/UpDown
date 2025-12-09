@@ -203,11 +203,11 @@ export class UcpController<TModel extends object> implements Controller<TModel>,
    * @param instance The object instance
    * @param skipType Type already registered (avoid duplicate)
    */
-  private prototypeChainRegister<T>(instance: T, skipType: InterfaceConstructor<T>): void {
+  private prototypeChainRegister<T>(instance: T, skipType: InterfaceKey<T>): void {
     let proto = Object.getPrototypeOf(instance);
     
     while (proto && proto.constructor && proto.constructor !== Object) {
-      const parentType = proto.constructor as InterfaceConstructor<unknown>;
+      const parentType = proto.constructor as InterfaceKey<unknown>;
       
       if (parentType !== skipType) {
         // Register under parent type
