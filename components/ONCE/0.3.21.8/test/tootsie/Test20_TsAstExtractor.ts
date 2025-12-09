@@ -4,6 +4,7 @@
  * ✅ Web4 Principle 25: Tootsie Tests Only
  * ✅ Web4 Principle 1: Everything is a Scenario
  * ✅ Web4 Principle 28: DRY + Code-First (AST is single point of truth)
+ * ✅ Web4 Radical OOP: No inline functions, model-based state
  * 
  * Tests:
  * 1. Extract TypeDescriptor from a class file
@@ -19,18 +20,25 @@ import { ONCETestCase } from './ONCETestCase.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { TsAstExtractor } from '../../src/ts/layer2/TsAstExtractor.js';
+import type { TypeDescriptorModel } from '../../src/ts/layer3/TypeDescriptorModel.interface.js';
 
 /**
- * Test model
+ * Test model - Radical OOP state management
  */
 interface Test20Model {
   extractor: TsAstExtractor | null;
   testScenariosDir: string;
   extractedTypes: string[];
+  /** Current search target for type lookup */
+  searchTypeName: string;
 }
 
 /**
  * Test20_TsAstExtractor - Verify AST extraction creates type scenarios
+ * 
+ * Uses Radical OOP patterns:
+ * - Model-based state instead of inline closures
+ * - Class methods instead of anonymous functions
  */
 export class Test20_TsAstExtractor extends ONCETestCase {
   
@@ -38,7 +46,68 @@ export class Test20_TsAstExtractor extends ONCETestCase {
     extractor: null,
     testScenariosDir: '',
     extractedTypes: [],
+    searchTypeName: '',
   };
+  
+  // ═══════════════════════════════════════════════════════════════
+  // RADICAL OOP HELPER METHODS (replace inline functions)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Check if type matches current search name
+   * Used as predicate for array methods - bound to model state
+   */
+  private typeNameMatches(type: TypeDescriptorModel): boolean {
+    return type.name === this.testModel.searchTypeName;
+  }
+  
+  /**
+   * Find type by name in array
+   * @param types Array of types to search
+   * @param name Name to find
+   */
+  private typeFindByName(types: TypeDescriptorModel[], name: string): TypeDescriptorModel | undefined {
+    this.testModel.searchTypeName = name;
+    for (const type of types) {
+      if (this.typeNameMatches(type)) {
+        return type;
+      }
+    }
+    return undefined;
+  }
+  
+  /**
+   * Check if type exists by name
+   * @param types Array of types to search
+   * @param name Name to check
+   */
+  private typeExistsByName(types: TypeDescriptorModel[], name: string): boolean {
+    return this.typeFindByName(types, name) !== undefined;
+  }
+  
+  /**
+   * Extract all type names from array
+   * @param types Array of types
+   */
+  private typeNamesExtract(types: TypeDescriptorModel[]): string[] {
+    const names: string[] = [];
+    for (const type of types) {
+      names.push(type.name);
+    }
+    return names;
+  }
+  
+  /**
+   * Extract all method names from type
+   * @param type Type to extract from
+   */
+  private methodNamesExtract(type: TypeDescriptorModel): string[] {
+    const names: string[] = [];
+    for (const method of type.methods) {
+      names.push(method.name);
+    }
+    return names;
+  }
   
   /**
    * Test execution
@@ -85,15 +154,15 @@ export class Test20_TsAstExtractor extends ONCETestCase {
       actual: jsInterfaceResult.errors,
     });
     
-    const jsInterfaceFound = jsInterfaceResult.types.some(function(t) { return t.name === 'JsInterface'; });
+    const jsInterfaceFound = this.typeExistsByName(jsInterfaceResult.types, 'JsInterface');
     jsInterfaceReq.validateCriterion('JS-02', jsInterfaceFound, {
-      actual: jsInterfaceResult.types.map(function(t) { return t.name; }),
+      actual: this.typeNamesExtract(jsInterfaceResult.types),
     });
     
-    const jsInterfaceType = jsInterfaceResult.types.find(function(t) { return t.name === 'JsInterface'; });
+    const jsInterfaceType = this.typeFindByName(jsInterfaceResult.types, 'JsInterface');
     if (jsInterfaceType) {
       this.logEvidence('evidence', `JsInterface.isAbstract: ${jsInterfaceType.isAbstract}`);
-      this.logEvidence('evidence', `JsInterface.methods: ${jsInterfaceType.methods.map(function(m) { return m.name; }).join(', ')}`);
+      this.logEvidence('evidence', `JsInterface.methods: ${this.methodNamesExtract(jsInterfaceType).join(', ')}`);
       this.testModel.extractedTypes.push('JsInterface');
     }
     this.validateRequirement(jsInterfaceReq);
@@ -112,15 +181,15 @@ export class Test20_TsAstExtractor extends ONCETestCase {
       actual: pmResult.errors,
     });
     
-    const pmFound = pmResult.types.some(function(t) { return t.name === 'PersistenceManager'; });
+    const pmFound = this.typeExistsByName(pmResult.types, 'PersistenceManager');
     pmReq.validateCriterion('PM-02', pmFound, {
-      actual: pmResult.types.map(function(t) { return t.name; }),
+      actual: this.typeNamesExtract(pmResult.types),
     });
     
-    const pmType = pmResult.types.find(function(t) { return t.name === 'PersistenceManager'; });
+    const pmType = this.typeFindByName(pmResult.types, 'PersistenceManager');
     if (pmType) {
       this.logEvidence('evidence', `PersistenceManager.isInterface: ${pmType.isInterface}`);
-      this.logEvidence('evidence', `PersistenceManager.methods: ${pmType.methods.map(function(m) { return m.name; }).join(', ')}`);
+      this.logEvidence('evidence', `PersistenceManager.methods: ${this.methodNamesExtract(pmType).join(', ')}`);
       this.testModel.extractedTypes.push('PersistenceManager');
     }
     this.validateRequirement(pmReq);
@@ -140,12 +209,12 @@ export class Test20_TsAstExtractor extends ONCETestCase {
       actual: ucpStorageResult.errors,
     });
     
-    const ucpFound = ucpStorageResult.types.some(function(t) { return t.name === 'UcpStorage'; });
+    const ucpFound = this.typeExistsByName(ucpStorageResult.types, 'UcpStorage');
     ucpReq.validateCriterion('UCP-02', ucpFound, {
-      actual: ucpStorageResult.types.map(function(t) { return t.name; }),
+      actual: this.typeNamesExtract(ucpStorageResult.types),
     });
     
-    const ucpStorageType = ucpStorageResult.types.find(function(t) { return t.name === 'UcpStorage'; });
+    const ucpStorageType = this.typeFindByName(ucpStorageResult.types, 'UcpStorage');
     if (ucpStorageType) {
       this.logEvidence('evidence', `UcpStorage.extends: ${ucpStorageType.extends}`);
       this.logEvidence('evidence', `UcpStorage.implements: ${ucpStorageType.implements.join(', ')}`);
