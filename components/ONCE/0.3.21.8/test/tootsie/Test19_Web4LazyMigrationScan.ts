@@ -12,8 +12,11 @@
  * - P16: setXyz(value) → should be `set xyz(value)`
  * - P16: createXyz() → should be `xyzCreate()`
  * - P16: updateXyz() → should be `xyzUpdate()`
+ * - P19: Multiple types in one file → split into separate files
  * - P4: Arrow functions in forEach/map/filter → should be method references
+ * - P3: Underscore prefix properties → use descriptive suffix
  * - P26: Factory functions → should be `new Class().init(scenario)`
+ * - P1: Separate Config objects → should be part of Scenario
  * 
  * @pdca session/2025-12-08-UTC-1100.jsinterface-type-descriptors.pdca.md
  */
@@ -282,6 +285,9 @@ export class Test19_Web4LazyMigrationScan extends ONCETestCase {
     const lines = content.split('\n');
     const relativePath = path.relative(this.componentRoot, filePath);
     
+    // P19: Check for multiple types in one file
+    this.checkOneFileOneType(content, relativePath);
+    
     for (const pattern of this.testModel.scanPatterns) {
       // Reset regex state
       pattern.regex.lastIndex = 0;
@@ -316,6 +322,66 @@ export class Test19_Web4LazyMigrationScan extends ONCETestCase {
           });
         }
       }
+    }
+  }
+  
+  /**
+   * Check for P19 violation: One File One Type
+   * Scans for multiple exported interfaces, types, classes, or enums in a single file
+   */
+  private checkOneFileOneType(content: string, relativePath: string): void {
+    // Patterns to find exported type declarations
+    const exportedInterfaceRegex = /^export\s+interface\s+(\w+)/gm;
+    const exportedTypeRegex = /^export\s+type\s+(\w+)/gm;
+    const exportedClassRegex = /^export\s+(?:abstract\s+)?class\s+(\w+)/gm;
+    const exportedEnumRegex = /^export\s+(?:const\s+)?enum\s+(\w+)/gm;
+    
+    const interfaces: string[] = [];
+    const types: string[] = [];
+    const classes: string[] = [];
+    const enums: string[] = [];
+    
+    let match;
+    
+    // Find all exported interfaces
+    while ((match = exportedInterfaceRegex.exec(content)) !== null) {
+      interfaces.push(match[1]);
+    }
+    
+    // Find all exported types
+    while ((match = exportedTypeRegex.exec(content)) !== null) {
+      types.push(match[1]);
+    }
+    
+    // Find all exported classes
+    while ((match = exportedClassRegex.exec(content)) !== null) {
+      classes.push(match[1]);
+    }
+    
+    // Find all exported enums
+    while ((match = exportedEnumRegex.exec(content)) !== null) {
+      enums.push(match[1]);
+    }
+    
+    // Count total exported types
+    const totalTypes = interfaces.length + types.length + classes.length + enums.length;
+    
+    // P19 violation if more than one exported type in a file
+    if (totalTypes > 1) {
+      const allTypes: string[] = [];
+      if (interfaces.length > 0) allTypes.push(`interfaces: ${interfaces.join(', ')}`);
+      if (types.length > 0) allTypes.push(`types: ${types.join(', ')}`);
+      if (classes.length > 0) allTypes.push(`classes: ${classes.join(', ')}`);
+      if (enums.length > 0) allTypes.push(`enums: ${enums.join(', ')}`);
+      
+      this.testModel.violations.push({
+        file: relativePath,
+        line: 1,
+        pattern: 'Multiple types in one file',
+        code: `${totalTypes} exports: ${allTypes.join('; ')}`,
+        suggestion: `Split into separate files: one file per interface/type/class/enum`,
+        principle: 'P19',
+      });
     }
   }
   
