@@ -14,7 +14,7 @@
  */
 
 import type { Storage } from '../layer3/Storage.interface.js';
-import type { PersistenceManager, ScenarioQuery } from '../layer3/PersistenceManager.interface.js';
+import { PersistenceManager, ScenarioQuery } from '../layer3/PersistenceManager.interface.js';
 import type { StorageScenario } from '../layer3/StorageScenario.interface.js';
 import type { StorageModel } from '../layer3/StorageModel.interface.js';
 import type { Scenario } from '../layer3/Scenario.interface.js';
@@ -55,6 +55,19 @@ export class UcpStorage implements Storage {
   
   /** Storage model state */
   private model: StorageModel;
+  
+  /**
+   * Static start - Register as PersistenceManager implementation
+   * 
+   * Called during class loading to register this class with the TypeRegistry
+   * and JsInterface implementation tracking.
+   * 
+   * @pdca 2025-12-09-UTC-1500.jsinterface-migration-persistence-manager.pdca.md
+   */
+  static start(): void {
+    // Register UcpStorage as an implementation of PersistenceManager
+    PersistenceManager.implementationRegister(UcpStorage);
+  }
   
   /**
    * Empty constructor - Web4 Principle 6
