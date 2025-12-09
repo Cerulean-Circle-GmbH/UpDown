@@ -115,12 +115,12 @@ export class BrowserOnceOrchestrator {
     
     console.log('[Orchestrator] Registering routes...');
     
-    // Main dashboard - shows RouteOverView (regression to 0.3.21.5)
-    await (this.router as any).routeRegister('/', 'once-over-view', { 
-      title: 'ONCE Dashboard' 
+    // Main dashboard - shows server status page (regression to 0.3.21.5)
+    await (this.router as any).routeRegister('/', 'once-peer-default-view', { 
+      title: 'ONCE Server Status' 
     });
     
-    // Demo route - peer grid
+    // Demo route - peer grid overview
     await (this.router as any).routeRegister('/demo', 'once-over-view', { 
       title: 'ONCE Peer Overview' 
     });
@@ -203,6 +203,8 @@ export class BrowserOnceOrchestrator {
     await import(`${basePath}/OnceOverView.js`);
     await import(`${basePath}/DefaultItemView.js`);
     await import(`${basePath}/OncePeerItemView.js`);
+    await import(`${basePath}/OncePeerDefaultView.js`);
+    await import(`${basePath}/RouteOverView.js`);
     
     console.log('[Orchestrator] ✅ View components imported');
   }

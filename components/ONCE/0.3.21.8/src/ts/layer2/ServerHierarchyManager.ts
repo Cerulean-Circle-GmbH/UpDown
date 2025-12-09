@@ -210,9 +210,10 @@ export class ServerHierarchyManager {
         const homeRoute = new HTMLRoute();
         homeRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         homeRoute.setPattern('/', HttpMethod.GET);
-        // Main route shows OncePeerDefaultView with RouteOverView (server status + routes)
-        // Regression stable to 0.3.21.5
-        homeRoute.setProvider(() => this.component!.serveDefaultView());
+        // ✅ Web4: Use once.html SPA - UcpRouter handles view selection
+        // / renders once-peer-default-view via UcpRouter
+        // @pdca 2025-12-09-UTC-1800.ucpview-framework-independence.pdca.md Phase H.0
+        homeRoute.setProvider(() => this.component!.serveDemoLit());
         homeRoute.model.priority = 50;
         this.httpRouter.registerRoute(homeRoute);
         

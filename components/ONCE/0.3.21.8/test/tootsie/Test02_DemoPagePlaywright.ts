@@ -395,11 +395,10 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       );
       
       mainRouteReq.addCriterion('MAIN-01', 'Main route / responds with HTTP 200');
-      mainRouteReq.addCriterion('MAIN-02', 'Page contains <once-peer-default-view> (server status)');
-      mainRouteReq.addCriterion('MAIN-03', 'Page title contains ONCE');
-      // MAIN-04 & MAIN-05: KNOWN ISSUE - serveDefaultView uses old Lit CDN
-      // TODO: Migrate main route to once.html SPA
-      // @pdca 2025-12-09-UTC-1800.ucpview-framework-independence.pdca.md BACKLOG
+      mainRouteReq.addCriterion('MAIN-02', 'Page contains <ucp-router> element');
+      mainRouteReq.addCriterion('MAIN-03', 'UcpRouter renders <once-peer-default-view>');
+      mainRouteReq.addCriterion('MAIN-04', 'Page title contains ONCE');
+      mainRouteReq.addCriterion('MAIN-05', 'No critical JavaScript errors on main route');
       
       this.logEvidence('step', 'Testing main route /');
       
@@ -419,40 +418,46 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       // Wait for Lit components to render
       await this.sleep(2000);
       
-      // Check for once-peer-default-view element (server status page)
+      // Check for ucp-router element (proves once.html SPA is serving)
+      // ✅ Web4 P4: Regular function in evaluate
+      const hasUcpRouter = await this.page.evaluate(function() {
+        return document.querySelector('ucp-router') !== null;
+      });
+      
+      this.logEvidence('output', 'UcpRouter check', { hasUcpRouter });
+      mainRouteReq.validateCriterion('MAIN-02', hasUcpRouter, { hasUcpRouter });
+      
+      // Check UcpRouter renders once-peer-default-view (for / route)
       // ✅ Web4 P4: Regular function in evaluate
       const hasDefaultView = await this.page.evaluate(function() {
-        return document.querySelector('once-peer-default-view') !== null;
+        // Check both light DOM and shadow DOM
+        const inLightDom = document.querySelector('once-peer-default-view') !== null;
+        const router = document.querySelector('ucp-router');
+        const shadowRoot = router?.shadowRoot;
+        const inShadowDom = shadowRoot?.querySelector('once-peer-default-view') !== null;
+        return inLightDom || inShadowDom;
       });
       
       this.logEvidence('output', 'OncePeerDefaultView check', { hasDefaultView });
-      mainRouteReq.validateCriterion('MAIN-02', hasDefaultView, { hasDefaultView });
+      mainRouteReq.validateCriterion('MAIN-03', hasDefaultView, { hasDefaultView });
       
       // Check page title contains ONCE
       const mainPageTitle = await this.page.title();
       const mainTitleHasOnce = mainPageTitle.includes('ONCE');
       
       this.logEvidence('output', 'Main page title', { mainPageTitle, mainTitleHasOnce });
-      mainRouteReq.validateCriterion('MAIN-03', mainTitleHasOnce, { mainPageTitle });
+      mainRouteReq.validateCriterion('MAIN-04', mainTitleHasOnce, { mainPageTitle });
       
-      // Check for JS errors (separate check for main route)
+      // Check for JS errors specific to main route
       // ✅ Web4 P4: Regular function in evaluate
       const mainRouteErrors = await this.page.evaluate(function() {
         const errorElements = document.querySelectorAll('.error, .js-error, [class*="error"]');
         return Array.from(errorElements).map(function(el) { return el.textContent; }).slice(0, 5);
       });
       
-      // Log errors for debugging (known issue: serveDefaultView uses old Lit CDN)
-      this.logEvidence('output', 'All captured errors (includes /demo errors)', { 
-        consoleErrors: consoleErrors,
-        pageErrors: pageErrors,
-        note: 'KNOWN ISSUE: serveDefaultView() uses old Lit CDN - TODO: migrate to once.html SPA'
-      });
-      
-      // MAIN-04 & MAIN-05 skipped - known issue with legacy serveDefaultView HTML
-      // The serveDefaultView() method uses a different Lit CDN that fails to load
-      // TODO: Migrate main route to once.html SPA (Phase H.0 continued)
-      this.logEvidence('info', 'MAIN-04 & MAIN-05 skipped - legacy serveDefaultView uses incompatible Lit CDN');
+      const mainNoErrors = mainRouteErrors.length === 0;
+      this.logEvidence('output', 'Main route JS check', { mainNoErrors, mainRouteErrors });
+      mainRouteReq.validateCriterion('MAIN-05', mainNoErrors, { mainRouteErrors });
       
       // Take screenshot of main route
       const mainScreenshotPath = path.join(this.testModel.screenshotDir, `test02-main-route-${Date.now()}.png`);
