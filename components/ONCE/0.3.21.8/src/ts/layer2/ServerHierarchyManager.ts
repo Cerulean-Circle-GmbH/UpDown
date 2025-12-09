@@ -210,7 +210,9 @@ export class ServerHierarchyManager {
         const homeRoute = new HTMLRoute();
         homeRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         homeRoute.setPattern('/', HttpMethod.GET);
-        homeRoute.setProvider(() => this.component!.serveDefaultView());
+        // ✅ Web4: Use once.html SPA entry point via BrowserOnceOrchestrator + UcpRouter
+        // @pdca 2025-12-09-UTC-1800.ucpview-framework-independence.pdca.md Phase H.0
+        homeRoute.setProvider(() => this.component!.serveDemoLit()); // Same as /demo - once.html
         homeRoute.model.priority = 50;
         this.httpRouter.registerRoute(homeRoute);
         

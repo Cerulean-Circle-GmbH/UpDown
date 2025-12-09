@@ -122,7 +122,7 @@ export class BrowserOnceOrchestrator {
     
     // Demo route - peer grid
     await (this.router as any).routeRegister('/demo', 'once-over-view', { 
-      title: 'Peer Overview' 
+      title: 'ONCE Peer Overview' 
     });
     
     // TODO: Add these routes when views are created
