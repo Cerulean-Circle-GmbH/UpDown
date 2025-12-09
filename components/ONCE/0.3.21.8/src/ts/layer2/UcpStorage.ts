@@ -13,7 +13,7 @@
  * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
  */
 
-import type { Storage } from '../layer3/Storage.interface.js';
+import { Storage } from '../layer3/Storage.interface.js';
 import { PersistenceManager, ScenarioQuery } from '../layer3/PersistenceManager.interface.js';
 import type { StorageScenario } from '../layer3/StorageScenario.interface.js';
 import type { StorageModel } from '../layer3/StorageModel.interface.js';
@@ -51,13 +51,13 @@ import * as crypto from 'crypto';
  * const pm = controller.relatedObjectLookup(PersistenceManager);
  * ```
  */
-export class UcpStorage implements Storage {
+export class UcpStorage extends Storage {
   
   /** Storage model state */
   private model: StorageModel;
   
   /**
-   * Static start - Register as PersistenceManager implementation
+   * Static start - Register as Storage and PersistenceManager implementation
    * 
    * Called during class loading to register this class with the TypeRegistry
    * and JsInterface implementation tracking.
@@ -65,7 +65,8 @@ export class UcpStorage implements Storage {
    * @pdca 2025-12-09-UTC-1500.jsinterface-migration-persistence-manager.pdca.md
    */
   static start(): void {
-    // Register UcpStorage as an implementation of PersistenceManager
+    // Register UcpStorage as an implementation of Storage (which extends PersistenceManager)
+    Storage.implementationRegister(UcpStorage);
     PersistenceManager.implementationRegister(UcpStorage);
   }
   
@@ -73,6 +74,7 @@ export class UcpStorage implements Storage {
    * Empty constructor - Web4 Principle 6
    */
   constructor() {
+    super();
     this.model = {
       uuid: crypto.randomUUID(),
       projectRoot: '',
