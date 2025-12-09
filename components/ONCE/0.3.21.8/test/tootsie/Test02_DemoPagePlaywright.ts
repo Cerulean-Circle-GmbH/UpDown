@@ -26,7 +26,9 @@ interface DemoPageTestModel {
   componentRoot: string;
   version: string;
   primaryPort: number;
+  baseUrl: string;
   demoUrl: string;
+  mainUrl: string;
   screenshotDir: string;
   startedByTest: boolean;
   capturedIorUrl: string | null;
@@ -41,7 +43,9 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
     componentRoot: '',
     version: '',
     primaryPort: 42777,
+    baseUrl: '',
     demoUrl: '',
+    mainUrl: '',
     screenshotDir: '',
     startedByTest: false,
     capturedIorUrl: null as string | null
@@ -51,12 +55,15 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
     // ✅ Web4: Initialize model from path authority (version from folder)
     this.testModel.componentRoot = this.componentRoot;
     this.testModel.version = this.onceVersion;
-    this.testModel.demoUrl = `http://localhost:${this.testModel.primaryPort}/demo`;
+    this.testModel.baseUrl = `http://localhost:${this.testModel.primaryPort}`;
+    this.testModel.mainUrl = `${this.testModel.baseUrl}/`;
+    this.testModel.demoUrl = `${this.testModel.baseUrl}/demo`;
     this.testModel.screenshotDir = path.join(this.testModel.componentRoot, 'test', 'tootsie', 'screenshots');
     
     this.logEvidence('input', 'Demo page Playwright test', {
       componentRoot: this.testModel.componentRoot,
       version: this.testModel.version,
+      mainUrl: this.testModel.mainUrl,
       demoUrl: this.testModel.demoUrl
     });
 
@@ -374,6 +381,117 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       relatedReq.validateCriterion('RO-04', relatedObjectsCheck.viewCount > 0, relatedObjectsCheck);
       
       this.validateRequirement(relatedReq);
+
+      // ═══════════════════════════════════════════════════════════════
+      // REQUIREMENT: Main Route (/) Works via UcpRouter
+      // @pdca 2025-12-09-UTC-1800.ucpview-framework-independence.pdca.md
+      // ═══════════════════════════════════════════════════════════════
+      
+      const mainRouteReq = this.requirement(
+        'Main Route via UcpRouter',
+        'Main route / loads correctly via UcpRouter SPA navigation'
+      );
+      
+      mainRouteReq.addCriterion('MAIN-01', 'Main route / responds with HTTP 200');
+      mainRouteReq.addCriterion('MAIN-02', 'Page contains <ucp-router> element');
+      mainRouteReq.addCriterion('MAIN-03', 'Page contains <once-over-view> element');
+      mainRouteReq.addCriterion('MAIN-04', 'No JavaScript errors on main route');
+      mainRouteReq.addCriterion('MAIN-05', 'SPA navigation from / to /demo works');
+      
+      this.logEvidence('step', 'Testing main route /');
+      
+      // Navigate to main route
+      const mainResponse = await this.page.goto(this.testModel.mainUrl, {
+        waitUntil: 'networkidle',
+        timeout: 30000
+      });
+      
+      const mainResponseOK = mainResponse?.ok() ?? false;
+      const mainStatusCode = mainResponse?.status() ?? 0;
+      
+      this.logEvidence('output', 'Main route response', { mainResponseOK, mainStatusCode });
+      
+      mainRouteReq.validateCriterion('MAIN-01', mainResponseOK, { statusCode: mainStatusCode });
+      
+      // Wait for Lit components to render
+      await this.sleep(2000);
+      
+      // Check for UcpRouter element
+      const hasUcpRouter = await this.page.evaluate(() => {
+        return document.querySelector('ucp-router') !== null;
+      });
+      
+      this.logEvidence('output', 'UcpRouter check', { hasUcpRouter });
+      mainRouteReq.validateCriterion('MAIN-02', hasUcpRouter, { hasUcpRouter });
+      
+      // Check for once-over-view element (inside UcpRouter)
+      const hasOnceOverView = await this.page.evaluate(() => {
+        // UcpRouter may render once-over-view inside shadow DOM or directly
+        const router = document.querySelector('ucp-router');
+        if (!router) return false;
+        
+        // Check both light DOM and shadow DOM
+        const inLightDom = document.querySelector('once-over-view') !== null;
+        const shadowRoot = router.shadowRoot;
+        const inShadowDom = shadowRoot?.querySelector('once-over-view') !== null;
+        
+        return inLightDom || inShadowDom;
+      });
+      
+      this.logEvidence('output', 'OnceOverView check', { hasOnceOverView });
+      mainRouteReq.validateCriterion('MAIN-03', hasOnceOverView, { hasOnceOverView });
+      
+      // Check for JS errors (separate check for main route)
+      const mainRouteErrors = await this.page.evaluate(() => {
+        // Return any visible error messages
+        const errorElements = document.querySelectorAll('.error, .js-error, [class*="error"]');
+        return Array.from(errorElements).map(el => el.textContent).slice(0, 5);
+      });
+      
+      const mainNoErrors = consoleErrors.length === 0 && pageErrors.length === 0;
+      this.logEvidence('output', 'Main route JS check', { mainNoErrors, mainRouteErrors });
+      mainRouteReq.validateCriterion('MAIN-04', mainNoErrors, { 
+        consoleErrors: consoleErrors.slice(0, 3),
+        pageErrors: pageErrors.slice(0, 3)
+      });
+      
+      // Test SPA navigation: / to /demo
+      this.logEvidence('step', 'Testing SPA navigation from / to /demo');
+      
+      const spaNavigation = await this.page.evaluate(async () => {
+        // Get UcpRouter and call navigateTo
+        const router = document.querySelector('ucp-router') as any;
+        if (!router || typeof router.navigateTo !== 'function') {
+          return { success: false, error: 'UcpRouter not found or missing navigateTo' };
+        }
+        
+        try {
+          router.navigateTo('/demo');
+          // Wait for navigation
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          // Check URL changed
+          const currentPath = window.location.pathname;
+          return { 
+            success: currentPath === '/demo', 
+            currentPath,
+            error: null 
+          };
+        } catch (e) {
+          return { success: false, error: String(e) };
+        }
+      });
+      
+      this.logEvidence('output', 'SPA navigation result', spaNavigation);
+      mainRouteReq.validateCriterion('MAIN-05', spaNavigation.success, spaNavigation);
+      
+      // Take screenshot of main route
+      const mainScreenshotPath = path.join(this.testModel.screenshotDir, `test02-main-route-${Date.now()}.png`);
+      await this.page.screenshot({ path: mainScreenshotPath, fullPage: true });
+      this.logEvidence('output', 'Main route screenshot saved', { path: mainScreenshotPath });
+      
+      // Validate main route requirement
+      this.validateRequirement(mainRouteReq);
 
       // ═══════════════════════════════════════════════════════════════
       // TEST 7: Click Shutdown Button and Verify IOR URL Version
