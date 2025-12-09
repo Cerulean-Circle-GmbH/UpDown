@@ -19,6 +19,7 @@ import { UnitDiscoveryService } from './UnitDiscoveryService.js';
 import { ScenarioService } from './ScenarioService.js';
 import { UcpStorage } from './UcpStorage.js';
 import { SemanticVersion } from './SemanticVersion.js';
+import { TsAstExtractor } from './TsAstExtractor.js';
 import type { Web4TSComponent } from '../layer3/Web4TSComponent.interface.js';
 import type { Web4TSComponentModel } from '../layer3/Web4TSComponentModel.interface.js';
 import type { Scenario } from '../layer3/Scenario.interface.js';
@@ -41,6 +42,9 @@ export class DefaultWeb4TSComponent
   
   /** Unit discovery service for build-time unit creation */
   private unitDiscoveryService: UnitDiscoveryService | null = null;
+  
+  /** Type extractor for build-time TypeDescriptor scenarios */
+  private typeExtractor: TsAstExtractor | null = null;
   
   /** Method signatures for CLI routing */
   private methods: Map<string, MethodSignature> = new Map();
@@ -194,6 +198,7 @@ export class DefaultWeb4TSComponent
   /**
    * Build component (TypeScript compilation)
    * After build, discovers and creates units for new files
+   * Also extracts TypeDescriptor scenarios from AST
    */
   async build(...flags: string[]): Promise<this> {
     const componentRoot = this.model!.targetComponentRoot || this.model!.componentRoot;
@@ -213,12 +218,58 @@ export class DefaultWeb4TSComponent
       console.log(`📦 Discovering units...`);
       await this.unitsDiscover();
       
+      // Extract TypeDescriptor scenarios from AST
+      console.log(`🔍 Extracting type descriptors...`);
+      await this.typesExtract();
+      
     } catch (error) {
       console.error(`❌ Build failed`);
       throw error;
     }
     
     return this;
+  }
+  
+  /**
+   * Extract TypeDescriptor scenarios from TypeScript AST
+   * Creates type.scenario.json files for each exported class/interface
+   */
+  private async typesExtract(): Promise<void> {
+    const componentRoot = this.model!.targetComponentRoot || this.model!.componentRoot;
+    const projectRoot = this.model!.projectRoot || componentRoot;
+    const scenariosDir = path.join(projectRoot, 'scenarios');
+    
+    // Initialize type extractor if needed
+    if (!this.typeExtractor) {
+      this.typeExtractor = new TsAstExtractor().init({
+        componentRoot,
+        componentName: this.model!.displayName,
+        componentVersion: this.model!.displayVersion,
+        scenariosDir,
+      });
+    }
+    
+    // Extract from source directory
+    const sourceDir = path.join(componentRoot, 'src', 'ts');
+    if (!fs.existsSync(sourceDir)) {
+      console.log(`ℹ️ No src/ts directory found, skipping type extraction`);
+      return;
+    }
+    
+    const results = await this.typeExtractor.extractDirectory(sourceDir);
+    
+    // Count extracted types
+    let typeCount = 0;
+    for (const result of results) {
+      typeCount += result.types.length;
+    }
+    
+    if (typeCount > 0) {
+      await this.typeExtractor.saveScenarios(results);
+      console.log(`✅ Extracted ${typeCount} type descriptors`);
+    } else {
+      console.log(`ℹ️ No types to extract`);
+    }
   }
   
   /**
