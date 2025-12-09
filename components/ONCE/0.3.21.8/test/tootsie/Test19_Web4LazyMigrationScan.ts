@@ -184,6 +184,36 @@ export class Test19_Web4LazyMigrationScan extends ONCETestCase {
         regex: /\.(some|every)\s*\(\s*\([^)]*\)\s*=>/g,
         suggestion: 'Use method reference: `.$1(this.methodName.bind(this))`',
       },
+      {
+        name: 'Inline function in forEach',
+        principle: 'P4',
+        regex: /\.forEach\s*\(\s*function\s*\(/g,
+        suggestion: 'Use for loop or class method instead of inline function',
+      },
+      {
+        name: 'Inline function in map',
+        principle: 'P4',
+        regex: /\.map\s*\(\s*function\s*\(/g,
+        suggestion: 'Use for loop or class method instead of inline function',
+      },
+      {
+        name: 'Inline function in filter',
+        principle: 'P4',
+        regex: /\.filter\s*\(\s*function\s*\(/g,
+        suggestion: 'Use for loop or class method instead of inline function',
+      },
+      {
+        name: 'Inline function in find',
+        principle: 'P4',
+        regex: /\.find\s*\(\s*function\s*\(/g,
+        suggestion: 'Use for loop or class method instead of inline function',
+      },
+      {
+        name: 'Inline function in some/every',
+        principle: 'P4',
+        regex: /\.(some|every)\s*\(\s*function\s*\(/g,
+        suggestion: 'Use for loop or class method instead of inline function',
+      },
       
       // ═══════════════════════════════════════════════════════════════
       // P26: No Factory Functions
