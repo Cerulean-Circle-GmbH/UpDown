@@ -213,7 +213,7 @@ export class ServerHierarchyManager {
         // ✅ Web4: Use once.html SPA - UcpRouter handles view selection
         // / renders once-peer-default-view via UcpRouter
         // @pdca 2025-12-09-UTC-1800.ucpview-framework-independence.pdca.md Phase H.0
-        homeRoute.setProvider(() => this.component!.serveDemoLit());
+        homeRoute.setProvider(() => this.component!.serveOnceApp());
         homeRoute.model.priority = 50;
         this.httpRouter.registerRoute(homeRoute);
         
