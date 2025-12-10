@@ -66,26 +66,24 @@ export abstract class UcpView<TModel = any> extends LitElement implements View<T
   /**
    * Apply cached CSS from CSSLoader
    * Called in connectedCallback to ensure styles are applied
+   * 
+   * IMPORTANT: APPENDS to existing adoptedStyleSheets (preserves Lit's static styles)
    */
   private applyCachedStyles(): void {
     const cssPath = (this.constructor as typeof UcpView).cssPath;
-    console.log(`[UcpView] applyCachedStyles for ${this.constructor.name}, cssPath=${cssPath}`);
     
     if (!cssPath) {
-      console.log(`[UcpView] No CSS path defined for ${this.constructor.name}`);
-      return;  // No CSS path defined for this view
+      return;  // No external CSS path defined for this view
     }
     
     const sheet = CSSLoader.get(cssPath);
-    console.log(`[UcpView] CSSLoader.get(${cssPath}) returned:`, sheet ? 'CSSStyleSheet' : 'null');
     
     if (sheet && this.shadowRoot) {
-      this.shadowRoot.adoptedStyleSheets = [sheet];
-      console.log(`[UcpView] ✅ Applied styles from ${cssPath}`);
-    } else if (!sheet) {
-      console.warn(`[UcpView] ⚠️ CSS not preloaded: ${cssPath}`);
-    } else if (!this.shadowRoot) {
-      console.warn(`[UcpView] ⚠️ No shadowRoot yet for ${this.constructor.name}`);
+      // APPEND to existing styles (don't replace Lit's static styles!)
+      const existingStyles = [...this.shadowRoot.adoptedStyleSheets];
+      if (!existingStyles.includes(sheet)) {
+        this.shadowRoot.adoptedStyleSheets = [...existingStyles, sheet];
+      }
     }
   }
   

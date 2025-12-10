@@ -57,79 +57,123 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
   /** CSS path - external CSS for Web4 P19 */
   static cssPath = 'OncePeerDefaultView.css';
   
-  /** Inline critical styles (for immediate rendering) */
+  /** 
+   * Inline critical styles - Cerulean theme matching 0.3.21.5
+   * @pdca 2025-12-09-UTC-1800.ucpview-framework-independence.pdca.md
+   */
   static styles: CSSResultGroup = css`
     :host {
       display: block;
-      font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', monospace;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       min-height: 100vh;
-      background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0f0f23 100%);
-      color: #e0e0e0;
-      padding: 2rem;
+      background: linear-gradient(135deg, #0891b2 0%, #06b6d4 50%, #0e7490 100%);
+      color: white;
+      padding: 20px;
       box-sizing: border-box;
     }
     
     .container {
-      max-width: 1200px;
+      max-width: 900px;
       margin: 0 auto;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
     
     .header {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+      text-align: center;
+      margin-bottom: 30px;
     }
     
     .logo {
-      font-size: 3rem;
+      font-size: 3.5rem;
+      filter: drop-shadow(0 4px 8px rgba(8, 145, 178, 0.3));
     }
     
     h1 {
-      font-size: 2rem;
-      font-weight: 400;
-      color: #00ff88;
-      margin: 0;
-      text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+      margin: 10px 0;
+      font-size: 2.5em;
+      background: linear-gradient(45deg, #fff, #67e8f9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .subtitle {
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 300;
+      margin: 10px 0;
+    }
+    
+    .branding {
+      color: #67e8f9;
+      font-style: italic;
+      margin: 10px 0;
     }
     
     .version-badge {
-      background: rgba(0, 255, 136, 0.1);
-      border: 1px solid rgba(0, 255, 136, 0.3);
-      border-radius: 4px;
-      padding: 0.25rem 0.75rem;
-      font-size: 0.85rem;
-      color: #00ff88;
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      font-weight: bold;
+      margin: 5px;
+    }
+    
+    .primary-badge {
+      background: linear-gradient(45deg, #10b981, #34d399);
+      color: white;
+    }
+    
+    .client-badge {
+      background: linear-gradient(45deg, #3b82f6, #60a5fa);
+      color: white;
+    }
+    
+    .status-banner {
+      background: rgba(0, 255, 0, 0.2);
+      border: 2px solid rgba(0, 255, 0, 0.4);
+      border-radius: 15px;
+      padding: 25px;
+      margin: 25px 0;
+      text-align: center;
+    }
+    
+    .status-banner h3 {
+      margin-top: 0;
+      color: #4ade80;
+      font-size: 1.5em;
     }
     
     .status-section {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin: 25px 0;
     }
     
     .status-card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 15px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
     
     .status-card h2 {
-      font-size: 1rem;
-      font-weight: 500;
-      color: #888;
-      margin: 0 0 1rem 0;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
+      margin-top: 0;
+      color: #a8edea;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1em;
     }
     
     .status-value {
-      font-size: 1.5rem;
+      font-size: 1rem;
       color: #fff;
+      word-break: break-all;
     }
     
     .status-indicator {
@@ -146,13 +190,13 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
     }
     
     .status-dot.running {
-      background: #00ff88;
-      box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+      background: #4ade80;
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
     }
     
     .status-dot.stopped {
-      background: #ff4444;
-      box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+      background: #f87171;
+      box-shadow: 0 0 10px rgba(248, 113, 113, 0.5);
     }
     
     @keyframes pulse {
@@ -170,27 +214,66 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
       display: flex;
       justify-content: space-between;
       padding: 0.5rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .capability-name {
-      color: #888;
+      color: rgba(255, 255, 255, 0.8);
     }
     
     .capability-value {
-      color: #00ff88;
-      font-family: monospace;
+      color: #a8edea;
+      font-family: 'Monaco', 'Menlo', monospace;
     }
     
     .routes-section {
-      margin-top: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 25px;
+      margin: 25px 0;
     }
     
     .routes-section h2 {
-      font-size: 1.2rem;
-      font-weight: 400;
-      color: #888;
-      margin-bottom: 1rem;
+      margin-top: 0;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    code {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      color: #a8edea;
+    }
+    
+    .endpoint {
+      margin: 15px 0;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      border-left: 4px solid #10b981;
+    }
+    
+    .endpoint strong {
+      color: #10b981;
+    }
+    
+    .endpoint p {
+      margin: 8px 0 0 0;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .endpoint a {
+      color: #a8edea;
+      text-decoration: none;
+    }
+    
+    .endpoint a:hover {
+      color: #fff;
+      text-decoration: underline;
     }
   `;
   
@@ -253,69 +336,81 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
   }
   
   /**
-   * Render header section
+   * Render header section - matches 0.3.21.5 styling
    */
   private headerRender(): TemplateResult {
     return html`
       <header class="header">
-        <span class="logo">🌐</span>
-        <h1>${this.serverName}</h1>
-        <span class="version-badge">v${this.serverVersion}</span>
-        ${this.isPrimary 
-          ? html`<span class="version-badge" style="background: rgba(0, 136, 255, 0.1); border-color: rgba(0, 136, 255, 0.3); color: #0088ff;">PRIMARY</span>`
-          : html`<span class="version-badge" style="background: rgba(136, 136, 136, 0.1); border-color: rgba(136, 136, 136, 0.3); color: #888;">CLIENT</span>`
-        }
+        <span class="logo">🚀</span>
+        <h1>ONCE Server</h1>
+        <p class="subtitle">Object Network Communication Engine</p>
+        <p class="subtitle">Enhanced v${this.serverVersion} with Server Hierarchy & Dynamic Port Management</p>
+        <p class="branding">Powered by <strong>Cerulean Circle GmbH</strong></p>
+        <span class="version-badge ${this.isPrimary ? 'primary-badge' : 'client-badge'}">
+          ${this.isPrimary ? '🟢 Primary Server' : '🔵 Client Server'}
+        </span>
       </header>
     `;
   }
   
   /**
-   * Render status section
+   * Render status section - matches 0.3.21.5 layout
    */
   private statusSectionRender(): TemplateResult {
     const isRunning = this.lifecycleState === LifecycleState.RUNNING;
     
     return html`
+      <div class="status-banner">
+        <h3>
+          <span class="status-dot ${isRunning ? 'running' : 'stopped'}"></span>
+          Server Status: ${isRunning ? 'Running' : this.lifecycleState}
+        </h3>
+        <p>ONCE kernel v${this.serverVersion} initialized and ready for enhanced P2P communication</p>
+      </div>
+      
       <div class="status-section">
         <div class="status-card">
-          <h2>Status</h2>
-          <div class="status-value status-indicator">
-            <span class="status-dot ${isRunning ? 'running' : 'stopped'}"></span>
-            ${this.lifecycleState}
-          </div>
+          <h2>🆔 Identity</h2>
+          <p><strong>UUID:</strong></p>
+          <code>${this.serverUuid}</code>
+          <p><strong>Domain:</strong> ${this.serverDomain}</p>
+          <p><strong>State:</strong> ${this.lifecycleState}</p>
         </div>
         
         <div class="status-card">
-          <h2>Identity</h2>
-          <div class="status-value" style="font-size: 1rem; word-break: break-all;">
-            ${this.serverUuid}
-          </div>
+          <h2>🌐 Network</h2>
+          <p><strong>HTTP Port:</strong> ${this.httpPort}</p>
+          <p><strong>WebSocket Port:</strong> ${this.wsPort}</p>
+          <p><strong>Server Type:</strong> ${this.isPrimary ? 'Primary (42777)' : 'Client (8080+)'}</p>
         </div>
         
         <div class="status-card">
-          <h2>Network</h2>
-          <div class="status-value" style="font-size: 1rem;">
-            ${this.serverHostname}.${this.serverDomain}
-          </div>
-        </div>
-        
-        <div class="status-card">
-          <h2>Capabilities</h2>
+          <h2>⚡ Capabilities</h2>
           <div class="capabilities-list">
-            ${this.capabilities.map(cap => this.capabilityItemRender(cap))}
+            ${this.capabilities.length > 0 
+              ? this.capabilities.map(cap => this.capabilityItemRender(cap))
+              : html`<p>No capabilities registered</p>`
+            }
           </div>
         </div>
-        
-        ${this.isPrimary ? html`
-          <div class="status-card">
-            <h2>Cluster</h2>
-            <div class="status-value">
-              ${this.peerCount} peer${this.peerCount !== 1 ? 's' : ''} connected
-            </div>
-          </div>
-        ` : ''}
       </div>
     `;
+  }
+  
+  /**
+   * Get HTTP port from capabilities
+   */
+  get httpPort(): string {
+    const httpCap = this.capabilities.find(c => c.capability === 'httpPort');
+    return httpCap?.port?.toString() || '42777';
+  }
+  
+  /**
+   * Get WebSocket port from capabilities
+   */
+  get wsPort(): string {
+    const wsCap = this.capabilities.find(c => c.capability === 'wsPort');
+    return wsCap?.port?.toString() || this.httpPort;
   }
   
   /**
@@ -331,13 +426,48 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
   }
   
   /**
-   * Render routes section with route-over-view component
+   * Render routes section - matches 0.3.21.5's endpoint list
    */
   private routesSectionRender(): TemplateResult {
     return html`
       <div class="routes-section">
-        <h2>Available Endpoints</h2>
-        <route-over-view .peerHost="${this.peerHost}"></route-over-view>
+        <h2>📡 Available Endpoints</h2>
+        
+        <div class="endpoint">
+          <strong>Server Status:</strong> 
+          <code><a href="/" target="_blank">/</a></code>
+          <p>This page - server status and information</p>
+        </div>
+        
+        <div class="endpoint">
+          <strong>Health Check:</strong> 
+          <code><a href="/health" target="_blank">/health</a></code>
+          <p>JSON server health and status information</p>
+        </div>
+        
+        <div class="endpoint">
+          <strong>Server Registry:</strong> 
+          <code><a href="/servers" target="_blank">/servers</a></code>
+          <p>${this.isPrimary ? 'JSON list of all registered servers in hierarchy' : 'Only available on primary server'}</p>
+        </div>
+        
+        <div class="endpoint">
+          <strong>Interactive Client:</strong> 
+          <code><a href="/once" target="_blank">/once</a></code>
+          <p>Interactive WebSocket browser client with message exchange</p>
+        </div>
+        
+        <div class="endpoint">
+          <strong>Demo Hub:</strong> 
+          <code><a href="/demo" target="_blank">/demo</a></code>
+          <p>Live server management dashboard with auto-refresh and status monitoring</p>
+        </div>
+      </div>
+      
+      <div class="routes-section">
+        <h2>🔌 WebSocket Connection</h2>
+        <p>WebSocket endpoint available at: <code>ws://${this.peerHost}/</code></p>
+        <p>Use this endpoint for real-time P2P communication with ONCE v${this.serverVersion} kernel</p>
       </div>
     `;
   }
