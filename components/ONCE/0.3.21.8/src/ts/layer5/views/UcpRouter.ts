@@ -17,7 +17,6 @@ import { customElement, state, property } from 'lit/decorators.js';
 import type { Reference } from '../../layer3/Reference.interface.js';
 import type { RouteScenario, RouteModel } from '../../layer3/RouteScenario.interface.js';
 import { Route } from '../../layer3/Route.js';
-import { LifecycleState } from '../../layer3/LifecycleState.enum.js';
 
 /**
  * UcpRouter - Web4 compliant SPA router
