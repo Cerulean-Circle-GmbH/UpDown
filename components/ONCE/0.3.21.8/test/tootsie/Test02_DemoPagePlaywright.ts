@@ -56,7 +56,9 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
     this.testModel.componentRoot = this.componentRoot;
     this.testModel.version = this.onceVersion;
     this.testModel.baseUrl = `http://localhost:${this.testModel.primaryPort}`;
-    this.testModel.mainUrl = `${this.testModel.baseUrl}/`;
+    // Use network hostname for main route (http://mcdonges-3.fritz.box:42777/)
+    // @pdca 2025-12-10-UTC-1202.main-route-0.3.21.5-regression.pdca.md
+    this.testModel.mainUrl = `http://mcdonges-3.fritz.box:${this.testModel.primaryPort}/`;
     this.testModel.demoUrl = `${this.testModel.baseUrl}/demo`;
     this.testModel.screenshotDir = path.join(this.testModel.componentRoot, 'test', 'tootsie', 'screenshots');
     
@@ -465,26 +467,43 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       
       // Check endpoints section displays all 6 endpoints
       // ✅ Web4 P4: Regular function in evaluate
+      // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
       const endpointsCheck = await this.page.evaluate(function() {
-        const endpointsSection = document.querySelector('.endpoints-section, once-peer-default-view .endpoints-section');
-        if (!endpointsSection) return { hasEndpointsSection: false, endpointCount: 0, endpoints: [] };
+        // Check shadow DOM - Lit components use shadow DOM
+        const defaultView = document.querySelector('once-peer-default-view');
+        if (!defaultView || !defaultView.shadowRoot) {
+          return { hasEndpointsSection: false, endpointCount: 0, endpoints: [], error: 'No shadowRoot' };
+        }
         
-        const endpointItems = endpointsSection.querySelectorAll('.endpoint-item, a[href="/"], a[href="/health"], a[href="/servers"], a[href="/once"], a[href="/onceCommunicationLog"], a[href="/demo"]');
-        const endpointLinks = Array.from(endpointItems).map(function(item) {
-          const link = item.querySelector('a') || (item.tagName === 'A' ? item : null);
-          return link ? link.getAttribute('href') : null;
-        }).filter(function(href) { return href !== null; });
+        // Find endpoints section in shadow DOM
+        const endpointsSection = defaultView.shadowRoot.querySelector('.endpoints-section');
+        if (!endpointsSection) {
+          return { hasEndpointsSection: false, endpointCount: 0, endpoints: [], error: 'No endpoints-section found' };
+        }
+        
+        // Find all endpoint items - they contain <a> tags with href
+        const endpointItems = endpointsSection.querySelectorAll('.endpoint-item');
+        const endpointHrefs: string[] = [];
+        
+        endpointItems.forEach(function(item) {
+          const link = item.querySelector('a');
+          if (link) {
+            const href = link.getAttribute('href');
+            if (href) endpointHrefs.push(href);
+          }
+        });
         
         const expectedEndpoints = ['/', '/health', '/servers', '/once', '/onceCommunicationLog', '/demo'];
         const foundEndpoints = expectedEndpoints.filter(function(ep) {
-          return endpointLinks.includes(ep);
+          return endpointHrefs.includes(ep);
         });
         
         return {
           hasEndpointsSection: true,
-          endpointCount: endpointLinks.length,
+          endpointCount: endpointHrefs.length,
           foundEndpoints: foundEndpoints,
-          allEndpointsFound: foundEndpoints.length === 6
+          allEndpointsFound: foundEndpoints.length === 6,
+          allHrefs: endpointHrefs
         };
       });
       
@@ -493,15 +512,40 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       
       // Check Primary Server APIs section (conditional display)
       // ✅ Web4 P4: Regular function in evaluate
+      // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
       const primaryApisCheck = await this.page.evaluate(function() {
-        const primarySection = document.querySelector('.endpoints-section h3');
-        if (!primarySection) return { hasPrimarySection: false };
+        const defaultView = document.querySelector('once-peer-default-view');
+        if (!defaultView) return { hasPrimarySection: false };
         
-        const sectionText = primarySection.textContent || '';
-        const hasPrimaryApis = sectionText.includes('Primary Server APIs') || sectionText.includes('🔧');
+        // Check shadow DOM for Primary Server APIs section
+        let primarySection = null;
+        if (defaultView.shadowRoot) {
+          const sections = defaultView.shadowRoot.querySelectorAll('.endpoints-section');
+          for (let i = 0; i < sections.length; i++) {
+            const h3 = sections[i].querySelector('h3');
+            if (h3 && (h3.textContent?.includes('Primary Server APIs') || h3.textContent?.includes('🔧'))) {
+              primarySection = sections[i];
+              break;
+            }
+          }
+        }
+        
+        // Also check light DOM
+        if (!primarySection) {
+          const sections = defaultView.querySelectorAll('.endpoints-section');
+          for (let i = 0; i < sections.length; i++) {
+            const h3 = sections[i].querySelector('h3');
+            if (h3 && (h3.textContent?.includes('Primary Server APIs') || h3.textContent?.includes('🔧'))) {
+              primarySection = sections[i];
+              break;
+            }
+          }
+        }
+        
+        const hasPrimaryApis = primarySection !== null;
         
         return {
-          hasPrimarySection: true,
+          hasPrimarySection: hasPrimaryApis,
           hasPrimaryApis: hasPrimaryApis
         };
       });
@@ -515,8 +559,36 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       
       // Check WebSocket connection section
       // ✅ Web4 P4: Regular function in evaluate
+      // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
       const websocketCheck = await this.page.evaluate(function() {
-        const wsSection = document.querySelector('.endpoints-section');
+        const defaultView = document.querySelector('once-peer-default-view');
+        if (!defaultView) return { hasWebSocketSection: false };
+        
+        // Check shadow DOM for WebSocket section
+        let wsSection = null;
+        if (defaultView.shadowRoot) {
+          const sections = defaultView.shadowRoot.querySelectorAll('.endpoints-section');
+          for (let i = 0; i < sections.length; i++) {
+            const h3 = sections[i].querySelector('h3');
+            if (h3 && (h3.textContent?.includes('WebSocket') || h3.textContent?.includes('🔌'))) {
+              wsSection = sections[i];
+              break;
+            }
+          }
+        }
+        
+        // Also check light DOM
+        if (!wsSection) {
+          const sections = defaultView.querySelectorAll('.endpoints-section');
+          for (let i = 0; i < sections.length; i++) {
+            const h3 = sections[i].querySelector('h3');
+            if (h3 && (h3.textContent?.includes('WebSocket') || h3.textContent?.includes('🔌'))) {
+              wsSection = sections[i];
+              break;
+            }
+          }
+        }
+        
         if (!wsSection) return { hasWebSocketSection: false };
         
         const sectionText = wsSection.textContent || '';
@@ -533,15 +605,40 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       
       // Check endpoint links are clickable
       // ✅ Web4 P4: Regular function in evaluate
+      // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
       const linksCheck = await this.page.evaluate(function() {
-        const links = document.querySelectorAll('a[href="/"], a[href="/health"], a[href="/servers"], a[href="/once"], a[href="/onceCommunicationLog"], a[href="/demo"]');
-        const clickableLinks = Array.from(links).filter(function(link) {
+        const defaultView = document.querySelector('once-peer-default-view');
+        if (!defaultView) return { totalLinks: 0, clickableLinks: 0, allClickable: false };
+        
+        // Find all links in shadow DOM
+        let allLinks: NodeListOf<HTMLAnchorElement> | null = null;
+        if (defaultView.shadowRoot) {
+          allLinks = defaultView.shadowRoot.querySelectorAll('a[href="/"], a[href="/health"], a[href="/servers"], a[href="/once"], a[href="/onceCommunicationLog"], a[href="/demo"]');
+        }
+        
+        // Also check light DOM
+        if (!allLinks || allLinks.length === 0) {
+          allLinks = defaultView.querySelectorAll('a[href="/"], a[href="/health"], a[href="/servers"], a[href="/once"], a[href="/onceCommunicationLog"], a[href="/demo"]');
+        }
+        
+        // Check if endpoint items contain links (they might be in .endpoint-item)
+        if (!allLinks || allLinks.length === 0) {
+          const endpointItems = defaultView.shadowRoot?.querySelectorAll('.endpoint-item') || defaultView.querySelectorAll('.endpoint-item');
+          const foundLinks: HTMLAnchorElement[] = [];
+          endpointItems.forEach(function(item) {
+            const link = item.querySelector('a');
+            if (link) foundLinks.push(link);
+          });
+          allLinks = foundLinks as any;
+        }
+        
+        const clickableLinks = Array.from(allLinks || []).filter(function(link) {
           const style = window.getComputedStyle(link);
           return style.pointerEvents !== 'none' && style.display !== 'none' && style.visibility !== 'hidden';
         });
         
         return {
-          totalLinks: links.length,
+          totalLinks: (allLinks || []).length,
           clickableLinks: clickableLinks.length,
           allClickable: clickableLinks.length >= 6
         };
