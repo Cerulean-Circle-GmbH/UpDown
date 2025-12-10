@@ -47,9 +47,9 @@ export class UcpController<TModel extends object> extends Controller<TModel> imp
   private modelProxy: Reference<TModel> = null;
   
   /** 
-   * RelatedObjects registry - maps interface types/symbols to instances
+   * RelatedObjects registry - maps interface types (JsInterface classes) to instances
    * Web4 Principle 24
-   * Supports both constructors and symbols as keys
+   * Uses JsInterface classes (abstract or concrete) as keys
    */
   private relatedObjectsRegistry: Map<InterfaceKey<unknown>, Set<unknown>> = new Map();
   
@@ -177,12 +177,11 @@ export class UcpController<TModel extends object> extends Controller<TModel> imp
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Register a related object for an interface type or symbol
+   * Register a related object for an interface type (JsInterface class)
    * 
-   * For constructor keys: Also walks the prototype chain to register for all parent classes.
-   * For symbol keys: Registers only under the symbol.
+   * Also walks the prototype chain to register for all parent classes automatically.
    * 
-   * @param interfaceKey The interface/class type or symbol to register under
+   * @param interfaceKey The interface/class type (JsInterface) to register under
    * @param instance The object instance
    */
   relatedObjectRegister<T>(interfaceKey: InterfaceKey<T>, instance: T): void {
@@ -202,10 +201,8 @@ export class UcpController<TModel extends object> extends Controller<TModel> imp
     }
     interfaces.add(interfaceKey);
     
-    // Only walk prototype chain for constructor keys (not symbols)
-    if (typeof interfaceKey !== 'symbol') {
-      this.prototypeChainRegister(instance, interfaceKey);
-    }
+    // Walk prototype chain to register for all parent classes
+    this.prototypeChainRegister(instance, interfaceKey);
   }
   
   /**
@@ -240,9 +237,9 @@ export class UcpController<TModel extends object> extends Controller<TModel> imp
   }
   
   /**
-   * Lookup all objects implementing an interface or registered under a symbol
+   * Lookup all objects implementing an interface (JsInterface class)
    * 
-   * @param interfaceKey The interface/class type or symbol to lookup
+   * @param interfaceKey The interface/class type (JsInterface) to lookup
    * @returns Array of all matching instances (empty if none)
    */
   relatedObjectLookup<T>(interfaceKey: InterfaceKey<T>): T[] {
@@ -254,9 +251,9 @@ export class UcpController<TModel extends object> extends Controller<TModel> imp
   }
   
   /**
-   * Lookup single object implementing an interface or registered under a symbol
+   * Lookup single object implementing an interface (JsInterface class)
    * 
-   * @param interfaceKey The interface/class type or symbol to lookup
+   * @param interfaceKey The interface/class type (JsInterface) to lookup
    * @returns First matching instance or null (Reference<T>)
    */
   relatedObjectLookupFirst<T>(interfaceKey: InterfaceKey<T>): Reference<T> {

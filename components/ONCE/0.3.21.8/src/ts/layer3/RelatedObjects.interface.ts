@@ -5,8 +5,8 @@
  * 
  * Every UcpComponent has a registry of related infrastructure objects
  * (views, persistence managers, routers, CLI instances). Objects register
- * themselves AND all interfaces they implement. Lookup by interface or
- * symbol returns all matching instances.
+ * themselves AND all interfaces they implement. Lookup by JsInterface class
+ * returns all matching instances.
  * 
  * Web4 Principles:
  * - P5: Reference<T> for nullable
@@ -33,7 +33,7 @@ import { Reference } from './Reference.interface.js';
  * // - ItemView
  * // - View
  * 
- * // Registration via Symbol
+ * // Registration via JsInterface class
  * import { PersistenceManager } from './PersistenceManager.interface.js';
  * controller.relatedObjectRegister(PersistenceManager, storageInstance);
  * 
@@ -48,29 +48,27 @@ export interface RelatedObjects {
   /**
    * Register a related object
    * 
-   * For constructor keys: Also registers the instance for all interfaces
-   * in its prototype chain automatically.
-   * For symbol keys: Registers only under the symbol.
+   * Also registers the instance for all interfaces in its prototype chain automatically.
    * 
-   * @param interfaceKey The interface/class type or symbol to register under
+   * @param interfaceKey The interface/class type (JsInterface) to register under
    * @param instance The object instance
    */
   relatedObjectRegister<T>(interfaceKey: InterfaceKey<T>, instance: T): void;
   
   /**
-   * Lookup all objects implementing an interface or registered under a symbol
+   * Lookup all objects implementing an interface (JsInterface class)
    * 
-   * @param interfaceKey The interface/class type or symbol to lookup
+   * @param interfaceKey The interface/class type (JsInterface) to lookup
    * @returns Array of all matching instances (empty if none)
    */
   relatedObjectLookup<T>(interfaceKey: InterfaceKey<T>): T[];
   
   /**
-   * Lookup single object implementing an interface or registered under a symbol
+   * Lookup single object implementing an interface (JsInterface class)
    * 
    * Returns the first registered instance, or null if none found.
    * 
-   * @param interfaceKey The interface/class type or symbol to lookup
+   * @param interfaceKey The interface/class type (JsInterface) to lookup
    * @returns First matching instance or null (Reference<T>)
    */
   relatedObjectLookupFirst<T>(interfaceKey: InterfaceKey<T>): Reference<T>;
