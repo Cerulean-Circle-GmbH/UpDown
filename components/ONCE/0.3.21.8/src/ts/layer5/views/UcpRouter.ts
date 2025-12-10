@@ -99,10 +99,8 @@ export class UcpRouter extends LitElement {
     super.connectedCallback();
     // ✅ Web4: Bound methods, not arrow functions
     window.addEventListener('popstate', this.routeChangeHandle.bind(this));
-    // Initial route resolution (async - fire and forget, will update when ready)
-    this.routeResolve(window.location.pathname).catch(function(err) {
-      console.error('[UcpRouter] Route resolution failed:', err);
-    });
+    // Initial route resolution
+    this.routeResolve(window.location.pathname);
   }
   
   disconnectedCallback(): void {
@@ -173,13 +171,13 @@ export class UcpRouter extends LitElement {
    * @param path URL path to navigate to
    * @param replace If true, replaces current history entry
    */
-  async navigateTo(path: string, replace: boolean = false): Promise<void> {
+  navigateTo(path: string, replace: boolean = false): void {
     if (replace) {
       window.history.replaceState({}, '', path);
     } else {
       window.history.pushState({}, '', path);
     }
-    await this.routeResolve(path);
+    this.routeResolve(path);
   }
   
   /**
@@ -203,15 +201,15 @@ export class UcpRouter extends LitElement {
   /**
    * Handle browser back/forward navigation
    */
-  private async routeChangeHandle(event: PopStateEvent): Promise<void> {
-    await this.routeResolve(window.location.pathname);
+  private routeChangeHandle(event: PopStateEvent): void {
+    this.routeResolve(window.location.pathname);
   }
   
   /**
    * Resolve path to a view
    * ✅ Web4 P26: Works with Route class
    */
-  private async routeResolve(path: string): Promise<void> {
+  private routeResolve(path: string): void {
     console.log(`[UcpRouter] Resolving: ${path}`);
     this.currentRoute = path;
     
@@ -249,8 +247,8 @@ export class UcpRouter extends LitElement {
         document.title = route.title;
       }
       
-      // Create view element (async - waits for server model fetch if needed)
-      await this.viewCreate(route);
+      // Create view element
+      this.viewCreate(route);
       
       // Notify server if configured
       if (route.serverRoute) {
@@ -292,11 +290,17 @@ export class UcpRouter extends LitElement {
   /**
    * Create view element for route
    * ✅ Web4 P26: Works with Route class
+   * ✅ Web4 P7: Layer 5 is synchronous - model must be set by Layer 4 orchestrator
    * @pdca 2025-12-10-UTC-1202.main-route-0.3.21.5-regression.pdca.md
    */
-  private async viewCreate(route: Route): Promise<void> {
+  private viewCreate(route: Route): void {
     // Create the view element
     const view = document.createElement(route.viewTag);
+    
+    // Set model if available (provided by Layer 4 orchestrator)
+    if (this.model) {
+      (view as any).model = this.model;
+    }
     
     // Set kernel if available
     if (this.kernel) {
@@ -313,26 +317,17 @@ export class UcpRouter extends LitElement {
       );
     }
     
-    // ✅ FIX: Fetch server model for once-peer-default-view BEFORE setting currentView
-    // This view needs ServerDefaultModel, not BrowserOnceModel
-    // Wait for async fetch to complete so model is set before rendering
-    if (route.viewTag === 'once-peer-default-view' && this.kernel) {
-      await this.serverModelFetch(view);
-    } else if (this.model) {
-      // Set model for other views
-      (view as any).model = this.model;
-    }
-    
     this.currentView = view;
     console.log(`[UcpRouter] Created view: <${route.viewTag}>`);
   }
   
   /**
-   * Fetch server model for OncePeerDefaultView
-   * Fetches server status via /servers endpoint and uses primaryServer model
+   * DEPRECATED: Server model fetch moved to Layer 4 (BrowserOnceOrchestrator)
+   * ❌ VIOLATION: This was async in Layer 5, violating Web4 P7 (Async Only in Layer 4)
+   * ✅ FIXED: BrowserOnceOrchestrator.serverModelFetch() handles async fetch and sets model synchronously
    * @pdca 2025-12-10-UTC-1202.main-route-0.3.21.5-regression.pdca.md
    */
-  private async serverModelFetch(view: HTMLElement): Promise<void> {
+  private async serverModelFetch_DEPRECATED(view: HTMLElement): Promise<void> {
     try {
       const peerHost = (this.kernel as any)?.browserModel?.peerHost || window.location.host;
       const response = await fetch(`http://${peerHost}/servers`);
