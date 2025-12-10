@@ -328,52 +328,63 @@ export class UcpRouter extends LitElement {
   
   /**
    * Fetch server model for OncePeerDefaultView
-   * Fetches server status via /health endpoint and populates ServerDefaultModel
+   * Fetches server status via /servers endpoint and uses primaryServer model
    * @pdca 2025-12-10-UTC-1202.main-route-0.3.21.5-regression.pdca.md
    */
   private async serverModelFetch(view: HTMLElement): Promise<void> {
     try {
       const peerHost = (this.kernel as any)?.browserModel?.peerHost || window.location.host;
-      const response = await fetch(`http://${peerHost}/health`);
+      const response = await fetch(`http://${peerHost}/servers`);
       
       if (!response.ok) {
-        console.warn(`[UcpRouter] Health fetch failed: ${response.status}`);
+        console.warn(`[UcpRouter] Servers fetch failed: ${response.status}`);
         return;
       }
       
-      const healthData = await response.json();
-      const healthModel = healthData.model || healthData;
+      const serversData = await response.json();
+      const serversModel = serversData.model || serversData;
       
-      // Extract server data from health response
-      const httpCap = healthModel.capabilities?.find(function(c: any) {
+      // Use primaryServer from /servers response
+      const primaryServer = serversModel.primaryServer;
+      if (!primaryServer) {
+        console.warn('[UcpRouter] No primaryServer in /servers response');
+        return;
+      }
+      
+      // Extract server data from primaryServer model
+      const httpCap = primaryServer.capabilities?.find(function(c: any) {
         return c.capability === 'httpPort';
       });
-      const wsCap = healthModel.capabilities?.find(function(c: any) {
+      const wsCap = primaryServer.capabilities?.find(function(c: any) {
         return c.capability === 'wsPort';
       });
       const port = httpCap?.port || wsCap?.port || 42777;
-      const hostname = healthModel.hostname || window.location.hostname;
+      const hostname = primaryServer.hostname || primaryServer.host || window.location.hostname;
       const peerHostFull = `${hostname}:${port}`;
       
       // Map lifecycle state string to enum
       let lifecycleState = LifecycleState.RUNNING;
-      const stateStr = healthModel.state || 'running';
+      const stateStr = primaryServer.state || 'running';
       if (stateStr === 'stopped') lifecycleState = LifecycleState.STOPPED;
       else if (stateStr === 'stopping') lifecycleState = LifecycleState.STOPPING;
       else if (stateStr === 'starting') lifecycleState = LifecycleState.STARTING;
       else if (stateStr === 'shutdown') lifecycleState = LifecycleState.SHUTDOWN;
       
+      // Get peer count from servers array
+      const servers = serversModel.servers || [];
+      const peerCount = servers.length;
+      
       // Build ServerDefaultModel matching serveDefaultView() format
       const serverModel = {
-        uuid: healthModel.uuid || healthModel.ior?.uuid || 'unknown',
+        uuid: primaryServer.uuid || 'unknown',
         name: 'ONCE Server',
-        version: healthModel.version || (this.kernel as any)?.browserModel?.version || '0.3.21.8',
+        version: (this.kernel as any)?.browserModel?.version || '0.3.21.8',
         hostname: hostname,
-        domain: healthModel.domain || 'local.once',
+        domain: primaryServer.domain || 'local.once',
         lifecycleState: lifecycleState,
-        isPrimaryServer: healthModel.isPrimaryServer || false,
-        capabilities: healthModel.capabilities || [],
-        peerCount: 0, // Will be updated when servers are fetched
+        isPrimaryServer: primaryServer.isPrimaryServer || serversModel.primary || false,
+        capabilities: primaryServer.capabilities || [],
+        peerCount: peerCount,
         peerHost: peerHostFull
       };
       
@@ -385,7 +396,7 @@ export class UcpRouter extends LitElement {
         (view as any).requestUpdate();
       }
       
-      console.log('[UcpRouter] ✅ Server model fetched and set on once-peer-default-view');
+      console.log('[UcpRouter] ✅ Server model fetched from /servers and set on once-peer-default-view');
       
     } catch (error) {
       console.error('[UcpRouter] ❌ Failed to fetch server model:', error);
