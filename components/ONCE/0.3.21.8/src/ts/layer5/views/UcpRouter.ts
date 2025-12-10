@@ -99,8 +99,10 @@ export class UcpRouter extends LitElement {
     super.connectedCallback();
     // ✅ Web4: Bound methods, not arrow functions
     window.addEventListener('popstate', this.routeChangeHandle.bind(this));
-    // Initial route resolution
-    this.routeResolve(window.location.pathname);
+    // Initial route resolution (async - fire and forget, will update when ready)
+    this.routeResolve(window.location.pathname).catch(function(err) {
+      console.error('[UcpRouter] Route resolution failed:', err);
+    });
   }
   
   disconnectedCallback(): void {
