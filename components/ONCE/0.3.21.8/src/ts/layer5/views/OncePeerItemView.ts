@@ -286,3 +286,9 @@ export class OncePeerItemView extends DefaultItemView<OncePeerModel> {
   }
 }
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'once-peer-item-view': OncePeerItemView;
+  }
+}
+

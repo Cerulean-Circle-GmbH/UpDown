@@ -225,43 +225,12 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
   }
   
   /**
-   * Render routes section - matches 0.3.21.5's endpoint list
+   * Render routes section - delegates to RouteOverView for dynamic routes
+   * Web4 P19: Separation of Concerns - route display is RouteOverView's responsibility
    */
   private routesSectionRender(): TemplateResult {
     return html`
-      <div class="routes-section">
-        <h2>📡 Available Endpoints</h2>
-        
-        <div class="endpoint">
-          <strong>Server Status:</strong> 
-          <code><a href="/" target="_blank">/</a></code>
-          <p>This page - server status and information</p>
-        </div>
-        
-        <div class="endpoint">
-          <strong>Health Check:</strong> 
-          <code><a href="/health" target="_blank">/health</a></code>
-          <p>JSON server health and status information</p>
-        </div>
-        
-        <div class="endpoint">
-          <strong>Server Registry:</strong> 
-          <code><a href="/servers" target="_blank">/servers</a></code>
-          <p>${this.isPrimary ? 'JSON list of all registered servers in hierarchy' : 'Only available on primary server'}</p>
-        </div>
-        
-        <div class="endpoint">
-          <strong>Interactive Client:</strong> 
-          <code><a href="/once" target="_blank">/once</a></code>
-          <p>Interactive WebSocket browser client with message exchange</p>
-        </div>
-        
-        <div class="endpoint">
-          <strong>Demo Hub:</strong> 
-          <code><a href="/demo" target="_blank">/demo</a></code>
-          <p>Live server management dashboard with auto-refresh and status monitoring</p>
-        </div>
-      </div>
+      <route-over-view .peerHost="${this.peerHost}"></route-over-view>
       
       <div class="routes-section">
         <h2>🔌 WebSocket Connection</h2>

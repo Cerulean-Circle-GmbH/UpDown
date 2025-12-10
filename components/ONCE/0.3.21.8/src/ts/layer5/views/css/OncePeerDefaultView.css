@@ -196,29 +196,6 @@ code {
   color: #a8edea;
 }
 
-.endpoint {
-  margin: 15px 0;
-  padding: 15px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  border-left: 4px solid #10b981;
-}
-
-.endpoint strong {
-  color: #10b981;
-}
-
-.endpoint p {
-  margin: 8px 0 0 0;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.endpoint a {
-  color: #a8edea;
-  text-decoration: none;
-}
-
-.endpoint a:hover {
-  color: #fff;
-  text-decoration: underline;
-}
+/* Endpoint styles are in RouteOverView.css
+ * Web4 P19: Separation of Concerns - route display delegated to RouteOverView
+ */

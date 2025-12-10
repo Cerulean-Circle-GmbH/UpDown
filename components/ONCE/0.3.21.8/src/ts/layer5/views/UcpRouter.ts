@@ -369,6 +369,12 @@ export class UcpRouter extends LitElement {
   }
 }
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'ucp-router': UcpRouter;
+  }
+}
+
 // Export for use by other modules
 // ✅ Web4 P1: Routes are Scenarios
 // ✅ Web4 P26: Route is a class (not factory)
