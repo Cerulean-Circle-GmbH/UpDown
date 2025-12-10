@@ -39,3 +39,5 @@ export interface CollectionDescriptor extends FeatureDescriptor {
   // Note: Collection elements are references, serialized as IOR array
 }
 
+
+

@@ -40,3 +40,5 @@ export interface ReferenceDescriptor extends FeatureDescriptor {
   // When serialized: becomes IOR string in scenario
 }
 
+
+

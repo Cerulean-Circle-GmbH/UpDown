@@ -60,3 +60,5 @@ export const MIME_TYPES: Record<string, string> = {
  */
 export const STATIC_FILE_EXTENSIONS = Object.keys(MIME_TYPES);
 
+
+
