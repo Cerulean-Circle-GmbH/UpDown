@@ -173,19 +173,71 @@ h1 {
   font-family: 'Monaco', 'Menlo', monospace;
 }
 
-.routes-section {
+.endpoints-section {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   padding: 25px;
   margin: 25px 0;
 }
 
-.routes-section h2 {
+.endpoints-section h3 {
   margin-top: 0;
   color: #fbbf24;
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.endpoint-item {
+  margin: 15px 0;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  border-left: 4px solid #10b981;
+}
+
+.endpoint-item strong {
+  color: #10b981;
+  margin-right: 10px;
+}
+
+.endpoint-item code {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-family: 'Monaco', 'Menlo', monospace;
+  color: #a8edea;
+}
+
+.endpoint-item a {
+  color: #a8edea;
+  text-decoration: none;
+}
+
+.endpoint-item a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.endpoint-item p {
+  margin: 8px 0 0 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9em;
+}
+
+.method-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75em;
+  font-weight: bold;
+  background: rgba(255, 170, 0, 0.3);
+  color: #ffaa00;
+  margin-left: 8px;
+}
+
+.emoji {
+  font-size: 1.2em;
 }
 
 code {

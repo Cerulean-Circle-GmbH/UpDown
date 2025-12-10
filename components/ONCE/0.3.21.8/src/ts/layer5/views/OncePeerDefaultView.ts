@@ -225,17 +225,50 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
   }
   
   /**
-   * Render routes section - delegates to RouteOverView for dynamic routes
-   * Web4 P19: Separation of Concerns - route display is RouteOverView's responsibility
+   * Render routes section - displays available endpoints matching 0.3.21.5 server-status.html
+   * Web4 P19: Separation of Concerns - endpoints list is part of default view
    */
   private routesSectionRender(): TemplateResult {
     return html`
-      <route-over-view .peerHost="${this.peerHost}"></route-over-view>
+      <div class="endpoints-section">
+        <h3><span class="emoji">📡</span> Available Endpoints</h3>
+        
+        ${this.endpointItemRender('Server Status', '/', 'This page - server status and information')}
+        ${this.endpointItemRender('Health Check', '/health', 'JSON server health and status information')}
+        ${this.endpointItemRender('Server Registry', '/servers', this.isPrimary ? 'JSON list of all registered servers in hierarchy' : 'Only available on primary server')}
+        ${this.endpointItemRender('ONCE Kernel', '/once', 'Minimal ONCE kernel bootstrap page - loads BrowserOnce in the browser')}
+        ${this.endpointItemRender('P2P Communication Demo', '/onceCommunicationLog', 'Interactive P2P demo with WebSocket messaging, broadcast, relay, and direct communication')}
+        ${this.endpointItemRender('Demo Hub', '/demo', 'Live server management dashboard with auto-refresh and status monitoring')}
+      </div>
       
-      <div class="routes-section">
-        <h2>🔌 WebSocket Connection</h2>
+      ${this.isPrimary ? html`
+        <div class="endpoints-section">
+          <h3><span class="emoji">🔧</span> Primary Server APIs</h3>
+          ${this.endpointItemRender('Start Server API', '/start-server', 'Dynamically spawn a new client server (primary only)', 'POST')}
+        </div>
+      ` : ''}
+      
+      <div class="endpoints-section">
+        <h3><span class="emoji">🔌</span> WebSocket Connection</h3>
         <p>WebSocket endpoint available at: <code>ws://${this.peerHost}/</code></p>
         <p>Use this endpoint for real-time P2P communication with ONCE v${this.serverVersion} kernel</p>
+        <p><strong>New in v${this.serverVersion}:</strong> Enhanced server hierarchy, dynamic port management, scenario-based configuration</p>
+      </div>
+    `;
+  }
+  
+  /**
+   * Render a single endpoint item
+   * Web4 P4: Method instead of arrow function
+   */
+  private endpointItemRender(name: string, path: string, description: string, method: string = 'GET'): TemplateResult {
+    const methodBadge = method !== 'GET' ? html`<span class="method-badge">${method}</span>` : '';
+    return html`
+      <div class="endpoint-item">
+        <strong>${name}:</strong>
+        ${methodBadge}
+        <code><a href="${path}" target="_blank">${path}</a></code>
+        <p>${description}</p>
       </div>
     `;
   }
