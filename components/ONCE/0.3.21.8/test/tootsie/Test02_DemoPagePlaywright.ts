@@ -56,9 +56,9 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
     this.testModel.componentRoot = this.componentRoot;
     this.testModel.version = this.onceVersion;
     this.testModel.baseUrl = `http://localhost:${this.testModel.primaryPort}`;
-    // Use network hostname for main route (http://mcdonges-3.fritz.box:42777/)
+    // Use localhost for main route (same as demo route)
     // @pdca 2025-12-10-UTC-1202.main-route-0.3.21.5-regression.pdca.md
-    this.testModel.mainUrl = `http://mcdonges-3.fritz.box:${this.testModel.primaryPort}/`;
+    this.testModel.mainUrl = `${this.testModel.baseUrl}/`;
     this.testModel.demoUrl = `${this.testModel.baseUrl}/demo`;
     this.testModel.screenshotDir = path.join(this.testModel.componentRoot, 'test', 'tootsie', 'screenshots');
     
@@ -464,6 +464,20 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       const mainNoErrors = mainRouteErrors.length === 0;
       this.logEvidence('output', 'Main route JS check', { mainNoErrors, mainRouteErrors });
       mainRouteReq.validateCriterion('MAIN-05', mainNoErrors, { mainRouteErrors });
+      
+      // Wait for view to render and shadow DOM to be available
+      // The serverModelFetch() is async, so we need to wait for it to complete
+      await this.page.waitForFunction(function() {
+        const defaultView = document.querySelector('once-peer-default-view');
+        if (!defaultView || !defaultView.shadowRoot) return false;
+        const endpointsSection = defaultView.shadowRoot.querySelector('.endpoints-section');
+        return endpointsSection !== null;
+      }, { timeout: 10000 }).catch(function() {
+        // If wait fails, continue anyway - test will fail with proper error message
+      });
+      
+      // Additional wait for async rendering
+      await this.sleep(1000);
       
       // Check endpoints section displays all 6 endpoints
       // ✅ Web4 P4: Regular function in evaluate
