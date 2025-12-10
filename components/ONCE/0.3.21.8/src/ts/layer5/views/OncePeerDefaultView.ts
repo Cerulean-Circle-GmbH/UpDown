@@ -241,9 +241,3 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
   }
 }
 
-declare global {
-  interface HTMLElementTagNameMap {
-    'once-peer-default-view': OncePeerDefaultView;
-  }
-}
-

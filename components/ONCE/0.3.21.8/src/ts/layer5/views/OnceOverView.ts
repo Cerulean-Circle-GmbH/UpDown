@@ -512,9 +512,3 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
   }
 }
 
-declare global {
-  interface HTMLElementTagNameMap {
-    'once-over-view': OnceOverView;
-  }
-}
-

@@ -15,6 +15,7 @@
  * - P19: Multiple types in one file → split into separate files
  * - P19: Inline CSS with `static styles = css\`` → move to external .css file
  * - P19: Inline HTML with innerHTML → move to external template
+ * - P19: declare global HTMLElementTagNameMap → use @customElement decorator only
  * - P4: Arrow functions in forEach/map/filter → should be method references
  * - P3: Underscore prefix properties → use descriptive suffix
  * - P26: Factory functions → should be `new Class().init(scenario)`
@@ -271,6 +272,13 @@ export class Test19_Web4LazyMigrationScan extends ONCETestCase {
         regex: /\.innerHTML\s*=\s*`[^`]*<\w+/g,
         suggestion: 'Move HTML to external template file (use HTMLTemplateLoader)',
         exclude: /\.html$/,  // Exclude from HTML files themselves
+      },
+      {
+        name: 'declare global HTMLElementTagNameMap',
+        principle: 'P19',
+        // Matches: declare global { interface HTMLElementTagNameMap
+        regex: /declare\s+global\s*\{[^}]*HTMLElementTagNameMap/g,
+        suggestion: '@customElement decorator handles registration. Remove declare global pattern.',
       },
     ];
   }

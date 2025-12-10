@@ -372,9 +372,3 @@ export class RouteOverView extends UcpView<RoutesModel> {
   }
 }
 
-declare global {
-  interface HTMLElementTagNameMap {
-    'route-over-view': RouteOverView;
-  }
-}
-
