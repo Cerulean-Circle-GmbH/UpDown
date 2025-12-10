@@ -17,6 +17,7 @@ import { customElement, state, property } from 'lit/decorators.js';
 import type { Reference } from '../../layer3/Reference.interface.js';
 import type { RouteScenario, RouteModel } from '../../layer3/RouteScenario.interface.js';
 import { Route } from '../../layer3/Route.js';
+import { LifecycleState } from '../../layer3/LifecycleState.enum.js';
 
 /**
  * UcpRouter - Web4 compliant SPA router
@@ -289,6 +290,7 @@ export class UcpRouter extends LitElement {
   /**
    * Create view element for route
    * ✅ Web4 P26: Works with Route class
+   * @pdca 2025-12-10-UTC-1202.main-route-0.3.21.5-regression.pdca.md
    */
   private viewCreate(route: Route): void {
     // Create the view element
@@ -314,8 +316,80 @@ export class UcpRouter extends LitElement {
       );
     }
     
+    // ✅ FIX: Fetch server model for once-peer-default-view
+    // This view needs ServerDefaultModel, not BrowserOnceModel
+    if (route.viewTag === 'once-peer-default-view' && this.kernel) {
+      this.serverModelFetch(view);
+    }
+    
     this.currentView = view;
     console.log(`[UcpRouter] Created view: <${route.viewTag}>`);
+  }
+  
+  /**
+   * Fetch server model for OncePeerDefaultView
+   * Fetches server status via /health endpoint and populates ServerDefaultModel
+   * @pdca 2025-12-10-UTC-1202.main-route-0.3.21.5-regression.pdca.md
+   */
+  private async serverModelFetch(view: HTMLElement): Promise<void> {
+    try {
+      const peerHost = (this.kernel as any)?.browserModel?.peerHost || window.location.host;
+      const response = await fetch(`http://${peerHost}/health`);
+      
+      if (!response.ok) {
+        console.warn(`[UcpRouter] Health fetch failed: ${response.status}`);
+        return;
+      }
+      
+      const healthData = await response.json();
+      const healthModel = healthData.model || healthData;
+      
+      // Extract server data from health response
+      const httpCap = healthModel.capabilities?.find(function(c: any) {
+        return c.capability === 'httpPort';
+      });
+      const wsCap = healthModel.capabilities?.find(function(c: any) {
+        return c.capability === 'wsPort';
+      });
+      const port = httpCap?.port || wsCap?.port || 42777;
+      const hostname = healthModel.hostname || window.location.hostname;
+      const peerHostFull = `${hostname}:${port}`;
+      
+      // Map lifecycle state string to enum
+      let lifecycleState = LifecycleState.RUNNING;
+      const stateStr = healthModel.state || 'running';
+      if (stateStr === 'stopped') lifecycleState = LifecycleState.STOPPED;
+      else if (stateStr === 'stopping') lifecycleState = LifecycleState.STOPPING;
+      else if (stateStr === 'starting') lifecycleState = LifecycleState.STARTING;
+      else if (stateStr === 'shutdown') lifecycleState = LifecycleState.SHUTDOWN;
+      
+      // Build ServerDefaultModel matching serveDefaultView() format
+      const serverModel = {
+        uuid: healthModel.uuid || healthModel.ior?.uuid || 'unknown',
+        name: 'ONCE Server',
+        version: healthModel.version || (this.kernel as any)?.browserModel?.version || '0.3.21.8',
+        hostname: hostname,
+        domain: healthModel.domain || 'local.once',
+        lifecycleState: lifecycleState,
+        isPrimaryServer: healthModel.isPrimaryServer || false,
+        capabilities: healthModel.capabilities || [],
+        peerCount: 0, // Will be updated when servers are fetched
+        peerHost: peerHostFull
+      };
+      
+      // Set model on view
+      (view as any).model = serverModel;
+      
+      // Request update to re-render with new model
+      if ((view as any).requestUpdate) {
+        (view as any).requestUpdate();
+      }
+      
+      console.log('[UcpRouter] ✅ Server model fetched and set on once-peer-default-view');
+      
+    } catch (error) {
+      console.error('[UcpRouter] ❌ Failed to fetch server model:', error);
+    }
   }
   
   /**
