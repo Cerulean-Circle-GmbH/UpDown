@@ -171,13 +171,13 @@ export class UcpRouter extends LitElement {
    * @param path URL path to navigate to
    * @param replace If true, replaces current history entry
    */
-  navigateTo(path: string, replace: boolean = false): void {
+  async navigateTo(path: string, replace: boolean = false): Promise<void> {
     if (replace) {
       window.history.replaceState({}, '', path);
     } else {
       window.history.pushState({}, '', path);
     }
-    this.routeResolve(path);
+    await this.routeResolve(path);
   }
   
   /**
@@ -201,15 +201,15 @@ export class UcpRouter extends LitElement {
   /**
    * Handle browser back/forward navigation
    */
-  private routeChangeHandle(event: PopStateEvent): void {
-    this.routeResolve(window.location.pathname);
+  private async routeChangeHandle(event: PopStateEvent): Promise<void> {
+    await this.routeResolve(window.location.pathname);
   }
   
   /**
    * Resolve path to a view
    * ✅ Web4 P26: Works with Route class
    */
-  private routeResolve(path: string): void {
+  private async routeResolve(path: string): Promise<void> {
     console.log(`[UcpRouter] Resolving: ${path}`);
     this.currentRoute = path;
     
@@ -247,8 +247,8 @@ export class UcpRouter extends LitElement {
         document.title = route.title;
       }
       
-      // Create view element
-      this.viewCreate(route);
+      // Create view element (async - waits for server model fetch if needed)
+      await this.viewCreate(route);
       
       // Notify server if configured
       if (route.serverRoute) {
@@ -292,14 +292,9 @@ export class UcpRouter extends LitElement {
    * ✅ Web4 P26: Works with Route class
    * @pdca 2025-12-10-UTC-1202.main-route-0.3.21.5-regression.pdca.md
    */
-  private viewCreate(route: Route): void {
+  private async viewCreate(route: Route): Promise<void> {
     // Create the view element
     const view = document.createElement(route.viewTag);
-    
-    // Set model if available
-    if (this.model) {
-      (view as any).model = this.model;
-    }
     
     // Set kernel if available
     if (this.kernel) {
@@ -316,10 +311,14 @@ export class UcpRouter extends LitElement {
       );
     }
     
-    // ✅ FIX: Fetch server model for once-peer-default-view
+    // ✅ FIX: Fetch server model for once-peer-default-view BEFORE setting currentView
     // This view needs ServerDefaultModel, not BrowserOnceModel
+    // Wait for async fetch to complete so model is set before rendering
     if (route.viewTag === 'once-peer-default-view' && this.kernel) {
-      this.serverModelFetch(view);
+      await this.serverModelFetch(view);
+    } else if (this.model) {
+      // Set model for other views
+      (view as any).model = this.model;
     }
     
     this.currentView = view;
