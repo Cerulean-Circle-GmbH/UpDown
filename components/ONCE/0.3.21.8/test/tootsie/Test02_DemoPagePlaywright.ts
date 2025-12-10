@@ -56,9 +56,9 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
     this.testModel.componentRoot = this.componentRoot;
     this.testModel.version = this.onceVersion;
     this.testModel.baseUrl = `http://localhost:${this.testModel.primaryPort}`;
-    // Use localhost for main route (same as demo route)
+    // Use network hostname for main route (http://mcdonges-3.fritz.box:42777/)
     // @pdca 2025-12-10-UTC-1202.main-route-0.3.21.5-regression.pdca.md
-    this.testModel.mainUrl = `${this.testModel.baseUrl}/`;
+    this.testModel.mainUrl = `http://mcdonges-3.fritz.box:${this.testModel.primaryPort}/`;
     this.testModel.demoUrl = `${this.testModel.baseUrl}/demo`;
     this.testModel.screenshotDir = path.join(this.testModel.componentRoot, 'test', 'tootsie', 'screenshots');
     
