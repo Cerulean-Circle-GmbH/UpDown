@@ -13,6 +13,8 @@
  * - P16: createXyz() → should be `xyzCreate()`
  * - P16: updateXyz() → should be `xyzUpdate()`
  * - P19: Multiple types in one file → split into separate files
+ * - P19: Inline CSS with `static styles = css\`` → move to external .css file
+ * - P19: Inline HTML with innerHTML → move to external template
  * - P4: Arrow functions in forEach/map/filter → should be method references
  * - P3: Underscore prefix properties → use descriptive suffix
  * - P26: Factory functions → should be `new Class().init(scenario)`
@@ -249,6 +251,26 @@ export class Test19_Web4LazyMigrationScan extends ONCETestCase {
         // Matches: interface XyzConfig or type XyzConfig
         regex: /(?:interface|type)\s+\w+Config\s*[{=]/g,
         suggestion: 'Configuration should be part of a Scenario, not separate Config type',
+      },
+      
+      // ═══════════════════════════════════════════════════════════════
+      // P19: Separation of Concerns - No inline CSS
+      // ═══════════════════════════════════════════════════════════════
+      
+      {
+        name: 'Inline CSS with static styles',
+        principle: 'P19',
+        // Matches: static styles = css` or static styles: CSSResultGroup = css`
+        regex: /static\s+styles\s*[=:][^;]*css`/g,
+        suggestion: 'Move CSS to external file: `ComponentName.css` and use adoptedStyleSheets',
+      },
+      {
+        name: 'Inline HTML template',
+        principle: 'P19',
+        // Matches: innerHTML = ` or = `<div but NOT from template files
+        regex: /\.innerHTML\s*=\s*`[^`]*<\w+/g,
+        suggestion: 'Move HTML to external template file (use HTMLTemplateLoader)',
+        exclude: /\.html$/,  // Exclude from HTML files themselves
       },
     ];
   }
