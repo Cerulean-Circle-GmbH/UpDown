@@ -465,20 +465,6 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       this.logEvidence('output', 'Main route JS check', { mainNoErrors, mainRouteErrors });
       mainRouteReq.validateCriterion('MAIN-05', mainNoErrors, { mainRouteErrors });
       
-      // Wait for view to render and shadow DOM to be available
-      // The serverModelFetch() is async, so we need to wait for it to complete
-      await this.page.waitForFunction(function() {
-        const defaultView = document.querySelector('once-peer-default-view');
-        if (!defaultView || !defaultView.shadowRoot) return false;
-        const endpointsSection = defaultView.shadowRoot.querySelector('.endpoints-section');
-        return endpointsSection !== null;
-      }, { timeout: 10000 }).catch(function() {
-        // If wait fails, continue anyway - test will fail with proper error message
-      });
-      
-      // Additional wait for async rendering
-      await this.sleep(1000);
-      
       // Check endpoints section displays all 6 endpoints
       // ✅ Web4 P4: Regular function in evaluate
       // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
