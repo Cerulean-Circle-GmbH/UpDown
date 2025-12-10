@@ -1,0 +1,6 @@
+# Exclude large directories that may cause Cursor to freeze during indexing
+components/
+.git/
+node_modules/
+dist/
+*.log
