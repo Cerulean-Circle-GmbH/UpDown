@@ -41,12 +41,31 @@ export class IORRoute extends Route {
     /**
      * Match IOR pattern: /{component}/{version}/{uuid}/{method}
      * 
+     * IOR paths must:
+     * - Have exactly 4 path segments
+     * - NOT have a file extension (static files handled by StaticFileRoute)
+     * 
      * @param path - URL path
      * @param method - HTTP method
      * @returns true if path matches IOR pattern
      */
     public matches(path: string, method: HttpMethod): boolean {
-        // IOR pattern: at least 4 path segments
+        // Remove query string for matching
+        const pathWithoutQuery = path.split('?')[0];
+        
+        // Check for file extension - IOR paths don't have extensions
+        const hasFileExtension = /\.[a-zA-Z0-9]+$/.test(pathWithoutQuery);
+        if (hasFileExtension) {
+            return false; // Static file route should handle this
+        }
+        
+        // IOR pattern: exactly 4 path segments: /{component}/{version}/{uuid}/{method}
+        const pathParts = pathWithoutQuery.split('/').filter(p => p.length > 0);
+        if (pathParts.length !== 4) {
+            return false; // Must be exactly 4 segments
+        }
+        
+        // Parse to verify it's a valid IOR
         const iorMethodCall = this.iorRouter.parseIorUrl(path);
         return iorMethodCall !== null;
     }
