@@ -206,7 +206,8 @@ export class RouteOverView extends UcpView<RoutesModel> {
    * Parse routes from server response
    */
   private parseRoutes(routeStrings: string[]): RouteInfo[] {
-    return routeStrings.map(route => this.parseRouteString(route));
+    // ✅ Web4 P4: Method reference instead of arrow function
+    return routeStrings.map(this.parseRouteString.bind(this));
   }
   
   /**
@@ -283,18 +284,21 @@ export class RouteOverView extends UcpView<RoutesModel> {
   
   /**
    * Render routes grouped by category
+   * ✅ Web4 P4: Uses helper method instead of arrow function
    */
   private routesByCategoryRender(): TemplateResult {
     const categories = this.routesGroupByCategory();
     const categoryOrder = ['Pages', 'API', 'Dynamic', 'Static Files', 'Other'];
+    const sections: TemplateResult[] = [];
     
-    return html`
-      ${categoryOrder.map(category => {
-        const routes = categories.get(category) || [];
-        if (routes.length === 0) return '';
-        return this.categorySectionRender(category, routes);
-      })}
-    `;
+    for (const category of categoryOrder) {
+      const routes = categories.get(category) || [];
+      if (routes.length > 0) {
+        sections.push(this.categorySectionRender(category, routes));
+      }
+    }
+    
+    return html`${sections}`;
   }
   
   /**
@@ -316,12 +320,16 @@ export class RouteOverView extends UcpView<RoutesModel> {
   /**
    * Render a category section
    */
+  /**
+   * Render a category section
+   * ✅ Web4 P4: Method reference instead of arrow function
+   */
   private categorySectionRender(category: string, routes: RouteInfo[]): TemplateResult {
     return html`
       <div class="category-section">
         <div class="category-title">${category}</div>
         <div class="routes-grid">
-          ${routes.map(route => this.routeCardRender(route))}
+          ${routes.map(this.routeCardRender.bind(this))}
         </div>
       </div>
     `;

@@ -388,7 +388,7 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
           <h2>⚡ Capabilities</h2>
           <div class="capabilities-list">
             ${this.capabilities.length > 0 
-              ? this.capabilities.map(cap => this.capabilityItemRender(cap))
+              ? this.capabilities.map(this.capabilityItemRender.bind(this))
               : html`<p>No capabilities registered</p>`
             }
           </div>
@@ -399,18 +399,33 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
   
   /**
    * Get HTTP port from capabilities
+   * Web4 P4: Using helper method instead of arrow function in find()
    */
   get httpPort(): string {
-    const httpCap = this.capabilities.find(c => c.capability === 'httpPort');
+    const httpCap = this.capabilityLookup('httpPort');
     return httpCap?.port?.toString() || '42777';
   }
   
   /**
    * Get WebSocket port from capabilities
+   * Web4 P4: Using helper method instead of arrow function in find()
    */
   get wsPort(): string {
-    const wsCap = this.capabilities.find(c => c.capability === 'wsPort');
+    const wsCap = this.capabilityLookup('wsPort');
     return wsCap?.port?.toString() || this.httpPort;
+  }
+  
+  /**
+   * Lookup capability by name
+   * Web4 P16: Parameterized lookup method (not capabilityGet!)
+   */
+  private capabilityLookup(name: string): ServerCapability | undefined {
+    for (const cap of this.capabilities) {
+      if (cap.capability === name) {
+        return cap;
+      }
+    }
+    return undefined;
   }
   
   /**
