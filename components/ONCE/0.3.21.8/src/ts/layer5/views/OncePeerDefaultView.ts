@@ -177,6 +177,8 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
             }
           </div>
         </div>
+        
+        ${this.browserClientInfoRender()}
       </div>
     `;
   }
@@ -269,6 +271,59 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
         ${methodBadge}
         <code><a href="${path}" target="_blank">${path}</a></code>
         <p>${description}</p>
+      </div>
+    `;
+  }
+  
+  /**
+   * Render browser client info section
+   * Shows ONCE BrowserClient connection status, UUID, and start time
+   */
+  private browserClientInfoRender(): TemplateResult {
+    const kernel = (this as any).kernel;
+    if (!kernel) {
+      return html``;
+    }
+    
+    const browserModel = kernel.browserModel;
+    if (!browserModel) {
+      return html``;
+    }
+    
+    const clientUuid = browserModel.uuid || 'unknown';
+    const isConnected = browserModel.isConnected || false;
+    const startTime = browserModel.startTime;
+    const connectionTime = browserModel.connectionTime;
+    
+    // Format start time
+    let startTimeStr = 'Not available';
+    if (startTime) {
+      const startDate = startTime instanceof Date ? startTime : new Date(startTime);
+      startTimeStr = startDate.toLocaleString();
+    }
+    
+    // Format connection time
+    let connectionTimeStr = 'Not connected';
+    if (connectionTime) {
+      const connDate = connectionTime instanceof Date ? connectionTime : new Date(connectionTime);
+      connectionTimeStr = connDate.toLocaleString();
+    } else if (isConnected) {
+      connectionTimeStr = 'Connected (time unknown)';
+    }
+    
+    return html`
+      <div class="status-card">
+        <h2>🌐 ONCE BrowserClient</h2>
+        <p><strong>UUID:</strong></p>
+        <code>${clientUuid}</code>
+        <p><strong>Connection Status:</strong> 
+          <span class="status-indicator">
+            <span class="status-dot ${isConnected ? 'running' : 'stopped'}"></span>
+            ${isConnected ? 'Connected' : 'Disconnected'}
+          </span>
+        </p>
+        <p><strong>Start Time:</strong> ${startTimeStr}</p>
+        <p><strong>Connection Time:</strong> ${connectionTimeStr}</p>
       </div>
     `;
   }

@@ -248,6 +248,17 @@ code {
   color: #a8edea;
 }
 
+/* UUID code styling - matches 0.3.21.5 appearance (lighter, more readable) */
+.status-card code {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-weight: 500;
+  word-break: break-all;
+  display: block;
+  margin-top: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 /* Endpoint styles are in RouteOverView.css
  * Web4 P19: Separation of Concerns - route display delegated to RouteOverView
  */
