@@ -1,15 +1,23 @@
 /**
- * RouteOverView.css
+ * RouteOverView.css - Route list container styles
  * 
- * Styles for the routes overview component
- * Most styles are inlined for immediate rendering,
- * but external CSS can be used for enhancements.
+ * <route-over-view> IS the container - styles on :host
  * 
- * @pdca 2025-11-19-UTC-1800.iteration-tracking.pdca.md
+ * Web4 P19: CSS separated from TypeScript
+ * 
+ * @component Router
+ * @layer 5
+ * @pdca 2025-12-11-UTC-1530.route-overview-migration.pdca.md Phase RO.3
  */
 
-/* Additional enhancements beyond inline styles */
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
 
-
-
-
+.no-routes {
+  color: var(--color-text-muted, #888);
+  font-style: italic;
+  padding: 0.5rem;
+}

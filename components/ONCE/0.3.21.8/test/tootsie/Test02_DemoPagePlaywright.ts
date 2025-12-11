@@ -470,10 +470,10 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       mainRouteReq.addCriterion('MAIN-03', 'UcpRouter renders <once-peer-default-view>');
       mainRouteReq.addCriterion('MAIN-04', 'Page title contains ONCE');
       mainRouteReq.addCriterion('MAIN-05', 'No critical JavaScript errors on main route');
-      mainRouteReq.addCriterion('MAIN-06', 'Endpoints section displays all 6 endpoints');
+      mainRouteReq.addCriterion('MAIN-06', 'Routes section displays registered SPA routes');
       mainRouteReq.addCriterion('MAIN-07', 'Primary Server APIs section displays conditionally');
       mainRouteReq.addCriterion('MAIN-08', 'WebSocket connection section displays');
-      mainRouteReq.addCriterion('MAIN-09', 'All endpoint links are clickable');
+      mainRouteReq.addCriterion('MAIN-09', 'Route links are visible and clickable');
       mainRouteReq.addCriterion('MAIN-10', 'Identity section displays SERVER UUID (not browser client UUID)');
       mainRouteReq.addCriterion('MAIN-11', 'Server status shows "Primary Server" (not "Client Server")');
       mainRouteReq.addCriterion('MAIN-12', 'Server state shows "running" (not "stopped")');
@@ -575,9 +575,10 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
         this.logEvidence('output', 'ShadowRoot timeout diagnostic', shadowRootCheck);
       }
       
-      // Check endpoints section displays all 6 endpoints
+      // Check routes/endpoints are displayed - BLACK-BOX test
       // ✅ Web4 P4: Regular function in evaluate
-      // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
+      // ✅ Black-box: Find routes by href, not by CSS class names
+      // @pdca 2025-12-11-UTC-1530.route-overview-migration.pdca.md Phase RO.7
       const endpointsCheck = await this.page.evaluate(function() {
         // Check shadow DOM - Lit components use shadow DOM
         // Element might be in router's shadow DOM
@@ -592,25 +593,40 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
           return { hasEndpointsSection: false, endpointCount: 0, endpoints: [], error: 'No shadowRoot', elementFound: !!defaultView };
         }
         
-        // Find endpoints section in shadow DOM
-        const endpointsSection = defaultView.shadowRoot.querySelector('.endpoints-section');
-        if (!endpointsSection) {
-          return { hasEndpointsSection: false, endpointCount: 0, endpoints: [], error: 'No endpoints-section found' };
-        }
-        
-        // Find all endpoint items - they contain <a> tags with href
-        const endpointItems = endpointsSection.querySelectorAll('.endpoint-item');
+        // BLACK-BOX: Find ALL links in shadow DOM by href attribute
+        // Don't rely on specific CSS class names like .endpoint-item
+        const allLinks = defaultView.shadowRoot.querySelectorAll('a[href]');
         const endpointHrefs: string[] = [];
         
-        endpointItems.forEach(function(item) {
-          const link = item.querySelector('a');
-          if (link) {
-            const href = link.getAttribute('href');
-            if (href) endpointHrefs.push(href);
-          }
+        allLinks.forEach(function(link) {
+          const href = link.getAttribute('href');
+          if (href) endpointHrefs.push(href);
         });
         
-        const expectedEndpoints = ['/', '/health', '/servers', '/once', '/onceCommunicationLog', '/demo'];
+        // Also check nested shadow DOMs (route-over-view, route-item-view)
+        const routeOverView = defaultView.shadowRoot.querySelector('route-over-view');
+        if (routeOverView && routeOverView.shadowRoot) {
+          const routeLinks = routeOverView.shadowRoot.querySelectorAll('a[href]');
+          routeLinks.forEach(function(link) {
+            const href = link.getAttribute('href');
+            if (href && !endpointHrefs.includes(href)) endpointHrefs.push(href);
+          });
+          
+          // Check route-item-view shadow DOMs
+          const routeItems = routeOverView.shadowRoot.querySelectorAll('route-item-view');
+          routeItems.forEach(function(item) {
+            if (item.shadowRoot) {
+              const itemLinks = item.shadowRoot.querySelectorAll('a[href]');
+              itemLinks.forEach(function(link) {
+                const href = link.getAttribute('href');
+                if (href && !endpointHrefs.includes(href)) endpointHrefs.push(href);
+              });
+            }
+          });
+        }
+        
+        // Expected SPA routes (registered with router)
+        const expectedEndpoints = ['/', '/demo'];
         const foundEndpoints = expectedEndpoints.filter(function(ep) {
           return endpointHrefs.includes(ep);
         });
@@ -619,7 +635,7 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
           hasEndpointsSection: true,
           endpointCount: endpointHrefs.length,
           foundEndpoints: foundEndpoints,
-          allEndpointsFound: foundEndpoints.length === 6,
+          allEndpointsFound: foundEndpoints.length >= 2, // At least / and /demo
           allHrefs: endpointHrefs
         };
       });
@@ -976,54 +992,61 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       this.logEvidence('output', 'WebSocket section check', websocketCheck);
       mainRouteReq.validateCriterion('MAIN-08', websocketCheck.hasWebSocket, websocketCheck);
       
-      // Check endpoint links are clickable
+      // Check route links are clickable - BLACK-BOX test
       // ✅ Web4 P4: Regular function in evaluate
-      // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
+      // ✅ Black-box: Find links by href, check they're visible and clickable
+      // @pdca 2025-12-11-UTC-1530.route-overview-migration.pdca.md Phase RO.7
       const linksCheck = await this.page.evaluate(function() {
-        let defaultView = document.querySelector('once-peer-default-view');
+        var defaultView = document.querySelector('once-peer-default-view');
         if (!defaultView) {
-          const router = document.querySelector('ucp-router');
+          var router = document.querySelector('ucp-router');
           if (router && router.shadowRoot) {
             defaultView = router.shadowRoot.querySelector('once-peer-default-view');
           }
         }
         if (!defaultView) return { totalLinks: 0, clickableLinks: 0, allClickable: false };
         
-        // Find all links in shadow DOM
-        let allLinks: NodeListOf<HTMLAnchorElement> | null = null;
-        if (defaultView.shadowRoot) {
-          allLinks = defaultView.shadowRoot.querySelectorAll('a[href="/"], a[href="/health"], a[href="/servers"], a[href="/once"], a[href="/onceCommunicationLog"], a[href="/demo"]');
+        // BLACK-BOX: Collect all links from any depth of shadow DOM
+        var allFoundLinks: HTMLAnchorElement[] = [];
+        
+        // Stack-based iteration to avoid recursive function (TypeScript bundler issue)
+        var elementsToCheck: Element[] = [defaultView];
+        while (elementsToCheck.length > 0) {
+          var element = elementsToCheck.pop();
+          if (!element) continue;
+          if (element.shadowRoot) {
+            var links = element.shadowRoot.querySelectorAll('a[href]');
+            for (var i = 0; i < links.length; i++) {
+              allFoundLinks.push(links[i] as HTMLAnchorElement);
+            }
+            // Add children with shadow roots to check
+            var children = element.shadowRoot.querySelectorAll('*');
+            for (var j = 0; j < children.length; j++) {
+              if (children[j].shadowRoot) {
+                elementsToCheck.push(children[j]);
+              }
+            }
+          }
         }
         
-        // Also check light DOM
-        if (!allLinks || allLinks.length === 0) {
-          allLinks = defaultView.querySelectorAll('a[href="/"], a[href="/health"], a[href="/servers"], a[href="/once"], a[href="/onceCommunicationLog"], a[href="/demo"]');
+        // Check which links are clickable (visible)
+        var clickableLinks: HTMLAnchorElement[] = [];
+        for (var k = 0; k < allFoundLinks.length; k++) {
+          var link = allFoundLinks[k];
+          var style = window.getComputedStyle(link);
+          if (style.pointerEvents !== 'none' && style.display !== 'none' && style.visibility !== 'hidden') {
+            clickableLinks.push(link);
+          }
         }
-        
-        // Check if endpoint items contain links (they might be in .endpoint-item)
-        if (!allLinks || allLinks.length === 0) {
-          const endpointItems = defaultView.shadowRoot?.querySelectorAll('.endpoint-item') || defaultView.querySelectorAll('.endpoint-item');
-          const foundLinks: HTMLAnchorElement[] = [];
-          endpointItems.forEach(function(item) {
-            const link = item.querySelector('a');
-            if (link) foundLinks.push(link);
-          });
-          allLinks = foundLinks as any;
-        }
-        
-        const clickableLinks = Array.from(allLinks || []).filter(function(link) {
-          const style = window.getComputedStyle(link);
-          return style.pointerEvents !== 'none' && style.display !== 'none' && style.visibility !== 'hidden';
-        });
         
         return {
-          totalLinks: (allLinks || []).length,
+          totalLinks: allFoundLinks.length,
           clickableLinks: clickableLinks.length,
-          allClickable: clickableLinks.length >= 6
+          allClickable: clickableLinks.length >= 2  // At least / and /demo
         };
       });
       
-      this.logEvidence('output', 'Endpoint links clickability check', linksCheck);
+      this.logEvidence('output', 'Route links clickability check', linksCheck);
       mainRouteReq.validateCriterion('MAIN-09', linksCheck.allClickable, linksCheck);
       
       // Take screenshot of main route

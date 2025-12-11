@@ -310,6 +310,10 @@ export class UcpRouter extends LitElement {
     // Set route reference (Web4 P26: pass the Route class instance)
     (view as any).route = route;
     
+    // Set router reference for RouteOverView to access registered routes
+    // @pdca 2025-12-11-UTC-1530.route-overview-migration.pdca.md Phase RO.5
+    (view as any).router = this;
+    
     // Set additional view props if specified
     if (route.viewProps) {
       Object.entries(route.viewProps).forEach(

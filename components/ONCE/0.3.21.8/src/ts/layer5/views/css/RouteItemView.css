@@ -1,0 +1,46 @@
+/**
+ * RouteItemView.css - Route item styles
+ * 
+ * Web4 P19: CSS separated from TypeScript
+ * 
+ * @component Router
+ * @layer 5
+ * @pdca 2025-12-11-UTC-1530.route-overview-migration.pdca.md Phase RO.3
+ */
+
+:host {
+  display: block;
+}
+
+.route-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  color: var(--color-link, #00bcd4);
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.route-link:hover {
+  background: rgba(0, 188, 212, 0.1);
+  text-decoration: none;
+}
+
+.route-link.active {
+  background: rgba(0, 188, 212, 0.15);
+  border-left: 3px solid var(--color-link, #00bcd4);
+  padding-left: calc(0.5rem - 3px);
+}
+
+.route-title {
+  font-weight: 600;
+  color: var(--color-text, #333);
+}
+
+.route-path {
+  font-size: 0.9em;
+  color: var(--color-text-muted, #888);
+  font-family: monospace;
+}

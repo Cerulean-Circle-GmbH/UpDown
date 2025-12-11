@@ -20,6 +20,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { UcpView } from './UcpView.js';
 import { LifecycleState } from '../../layer3/LifecycleState.enum.js';
 import type { Reference } from '../../layer3/Reference.interface.js';
+import './RouteOverView.js';  // Import to register custom element
 
 /**
  * ServerCapability - Capability descriptor
@@ -60,6 +61,9 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
    * Applied via UcpView.applyCachedStyles() in connectedCallback()
    */
   static cssPath = 'OncePeerDefaultView.css';
+  
+  /** Router reference - set by UcpRouter when creating view */
+  @property({ attribute: false }) router: Reference<HTMLElement> = null;
   
   // ═══════════════════════════════════════════════════════════════
   // Getters - Web4 P16: TypeScript Accessors
@@ -227,26 +231,22 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
   }
   
   /**
-   * Render routes section - displays available endpoints matching 0.3.21.5 server-status.html
-   * Web4 P19: Separation of Concerns - endpoints list is part of default view
+   * Render routes section - displays available routes from Router
+   * Uses <route-over-view> which gets routes dynamically from router.routesGet()
+   * 
+   * @pdca 2025-12-11-UTC-1530.route-overview-migration.pdca.md Phase RO.4
    */
   private routesSectionRender(): TemplateResult {
     return html`
       <div class="endpoints-section">
-        <h3><span class="emoji">📡</span> Available Endpoints</h3>
-        
-        ${this.endpointItemRender('Server Status', '/', 'This page - server status and information')}
-        ${this.endpointItemRender('Health Check', '/health', 'JSON server health and status information')}
-        ${this.endpointItemRender('Server Registry', '/servers', this.isPrimary ? 'JSON list of all registered servers in hierarchy' : 'Only available on primary server')}
-        ${this.endpointItemRender('ONCE Kernel', '/once', 'Minimal ONCE kernel bootstrap page - loads BrowserOnce in the browser')}
-        ${this.endpointItemRender('P2P Communication Demo', '/onceCommunicationLog', 'Interactive P2P demo with WebSocket messaging, broadcast, relay, and direct communication')}
-        ${this.endpointItemRender('Demo Hub', '/demo', 'Live server management dashboard with auto-refresh and status monitoring')}
+        <h3><span class="emoji">📡</span> Available Routes</h3>
+        <route-over-view .router=${this.router}></route-over-view>
       </div>
       
       ${this.isPrimary ? html`
         <div class="endpoints-section">
           <h3><span class="emoji">🔧</span> Primary Server APIs</h3>
-          ${this.endpointItemRender('Start Server API', '/start-server', 'Dynamically spawn a new client server (primary only)', 'POST')}
+          <p><strong>POST /start-server</strong> - Dynamically spawn a new client server (primary only)</p>
         </div>
       ` : ''}
       
@@ -259,86 +259,8 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
     `;
   }
   
-  /**
-   * Get router instance from shadow root host
-   * Router is the shadow root host (ucp-router)
-   * ✅ Web4 P4: Regular method, not arrow function
-   */
-  private routerGet(): HTMLElement | null {
-    const root = this.getRootNode();
-    if (root instanceof ShadowRoot && root.host) {
-      return root.host as HTMLElement;
-    }
-    // Fallback: traverse up DOM tree
-    let parent = this.parentElement;
-    while (parent) {
-      if (parent.tagName === 'UCP-ROUTER') {
-        return parent;
-      }
-      parent = parent.parentElement;
-    }
-    return null;
-  }
-  
-  /**
-   * Handle endpoint link click - SPA navigation
-   * ✅ Web4 P4: Regular method, not arrow function
-   * Prevents default navigation and uses router.navigateTo() for SPA routes
-   */
-  private endpointLinkClickHandle(event: Event, path: string): void {
-    // SPA routes that should navigate without reload
-    const spaRoutes = ['/', '/demo', '/onceCommunicationLog', '/once'];
-    
-    if (spaRoutes.includes(path)) {
-      event.preventDefault();
-      const router = this.routerGet();
-      if (router && (router as any).navigateTo) {
-        (router as any).navigateTo(path, false); // false = pushState (adds to history)
-      } else {
-        // Fallback: use window.location if router not found
-        window.history.pushState({}, '', path);
-        window.dispatchEvent(new PopStateEvent('popstate'));
-      }
-    }
-    // For API endpoints (/health, /servers) - let default navigation happen (opens in new tab)
-  }
-  
-  /**
-   * Get click handler for endpoint link
-   * Returns bound method for use in template
-   * ✅ Web4 P4: Returns bound method, not arrow function
-   * Uses partial application: binds path, event comes from click
-   */
-  private endpointLinkClickHandlerGet(path: string): (event: Event) => void {
-    // Bind path as second parameter, event will be first parameter from click
-    const handler = this.endpointLinkClickHandle.bind(this);
-    return function(event: Event): void {
-      handler(event, path);
-    };
-  }
-  
-  /**
-   * Render a single endpoint item
-   * Web4 P4: Method instead of arrow function
-   */
-  private endpointItemRender(name: string, path: string, description: string, method: string = 'GET'): TemplateResult {
-    const methodBadge = method !== 'GET' ? html`<span class="method-badge">${method}</span>` : '';
-    // SPA routes: no target="_blank", add click handler
-    // API endpoints: keep target="_blank" for JSON responses
-    const spaRoutes = ['/', '/demo', '/onceCommunicationLog', '/once'];
-    const isSpaRoute = spaRoutes.includes(path);
-    const linkTarget = isSpaRoute ? '' : '_blank';
-    const clickHandler = isSpaRoute ? this.endpointLinkClickHandlerGet(path) : undefined;
-    
-    return html`
-      <div class="endpoint-item">
-        <strong>${name}:</strong>
-        ${methodBadge}
-        <code><a href="${path}" target="${linkTarget}" @click=${clickHandler}>${path}</a></code>
-        <p>${description}</p>
-      </div>
-    `;
-  }
+  // Navigation methods moved to RouteItemView
+  // @pdca 2025-12-11-UTC-1530.route-overview-migration.pdca.md Phase RO.4
   
   /**
    * Render browser client info section

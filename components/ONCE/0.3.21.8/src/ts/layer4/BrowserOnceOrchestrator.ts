@@ -217,6 +217,8 @@ export class BrowserOnceOrchestrator {
     await import(`${basePath}/DefaultItemView.js`);
     await import(`${basePath}/OncePeerItemView.js`);
     await import(`${basePath}/OncePeerDefaultView.js`);
+    // Route view components - @pdca 2025-12-11-UTC-1530.route-overview-migration.pdca.md Phase RO.6
+    await import(`${basePath}/RouteItemView.js`);
     await import(`${basePath}/RouteOverView.js`);
     
     console.log('[Orchestrator] ✅ View components imported');
