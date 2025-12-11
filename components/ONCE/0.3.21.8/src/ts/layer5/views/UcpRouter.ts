@@ -324,11 +324,22 @@ export class UcpRouter extends LitElement {
       : this.model;
     
     this.currentView = view;
-    console.log(`[UcpRouter] Created view: <${route.viewTag}>, serverModel=${!!this.serverModel}, model=${!!this.model}`);
+    
+    // ⚠️ CRITICAL LOGGING: Verify model is set correctly
+    if (route.viewTag === 'once-peer-default-view') {
+      if (this.serverModel) {
+        console.log(`[UcpRouter] ✅ Setting SERVER model on <${route.viewTag}>`);
+        console.log(`[UcpRouter] Server UUID: ${(this.serverModel as any).uuid}`);
+        console.log(`[UcpRouter] Server domain: ${(this.serverModel as any).domain}`);
+        console.log(`[UcpRouter] Server lifecycleState: ${(this.serverModel as any).lifecycleState}`);
+      } else {
+        console.error(`[UcpRouter] ❌ CRITICAL: No serverModel available for <${route.viewTag}> - will use browserModel`);
+        console.error(`[UcpRouter] This means Identity section will show browser client UUID instead of server UUID!`);
+      }
+    }
     
     // Set model immediately - Lit's requestUpdate() will queue until element is connected
     if (modelToSet) {
-      console.log(`[UcpRouter] Setting model on <${route.viewTag}>`);
       (view as any).model = modelToSet;
     } else {
       console.warn(`[UcpRouter] No model to set on <${route.viewTag}> - serverModel=${!!this.serverModel}, model=${!!this.model}`);

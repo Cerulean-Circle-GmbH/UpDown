@@ -340,8 +340,10 @@ export class BrowserOnceOrchestrator {
       }
       
       if (!primaryServerModel) {
-        console.warn('[Orchestrator] No primary server found in /servers response');
-        return;
+        console.error('[Orchestrator] ❌ CRITICAL: No primary server found in /servers response');
+        console.error('[Orchestrator] Response data:', JSON.stringify(data, null, 2));
+        console.error('[Orchestrator] Servers array:', servers);
+        throw new Error('[Orchestrator] No primary server found in /servers response - cannot render server status');
       }
       
       // Map ONCEServerModel to ServerDefaultModel
