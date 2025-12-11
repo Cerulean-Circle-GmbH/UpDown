@@ -1,0 +1,79 @@
+{
+  "ior": {
+    "uuid": "c5838aa9-13f3-4734-9cf9-ad88b8040b38",
+    "component": "ONCE",
+    "version": "0.3.21.8"
+  },
+  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkxTFRFeUxURXhWREV3T2pVd09qUTVMamt6TjFvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwibmFtZSI6ImRvbmdlcyIsInVzZXJuYW1lIjoic3lzdGVtIiwiaG9zdG5hbWUiOiJNY0Rvbmdlcy0zLmZyaXR6LmJveCJ9fQ==",
+  "model": {
+    "uuid": "c5838aa9-13f3-4734-9cf9-ad88b8040b38",
+    "name": "McDonges-3",
+    "objectType": "ONCE",
+    "version": "0.3.21.8",
+    "state": {
+      "uuid": "c5838aa9-13f3-4734-9cf9-ad88b8040b38",
+      "pid": 30395,
+      "state": "running",
+      "platform": {
+        "platform": "node",
+        "version": "v22.20.0",
+        "capabilities": [
+          "server",
+          "websocket",
+          "p2p"
+        ],
+        "isOnline": true
+      },
+      "domain": "box.fritz",
+      "hostname": "McDonges-3",
+      "host": "McDonges-3.fritz.box",
+      "ip": "192.168.178.49",
+      "capabilities": [
+        {
+          "capability": "httpPort",
+          "port": 42777
+        },
+        {
+          "capability": "wsPort",
+          "port": 42777
+        }
+      ],
+      "isPrimaryServer": true
+    },
+    "metadata": {
+      "created": "2025-12-11T10:50:49.934Z",
+      "modified": "2025-12-11T10:50:49.938Z",
+      "creator": "ONCE-v0.3.21.8",
+      "description": "ONCE server Primary server instance",
+      "tags": [
+        "server",
+        "once",
+        "primary"
+      ],
+      "domain": "box.fritz",
+      "host": "McDonges-3.fritz.box",
+      "port": 42777,
+      "isPrimaryServer": true
+    },
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/5/8/3/8/c5838aa9-13f3-4734-9cf9-ad88b8040b38.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.21.8",
+      "domain/box/fritz/McDonges-3/ONCE/0.3.21.8",
+      "domain/box/fritz/McDonges-3/ONCE/0.3.21.8/capability/httpPort/42777"
+    ],
+    "updatedAt": "2025-12-11T10:50:49.938Z"
+  },
+  "unit": {
+    "indexPath": "c/5/8/3/8/c5838aa9-13f3-4734-9cf9-ad88b8040b38.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.21.8",
+      "domain/box/fritz/McDonges-3/ONCE/0.3.21.8",
+      "domain/box/fritz/McDonges-3/ONCE/0.3.21.8/capability/httpPort/42777"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "ONCE/0.3.21.8",
+    "createdAt": "2025-12-11T10:50:49.938Z",
+    "updatedAt": "2025-12-11T10:50:49.938Z"
+  }
+}
