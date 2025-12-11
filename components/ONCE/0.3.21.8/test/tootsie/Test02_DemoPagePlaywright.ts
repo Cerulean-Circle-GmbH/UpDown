@@ -828,23 +828,37 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
           return { hasCapabilitiesSection: false, capabilityCount: 0, showsNoCapabilities: false };
         }
         
-        // Find capabilities section
-        const capabilitiesSection = defaultView.shadowRoot.querySelector('.capabilities-section, .status-card');
-        if (!capabilitiesSection) {
-          return { hasCapabilitiesSection: false, capabilityCount: 0, showsNoCapabilities: false };
+        // Find capabilities card - look for card with "⚡ Capabilities" heading
+        const allCards = defaultView.shadowRoot.querySelectorAll('.status-card');
+        let capabilitiesCard = null;
+        for (let i = 0; i < allCards.length; i++) {
+          const heading = allCards[i].querySelector('h2');
+          if (heading && heading.textContent && heading.textContent.includes('⚡')) {
+            capabilitiesCard = allCards[i];
+            break;
+          }
         }
         
-        const sectionText = capabilitiesSection.textContent || '';
+        if (!capabilitiesCard) {
+          return { hasCapabilitiesSection: false, capabilityCount: 0, showsNoCapabilities: false, error: 'No capabilities card found' };
+        }
+        
+        const sectionText = capabilitiesCard.textContent || '';
         const showsNoCapabilities = sectionText.includes('No capabilities registered') || sectionText.includes('No capabilities');
-        const capabilityItems = capabilitiesSection.querySelectorAll('.capability-item');
+        const capabilityItems = capabilitiesCard.querySelectorAll('.capability-item');
         const capabilityCount = capabilityItems.length;
+        
+        // Also check model to see what capabilities are set
+        const modelCapabilities = (defaultView as any).model?.capabilities || [];
         
         return {
           hasCapabilitiesSection: true,
           capabilityCount: capabilityCount,
           showsNoCapabilities: showsNoCapabilities,
           expectedCount: expectedCount,
-          sectionText: sectionText.substring(0, 300)
+          sectionText: sectionText.substring(0, 300),
+          modelCapabilitiesCount: modelCapabilities.length,
+          modelCapabilities: modelCapabilities.map(function(c: any) { return c.capability; })
         };
       }, { expectedCount: expectedCapabilitiesCount });
       
