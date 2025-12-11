@@ -391,13 +391,41 @@ export class BrowserOnceOrchestrator {
     });
     const peerHost = httpCap ? `${onceModel.hostname || onceModel.host || 'localhost'}:${httpCap.port}` : window.location.host;
     
+    // Map state string to LifecycleState enum
+    // Server returns "running", "stopped", etc. as strings
+    let lifecycleState = LifecycleState.STOPPED;
+    if (onceModel.state) {
+      const stateStr = onceModel.state.toLowerCase();
+      // Map common state strings to enum values
+      if (stateStr === 'running') {
+        lifecycleState = LifecycleState.RUNNING;
+      } else if (stateStr === 'stopped') {
+        lifecycleState = LifecycleState.STOPPED;
+      } else if (stateStr === 'starting') {
+        lifecycleState = LifecycleState.STARTING;
+      } else if (stateStr === 'stopping') {
+        lifecycleState = LifecycleState.STOPPING;
+      } else {
+        // Try to match enum value directly
+        lifecycleState = (onceModel.state as any) as LifecycleState || LifecycleState.STOPPED;
+      }
+    }
+    
+    console.log('[Orchestrator] Mapping server model:', {
+      uuid: onceModel.uuid,
+      state: onceModel.state,
+      lifecycleState: lifecycleState,
+      capabilitiesCount: capabilities.length,
+      capabilities: capabilities
+    });
+    
     return {
       uuid: onceModel.uuid,
       name: 'ONCE Server',
       version: this.component.browserModel.version || '0.3.21.8',
       hostname: onceModel.hostname || onceModel.host || 'localhost',
       domain: onceModel.domain || 'local.once',
-      lifecycleState: onceModel.state || LifecycleState.STOPPED,
+      lifecycleState: lifecycleState,
       isPrimaryServer: onceModel.isPrimaryServer || false,
       capabilities: capabilities,
       peerCount: peerCount,
