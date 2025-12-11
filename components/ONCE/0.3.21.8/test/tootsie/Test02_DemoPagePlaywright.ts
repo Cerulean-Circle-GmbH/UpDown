@@ -468,6 +468,7 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       // Wait for shadowRoot to be available (Lit components create shadowRoot during first render)
       // Lit creates shadowRoot when render() is called, which requires model to be set
       // This must be BEFORE checking shadow DOM content
+      const testInstance = this;
       const shadowRootCheck = await this.page.waitForFunction(function() {
         const defaultView = document.querySelector('once-peer-default-view');
         if (!defaultView) return false;
@@ -487,9 +488,9 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
         }
         
         return hasModel && hasShadowRoot;
-      }, { timeout: 15000 }).catch(function(error) {
-        // Log diagnostic info if timeout
-        return this.page.evaluate(function() {
+      }, { timeout: 15000 }).catch(async function(error) {
+        // Log diagnostic info if timeout - use arrow function or bind to access this
+        return await testInstance.page.evaluate(function() {
           const defaultView = document.querySelector('once-peer-default-view');
           return {
             elementExists: defaultView !== null,
