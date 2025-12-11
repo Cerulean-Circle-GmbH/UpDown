@@ -82,9 +82,21 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
    */
   private async shadowRootDiagnostic(error: any): Promise<any> {
     return await this.page!.evaluate(function() {
-      const defaultView = document.querySelector('once-peer-default-view');
+      // Check both light DOM and router's shadow DOM
+      let defaultView = document.querySelector('once-peer-default-view');
+      let inRouterShadow = false;
+      if (!defaultView) {
+        const router = document.querySelector('ucp-router');
+        if (router && router.shadowRoot) {
+          defaultView = router.shadowRoot.querySelector('once-peer-default-view');
+          inRouterShadow = defaultView !== null;
+        }
+      }
       return {
         elementExists: defaultView !== null,
+        inRouterShadow: inRouterShadow,
+        routerExists: document.querySelector('ucp-router') !== null,
+        routerHasShadowRoot: document.querySelector('ucp-router')?.shadowRoot !== null,
         hasModel: defaultView ? ((defaultView as any).model !== null && (defaultView as any).model !== undefined) : false,
         hasShadowRoot: defaultView ? defaultView.shadowRoot !== null : false,
         modelType: defaultView && (defaultView as any).model ? typeof (defaultView as any).model : 'none',
@@ -512,7 +524,15 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       // This must be BEFORE checking shadow DOM content
       // ✅ Web4 P4: Use regular function (not arrow function) for browser context
       const shadowRootCheck = await this.page.waitForFunction(function() {
-        const defaultView = document.querySelector('once-peer-default-view');
+        // Check both light DOM and router's shadow DOM
+        let defaultView = document.querySelector('once-peer-default-view');
+        if (!defaultView) {
+          // Check inside router's shadow DOM
+          const router = document.querySelector('ucp-router');
+          if (router && router.shadowRoot) {
+            defaultView = router.shadowRoot.querySelector('once-peer-default-view');
+          }
+        }
         if (!defaultView) return false;
         
         // Check if model is set (required for render)
