@@ -52,11 +52,26 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
   };
 
   /**
+   * Find once-peer-default-view element (checks router shadow DOM)
+   * Web4 P4: Regular function for browser context
+   */
+  private findDefaultView(): HTMLElement | null {
+    let defaultView = document.querySelector('once-peer-default-view');
+    if (!defaultView) {
+      const router = document.querySelector('ucp-router');
+      if (router && router.shadowRoot) {
+        defaultView = router.shadowRoot.querySelector('once-peer-default-view');
+      }
+    }
+    return defaultView as HTMLElement | null;
+  }
+
+  /**
    * Check if shadowRoot is ready (Web4 P4: method, not arrow function)
    * Used in waitForFunction
    */
   private shadowRootWaitCheck(): boolean {
-    const defaultView = document.querySelector('once-peer-default-view');
+    const defaultView = this.findDefaultView();
     if (!defaultView) return false;
     
     // Check if model is set (required for render)
@@ -523,11 +538,11 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       // Lit creates shadowRoot when render() is called, which requires model to be set
       // This must be BEFORE checking shadow DOM content
       // ✅ Web4 P4: Use regular function (not arrow function) for browser context
+      // Helper function to find defaultView (must be in browser context)
       const shadowRootCheck = await this.page.waitForFunction(function() {
         // Check both light DOM and router's shadow DOM
         let defaultView = document.querySelector('once-peer-default-view');
         if (!defaultView) {
-          // Check inside router's shadow DOM
           const router = document.querySelector('ucp-router');
           if (router && router.shadowRoot) {
             defaultView = router.shadowRoot.querySelector('once-peer-default-view');
@@ -561,9 +576,16 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
       const endpointsCheck = await this.page.evaluate(function() {
         // Check shadow DOM - Lit components use shadow DOM
-        const defaultView = document.querySelector('once-peer-default-view');
+        // Element might be in router's shadow DOM
+        let defaultView = document.querySelector('once-peer-default-view');
+        if (!defaultView) {
+          const router = document.querySelector('ucp-router');
+          if (router && router.shadowRoot) {
+            defaultView = router.shadowRoot.querySelector('once-peer-default-view');
+          }
+        }
         if (!defaultView || !defaultView.shadowRoot) {
-          return { hasEndpointsSection: false, endpointCount: 0, endpoints: [], error: 'No shadowRoot' };
+          return { hasEndpointsSection: false, endpointCount: 0, endpoints: [], error: 'No shadowRoot', elementFound: !!defaultView };
         }
         
         // Find endpoints section in shadow DOM
@@ -600,7 +622,13 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       
       // Wait for shadowRoot to be available (Lit components create shadowRoot asynchronously)
       await this.page.waitForFunction(function() {
-        const defaultView = document.querySelector('once-peer-default-view');
+        let defaultView = document.querySelector('once-peer-default-view');
+        if (!defaultView) {
+          const router = document.querySelector('ucp-router');
+          if (router && router.shadowRoot) {
+            defaultView = router.shadowRoot.querySelector('once-peer-default-view');
+          }
+        }
         return defaultView !== null && defaultView.shadowRoot !== null;
       }, { timeout: 10000 }).catch(function() {
         // Continue even if timeout - will fail in check below
@@ -614,9 +642,15 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
       // ShadowRoot already waited for above, so should be available now
       const identityCheck = await this.page.evaluate(function() {
-        const defaultView = document.querySelector('once-peer-default-view');
+        let defaultView = document.querySelector('once-peer-default-view');
+        if (!defaultView) {
+          const router = document.querySelector('ucp-router');
+          if (router && router.shadowRoot) {
+            defaultView = router.shadowRoot.querySelector('once-peer-default-view');
+          }
+        }
         if (!defaultView || !defaultView.shadowRoot) {
-          return { hasIdentitySection: false, hasServerUuid: false, uuid: null, error: 'No shadowRoot' };
+          return { hasIdentitySection: false, hasServerUuid: false, uuid: null, error: 'No shadowRoot', elementFound: !!defaultView };
         }
         
         // Find Identity section in shadow DOM
@@ -658,7 +692,13 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       // ✅ Web4 P4: Regular function in evaluate
       // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
       const primaryApisCheck = await this.page.evaluate(function() {
-        const defaultView = document.querySelector('once-peer-default-view');
+        let defaultView = document.querySelector('once-peer-default-view');
+        if (!defaultView) {
+          const router = document.querySelector('ucp-router');
+          if (router && router.shadowRoot) {
+            defaultView = router.shadowRoot.querySelector('once-peer-default-view');
+          }
+        }
         if (!defaultView) return { hasPrimarySection: false };
         
         // Check shadow DOM for Primary Server APIs section
@@ -705,7 +745,13 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       // ✅ Web4 P4: Regular function in evaluate
       // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
       const websocketCheck = await this.page.evaluate(function() {
-        const defaultView = document.querySelector('once-peer-default-view');
+        let defaultView = document.querySelector('once-peer-default-view');
+        if (!defaultView) {
+          const router = document.querySelector('ucp-router');
+          if (router && router.shadowRoot) {
+            defaultView = router.shadowRoot.querySelector('once-peer-default-view');
+          }
+        }
         if (!defaultView) return { hasWebSocketSection: false };
         
         // Check shadow DOM for WebSocket section
@@ -751,7 +797,13 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       // ✅ Web4 P4: Regular function in evaluate
       // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
       const linksCheck = await this.page.evaluate(function() {
-        const defaultView = document.querySelector('once-peer-default-view');
+        let defaultView = document.querySelector('once-peer-default-view');
+        if (!defaultView) {
+          const router = document.querySelector('ucp-router');
+          if (router && router.shadowRoot) {
+            defaultView = router.shadowRoot.querySelector('once-peer-default-view');
+          }
+        }
         if (!defaultView) return { totalLinks: 0, clickableLinks: 0, allClickable: false };
         
         // Find all links in shadow DOM
