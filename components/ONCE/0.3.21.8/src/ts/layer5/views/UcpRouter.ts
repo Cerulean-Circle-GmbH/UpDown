@@ -299,16 +299,7 @@ export class UcpRouter extends LitElement {
     // Create the view element
     const view = document.createElement(route.viewTag);
     
-    // Set model if available (provided by Layer 4 orchestrator)
-    // ✅ For once-peer-default-view, use serverModel (ServerDefaultModel)
-    // ✅ For other views, use browserModel (BrowserOnceModel)
-    if (route.viewTag === 'once-peer-default-view' && this.serverModel) {
-      (view as any).model = this.serverModel;
-    } else if (this.model) {
-      (view as any).model = this.model;
-    }
-    
-    // Set kernel if available
+    // Set kernel if available (needed for view to access orchestrator)
     if (this.kernel) {
       (view as any).kernel = this.kernel;
     }
@@ -323,8 +314,22 @@ export class UcpRouter extends LitElement {
       );
     }
     
+    // Store model reference to set AFTER element is in DOM
+    // Lit needs element in DOM before render() is called
+    const modelToSet = route.viewTag === 'once-peer-default-view' && this.serverModel
+      ? this.serverModel
+      : this.model;
+    
     this.currentView = view;
     console.log(`[UcpRouter] Created view: <${route.viewTag}>`);
+    
+    // Set model AFTER element is added to DOM (in next microtask)
+    // This ensures connectedCallback() runs before model triggers render()
+    if (modelToSet) {
+      Promise.resolve().then(function() {
+        (view as any).model = modelToSet;
+      });
+    }
   }
   
   /**
