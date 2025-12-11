@@ -474,6 +474,10 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       mainRouteReq.addCriterion('MAIN-07', 'Primary Server APIs section displays conditionally');
       mainRouteReq.addCriterion('MAIN-08', 'WebSocket connection section displays');
       mainRouteReq.addCriterion('MAIN-09', 'All endpoint links are clickable');
+      mainRouteReq.addCriterion('MAIN-10', 'Identity section displays SERVER UUID (not browser client UUID)');
+      mainRouteReq.addCriterion('MAIN-11', 'Server status shows "Primary Server" (not "Client Server")');
+      mainRouteReq.addCriterion('MAIN-12', 'Server state shows "running" (not "stopped")');
+      mainRouteReq.addCriterion('MAIN-13', 'Capabilities section displays server capabilities');
       
       this.logEvidence('step', 'Testing main route /');
       
@@ -637,11 +641,31 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       this.logEvidence('output', 'Endpoints section check', endpointsCheck);
       mainRouteReq.validateCriterion('MAIN-06', endpointsCheck.allEndpointsFound, endpointsCheck);
       
-      // Check Identity section shows server UUID (not browser client UUID)
+      // Get actual server data from /servers endpoint to verify against
+      const serverInfoResponse = await fetch(`http://localhost:${this.testModel.primaryPort}/servers`);
+      const serverInfo = await serverInfoResponse.json();
+      const expectedServerUuid = serverInfo?.model?.primaryServer?.uuid || null;
+      const expectedServerDomain = serverInfo?.model?.primaryServer?.domain || null;
+      const expectedServerState = serverInfo?.model?.primaryServer?.state || null;
+      const expectedIsPrimary = serverInfo?.model?.primaryServer?.isPrimaryServer || false;
+      const expectedCapabilitiesCount = serverInfo?.model?.primaryServer?.capabilities?.length || 0;
+      
+      this.logEvidence('output', 'Expected server data from /servers endpoint', {
+        expectedServerUuid,
+        expectedServerDomain,
+        expectedServerState,
+        expectedIsPrimary,
+        expectedCapabilitiesCount
+      });
+      
+      if (!expectedServerUuid) {
+        throw new Error('Cannot verify Identity section - no server UUID found in /servers response');
+      }
+      
+      // Check Identity section shows SERVER UUID (not browser client UUID)
       // ✅ Web4 P4: Regular function in evaluate
       // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
-      // ShadowRoot already waited for above, so should be available now
-      const identityCheck = await this.page.evaluate(function() {
+      const identityCheck = await this.page.evaluate(function(expectedUuid: string, expectedDomain: string, expectedState: string) {
         let defaultView = document.querySelector('once-peer-default-view');
         if (!defaultView) {
           const router = document.querySelector('ucp-router');
@@ -650,13 +674,28 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
           }
         }
         if (!defaultView || !defaultView.shadowRoot) {
-          return { hasIdentitySection: false, hasServerUuid: false, uuid: null, error: 'No shadowRoot', elementFound: !!defaultView };
+          return { 
+            hasIdentitySection: false, 
+            hasServerUuid: false, 
+            uuid: null, 
+            domain: null,
+            state: null,
+            error: 'No shadowRoot', 
+            elementFound: !!defaultView 
+          };
         }
         
         // Find Identity section in shadow DOM
         const identityCard = defaultView.shadowRoot.querySelector('.status-card');
         if (!identityCard) {
-          return { hasIdentitySection: false, hasServerUuid: false, uuid: null, error: 'No identity card found' };
+          return { 
+            hasIdentitySection: false, 
+            hasServerUuid: false, 
+            uuid: null, 
+            domain: null,
+            state: null,
+            error: 'No identity card found' 
+          };
         }
         
         // Check if Identity heading exists
@@ -664,29 +703,147 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
         const isIdentitySection = identityHeading && identityHeading.textContent && identityHeading.textContent.includes('🆔');
         
         if (!isIdentitySection) {
-          return { hasIdentitySection: false, hasServerUuid: false, uuid: null, error: 'Identity section not found' };
+          return { 
+            hasIdentitySection: false, 
+            hasServerUuid: false, 
+            uuid: null, 
+            domain: null,
+            state: null,
+            error: 'Identity section not found' 
+          };
         }
         
         // Get UUID from code element
         const uuidCode = identityCard.querySelector('code');
-        const uuid = uuidCode ? uuidCode.textContent : null;
+        const uuid = uuidCode ? uuidCode.textContent.trim() : null;
         
-        // Check if model is set and is ServerDefaultModel (has server UUID, not browser client UUID)
-        // Browser client UUIDs are typically different from server UUIDs
-        // We can't directly check model type, but we can verify UUID exists and is not empty
-        const hasServerUuid = uuid !== null && uuid.length > 0 && uuid !== 'unknown';
+        // Get domain and state from text content
+        const cardText = identityCard.textContent || '';
+        const domainMatch = cardText.match(/Domain:\s*([^\n]+)/);
+        const domain = domainMatch ? domainMatch[1].trim() : null;
+        
+        const stateMatch = cardText.match(/State:\s*([^\n]+)/);
+        const state = stateMatch ? stateMatch[1].trim() : null;
+        
+        // Verify UUID matches expected server UUID
+        const uuidMatches = uuid === expectedUuid;
         
         return {
           hasIdentitySection: true,
-          hasServerUuid: hasServerUuid,
+          hasServerUuid: uuid !== null && uuid.length > 0,
           uuid: uuid,
-          modelType: (defaultView as any).model ? 'model-set' : 'no-model'
+          domain: domain,
+          state: state,
+          uuidMatches: uuidMatches,
+          expectedUuid: expectedUuid,
+          domainMatches: domain === expectedDomain,
+          expectedDomain: expectedDomain,
+          stateMatches: state === expectedState,
+          expectedState: expectedState
         };
-      });
+      }, expectedServerUuid, expectedServerDomain || '', expectedServerState || '');
       
       this.logEvidence('output', 'Identity section check', identityCheck);
-      mainRouteReq.addCriterion('MAIN-10', 'Identity section displays server UUID');
-      mainRouteReq.validateCriterion('MAIN-10', identityCheck.hasServerUuid, identityCheck);
+      mainRouteReq.validateCriterion('MAIN-10', identityCheck.uuidMatches, {
+        ...identityCheck,
+        message: `UUID mismatch: expected server UUID ${expectedServerUuid}, but Identity section shows ${identityCheck.uuid}`
+      });
+      
+      // Check server status shows "Primary Server" (not "Client Server") and "running" (not "stopped")
+      const serverStatusCheck = await this.page.evaluate(function(expectedIsPrimary: boolean, expectedState: string) {
+        let defaultView = document.querySelector('once-peer-default-view');
+        if (!defaultView) {
+          const router = document.querySelector('ucp-router');
+          if (router && router.shadowRoot) {
+            defaultView = router.shadowRoot.querySelector('once-peer-default-view');
+          }
+        }
+        if (!defaultView || !defaultView.shadowRoot) {
+          return { hasStatusSection: false, showsPrimary: false, showsRunning: false, statusText: null };
+        }
+        
+        // Find server status section - check all status cards
+        const statusCards = defaultView.shadowRoot.querySelectorAll('.status-card');
+        let statusText = '';
+        for (let i = 0; i < statusCards.length; i++) {
+          const cardText = statusCards[i].textContent || '';
+          if (cardText.includes('Server Status') || cardText.includes('Primary Server') || cardText.includes('Client Server')) {
+            statusText = cardText;
+            break;
+          }
+        }
+        
+        // Also check header area for server type indicator
+        const header = defaultView.shadowRoot.querySelector('header, .header, h1');
+        if (header) {
+          statusText += ' ' + (header.textContent || '');
+        }
+        
+        const showsPrimary = statusText.includes('Primary Server');
+        const showsClient = statusText.includes('Client Server');
+        const showsRunning = statusText.toLowerCase().includes('running');
+        const showsStopped = statusText.toLowerCase().includes('stopped');
+        
+        return {
+          hasStatusSection: true,
+          showsPrimary: showsPrimary,
+          showsClient: showsClient,
+          showsRunning: showsRunning,
+          showsStopped: showsStopped,
+          statusText: statusText.substring(0, 300), // First 300 chars for logging
+          expectedIsPrimary: expectedIsPrimary,
+          expectedState: expectedState
+        };
+      }, expectedIsPrimary, expectedServerState || '');
+      
+      this.logEvidence('output', 'Server status check', serverStatusCheck);
+      mainRouteReq.validateCriterion('MAIN-11', serverStatusCheck.showsPrimary && !serverStatusCheck.showsClient, {
+        ...serverStatusCheck,
+        message: `Expected "Primary Server" but status shows: ${serverStatusCheck.statusText}`
+      });
+      mainRouteReq.validateCriterion('MAIN-12', serverStatusCheck.showsRunning && !serverStatusCheck.showsStopped, {
+        ...serverStatusCheck,
+        message: `Expected "running" but status shows: ${serverStatusCheck.statusText}`
+      });
+      
+      // Check capabilities section displays server capabilities (not "No capabilities registered")
+      const capabilitiesCheck = await this.page.evaluate(function(expectedCount: number) {
+        let defaultView = document.querySelector('once-peer-default-view');
+        if (!defaultView) {
+          const router = document.querySelector('ucp-router');
+          if (router && router.shadowRoot) {
+            defaultView = router.shadowRoot.querySelector('once-peer-default-view');
+          }
+        }
+        if (!defaultView || !defaultView.shadowRoot) {
+          return { hasCapabilitiesSection: false, capabilityCount: 0, showsNoCapabilities: false };
+        }
+        
+        // Find capabilities section
+        const capabilitiesSection = defaultView.shadowRoot.querySelector('.capabilities-section, .status-card');
+        if (!capabilitiesSection) {
+          return { hasCapabilitiesSection: false, capabilityCount: 0, showsNoCapabilities: false };
+        }
+        
+        const sectionText = capabilitiesSection.textContent || '';
+        const showsNoCapabilities = sectionText.includes('No capabilities registered') || sectionText.includes('No capabilities');
+        const capabilityItems = capabilitiesSection.querySelectorAll('.capability-item');
+        const capabilityCount = capabilityItems.length;
+        
+        return {
+          hasCapabilitiesSection: true,
+          capabilityCount: capabilityCount,
+          showsNoCapabilities: showsNoCapabilities,
+          expectedCount: expectedCount,
+          sectionText: sectionText.substring(0, 300)
+        };
+      }, expectedCapabilitiesCount);
+      
+      this.logEvidence('output', 'Capabilities check', capabilitiesCheck);
+      mainRouteReq.validateCriterion('MAIN-13', !capabilitiesCheck.showsNoCapabilities && capabilitiesCheck.capabilityCount > 0, {
+        ...capabilitiesCheck,
+        message: `Expected ${expectedCapabilitiesCount} capabilities, but got: ${capabilitiesCheck.capabilityCount}, showsNoCapabilities: ${capabilitiesCheck.showsNoCapabilities}`
+      });
       
       // Check Primary Server APIs section (conditional display)
       // ✅ Web4 P4: Regular function in evaluate
