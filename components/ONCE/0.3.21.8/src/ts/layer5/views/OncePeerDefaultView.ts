@@ -260,16 +260,81 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
   }
   
   /**
+   * Get router instance from shadow root host
+   * Router is the shadow root host (ucp-router)
+   * ✅ Web4 P4: Regular method, not arrow function
+   */
+  private routerGet(): HTMLElement | null {
+    const root = this.getRootNode();
+    if (root instanceof ShadowRoot && root.host) {
+      return root.host as HTMLElement;
+    }
+    // Fallback: traverse up DOM tree
+    let parent = this.parentElement;
+    while (parent) {
+      if (parent.tagName === 'UCP-ROUTER') {
+        return parent;
+      }
+      parent = parent.parentElement;
+    }
+    return null;
+  }
+  
+  /**
+   * Handle endpoint link click - SPA navigation
+   * ✅ Web4 P4: Regular method, not arrow function
+   * Prevents default navigation and uses router.navigateTo() for SPA routes
+   */
+  private endpointLinkClickHandle(event: Event, path: string): void {
+    // SPA routes that should navigate without reload
+    const spaRoutes = ['/', '/demo', '/onceCommunicationLog', '/once'];
+    
+    if (spaRoutes.includes(path)) {
+      event.preventDefault();
+      const router = this.routerGet();
+      if (router && (router as any).navigateTo) {
+        (router as any).navigateTo(path, false); // false = pushState (adds to history)
+      } else {
+        // Fallback: use window.location if router not found
+        window.history.pushState({}, '', path);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
+    }
+    // For API endpoints (/health, /servers) - let default navigation happen (opens in new tab)
+  }
+  
+  /**
+   * Get click handler for endpoint link
+   * Returns bound method for use in template
+   * ✅ Web4 P4: Returns bound method, not arrow function
+   * Uses partial application: binds path, event comes from click
+   */
+  private endpointLinkClickHandlerGet(path: string): (event: Event) => void {
+    // Bind path as second parameter, event will be first parameter from click
+    const handler = this.endpointLinkClickHandle.bind(this);
+    return function(event: Event): void {
+      handler(event, path);
+    };
+  }
+  
+  /**
    * Render a single endpoint item
    * Web4 P4: Method instead of arrow function
    */
   private endpointItemRender(name: string, path: string, description: string, method: string = 'GET'): TemplateResult {
     const methodBadge = method !== 'GET' ? html`<span class="method-badge">${method}</span>` : '';
+    // SPA routes: no target="_blank", add click handler
+    // API endpoints: keep target="_blank" for JSON responses
+    const spaRoutes = ['/', '/demo', '/onceCommunicationLog', '/once'];
+    const isSpaRoute = spaRoutes.includes(path);
+    const linkTarget = isSpaRoute ? '' : '_blank';
+    const clickHandler = isSpaRoute ? this.endpointLinkClickHandlerGet(path) : undefined;
+    
     return html`
       <div class="endpoint-item">
         <strong>${name}:</strong>
         ${methodBadge}
-        <code><a href="${path}" target="_blank">${path}</a></code>
+        <code><a href="${path}" target="${linkTarget}" @click=${clickHandler}>${path}</a></code>
         <p>${description}</p>
       </div>
     `;
