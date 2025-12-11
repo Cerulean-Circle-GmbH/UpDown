@@ -465,14 +465,45 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       this.logEvidence('output', 'Main route JS check', { mainNoErrors, mainRouteErrors });
       mainRouteReq.validateCriterion('MAIN-05', mainNoErrors, { mainRouteErrors });
       
-      // Wait for shadowRoot to be available (Lit components create shadowRoot asynchronously)
+      // Wait for shadowRoot to be available (Lit components create shadowRoot during first render)
+      // Lit creates shadowRoot when render() is called, which requires model to be set
       // This must be BEFORE checking shadow DOM content
-      await this.page.waitForFunction(function() {
+      const shadowRootCheck = await this.page.waitForFunction(function() {
         const defaultView = document.querySelector('once-peer-default-view');
-        return defaultView !== null && defaultView.shadowRoot !== null;
-      }, { timeout: 10000 }).catch(function() {
-        // Continue even if timeout - will fail in check below
+        if (!defaultView) return false;
+        
+        // Check if model is set (required for render)
+        const hasModel = (defaultView as any).model !== null && (defaultView as any).model !== undefined;
+        
+        // Check if shadowRoot exists (created during render)
+        const hasShadowRoot = defaultView.shadowRoot !== null;
+        
+        // Debug info
+        if (!hasModel) {
+          console.log('[Test] Model not set yet');
+        }
+        if (!hasShadowRoot && hasModel) {
+          console.log('[Test] Model set but shadowRoot not created yet');
+        }
+        
+        return hasModel && hasShadowRoot;
+      }, { timeout: 15000 }).catch(function(error) {
+        // Log diagnostic info if timeout
+        return this.page.evaluate(function() {
+          const defaultView = document.querySelector('once-peer-default-view');
+          return {
+            elementExists: defaultView !== null,
+            hasModel: defaultView ? ((defaultView as any).model !== null && (defaultView as any).model !== undefined) : false,
+            hasShadowRoot: defaultView ? defaultView.shadowRoot !== null : false,
+            modelType: defaultView && (defaultView as any).model ? typeof (defaultView as any).model : 'none',
+            modelKeys: defaultView && (defaultView as any).model ? Object.keys((defaultView as any).model) : []
+          };
+        });
       });
+      
+      if (shadowRootCheck && typeof shadowRootCheck === 'object' && 'elementExists' in shadowRootCheck) {
+        this.logEvidence('output', 'ShadowRoot timeout diagnostic', shadowRootCheck);
+      }
       
       // Check endpoints section displays all 6 endpoints
       // ✅ Web4 P4: Regular function in evaluate
