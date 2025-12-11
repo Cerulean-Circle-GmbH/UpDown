@@ -665,7 +665,11 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       // Check Identity section shows SERVER UUID (not browser client UUID)
       // ✅ Web4 P4: Regular function in evaluate
       // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
-      const identityCheck = await this.page.evaluate(function(expectedUuid: string, expectedDomain: string, expectedState: string) {
+      // ⚠️ Playwright: page.evaluate() only accepts ONE argument - wrap in object
+      const identityCheck = await this.page.evaluate(function(args: { expectedUuid: string, expectedDomain: string, expectedState: string }) {
+        const expectedUuid = args.expectedUuid;
+        const expectedDomain = args.expectedDomain;
+        const expectedState = args.expectedState;
         let defaultView = document.querySelector('once-peer-default-view');
         if (!defaultView) {
           const router = document.querySelector('ucp-router');
@@ -741,7 +745,7 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
           stateMatches: state === expectedState,
           expectedState: expectedState
         };
-      }, expectedServerUuid, expectedServerDomain || '', expectedServerState || '');
+      }, { expectedUuid: expectedServerUuid, expectedDomain: expectedServerDomain || '', expectedState: expectedServerState || '' });
       
       this.logEvidence('output', 'Identity section check', identityCheck);
       mainRouteReq.validateCriterion('MAIN-10', identityCheck.uuidMatches, {
@@ -750,7 +754,10 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       });
       
       // Check server status shows "Primary Server" (not "Client Server") and "running" (not "stopped")
-      const serverStatusCheck = await this.page.evaluate(function(expectedIsPrimary: boolean, expectedState: string) {
+      // ⚠️ Playwright: page.evaluate() only accepts ONE argument - wrap in object
+      const serverStatusCheck = await this.page.evaluate(function(args: { expectedIsPrimary: boolean, expectedState: string }) {
+        const expectedIsPrimary = args.expectedIsPrimary;
+        const expectedState = args.expectedState;
         let defaultView = document.querySelector('once-peer-default-view');
         if (!defaultView) {
           const router = document.querySelector('ucp-router');
@@ -794,7 +801,7 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
           expectedIsPrimary: expectedIsPrimary,
           expectedState: expectedState
         };
-      }, expectedIsPrimary, expectedServerState || '');
+      }, { expectedIsPrimary: expectedIsPrimary, expectedState: expectedServerState || '' });
       
       this.logEvidence('output', 'Server status check', serverStatusCheck);
       mainRouteReq.validateCriterion('MAIN-11', serverStatusCheck.showsPrimary && !serverStatusCheck.showsClient, {
@@ -807,7 +814,9 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       });
       
       // Check capabilities section displays server capabilities (not "No capabilities registered")
-      const capabilitiesCheck = await this.page.evaluate(function(expectedCount: number) {
+      // ⚠️ Playwright: page.evaluate() only accepts ONE argument - wrap in object
+      const capabilitiesCheck = await this.page.evaluate(function(args: { expectedCount: number }) {
+        const expectedCount = args.expectedCount;
         let defaultView = document.querySelector('once-peer-default-view');
         if (!defaultView) {
           const router = document.querySelector('ucp-router');
@@ -837,7 +846,7 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
           expectedCount: expectedCount,
           sectionText: sectionText.substring(0, 300)
         };
-      }, expectedCapabilitiesCount);
+      }, { expectedCount: expectedCapabilitiesCount });
       
       this.logEvidence('output', 'Capabilities check', capabilitiesCheck);
       mainRouteReq.validateCriterion('MAIN-13', !capabilitiesCheck.showsNoCapabilities && capabilitiesCheck.capabilityCount > 0, {
