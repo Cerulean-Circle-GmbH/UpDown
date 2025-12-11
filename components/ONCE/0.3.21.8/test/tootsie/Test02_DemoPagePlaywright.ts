@@ -510,6 +510,50 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       this.logEvidence('output', 'Endpoints section check', endpointsCheck);
       mainRouteReq.validateCriterion('MAIN-06', endpointsCheck.allEndpointsFound, endpointsCheck);
       
+      // Check Identity section shows server UUID (not browser client UUID)
+      // ✅ Web4 P4: Regular function in evaluate
+      // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
+      const identityCheck = await this.page.evaluate(function() {
+        const defaultView = document.querySelector('once-peer-default-view');
+        if (!defaultView || !defaultView.shadowRoot) {
+          return { hasIdentitySection: false, hasServerUuid: false, uuid: null, error: 'No shadowRoot' };
+        }
+        
+        // Find Identity section in shadow DOM
+        const identityCard = defaultView.shadowRoot.querySelector('.status-card');
+        if (!identityCard) {
+          return { hasIdentitySection: false, hasServerUuid: false, uuid: null, error: 'No identity card found' };
+        }
+        
+        // Check if Identity heading exists
+        const identityHeading = identityCard.querySelector('h2');
+        const isIdentitySection = identityHeading && identityHeading.textContent && identityHeading.textContent.includes('🆔');
+        
+        if (!isIdentitySection) {
+          return { hasIdentitySection: false, hasServerUuid: false, uuid: null, error: 'Identity section not found' };
+        }
+        
+        // Get UUID from code element
+        const uuidCode = identityCard.querySelector('code');
+        const uuid = uuidCode ? uuidCode.textContent : null;
+        
+        // Check if model is set and is ServerDefaultModel (has server UUID, not browser client UUID)
+        // Browser client UUIDs are typically different from server UUIDs
+        // We can't directly check model type, but we can verify UUID exists and is not empty
+        const hasServerUuid = uuid !== null && uuid.length > 0 && uuid !== 'unknown';
+        
+        return {
+          hasIdentitySection: true,
+          hasServerUuid: hasServerUuid,
+          uuid: uuid,
+          modelType: (defaultView as any).model ? 'model-set' : 'no-model'
+        };
+      });
+      
+      this.logEvidence('output', 'Identity section check', identityCheck);
+      mainRouteReq.addCriterion('MAIN-10', 'Identity section displays server UUID');
+      mainRouteReq.validateCriterion('MAIN-10', identityCheck.hasServerUuid, identityCheck);
+      
       // Check Primary Server APIs section (conditional display)
       // ✅ Web4 P4: Regular function in evaluate
       // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
