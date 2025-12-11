@@ -468,39 +468,10 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       // Wait for shadowRoot to be available (Lit components create shadowRoot during first render)
       // Lit creates shadowRoot when render() is called, which requires model to be set
       // This must be BEFORE checking shadow DOM content
-      const testInstance = this;
-      const shadowRootCheck = await this.page.waitForFunction(function() {
-        const defaultView = document.querySelector('once-peer-default-view');
-        if (!defaultView) return false;
-        
-        // Check if model is set (required for render)
-        const hasModel = (defaultView as any).model !== null && (defaultView as any).model !== undefined;
-        
-        // Check if shadowRoot exists (created during render)
-        const hasShadowRoot = defaultView.shadowRoot !== null;
-        
-        // Debug info
-        if (!hasModel) {
-          console.log('[Test] Model not set yet');
-        }
-        if (!hasShadowRoot && hasModel) {
-          console.log('[Test] Model set but shadowRoot not created yet');
-        }
-        
-        return hasModel && hasShadowRoot;
-      }, { timeout: 15000 }).catch(async function(error) {
-        // Log diagnostic info if timeout - use arrow function or bind to access this
-        return await testInstance.page.evaluate(function() {
-          const defaultView = document.querySelector('once-peer-default-view');
-          return {
-            elementExists: defaultView !== null,
-            hasModel: defaultView ? ((defaultView as any).model !== null && (defaultView as any).model !== undefined) : false,
-            hasShadowRoot: defaultView ? defaultView.shadowRoot !== null : false,
-            modelType: defaultView && (defaultView as any).model ? typeof (defaultView as any).model : 'none',
-            modelKeys: defaultView && (defaultView as any).model ? Object.keys((defaultView as any).model) : []
-          };
-        });
-      });
+      const shadowRootCheck = await this.page.waitForFunction(
+        this.shadowRootWaitCheck.bind(this),
+        { timeout: 15000 }
+      ).catch(this.shadowRootDiagnostic.bind(this));
       
       if (shadowRootCheck && typeof shadowRootCheck === 'object' && 'elementExists' in shadowRootCheck) {
         this.logEvidence('output', 'ShadowRoot timeout diagnostic', shadowRootCheck);
