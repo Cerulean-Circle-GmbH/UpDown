@@ -90,6 +90,9 @@ export class UcpRouter extends LitElement {
   /** Model to pass to views */
   @property({ attribute: false }) model: Reference<any> = null;
   
+  /** Server model for once-peer-default-view (set by Layer 4 orchestrator) */
+  @property({ attribute: false }) serverModel: Reference<any> = null;
+  
   // ═══════════════════════════════════════════════════════════════
   // LIFECYCLE
   // ═══════════════════════════════════════════════════════════════
@@ -297,7 +300,11 @@ export class UcpRouter extends LitElement {
     const view = document.createElement(route.viewTag);
     
     // Set model if available (provided by Layer 4 orchestrator)
-    if (this.model) {
+    // ✅ For once-peer-default-view, use serverModel (ServerDefaultModel)
+    // ✅ For other views, use browserModel (BrowserOnceModel)
+    if (route.viewTag === 'once-peer-default-view' && this.serverModel) {
+      (view as any).model = this.serverModel;
+    } else if (this.model) {
       (view as any).model = this.model;
     }
     

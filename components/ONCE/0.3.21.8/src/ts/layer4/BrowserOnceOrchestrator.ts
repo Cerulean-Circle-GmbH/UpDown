@@ -19,6 +19,9 @@ import { LitElement } from 'lit';
 import { Reference } from '../layer3/Reference.interface.js';
 import type { BrowserOnce } from '../layer2/BrowserOnce.js';
 import type { UcpRouter } from '../layer5/views/UcpRouter.js';
+import type { ServerDefaultModel } from '../layer5/views/OncePeerDefaultView.js';
+import type { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
+import { LifecycleState } from '../layer3/LifecycleState.enum.js';
 
 /**
  * BrowserOnceOrchestrator
@@ -42,6 +45,9 @@ export class BrowserOnceOrchestrator {
   
   /** Container element for app rendering */
   private container: Reference<Element> = null;
+  
+  /** Server model for main route (once-peer-default-view) */
+  private serverModel: Reference<ServerDefaultModel> = null;
   
   /**
    * Constructor - receives kernel reference
@@ -71,31 +77,38 @@ export class BrowserOnceOrchestrator {
     // 2. Import view components (including UcpRouter)
     await this.viewsImport();
     
-    // 3. Create UcpRouter as main view
+    // 3. Fetch server model BEFORE creating router (Layer 4 async operation)
+    // This ensures ServerDefaultModel is available when router creates once-peer-default-view
+    await this.serverModelFetch();
+    
+    // 4. Create UcpRouter as main view
     console.log('[Orchestrator] Creating UcpRouter...');
     await import('../layer5/views/UcpRouter.js');
     this.router = document.createElement('ucp-router') as UcpRouter;
     (this.router as any).kernel = this.component;
+    // Pass browserModel as default, but router will use serverModel for once-peer-default-view
     (this.router as any).model = this.component.browserModel;
+    // Store serverModel reference in router for use when creating once-peer-default-view
+    (this.router as any).serverModel = this.serverModel;
     container.appendChild(this.router);
     this.mainView = this.router;
     
-    // 4. Register routes
+    // 5. Register routes
     await this.routesRegister();
     
-    // 5. Navigate to current URL
+    // 6. Navigate to current URL
     const currentPath = window.location.pathname;
     console.log(`[Orchestrator] Navigating to: ${currentPath}`);
     (this.router as any).navigateTo(currentPath, true);  // replace=true to not add history entry
     
-    // 6. Listen for action events from views
+    // 7. Listen for action events from views
     // ✅ Web4: Layer 4 handles async, Layer 5 dispatches events
     this.router.addEventListener('action-request', this.actionRequestHandle.bind(this) as unknown as EventListener);
     
-    // 7. Connect WebSocket for real-time updates
+    // 8. Connect WebSocket for real-time updates
     this.webSocketConnect();
     
-    // 8. Initial data fetch
+    // 9. Initial data fetch (for peers list)
     await this.serversFetch();
     
     console.log('[Orchestrator] appRender() complete');
@@ -283,6 +296,98 @@ export class BrowserOnceOrchestrator {
   // ═══════════════════════════════════════════════════════════════
   // SERVER OPERATIONS (async)
   // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Fetch primary server model for main route (once-peer-default-view)
+   * ✅ Web4 P7: Layer 4 handles async operations
+   * Called BEFORE creating router to ensure ServerDefaultModel is available
+   */
+  async serverModelFetch(): Promise<void> {
+    try {
+      // Determine endpoint (primary or local)
+      const peerHost = this.component.browserModel.peerHost || window.location.host;
+      let endpoint = `http://${peerHost}/servers`;
+      
+      const primaryPeer = this.component.browserModel.primaryPeer;
+      if (primaryPeer) {
+        endpoint = `http://${primaryPeer.host}:${primaryPeer.port}/servers`;
+      }
+      
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      const servers = data.model?.servers || data.servers || [];
+      
+      // Check if primaryServer is returned separately in response
+      let primaryServerModel: ONCEServerModel | null = null;
+      
+      if (data.model?.primaryServer) {
+        // Primary server returned separately
+        primaryServerModel = data.model.primaryServer;
+      } else {
+        // Find primary server in servers array (isPrimaryServer: true)
+        const primaryServer = servers.find(function(server: any) {
+          const serverModel = server.model || server;
+          return serverModel.isPrimaryServer === true;
+        });
+        
+        if (primaryServer) {
+          primaryServerModel = primaryServer.model || primaryServer;
+        }
+      }
+      
+      if (!primaryServerModel) {
+        console.warn('[Orchestrator] No primary server found in /servers response');
+        return;
+      }
+      
+      // Map ONCEServerModel to ServerDefaultModel
+      this.serverModel = this.mapToServerDefaultModel(primaryServerModel, servers.length);
+      
+      console.log('[Orchestrator] Server model fetched:', this.serverModel);
+      
+    } catch (error) {
+      console.warn('[Orchestrator] serverModelFetch failed:', error);
+    }
+  }
+  
+  /**
+   * Map ONCEServerModel to ServerDefaultModel
+   * ✅ Web4 P4: No arrow functions - uses method binding
+   */
+  private mapToServerDefaultModel(onceModel: ONCEServerModel, peerCount: number): ServerDefaultModel {
+    // Map capabilities format: ONCEServerModel.capabilities already has { capability: string, port: number }
+    // ServerDefaultModel expects same format, so we can use directly
+    const capabilities = (onceModel.capabilities || []).map(function(cap: any) {
+      // Ensure capability field exists (should already be there from ONCEServerModel)
+      return {
+        capability: cap.capability || 'httpPort',
+        port: cap.port
+      };
+    });
+    
+    // Get peerHost from HTTP capability
+    const httpCap = capabilities.find(function(c: any) {
+      return c.capability === 'httpPort';
+    });
+    const peerHost = httpCap ? `${onceModel.hostname || onceModel.host || 'localhost'}:${httpCap.port}` : window.location.host;
+    
+    return {
+      uuid: onceModel.uuid,
+      name: 'ONCE Server',
+      version: this.component.browserModel.version || '0.3.21.8',
+      hostname: onceModel.hostname || onceModel.host || 'localhost',
+      domain: onceModel.domain || 'local.once',
+      lifecycleState: onceModel.state || LifecycleState.STOPPED,
+      isPrimaryServer: onceModel.isPrimaryServer || false,
+      capabilities: capabilities,
+      peerCount: peerCount,
+      peerHost: peerHost
+    };
+  }
   
   /**
    * Fetch servers list and update model
