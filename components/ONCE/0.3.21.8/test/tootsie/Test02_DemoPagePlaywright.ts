@@ -507,6 +507,14 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
         };
       });
       
+      // Wait for shadowRoot to be available (Lit components create shadowRoot asynchronously)
+      await this.page.waitForFunction(function() {
+        const defaultView = document.querySelector('once-peer-default-view');
+        return defaultView !== null && defaultView.shadowRoot !== null;
+      }, { timeout: 10000 }).catch(function() {
+        // Continue even if timeout - will fail in check below
+      });
+      
       this.logEvidence('output', 'Endpoints section check', endpointsCheck);
       mainRouteReq.validateCriterion('MAIN-06', endpointsCheck.allEndpointsFound, endpointsCheck);
       
