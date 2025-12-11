@@ -321,14 +321,20 @@ export class UcpRouter extends LitElement {
       : this.model;
     
     this.currentView = view;
-    console.log(`[UcpRouter] Created view: <${route.viewTag}>`);
+    console.log(`[UcpRouter] Created view: <${route.viewTag} else model=${!!this.model}`);
     
     // Set model AFTER element is added to DOM (in next microtask)
     // This ensures connectedCallback() runs before model triggers render()
+    // ⚠️ NOTE: This is async, but necessary for Lit timing
+    // The alternative would be to set model in firstUpdated(), but that requires view changes
     if (modelToSet) {
+      console.log(`[UcpRouter] Will set model on <${route.viewTag}> in next microtask`);
       Promise.resolve().then(function() {
+        console.log(`[UcpRouter] Setting model on <${route.viewTag}>`);
         (view as any).model = modelToSet;
       });
+    } else {
+      console.warn(`[UcpRouter] No model to set on <${route.viewTag}> - serverModel=${!!this.serverModel}, model=${!!this.model}`);
     }
   }
   
