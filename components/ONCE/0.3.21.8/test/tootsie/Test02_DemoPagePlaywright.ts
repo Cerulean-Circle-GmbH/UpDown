@@ -465,6 +465,15 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       this.logEvidence('output', 'Main route JS check', { mainNoErrors, mainRouteErrors });
       mainRouteReq.validateCriterion('MAIN-05', mainNoErrors, { mainRouteErrors });
       
+      // Wait for shadowRoot to be available (Lit components create shadowRoot asynchronously)
+      // This must be BEFORE checking shadow DOM content
+      await this.page.waitForFunction(function() {
+        const defaultView = document.querySelector('once-peer-default-view');
+        return defaultView !== null && defaultView.shadowRoot !== null;
+      }, { timeout: 10000 }).catch(function() {
+        // Continue even if timeout - will fail in check below
+      });
+      
       // Check endpoints section displays all 6 endpoints
       // ✅ Web4 P4: Regular function in evaluate
       // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
@@ -521,6 +530,7 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       // Check Identity section shows server UUID (not browser client UUID)
       // ✅ Web4 P4: Regular function in evaluate
       // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
+      // ShadowRoot already waited for above, so should be available now
       const identityCheck = await this.page.evaluate(function() {
         const defaultView = document.querySelector('once-peer-default-view');
         if (!defaultView || !defaultView.shadowRoot) {
