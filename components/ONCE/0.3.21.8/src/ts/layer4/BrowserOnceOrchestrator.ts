@@ -313,7 +313,12 @@ export class BrowserOnceOrchestrator {
         endpoint = `http://${primaryPeer.host}:${primaryPeer.port}/servers`;
       }
       
+      console.log('[Orchestrator] Fetching server model from:', endpoint);
+      console.log('[Orchestrator] peerHost:', peerHost);
+      console.log('[Orchestrator] primaryPeer:', primaryPeer);
+      
       const response = await fetch(endpoint);
+      console.log('[Orchestrator] Fetch response status:', response.status, response.statusText);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
