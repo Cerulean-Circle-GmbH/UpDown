@@ -101,8 +101,11 @@ export class UcpRouter extends LitElement {
     super.connectedCallback();
     // ✅ Web4: Bound methods, not arrow functions
     window.addEventListener('popstate', this.routeChangeHandle.bind(this));
+    // ⚠️ NOTE: Initial route resolution deferred until routes are registered
+    // Routes are registered AFTER router is added to DOM (see BrowserOnceOrchestrator.appRender)
+    // So we don't resolve here - navigateTo() will be called after routes are registered
     // Initial route resolution
-    this.routeResolve(window.location.pathname);
+    // this.routeResolve(window.location.pathname);  // REMOVED - routes not registered yet
   }
   
   disconnectedCallback(): void {
@@ -314,25 +317,19 @@ export class UcpRouter extends LitElement {
       );
     }
     
-    // Store model reference to set AFTER element is in DOM
-    // Lit needs element in DOM before render() is called
+    // Set model immediately - Lit will handle timing
+    // Model setter calls requestUpdate(), which Lit queues until element is connected
     const modelToSet = route.viewTag === 'once-peer-default-view' && this.serverModel
       ? this.serverModel
       : this.model;
     
     this.currentView = view;
-    console.log(`[UcpRouter] Created view: <${route.viewTag} else model=${!!this.model}`);
+    console.log(`[UcpRouter] Created view: <${route.viewTag}>, serverModel=${!!this.serverModel}, model=${!!this.model}`);
     
-    // Set model AFTER element is added to DOM (in next microtask)
-    // This ensures connectedCallback() runs before model triggers render()
-    // ⚠️ NOTE: This is async, but necessary for Lit timing
-    // The alternative would be to set model in firstUpdated(), but that requires view changes
+    // Set model immediately - Lit's requestUpdate() will queue until element is connected
     if (modelToSet) {
-      console.log(`[UcpRouter] Will set model on <${route.viewTag}> in next microtask`);
-      Promise.resolve().then(function() {
-        console.log(`[UcpRouter] Setting model on <${route.viewTag}>`);
-        (view as any).model = modelToSet;
-      });
+      console.log(`[UcpRouter] Setting model on <${route.viewTag}>`);
+      (view as any).model = modelToSet;
     } else {
       console.warn(`[UcpRouter] No model to set on <${route.viewTag}> - serverModel=${!!this.serverModel}, model=${!!this.model}`);
     }
