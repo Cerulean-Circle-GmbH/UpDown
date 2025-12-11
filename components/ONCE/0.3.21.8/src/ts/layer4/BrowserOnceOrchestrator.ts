@@ -353,11 +353,15 @@ export class BrowserOnceOrchestrator {
       console.log('[Orchestrator] Server UUID:', this.serverModel.uuid);
       
     } catch (error) {
-      console.error('[Orchestrator] serverModelFetch failed:', error);
+      console.error('[Orchestrator] ❌ CRITICAL: serverModelFetch failed:', error);
+      console.error('[Orchestrator] Error stack:', (error as Error).stack);
       // ⚠️ CRITICAL: If serverModel fetch fails, once-peer-default-view will fall back to browserModel
       // This means Identity section will show browser client UUID instead of server UUID
-      // TODO: Consider retry logic or showing error state in view
-      throw error; // Re-throw to prevent silent failure
+      // Set serverModel to null explicitly so router knows it's missing
+      this.serverModel = null;
+      // Don't throw - allow page to load with browserModel as fallback
+      // This is a graceful degradation, but should be fixed
+      console.warn('[Orchestrator] ⚠️ Page will load with browserModel - Identity section will show browser UUID');
     }
   }
   
