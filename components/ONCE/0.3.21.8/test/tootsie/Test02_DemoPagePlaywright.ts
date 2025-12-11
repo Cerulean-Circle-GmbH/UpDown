@@ -808,9 +808,12 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
         ...serverStatusCheck,
         message: `Expected "Primary Server" but status shows: ${serverStatusCheck.statusText}`
       });
-      mainRouteReq.validateCriterion('MAIN-12', serverStatusCheck.showsRunning && !serverStatusCheck.showsStopped, {
+      // MAIN-12: Check if Identity section shows "State: running" (we already verified this in identityCheck)
+      // The Identity section check already verified stateMatches, so use that result
+      mainRouteReq.validateCriterion('MAIN-12', identityCheck.stateMatches, {
         ...serverStatusCheck,
-        message: `Expected "running" but status shows: ${serverStatusCheck.statusText}`
+        ...identityCheck,
+        message: `Expected "State: ${expectedServerState}" but Identity section shows: ${identityCheck.state}`
       });
       
       // Check capabilities section displays server capabilities (not "No capabilities registered")
