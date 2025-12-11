@@ -78,23 +78,19 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
   
   /**
    * Get diagnostic info when shadowRoot wait times out (Web4 P4: method, not arrow function)
+   * Uses regular function in evaluate (not bound method) because page.evaluate needs serializable function
    */
   private async shadowRootDiagnostic(error: any): Promise<any> {
-    return await this.page!.evaluate(this.shadowRootDiagnosticEvaluate.bind(this));
-  }
-  
-  /**
-   * Evaluate diagnostic info in browser context (Web4 P4: method, not arrow function)
-   */
-  private shadowRootDiagnosticEvaluate(): any {
-    const defaultView = document.querySelector('once-peer-default-view');
-    return {
-      elementExists: defaultView !== null,
-      hasModel: defaultView ? ((defaultView as any).model !== null && (defaultView as any).model !== undefined) : false,
-      hasShadowRoot: defaultView ? defaultView.shadowRoot !== null : false,
-      modelType: defaultView && (defaultView as any).model ? typeof (defaultView as any).model : 'none',
-      modelKeys: defaultView && (defaultView as any).model ? Object.keys((defaultView as any).model) : []
-    };
+    return await this.page!.evaluate(function() {
+      const defaultView = document.querySelector('once-peer-default-view');
+      return {
+        elementExists: defaultView !== null,
+        hasModel: defaultView ? ((defaultView as any).model !== null && (defaultView as any).model !== undefined) : false,
+        hasShadowRoot: defaultView ? defaultView.shadowRoot !== null : false,
+        modelType: defaultView && (defaultView as any).model ? typeof (defaultView as any).model : 'none',
+        modelKeys: defaultView && (defaultView as any).model ? Object.keys((defaultView as any).model) : []
+      };
+    });
   }
 
   protected async executeTestLogic(): Promise<any> {
