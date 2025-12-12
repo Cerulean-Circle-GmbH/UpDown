@@ -120,3 +120,4 @@ export class RouteItemView extends UcpView<RouteModel> {
     `;
   }
 }
+
