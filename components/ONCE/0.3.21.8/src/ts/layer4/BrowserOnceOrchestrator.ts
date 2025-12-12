@@ -111,6 +111,10 @@ export class BrowserOnceOrchestrator {
     // 9. Initial data fetch (for peers list)
     await this.serversFetch();
     
+    // 10. Register Service Worker for PWA
+    // @pdca 2025-12-12-UTC-1230.pwa-offline-unit-cache.pdca.md
+    this.serviceWorkerRegister();  // Fire and forget - don't await
+    
     console.log('[Orchestrator] appRender() complete');
   }
   
@@ -597,6 +601,111 @@ export class BrowserOnceOrchestrator {
   // ═══════════════════════════════════════════════════════════════
   // CLEANUP
   // ═══════════════════════════════════════════════════════════════
+  
+  // ═══════════════════════════════════════════════════════════════
+  // PWA & SERVICE WORKER
+  // @pdca 2025-12-12-UTC-1230.pwa-offline-unit-cache.pdca.md
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Register Service Worker for PWA functionality
+   * 
+   * The SW is self-registering (OnceServiceWorker.ts),
+   * this method just tells the browser where to find it.
+   * 
+   * @pdca 2025-12-12-UTC-1230.pwa-offline-unit-cache.pdca.md
+   */
+  async serviceWorkerRegister(): Promise<ServiceWorkerRegistration | null> {
+    // Check if service workers are supported
+    if (!('serviceWorker' in navigator)) {
+      console.warn('[Orchestrator] Service Workers not supported');
+      return null;
+    }
+    
+    try {
+      // Register the SW at /sw.js (served by ServiceWorkerRoute)
+      const registration = await navigator.serviceWorker.register('/sw.js', {
+        scope: '/'
+      });
+      
+      console.log('[Orchestrator] ✅ Service Worker registered:', registration.scope);
+      
+      // Listen for updates
+      registration.addEventListener('updatefound', this.swUpdateHandle.bind(this, registration));
+      
+      return registration;
+    } catch (error) {
+      console.error('[Orchestrator] ❌ Service Worker registration failed:', error);
+      return null;
+    }
+  }
+  
+  /**
+   * Handle SW update found
+   */
+  private swUpdateHandle(registration: ServiceWorkerRegistration): void {
+    const newWorker = registration.installing;
+    if (!newWorker) {
+      return;
+    }
+    
+    console.log('[Orchestrator] 📦 New Service Worker installing...');
+    
+    newWorker.addEventListener('statechange', this.swStateChangeHandle.bind(this, newWorker, registration));
+  }
+  
+  /**
+   * Handle SW state change
+   */
+  private swStateChangeHandle(worker: ServiceWorker, registration: ServiceWorkerRegistration): void {
+    if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+      // New SW is waiting - offer update to user
+      console.log('[Orchestrator] 📦 New Service Worker waiting. Call swUpdate() to activate.');
+      
+      // Could dispatch an event for UI to show "Update available" prompt
+      this.container?.dispatchEvent(new CustomEvent('sw-update-available', {
+        bubbles: true,
+        detail: { registration }
+      }));
+    }
+  }
+  
+  /**
+   * Force update to new waiting Service Worker
+   */
+  async swUpdate(): Promise<void> {
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (!registration?.waiting) {
+      console.log('[Orchestrator] No waiting Service Worker');
+      return;
+    }
+    
+    // Tell SW to skip waiting
+    registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+    
+    // Reload page to use new SW
+    window.location.reload();
+  }
+  
+  /**
+   * Get Service Worker status
+   */
+  async swStatusGet(): Promise<object> {
+    if (!('serviceWorker' in navigator)) {
+      return { supported: false };
+    }
+    
+    const registration = await navigator.serviceWorker.getRegistration();
+    
+    return {
+      supported: true,
+      registered: !!registration,
+      scope: registration?.scope || null,
+      active: !!registration?.active,
+      waiting: !!registration?.waiting,
+      installing: !!registration?.installing
+    };
+  }
   
   /**
    * Cleanup resources
