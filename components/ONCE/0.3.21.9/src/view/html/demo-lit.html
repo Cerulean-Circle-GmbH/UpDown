@@ -7,7 +7,7 @@
     
     <!-- Web4 Principle 19: External CSS Variables (global) 
          Web4 Principle 23: EAMD.ucp Virtual Root -->
-    <link rel="stylesheet" href="/EAMD.ucp/components/ONCE/{{VERSION}}/src/ts/layer5/views/css/themeBase.css">
+    <link rel="stylesheet" href="/EAMD.ucp/components/ONCE/${this.version}/src/ts/layer5/views/css/themeBase.css">
     
     <!-- Import Map for Lit (Browser Module Resolution) -->
     <script type="importmap">
@@ -42,8 +42,8 @@
         // ═══════════════════════════════════════════════════════════════
         
         // Import asset loaders via EAMD.ucp virtual root
-        import { CSSLoader } from '/EAMD.ucp/components/ONCE/{{VERSION}}/dist/ts/layer2/CSSLoader.js';
-        import { HTMLTemplateLoader } from '/EAMD.ucp/components/ONCE/{{VERSION}}/dist/ts/layer2/HTMLTemplateLoader.js';
+        import { CSSLoader } from '/EAMD.ucp/components/ONCE/${this.version}/dist/ts/layer2/CSSLoader.js';
+        import { HTMLTemplateLoader } from '/EAMD.ucp/components/ONCE/${this.version}/dist/ts/layer2/HTMLTemplateLoader.js';
         
         console.log('[demo-lit] 📦 Fetching asset manifest...');
         
@@ -84,13 +84,13 @@
         console.log('[demo-lit] 📦 Importing Lit components...');
         
         // Import ONCE kernel via EAMD.ucp virtual root
-        const { ONCE } = await import('/EAMD.ucp/components/ONCE/{{VERSION}}/dist/ts/layer1/ONCE.js');
+        const { ONCE } = await import('/EAMD.ucp/components/ONCE/${this.version}/dist/ts/layer1/ONCE.js');
         
         // Import Lit components (they self-register via @customElement)
         // CSS will be applied via adoptedStyleSheets in connectedCallback
-        await import('/EAMD.ucp/components/ONCE/{{VERSION}}/dist/ts/layer5/views/OnceOverView.js');
-        await import('/EAMD.ucp/components/ONCE/{{VERSION}}/dist/ts/layer5/views/DefaultItemView.js');
-        await import('/EAMD.ucp/components/ONCE/{{VERSION}}/dist/ts/layer5/views/OncePeerItemView.js');
+        await import('/EAMD.ucp/components/ONCE/${this.version}/dist/ts/layer5/views/OnceOverView.js');
+        await import('/EAMD.ucp/components/ONCE/${this.version}/dist/ts/layer5/views/DefaultItemView.js');
+        await import('/EAMD.ucp/components/ONCE/${this.version}/dist/ts/layer5/views/OncePeerItemView.js');
         
         console.log('[demo-lit] ✅ Components imported');
         

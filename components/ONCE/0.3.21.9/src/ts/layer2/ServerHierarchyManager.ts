@@ -844,13 +844,24 @@ export class ServerHierarchyManager {
 
     /**
      * Radical OOP template renderer - uses native JS template literals with this context
+     * 
+     * Templates can use ${this.version}, ${this.httpPort}, etc.
+     * The template is evaluated with 'this' bound to ServerHierarchyManager.
+     * 
+     * @param templatePath - Path relative to component root, OR just filename for src/view/html
      */
     private renderTemplate(templatePath: string): string {
         const componentRoot = this.component?.model.componentRoot;
         if (!componentRoot) {
             throw new Error('Component not initialized');
         }
-        const fullPath = path.join(componentRoot, 'src/view/html', templatePath);
+        
+        // If path contains '/', treat as relative to component root
+        // Otherwise, assume it's in src/view/html
+        const fullPath = templatePath.includes('/') 
+            ? path.join(componentRoot, templatePath)
+            : path.join(componentRoot, 'src/view/html', templatePath);
+            
         const template = fs.readFileSync(fullPath, 'utf-8');
         // Escape backticks in template to prevent breaking the Function constructor
         const escapedTemplate = template.replace(/`/g, '\\`');
@@ -914,113 +925,56 @@ export class ServerHierarchyManager {
      * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
      */
     getOnceCommunicationLogHTML(): string {
-        if (!this.component?.model.componentRoot) {
-            throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
-        }
-        const fullPath = path.join(this.component.model.componentRoot, 'src/view/html/once-client.html');
-        let html = fs.readFileSync(fullPath, 'utf-8');
-        
-        // ✅ Web4 Version Authority: Replace {{VERSION}} placeholder first
-        html = html.replace(/\{\{VERSION\}\}/g, this.version);
-        // Legacy fallback for old hardcoded versions
-        html = html.replace(/0\.3\.\d+\.\d+/g, this.version);
-        
-        return html;
+        return this.renderTemplate('once-client.html');
     }
 
     /**
      * Get minimal ONCE bootstrap HTML (for /once endpoint)
-     * 
-     * Web4 Version Authority: {{VERSION}} placeholder replaced with actual version
+     * Uses model-based template renderer with ${this.version} syntax.
      * 
      * @pdca 2025-11-25-UTC-2030.iteration-01.11-once-route-refactoring.pdca.md
      * @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md
      */
     getOnceMinimalHTML(): string {
-        if (!this.component?.model.componentRoot) {
-            throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
-        }
-        const fullPath = path.join(this.component.model.componentRoot, 'src/view/html/once-minimal.html');
-        let html = fs.readFileSync(fullPath, 'utf-8');
-        
-        // ✅ Web4 Version Authority: Replace {{VERSION}} placeholder first
-        html = html.replace(/\{\{VERSION\}\}/g, this.version);
-        // Legacy fallback for old hardcoded versions
-        html = html.replace(/0\.3\.\d+\.\d+/g, this.version);
-        
-        return html;
+        return this.renderTemplate('once-minimal.html');
     }
 
     /**
      * Get demo hub HTML (for /demo endpoint)
-     * ✅ TRUE Radical OOP: Dynamically inject version instead of hardcoding
-     * ✅ Path Authority: component.model.componentRoot set in DefaultONCE constructor
-     * 
-     * Web4 Version Authority: {{VERSION}} placeholder replaced with actual version
+     * Uses model-based template renderer with ${this.version} syntax.
      * 
      * @deprecated Use DefaultONCE.serveDemoHub() instead (delegates to this method)
      * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
      * @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md
      */
     getDemoHubHTML(): string {
-        if (!this.component?.model.componentRoot) {
-            throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
-        }
-        const fullPath = path.join(this.component.model.componentRoot, 'src/view/html/demo-hub.html');
-        let html = fs.readFileSync(fullPath, 'utf-8');
-        
-        // ✅ Web4 Version Authority: Replace {{VERSION}} placeholder first
-        html = html.replace(/\{\{VERSION\}\}/g, this.version);
-        // Legacy fallback for old hardcoded versions
-        html = html.replace(/0\.3\.\d+\.\d+/g, this.version);
-        
-        return html;
+        return this.renderTemplate('demo-hub.html');
     }
     
     /**
      * Get demo Lit MVC HTML (for /demo-lit endpoint)
      * Web4 MVC Architecture with Lit 3 components
      * 
-     * Web4 Version Authority: {{VERSION}} placeholder replaced with actual version
+     * Uses model-based template renderer with ${this.version} syntax.
      * 
      * @pdca 2025-12-03-UTC-1200.mvc-lit3-views.pdca.md
      * @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md
      */
     getDemoLitHTML(): string {
-        if (!this.component?.model.componentRoot) {
-            throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
-        }
-        const fullPath = path.join(this.component.model.componentRoot, 'src/view/html/demo-lit.html');
-        let html = fs.readFileSync(fullPath, 'utf-8');
-        
-        // ✅ Web4 Version Authority: Replace {{VERSION}} with actual component version
-        html = html.replace(/\{\{VERSION\}\}/g, this.version);
-        
-        return html;
+        return this.renderTemplate('demo-lit.html');
     }
 
     /**
      * Get ONCE App HTML (for /app endpoint)
      * Minimal SPA entry point - ALL logic in classes
      * 
-     * Web4 Version Authority: {{VERSION}} placeholder replaced with actual version
-     * This ensures HTML templates are version-agnostic and work across version bumps.
+     * Uses model-based template renderer with ${this.version} syntax.
      * 
      * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
      * @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md
      */
     getOnceAppHTML(): string {
-        if (!this.component?.model.componentRoot) {
-            throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
-        }
-        const fullPath = path.join(this.component.model.componentRoot, 'src/ts/layer5/views/once.html');
-        let html = fs.readFileSync(fullPath, 'utf-8');
-        
-        // ✅ Web4 Version Authority: Replace {{VERSION}} with actual component version
-        // This avoids hardcoding version numbers in HTML templates
-        html = html.replace(/\{\{VERSION\}\}/g, this.version);
-        
-        return html;
+        return this.renderTemplate('src/ts/layer5/views/once.html');
     }
 
     /**
