@@ -297,7 +297,7 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
     const port = 42777;
     
     try {
-      this.ws = new WebSocket(`ws://${host}:${port}`);
+      this.ws = new WebSocket(`wss://${host}:${port}`);
       
       this.ws.onopen = this.webSocketOnOpen.bind(this);
       this.ws.onmessage = this.webSocketOnMessage.bind(this);
@@ -441,8 +441,8 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
    */
   private async iorCall(host: string, port: number, method: string, uuid?: string): Promise<void> {
     const url = uuid 
-      ? `http://${host}:${port}/ONCE/0.3.21.8/${uuid}/${method}`
-      : `http://${host}:${port}/${method}`;
+      ? `https://${host}:${port}/ONCE/0.3.21.9/${uuid}/${method}`
+      : `https://${host}:${port}/${method}`;
     
     try {
       const response = await fetch(url, { method: 'GET' });
@@ -471,7 +471,7 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
     const port = 42777;
     
     try {
-      const response = await fetch(`http://${host}:${port}/servers`);
+      const response = await fetch(`https://${host}:${port}/servers`);
       const data = await response.json();
       
       // Add primary server - ✅ Web4: Flat model

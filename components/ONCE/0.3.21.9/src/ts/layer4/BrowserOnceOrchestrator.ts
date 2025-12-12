@@ -248,7 +248,7 @@ export class BrowserOnceOrchestrator {
    */
   webSocketConnect(): void {
     const host = this.component.browserModel.peerHost || window.location.host;
-    const wsUrl = `ws://${host}`;
+    const wsUrl = `wss://${host}`;
     
     console.log(`[Orchestrator] Connecting WebSocket to ${wsUrl}...`);
     
@@ -323,11 +323,11 @@ export class BrowserOnceOrchestrator {
     try {
       // Determine endpoint (primary or local)
       const peerHost = this.component.browserModel.peerHost || window.location.host;
-      let endpoint = `http://${peerHost}/servers`;
+      let endpoint = `https://${peerHost}/servers`;
       
       const primaryPeer = this.component.browserModel.primaryPeer;
       if (primaryPeer) {
-        endpoint = `http://${primaryPeer.host}:${primaryPeer.port}/servers`;
+        endpoint = `https://${primaryPeer.host}:${primaryPeer.port}/servers`;
       }
       
       console.log('[Orchestrator] Fetching server model from:', endpoint);
@@ -457,11 +457,11 @@ export class BrowserOnceOrchestrator {
     try {
       // Determine endpoint (primary or local)
       const peerHost = this.component.browserModel.peerHost || window.location.host;
-      let endpoint = `http://${peerHost}/servers`;
+      let endpoint = `https://${peerHost}/servers`;
       
       const primaryPeer = this.component.browserModel.primaryPeer;
       if (primaryPeer) {
-        endpoint = `http://${primaryPeer.host}:${primaryPeer.port}/servers`;
+        endpoint = `https://${primaryPeer.host}:${primaryPeer.port}/servers`;
       }
       
       const response = await fetch(endpoint);
@@ -489,8 +489,8 @@ export class BrowserOnceOrchestrator {
   async iorCall(host: string, port: number, method: string, uuid?: string): Promise<any> {
     const version = this.component.browserModel.version;
     const url = uuid 
-      ? `http://${host}:${port}/ONCE/${version}/${uuid}/${method}`
-      : `http://${host}:${port}/${method}`;
+      ? `https://${host}:${port}/ONCE/${version}/${uuid}/${method}`
+      : `https://${host}:${port}/${method}`;
     
     try {
       const response = await fetch(url, { method: 'GET' });
@@ -512,7 +512,7 @@ export class BrowserOnceOrchestrator {
     const peerHost = this.component.browserModel.peerHost || window.location.host;
     
     try {
-      const response = await fetch(`http://${peerHost}/health`);
+      const response = await fetch(`https://${peerHost}/health`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
@@ -575,7 +575,7 @@ export class BrowserOnceOrchestrator {
         await this.iorCall(host, port, 'peerStop', uuid);
         break;
       case 'healthCheck':
-        window.open(`http://${host}:${port}/health`, '_blank');
+        window.open(`https://${host}:${port}/health`, '_blank');
         break;
       default:
         console.warn(`[Orchestrator] Unknown action: ${action}`);

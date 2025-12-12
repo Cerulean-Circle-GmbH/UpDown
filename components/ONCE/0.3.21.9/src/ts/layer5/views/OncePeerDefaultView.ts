@@ -260,7 +260,7 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
       
       <div class="endpoints-section">
         <h3><span class="emoji">🔌</span> WebSocket Connection</h3>
-        <p>WebSocket endpoint available at: <code>ws://${this.peerHost}/</code></p>
+        <p>WebSocket endpoint available at: <code>wss://${this.peerHost}/</code></p>
         <p>Use this endpoint for real-time P2P communication with ONCE v${this.serverVersion} kernel</p>
         <p><strong>New in v${this.serverVersion}:</strong> Enhanced server hierarchy, dynamic port management, scenario-based configuration</p>
       </div>

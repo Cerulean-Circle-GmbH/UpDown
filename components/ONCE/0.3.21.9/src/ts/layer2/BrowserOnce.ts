@@ -374,9 +374,10 @@ export class BrowserOnce extends DefaultOnceKernel {
     }
     
     async getHealth(): Promise<any> {
-        // ✅ Get health status from peer
+        // ✅ Get health status from peer (HTTPS by default)
+        // @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md
         try {
-            const response = await fetch(`http://${this.model.peerHost}/health`);
+            const response = await fetch(`https://${this.model.peerHost}/health`);
             if (!response || !response.ok) {
                 throw new Error('Health check failed');
             }
@@ -473,11 +474,12 @@ export class BrowserOnce extends DefaultOnceKernel {
     private async getPeers(): Promise<void> {
         // ✅ Get connected peers (NOT "servers")
         try {
-            // Determine primary peer endpoint
-            let endpoint = `http://${this.model.peerHost}/servers`;
+            // Determine primary peer endpoint (HTTPS by default)
+            // @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md
+            let endpoint = `https://${this.model.peerHost}/servers`;
             
             if (this.model.primaryPeer) {
-                endpoint = `http://${this.model.primaryPeer.host}:${this.model.primaryPeer.port}/servers`;
+                endpoint = `https://${this.model.primaryPeer.host}:${this.model.primaryPeer.port}/servers`;
             }
             
             const response = await fetch(endpoint);
@@ -502,7 +504,9 @@ export class BrowserOnce extends DefaultOnceKernel {
     // ========================================
     
     private async connectWebSocket(): Promise<void> {
-        const wsUrl = `ws://${this.model.peerHost}`;
+        // ✅ WSS by default (HTTPS requires WSS)
+        // @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md
+        const wsUrl = `wss://${this.model.peerHost}`;
         this.model.ws = new WebSocket(wsUrl);
         
         const self = this;
