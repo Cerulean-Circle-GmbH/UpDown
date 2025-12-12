@@ -12,6 +12,7 @@
 import { RouterModel } from '../layer3/RouterModel.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { Route } from './Route.js';
+import { ErrorRoute } from './ErrorRoute.js';
 import { IncomingMessage, ServerResponse } from 'http';
 import { HttpMethod } from '../layer3/HttpMethod.enum.js';
 import { parse as parseUrl } from 'url';
@@ -35,10 +36,12 @@ import { parse as parseUrl } from 'url';
 export class HTTPRouter {
     public model: RouterModel;
     private routes: Map<string, Route>; // key: `${pattern}:${method}`
+    private errorRoute: ErrorRoute;  // Error handling route
     
     constructor() {
         // Empty constructor - Web4 Principle 6
         const now = new Date().toISOString();
+        this.errorRoute = new ErrorRoute();
         this.model = {
             uuid: '', // Set by init()
             name: 'HTTPRouter',
@@ -137,17 +140,24 @@ export class HTTPRouter {
             
             console.error('[HTTPRouter] Routing error:', error);
             
-            if (!res.headersSent) {
-                res.writeHead(500, { 
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
-                });
-                res.end(JSON.stringify({ 
-                    error: 'Internal Server Error',
-                    message: error.message 
-                }));
-            }
+            // Delegate to errorHandle for consistent error responses
+            await this.errorHandle(req, res, error);
         }
+    }
+    
+    /**
+     * Handle error via ErrorRoute
+     * Server/Router calls this instead of hardcoding error response
+     * 
+     * Web4 Radical OOP: ErrorRoute decides response format (JSON/HTML)
+     * 
+     * @param req - HTTP request
+     * @param res - HTTP response
+     * @param error - Error to handle
+     */
+    public async errorHandle(req: IncomingMessage, res: ServerResponse, error: Error): Promise<void> {
+        console.error('[HTTPRouter] Error:', error.message);
+        await this.errorRoute.handleWithError(req, res, error);
     }
     
     /**

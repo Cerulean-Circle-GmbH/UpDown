@@ -28,7 +28,9 @@ import { Scenario } from '../layer3/Scenario.interface.js';
 import { HostnameParser } from '../layer1/HostnameParser.js';
 import { IORMethodRouter } from './IORMethodRouter.js';
 import { HTTPServer } from './HTTPServer.js';
+import { HTTPSServer } from './HTTPSServer.js';
 import { HTTPRouter } from './HTTPRouter.js';
+import { TLSOptions } from '../layer3/TLSOptions.interface.js';
 import { HTMLRoute } from './HTMLRoute.js';
 import { ScenarioRoute } from './ScenarioRoute.js';
 import { IORRoute } from './IORRoute.js';
@@ -479,28 +481,74 @@ export class ServerHierarchyManager {
     }
 
     /**
-     * Start HTTP server on specified port
+     * Start HTTP or HTTPS server on specified port
      * 
-     * ✅ Web4 Radical OOP: Uses HTTPServer + HTTPRouter classes
+     * ✅ Web4 Radical OOP: Uses HTTPServer/HTTPSServer + HTTPRouter classes
      * ✅ Web4 Principle 19: Separate bindInterface from urlHost
+     * ✅ Automatically uses HTTPS when TLS configuration is available
      * @pdca 2025-12-01-UTC-0950.iteration-05-phase5-7-httpserver-router-refactoring.pdca.md
+     * @pdca 2025-12-12-UTC-1500.iteration-06-httpsserver-component-inline.pdca.md
      */
     private async startHttpServer(port: number): Promise<void> {
         // Register all routes
         this.registerRoutes();
         
-        // Create HTTPServer instance
-        this.httpServer = new HTTPServer();
-        this.httpServer.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
-        this.httpServer.model.port = port;
-        this.httpServer.model.bindInterface = '0.0.0.0'; // ✅ Bind to all interfaces
-        this.httpServer.model.urlHost = this.serverModel.host; // ✅ FQDN for URLs
-        this.httpServer.router = this.httpRouter;
+        // Check for TLS configuration from component model
+        const tlsConfig = this.component?.model?.tls as TLSOptions | undefined;
         
-        // Start the server (bind to 0.0.0.0)
-        await this.httpServer.start(port, '0.0.0.0');
-        
-        console.log(`🌐 HTTP server started on 0.0.0.0:${port} (URLs use: ${this.serverModel.host}:${port})`);
+        if (tlsConfig && tlsConfig.certPath && tlsConfig.keyPath) {
+            // ✅ Use HTTPS server with TLS
+            const httpsServer = new HTTPSServer();
+            httpsServer.init({
+                ior: { uuid: '', component: '', version: '' },
+                owner: '',
+                model: {
+                    uuid: this.idProvider.create(),
+                    name: 'HTTPSServer',
+                    port: port,
+                    bindInterface: '0.0.0.0',
+                    urlHost: this.serverModel.host,
+                    state: LifecycleState.CREATED,
+                    routerUuid: this.httpRouter.model.uuid,
+                    tls: tlsConfig,
+                    httpRedirect: {
+                        enabled: true,
+                        httpPort: port + 80  // e.g., 42777 → 42857 for redirect
+                    },
+                    defaultHeaders: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Content-Type': 'application/json'
+                    },
+                    statistics: {
+                        totalOperations: 0,
+                        successCount: 0,
+                        errorCount: 0,
+                        lastOperationAt: '',
+                        lastErrorAt: '',
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    }
+                }
+            }, this.httpRouter);
+            
+            this.httpServer = httpsServer;
+            await this.httpServer.start(port, '0.0.0.0');
+            
+            console.log(`🔒 HTTPS server started on 0.0.0.0:${port} (URLs use: https://${this.serverModel.host}:${port})`);
+        } else {
+            // Use standard HTTP server
+            this.httpServer = new HTTPServer();
+            this.httpServer.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
+            this.httpServer.model.port = port;
+            this.httpServer.model.bindInterface = '0.0.0.0'; // ✅ Bind to all interfaces
+            this.httpServer.model.urlHost = this.serverModel.host; // ✅ FQDN for URLs
+            this.httpServer.router = this.httpRouter;
+            
+            // Start the server (bind to 0.0.0.0)
+            await this.httpServer.start(port, '0.0.0.0');
+            
+            console.log(`🌐 HTTP server started on 0.0.0.0:${port} (URLs use: http://${this.serverModel.host}:${port})`);
+        }
     }
 
     /**
