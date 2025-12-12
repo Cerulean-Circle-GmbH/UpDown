@@ -22,12 +22,21 @@ import { StatisticsModel } from './StatisticsModel.interface.js';
  * @property pattern - URL pattern (e.g., "/", "/demo", "/{component}/{version}/{uuid}/{method}")
  * @property method - HTTP method (GET, POST, etc.)
  * @property priority - Route priority (lower = higher priority, default: 100)
+ * @property domains - Optional domain restriction (supports wildcards like *.example.com)
  * @property statistics - DRY statistics for route hits/errors
  */
 export interface RouteModel extends Model {
     pattern: string;
     method: HttpMethod;
     priority: number;
+    /** 
+     * Domains this route handles (optional)
+     * If empty or undefined, route matches any domain
+     * Supports wildcards: ['*.example.com', 'api.example.com']
+     * 
+     * Web4: Enables multi-tenant hosting on single ONCE instance
+     */
+    domains?: string[];
     statistics: StatisticsModel;
 }
 

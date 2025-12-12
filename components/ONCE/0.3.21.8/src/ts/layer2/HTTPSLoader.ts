@@ -220,6 +220,60 @@ export class HTTPSLoader implements Loader {
     }
     
     /**
+     * Save via HTTPS with profile failover - returns response
+     * 
+     * Like save() but returns the response body.
+     * Needed for ACME API calls that return data after POST.
+     * 
+     * @param data - Request body
+     * @param ior - IOR with HTTPS profiles
+     * @param options - Optional headers, method
+     * @returns Response body as string
+     */
+    public async saveWithResponse(data: string, ior: string, options?: any): Promise<string> {
+        const now = new Date().toISOString();
+        this.model.statistics.totalOperations++;
+        this.model.statistics.lastOperationAt = now;
+        this.model.statistics.updatedAt = now;
+        
+        const profiles = this.extractProfiles(ior);
+        
+        for (let i = 0; i < profiles.length; i++) {
+            const profile = profiles[i];
+            
+            try {
+                const url = this.buildURL(profile, ior);
+                
+                const response = await fetch(url, {
+                    method: options?.method || 'POST',
+                    headers: options?.headers || { 'Content-Type': 'application/json' },
+                    body: data
+                });
+                
+                const responseText = await response.text();
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${responseText}`);
+                }
+                
+                this.model.statistics.successCount++;
+                return responseText;
+                
+            } catch (error: any) {
+                console.warn(`⚠️  HTTPSLoader: SaveWithResponse failed on ${profile.host}:${profile.port}: ${error.message}`);
+                
+                if (i === profiles.length - 1) {
+                    this.model.statistics.errorCount++;
+                    this.model.statistics.lastErrorAt = now;
+                    throw new Error(`All IOR profiles exhausted for saveWithResponse: ${ior}`);
+                }
+            }
+        }
+        
+        throw new Error(`HTTPSLoader: No profiles to try`);
+    }
+    
+    /**
      * Empty constructor pattern - init with scenario
      */
     public init(scenario?: Scenario<LoaderModel>): this {
