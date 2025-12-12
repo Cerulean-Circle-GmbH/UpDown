@@ -102,3 +102,6 @@ echo ""
 echo "⚠️  This is a self-signed certificate for development."
 echo "   Browsers will show a security warning."
 echo "   For production, use LetsEncrypt via the UI."
+
+
+

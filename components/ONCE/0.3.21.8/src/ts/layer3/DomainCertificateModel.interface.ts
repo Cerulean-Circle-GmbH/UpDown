@@ -51,3 +51,6 @@ export interface DomainCertificateModel extends Model {
     /** Certificate serial number */
     serialNumber: string;
 }
+
+
+

@@ -53,3 +53,6 @@ export interface DomainConfigurationModel {
     /** Days before expiry to renew (default: 30) */
     renewBeforeExpiryDays: number;
 }
+
+
+

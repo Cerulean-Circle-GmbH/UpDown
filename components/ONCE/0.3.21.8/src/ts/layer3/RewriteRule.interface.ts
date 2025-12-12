@@ -37,3 +37,6 @@ export interface RewriteRule {
     /** Pattern for replace operation (regex) */
     pattern?: string;
 }
+
+
+

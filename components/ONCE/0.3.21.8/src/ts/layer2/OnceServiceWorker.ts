@@ -474,3 +474,6 @@ export class OnceServiceWorker {
 if (isServiceWorkerContext) {
   OnceServiceWorker.register();
 }
+
+
+

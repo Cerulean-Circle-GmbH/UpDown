@@ -42,3 +42,6 @@ export interface DomainCertificateStoreModel {
     /** Statistics - reuses StatisticsModel (DRY) */
     statistics: StatisticsModel;
 }
+
+
+

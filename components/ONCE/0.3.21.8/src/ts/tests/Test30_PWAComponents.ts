@@ -375,3 +375,6 @@ const test = new Test30_PWAComponents();
 test.runAllTests().then(passed => {
   process.exit(passed ? 0 : 1);
 });
+
+
+

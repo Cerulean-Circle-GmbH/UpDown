@@ -135,3 +135,6 @@ export class ServiceWorkerRoute extends Route {
     return 'sw-route-' + Date.now().toString(36) + '-' + Math.random().toString(36).substring(2, 9);
   }
 }
+
+
+
