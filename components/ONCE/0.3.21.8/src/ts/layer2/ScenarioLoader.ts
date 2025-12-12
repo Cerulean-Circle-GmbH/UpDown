@@ -27,12 +27,14 @@ export class ScenarioLoader implements Loader {
     private nextLoaderRegistry: Map<string, Loader>;
     
     constructor() {
-        // Empty constructor - UUID provided by ONCE kernel
+        // Empty constructor - UUID and version provided by ONCE kernel via init()
         const now = new Date().toISOString();
         this.model = {
             uuid: '',  // Set by init()
             name: 'ScenarioLoader',
             protocol: 'scenario',
+            component: 'ScenarioLoader',  // DRY: Used by toScenario()
+            version: '',  // Set by init() - NEVER hardcode!
             statistics: {
                 totalOperations: 0,
                 successCount: 0,
@@ -169,12 +171,17 @@ export class ScenarioLoader implements Loader {
     /**
      * Convert to scenario (async to match Component interface)
      */
+    /**
+     * Convert to scenario
+     * 
+     * DRY: Uses model.component and model.version instead of hardcoded strings
+     */
     public async toScenario(): Promise<Scenario<LoaderModel>> {
         return {
             ior: {
                 uuid: this.model.uuid,
-                component: 'ScenarioLoader',
-                version: '0.3.21.7'
+                component: this.model.component,  // DRY: from model
+                version: this.model.version       // DRY: from model (set by init)
             },
             owner: '',
             model: this.model

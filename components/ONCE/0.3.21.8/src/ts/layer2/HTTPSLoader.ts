@@ -38,12 +38,14 @@ export class HTTPSLoader implements Loader {
     public model: LoaderModel;
     
     constructor() {
-        // Empty constructor - UUID provided by ONCE kernel via init()
+        // Empty constructor - UUID and version provided by ONCE kernel via init()
         const now = new Date().toISOString();
         this.model = {
             uuid: '',  // Set by init()
             name: 'HTTPSLoader',
             protocol: 'https',
+            component: 'HTTPSLoader',  // DRY: Used by toScenario()
+            version: '',  // Set by init() - NEVER hardcode!
             statistics: {
                 totalOperations: 0,
                 successCount: 0,
@@ -229,13 +231,15 @@ export class HTTPSLoader implements Loader {
     
     /**
      * Convert to scenario (async to match Component interface)
+     * 
+     * DRY: Uses model.component and model.version instead of hardcoded strings
      */
     public async toScenario(): Promise<Scenario<LoaderModel>> {
         return {
             ior: {
                 uuid: this.model.uuid,
-                component: 'HTTPSLoader',
-                version: '0.3.21.8'
+                component: this.model.component,  // DRY: from model
+                version: this.model.version       // DRY: from model (set by init)
             },
             owner: '',
             model: this.model

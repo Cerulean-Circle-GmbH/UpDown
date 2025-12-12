@@ -28,12 +28,14 @@ export class RESTLoader implements Loader {
     private nextLoaderRegistry: Map<string, Loader>;
     
     constructor() {
-        // Empty constructor - UUID provided by ONCE kernel via init()
+        // Empty constructor - UUID and version provided by ONCE kernel via init()
         const now = new Date().toISOString();
         this.model = {
             uuid: '',  // Set by init()
             name: 'RESTLoader',
             protocol: 'REST',
+            component: 'RESTLoader',  // DRY: Used by toScenario()
+            version: '',  // Set by init() - NEVER hardcode!
             statistics: {
                 totalOperations: 0,
                 successCount: 0,
@@ -180,12 +182,17 @@ export class RESTLoader implements Loader {
     /**
      * Convert to scenario (async to match Component interface)
      */
+    /**
+     * Convert to scenario
+     * 
+     * DRY: Uses model.component and model.version instead of hardcoded strings
+     */
     public async toScenario(): Promise<Scenario<LoaderModel>> {
         return {
             ior: {
                 uuid: this.model.uuid,
-                component: 'RESTLoader',
-                version: '0.3.21.7'
+                component: this.model.component,  // DRY: from model
+                version: this.model.version       // DRY: from model (set by init)
             },
             owner: '',
             model: this.model
