@@ -44,8 +44,8 @@ export class HTTPSLoader implements Loader {
             uuid: '',  // Set by init()
             name: 'HTTPSLoader',
             protocol: 'https',
-            component: 'HTTPSLoader',  // DRY: Used by toScenario()
-            version: '',  // Set by init() - NEVER hardcode!
+            iorComponent: 'HTTPSLoader',  // DRY: Used by toScenario()
+            iorVersion: '',  // Set by init() - NEVER hardcode!
             statistics: {
                 totalOperations: 0,
                 successCount: 0,
@@ -238,8 +238,8 @@ export class HTTPSLoader implements Loader {
         return {
             ior: {
                 uuid: this.model.uuid,
-                component: this.model.component,  // DRY: from model
-                version: this.model.version       // DRY: from model (set by init)
+                component: this.model.iorComponent,  // DRY: from model
+                version: this.model.iorVersion       // DRY: from model (set by init)
             },
             owner: '',
             model: this.model

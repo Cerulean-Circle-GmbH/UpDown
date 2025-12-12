@@ -17,9 +17,10 @@ import * as tls from 'tls';
 import { TLSOptions } from '../layer3/TLSOptions.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 
-export interface TLSCertificateLoaderModel {
-    uuid: string;
-    name: string;
+import { Model } from '../layer3/Model.interface.js';
+
+export interface TLSCertificateLoaderModel extends Model {
+    // uuid, name, iorComponent, iorVersion inherited from Model
     options: TLSOptions;
     loaded: boolean;
     certificateExpiry?: string;
@@ -137,8 +138,8 @@ export class TLSCertificateLoader {
         return {
             ior: {
                 uuid: this.model.uuid,
-                component: 'TLSCertificateLoader',
-                version: '0.3.21.8'
+                component: this.model.iorComponent || 'TLSCertificateLoader',  // DRY
+                version: this.model.iorVersion || ''  // DRY: from init()
             },
             owner: '',
             model: { ...this.model }

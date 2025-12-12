@@ -182,8 +182,8 @@ export class HTTPServer {
         return {
             ior: {
                 uuid: this.model.uuid,
-                component: 'HTTPServer',
-                version: '0.3.21.7'
+                component: this.model.iorComponent || 'HTTPServer',  // DRY
+                version: this.model.iorVersion || ''  // DRY: from init()
             },
             owner: '',
             model: { ...this.model }

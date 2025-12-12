@@ -15,17 +15,17 @@ import { StatisticsModel } from './StatisticsModel.interface.js';
  * 
  * State for protocol loaders (scenario, REST, HTTPS, WSS, etc.)
  * 
+ * Inherits from Model: uuid, name, iorComponent, iorVersion
+ * 
  * @property protocol - Protocol handled by this loader (e.g., "scenario", "REST", "https")
- * @property component - Component name (class name for JsInterface)
- * @property version - Component version (from directory, not hardcoded!)
  * @property statistics - DRY statistics for load/save operations
  */
 export interface LoaderModel extends Model {
     protocol: string;
-    /** Component name (class name - DRY with toScenario) */
-    component: string;
-    /** Version from directory - NEVER hardcode! */
-    version: string;
+    /** Component name for IOR - required for toScenario() */
+    iorComponent: string;
+    /** Version string for IOR - required, set by init() */
+    iorVersion: string;
     statistics: StatisticsModel;
 }
 

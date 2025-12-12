@@ -245,8 +245,8 @@ export class HTTPSServer extends HTTPServer {
         return {
             ior: {
                 uuid: this.model.uuid,
-                component: 'HTTPSServer',
-                version: '0.3.21.8'
+                component: this.model.iorComponent || 'HTTPSServer',  // DRY
+                version: this.model.iorVersion || ''  // DRY: from init()
             },
             owner: '',
             model: { ...this.model }

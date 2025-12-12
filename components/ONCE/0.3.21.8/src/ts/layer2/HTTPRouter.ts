@@ -229,8 +229,8 @@ export class HTTPRouter {
         return {
             ior: {
                 uuid: this.model.uuid,
-                component: 'HTTPRouter',
-                version: '0.3.21.7'
+                component: this.model.iorComponent || 'HTTPRouter',  // DRY
+                version: this.model.iorVersion || ''  // DRY: from init()
             },
             owner: '',
             model: { ...this.model }

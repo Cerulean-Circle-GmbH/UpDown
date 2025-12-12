@@ -147,14 +147,16 @@ export abstract class Route {
      * Convert to scenario
      * Web4 Pattern: All components can hibernate to scenarios
      * 
+     * DRY: Uses model.component and model.version - NEVER hardcode!
+     * 
      * @returns Scenario representation
      */
     public async toScenario(): Promise<Scenario<RouteModel>> {
         return {
             ior: {
                 uuid: this.model.uuid,
-                component: this.constructor.name,
-                version: '0.3.21.7'
+                component: this.model.iorComponent || this.constructor.name,  // DRY
+                version: this.model.iorVersion || ''  // DRY: from init()
             },
             owner: '',
             model: { ...this.model }

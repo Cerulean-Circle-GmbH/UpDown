@@ -45,6 +45,8 @@ export class IORMethodRouter {
     public model: {
         uuid: string;
         name: string;
+        iorComponent?: string;  // DRY: for toScenario()
+        iorVersion?: string;    // DRY: from init(), never hardcode
         routeCount: number;
         successCount: number;
         errorCount: number;
@@ -188,8 +190,8 @@ export class IORMethodRouter {
             return {
                 ior: {
                     uuid: this.model.uuid,
-                    component: 'IORMethodRouter',
-                    version: '0.3.21.7'
+                    component: this.model.iorComponent || 'IORMethodRouter',  // DRY
+                    version: this.model.iorVersion || ''  // DRY: from init()
                 },
                 owner: '',
                 model: {
