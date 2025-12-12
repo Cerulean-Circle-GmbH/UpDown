@@ -6,7 +6,8 @@
     <title>ONCE</title>
     
     <!-- Web4 Principle 23: EAMD.ucp Virtual Root for base CSS -->
-    <link rel="stylesheet" href="/EAMD.ucp/components/ONCE/0.3.21.9/src/ts/layer5/views/css/themeBase.css">
+    <!-- Web4 Principle: {{VERSION}} placeholder replaced by server at runtime -->
+    <link rel="stylesheet" href="/EAMD.ucp/components/ONCE/{{VERSION}}/src/ts/layer5/views/css/themeBase.css">
     
     <!-- Lit Import Map (Browser Module Resolution) -->
     <script type="importmap">
@@ -45,7 +46,8 @@
         // ═══════════════════════════════════════════════════════════════
         
         // Import ONCE kernel via EAMD.ucp virtual root
-        import { ONCE } from '/EAMD.ucp/components/ONCE/0.3.21.9/dist/ts/layer1/ONCE.js';
+        // Web4 Principle: {{VERSION}} placeholder replaced by server at runtime
+        import { ONCE } from '/EAMD.ucp/components/ONCE/{{VERSION}}/dist/ts/layer1/ONCE.js';
         
         // Get peer host from URL (optional query param)
         const urlParams = new URLSearchParams(window.location.search);

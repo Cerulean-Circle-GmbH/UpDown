@@ -918,70 +918,108 @@ export class ServerHierarchyManager {
             throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
         }
         const fullPath = path.join(this.component.model.componentRoot, 'src/view/html/once-client.html');
-        const html = fs.readFileSync(fullPath, 'utf-8');
+        let html = fs.readFileSync(fullPath, 'utf-8');
         
-        // Replace all hardcoded version strings with dynamic version
-        return html.replace(/0\.3\.20\.[0-9]/g, this.versionFromComponent);
+        // ✅ Web4 Version Authority: Replace {{VERSION}} placeholder first
+        html = html.replace(/\{\{VERSION\}\}/g, this.version);
+        // Legacy fallback for old hardcoded versions
+        html = html.replace(/0\.3\.\d+\.\d+/g, this.version);
+        
+        return html;
     }
 
     /**
      * Get minimal ONCE bootstrap HTML (for /once endpoint)
+     * 
+     * Web4 Version Authority: {{VERSION}} placeholder replaced with actual version
+     * 
      * @pdca 2025-11-25-UTC-2030.iteration-01.11-once-route-refactoring.pdca.md
+     * @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md
      */
     getOnceMinimalHTML(): string {
         if (!this.component?.model.componentRoot) {
             throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
         }
         const fullPath = path.join(this.component.model.componentRoot, 'src/view/html/once-minimal.html');
-        const html = fs.readFileSync(fullPath, 'utf-8');
+        let html = fs.readFileSync(fullPath, 'utf-8');
         
-        // Replace all hardcoded version strings with dynamic version
-        return html.replace(/0\.3\.20\.[0-9]/g, this.versionFromComponent);
+        // ✅ Web4 Version Authority: Replace {{VERSION}} placeholder first
+        html = html.replace(/\{\{VERSION\}\}/g, this.version);
+        // Legacy fallback for old hardcoded versions
+        html = html.replace(/0\.3\.\d+\.\d+/g, this.version);
+        
+        return html;
     }
 
     /**
      * Get demo hub HTML (for /demo endpoint)
      * ✅ TRUE Radical OOP: Dynamically inject version instead of hardcoding
      * ✅ Path Authority: component.model.componentRoot set in DefaultONCE constructor
+     * 
+     * Web4 Version Authority: {{VERSION}} placeholder replaced with actual version
+     * 
      * @deprecated Use DefaultONCE.serveDemoHub() instead (delegates to this method)
      * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+     * @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md
      */
     getDemoHubHTML(): string {
         if (!this.component?.model.componentRoot) {
             throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
         }
         const fullPath = path.join(this.component.model.componentRoot, 'src/view/html/demo-hub.html');
-        const html = fs.readFileSync(fullPath, 'utf-8');
+        let html = fs.readFileSync(fullPath, 'utf-8');
         
-        // Replace all hardcoded version strings with dynamic version
-        return html.replace(/0\.3\.20\.[0-9]/g, this.versionFromComponent);
+        // ✅ Web4 Version Authority: Replace {{VERSION}} placeholder first
+        html = html.replace(/\{\{VERSION\}\}/g, this.version);
+        // Legacy fallback for old hardcoded versions
+        html = html.replace(/0\.3\.\d+\.\d+/g, this.version);
+        
+        return html;
     }
     
     /**
      * Get demo Lit MVC HTML (for /demo-lit endpoint)
      * Web4 MVC Architecture with Lit 3 components
+     * 
+     * Web4 Version Authority: {{VERSION}} placeholder replaced with actual version
+     * 
      * @pdca 2025-12-03-UTC-1200.mvc-lit3-views.pdca.md
+     * @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md
      */
     getDemoLitHTML(): string {
         if (!this.component?.model.componentRoot) {
             throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
         }
         const fullPath = path.join(this.component.model.componentRoot, 'src/view/html/demo-lit.html');
-        const html = fs.readFileSync(fullPath, 'utf-8');
+        let html = fs.readFileSync(fullPath, 'utf-8');
+        
+        // ✅ Web4 Version Authority: Replace {{VERSION}} with actual component version
+        html = html.replace(/\{\{VERSION\}\}/g, this.version);
+        
         return html;
     }
 
     /**
      * Get ONCE App HTML (for /app endpoint)
      * Minimal SPA entry point - ALL logic in classes
+     * 
+     * Web4 Version Authority: {{VERSION}} placeholder replaced with actual version
+     * This ensures HTML templates are version-agnostic and work across version bumps.
+     * 
      * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
+     * @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md
      */
     getOnceAppHTML(): string {
         if (!this.component?.model.componentRoot) {
             throw new Error('ServerHierarchyManager: component backlink not set. component.model.componentRoot is undefined.');
         }
         const fullPath = path.join(this.component.model.componentRoot, 'src/ts/layer5/views/once.html');
-        const html = fs.readFileSync(fullPath, 'utf-8');
+        let html = fs.readFileSync(fullPath, 'utf-8');
+        
+        // ✅ Web4 Version Authority: Replace {{VERSION}} with actual component version
+        // This avoids hardcoding version numbers in HTML templates
+        html = html.replace(/\{\{VERSION\}\}/g, this.version);
+        
         return html;
     }
 

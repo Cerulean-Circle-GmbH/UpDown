@@ -635,7 +635,10 @@ export class BrowserOnceOrchestrator {
       
       return registration;
     } catch (error) {
-      console.error('[Orchestrator] ❌ Service Worker registration failed:', error);
+      // SW registration failure is non-critical - log as warning, not error
+      // The OnceServiceWorker.ts has ES module imports that may fail in SW context
+      // TODO: Bundle SW separately without imports for proper SW support
+      console.warn('[Orchestrator] ⚠️ Service Worker registration failed (non-critical):', error);
       return null;
     }
   }
