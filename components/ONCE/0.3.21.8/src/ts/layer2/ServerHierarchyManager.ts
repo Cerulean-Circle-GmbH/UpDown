@@ -36,6 +36,10 @@ import { ScenarioRoute } from './ScenarioRoute.js';
 import { IORRoute } from './IORRoute.js';
 import { StaticFileRoute } from './StaticFileRoute.js';
 import { HttpMethod } from '../layer3/HttpMethod.enum.js';
+// PWA Routes
+import { UnitsRoute } from './UnitsRoute.js';
+import { ManifestRoute } from './ManifestRoute.js';
+import { ServiceWorkerRoute } from './ServiceWorkerRoute.js';
 
 /**
  * Server registry entry for primary server
@@ -353,6 +357,50 @@ export class ServerHierarchyManager {
         });
         routesRoute.model.priority = 100;
         this.httpRouter.registerRoute(routesRoute);
+        
+        // ═══════════════════════════════════════════════════════════════
+        // PWA ROUTES (Service Worker, Manifest, Units)
+        // @pdca 2025-12-12-UTC-1230.pwa-offline-unit-cache.pdca.md
+        // ═══════════════════════════════════════════════════════════════
+        
+        // ✅ Route 11: Service Worker ("/sw.js") - Self-registering OnceServiceWorker
+        const swRoute = new ServiceWorkerRoute();
+        swRoute.init();
+        swRoute.model.uuid = this.idProvider.create();
+        swRoute.componentRootSet(this.component!.model.componentRoot || '');
+        this.httpRouter.registerRoute(swRoute);
+        
+        // ✅ Route 12: PWA Manifest ("/manifest.json") - Enables PWA install
+        const manifestRoute = new ManifestRoute();
+        manifestRoute.init();
+        manifestRoute.model.uuid = this.idProvider.create();
+        manifestRoute.nameSet('ONCE - Open Network Computing Environment')
+            .shortNameSet('ONCE')
+            .descriptionSet('Web4 Progressive Web Application')
+            .themeColorSet('#0f3460')
+            .backgroundColorSet('#1a1a2e')
+            .iconAdd('/EAMD.ucp/components/ONCE/' + this.version + '/src/assets/icon-192.svg', '192x192', 'image/svg+xml', 'any')
+            .iconAdd('/EAMD.ucp/components/ONCE/' + this.version + '/src/assets/icon-512.svg', '512x512', 'image/svg+xml', 'any');
+        this.httpRouter.registerRoute(manifestRoute);
+        
+        // ✅ Route 13: Units Registry ("/units") - For Service Worker precache
+        const unitsRoute = new UnitsRoute();
+        unitsRoute.init();
+        unitsRoute.model.uuid = this.idProvider.create();
+        unitsRoute.componentVersionSet(this.version);
+        // Register critical units for offline support
+        unitsRoute.unitsFromFilesGenerate('/EAMD.ucp/components/ONCE/' + this.version, [
+            'dist/ts/layer2/BrowserOnce.js',
+            'dist/ts/layer4/BrowserOnceOrchestrator.js',
+            'dist/ts/layer5/views/OnceOverView.js',
+            'dist/ts/layer5/views/OncePeerDefaultView.js',
+            'dist/ts/layer5/views/OncePeerItemView.js',
+            'dist/ts/layer5/views/DefaultItemView.js',
+            'dist/ts/layer5/views/css/OnceOverView.css',
+            'dist/ts/layer5/views/css/OncePeerItemView.css',
+            'dist/ts/layer5/views/css/DefaultItemView.css'
+        ]);
+        this.httpRouter.registerRoute(unitsRoute);
         
         // Note: /servers route registered after port is bound (see registerPrimaryOnlyRoutes)
         
