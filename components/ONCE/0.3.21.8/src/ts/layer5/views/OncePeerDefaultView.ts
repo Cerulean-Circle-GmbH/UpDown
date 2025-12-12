@@ -231,16 +231,24 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
   }
   
   /**
-   * Render routes section - displays available routes from Router
-   * Uses <route-over-view> which gets routes dynamically from router.routesGet()
+   * Render routes section - displays ALL routes (SPA + HTTP)
+   * Uses <route-over-view> with includeHttpRoutes for unified display
+   * 
+   * Web4 P27: Declarative - ONE tag displays ALL routes
    * 
    * @pdca 2025-12-11-UTC-1530.route-overview-migration.pdca.md Phase RO.4
+   * @pdca 2025-12-12-UTC-1103.http-routes-display.pdca.md RO.HTTP.5
    */
   private routesSectionRender(): TemplateResult {
     return html`
       <div class="endpoints-section">
-        <h3><span class="emoji">📡</span> Available Routes</h3>
-        <route-over-view .router=${this.router}></route-over-view>
+        <h3><span class="emoji">📡</span> All Routes</h3>
+        <!-- ✅ DECLARATIVE: One tag, ALL routes (SPA + HTTP) -->
+        <route-over-view 
+          .router=${this.router}
+          .includeHttpRoutes=${true}
+          .groupByType=${true}>
+        </route-over-view>
       </div>
       
       ${this.isPrimary ? html`

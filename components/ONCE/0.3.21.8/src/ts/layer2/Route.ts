@@ -124,6 +124,26 @@ export abstract class Route {
     protected abstract handleRequest(req: IncomingMessage, res: ServerResponse): Promise<void>;
     
     /**
+     * Get icon for this route type (Radical OOP: polymorphism)
+     * Override in subclasses to provide type-specific icon
+     * 
+     * @pdca 2025-12-12-UTC-1103.http-routes-display.pdca.md RO.HTTP.1
+     */
+    public iconGet(): string {
+        return '🔌';  // Default icon for generic route
+    }
+    
+    /**
+     * Get label for route group (Radical OOP: polymorphism)
+     * Override in subclasses to provide type-specific label
+     * 
+     * @pdca 2025-12-12-UTC-1103.http-routes-display.pdca.md RO.HTTP.1
+     */
+    public labelGet(): string {
+        return '🔌 Routes';  // Default label for generic route
+    }
+    
+    /**
      * Convert to scenario
      * Web4 Pattern: All components can hibernate to scenarios
      * 

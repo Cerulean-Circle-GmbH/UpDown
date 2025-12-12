@@ -39,6 +39,22 @@ export class IORRoute extends Route {
     }
     
     /**
+     * Get icon for IOR route (Radical OOP: polymorphism)
+     * @pdca 2025-12-12-UTC-1103.http-routes-display.pdca.md RO.HTTP.1
+     */
+    public override iconGet(): string {
+        return '🔗';
+    }
+    
+    /**
+     * Get label for IOR route group
+     * @pdca 2025-12-12-UTC-1103.http-routes-display.pdca.md RO.HTTP.1
+     */
+    public override labelGet(): string {
+        return '🔗 IOR Methods';
+    }
+    
+    /**
      * Match IOR pattern: /{component}/{version}/{uuid}/{method}
      * 
      * IOR paths must:

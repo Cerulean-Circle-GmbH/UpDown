@@ -186,6 +186,41 @@ export class HTTPRouter {
     }
     
     /**
+     * Get all registered routes with class names (JsInterface pattern)
+     * Web4 P16: routesGet() accessor pattern
+     * Web4 P4: Method reference for forEach
+     * 
+     * @pdca 2025-12-12-UTC-1103.http-routes-display.pdca.md RO.HTTP.2
+     * @returns Array of route models with className, icon, label
+     */
+    public routesGet(): Array<any> {
+        const routes: Array<any> = [];
+        this.routes.forEach(this.routeModelExtract.bind(this, routes));
+        return routes;
+    }
+    
+    /**
+     * Extract RouteModel from Route instance
+     * JsInterface: Include constructor.name as className
+     * Radical OOP: Include icon and label from object (polymorphism)
+     * 
+     * @pdca 2025-12-12-UTC-1103.http-routes-display.pdca.md RO.HTTP.2
+     */
+    private routeModelExtract(routes: Array<any>, route: Route): void {
+        routes.push({
+            pattern: route.model.pattern,
+            method: route.model.method || 'GET',
+            title: route.model.name || route.constructor.name,
+            priority: route.model.priority ?? 0,
+            // JsInterface: The class name IS the type - no enum needed!
+            className: route.constructor.name,
+            // Radical OOP: ASK THE OBJECT for its display properties!
+            icon: route.iconGet(),    // Each class defines its own icon
+            label: route.labelGet()   // Each class defines its own group label
+        });
+    }
+    
+    /**
      * Convert to scenario
      * 
      * @returns Scenario representation

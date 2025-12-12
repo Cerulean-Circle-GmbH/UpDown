@@ -333,6 +333,27 @@ export class ServerHierarchyManager {
         this.httpRouter.registerRoute(healthRoute);
         this.httpRouter.registerRoute(assetManifestRoute);
         
+        // ✅ Route 10: Routes list ("/routes") - Returns HTTP routes for browser UI
+        // @pdca 2025-12-12-UTC-1103.http-routes-display.pdca.md RO.HTTP.2
+        const routesRoute = new ScenarioRoute();
+        routesRoute.model.uuid = this.idProvider.create();
+        routesRoute.setPattern('/routes', HttpMethod.GET);
+        routesRoute.setProvider(async () => {
+            return {
+                ior: {
+                    uuid: this.serverModel.uuid,
+                    component: 'ONCE',
+                    version: this.version
+                },
+                owner: 'system',
+                model: {
+                    routes: this.httpRouter.routesGet()
+                }
+            };
+        });
+        routesRoute.model.priority = 100;
+        this.httpRouter.registerRoute(routesRoute);
+        
         // Note: /servers route registered after port is bound (see registerPrimaryOnlyRoutes)
         
         console.log(`📍 Registered ${this.httpRouter.model.routes.length} routes in HTTPRouter`);

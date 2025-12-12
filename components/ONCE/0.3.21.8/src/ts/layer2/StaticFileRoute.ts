@@ -104,6 +104,22 @@ export class StaticFileRoute extends Route {
     }
     
     /**
+     * Get icon for static file route (Radical OOP: polymorphism)
+     * @pdca 2025-12-12-UTC-1103.http-routes-display.pdca.md RO.HTTP.1
+     */
+    public override iconGet(): string {
+        return '📁';
+    }
+    
+    /**
+     * Get label for static file route group
+     * @pdca 2025-12-12-UTC-1103.http-routes-display.pdca.md RO.HTTP.1
+     */
+    public override labelGet(): string {
+        return '📁 Static Files';
+    }
+    
+    /**
      * Set project root for resolving component paths
      * Web4 Principle 16: Object-Action naming (projectRoot + Set)
      * 
