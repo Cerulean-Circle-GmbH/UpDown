@@ -93,7 +93,7 @@ export abstract class PersistenceManager extends JsInterface {
   
   /**
    * Build type symlink path
-   * @returns Relative path like: type/ONCE/0.3.21.8
+   * @returns Relative path like: type/ONCE/0.3.21.9
    */
   abstract typePathBuild(component: string, version: string): string;
   
@@ -101,7 +101,7 @@ export abstract class PersistenceManager extends JsInterface {
    * Build domain symlink path with hostname
    * @param domainParts Array like ['box', 'fritz']
    * @param hostname Hostname like 'McDonges'
-   * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.8
+   * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.9
    */
   abstract domainPathBuild(domainParts: string[], hostname: string, component: string, version: string): string;
   
@@ -109,7 +109,7 @@ export abstract class PersistenceManager extends JsInterface {
    * Build capability symlink path under domain
    * @param domainParts Array like ['box', 'fritz']
    * @param hostname Hostname like 'McDonges'
-   * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.8/capability/httpPort/42777
+   * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.9/capability/httpPort/42777
    */
   abstract capabilityPathBuild(
     domainParts: string[], 

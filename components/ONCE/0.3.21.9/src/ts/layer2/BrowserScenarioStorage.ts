@@ -353,7 +353,7 @@ export class BrowserScenarioStorage implements PersistenceManager {
       ior: {
         uuid: this.model.uuid,
         component: 'BrowserScenarioStorage',
-        version: '0.3.21.8'
+        version: '0.3.21.9'
       },
       owner: 'browser',
       model: this.model
@@ -377,7 +377,7 @@ export class BrowserScenarioStorage implements PersistenceManager {
   
   /**
    * Build type symlink path (relative)
-   * @returns Relative path like: type/ONCE/0.3.21.8
+   * @returns Relative path like: type/ONCE/0.3.21.9
    */
   typePathBuild(component: string, version: string): string {
     return `type/${component}/${version}`;
@@ -387,7 +387,7 @@ export class BrowserScenarioStorage implements PersistenceManager {
    * Build domain symlink path with hostname (relative)
    * @param domainParts Array like ['box', 'fritz']
    * @param hostname Hostname like 'McDonges'
-   * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.8
+   * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.9
    */
   domainPathBuild(domainParts: string[], hostname: string, component: string, version: string): string {
     return `domain/${domainParts.join('/')}/${hostname}/${component}/${version}`;
@@ -397,7 +397,7 @@ export class BrowserScenarioStorage implements PersistenceManager {
    * Build capability symlink path under domain (relative)
    * @param domainParts Array like ['box', 'fritz']
    * @param hostname Hostname like 'McDonges'
-   * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.8/capability/httpPort/42777
+   * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.9/capability/httpPort/42777
    */
   capabilityPathBuild(
     domainParts: string[], 

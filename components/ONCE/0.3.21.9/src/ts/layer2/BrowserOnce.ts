@@ -151,9 +151,9 @@ export class BrowserOnce extends DefaultOnceKernel {
             // Fallback to known assets
             manifest = {
                 css: [
-                    '/EAMD.ucp/components/ONCE/0.3.21.8/src/ts/layer5/views/css/OnceOverView.css',
-                    '/EAMD.ucp/components/ONCE/0.3.21.8/src/ts/layer5/views/css/OncePeerItemView.css',
-                    '/EAMD.ucp/components/ONCE/0.3.21.8/src/ts/layer5/views/css/DefaultItemView.css'
+                    '/EAMD.ucp/components/ONCE/0.3.21.9/src/ts/layer5/views/css/OnceOverView.css',
+                    '/EAMD.ucp/components/ONCE/0.3.21.9/src/ts/layer5/views/css/OncePeerItemView.css',
+                    '/EAMD.ucp/components/ONCE/0.3.21.9/src/ts/layer5/views/css/DefaultItemView.css'
                 ],
                 templates: []
             };
@@ -176,7 +176,7 @@ export class BrowserOnce extends DefaultOnceKernel {
     private async viewsImport(): Promise<void> {
         console.log('[BrowserOnce] Importing view components...');
         
-        const basePath = '/EAMD.ucp/components/ONCE/0.3.21.8/dist/ts/layer5/views';
+        const basePath = '/EAMD.ucp/components/ONCE/0.3.21.9/dist/ts/layer5/views';
         
         // Import Lit components (they self-register via @customElement)
         await import(`${basePath}/OnceOverView.js`);
@@ -241,7 +241,7 @@ export class BrowserOnce extends DefaultOnceKernel {
         this.transitionTo(LifecycleState.INITIALIZING, LifecycleEventType.BEFORE_INIT);
         
         // ✅ Extract version from script URL (Web4 Path Authority pattern)
-        // URL: .../components/ONCE/0.3.21.8/dist/ts/layer2/BrowserOnce.js
+        // URL: .../components/ONCE/0.3.21.9/dist/ts/layer2/BrowserOnce.js
         const scriptUrl = import.meta.url;
         const versionMatch = scriptUrl.match(/\/(\d+\.\d+\.\d+\.\d+)\//);
         const detectedVersion = versionMatch ? versionMatch[1] : '0.0.0.0';
@@ -339,7 +339,7 @@ export class BrowserOnce extends DefaultOnceKernel {
             ior: {
                 uuid: storageUUID,
                 component: 'BrowserScenarioStorage',
-                version: this.model.version || '0.3.21.8'
+                version: this.model.version || '0.3.21.9'
             },
             owner: 'browser',
             model: {

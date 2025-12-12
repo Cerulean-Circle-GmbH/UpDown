@@ -80,7 +80,7 @@ export class Route {
       ior: {
         uuid: routeId,
         component: scenario.ior?.component || 'ONCE',
-        version: scenario.ior?.version || '0.3.21.8'
+        version: scenario.ior?.version || '0.3.21.9'
       },
       owner: scenario.owner || 'system',
       model: {

@@ -107,7 +107,7 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
    * Render the overview
    */
   render(): TemplateResult {
-    const model = this.hasModel ? this.model : { peers: [], version: '0.3.21.8' };
+    const model = this.hasModel ? this.model : { peers: [], version: '0.3.21.9' };
     
     // Use localPeers (from WebSocket) if available, else model.peers
     const peers = this.localPeers.length > 0 

@@ -27,7 +27,7 @@ export interface CachedUnitModel extends Model {
   
   /**
    * IOR path to this unit
-   * Example: /EAMD.ucp/components/ONCE/0.3.21.8/dist/ts/layer2/HTTPServer.js
+   * Example: /EAMD.ucp/components/ONCE/0.3.21.9/dist/ts/layer2/HTTPServer.js
    */
   ior: string;
   

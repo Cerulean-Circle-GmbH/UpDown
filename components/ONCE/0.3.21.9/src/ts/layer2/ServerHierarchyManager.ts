@@ -1387,14 +1387,14 @@ export class ServerHierarchyManager {
             
             // Build symlink paths using ScenarioService's path builders
             const symlinkPaths: string[] = [
-                // Type index: type/ONCE/0.3.21.8
+                // Type index: type/ONCE/0.3.21.9
                 scenarioService.typePathBuild(component, version),
                 
-                // Domain index: domain/box/fritz/McDonges/ONCE/0.3.21.8
+                // Domain index: domain/box/fritz/McDonges/ONCE/0.3.21.9
                 scenarioService.domainPathBuild(domainParts, hostname, component, version)
             ];
             
-            // Capability index under domain: domain/box/fritz/McDonges/ONCE/0.3.21.8/capability/httpPort/42777
+            // Capability index under domain: domain/box/fritz/McDonges/ONCE/0.3.21.9/capability/httpPort/42777
             if (port) {
                 symlinkPaths.push(
                     scenarioService.capabilityPathBuild(

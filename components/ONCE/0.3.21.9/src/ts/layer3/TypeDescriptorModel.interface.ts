@@ -38,13 +38,13 @@ export interface TypeDescriptorModel extends Model {
   
   /**
    * Parent class IOR (nullable reference)
-   * e.g., "ior:esm:/ONCE/0.3.21.8/UcpComponent"
+   * e.g., "ior:esm:/ONCE/0.3.21.9/UcpComponent"
    */
   extends: Reference<string>;
   
   /**
    * Implemented interface IORs
-   * e.g., ["ior:esm:/ONCE/0.3.21.8/PersistenceManager"]
+   * e.g., ["ior:esm:/ONCE/0.3.21.9/PersistenceManager"]
    */
   implements: string[];
   

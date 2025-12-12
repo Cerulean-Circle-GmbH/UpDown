@@ -41,7 +41,7 @@ interface UnitsResponse {
  */
 export class UnitsRoute extends Route {
   
-  private componentVersion: string = '0.3.21.8';
+  private componentVersion: string = '0.3.21.9';
   private componentRoot: string = '';
   private units: CachedUnitModel[] = [];
   
@@ -116,7 +116,7 @@ export class UnitsRoute extends Route {
   
   /**
    * Generate units from static file patterns
-   * @param basePath Base IOR path (e.g., /EAMD.ucp/components/ONCE/0.3.21.8)
+   * @param basePath Base IOR path (e.g., /EAMD.ucp/components/ONCE/0.3.21.9)
    * @param files Array of relative file paths
    */
   public unitsFromFilesGenerate(basePath: string, files: string[]): this {

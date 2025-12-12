@@ -7,15 +7,15 @@
  * URL Patterns (Web4 Principle 23: EAMD.ucp Virtual Root):
  * 
  * Pattern 1: /{Component}/{version}/**
- *   Example: /ONCE/0.3.21.8/src/ts/layer5/views/css/ItemView.css
+ *   Example: /ONCE/0.3.21.9/src/ts/layer5/views/css/ItemView.css
  *   Resolves to: {projectRoot}/components/{Component}/{version}/...
  * 
  * Pattern 2: /EAMD.ucp/components/**
- *   Example: /EAMD.ucp/components/ONCE/0.3.21.8/dist/ts/layer1/ONCE.js
+ *   Example: /EAMD.ucp/components/ONCE/0.3.21.9/dist/ts/layer1/ONCE.js
  *   Resolves to: {projectRoot}/components/...
  * 
  * Pattern 3: /EAMD.ucp/scenarios/**
- *   Example: /EAMD.ucp/scenarios/box/fritz/McDonges-3/ONCE/0.3.21.8/uuid.json
+ *   Example: /EAMD.ucp/scenarios/box/fritz/McDonges-3/ONCE/0.3.21.9/uuid.json
  *   Resolves to: {projectRoot}/scenarios/...
  * 
  * PROBLEM SOLVED:
@@ -54,17 +54,17 @@ import * as path from 'path';
  * 
  * 1. /{Component}/{version}/** (backwards compatible)
  *    Examples:
- *    - /ONCE/0.3.21.8/src/ts/layer5/views/css/ItemView.css
+ *    - /ONCE/0.3.21.9/src/ts/layer5/views/css/ItemView.css
  *    - /Web4TSComponent/0.3.20.6/package.json
  * 
  * 2. /EAMD.ucp/components/** (Web4 Principle 23)
  *    Examples:
- *    - /EAMD.ucp/components/ONCE/0.3.21.8/dist/ts/layer1/ONCE.js
+ *    - /EAMD.ucp/components/ONCE/0.3.21.9/dist/ts/layer1/ONCE.js
  *    - /EAMD.ucp/components/Tootsie/0.3.20.6/dist/ts/layer4/TootsieTestRunner.js
  * 
  * 3. /EAMD.ucp/scenarios/** (Web4 Principle 23)
  *    Examples:
- *    - /EAMD.ucp/scenarios/box/fritz/McDonges-3/ONCE/0.3.21.8/uuid.json
+ *    - /EAMD.ucp/scenarios/box/fritz/McDonges-3/ONCE/0.3.21.9/uuid.json
  * 
  * Priority: 5 (higher than IORRoute's 10)
  * - Matches file extension patterns BEFORE IOR pattern matching
@@ -129,7 +129,7 @@ export class StaticFileRoute extends Route {
      */
     public componentRootSet(componentRoot: string): this {
         // Extract project root from component root
-        // /path/to/project/components/ONCE/0.3.21.8 -> /path/to/project
+        // /path/to/project/components/ONCE/0.3.21.9 -> /path/to/project
         const componentsIdx = componentRoot.indexOf('/components/');
         if (componentsIdx !== -1) {
             this.projectRoot = componentRoot.substring(0, componentsIdx);
@@ -165,7 +165,7 @@ export class StaticFileRoute extends Route {
      * 2. /EAMD.ucp/components/** - Virtual root for components (Web4 P23)
      * 3. /EAMD.ucp/scenarios/** - Virtual root for scenarios (Web4 P23)
      * 
-     * @param urlPath - URL path (e.g., /ONCE/0.3.21.8/src/ts/... or /EAMD.ucp/...)
+     * @param urlPath - URL path (e.g., /ONCE/0.3.21.9/src/ts/... or /EAMD.ucp/...)
      * @param method - HTTP method (only GET supported)
      * @returns true if path is a static file request
      */
@@ -189,16 +189,16 @@ export class StaticFileRoute extends Route {
         }
         
         // Pattern 2: /{Component}/{version}/**
-        // Example: /ONCE/0.3.21.8/src/ts/layer5/views/css/ItemView.css
-        // Example: /ONCE/0.3.21.8/dist/ts/layer1/ONCE.js
-        // Example: /ONCE/0.3.21.8/package.json
+        // Example: /ONCE/0.3.21.9/src/ts/layer5/views/css/ItemView.css
+        // Example: /ONCE/0.3.21.9/dist/ts/layer1/ONCE.js
+        // Example: /ONCE/0.3.21.9/package.json
         const parts = urlPath.split('/').filter(p => p.length > 0);
         if (parts.length < 3) {
             return false; // Need at least: Component, version, file
         }
         
         // parts[0] = Component name (PascalCase)
-        // parts[1] = version (semantic version pattern like 0.3.21.8)
+        // parts[1] = version (semantic version pattern like 0.3.21.9)
         // parts[2+] = file path within component
         
         // Basic validation: version should look like a semantic version
@@ -298,8 +298,8 @@ export class StaticFileRoute extends Route {
      * 3. /EAMD.ucp/scenarios/** → {projectRoot}/scenarios/**
      * 
      * Examples:
-     *   /ONCE/0.3.21.8/src/ts/... → /project/components/ONCE/0.3.21.8/src/ts/...
-     *   /EAMD.ucp/components/ONCE/0.3.21.8/dist/... → /project/components/ONCE/0.3.21.8/dist/...
+     *   /ONCE/0.3.21.9/src/ts/... → /project/components/ONCE/0.3.21.9/src/ts/...
+     *   /EAMD.ucp/components/ONCE/0.3.21.9/dist/... → /project/components/ONCE/0.3.21.9/dist/...
      *   /EAMD.ucp/scenarios/box/fritz/... → /project/scenarios/box/fritz/...
      * 
      * Prevents directory traversal attacks via path.normalize()

@@ -177,7 +177,7 @@ export class BrowserOnceOrchestrator {
     
     try {
       let cssFiles: string[] = [];
-      const version = this.component.browserModel.version || '0.3.21.8';
+      const version = this.component.browserModel.version || '0.3.21.9';
       const basePath = `/EAMD.ucp/components/ONCE/${version}`;
       
       // Try component.json first (Web4 Unit integration)
@@ -439,7 +439,7 @@ export class BrowserOnceOrchestrator {
     return {
       uuid: onceModel.uuid,
       name: 'ONCE Server',
-      version: this.component.browserModel.version || '0.3.21.8',
+      version: this.component.browserModel.version || '0.3.21.9',
       hostname: onceModel.hostname || onceModel.host || 'localhost',
       domain: onceModel.domain || 'local.once',
       lifecycleState: lifecycleState,

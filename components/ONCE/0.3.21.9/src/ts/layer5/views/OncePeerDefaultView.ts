@@ -78,7 +78,7 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
   }
   
   get serverVersion(): string {
-    return this.model?.version || '0.3.21.8';
+    return this.model?.version || '0.3.21.9';
   }
   
   get serverHostname(): string {

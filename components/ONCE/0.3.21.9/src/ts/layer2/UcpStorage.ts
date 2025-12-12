@@ -410,9 +410,9 @@ export class UcpStorage extends Storage {
       const currentDir = path.dirname(fileURLToPath(import.meta.url));
       const packageJsonPath = path.resolve(currentDir, '../../../package.json');
       const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'));
-      return packageJson.version || '0.3.21.8';
+      return packageJson.version || '0.3.21.9';
     } catch (error) {
-      return '0.3.21.8'; // Fallback version
+      return '0.3.21.9'; // Fallback version
     }
   }
   
@@ -437,7 +437,7 @@ export class UcpStorage extends Storage {
   
   /**
    * Build type symlink path (relative)
-   * @returns Relative path like: type/ONCE/0.3.21.8
+   * @returns Relative path like: type/ONCE/0.3.21.9
    */
   typePathBuild(component: string, version: string): string {
     return join('type', component, version);
@@ -447,7 +447,7 @@ export class UcpStorage extends Storage {
    * Build domain symlink path with hostname (relative)
    * @param domainParts Array like ['box', 'fritz']
    * @param hostname Hostname like 'McDonges'
-   * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.8
+   * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.9
    */
   domainPathBuild(domainParts: string[], hostname: string, component: string, version: string): string {
     return join('domain', ...domainParts, hostname, component, version);
@@ -457,7 +457,7 @@ export class UcpStorage extends Storage {
    * Build capability symlink path under domain (relative)
    * @param domainParts Array like ['box', 'fritz']
    * @param hostname Hostname like 'McDonges'
-   * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.8/capability/httpPort/42777
+   * @returns Relative path like: domain/box/fritz/McDonges/ONCE/0.3.21.9/capability/httpPort/42777
    */
   capabilityPathBuild(
     domainParts: string[], 

@@ -102,7 +102,7 @@ export class OnceServiceWorker {
       uuid: config.uuid || this.uuidGenerate(),
       name: config.name || 'OnceServiceWorker',
       iorComponent: 'OnceServiceWorker',
-      iorVersion: config.iorVersion || '0.3.21.8',
+      iorVersion: config.iorVersion || '0.3.21.9',
       version: config.version || '1.0.0',
       cacheNamePrefix: config.cacheNamePrefix || 'once-pwa',
       defaultCacheStrategy: config.defaultCacheStrategy || CacheStrategy.CACHE_FIRST,

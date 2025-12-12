@@ -296,10 +296,10 @@ export class Test30_PWAComponents {
     try {
       const route = new UnitsRoute();
       route.init();
-      route.componentVersionSet('0.3.21.8');
+      route.componentVersionSet('0.3.21.9');
       
       // Generate units from files
-      route.unitsFromFilesGenerate('/EAMD.ucp/components/ONCE/0.3.21.8', [
+      route.unitsFromFilesGenerate('/EAMD.ucp/components/ONCE/0.3.21.9', [
         'dist/ts/layer2/HTTPServer.js',
         'src/ts/layer5/views/css/OnceOverView.css',
         'src/ts/layer5/views/html/DefaultItemView.html'

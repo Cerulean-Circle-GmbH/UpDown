@@ -42,7 +42,7 @@ export class Test26_DomainCertificateStore {
         
         const store = new DomainCertificateStore().init();
         store.scenariosRootPathSet(this.testDir);
-        store.model.providerVersion = '0.3.21.8';
+        store.model.providerVersion = '0.3.21.9';
         
         const cert = this.mockCertificateCreate('test.example.com');
         store.certificateSave(cert);
@@ -65,7 +65,7 @@ export class Test26_DomainCertificateStore {
         
         const store = new DomainCertificateStore().init();
         store.scenariosRootPathSet(this.testDir);
-        store.model.providerVersion = '0.3.21.8';
+        store.model.providerVersion = '0.3.21.9';
         
         store.certificateSave(this.mockCertificateCreate('a.example.com'));
         store.certificateSave(this.mockCertificateCreate('b.example.com'));
@@ -84,7 +84,7 @@ export class Test26_DomainCertificateStore {
         
         const store = new DomainCertificateStore().init();
         store.scenariosRootPathSet(this.testDir);
-        store.model.providerVersion = '0.3.21.8';
+        store.model.providerVersion = '0.3.21.9';
         
         // Create cert expiring in 10 days
         const expiringCert = this.mockCertificateCreate('expiring.example.com', 10);
@@ -109,7 +109,7 @@ export class Test26_DomainCertificateStore {
         
         const store = new DomainCertificateStore().init();
         store.scenariosRootPathSet(this.testDir);
-        store.model.providerVersion = '0.3.21.8';
+        store.model.providerVersion = '0.3.21.9';
         
         store.certificateSave(this.mockCertificateCreate('delete-me.example.com'));
         

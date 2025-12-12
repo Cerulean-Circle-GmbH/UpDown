@@ -10,12 +10,12 @@
  * - P19: Enables external CSS (separation of concerns)
  * 
  * Cache Keys:
- * - Full URL: /ONCE/0.3.21.8/src/ts/layer5/views/css/ItemView.css
+ * - Full URL: /ONCE/0.3.21.9/src/ts/layer5/views/css/ItemView.css
  * - Filename: ItemView.css
  * This allows components to use simple filenames while loading uses full URLs.
  * 
  * Usage:
- *   await CSSLoader.preloadAll(['/ONCE/0.3.21.8/src/.../ItemView.css']);
+ *   await CSSLoader.preloadAll(['/ONCE/0.3.21.9/src/.../ItemView.css']);
  *   const sheet = CSSLoader.get('ItemView.css'); // Works with filename!
  *   element.shadowRoot.adoptedStyleSheets = [sheet];
  * 
@@ -168,7 +168,7 @@ export class CSSLoader {
   
   /**
    * Extract filename from path
-   * /ONCE/0.3.21.8/src/ts/.../ItemView.css → ItemView.css
+   * /ONCE/0.3.21.9/src/ts/.../ItemView.css → ItemView.css
    */
   private static extractFilename(cssPath: string): string {
     const parts = cssPath.split('/');

@@ -41,7 +41,7 @@ export interface ScenarioUnit {
   
   /** 
    * Created symlinks for this scenario
-   * e.g., ["type/ONCE/0.3.21.8/uuid.scenario.json", "domain/box/fritz/.../uuid.scenario.json"]
+   * e.g., ["type/ONCE/0.3.21.9/uuid.scenario.json", "domain/box/fritz/.../uuid.scenario.json"]
    */
   symlinkPaths: string[];
   
@@ -85,7 +85,7 @@ export interface ScenarioUnit {
   
   /** 
    * Component that created this scenario
-   * e.g., "ONCE/0.3.21.8"
+   * e.g., "ONCE/0.3.21.9"
    */
   createdBy: string;
   

@@ -43,7 +43,7 @@ export type ScenarioMigrationMethod<T extends Model = Model> = (scenario: Scenar
  * Migration Convention (Radical OOP):
  * - NO central SchemaMigrator class
  * - Each component version implements: upgradeScenarioFromX_Y_Z()
- * - Chain: 0.3.21.5 → 0.3.21.6 → 0.3.21.7 → 0.3.21.8
+ * - Chain: 0.3.21.5 → 0.3.21.6 → 0.3.21.7 → 0.3.21.9
  */
 export class ScenarioService {
   
@@ -57,7 +57,7 @@ export class ScenarioService {
   private componentName: string = 'ONCE';
   
   /** Component version for created scenarios */
-  private componentVersion: string = '0.3.21.8';
+  private componentVersion: string = '0.3.21.9';
   
   /**
    * Empty constructor - Web4 Principle 6

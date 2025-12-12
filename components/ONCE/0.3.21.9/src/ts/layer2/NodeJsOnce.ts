@@ -597,7 +597,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       ior: {
         uuid: crypto.randomUUID(),
         component: 'UcpStorage',
-        version: this.model.version || '0.3.21.8'
+        version: this.model.version || '0.3.21.9'
       },
       owner: 'system',
       model: {
@@ -623,7 +623,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       persistenceManager: this.scenarioStorage,
       component: this as any,
       componentName: 'ONCE',
-      componentVersion: this.model.version || '0.3.21.8',
+      componentVersion: this.model.version || '0.3.21.9',
     });
     console.log('[NodeJsOnce] ✅ ScenarioService initialized');
   }
@@ -2147,7 +2147,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       const cssFiles = fs.readdirSync(cssDir);
       cssFiles.forEach(function(file: string) {
         if (file.endsWith('.css')) {
-          // URL: /ONCE/0.3.21.8/src/ts/layer5/views/css/ItemView.css
+          // URL: /ONCE/0.3.21.9/src/ts/layer5/views/css/ItemView.css
           css.push(`/ONCE/${version}/src/ts/layer5/views/css/${file}`);
         }
       });
@@ -2161,7 +2161,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       const templateFiles = fs.readdirSync(templatesDir);
       templateFiles.forEach(function(file: string) {
         if (file.endsWith('.html')) {
-          // URL: /ONCE/0.3.21.8/src/ts/layer5/views/webBeans/ItemView.html
+          // URL: /ONCE/0.3.21.9/src/ts/layer5/views/webBeans/ItemView.html
           templates.push(`/ONCE/${version}/src/ts/layer5/views/webBeans/${file}`);
         }
       });
@@ -2300,7 +2300,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       throw new Error('Server not initialized. Call startServer() first.');
     }
     
-    const version = this.model.version || '0.3.21.8';
+    const version = this.model.version || '0.3.21.9';
     const uuid = this.serverHierarchyManager.getServerModel().uuid;
     const hostname = this.serverHierarchyManager.getServerModel().hostname || 'localhost';
     const domain = this.serverHierarchyManager.getServerModel().domain || 'local.once';
@@ -2402,7 +2402,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       ior: {
         uuid: newUUID,
         component: 'ONCE',
-        version: this.model.version || '0.3.21.8'
+        version: this.model.version || '0.3.21.9'
       },
       owner: 'system',
       model: {
