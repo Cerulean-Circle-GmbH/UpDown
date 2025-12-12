@@ -111,9 +111,10 @@ export class HTTPRouter {
             const url = parseUrl(req.url || '/', true);
             const path = url.pathname || '/';
             const method = (req.method?.toUpperCase() as HttpMethod) || HttpMethod.GET;
+            const hostname = this.hostnameExtract(req);
             
-            // Find matching route
-            const matchedRoute = this.findMatchingRoute(path, method);
+            // Find matching route (with domain support)
+            const matchedRoute = this.findMatchingRoute(path, method, hostname);
             
             if (matchedRoute) {
                 // ✅ ONE LINE DELEGATION!
@@ -161,28 +162,106 @@ export class HTTPRouter {
     }
     
     /**
-     * Find matching route by path and method
+     * Find matching route by path, method, and optionally hostname
      * Routes checked by priority (lower number = higher priority)
+     * 
+     * @pdca 2025-12-12-UTC-1700.iteration-08-letsencrypt-multi-domain.pdca.md Phase 8.3
      * 
      * @param path - URL path
      * @param method - HTTP method
+     * @param hostname - Optional hostname for domain-based routing
      * @returns Matching route or undefined
      */
-    private findMatchingRoute(path: string, method: HttpMethod): Route | undefined {
+    private findMatchingRoute(path: string, method: HttpMethod, hostname?: string): Route | undefined {
         // Get all routes as array
         const allRoutes = Array.from(this.routes.values());
         
         // Sort by priority (lower number = higher priority)
-        allRoutes.sort((a, b) => a.model.priority - b.model.priority);
+        allRoutes.sort(this.routePriorityCompare.bind(this));
         
         // Find first match
         for (const route of allRoutes) {
+            // Check domain match first (if domains specified on route)
+            if (!this.domainMatches(hostname, route.model.domains)) {
+                continue;
+            }
+            
+            // Then check path and method
             if (route.matches(path, method)) {
                 return route;
             }
         }
         
         return undefined;
+    }
+    
+    /**
+     * Compare route priorities for sorting
+     * Web4 P4: Method for sort callback
+     * @pdca 2025-12-12-UTC-1700.iteration-08-letsencrypt-multi-domain.pdca.md
+     */
+    private routePriorityCompare(routeA: Route, routeB: Route): number {
+        return (routeA.model.priority || 100) - (routeB.model.priority || 100);
+    }
+    
+    /**
+     * Check if hostname matches route domains
+     * Web4 P4: Method, not arrow function
+     * @pdca 2025-12-12-UTC-1700.iteration-08-letsencrypt-multi-domain.pdca.md Phase 8.3
+     */
+    private domainMatches(hostname: string | undefined, domains?: string[]): boolean {
+        // No domain restriction = matches all
+        if (!domains || domains.length === 0) {
+            return true;
+        }
+        
+        // No hostname provided = can't match specific domains
+        if (!hostname) {
+            return false;
+        }
+        
+        const hostnameLower = hostname.toLowerCase();
+        
+        for (const domain of domains) {
+            if (this.singleDomainMatches(hostnameLower, domain.toLowerCase())) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Check if hostname matches single domain pattern
+     * Web4 P4: Method for iteration
+     * @pdca 2025-12-12-UTC-1700.iteration-08-letsencrypt-multi-domain.pdca.md
+     */
+    private singleDomainMatches(hostname: string, domain: string): boolean {
+        // Exact match
+        if (hostname === domain) {
+            return true;
+        }
+        
+        // Wildcard match (*.example.com)
+        if (domain.startsWith('*.')) {
+            const suffix = domain.slice(1);  // .example.com
+            if (hostname.endsWith(suffix) && hostname.length > suffix.length) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Extract hostname from request
+     * Web4 P16: hostnameExtract
+     * @pdca 2025-12-12-UTC-1700.iteration-08-letsencrypt-multi-domain.pdca.md
+     */
+    private hostnameExtract(request: IncomingMessage): string {
+        const host = request.headers.host || '';
+        // Remove port if present
+        return host.split(':')[0].toLowerCase();
     }
     
     /**

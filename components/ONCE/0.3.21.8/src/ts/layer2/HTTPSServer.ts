@@ -34,6 +34,14 @@ import { Reference } from '../layer3/Reference.interface.js';
  * - HTTP→HTTPS redirect (optional)
  * - ONE LINE delegation to router (Radical OOP)
  */
+/**
+ * SNI Callback type for Server Name Indication
+ */
+type SNICallback = (
+    serverName: string,
+    callback: (error: Error | null, context?: any) => void
+) => void;
+
 export class HTTPSServer extends HTTPServer {
     // Override model type
     public override model!: HTTPSServerModel;
@@ -43,9 +51,27 @@ export class HTTPSServer extends HTTPServer {
     private httpRedirectServer: Reference<http.Server> = null;
     private certificateLoader: TLSCertificateLoader;
     
+    /** SNI callback for multi-domain certificate selection */
+    private sniCallback: SNICallback | null = null;
+    
     constructor() {
         super();
         this.certificateLoader = new TLSCertificateLoader();
+    }
+    
+    /**
+     * Set SNI callback for multi-domain TLS
+     * 
+     * Web4 P16: serverNameIndicationCallbackSet
+     * @pdca 2025-12-12-UTC-1700.iteration-08-letsencrypt-multi-domain.pdca.md
+     * 
+     * @param callback - SNI callback from CertificateOrchestrator
+     * @returns this (method chaining)
+     */
+    public serverNameIndicationCallbackSet(callback: SNICallback): this {
+        this.sniCallback = callback;
+        this.model.sniEnabled = true;
+        return this;
     }
     
     /**
@@ -104,6 +130,12 @@ export class HTTPSServer extends HTTPServer {
         resolve: (value: this) => void,
         reject: (error: Error) => void
     ): void {
+        // Add SNI callback if set (multi-domain TLS)
+        if (this.sniCallback) {
+            tlsOptions.SNICallback = this.sniCallback;
+            console.log('🔐 HTTPSServer: SNI enabled for multi-domain TLS');
+        }
+        
         // Create HTTPS server with bound request handler
         this.httpsServer = https.createServer(tlsOptions, this.requestHandle.bind(this));
         

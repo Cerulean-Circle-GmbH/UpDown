@@ -27,4 +27,11 @@ export interface HTTPSServerModel extends HTTPServerModel {
     
     /** Is certificate self-signed? (for dev warning) */
     isSelfSigned?: boolean;
+    
+    /**
+     * Enable Server Name Indication (SNI) for multi-domain TLS?
+     * When enabled, uses SNI callback for dynamic certificate selection.
+     * @pdca 2025-12-12-UTC-1700.iteration-08-letsencrypt-multi-domain.pdca.md
+     */
+    sniEnabled?: boolean;
 }
