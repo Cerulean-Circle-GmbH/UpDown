@@ -1,0 +1,86 @@
+/*
+ * themeBase.css - Web4 CSS Variables Theme
+ * 
+ * Shared CSS variables for all Web4 views.
+ * Dark/hacker terminal aesthetic.
+ * 
+ * pdca 2025-12-03-UTC-1200.mvc-lit3-views.pdca.md
+ */
+
+:root {
+  /* Base Colors */
+  --color-primary: #0f0;
+  --color-secondary: #0ff;
+  --color-accent: #ff0;
+  --color-danger: #f00;
+  --color-warning: #ff0;
+  
+  /* Background Colors */
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2a2a2a;
+  --bg-highlight: rgba(0, 255, 0, 0.1);
+  --bg-hover: rgba(0, 255, 0, 0.15);
+  
+  /* Text Colors */
+  --text-primary: #0f0;
+  --text-secondary: #888;
+  --text-muted: #666;
+  --text-accent: #ff0;
+  
+  /* Border Colors */
+  --border-color: #0f0;
+  --border-secondary: #333;
+  
+  /* Status Colors */
+  --color-running: #0f0;
+  --color-stopped: #666;
+  --color-starting: #ff0;
+  --color-error: #f00;
+  
+  /* Button Styles */
+  --btn-primary-bg: #0f0;
+  --btn-primary-color: #000;
+  --btn-primary-hover: #ff0;
+  
+  --btn-secondary-bg: #066;
+  --btn-secondary-color: #fff;
+  --btn-secondary-border: #0ff;
+  --btn-secondary-hover: #0ff;
+  
+  --btn-danger-bg: #a00;
+  --btn-danger-color: #fff;
+  --btn-danger-border: #f00;
+  --btn-danger-hover: #f00;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* Typography */
+  --font-family: 'Courier New', 'Fira Code', monospace;
+  --font-size-sm: 0.85em;
+  --font-size-base: 1em;
+  --font-size-lg: 1.2em;
+  --font-size-xl: 1.5em;
+  --font-size-xxl: 2em;
+  
+  /* Borders */
+  --border-radius: 0px;
+  --border-width: 1px;
+  
+  /* Transitions */
+  --transition-fast: 0.1s ease;
+  --transition-normal: 0.2s ease;
+  
+  /* Item View Specific */
+  --item-bg: rgba(0, 255, 0, 0.05);
+  --highlight-bg: rgba(0, 255, 0, 0.15);
+}
+
+
+
+
+

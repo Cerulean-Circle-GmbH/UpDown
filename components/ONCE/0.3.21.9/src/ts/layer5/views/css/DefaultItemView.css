@@ -1,0 +1,154 @@
+/*
+ * DefaultItemView.css - Generic Item View Styles
+ * 
+ * Base styles for DefaultItemView component.
+ * Extended by specific item views (OncePeerItemView, etc.)
+ * 
+ * Web4 Principle 19: Separation of Concerns
+ * 
+ * @pdca 2025-12-05-UTC-1600.phase-a1-oncepeeritemview-relatedobjects.pdca.md
+ */
+
+:host {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color, #333);
+  background: var(--item-bg, rgba(255, 255, 255, 0.02));
+  margin-bottom: var(--spacing-sm, 8px);
+  transition: var(--transition-fast, 0.15s ease);
+}
+
+:host(:hover) {
+  border-color: var(--color-accent, #0af);
+  background: var(--item-hover-bg, rgba(255, 255, 255, 0.05));
+}
+
+/* Item Icon */
+.item-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-size: 1.5em;
+  color: var(--text-secondary, #888);
+}
+
+/* Item Content */
+.item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-name {
+  font-weight: bold;
+  color: var(--text-primary, #fff);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-description {
+  font-size: var(--font-size-sm, 0.85em);
+  color: var(--text-secondary, #888);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Item Badge */
+.item-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: var(--font-size-xs, 0.75em);
+  background: var(--badge-bg, #333);
+  color: var(--badge-color, #fff);
+  margin-right: 12px;
+}
+
+/* Action Zone */
+.action-zone {
+  display: flex;
+  gap: var(--spacing-sm, 8px);
+  flex-shrink: 0;
+}
+
+/* Action Buttons */
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 1px solid;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--font-size-sm, 0.85em);
+  transition: var(--transition-fast, 0.15s ease);
+}
+
+.action-btn i {
+  font-size: 0.9em;
+}
+
+.action-btn span {
+  font-weight: 500;
+}
+
+/* Button Variants */
+.btn-primary {
+  background: var(--btn-primary-bg, #0a0);
+  color: var(--btn-primary-color, #fff);
+  border-color: var(--btn-primary-border, #0f0);
+}
+
+.btn-primary:hover {
+  background: var(--btn-primary-hover, #0c0);
+}
+
+.btn-secondary {
+  background: var(--btn-secondary-bg, #333);
+  color: var(--btn-secondary-color, #fff);
+  border-color: var(--btn-secondary-border, #666);
+}
+
+.btn-secondary:hover {
+  background: var(--btn-secondary-hover, #444);
+}
+
+.btn-danger {
+  background: var(--btn-danger-bg, #a00);
+  color: var(--btn-danger-color, #fff);
+  border-color: var(--btn-danger-border, #f00);
+}
+
+.btn-danger:hover {
+  background: var(--btn-danger-hover, #c00);
+}
+
+.btn-warning {
+  background: var(--btn-warning-bg, #a80);
+  color: var(--btn-warning-color, #fff);
+  border-color: var(--btn-warning-border, #fa0);
+}
+
+.btn-warning:hover {
+  background: var(--btn-warning-hover, #ca0);
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+}
+
+/* Loading State */
+.loading {
+  color: var(--text-muted, #666);
+  font-style: italic;
+  padding: 12px;
+}
+
+
+
+
+

@@ -1,0 +1,106 @@
+/**
+ * RouteItemView.css - Route item styles
+ * 
+ * Web4 P19: CSS separated from TypeScript
+ * 
+ * @component Router
+ * @layer 5
+ * @pdca 2025-12-11-UTC-1530.route-overview-migration.pdca.md Phase RO.3
+ */
+
+:host {
+  display: block;
+}
+
+.route-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  color: var(--color-link, #00bcd4);
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.route-link:hover {
+  background: rgba(0, 188, 212, 0.1);
+  text-decoration: none;
+}
+
+.route-link.active {
+  background: rgba(0, 188, 212, 0.15);
+  border-left: 3px solid var(--color-link, #00bcd4);
+  padding-left: calc(0.5rem - 3px);
+}
+
+.route-title {
+  font-weight: 600;
+  color: var(--color-text, #333);
+}
+
+.route-path {
+  font-size: 0.9em;
+  color: var(--color-text-muted, #888);
+  font-family: monospace;
+}
+
+/* Route icon - from Route.iconGet() polymorphism */
+.route-icon {
+  font-size: 1.2em;
+  min-width: 1.5em;
+  text-align: center;
+}
+
+/* Method badges for HTTP routes */
+.method-badge {
+  font-size: 0.7em;
+  font-weight: 700;
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  text-transform: uppercase;
+  font-family: monospace;
+}
+
+.method-get {
+  background: rgba(97, 175, 254, 0.2);
+  color: #61affe;
+}
+
+.method-post {
+  background: rgba(73, 204, 144, 0.2);
+  color: #49cc90;
+}
+
+.method-put {
+  background: rgba(252, 161, 48, 0.2);
+  color: #fca130;
+}
+
+.method-delete {
+  background: rgba(249, 62, 62, 0.2);
+  color: #f93e3e;
+}
+
+.method-patch {
+  background: rgba(80, 227, 194, 0.2);
+  color: #50e3c2;
+}
+
+/* HTTP route-type specific styles (JsInterface class names) */
+.route-staticfileroute .route-path {
+  color: var(--color-static, #6c757d);
+}
+
+.route-iorroute .route-path {
+  color: var(--color-ior, #9c27b0);
+}
+
+.route-scenarioroute .route-path {
+  color: var(--color-scenario, #ff9800);
+}
+
+.route-htmlroute .route-path {
+  color: var(--color-html, #2196f3);
+}
+
