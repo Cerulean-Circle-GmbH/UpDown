@@ -1077,6 +1077,19 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       });
       await this.sleep(2000);  // Wait for view to render
       
+      // ✅ Unregister Service Worker to ensure Playwright can capture requests
+      // Service Workers intercept fetch requests, preventing Playwright from seeing them
+      await this.page.evaluate(async function() {
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (const reg of registrations) {
+            await reg.unregister();
+            console.log('[Test] Unregistered Service Worker:', reg.scope);
+          }
+        }
+      });
+      await this.sleep(500);  // Wait for SW to unregister
+      
       this.logEvidence('step', 'Testing Shutdown All button IOR URL');
       
       // Reset captured URL in model
@@ -1085,20 +1098,47 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       // ✅ Web4: Use method reference for request capture (capture ALL requests for debugging)
       this.page.on('request', this.captureIorRequest.bind(this));
       
-      // Override confirm to auto-accept
-      await this.page.evaluate(function() {
-        (window as any).confirm = function() { return true; };
-      });
-      
       // Use page.route to intercept and capture the actual request URL
       await this.page.route('**/peerStopAll', this.captureRoute.bind(this));
       
-      // Click the shutdown button (inside shadow DOM of once-over-view)
-      // ✅ Web4: Lit components use shadow DOM, need >> to pierce
-      await this.page.click('once-over-view >> .shutdown-btn');
+      // Wait for element to be visible before clicking
+      const shutdownBtn = this.page.locator('once-over-view >> .shutdown-btn');
+      await shutdownBtn.waitFor({ state: 'visible', timeout: 10000 });
       
-      // Wait for the request to be captured and processed
-      await this.sleep(1000);
+      // Set up dialog handler that accepts the confirm dialog
+      let dialogHandled = false;
+      this.page.once('dialog', async (dialog: any) => {
+        console.log(`[Test] Dialog appeared: ${dialog.type()} - accepting...`);
+        await dialog.accept();
+        dialogHandled = true;
+        console.log(`[Test] Dialog accepted`);
+      });
+      
+      // Capture console messages to get the IOR URL from orchestrator's debug log
+      this.page.on('console', (msg: any) => {
+        const text = msg.text();
+        // Orchestrator logs: [Orchestrator] iorCall URL: https://...
+        if (text.includes('iorCall URL:')) {
+          const urlMatch = text.match(/iorCall URL: (https?:\/\/[^\s]+)/);
+          if (urlMatch) {
+            this.testModel.capturedIorUrl = urlMatch[1];
+            console.log(`[Test] ✅ Captured IOR URL from console: ${urlMatch[1]}`);
+          }
+        }
+      });
+      
+      // Click the button - this will trigger the dialog
+      await shutdownBtn.click();
+      
+      // Wait for dialog to be handled and action to complete
+      for (let i = 0; i < 50; i++) {
+        if (dialogHandled) break;
+        await this.sleep(100);
+      }
+      console.log(`[Test] Dialog handled: ${dialogHandled}`);
+      
+      // Wait for the IOR call to complete and console message to be captured
+      await this.sleep(2000);
       
       // ✅ Web4: Verify the captured URL contains the correct version (from model)
       const capturedUrl = String(this.testModel.capturedIorUrl || '');
@@ -1216,7 +1256,12 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
    */
   private captureIorRequest(request: any): void {
     const url = request.url();
+    // Debug: Log all ONCE IOR requests
+    if (url.includes('/ONCE/')) {
+      console.log(`[Test] IOR Request captured: ${url}`);
+    }
     if (url.includes('/peerStopAll') || url.includes('/shutdownAll')) {
+      console.log(`[Test] ✅ Shutdown URL captured: ${url}`);
       this.testModel.capturedIorUrl = url;
     }
   }

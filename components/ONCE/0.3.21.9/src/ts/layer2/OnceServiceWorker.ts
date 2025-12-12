@@ -107,7 +107,8 @@ export class OnceServiceWorker {
       cacheNamePrefix: config.cacheNamePrefix || 'once-pwa',
       defaultCacheStrategy: config.defaultCacheStrategy || CacheStrategy.CACHE_FIRST,
       precachePatterns: config.precachePatterns || ['*.js', '*.css', '*.html'],
-      noCachePatterns: config.noCachePatterns || ['/api/*', '/ws/*', '/health'],
+      // IOR calls (/ONCE/{version}/{uuid}/{method}) should never be cached - they're dynamic actions
+      noCachePatterns: config.noCachePatterns || ['/api/*', '/ws/*', '/health', '/ONCE/*/*/*/*'],
       maxCacheSizeBytes: config.maxCacheSizeBytes || 50 * 1024 * 1024,
       maxCachedUnits: config.maxCachedUnits || 500,
       isActive: false,

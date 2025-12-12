@@ -492,6 +492,9 @@ export class BrowserOnceOrchestrator {
       ? `https://${host}:${port}/ONCE/${version}/${uuid}/${method}`
       : `https://${host}:${port}/${method}`;
     
+    // Debug log for test capture
+    console.log(`[Orchestrator] iorCall URL: ${url}`);
+    
     try {
       const response = await fetch(url, { method: 'GET' });
       if (!response.ok) {
