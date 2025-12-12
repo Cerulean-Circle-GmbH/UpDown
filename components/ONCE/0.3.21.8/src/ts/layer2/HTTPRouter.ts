@@ -291,6 +291,8 @@ export class HTTPRouter {
             method: route.model.method || 'GET',
             title: route.model.name || route.constructor.name,
             priority: route.model.priority ?? 0,
+            // Domain restriction (Phase 8.3)
+            domains: route.model.domains,
             // JsInterface: The class name IS the type - no enum needed!
             className: route.constructor.name,
             // Radical OOP: ASK THE OBJECT for its display properties!
