@@ -138,16 +138,23 @@ export class BrowserOnceOrchestrator {
       title: 'ONCE Peer Overview' 
     });
     
-    // TODO: Add these routes when views are created
-    // await (this.router as any).routeRegister('/onceCommunicationLog', 'lit-once-logger-view', { 
-    //   title: 'Communication Log' 
-    // });
-    // await (this.router as any).routeRegister('/server-status', 'lit-once-server-status-view', { 
-    //   title: 'Server Status' 
-    // });
-    // await (this.router as any).routeRegister('/peer/:uuid', 'lit-once-peer-default-view', { 
-    //   title: 'Peer Details' 
-    // });
+    // Communication log - P2P message viewer
+    // @pdca 2025-12-12-UTC-1055.spa-route-registration-extension.pdca.md RO.EXT.1
+    await (this.router as any).routeRegister('/onceCommunicationLog', 'once-logger-view', { 
+      title: 'Communication Log' 
+    });
+    
+    // Server status - detailed metrics
+    // @pdca 2025-12-12-UTC-1055.spa-route-registration-extension.pdca.md RO.EXT.2
+    await (this.router as any).routeRegister('/server-status', 'once-server-status-view', { 
+      title: 'Server Status' 
+    });
+    
+    // Peer details - single peer view with UUID param
+    // @pdca 2025-12-12-UTC-1055.spa-route-registration-extension.pdca.md RO.EXT.3
+    await (this.router as any).routeRegister('/peer/:uuid', 'once-peer-details-view', { 
+      title: 'Peer Details' 
+    });
     
     console.log('[Orchestrator] ✅ Routes registered');
   }
@@ -220,6 +227,10 @@ export class BrowserOnceOrchestrator {
     // Route view components - @pdca 2025-12-11-UTC-1530.route-overview-migration.pdca.md Phase RO.6
     await import(`${basePath}/RouteItemView.js`);
     await import(`${basePath}/RouteOverView.js`);
+    // SPA extension views - @pdca 2025-12-12-UTC-1055.spa-route-registration-extension.pdca.md
+    await import(`${basePath}/OnceLoggerView.js`);
+    await import(`${basePath}/OnceServerStatusView.js`);
+    await import(`${basePath}/OncePeerDetailsView.js`);
     
     console.log('[Orchestrator] ✅ View components imported');
   }
