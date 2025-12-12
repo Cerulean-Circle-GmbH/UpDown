@@ -618,6 +618,10 @@ export class LetsEncryptCertificateProvider {
         expiresAt.setDate(expiresAt.getDate() + 90); // Let's Encrypt certs valid 90 days
         
         return {
+            // Model base fields (domain serves as both uuid and name)
+            uuid: configuration.domain,
+            name: `Certificate: ${configuration.domain}`,
+            // Certificate fields
             domain: configuration.domain,
             alternativeNames: [],
             certificatePem: certificatePem,

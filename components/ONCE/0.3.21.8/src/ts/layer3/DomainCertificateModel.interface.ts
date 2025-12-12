@@ -9,13 +9,16 @@
  * Web4 P19: One file, one type
  */
 
+import { Model } from './Model.interface.js';
+
 /**
  * DomainCertificateModel - Certificate for a domain
  * 
- * Stored as scenario in: scenarios/domain/.../ONCE/0.3.21.8/certificates/
+ * Extends Model for Scenario compatibility.
+ * Stored as scenario in: scenarios/domain/.../ONCE/{version}/certificates/
  */
-export interface DomainCertificateModel {
-    /** Primary domain (CN) */
+export interface DomainCertificateModel extends Model {
+    /** Primary domain (CN) - also serves as uuid */
     domain: string;
     
     /** Subject Alternative Names (SAN) */
