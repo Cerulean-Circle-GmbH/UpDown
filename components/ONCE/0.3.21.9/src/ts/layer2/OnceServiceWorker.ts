@@ -46,6 +46,20 @@ interface SWMessageEvent extends SWExtendableEvent {
 interface SWClient {
   postMessage(message: any): void;
 }
+
+// Unit descriptor for precaching (matches /units response structure)
+interface UnitDescriptor {
+  ior: string;
+  unitType?: string;
+  name?: string;
+}
+
+interface UnitsApiResponse {
+  version: string;
+  generatedAt: string;
+  totalUnits: number;
+  units: UnitDescriptor[];
+}
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 /**
@@ -159,10 +173,61 @@ export class OnceServiceWorker {
   }
   
   private precacheExecute(): Promise<void> {
-    // Precache critical assets
-    // In production, this would fetch /units endpoint
+    // Precache critical assets by fetching /units endpoint
     console.log('📦 OnceServiceWorker: precaching assets...');
-    return Promise.resolve();
+    
+    return fetch('/units')
+      .then(this.unitsResponseParse.bind(this))
+      .then(this.unitsPrecache.bind(this))
+      .catch(this.precacheError.bind(this));
+  }
+  
+  private unitsResponseParse(response: Response): Promise<UnitDescriptor[]> {
+    if (!response.ok) {
+      throw new Error(`Units fetch failed: ${response.status}`);
+    }
+    return response.json().then(this.unitsExtract.bind(this));
+  }
+  
+  private unitsExtract(data: UnitsApiResponse): UnitDescriptor[] {
+    // Extract units array from response
+    return data.units || [];
+  }
+  
+  private unitsPrecache(units: UnitDescriptor[]): Promise<void> {
+    // Filter to essential units (JS, CSS, HTML)
+    const essentialUnits = units.filter(this.unitIsEssential.bind(this));
+    const urls = essentialUnits.map(this.unitIorGet.bind(this));
+    
+    console.log(`📦 Precaching ${urls.length} essential assets...`);
+    
+    // Cache all essential URLs
+    return this.cacheManager.addAllToCache(urls)
+      .then(this.precacheComplete.bind(this, urls.length));
+  }
+  
+  private unitIsEssential(unit: UnitDescriptor): boolean {
+    const ior = unit.ior || '';
+    // Essential: JS, CSS, HTML files, and main entry points
+    return ior.endsWith('.js') || 
+           ior.endsWith('.css') || 
+           ior.endsWith('.html') ||
+           ior.includes('/dist/') ||
+           ior.includes('/layer1/') ||
+           ior.includes('/layer5/');
+  }
+  
+  private unitIorGet(unit: UnitDescriptor): string {
+    return unit.ior || '';
+  }
+  
+  private precacheComplete(count: number): void {
+    console.log(`✅ Precached ${count} assets successfully`);
+  }
+  
+  private precacheError(error: Error): void {
+    // Non-fatal: app works without precache, just slower first load
+    console.warn('⚠️ Precache failed (non-fatal):', error.message);
   }
   
   private skipWaitingExecute(): Promise<void> {

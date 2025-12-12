@@ -154,6 +154,67 @@ export class UnitCacheManager {
     return parts[parts.length - 1] || 'unknown';
   }
   
+  /**
+   * Add multiple URLs to cache at once
+   * Used for precaching during install
+   * @param urls Array of URLs to cache
+   */
+  public addAllToCache(urls: string[]): Promise<void> {
+    if (!this.cache) {
+      return Promise.reject(new Error('Cache not opened'));
+    }
+    
+    return this.cache.addAll(urls).then(this.addAllHandle.bind(this, urls));
+  }
+  
+  private addAllHandle(urls: string[]): void {
+    const now = new Date().toISOString();
+    
+    urls.forEach(this.urlMetadataCreate.bind(this, now));
+    
+    this.model.unitCount = this.model.unitCount + urls.length;
+    console.log(`📦 Added ${urls.length} URLs to cache`);
+  }
+  
+  private urlMetadataCreate(now: string, url: string): void {
+    const metadata: CachedUnitModel = {
+      uuid: url,
+      name: this.nameFromIor(url),
+      ior: url,
+      unitType: this.typeFromUrl(url),
+      cacheStrategy: CacheStrategy.CACHE_FIRST,
+      version: this.model.cacheVersion,
+      hash: '',
+      size: 0,
+      mimeType: this.mimeFromUrl(url),
+      dependencies: [],
+      cachedAt: now,
+      lastAccessedAt: now,
+      accessCount: 0
+    };
+    
+    this.unitMetadata.set(url, metadata);
+    this.model.cachedIors.push(url);
+  }
+  
+  private typeFromUrl(url: string): UnitType {
+    if (url.endsWith('.js')) return UnitType.JAVASCRIPT;
+    if (url.endsWith('.css')) return UnitType.CSS;
+    if (url.endsWith('.html')) return UnitType.HTML;
+    if (url.endsWith('.json')) return UnitType.JSON;
+    if (url.endsWith('.woff') || url.endsWith('.woff2')) return UnitType.FONT;
+    if (url.endsWith('.png') || url.endsWith('.jpg') || url.endsWith('.svg')) return UnitType.IMAGE;
+    return UnitType.OTHER;
+  }
+  
+  private mimeFromUrl(url: string): string {
+    if (url.endsWith('.js')) return 'application/javascript';
+    if (url.endsWith('.css')) return 'text/css';
+    if (url.endsWith('.html')) return 'text/html';
+    if (url.endsWith('.json')) return 'application/json';
+    return 'application/octet-stream';
+  }
+  
   private strategyForType(unitType: UnitType): CacheStrategy {
     switch (unitType) {
       case UnitType.JAVASCRIPT:
