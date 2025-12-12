@@ -139,6 +139,10 @@ export class HTTPSServer extends HTTPServer {
         // Create HTTPS server with bound request handler
         this.httpsServer = https.createServer(tlsOptions, this.requestHandle.bind(this));
         
+        // ✅ FIX: Set parent's server reference so WebSocketServer can attach
+        // @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md
+        this.server = this.httpsServer as any;  // https.Server is compatible with http.Server
+        
         this.httpsServer.listen(port, bindInterface, this.listenCallback.bind(this, port, resolve));
         this.httpsServer.on('error', this.errorCallback.bind(this, reject));
         
