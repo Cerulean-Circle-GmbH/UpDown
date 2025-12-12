@@ -48,6 +48,8 @@
 ### **Principle 4: TRUE Radical OOP Discipline**
 > Objects over functions. No functional programming patterns.
 
+#### **P4a: Method References (No Arrow Functions)**
+
 - [ ] No standalone functions (wrap in classes)
 - [ ] No functional factories
 - [ ] State belongs to objects, not closures
@@ -55,13 +57,57 @@
 - [ ] **Use Web4Requirement for acceptance criteria** (not arrow functions!)
 - [ ] **No arrow function callbacks** - pass method references instead:
   ```typescript
-  // ❌ WRONG: peers.forEach(peer => { this.render(peer); });
-  // ✅ CORRECT: peers.forEach(this.peerRender.bind(this));
+  // ❌ WRONG: Arrow function
+  peers.forEach(peer => { this.render(peer); });
+  
+  // ❌ WRONG: Anonymous function
+  peers.forEach(function(peer) { this.render(peer); });
+  
+  // ✅ CORRECT: Method reference (Radical OOP)
+  peers.forEach(this.peerRender.bind(this));
   ```
+
+#### **P4b: Polymorphism (Ask the Object, Don't Switch!)**
+
+- [ ] **No switch/if on object type** - ask the object for its behavior
+- [ ] **No lookup tables for type→value** - same anti-pattern as switch!
+- [ ] **Each class defines its own behavior** via methods
+
+```typescript
+// ❌ WRONG: External switch/if on type
+get routeIcon(): string {
+  if (className.includes('Static')) return '📁';  // BAD!
+  if (className.includes('IOR')) return '🔗';     // BAD!
+}
+
+// ❌ WRONG: Lookup table (same anti-pattern!)
+const icons: Record<string, string> = {
+  'StaticFileRoute': '📁',
+  'IORRoute': '🔗'
+};
+return icons[className];
+
+// ✅ CORRECT: Each class defines its own behavior (polymorphism)
+class StaticFileRoute extends Route {
+  public iconGet(): string { return '📁'; }
+  public labelGet(): string { return '📁 Static Files'; }
+}
+
+class IORRoute extends Route {
+  public iconGet(): string { return '🔗'; }
+  public labelGet(): string { return '🔗 IOR Methods'; }
+}
+
+// Usage - just ASK THE OBJECT:
+const icon = route.iconGet();    // Polymorphism!
+const label = route.labelGet();  // Polymorphism!
+```
 
 **Example 1 (Chai in OOP):** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/test/tootsie/ONCETestCase.ts) | [§/components/ONCE/0.3.21.8/test/tootsie/ONCETestCase.ts](../test/tootsie/ONCETestCase.ts) (Lines 199-237)
 
 **Example 2 (Web4Requirement):** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/Web4Requirement/0.3.20.6/src/ts/layer2/DefaultWeb4Requirement.ts) | [§/components/Web4Requirement/0.3.20.6/src/ts/layer2/DefaultWeb4Requirement.ts](../../../../Web4Requirement/0.3.20.6/src/ts/layer2/DefaultWeb4Requirement.ts) (Lines 75-145)
+
+**PDCA Reference (Polymorphism):** [GitHub](https://github.com/2cuGitHub/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/session/2025-12-12-UTC-1103.http-routes-display.pdca.md) | [§/components/ONCE/0.3.21.8/session/2025-12-12-UTC-1103.http-routes-display.pdca.md](./2025-12-12-UTC-1103.http-routes-display.pdca.md)
 
 ---
 
@@ -468,6 +514,76 @@ Implementation: Adapts to underlying framework
 Benefit: Same Web4 code works with any UI framework
 
 **PDCA Reference:** [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/session/2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md) | [§SPA Cleanup](./2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md)
+
+---
+
+### **Principle 28: JsInterface Pattern - Object IS Its Type**
+> In JavaScript/TypeScript, the object IS its type. No redundant enums or type discriminators needed.
+
+The class hierarchy IS the type system. Use `constructor.name` and `instanceof` instead of type fields or enums.
+
+#### **No Type Enums**
+
+- [ ] **No redundant type enums** - class hierarchy IS the type
+- [ ] **No `type` discriminator fields** - use `instanceof` or `constructor.name`
+- [ ] **Serialize `className`** when sending objects over HTTP
+
+```typescript
+// ❌ WRONG: Redundant enum duplicates class type information
+enum RouteType { SPA, STATIC, IOR, HTML, SCENARIO }
+
+interface RouteModel {
+  type: RouteType;  // Redundant! The class already tells us the type!
+}
+
+if (route.type === RouteType.STATIC) { ... }  // Double maintenance!
+
+// ✅ CORRECT: Class hierarchy IS the type system
+route.constructor.name           // "StaticFileRoute"
+route instanceof StaticFileRoute // true
+
+// Type check without enum:
+if (route instanceof StaticFileRoute) { ... }
+```
+
+#### **Serialize className for HTTP**
+
+When serializing objects (e.g., JSON response), include `className`:
+
+```typescript
+// Server serializes with className (JsInterface pattern)
+private routeModelExtract(route: Route): object {
+  return {
+    pattern: route.model.pattern,
+    className: route.constructor.name,  // JsInterface: serialize type
+    icon: route.iconGet(),              // Polymorphism: ask object
+    label: route.labelGet()             // Polymorphism: ask object
+  };
+}
+```
+
+#### **Runtime Type Access**
+
+```typescript
+// Get type name
+const typeName = object.constructor.name;
+
+// Type check
+if (object instanceof SpecificClass) { ... }
+
+// Get all implemented interfaces (future: via TypeRegistry)
+const interfaces = TypeRegistry.interfacesOf(object);
+```
+
+#### **Why JsInterface?**
+
+| Approach | Problem |
+|----------|---------|
+| Enums | Duplicate information, manual sync, no polymorphism |
+| Type fields | Same issues, plus storage overhead |
+| **JsInterface** | Single source of truth (the class), enables polymorphism |
+
+**PDCA Reference:** [GitHub](https://github.com/2cuGitHub/UpDown/blob/dev/web4v0100/components/ONCE/0.3.21.8/session/2025-12-12-UTC-1103.http-routes-display.pdca.md) | [§/components/ONCE/0.3.21.8/session/2025-12-12-UTC-1103.http-routes-display.pdca.md](./2025-12-12-UTC-1103.http-routes-display.pdca.md)
 
 ---
 
