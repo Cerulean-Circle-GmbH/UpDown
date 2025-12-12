@@ -66,10 +66,14 @@ export class ServiceWorkerRoute extends Route {
   
   /**
    * Set component root for file path resolution
+   * 
+   * The SW is bundled by build-sw.sh into dist/sw.js (no ES module imports)
+   * @pdca 2025-12-12-UTC-1730.service-worker-fix.pdca.md
    */
   public componentRootSet(root: string): this {
     this.componentRoot = root;
-    this.swFilePath = path.join(root, 'dist', 'ts', 'layer2', 'OnceServiceWorker.js');
+    // Use bundled SW (created by build-sw.sh with esbuild)
+    this.swFilePath = path.join(root, 'dist', 'sw.js');
     return this;
   }
   

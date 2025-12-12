@@ -83,6 +83,16 @@ elif [ ! -f "dist/ts/layer5/ONCECLI.js" ] || find src -name "*.ts" -newer "dist/
             echo "📄 Copied HTML templates to dist/"
         fi
     fi
+    
+    # Bundle Service Worker (requires esbuild)
+    # @pdca 2025-12-12-UTC-1730.service-worker-fix.pdca.md
+    if [ -f "src/sh/build-sw.sh" ]; then
+        if [ "$VERBOSE" = "true" ]; then
+            ./src/sh/build-sw.sh
+        else
+            ./src/sh/build-sw.sh 2>&1 | grep -E "^(✅|❌)" >&2
+        fi
+    fi
 else
     if [ "$VERBOSE" = "true" ]; then
         echo "✅ ONCE is up to date, no build needed"

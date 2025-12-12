@@ -440,8 +440,10 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
    * Make IOR call to server
    */
   private async iorCall(host: string, port: number, method: string, uuid?: string): Promise<void> {
+    // Use version from model (no hardcoding!)
+    const version = this.model?.version || '0.0.0.0';
     const url = uuid 
-      ? `https://${host}:${port}/ONCE/0.3.21.9/${uuid}/${method}`
+      ? `https://${host}:${port}/ONCE/${version}/${uuid}/${method}`
       : `https://${host}:${port}/${method}`;
     
     try {
