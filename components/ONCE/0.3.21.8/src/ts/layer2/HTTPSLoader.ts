@@ -1,12 +1,16 @@
 /**
  * HTTPSLoader.ts
  * 
- * Web4 HTTPS Loader
+ * Web4 HTTPS Loader - ISOMORPHIC (Browser + Node.js)
  * Handles HTTPS transport with IOR profile failover
+ * Uses fetch() API which works in both environments.
  * 
  * Protocol: 'https'
  * Purpose: HTTPS transport (TLS, TCP/IP)
  * Chain: ScenarioLoader → RESTLoader → HTTPSLoader → Network
+ * 
+ * Web4 P4: No arrow functions - all callbacks use bound methods
+ * @pdca session/2025-12-12-UTC-1430.browser-client-radical-oop.pdca.md
  */
 
 import { Loader } from '../layer3/Loader.interface.js';
@@ -156,6 +160,8 @@ export class HTTPSLoader implements Loader {
     /**
      * Extract IOR profiles from URL
      * 
+     * Web4 P4: Uses bound method instead of arrow function
+     * 
      * @example
      * https://host1:8080,host2:8081,host3:8082/path
      * → [{ host: "host1", port: 8080 }, { host: "host2", port: 8081 }, ...]
@@ -171,12 +177,25 @@ export class HTTPSLoader implements Loader {
         const hostPortString = match[1];
         const hostPorts = hostPortString.split(',');
         
-        return hostPorts.map(hp => {
-            const [host, portStr] = hp.split(':');
-            return {
-                host: host.trim(),
-                port: parseInt(portStr, 10)
-            };
+        // P4 FIX: Use forEach with bound method instead of map with arrow
+        const profiles: IORProfile[] = [];
+        hostPorts.forEach(this.hostPortProfileParse.bind(this, profiles));
+        return profiles;
+    }
+    
+    /**
+     * Parse single host:port string into IORProfile
+     * 
+     * Web4 P4: Named method for .forEach() callback
+     * 
+     * @param profiles - Array to push parsed profile into
+     * @param hostPort - String like "host:port"
+     */
+    private hostPortProfileParse(profiles: IORProfile[], hostPort: string): void {
+        const [host, portStr] = hostPort.split(':');
+        profiles.push({
+            host: host.trim(),
+            port: parseInt(portStr, 10)
         });
     }
     
@@ -216,7 +235,7 @@ export class HTTPSLoader implements Loader {
             ior: {
                 uuid: this.model.uuid,
                 component: 'HTTPSLoader',
-                version: '0.3.21.7'
+                version: '0.3.21.8'
             },
             owner: '',
             model: this.model
