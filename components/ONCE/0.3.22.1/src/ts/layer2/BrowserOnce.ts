@@ -112,12 +112,8 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
      */
     private scenarioStorage: Reference<BrowserScenarioStorage> = null;
     
-    /**
-     * Registered model change listeners
-     * ✅ Web4 Observer Pattern (no arrow functions)
-     * @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
-     */
-    private modelListeners: Array<() => void> = [];
+    // ✅ I.10: modelListeners REMOVED - UcpModel handles view updates automatically
+    // @pdca 2025-12-14-UTC-1730.i10-ucpmodel-integration.pdca.md
     
     constructor() {
         // ✅ Empty constructor (Radical OOP)
@@ -181,8 +177,8 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
         // ✅ Web4: Delegate async to Layer 4 Orchestrator
         await this.orchestrator.appRender(container);
         
-        // Register for model updates
-        this.onModelChange(this.modelChangeHandle.bind(this));
+        // ✅ I.10: UcpModel handles view updates automatically via proxy
+        // @pdca 2025-12-14-UTC-1730.i10-ucpmodel-integration.pdca.md
         
         console.log('[BrowserOnce] appRender() complete');
     }
@@ -242,55 +238,20 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
         console.log('[BrowserOnce] View components imported');
     }
     
-    /**
-     * Handle model change - update view
-     * Called when model is updated via WebSocket scenario
-     * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
-     */
-    private modelChangeHandle(): void {
-        if (this.mainView) {
-            (this.mainView as any).model = this.model;
-            this.mainView.requestUpdate();
-        }
-    }
-    
-    /**
-     * Register a listener for model changes
-     * ✅ Web4 Observer Pattern
-     * Called by views to receive update notifications
-     * @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
-     */
-    onModelChange(listener: () => void): void {
-        this.modelListeners.push(listener);
-        console.log(`[BrowserOnce] Model listener registered (total: ${this.modelListeners.length})`);
-    }
-    
-    /**
-     * Unregister a model change listener
-     */
-    offModelChange(listener: () => void): void {
-        const index = this.modelListeners.indexOf(listener);
-        if (index > -1) {
-            this.modelListeners.splice(index, 1);
-        }
-    }
-    
-    /**
-     * Notify all registered listeners of model change
-     * ✅ Web4 Principle 4: No arrow functions
-     * @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
-     */
-    private notifyModelListeners(): void {
-        console.log(`[BrowserOnce] Notifying ${this.modelListeners.length} listeners`);
-        this.modelListeners.forEach(this.invokeListener);
-    }
-    
-    /**
-     * Invoke a single listener - called via method reference
-     */
-    private invokeListener(listener: () => void): void {
-        listener();
-    }
+    // ═══════════════════════════════════════════════════════════════
+    // I.10: Observer Pattern REMOVED
+    // UcpModel automatically triggers view updates via proxy
+    // @pdca 2025-12-14-UTC-1730.i10-ucpmodel-integration.pdca.md
+    //
+    // REMOVED:
+    // - modelChangeHandle()
+    // - onModelChange()
+    // - offModelChange()
+    // - notifyModelListeners()
+    // - invokeListener()
+    //
+    // REPLACEMENT: this.model.xxx = value triggers views automatically
+    // ═══════════════════════════════════════════════════════════════
     
     async init(scenario?: any): Promise<this> {
         // ✅ Transition to INITIALIZING state
@@ -576,9 +537,8 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
             this.handleMessageScenario(scenario);
         }
         
-        // ✅ Notify registered listeners (for Lit views)
-        // @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
-        this.notifyModelListeners();
+        // ✅ I.10: UcpModel handles view updates automatically - no manual notify needed
+        // @pdca 2025-12-14-UTC-1730.i10-ucpmodel-integration.pdca.md
         
         // ✅ Update legacy UI (for demo-hub.html)
         this.updatePeersDisplay();
