@@ -1,0 +1,510 @@
+/**
+ * ONCETestCase - Base test case for ONCE component regression tests
+ * 
+ * ✅ HTTPS by Default for all server connections
+ * ✅ Minimal base class for Tootsie-based regression tests
+ * ✅ Version-agnostic using path-based version detection
+ * ✅ Tests existing functionality - does NOT reimplement
+ * ✅ Radical OOP: Uses Web4Requirement for acceptance criteria (not arrow functions)
+ * 
+ * @pdca 2025-12-02-UTC-2115.web4requirement-integration.pdca.md
+ * @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md T.1
+ */
+
+/**
+ * ONCETestCase - Base test case for ONCE component regression tests
+ * 
+ * ✅ HTTPS by Default for all test connections
+ * ✅ Accepts self-signed certificates for local testing
+ * 
+ * @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md T.1
+ */
+import { DefaultWeb4TestCase } from '../../../../Web4Test/0.3.20.6/dist/ts/layer2/DefaultWeb4TestCase.js';
+import { TestScenario } from '../../../../Web4Test/0.3.20.6/dist/ts/layer3/TestScenario.js';
+import { DefaultWeb4Requirement } from '../../../../Web4Requirement/0.3.20.6/dist/ts/layer2/DefaultWeb4Requirement.js';
+import { Web4Requirement } from '../../../../Web4Requirement/0.3.20.6/dist/ts/layer3/Web4Requirement.interface.js';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as http from 'http';
+import * as https from 'https';
+import { execSync, spawn, ChildProcess } from 'child_process';
+import { fileURLToPath } from 'url';
+import { expect as chaiExpect } from 'chai';
+
+// ✅ Accept self-signed certificates in Node.js for testing
+// This is safe in test environment only
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+export abstract class ONCETestCase extends DefaultWeb4TestCase {
+  
+  constructor() {
+    super();
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // PATH AUTHORITY (TypeScript getters)
+  // ═══════════════════════════════════════════════════════════════
+  // 
+  // @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+  // Note: These calculate EXPECTED values for path authority tests.
+  // Production code should use Web4TSComponent.projectRoot etc.
+
+  /**
+   * ONCE version from file location (Version Authority pattern)
+   */
+  protected get onceVersion(): string {
+    const currentFilePath = fileURLToPath(import.meta.url);
+    const testDir = path.dirname(currentFilePath);
+    const testRoot = path.dirname(testDir);
+    const versionDir = path.dirname(testRoot);
+    return path.basename(versionDir);
+  }
+
+  /**
+   * Component root path (derived from test file location)
+   */
+  protected get componentRoot(): string {
+    const currentFilePath = fileURLToPath(import.meta.url);
+    const testDir = path.dirname(currentFilePath);
+    const testRoot = path.dirname(testDir);
+    return path.dirname(testRoot);
+  }
+
+  /**
+   * Test data directory path
+   */
+  protected get testDataDir(): string {
+    return path.join(this.componentRoot, 'test', 'data');
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // PROTOCOL & PORT CONFIGURATION (HTTPS by Default)
+  // ═══════════════════════════════════════════════════════════════
+  //
+  // @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md T.1
+
+  /**
+   * Protocol for server connections (HTTPS by default)
+   * ✅ ALL servers now use HTTPS
+   */
+  protected get protocol(): 'https' | 'http' {
+    return 'https';
+  }
+
+  /**
+   * Primary HTTPS server port
+   */
+  protected get primaryPort(): number {
+    return 42777;
+  }
+
+  /**
+   * HTTP redirect port (redirects to primaryPort)
+   */
+  protected get httpRedirectPort(): number {
+    return 42000;
+  }
+
+  /**
+   * Secondary server starting port
+   */
+  protected get secondaryPortStart(): number {
+    return 8080;
+  }
+
+  /**
+   * Build URL for the primary server
+   */
+  protected primaryUrl(path: string = ''): string {
+    return `${this.protocol}://localhost:${this.primaryPort}${path}`;
+  }
+
+  /**
+   * Build URL for a secondary server
+   */
+  protected secondaryUrl(port: number, path: string = ''): string {
+    return `${this.protocol}://localhost:${port}${path}`;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // CLI HELPERS (Black-Box Testing)
+  // ═══════════════════════════════════════════════════════════════
+
+  /**
+   * Run once CLI command and return output
+   */
+  protected runOnceCLI(command: string, options?: { cwd?: string }): string {
+    const onceExec = path.join(this.componentRoot, 'once');
+    const cwd = options?.cwd || this.componentRoot;
+    
+    return execSync(`"${onceExec}" ${command} 2>&1`, {
+      encoding: 'utf8',
+      cwd
+    });
+  }
+
+  /**
+   * Run once CLI from test/data (test isolation context)
+   */
+  protected runOnceCLIInTestIsolation(command: string): string {
+    const onceExec = path.join(this.testDataDir, 'scripts', 'once');
+    
+    return execSync(`"${onceExec}" ${command} 2>&1`, {
+      encoding: 'utf8',
+      cwd: this.testDataDir
+    });
+  }
+
+  /**
+   * Ensure test isolation is set up
+   */
+  protected async ensureTestIsolation(): Promise<void> {
+    const scriptsOnce = path.join(this.testDataDir, 'scripts', 'once');
+    
+    if (!fs.existsSync(scriptsOnce)) {
+      this.logEvidence('step', 'Setting up test isolation');
+      this.runOnceCLI('test shell');
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // SERVER LIFECYCLE HELPERS
+  // ═══════════════════════════════════════════════════════════════
+
+  private serverProcess: ChildProcess | null = null;
+
+  /**
+   * Start ONCE server as background process (non-blocking)
+   * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   */
+  protected serverStart(): ChildProcess {
+    const onceExec = path.join(this.componentRoot, 'once');
+    
+    this.logEvidence('step', 'Starting server as background process');
+    
+    this.serverProcess = spawn(onceExec, ['startServer'], {
+      cwd: this.componentRoot,
+      detached: true,
+      stdio: ['ignore', 'pipe', 'pipe']
+    });
+    
+    // Log server output for debugging
+    this.serverProcess.stdout?.on('data', (data) => {
+      console.log(`[SERVER] ${data.toString().trim()}`);
+    });
+    
+    this.serverProcess.stderr?.on('data', (data) => {
+      console.error(`[SERVER ERROR] ${data.toString().trim()}`);
+    });
+    
+    this.serverProcess.on('error', (err) => {
+      console.error(`[SERVER SPAWN ERROR] ${err.message}`);
+    });
+    
+    return this.serverProcess;
+  }
+
+  /**
+   * Start ONCE server in TEST ISOLATION (from test/data)
+   * ✅ Web4 Path Authority: Uses testDataDir, not componentRoot
+   * Scenarios will be stored in test/data/scenarios/
+   */
+  protected serverStartInTestIsolation(): ChildProcess {
+    const onceExec = path.join(this.testDataDir, 'scripts', 'once');
+    
+    this.logEvidence('step', 'Starting server in test isolation (from test/data)');
+    
+    this.serverProcess = spawn(onceExec, ['startServer'], {
+      cwd: this.testDataDir,  // ✅ Test isolation: run from test/data
+      detached: true,
+      stdio: ['ignore', 'pipe', 'pipe']
+    });
+    
+    // Log server output for debugging
+    this.serverProcess.stdout?.on('data', (data) => {
+      console.log(`[SERVER-ISO] ${data.toString().trim()}`);
+    });
+    
+    this.serverProcess.stderr?.on('data', (data) => {
+      console.error(`[SERVER-ISO ERROR] ${data.toString().trim()}`);
+    });
+    
+    this.serverProcess.on('error', (err) => {
+      console.error(`[SERVER-ISO SPAWN ERROR] ${err.message}`);
+    });
+    
+    return this.serverProcess;
+  }
+
+  /**
+   * Stop server if started by test
+   * @pdca 2025-12-03-UTC-0900.fix-path-authority-dry-violation.pdca.md
+   */
+  protected async serverStop(): Promise<void> {
+    if (this.serverProcess) {
+      this.logEvidence('step', 'Stopping server process');
+      
+      // Try graceful shutdown first (via HTTPS)
+      try {
+        await this.httpPost(this.primaryUrl('/shutdown-all'));
+        await this.sleep(1000);
+      } catch (e) {
+        // Server might already be stopped
+      }
+      
+      // Force kill if still running
+      if (this.serverProcess && !this.serverProcess.killed) {
+        this.serverProcess.kill('SIGTERM');
+        await this.sleep(500);
+        
+        if (!this.serverProcess.killed) {
+          this.serverProcess.kill('SIGKILL');
+        }
+      }
+      
+      this.serverProcess = null;
+    }
+  }
+
+  /**
+   * Stop ALL running ONCE server processes (clean slate for testing)
+   * Uses pkill to terminate any node processes running ONCE
+   */
+  protected async serverStopAll(): Promise<void> {
+    this.logEvidence('step', 'Stopping ALL ONCE server processes');
+    
+    return new Promise((resolve) => {
+      // Kill all node processes running ONCE CLI (correct pattern for ONCECLI.js)
+      const pkill = spawn('pkill', ['-f', 'ONCECLI.js'], {
+        stdio: 'ignore'
+      });
+      
+      pkill.on('close', () => {
+        resolve();
+      });
+      
+      pkill.on('error', () => {
+        // pkill may not find any processes - that's OK
+        resolve();
+      });
+    });
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // HTTPS HELPERS (Black-Box Testing)
+  // ═══════════════════════════════════════════════════════════════
+  //
+  // ✅ All helpers now use HTTPS by default
+  // @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md T.1
+
+  /**
+   * Check if server is healthy via HTTPS
+   * ✅ Uses HTTPS and accepts self-signed certificates
+   */
+  protected async checkServerHealth(port: number, timeout: number = 1000): Promise<boolean> {
+    return new Promise((resolve) => {
+      const req = https.request({
+        hostname: 'localhost',
+        port,
+        path: '/health',
+        method: 'GET',
+        timeout,
+        rejectUnauthorized: false  // ✅ Accept self-signed certs
+      }, (res) => {
+        resolve(res.statusCode === 200);
+      });
+      
+      req.on('error', () => resolve(false));
+      req.on('timeout', () => {
+        req.destroy();
+        resolve(false);
+      });
+      req.end();
+    });
+  }
+
+  /**
+   * Wait for server to be ready
+   */
+  protected async waitForServer(port: number, maxWaitMs: number = 10000): Promise<boolean> {
+    const startTime = Date.now();
+    while (Date.now() - startTime < maxWaitMs) {
+      if (await this.checkServerHealth(port)) {
+        return true;
+      }
+      await this.sleep(500);
+    }
+    return false;
+  }
+
+  /**
+   * HTTPS GET request
+   * ✅ Uses HTTPS and accepts self-signed certificates
+   */
+  protected async httpGet(url: string): Promise<{ status: number; body: string }> {
+    return new Promise((resolve, reject) => {
+      // Determine if URL is HTTPS or HTTP
+      const urlObj = new URL(url);
+      const requester = urlObj.protocol === 'https:' ? https : http;
+      
+      const options = {
+        hostname: urlObj.hostname,
+        port: urlObj.port || (urlObj.protocol === 'https:' ? 443 : 80),
+        path: urlObj.pathname + urlObj.search,
+        method: 'GET',
+        rejectUnauthorized: false  // ✅ Accept self-signed certs
+      };
+      
+      const req = requester.request(options, (res) => {
+        let body = '';
+        res.on('data', (chunk: Buffer | string) => body += chunk);
+        res.on('end', () => resolve({ status: res.statusCode || 0, body }));
+      }).on('error', reject);
+    });
+  }
+
+  /**
+   * HTTPS POST request
+   * ✅ Uses HTTPS and accepts self-signed certificates
+   */
+  protected async httpPost(url: string, data?: any): Promise<{ status: number; body: string }> {
+    return new Promise((resolve, reject) => {
+      const urlObj = new URL(url);
+      const requester = urlObj.protocol === 'https:' ? https : http;
+      
+      const req = requester.request({
+        hostname: urlObj.hostname,
+        port: urlObj.port || (urlObj.protocol === 'https:' ? 443 : 80),
+        path: urlObj.pathname,
+        method: 'POST',
+        headers: data ? { 'Content-Type': 'application/json' } : {},
+        rejectUnauthorized: false  // ✅ Accept self-signed certs
+      }, (res) => {
+        let body = '';
+        res.on('data', (chunk: Buffer | string) => body += chunk);
+        res.on('end', () => resolve({ status: res.statusCode || 0, body }));
+      });
+      
+      req.on('error', reject);
+      if (data) req.write(JSON.stringify(data));
+      req.end();
+    });
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // UTILITY HELPERS
+  // ═══════════════════════════════════════════════════════════════
+
+  /**
+   * Sleep for specified milliseconds
+   */
+  protected sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Log evidence (wrapper for parent's recordEvidence)
+   */
+  protected logEvidence(type: string, description: string, data?: any): void {
+    console.log(`[${new Date().toISOString()}][${type.toUpperCase()}] ${description}:`, 
+      data ? JSON.stringify(data, null, 2) : '');
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // RADICAL OOP WEB4REQUIREMENT
+  // ═══════════════════════════════════════════════════════════════
+  // 
+  // ✅ Replaces arrow function assertions with Web4Requirement objects
+  // ✅ Acceptance criteria are objects, not functions
+  // 
+  // Usage:
+  //   const req = this.requirement('Path Authority', 'Verify path detection');
+  //   req.addCriterion('AC-01', 'isTestIsolation is false in production');
+  //   req.addCriterion('AC-02', 'projectRoot ends with /UpDown');
+  //   req.validateCriterion('AC-01', isTestIsolation === false);
+  //   req.validateCriterion('AC-02', projectRoot.endsWith('/UpDown'));
+  //   if (!req.allCriteriaPassed()) throw new Error(req.generateReport());
+
+  /**
+   * Create a Web4Requirement for acceptance criteria validation
+   * 
+   * @example
+   * const req = this.requirement('Path Authority', 'Verify path detection');
+   * req.addCriterion('AC-01', 'isTestIsolation is false');
+   * req.validateCriterion('AC-01', isTestIsolation === false, { actual: isTestIsolation });
+   */
+  protected requirement(name: string, description: string): Web4Requirement {
+    const req = new DefaultWeb4Requirement();
+    req.model.name = name;
+    req.model.description = description;
+    req.model.uuid = crypto.randomUUID();
+    this.logEvidence('requirement', `📋 ${name}: ${description}`);
+    return req;
+  }
+
+  /**
+   * Validate a requirement and throw if any criteria failed
+   * Logs the full report as evidence
+   */
+  protected validateRequirement(req: Web4Requirement): void {
+    const report = req.generateReport();
+    this.logEvidence('requirement-report', report);
+    
+    if (!req.allCriteriaPassed()) {
+      const failed = req.getFailedCriteria();
+      throw new Error(`Requirement failed: ${failed.map(c => `${c.id}: ${c.description}`).join(', ')}`);
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // RADICAL OOP CHAI ASSERTIONS (Legacy Support)
+  // ═══════════════════════════════════════════════════════════════
+  // 
+  // Wraps Chai's expect() in Radical OOP pattern with evidence logging.
+  // Usage: this.expect(value).to.equal(expected)
+  // 
+  // The assertion is logged as evidence for Tootsie quality tracking.
+  //
+  // ⚠️ DEPRECATED: Prefer Web4Requirement for new tests
+
+  /**
+   * Radical OOP expect() - Chai syntax with evidence logging
+   * 
+   * @deprecated Use this.requirement() for Radical OOP acceptance criteria
+   * 
+   * @example
+   * this.expect(isTestIsolation).to.be.false;
+   * this.expect(projectRoot).to.include('/UpDown');
+   * this.expect(response.status).to.equal(200);
+   */
+  protected expect(value: any, description?: string): Chai.Assertion {
+    // Log the expectation as evidence
+    if (description) {
+      this.logEvidence('expect', description, { value });
+    }
+    return chaiExpect(value);
+  }
+
+  /**
+   * Radical OOP assertion with automatic evidence logging
+   * 
+   * @deprecated Use this.requirement() for Radical OOP acceptance criteria
+   * 
+   * @example
+   * this.assert('Production isTestIsolation is false', () => {
+   *   this.expect(isTestIsolation).to.be.false;
+   * });
+   */
+  protected assert(description: string, assertion: () => void): void {
+    try {
+      assertion();
+      this.logEvidence('assertion', `✅ ${description}`, { passed: true });
+    } catch (error: any) {
+      this.logEvidence('assertion', `❌ ${description}`, { 
+        passed: false, 
+        error: error.message 
+      });
+      throw error;
+    }
+  }
+}

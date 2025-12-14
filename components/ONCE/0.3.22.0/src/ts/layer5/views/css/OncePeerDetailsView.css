@@ -1,0 +1,138 @@
+/**
+ * OncePeerDetailsView.css - Single Peer Details Styles
+ * @component ONCE
+ * @layer 5
+ */
+
+:host {
+    display: block;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.peer-details-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+.peer-details-container header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.peer-details-container header h2 {
+    margin: 0;
+    font-size: 1.75rem;
+}
+
+.peer-uuid {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.5rem;
+    background: #e9ecef;
+    border-radius: 4px;
+}
+
+.peer-info {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-row {
+    display: flex;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.label {
+    font-weight: 500;
+    color: #6c757d;
+    min-width: 100px;
+}
+
+.value {
+    flex: 1;
+    color: #212529;
+}
+
+.state-running { color: #28a745; font-weight: 500; }
+.state-starting { color: #ffc107; font-weight: 500; }
+.state-stopped { color: #dc3545; font-weight: 500; }
+.state-error { color: #dc3545; font-weight: 500; }
+.state-unknown { color: #6c757d; font-style: italic; }
+
+.capabilities {
+    margin-bottom: 1.5rem;
+}
+
+.capabilities h3 {
+    margin: 0 0 1rem;
+    font-size: 1.1rem;
+    color: #495057;
+}
+
+.capability {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    background: #e7f1ff;
+    border-radius: 4px;
+    margin: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.cap-name {
+    color: #0d6efd;
+}
+
+.cap-port {
+    color: #6c757d;
+    margin-left: 0.25rem;
+}
+
+.no-caps {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.peer-actions {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.back-link {
+    color: #4a90d9;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.loading {
+    text-align: center;
+    padding: 3rem;
+    color: #6c757d;
+}
+
+.error {
+    text-align: center;
+    padding: 2rem;
+    background: #fee;
+    border-radius: 8px;
+}
+
+.error h2 {
+    color: #dc3545;
+}
