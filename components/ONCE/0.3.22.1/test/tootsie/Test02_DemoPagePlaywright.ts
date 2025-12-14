@@ -951,6 +951,7 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       // Check WebSocket connection section
       // ✅ Web4 P4: Regular function in evaluate
       // ✅ Web4: Lit components use shadow DOM, need to check inside shadow root
+      // ✅ I.13: Also check for <web-socket-default-view> component
       const websocketCheck = await this.page.evaluate(function() {
         let defaultView = document.querySelector('once-peer-default-view');
         if (!defaultView) {
@@ -961,7 +962,30 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
         }
         if (!defaultView) return { hasWebSocketSection: false };
         
-        // Check shadow DOM for WebSocket section
+        // ✅ I.13: First check for <web-socket-default-view> component
+        let wsComponent = null;
+        if (defaultView.shadowRoot) {
+          wsComponent = defaultView.shadowRoot.querySelector('web-socket-default-view');
+        }
+        if (!wsComponent) {
+          wsComponent = defaultView.querySelector('web-socket-default-view');
+        }
+        
+        if (wsComponent) {
+          // Check inside the component's shadow DOM
+          let componentText = wsComponent.textContent || '';
+          if (wsComponent.shadowRoot) {
+            componentText = wsComponent.shadowRoot.textContent || '';
+          }
+          const hasWebSocket = componentText.includes('WebSocket') || componentText.includes('🔌');
+          return {
+            hasWebSocketSection: true,
+            hasWebSocket: hasWebSocket,
+            usingComponent: true
+          };
+        }
+        
+        // Fallback: Check for legacy .endpoints-section
         let wsSection = null;
         if (defaultView.shadowRoot) {
           const sections = defaultView.shadowRoot.querySelectorAll('.endpoints-section');
@@ -993,7 +1017,8 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
         
         return {
           hasWebSocketSection: true,
-          hasWebSocket: hasWebSocket
+          hasWebSocket: hasWebSocket,
+          usingComponent: false
         };
       });
       

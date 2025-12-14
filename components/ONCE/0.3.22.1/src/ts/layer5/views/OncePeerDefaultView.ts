@@ -19,8 +19,11 @@ import { html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UcpView } from './UcpView.js';
 import { LifecycleState } from '../../layer3/LifecycleState.enum.js';
+import { WebSocketModel, WebSocketState } from '../../layer3/WebSocketModel.interface.js';
+import { DefaultWebSocket } from '../../layer2/DefaultWebSocket.js';
 import type { Reference } from '../../layer3/Reference.interface.js';
 import './RouteOverView.js';  // Import to register custom element
+import './WebSocketDefaultView.js';  // Import for WebSocket status display
 
 /**
  * ServerCapability - Capability descriptor
@@ -65,6 +68,12 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
   /** Router reference - set by UcpRouter when creating view */
   @property({ attribute: false }) router: Reference<HTMLElement> = null;
   
+  /** WebSocket component for live connection status */
+  private webSocketComponent: Reference<DefaultWebSocket> = null;
+  
+  /** WebSocket model state for reactive updates */
+  @state() private wsModel: Reference<WebSocketModel> = null;
+  
   // ═══════════════════════════════════════════════════════════════
   // Getters - Web4 P16: TypeScript Accessors
   // ═══════════════════════════════════════════════════════════════
@@ -107,6 +116,81 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
   
   get peerHost(): string {
     return this.model?.peerHost || 'localhost:42777';
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Lifecycle - WebSocket Component Initialization
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Initialize WebSocket component when connected to DOM
+   */
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.webSocketInitialize();
+  }
+  
+  /**
+   * Cleanup WebSocket when disconnected from DOM
+   */
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.webSocketCleanup();
+  }
+  
+  /** Polling interval for WebSocket status updates */
+  private wsUpdateInterval: Reference<ReturnType<typeof setInterval>> = null;
+  
+  /**
+   * Initialize WebSocket component with live connection
+   */
+  private webSocketInitialize(): void {
+    if (this.webSocketComponent) return;
+    
+    // Create WebSocket component
+    this.webSocketComponent = new DefaultWebSocket();
+    this.webSocketComponent.initSync();
+    
+    // Set URL based on peerHost
+    const wsUrl = `wss://${this.peerHost}/`;
+    this.webSocketComponent.model.url = wsUrl;
+    
+    // Store model reference for reactive updates
+    this.wsModel = this.webSocketComponent.model;
+    
+    // Poll for model changes (simple approach for demonstrator)
+    // UcpModel triggers view updates internally; we poll to sync Lit state
+    this.wsUpdateInterval = setInterval(
+      this.webSocketModelSync.bind(this),
+      500 // Sync every 500ms
+    );
+    
+    // Connect to WebSocket
+    this.webSocketComponent.connect();
+  }
+  
+  /**
+   * Sync WebSocket model state to trigger Lit re-render
+   */
+  private webSocketModelSync(): void {
+    if (this.webSocketComponent && this.webSocketComponent.model) {
+      // Copy model to trigger Lit reactive update
+      this.wsModel = { ...this.webSocketComponent.model };
+    }
+  }
+  
+  /**
+   * Cleanup WebSocket connection
+   */
+  private webSocketCleanup(): void {
+    if (this.wsUpdateInterval) {
+      clearInterval(this.wsUpdateInterval);
+      this.wsUpdateInterval = null;
+    }
+    if (this.webSocketComponent) {
+      this.webSocketComponent.disconnect();
+      this.webSocketComponent = null;
+    }
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -258,12 +342,10 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
         </div>
       ` : ''}
       
-      <div class="endpoints-section">
-        <h3><span class="emoji">🔌</span> WebSocket Connection</h3>
-        <p>WebSocket endpoint available at: <code>wss://${this.peerHost}/</code></p>
-        <p>Use this endpoint for real-time P2P communication with ONCE v${this.serverVersion} kernel</p>
-        <p><strong>New in v${this.serverVersion}:</strong> Enhanced server hierarchy, dynamic port management, scenario-based configuration</p>
-      </div>
+      <!-- ✅ I.13: Live WebSocket status via UcpModel reactive updates -->
+      <web-socket-default-view 
+        .model=${this.wsModel}>
+      </web-socket-default-view>
     `;
   }
   
