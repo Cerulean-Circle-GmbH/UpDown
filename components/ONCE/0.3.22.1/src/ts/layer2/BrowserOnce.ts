@@ -32,9 +32,65 @@ import type { StorageScenario } from '../layer3/StorageScenario.interface.js';
 import type { LitElement } from 'lit';
 import type { Reference } from '../layer3/Reference.interface.js';
 
-export class BrowserOnce extends DefaultOnceKernel {
-    // ✅ Type the model properly
-    protected declare model: BrowserOnceModel;
+export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
+    // Model type is BrowserOnceModel via generic inheritance
+    // Access via this.model getter from UcpComponent
+    
+    /**
+     * Default model for BrowserOnce
+     * Required by UcpComponent (abstract in DefaultOnceKernel)
+     */
+    protected modelDefault(): BrowserOnceModel {
+        // Extract version from script URL (Web4 Path Authority pattern)
+        const scriptUrl = import.meta.url;
+        const versionMatch = scriptUrl.match(/\/(\d+\.\d+\.\d+\.\d+)\//);
+        const detectedVersion = versionMatch ? versionMatch[1] : '0.0.0.0';
+        
+        return {
+            // Base model properties (from Model interface)
+            uuid: this.generateUUID(),
+            name: 'BrowserONCEKernel',
+            
+            // Kernel properties (from ONCEKernelModel)
+            version: detectedVersion,
+            state: LifecycleState.CREATED,
+            environment: DefaultEnvironmentInfo.createBrowserEnvironment(
+                navigator.userAgent
+            ).getModel(),
+            peers: [],
+            connectionTime: null,
+            startTime: new Date(),
+            stats: {
+                messagesSent: 0,
+                messagesReceived: 0,
+                acknowledgmentsSent: 0,
+                errorsCount: 0
+            },
+            
+            // Browser-specific properties
+            peerHost: window.location.host,
+            peerUUID: null,
+            peerVersion: 'unknown',
+            isConnected: false,
+            primaryPeer: null,
+            ws: null,
+            
+            // UI elements (for display updates)
+            elements: {
+                connectionStatus: null,
+                primaryConnection: null,
+                connectedPeers: null,
+                messageLog: null,
+                messagesSent: null,
+                messagesReceived: null,
+                acknowledgmentsSent: null,
+                connectionTime: null
+            },
+            
+            // Messages cache
+            messages: []
+        };
+    }
     
     /**
      * Layer 4 Orchestrator - handles ALL async operations
@@ -240,57 +296,14 @@ export class BrowserOnce extends DefaultOnceKernel {
         // ✅ Transition to INITIALIZING state
         this.transitionTo(LifecycleState.INITIALIZING, LifecycleEventType.BEFORE_INIT);
         
-        // ✅ Extract version from script URL (Web4 Path Authority pattern)
-        // URL: .../components/ONCE/0.3.21.9/dist/ts/layer2/BrowserOnce.js
-        const scriptUrl = import.meta.url;
-        const versionMatch = scriptUrl.match(/\/(\d+\.\d+\.\d+\.\d+)\//);
-        const detectedVersion = versionMatch ? versionMatch[1] : '0.0.0.0';
+        // ✅ Initialize via UcpComponent (creates UcpModel wrapper)
+        await super.init(scenario);
         
-        // ✅ Initialize with scenario
-        this.model = {
-            // Base model properties (from Model interface)
-            uuid: this.generateUUID(),
-            name: 'BrowserONCEKernel',
-            
-            // Kernel properties (from ONCEKernelModel)
-            version: detectedVersion,  // ✅ Dynamic from URL, not hardcoded!
-            state: LifecycleState.INITIALIZING, // Current lifecycle state
-            environment: DefaultEnvironmentInfo.createBrowserEnvironment(
-                navigator.userAgent
-            ).getModel(),
-            peers: [],
-            connectionTime: null,
-            startTime: new Date(),
-            stats: {
-                messagesSent: 0,
-                messagesReceived: 0,
-                acknowledgmentsSent: 0,
-                errorsCount: 0
-            },
-            
-            // Browser-specific properties
-            peerHost: scenario?.peerHost || window.location.host,
-            peerUUID: null,
-            peerVersion: 'unknown',
-            isConnected: false,
-            primaryPeer: null,
-            ws: null,
-            
-            // UI elements (for display updates)
-            elements: {
-                connectionStatus: null,
-                primaryConnection: null,
-                connectedPeers: null,
-                messageLog: null,
-                messagesSent: null,
-                messagesReceived: null,
-                acknowledgmentsSent: null,
-                connectionTime: null
-            },
-            
-            // Messages cache
-            messages: []
-        };
+        // ✅ Update model state and apply scenario overrides
+        this.model.state = LifecycleState.INITIALIZING;
+        if (scenario?.peerHost) {
+            this.model.peerHost = scenario.peerHost;
+        }
         
         // 0. Initialize scenario storage (Web4 Principle 24)
         await this.storageInitialize();

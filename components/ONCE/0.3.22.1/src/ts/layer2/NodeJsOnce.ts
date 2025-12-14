@@ -50,9 +50,38 @@ import { realpathSync } from 'fs';  // For symlink resolution
  * ✅ Peer hierarchy and scenario management
  * ✅ IOR-based method invocation
  */
-export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
-  // Override model with specific type
-  protected model: ONCEModel;
+export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInterface {
+  // Model type is ONCEModel via generic inheritance
+  // Access via this.model getter from UcpComponent
+  
+  /**
+   * Default model for NodeJsOnce
+   * Required by UcpComponent (abstract in DefaultOnceKernel)
+   */
+  protected modelDefault(): ONCEModel {
+    return {
+      uuid: crypto.randomUUID(),
+      name: '',
+      origin: '',
+      definition: '',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      component: 'ONCE',
+      version: '0.0.0.0',     // Will be discovered in discoverPathsFromFilesystem()
+      state: LifecycleState.CREATED,
+      initialized: false,
+      initializationTime: 0,
+      eventHandlers: new Map(),
+      // Paths discovered in discoverPathsFromFilesystem()
+      componentRoot: '',
+      projectRoot: '',
+      targetDirectory: '',
+      targetComponentRoot: '',
+      isTestIsolation: false,
+      // Primary Server IOR with Failover
+      primaryServerIor: 'ior:https://localhost:42777/ONCE/0.0.0.0/primary-server-uuid'
+    };
+  }
   private web4ts?: any; // Lazy-initialized Web4TSComponent for delegation (dynamic import, no static dependency)
   private user?: User; // Optional User service (lazy initialization)
   private methods: Map<string, MethodSignature> = new Map();
@@ -74,6 +103,7 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
    * Full refactoring to empty constructor + init() pattern in future iteration
    * 
    * @pdca session/2025-11-22-UTC-2200.iteration-01.8-unified-kernel-architecture.pdca.md
+   * @pdca 2025-12-12-UTC-2300.i9-1-ucpmodel-class.pdca.md - Uses UcpModel
    */
   constructor() {
     super(); // AbstractONCEKernel (unified architecture)
@@ -83,34 +113,9 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
     // ✅ Web4 Principle 20: Initialize ID provider (testable, replaceable)
     this.idProvider = new UUIDProvider();
     
-    // Minimal model initialization
-    this.model = {
-      uuid: crypto.randomUUID(),
-      name: '',
-      origin: '',
-      definition: '',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      component: 'ONCE',
-      version: '0.0.0.0',     // Will be discovered in discoverPathsFromFilesystem()
-      state: LifecycleState.CREATED, // ✅ Initial lifecycle state
-      initialized: false,
-      initializationTime: 0,
-      eventHandlers: new Map(),
-      // Paths discovered in discoverPathsFromFilesystem()
-      componentRoot: '',
-      projectRoot: '',
-      targetDirectory: '',
-      targetComponentRoot: '',
-      isTestIsolation: false,
-      // Primary Server IOR with Failover
-      // @pdca 2025-11-22-UTC-1430.iteration-01.6.4a-ior-failover.pdca.md
-      // ✅ Web4: Configuration via scenario, NOT environment variables
-      // Default: localhost for development
-      // Production: Set via init() scenario
-      // Example multi-region: 'ior:https://primary.once.network:42777,europe:42778,asia:42779/ONCE/0.3.21.6/registry-uuid'
-      primaryServerIor: 'ior:https://localhost:42777/ONCE/0.0.0.0/primary-server-uuid'
-    };
+    // ✅ Initialize UcpModel synchronously for constructor-based initialization
+    // Note: This is a legacy pattern; prefer async init() for new code
+    this.initSync();
     
     // ✅ Synchronous path discovery (needed for CLI to work)
     this.discoverPathsFromFilesystem();
@@ -446,7 +451,8 @@ export class NodeJsOnce extends DefaultOnceKernel implements ONCEInterface {
       const web4Scenario = scenario as any;
       if (web4Scenario.model) {
         console.log(`🔍 [PATH] DefaultONCE.init() BEFORE: projectRoot=${this.model.projectRoot} componentRoot=${this.model.componentRoot}`);
-        this.model = { ...this.model, ...web4Scenario.model };
+        // Merge scenario into model via Object.assign (triggers UcpModel proxy updates)
+        Object.assign(this.model, web4Scenario.model);
         console.log(`🔍 [PATH] DefaultONCE.init() AFTER: projectRoot=${this.model.projectRoot} componentRoot=${this.model.componentRoot} isTestIsolation=${this.model.isTestIsolation}`);
       }
     } else if (scenario) {

@@ -44,8 +44,8 @@ export interface OnceKernelModel extends Model {
     state?: LifecycleState;
 }
 
-export abstract class DefaultOnceKernel extends UcpComponent<OnceKernelModel> implements LifecycleManager {
-    // model is inherited from UcpComponent
+export abstract class DefaultOnceKernel<TModel extends OnceKernelModel = OnceKernelModel> extends UcpComponent<TModel> implements LifecycleManager {
+    // model is inherited from UcpComponent with generic type TModel
     
     /**
      * Lifecycle observers (Observer Pattern)
@@ -71,16 +71,10 @@ export abstract class DefaultOnceKernel extends UcpComponent<OnceKernelModel> im
     
     /**
      * Default model for ONCE kernels
-     * Subclasses should override with specific model
+     * Abstract - subclasses MUST override with specific model type
      * @pdca B.6 - Required by UcpComponent
      */
-    protected modelDefault(): OnceKernelModel {
-        return {
-            uuid: this.generateUUID(),
-            name: 'OnceKernel',
-            state: LifecycleState.CREATED
-        };
-    }
+    protected abstract modelDefault(): TModel;
     
     /**
      * Initialize kernel with scenario

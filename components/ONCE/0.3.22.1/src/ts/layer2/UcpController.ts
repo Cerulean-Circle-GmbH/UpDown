@@ -2,7 +2,7 @@
  * UcpController.ts - Web4 MVC Controller Base Class
  * 
  * Base class for all controllers in Web4 MVC architecture.
- * Manages views, handles model updates via Proxy, and provides
+ * Manages views, handles model updates via UcpModel, and provides
  * the RelatedObjects registry for infrastructure lookup.
  * 
  * Web4 Principles:
@@ -14,14 +14,16 @@
  * - P24: RelatedObjects Registry
  * 
  * Layer Flow:
- *   Layer 4 (async) → scenarioReceive() → viewsUpdateAll() → view.update() (sync)
+ *   Layer 4 (async) → scenarioReceive() → UcpModel.merge() → viewsUpdateAll() (sync)
  * 
  * @ior ior:esm:/ONCE/{version}/UcpController
  * @pdca 2025-12-03-UTC-1200.mvc-lit3-views.pdca.md
  * @pdca 2025-12-05-UTC-1800.a1-1-core-interfaces.pdca.md
+ * @pdca 2025-12-12-UTC-2300.i9-1-ucpmodel-class.pdca.md
  */
 
 import { Controller } from '../layer3/Controller.interface.js';
+import { UcpModel } from '../layer3/UcpModel.js';
 import type { View } from '../layer3/View.interface.js';
 import type { Reference } from '../layer3/Reference.interface.js';
 import type { RelatedObjects } from '../layer3/RelatedObjects.interface.js';
@@ -43,8 +45,8 @@ export class UcpController<TModel extends object> extends Controller<TModel> imp
   /** Registered views - notified on model changes */
   private registeredViews: Set<View<TModel>> = new Set();
   
-  /** Proxied model - changes trigger view updates */
-  private modelProxy: Reference<TModel> = null;
+  /** UcpModel reference (owned by UcpComponent) */
+  private ucpModel: Reference<UcpModel<TModel>> = null;
   
   /** 
    * RelatedObjects registry - maps interface types (JsInterface classes) to instances
@@ -73,65 +75,63 @@ export class UcpController<TModel extends object> extends Controller<TModel> imp
    */
   constructor() {
     super();
-    // Empty - initialization via init()
+    // Empty - initialization via initWithUcpModel()
   }
   
   /**
-   * Initialize controller with model
-   * Creates proxy for auto-updates
-   * @param model Initial model state
+   * Initialize controller with UcpModel
+   * Called from UcpComponent.init()
+   * @param ucpModel UcpModel instance from component
    * @returns this for chaining
    */
-  init(model: TModel): this {
-    this.modelProxy = this.proxyCreate(model);
+  initWithUcpModel(ucpModel: UcpModel<TModel>): this {
+    this.ucpModel = ucpModel;
     return this;
   }
   
   /**
-   * Create proxy wrapper for model
-   * Detects property changes and triggers view updates
+   * Legacy init method - creates UcpModel internally
+   * @deprecated Use initWithUcpModel() instead
+   * @param model Initial model state
+   * @returns this for chaining
    */
-  private proxyCreate(model: TModel): TModel {
-    const controller = this;
-    
-    return new Proxy(model, {
-      set: function(target, property, value) {
-        (target as any)[property] = value;
-        controller.viewsUpdateAll();  // SYNCHRONOUS!
-        return true;
-      }
-    });
+  init(model: TModel): this {
+    this.ucpModel = new UcpModel<TModel>().init(
+      model,
+      this.viewsUpdateAll.bind(this)
+    );
+    return this;
   }
   
   /**
    * Get the proxied model
+   * Returns null if controller not initialized (for backward compatibility)
    */
   get model(): TModel {
-    if (this.modelProxy === null) {
-      throw new Error('Controller not initialized - call init() first');
+    if (this.ucpModel === null) {
+      return null as unknown as TModel;
     }
-    return this.modelProxy;
+    return this.ucpModel.model;
   }
   
   /**
    * Receive scenario from WebSocket (entry point from Layer 4)
-   * Updates model which triggers synchronous view updates.
+   * Uses UcpModel.merge() to trigger synchronous view updates.
    * 
    * Called from: BrowserOnce.ws.onmessage (async Layer 4)
-   * Triggers: viewsUpdateAll() → view.update() (sync Layer 5)
+   * Triggers: UcpModel.merge() → viewsUpdateAll() → view.refresh() (sync Layer 5)
    * 
    * @param scenario Incoming scenario from WebSocket
    */
   scenarioReceive(scenario: any): void {
-    if (!this.modelProxy) {
+    if (!this.ucpModel) {
       console.warn('Controller not initialized, ignoring scenario');
       return;
     }
     
-    // Merge scenario.model into proxy
-    // This triggers the Proxy set trap for each property
+    // Merge scenario.model via UcpModel - triggers updates via proxy
     if (scenario?.model) {
-      Object.assign(this.modelProxy, scenario.model);
+      this.ucpModel.merge(scenario.model);
     }
   }
   
@@ -141,8 +141,8 @@ export class UcpController<TModel extends object> extends Controller<TModel> imp
    */
   viewRegister(view: View<TModel>): void {
     this.registeredViews.add(view);
-    if (this.modelProxy) {
-      view.model = this.modelProxy;
+    if (this.ucpModel) {
+      view.model = this.ucpModel.model;
     }
   }
   

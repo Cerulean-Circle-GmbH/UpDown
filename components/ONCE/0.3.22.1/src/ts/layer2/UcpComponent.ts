@@ -4,6 +4,7 @@
  * All generated Web4 components extend this base class.
  * Provides lifecycle management and view delegation via UcpController.
  * Integrates with Unit for scenario storage.
+ * Uses UcpModel for reactive model updates with change tracking.
  * 
  * Web4 Principles:
  * - P4: Radical OOP
@@ -14,10 +15,12 @@
  * 
  * @ior ior:esm:/ONCE/{version}/UcpComponent
  * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
+ * @pdca 2025-12-12-UTC-2300.i9-1-ucpmodel-class.pdca.md
  */
 
 import { UcpController } from './UcpController.js';
 import { TypeDescriptor } from '../layer3/TypeDescriptor.js';
+import { UcpModel } from '../layer3/UcpModel.js';
 import { View } from '../layer3/View.interface.js';
 import { Reference } from '../layer3/Reference.interface.js';
 import type { Model } from '../layer3/Model.interface.js';
@@ -64,8 +67,8 @@ export abstract class UcpComponent<TModel extends Model> {
   // Instance Properties
   // ═══════════════════════════════════════════════════════════════
   
-  /** Component model state - protected for subclass access */
-  protected model: Reference<TModel> = null;
+  /** UcpModel wrapper - manages reactive model with change tracking */
+  private ucpModel: Reference<UcpModel<TModel>> = null;
   
   /** Controller for view management */
   protected controller: UcpController<TModel>;
@@ -81,21 +84,141 @@ export abstract class UcpComponent<TModel extends Model> {
   }
   
   /**
-   * Initialize component with scenario
+   * Initialize component with scenario (async version)
+   * 
+   * Flow:
+   * 1. Get raw model from modelDefault() or scenario
+   * 2. Wrap in UcpModel for reactive updates
+   * 3. UcpModel.model (proxy) triggers viewsUpdateAll() on set
+   * 
    * @param scenario Optional initial scenario
    * @returns this for chaining
    */
   async init(scenario?: { model?: TModel }): Promise<this> {
-    this.model = scenario?.model || this.modelDefault();
-    this.controller.init(this.model);
+    return this.initSync(scenario);
+  }
+  
+  /**
+   * Synchronous initialization - for constructor-based legacy patterns
+   * 
+   * @param scenario Optional initial scenario
+   * @returns this for chaining
+   */
+  initSync(scenario?: { model?: TModel }): this {
+    // Skip if already initialized
+    if (this.ucpModel !== null) {
+      // Merge scenario model if provided
+      if (scenario?.model) {
+        Object.assign(this.ucpModel.model, scenario.model);
+      }
+      return this;
+    }
+    
+    const rawModel = scenario?.model ?? this.modelDefault();
+    
+    // Create UcpModel wrapper with view update callback
+    this.ucpModel = new UcpModel<TModel>().init(
+      rawModel,
+      this.controller.viewsUpdateAll.bind(this.controller)
+    );
+    
+    // Initialize controller with UcpModel
+    this.controller.initWithUcpModel(this.ucpModel);
+    
     return this;
   }
   
   /**
    * Override to provide default model
    * Called when no scenario provided to init()
+   * Returns RAW model - will be wrapped in UcpModel by init()
    */
   protected abstract modelDefault(): TModel;
+  
+  // ═══════════════════════════════════════════════════════════════
+  // MODEL ACCESSORS (via UcpModel)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * PUBLIC: Get proxied model
+   * 
+   * Assignments trigger IMMEDIATE view updates:
+   *   this.model.state = LifecycleState.RUNNING  // → views re-render
+   * 
+   * Returns null if component not initialized (for backward compatibility)
+   */
+  get model(): TModel {
+    if (this.ucpModel === null) {
+      // Backward compatibility: return null before init() is called
+      // Code accessing model before init() should check for null
+      return null as unknown as TModel;
+    }
+    return this.ucpModel.model;
+  }
+  
+  /**
+   * Check if UcpModel is initialized
+   */
+  get hasModel(): boolean {
+    return this.ucpModel !== null;
+  }
+  
+  /**
+   * PROTECTED: Get raw model (bypass view updates)
+   * 
+   * Assignments are TRACKED but do NOT trigger immediate updates:
+   *   this.value.state = LifecycleState.RUNNING  // → tracked, no re-render
+   * 
+   * Use for:
+   * - Batch operations (many property changes)
+   * - Internal state tracking
+   * - Performance-critical code
+   * 
+   * Call this.commit() after batch is complete.
+   */
+  protected get value(): TModel {
+    if (this.ucpModel === null) {
+      // Backward compatibility: return null before init() is called
+      return null as unknown as TModel;
+    }
+    return this.ucpModel.value;
+  }
+  
+  /**
+   * Get accumulated changes (for inspection/debugging)
+   * Shows which properties were changed via this.value since last commit
+   */
+  get updateObject(): Partial<TModel> {
+    return this.ucpModel?.updateObject ?? {};
+  }
+  
+  /**
+   * Check if model has uncommitted changes
+   * True when updateObject has any keys
+   */
+  get isDirty(): boolean {
+    return this.ucpModel?.isDirty ?? false;
+  }
+  
+  /**
+   * Commit all tracked changes
+   * 
+   * 1. Updates all views (sync)
+   * 2. Notifies PersistenceManagers via RelatedObjects
+   * 3. Empties updateObject
+   * 
+   * Call after using this.value for batch operations.
+   */
+  commit(): void {
+    this.ucpModel?.commit();
+  }
+  
+  /**
+   * Discard uncommitted changes
+   */
+  rollback(): void {
+    this.ucpModel?.rollback();
+  }
   
   // ═══════════════════════════════════════════════════════════════
   // Unit Integration - Scenario Storage
