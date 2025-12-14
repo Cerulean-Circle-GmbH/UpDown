@@ -30,7 +30,8 @@ export class WebSocketDefaultView extends UcpView<WebSocketModel> {
     :host {
       display: block;
       padding: 1rem;
-      background: var(--color-surface, #1e1e1e);
+      /* Inherit theme from parent - transparent allows parent background to show */
+      background: var(--color-surface, transparent);
       border-radius: 8px;
       border: 1px solid var(--color-border, rgba(255,255,255,0.1));
     }
