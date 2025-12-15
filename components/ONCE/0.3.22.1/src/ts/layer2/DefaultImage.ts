@@ -119,16 +119,19 @@ export class DefaultImage extends UcpComponent<ImageModel> {
       const img = new Image();
       const objectUrl = URL.createObjectURL(file);
       
-      img.onload = (): void => {
+      // P4a: Use function declarations instead of arrow functions
+      function handleLoad(): void {
         resolve({ width: img.naturalWidth, height: img.naturalHeight });
         URL.revokeObjectURL(objectUrl);
-      };
+      }
       
-      img.onerror = (): void => {
+      function handleError(): void {
         resolve({ width: 0, height: 0 });
         URL.revokeObjectURL(objectUrl);
-      };
+      }
       
+      img.onload = handleLoad;
+      img.onerror = handleError;
       img.src = objectUrl;
     });
   }

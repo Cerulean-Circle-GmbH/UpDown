@@ -127,11 +127,16 @@ export abstract class UcpView<TModel = any> extends LitElement implements View<T
    * Called in connectedCallback
    */
   private dropHandlersSetup(): void {
+    // Initialize bound handlers if not already done
+    if (!this.boundHandleDragEnter) {
+      this.boundHandlersInit();
+    }
+    
     // Use bound methods to allow removal
-    this.addEventListener('dragover', this.handleDragOver);
-    this.addEventListener('dragleave', this.handleDragLeave);
-    this.addEventListener('drop', this.handleDrop);
-    this.addEventListener('dragenter', this.handleDragEnter);
+    this.addEventListener('dragover', this.boundHandleDragOver);
+    this.addEventListener('dragleave', this.boundHandleDragLeave);
+    this.addEventListener('drop', this.boundHandleDrop);
+    this.addEventListener('dragenter', this.boundHandleDragEnter);
   }
   
   /**
@@ -139,16 +144,33 @@ export abstract class UcpView<TModel = any> extends LitElement implements View<T
    * Called in disconnectedCallback
    */
   private dropHandlersRemove(): void {
-    this.removeEventListener('dragover', this.handleDragOver);
-    this.removeEventListener('dragleave', this.handleDragLeave);
-    this.removeEventListener('drop', this.handleDrop);
-    this.removeEventListener('dragenter', this.handleDragEnter);
+    this.removeEventListener('dragover', this.boundHandleDragOver);
+    this.removeEventListener('dragleave', this.boundHandleDragLeave);
+    this.removeEventListener('drop', this.boundHandleDrop);
+    this.removeEventListener('dragenter', this.boundHandleDragEnter);
+  }
+  
+  /** Bound event handlers (P4a: No arrow functions) - initialized in boundHandlersInit() */
+  private boundHandleDragEnter!: (event: DragEvent) => void;
+  private boundHandleDragOver!: (event: DragEvent) => void;
+  private boundHandleDragLeave!: (event: DragEvent) => void;
+  private boundHandleDrop!: (event: DragEvent) => void;
+  
+  /**
+   * Initialize bound handlers (called once per instance)
+   * P4a: Use .bind(this) instead of arrow functions
+   */
+  private boundHandlersInit(): void {
+    this.boundHandleDragEnter = this.handleDragEnter.bind(this);
+    this.boundHandleDragOver = this.handleDragOver.bind(this);
+    this.boundHandleDragLeave = this.handleDragLeave.bind(this);
+    this.boundHandleDrop = this.handleDrop.bind(this);
   }
   
   /**
    * Handle dragenter event
    */
-  private handleDragEnter = (event: DragEvent): void => {
+  private handleDragEnter(event: DragEvent): void {
     if (this.isDropDisabled) return;
     
     // Check if this is a file drag
@@ -157,12 +179,12 @@ export abstract class UcpView<TModel = any> extends LitElement implements View<T
       this.isDragOver = true;
       this.classList.add('drop-active');
     }
-  };
+  }
   
   /**
    * Handle dragover event - must preventDefault to allow drop
    */
-  private handleDragOver = (event: DragEvent): void => {
+  private handleDragOver(event: DragEvent): void {
     if (this.isDropDisabled) return;
     
     // Check if this is a file drag
@@ -170,12 +192,12 @@ export abstract class UcpView<TModel = any> extends LitElement implements View<T
       event.preventDefault();
       event.dataTransfer.dropEffect = 'copy';
     }
-  };
+  }
   
   /**
    * Handle dragleave event
    */
-  private handleDragLeave = (event: DragEvent): void => {
+  private handleDragLeave(event: DragEvent): void {
     if (this.isDropDisabled) return;
     
     // Only remove highlight if leaving to an element outside this view
@@ -184,12 +206,12 @@ export abstract class UcpView<TModel = any> extends LitElement implements View<T
       this.isDragOver = false;
       this.classList.remove('drop-active');
     }
-  };
+  }
   
   /**
    * Handle drop event - process dropped files
    */
-  private handleDrop = (event: DragEvent): void => {
+  private handleDrop(event: DragEvent): void {
     if (this.isDropDisabled) return;
     
     event.preventDefault();
@@ -206,7 +228,7 @@ export abstract class UcpView<TModel = any> extends LitElement implements View<T
       const file = files[i];
       this.fileDropProcess(file);
     }
-  };
+  }
   
   /**
    * Check if drop is disabled
