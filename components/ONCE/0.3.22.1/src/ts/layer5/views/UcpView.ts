@@ -2,7 +2,8 @@
  * UcpView.ts - Base class for all Web4 Views
  * 
  * Base class extending LitElement for all Web4 views.
- * Provides model binding, child view management, and CSS preloading.
+ * Provides model binding, child view management, CSS preloading,
+ * and UNIVERSAL DROP SUPPORT (Web4 Principle 31).
  * 
  * Web4 Principles:
  * - P4: Radical OOP (no arrow functions)
@@ -12,18 +13,27 @@
  * - P16: TypeScript accessors
  * - P19: External CSS via adoptedStyleSheets
  * - P22: Collection<T> for child views
+ * - P31: Universal Drop Support - ALL views accept drops by default
  * 
  * CSS Loading Pattern:
  *   1. CSSLoader.preloadAll() called before component import
  *   2. connectedCallback() applies cached CSSStyleSheet
  *   3. No FOUC (Flash of Unstyled Content)
  * 
+ * Drop Handling (P31):
+ *   1. ALL views accept file drops by default
+ *   2. Set dropDisabled="true" attribute to opt out
+ *   3. Drop fires 'file-drop' event with file details
+ *   4. Parent can call view.add(component) to add dropped content
+ * 
  * @ior ior:esm:/ONCE/{version}/UcpView
  * @pdca 2025-12-03-UTC-1200.mvc-lit3-views.pdca.md
  * @pdca 2025-12-03-UTC-1400.lit-css-preload.pdca.md
+ * @pdca 2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md
  */
 
-import { LitElement } from 'lit';
+import { LitElement, css, CSSResultGroup } from 'lit';
+import { property } from 'lit/decorators.js';
 import { View } from '../../layer3/View.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 import { CSSLoader } from '../../layer2/CSSLoader.js';
@@ -35,6 +45,22 @@ import { CSSLoader } from '../../layer2/CSSLoader.js';
  * 
  * Layer 5 - All methods are SYNCHRONOUS!
  */
+/**
+ * FileDropDetail - Event detail for file-drop events
+ */
+export interface FileDropDetail {
+  /** The dropped file */
+  file: File;
+  /** MIME type of the file */
+  mimetype: string;
+  /** File name */
+  filename: string;
+  /** File size in bytes */
+  size: number;
+  /** The view that received the drop */
+  targetView: UcpView<any>;
+}
+
 export abstract class UcpView<TModel = any> extends LitElement implements View<TModel> {
   
   /**
@@ -43,6 +69,30 @@ export abstract class UcpView<TModel = any> extends LitElement implements View<T
    */
   static cssPath: string = '';
   
+  /**
+   * Base styles for drop indicator (P31: Universal Drop Support)
+   * Subclasses should include this in their static styles
+   */
+  static dropStyles: CSSResultGroup = css`
+    :host {
+      position: relative;
+    }
+    
+    :host(.drop-active) {
+      outline: 2px dashed var(--color-primary, #1976d2);
+      outline-offset: -2px;
+      background-color: var(--color-drop-highlight, rgba(25, 118, 210, 0.08));
+    }
+    
+    :host(.drop-active)::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: var(--color-drop-overlay, rgba(25, 118, 210, 0.04));
+    }
+  `;
+  
   /** Model reference - Use Reference<T>, NOT | null */
   private modelRef: Reference<TModel> = null;
   
@@ -50,17 +100,155 @@ export abstract class UcpView<TModel = any> extends LitElement implements View<T
   protected childViews: UcpView<any>[] = [];
   
   /**
+   * Disable drop handling for this view (P31: opt-out)
+   * Set to "true" to disable file drops on this view
+   */
+  @property({ type: String, reflect: true })
+  dropDisabled: string = 'false';
+  
+  /** Is a drag currently over this view? */
+  private isDragOver = false;
+  
+  /**
    * Lit lifecycle: Called when element is added to DOM
    * Applies preloaded CSS from CSSLoader cache
+   * Sets up drop handling (P31: Universal Drop Support)
    */
   connectedCallback(): void {
     console.log(`[UcpView] connectedCallback for ${this.constructor.name}`);
     try {
       super.connectedCallback();
       this.applyCachedStyles();
+      this.dropHandlersSetup();
     } catch (e) {
       console.error(`[UcpView] Error in connectedCallback:`, e);
     }
+  }
+  
+  /**
+   * Lit lifecycle: Called when element is removed from DOM
+   * Cleans up drop handlers
+   */
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.dropHandlersRemove();
+  }
+  
+  /**
+   * Setup drop event handlers (P31: Universal Drop Support)
+   * Called in connectedCallback
+   */
+  private dropHandlersSetup(): void {
+    // Use bound methods to allow removal
+    this.addEventListener('dragover', this.handleDragOver);
+    this.addEventListener('dragleave', this.handleDragLeave);
+    this.addEventListener('drop', this.handleDrop);
+    this.addEventListener('dragenter', this.handleDragEnter);
+  }
+  
+  /**
+   * Remove drop event handlers
+   * Called in disconnectedCallback
+   */
+  private dropHandlersRemove(): void {
+    this.removeEventListener('dragover', this.handleDragOver);
+    this.removeEventListener('dragleave', this.handleDragLeave);
+    this.removeEventListener('drop', this.handleDrop);
+    this.removeEventListener('dragenter', this.handleDragEnter);
+  }
+  
+  /**
+   * Handle dragenter event
+   */
+  private handleDragEnter = (event: DragEvent): void => {
+    if (this.isDropDisabled) return;
+    
+    // Check if this is a file drag
+    if (event.dataTransfer?.types.includes('Files')) {
+      event.preventDefault();
+      this.isDragOver = true;
+      this.classList.add('drop-active');
+    }
+  };
+  
+  /**
+   * Handle dragover event - must preventDefault to allow drop
+   */
+  private handleDragOver = (event: DragEvent): void => {
+    if (this.isDropDisabled) return;
+    
+    // Check if this is a file drag
+    if (event.dataTransfer?.types.includes('Files')) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'copy';
+    }
+  };
+  
+  /**
+   * Handle dragleave event
+   */
+  private handleDragLeave = (event: DragEvent): void => {
+    if (this.isDropDisabled) return;
+    
+    // Only remove highlight if leaving to an element outside this view
+    const relatedTarget = event.relatedTarget as Node | null;
+    if (!this.contains(relatedTarget)) {
+      this.isDragOver = false;
+      this.classList.remove('drop-active');
+    }
+  };
+  
+  /**
+   * Handle drop event - process dropped files
+   */
+  private handleDrop = (event: DragEvent): void => {
+    if (this.isDropDisabled) return;
+    
+    event.preventDefault();
+    event.stopPropagation();
+    
+    this.isDragOver = false;
+    this.classList.remove('drop-active');
+    
+    const files = event.dataTransfer?.files;
+    if (!files || files.length === 0) return;
+    
+    // Process each dropped file
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      this.fileDropProcess(file);
+    }
+  };
+  
+  /**
+   * Check if drop is disabled
+   */
+  private get isDropDisabled(): boolean {
+    return this.dropDisabled === 'true';
+  }
+  
+  /**
+   * Process a dropped file
+   * Dispatches 'file-drop' event for parent handling
+   * @param file The dropped File object
+   */
+  protected fileDropProcess(file: File): void {
+    const detail: FileDropDetail = {
+      file,
+      mimetype: file.type || 'application/octet-stream',
+      filename: file.name,
+      size: file.size,
+      targetView: this
+    };
+    
+    console.log(`[UcpView] File dropped: ${file.name} (${file.type})`);
+    
+    // Dispatch event for parent component/controller to handle
+    this.dispatchEvent(new CustomEvent<FileDropDetail>('file-drop', {
+      detail,
+      bubbles: true,
+      composed: true
+    }));
   }
   
   /**
