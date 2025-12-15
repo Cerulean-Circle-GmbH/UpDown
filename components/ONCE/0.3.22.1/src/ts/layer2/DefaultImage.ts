@@ -85,6 +85,11 @@ export class DefaultImage extends UcpComponent<ImageModel> {
   
   /**
    * Initialize from a File object (e.g., from drag & drop)
+   * 
+   * After initialization, automatically creates:
+   * - Unit: Named instance for this image
+   * - Artefact: Content-addressable storage with hash
+   * 
    * @param file The File object to initialize from
    */
   async initFromFile(file: File): Promise<void> {
@@ -107,6 +112,14 @@ export class DefaultImage extends UcpComponent<ImageModel> {
     this.model.fileUuid = this.fileInstance.model.uuid;
     this.model.objectUrl = this.fileInstance.objectUrl;
     this.model.alt = file.name.replace(/\.[^/.]+$/, ''); // Remove extension
+    
+    // FS.6: Create Unit + Artefact for this image
+    // Compute content hash for the artefact
+    const contentHash = await this.fileInstance.contentHashCompute();
+    const contentSize = this.fileInstance.model.size;
+    
+    // Create scenario (Unit + Artefact) in base class
+    await this.scenarioCreate(contentHash, contentSize, mimetype);
   }
   
   /**
