@@ -71,7 +71,7 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
    */
   protected modelDefault(): FileSystemModel {
     return {
-      uuid: crypto.randomUUID(),
+      uuid: this.uuidCreate(),
       name: 'FileSystem',
       rootFolderUuid: '',
       basePath: '/scenarios/type/File',
@@ -93,7 +93,7 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
       this.rootFolderInstance = new DefaultFolder();
       await this.rootFolderInstance.init({
         model: {
-          uuid: crypto.randomUUID(),
+          uuid: this.uuidCreate(),
           name: 'Root',
           path: '',
           folderName: '',
@@ -157,7 +157,7 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
     const folder = new DefaultFolder();
     folder.initSync({
       model: {
-        uuid: crypto.randomUUID(),
+        uuid: this.uuidCreate(),
         name,
         path: (parentFolder || this.rootFolderInstance)?.fullPath || '/',
         folderName: name,

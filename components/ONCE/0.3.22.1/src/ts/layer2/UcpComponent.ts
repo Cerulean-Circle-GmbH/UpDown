@@ -27,6 +27,10 @@ import type { Model } from '../layer3/Model.interface.js';
 import type { UnitModel } from '../layer3/UnitModel.interface.js';
 import type { UnitReference } from '../layer3/UnitReference.interface.js';
 import type { Storage } from '../layer3/Storage.interface.js';
+import type { IDProvider } from '../layer3/IDProvider.interface.js';
+import type { ContentIDProvider } from '../layer3/ContentIDProvider.interface.js';
+import { UUIDProvider } from './UUIDProvider.js';
+import { SHA256Provider } from './SHA256Provider.js';
 
 /**
  * UcpComponent - Abstract base class for all Web4 components
@@ -76,11 +80,41 @@ export abstract class UcpComponent<TModel extends Model> {
   /** Storage instance for scenario persistence */
   protected storage: Reference<Storage> = null;
   
+  // ═══════════════════════════════════════════════════════════════
+  // Static ID Providers (Shared across all components)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /** Default UUID provider (singleton) */
+  private static uuidProviderInstance: UUIDProvider = new UUIDProvider();
+  
+  /** Default SHA-256 content ID provider (singleton) */
+  private static sha256ProviderInstance: SHA256Provider = new SHA256Provider();
+  
   /**
    * Empty constructor - Web4 Principle 6
    */
   constructor() {
     this.controller = new UcpController<TModel>();
+    
+    // Register default ID providers in RelatedObjects
+    this.idProvidersRegister();
+  }
+  
+  /**
+   * Register default ID providers in RelatedObjects
+   * Called from constructor. Override to add custom providers.
+   */
+  protected idProvidersRegister(): void {
+    // Register static providers in this component's controller
+    // Uses interface as key for polymorphic lookup
+    this.controller.relatedObjectRegister(
+      UUIDProvider as unknown as new () => IDProvider, 
+      UcpComponent.uuidProviderInstance
+    );
+    this.controller.relatedObjectRegister(
+      SHA256Provider as unknown as new () => ContentIDProvider, 
+      UcpComponent.sha256ProviderInstance
+    );
   }
   
   /**
@@ -248,6 +282,71 @@ export abstract class UcpComponent<TModel extends Model> {
   get references(): UnitReference[] {
     const unitModel = this.model as unknown as UnitModel;
     return unitModel?.references || [];
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // ID Generation (via RelatedObjects lookup)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Create a new UUID
+   * 
+   * Uses IDProvider from RelatedObjects (default: UUIDProvider).
+   * Override idProvidersRegister() to use a different provider.
+   * 
+   * @returns RFC 4122 v4 UUID string
+   */
+  protected uuidCreate(): string {
+    const provider = this.controller.relatedObjectLookupFirst(
+      UUIDProvider as unknown as new () => IDProvider
+    );
+    if (provider) {
+      return provider.create();
+    }
+    // Fallback to static provider
+    return UcpComponent.uuidProviderInstance.create();
+  }
+  
+  /**
+   * Create content-based ID (hash)
+   * 
+   * Uses ContentIDProvider from RelatedObjects (default: SHA256Provider).
+   * Same content always produces the same ID (deterministic).
+   * 
+   * @param content Content to hash (ArrayBuffer, string, or Uint8Array)
+   * @returns Promise resolving to hash string (64 hex chars for SHA-256)
+   */
+  protected async contentIdCreate(content: ArrayBuffer | string | Uint8Array): Promise<string> {
+    const provider = this.controller.relatedObjectLookupFirst(
+      SHA256Provider as unknown as new () => ContentIDProvider
+    ) as ContentIDProvider | null;
+    
+    if (provider) {
+      return provider.contentIdCreate(content);
+    }
+    // Fallback to static provider
+    return UcpComponent.sha256ProviderInstance.contentIdCreate(content);
+  }
+  
+  /**
+   * Create content-based ID synchronously (if available)
+   * 
+   * Note: May return null in browser environment.
+   * Use contentIdCreate() for guaranteed results.
+   * 
+   * @param content Content to hash
+   * @returns Hash string or null if sync not available
+   */
+  protected contentIdCreateSync(content: ArrayBuffer | string | Uint8Array): string | null {
+    const provider = this.controller.relatedObjectLookupFirst(
+      SHA256Provider as unknown as new () => ContentIDProvider
+    ) as ContentIDProvider | null;
+    
+    if (provider) {
+      return provider.contentIdCreateSync(content);
+    }
+    // Fallback to static provider
+    return UcpComponent.sha256ProviderInstance.contentIdCreateSync(content);
   }
   
   // ═══════════════════════════════════════════════════════════════

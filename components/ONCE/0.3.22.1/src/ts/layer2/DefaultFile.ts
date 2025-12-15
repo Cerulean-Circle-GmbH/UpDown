@@ -87,7 +87,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
   protected modelDefault(): FileModel {
     const now = Date.now();
     return {
-      uuid: crypto.randomUUID(),
+      uuid: this.uuidCreate(),
       name: 'New File',
       path: '/',
       filename: 'untitled',
@@ -189,10 +189,8 @@ export class DefaultFile extends UcpComponent<FileModel> {
     const arrayBuffer = await this.fileContent.blob.arrayBuffer();
     this.fileContent.arrayBuffer = arrayBuffer;
     
-    // Compute SHA-256
-    const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    // Use ContentIDProvider for SHA-256 (via UcpComponent)
+    const hashHex = await this.contentIdCreate(arrayBuffer);
     
     this.model.contentHash = hashHex;
     return hashHex;
@@ -213,7 +211,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
     link.initSync({
       model: {
         ...this.modelDefault(),
-        uuid: crypto.randomUUID(),
+        uuid: this.uuidCreate(),
         path: linkPath,
         filename: this.model.filename,
         name: this.model.name,

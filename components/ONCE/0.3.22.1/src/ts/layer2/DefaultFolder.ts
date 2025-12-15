@@ -70,7 +70,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   protected modelDefault(): FolderModel {
     const now = Date.now();
     return {
-      uuid: crypto.randomUUID(),
+      uuid: this.uuidCreate(),
       name: 'New Folder',
       path: '/',
       folderName: 'untitled',
@@ -304,7 +304,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     link.initSync({
       model: {
         ...this.modelDefault(),
-        uuid: crypto.randomUUID(),
+        uuid: this.uuidCreate(),
         path: linkPath,
         folderName: this.model.folderName,
         name: this.model.name,
