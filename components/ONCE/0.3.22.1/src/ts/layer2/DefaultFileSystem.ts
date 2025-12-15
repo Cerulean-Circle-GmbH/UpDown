@@ -20,26 +20,17 @@ import { FileSystemModel } from '../layer3/FileSystemModel.interface.js';
 import { DefaultFile } from './DefaultFile.js';
 import { DefaultFolder } from './DefaultFolder.js';
 import { Reference } from '../layer3/Reference.interface.js';
+import { 
+  DefaultMimetypeHandlerRegistry, 
+  mimetypeRegistry 
+} from './DefaultMimetypeHandlerRegistry.js';
+import { MimetypeHandler, ComponentConstructor } from '../layer3/MimetypeHandler.interface.js';
 
 /**
  * Generate UUID (browser-compatible)
  */
 function generateUUID(): string {
   return crypto.randomUUID();
-}
-
-/**
- * MimetypeHandler - Maps mimetypes to component constructors
- */
-export interface MimetypeHandler {
-  /** Mimetype pattern (e.g., "image/*", "text/plain") */
-  pattern: string;
-  
-  /** Component class constructor */
-  componentClass: new () => UcpComponent<any>;
-  
-  /** Priority (higher = checked first) */
-  priority: number;
 }
 
 /**
@@ -66,11 +57,13 @@ export interface MimetypeHandler {
 export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
   
   // ═══════════════════════════════════════════════════════════════
-  // Mimetype Handler Registry
+  // Mimetype Handler Registry (uses singleton)
   // ═══════════════════════════════════════════════════════════════
   
-  /** Registered mimetype handlers (sorted by priority) */
-  private mimetypeHandlers: MimetypeHandler[] = [];
+  /** Access to singleton mimetype registry */
+  get mimetypeRegistry(): DefaultMimetypeHandlerRegistry {
+    return mimetypeRegistry;
+  }
   
   /** Root folder */
   private _rootFolder: Reference<DefaultFolder> = null;
@@ -221,55 +214,38 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
   }
   
   // ═══════════════════════════════════════════════════════════════
-  // Mimetype Handler Registry
+  // Mimetype Handler Registry (delegates to singleton)
   // ═══════════════════════════════════════════════════════════════
   
   /**
    * Register a mimetype handler
    * 
+   * Delegates to singleton registry.
+   * 
    * @param pattern Mimetype pattern (e.g., "image/*", "text/plain")
    * @param componentClass Component class constructor
    * @param priority Priority (higher = checked first)
+   * @param name Optional handler name
    */
   mimetypeHandlerRegister(
     pattern: string,
-    componentClass: new () => UcpComponent<any>,
-    priority: number = 0
+    componentClass: ComponentConstructor,
+    priority: number = 0,
+    name?: string
   ): void {
-    this.mimetypeHandlers.push({ pattern, componentClass, priority });
-    // Sort by priority descending
-    this.mimetypeHandlers.sort((a, b) => b.priority - a.priority);
+    mimetypeRegistry.register(pattern, componentClass, priority, name);
   }
   
   /**
    * Lookup handler for a mimetype
    * 
+   * Delegates to singleton registry.
+   * 
    * @param mimetype MIME type to match
    * @returns Handler or null
    */
-  mimetypeHandlerLookup(mimetype: string): Reference<MimetypeHandler> {
-    for (const handler of this.mimetypeHandlers) {
-      if (this.mimetypeMatches(mimetype, handler.pattern)) {
-        return handler;
-      }
-    }
-    return null;
-  }
-  
-  /**
-   * Check if mimetype matches pattern
-   */
-  private mimetypeMatches(mimetype: string, pattern: string): boolean {
-    if (pattern === '*/*') return true;
-    if (pattern === mimetype) return true;
-    
-    // Handle wildcards like "image/*"
-    if (pattern.endsWith('/*')) {
-      const prefix = pattern.slice(0, -1); // "image/"
-      return mimetype.startsWith(prefix);
-    }
-    
-    return false;
+  mimetypeHandlerLookup(mimetype: string): MimetypeHandler | null {
+    return mimetypeRegistry.handlerLookup(mimetype);
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -327,6 +303,6 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
       this._rootFolder.dispose();
       this._rootFolder = null;
     }
-    this.mimetypeHandlers = [];
+    // Note: Registry is singleton, not cleared on FileSystem dispose
   }
 }
