@@ -4,10 +4,16 @@
  * Represents a folder/directory in the Web4 FileSystem.
  * Manages child files and folders, supports link operations.
  * 
+ * Folder implements Tree<FileSystemNode>:
+ * - Folders ARE Files (specialized)
+ * - Files CANNOT have children (leaf nodes)
+ * - Folders CAN add files/folders as children
+ * 
  * Web4 Principles:
- * - P4: Radical OOP - Folder IS a UcpComponent
+ * - P4: Radical OOP - Folder IS a File AND implements Tree
  * - P6: Empty constructor, async init
  * - P7: Layer 2 sync methods, Layer 4 for async I/O
+ * - P22: Collection<T> for children
  * - P24: RelatedObjects for unit/artefact (via UcpComponent base)
  * 
  * @ior ior:esm:/ONCE/{version}/DefaultFolder
@@ -18,6 +24,9 @@ import { UcpComponent } from './UcpComponent.js';
 import { FolderModel, FolderChildReference } from '../layer3/FolderModel.interface.js';
 import { DefaultFile } from './DefaultFile.js';
 import { Reference } from '../layer3/Reference.interface.js';
+import { Collection } from '../layer3/Collection.interface.js';
+import { Tree } from '../layer3/Tree.interface.js';
+import { Container } from '../layer3/Container.interface.js';
 
 /**
  * Generate UUID (browser-compatible)
@@ -27,19 +36,36 @@ function generateUUID(): string {
 }
 
 /**
+ * FileSystemNode - Union type for files and folders
+ */
+export type FileSystemNode = DefaultFile | DefaultFolder;
+
+/**
  * DefaultFolder - Folder component for Web4 FileSystem
+ * 
+ * Implements Tree<FileSystemNode>:
+ * - parent: Reference<DefaultFolder> (from Tree)
+ * - children: Collection<FileSystemNode> (from Tree)
+ * 
+ * Implements Container<FileSystemNode>:
+ * - pathFromRoot(): for breadcrumb navigation
+ * - navigateTo(): for animated panel transitions
  * 
  * Children are stored as lightweight references (FolderChildReference).
  * Full child components loaded on-demand when navigated.
  */
-export class DefaultFolder extends UcpComponent<FolderModel> {
+export class DefaultFolder extends UcpComponent<FolderModel> 
+  implements Tree<FileSystemNode>, Container<FileSystemNode> {
   
   // ═══════════════════════════════════════════════════════════════
-  // Child Component Cache (loaded on demand)
+  // Tree Structure
   // ═══════════════════════════════════════════════════════════════
   
-  /** Cache of loaded child components (by UUID) */
-  private childrenCache: Map<string, DefaultFile | DefaultFolder> = new Map();
+  /** Parent folder (null for root) */
+  private _parent: Reference<DefaultFolder> = null;
+  
+  /** Child components cache (by UUID) */
+  private _children: Map<string, FileSystemNode> = new Map();
   
   // ═══════════════════════════════════════════════════════════════
   // Initialization
@@ -65,31 +91,44 @@ export class DefaultFolder extends UcpComponent<FolderModel> {
   }
   
   // ═══════════════════════════════════════════════════════════════
-  // Child Management
+  // Tree Interface Implementation
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Add a file to this folder
-   * 
-   * @param file File component to add
+   * Get parent folder (Tree interface)
    */
-  childAdd(file: DefaultFile): void;
+  get parent(): Reference<Tree<FileSystemNode>> {
+    return this._parent;
+  }
   
   /**
-   * Add a subfolder to this folder
-   * 
-   * @param folder Folder component to add
+   * Set parent folder (called by parent's childAdd)
+   * @internal
    */
-  childAdd(folder: DefaultFolder): void;
+  parentSet(folder: Reference<DefaultFolder>): void {
+    this._parent = folder;
+    if (folder) {
+      this.model.parentUuid = folder.model.uuid;
+    }
+  }
   
   /**
-   * Add a child (file or folder) to this folder
+   * Get children as Collection (Tree interface)
    */
-  childAdd(child: DefaultFile | DefaultFolder): void {
+  get children(): Collection<FileSystemNode> {
+    return Array.from(this._children.values());
+  }
+  
+  /**
+   * Add a child (Tree interface)
+   * 
+   * Folders can add files or other folders.
+   */
+  childAdd(child: FileSystemNode): void {
     const isFolder = child instanceof DefaultFolder;
     const childModel = child.model;
     
-    // Create reference
+    // Create lightweight reference for model
     const ref: FolderChildReference = {
       uuid: childModel.uuid,
       name: childModel.name,
@@ -99,58 +138,124 @@ export class DefaultFolder extends UcpComponent<FolderModel> {
       hasChildren: isFolder ? (childModel as FolderModel).children.length > 0 : false
     };
     
-    // Add to children
+    // Add to model children (lightweight references)
     this.model.children = [...this.model.children, ref];
     this.model.modifiedAt = Date.now();
     
-    // Update child's path and parent
+    // Set parent on child
+    child.parentSet(this);
+    
+    // Update child's path
     if (isFolder) {
-      (child as DefaultFolder).model.parentUuid = this.model.uuid;
       (child as DefaultFolder).model.path = this.childPath;
     } else {
       (child as DefaultFile).model.path = this.childPath;
     }
     
     // Cache the component
-    this.childrenCache.set(childModel.uuid, child);
+    this._children.set(childModel.uuid, child);
   }
   
   /**
-   * Remove a child by UUID
+   * Remove a child (Tree interface)
    * 
-   * @param uuid UUID of child to remove
-   * @returns The removed child, or null if not found
+   * @param child Child to remove
+   * @returns true if removed, false if not found
    */
-  childRemove(uuid: string): Reference<DefaultFile | DefaultFolder> {
+  childRemove(child: FileSystemNode): boolean {
+    const uuid = child.model.uuid;
     const index = this.model.children.findIndex(c => c.uuid === uuid);
-    if (index === -1) return null;
+    if (index === -1) return false;
     
     // Remove from model
     this.model.children = this.model.children.filter(c => c.uuid !== uuid);
     this.model.modifiedAt = Date.now();
     
-    // Get from cache and remove
-    const cached = this.childrenCache.get(uuid);
-    this.childrenCache.delete(uuid);
+    // Clear parent on child
+    child.parentSet(null);
     
-    return cached || null;
+    // Remove from cache
+    this._children.delete(uuid);
+    
+    return true;
   }
   
   /**
-   * Get child by UUID (from cache or load)
-   * 
-   * @param uuid UUID of child
-   * @returns Child component or null
+   * Remove child by UUID (convenience method)
    */
-  childGet(uuid: string): Reference<DefaultFile | DefaultFolder> {
-    return this.childrenCache.get(uuid) || null;
+  childRemoveByUuid(uuid: string): Reference<FileSystemNode> {
+    const child = this._children.get(uuid);
+    if (!child) return null;
+    
+    this.childRemove(child);
+    return child;
   }
   
   /**
-   * Check if folder has any children
+   * Get child by UUID (from cache)
+   */
+  childGet(uuid: string): Reference<FileSystemNode> {
+    return this._children.get(uuid) || null;
+  }
+  
+  /**
+   * Check if folder has any children (Tree interface)
    */
   get hasChildren(): boolean {
-    return this.model.children.length > 0;
+    return this._children.size > 0 || this.model.children.length > 0;
+  }
+  
+  /**
+   * Get number of children (Tree interface)
+   */
+  get childCount(): number {
+    return this._children.size || this.model.children.length;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Container Interface Implementation
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Display name for breadcrumb/UI (Container interface)
+   */
+  get displayName(): string {
+    return this.model.name || this.model.folderName;
+  }
+  
+  /**
+   * UUID (Container interface)
+   */
+  get uuid(): string {
+    return this.model.uuid;
+  }
+  
+  /**
+   * Get path from root to this folder (Container interface)
+   * 
+   * Used for breadcrumb navigation.
+   */
+  pathFromRoot(): Container<FileSystemNode>[] {
+    const path: Container<FileSystemNode>[] = [];
+    let current: Reference<DefaultFolder> = this;
+    
+    while (current) {
+      path.unshift(current);
+      current = current._parent;
+    }
+    
+    return path;
+  }
+  
+  /**
+   * Navigate to a child (Container interface)
+   * 
+   * For OverViews: triggers navigation/animation.
+   */
+  navigateTo(child: FileSystemNode): boolean {
+    const exists = this._children.has(child.model.uuid);
+    // Navigation logic handled by OverView, we just validate
+    return exists;
   }
   
   /**
@@ -252,12 +357,11 @@ export class DefaultFolder extends UcpComponent<FolderModel> {
    * @param newPath New path for the folder
    */
   pathMove(newPath: string): void {
-    const oldPath = this.fullPath;
     this.model.path = newPath;
     this.model.modifiedAt = Date.now();
     
     // Update cached children paths
-    this.childrenCache.forEach(child => {
+    this._children.forEach(child => {
       if (child instanceof DefaultFolder) {
         child.model.path = this.childPath;
       } else {
@@ -286,11 +390,11 @@ export class DefaultFolder extends UcpComponent<FolderModel> {
    */
   dispose(): void {
     // Dispose all cached children
-    this.childrenCache.forEach(child => {
+    this._children.forEach(child => {
       if ('dispose' in child) {
         (child as any).dispose();
       }
     });
-    this.childrenCache.clear();
+    this._children.clear();
   }
 }

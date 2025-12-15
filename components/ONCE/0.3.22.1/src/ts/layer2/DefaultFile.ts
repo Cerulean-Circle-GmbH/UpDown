@@ -4,6 +4,11 @@
  * Represents a file in the Web4 FileSystem.
  * Manages file content, hash computation, and link operations.
  * 
+ * File is a LEAF node in the Tree hierarchy:
+ * - Has parent (set by Folder when added)
+ * - CANNOT have children (leaf node)
+ * - Folder extends File and adds Tree capabilities
+ * 
  * Web4 Principles:
  * - P4: Radical OOP - File IS a UcpComponent
  * - P6: Empty constructor, async init
@@ -17,6 +22,10 @@
 import { UcpComponent } from './UcpComponent.js';
 import { FileModel, FileContent } from '../layer3/FileModel.interface.js';
 import { Reference } from '../layer3/Reference.interface.js';
+
+// Forward declaration to avoid circular import
+import type { DefaultFolder } from './DefaultFolder.js';
+
 /**
  * Generate UUID (browser-compatible)
  */
@@ -26,6 +35,10 @@ function generateUUID(): string {
 
 /**
  * DefaultFile - File component for Web4 FileSystem
+ * 
+ * File is a LEAF node:
+ * - Has parent (Folder that contains it)
+ * - Cannot have children (use Folder for that)
  * 
  * Lifecycle:
  * 1. Created via FileSystem.fileCreate(blob, mimetype, name)
@@ -39,6 +52,30 @@ function generateUUID(): string {
  * - objectUrl created for display
  */
 export class DefaultFile extends UcpComponent<FileModel> {
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Tree Structure (File is a LEAF - no children)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /** Parent folder (set when added to a folder) */
+  private _parent: Reference<DefaultFolder> = null;
+  
+  /**
+   * Get parent folder
+   * 
+   * Returns null for orphan files (not yet added to a folder).
+   */
+  get parent(): Reference<DefaultFolder> {
+    return this._parent;
+  }
+  
+  /**
+   * Set parent folder (called by Folder.childAdd)
+   * @internal
+   */
+  parentSet(folder: Reference<DefaultFolder>): void {
+    this._parent = folder;
+  }
   
   // ═══════════════════════════════════════════════════════════════
   // Runtime Content (NOT in model - can't serialize Blobs)
