@@ -76,9 +76,13 @@ export class SHA256Provider implements ContentIDProvider {
     // Compute SHA-256 (cast to BufferSource for strict TypeScript)
     const hashBuffer = await crypto.subtle.digest('SHA-256', data as unknown as BufferSource);
     
-    // Convert to hex string
+    // Convert to hex string - P4a: Use for...of instead of map with arrow
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    const hexParts: string[] = [];
+    for (const b of hashArray) {
+      hexParts.push(b.toString(16).padStart(2, '0'));
+    }
+    return hexParts.join('');
   }
   
   /**

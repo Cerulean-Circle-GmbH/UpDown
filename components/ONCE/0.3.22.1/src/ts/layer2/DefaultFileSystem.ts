@@ -255,8 +255,9 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
    * @returns Created component or DefaultFile if no handler
    */
   async componentFromFile(nativeFile: File): Promise<UcpComponent<any>> {
-    // Create DefaultFile first
-    const blob = await nativeFile.arrayBuffer().then(ab => new Blob([ab], { type: nativeFile.type }));
+    // Create DefaultFile first - P4a: Avoid arrow in then()
+    const arrayBuffer = await nativeFile.arrayBuffer();
+    const blob = new Blob([arrayBuffer], { type: nativeFile.type });
     const file = await this.fileCreate(blob, nativeFile.name, nativeFile.type);
     
     // Lookup handler

@@ -27,11 +27,10 @@ import { Reference } from '../layer3/Reference.interface.js';
 import { Collection } from '../layer3/Collection.interface.js';
 import { Tree } from '../layer3/Tree.interface.js';
 import { Container } from '../layer3/Container.interface.js';
+import { FileSystemNode } from '../layer3/FileSystemNode.type.js';
 
-/**
- * FileSystemNode - Union type for files and folders
- */
-export type FileSystemNode = DefaultFile | DefaultFolder;
+// Re-export for backwards compatibility
+export type { FileSystemNode };
 
 /**
  * DefaultFolder - Folder component for Web4 FileSystem
@@ -157,11 +156,20 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    */
   childRemove(child: FileSystemNode): boolean {
     const uuid = child.model.uuid;
-    const index = this.model.children.findIndex(c => c.uuid === uuid);
+    
+    // P4a: Use function predicates instead of arrows
+    function matchesUuid(c: FolderChildReference): boolean {
+      return c.uuid === uuid;
+    }
+    function notMatchesUuid(c: FolderChildReference): boolean {
+      return c.uuid !== uuid;
+    }
+    
+    const index = Array.prototype.findIndex.call(this.model.children, matchesUuid);
     if (index === -1) return false;
     
     // Remove from model
-    this.model.children = this.model.children.filter(c => c.uuid !== uuid);
+    this.model.children = Array.prototype.filter.call(this.model.children, notMatchesUuid);
     this.model.modifiedAt = Date.now();
     
     // Clear parent on child
@@ -272,21 +280,33 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * @returns Child reference or null
    */
   childFindByName(name: string): Reference<FolderChildReference> {
-    return this.model.children.find(c => c.name === name) || null;
+    // P4a: Use function predicate instead of arrow
+    function matchesName(c: FolderChildReference): boolean {
+      return c.name === name;
+    }
+    return Array.prototype.find.call(this.model.children, matchesName) || null;
   }
   
   /**
-   * Get all files (not folders)
+   * Get all files (not folders) - P22: Collection<T>
    */
-  get files(): FolderChildReference[] {
-    return this.model.children.filter(c => !c.isFolder);
+  get files(): Collection<FolderChildReference> {
+    // P4a: Use function predicate instead of arrow
+    function isFile(child: FolderChildReference): boolean {
+      return !child.isFolder;
+    }
+    return Array.prototype.filter.call(this.model.children, isFile);
   }
   
   /**
-   * Get all subfolders
+   * Get all subfolders - P22: Collection<T>
    */
-  get folders(): FolderChildReference[] {
-    return this.model.children.filter(c => c.isFolder);
+  get folders(): Collection<FolderChildReference> {
+    // P4a: Use function predicate instead of arrow
+    function isFolder(child: FolderChildReference): boolean {
+      return child.isFolder;
+    }
+    return Array.prototype.filter.call(this.model.children, isFolder);
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -353,14 +373,14 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     this.model.path = newPath;
     this.model.modifiedAt = Date.now();
     
-    // Update cached children paths
-    this.childrenCache.forEach(child => {
+    // Update cached children paths - P4a: Use for...of instead of arrow
+    for (const child of this.childrenCache.values()) {
       if (child instanceof DefaultFolder) {
         child.model.path = this.childPath;
       } else {
         child.model.path = this.childPath;
       }
-    });
+    }
   }
   
   /**
@@ -382,12 +402,12 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * Release resources (recursive)
    */
   dispose(): void {
-    // Dispose all cached children
-    this.childrenCache.forEach(child => {
+    // Dispose all cached children - P4a: Use for...of instead of arrow
+    for (const child of this.childrenCache.values()) {
       if ('dispose' in child) {
         (child as any).dispose();
       }
-    });
+    }
     this.childrenCache.clear();
   }
 }

@@ -65,8 +65,17 @@ export class DefaultMimetypeHandlerRegistry implements MimetypeHandlerRegistry {
    * Register a handler for a mimetype pattern
    */
   handlerRegister(handler: MimetypeHandler): void {
+    // P4a: Use function predicates instead of arrows
+    const pattern = handler.pattern;
+    function matchesPattern(h: MimetypeHandler): boolean {
+      return h.pattern === pattern;
+    }
+    function comparePriority(a: MimetypeHandler, b: MimetypeHandler): number {
+      return b.priority - a.priority;
+    }
+    
     // Check for duplicate pattern
-    const existing = this.handlers.findIndex(h => h.pattern === handler.pattern);
+    const existing = this.handlers.findIndex(matchesPattern);
     if (existing !== -1) {
       // Replace existing
       this.handlers[existing] = handler;
@@ -75,7 +84,7 @@ export class DefaultMimetypeHandlerRegistry implements MimetypeHandlerRegistry {
     }
     
     // Sort by priority descending (higher priority first)
-    this.handlers.sort((a, b) => b.priority - a.priority);
+    this.handlers.sort(comparePriority);
   }
   
   /**
@@ -99,7 +108,11 @@ export class DefaultMimetypeHandlerRegistry implements MimetypeHandlerRegistry {
    * Unregister a handler by pattern
    */
   handlerUnregister(pattern: string): void {
-    this.handlers = this.handlers.filter(h => h.pattern !== pattern);
+    // P4a: Use function predicate instead of arrow
+    function notMatchesPattern(h: MimetypeHandler): boolean {
+      return h.pattern !== pattern;
+    }
+    this.handlers = this.handlers.filter(notMatchesPattern);
   }
   
   /**
@@ -160,14 +173,23 @@ export class DefaultMimetypeHandlerRegistry implements MimetypeHandlerRegistry {
    * Check if a handler exists for a pattern
    */
   hasHandler(pattern: string): boolean {
-    return this.handlers.some(h => h.pattern === pattern);
+    // P4a: Use function predicate instead of arrow
+    function matchesPattern(h: MimetypeHandler): boolean {
+      return h.pattern === pattern;
+    }
+    return this.handlers.some(matchesPattern);
   }
   
   /**
    * Get all patterns
    */
   get patterns(): string[] {
-    return this.handlers.map(h => h.pattern);
+    // P4a: Use for...of instead of map with arrow
+    const result: string[] = [];
+    for (const h of this.handlers) {
+      result.push(h.pattern);
+    }
+    return result;
   }
 }
 

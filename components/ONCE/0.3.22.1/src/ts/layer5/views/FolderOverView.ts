@@ -226,7 +226,7 @@ export class FolderOverView extends LitElement {
   }
   
   /**
-   * Render breadcrumb navigation
+   * Render breadcrumb navigation - P4a: No arrow functions
    */
   private renderBreadcrumb(): TemplateResult {
     if (this.breadcrumbPath.length === 0) {
@@ -238,25 +238,51 @@ export class FolderOverView extends LitElement {
       `;
     }
     
+    // P4a: Build template parts using for...of instead of map with arrow
+    const parts: TemplateResult[] = [];
+    for (let index = 0; index < this.breadcrumbPath.length; index++) {
+      const item = this.breadcrumbPath[index];
+      const isLast = index === this.breadcrumbPath.length - 1;
+      parts.push(this.renderBreadcrumbItem(item, index, isLast));
+    }
+    
+    return html`${parts}`;
+  }
+  
+  /**
+   * Render a single breadcrumb item - P4a: Separate method for click handler
+   */
+  private renderBreadcrumbItem(
+    item: { name: string; uuid: string }, 
+    index: number, 
+    isLast: boolean
+  ): TemplateResult {
     return html`
-      ${this.breadcrumbPath.map((item, index) => {
-        const isLast = index === this.breadcrumbPath.length - 1;
-        return html`
-          ${index > 0 ? html`<span class="breadcrumb-separator">/</span>` : ''}
-          <span 
-            class="breadcrumb-item ${isLast ? 'current' : ''}"
-            @click=${() => !isLast && this.breadcrumbNavigate(item.uuid, index)}
-          >
-            ${index === 0 ? html`<span class="breadcrumb-icon">📁</span>` : ''}
-            ${item.name}
-          </span>
-        `;
-      })}
+      ${index > 0 ? html`<span class="breadcrumb-separator">/</span>` : ''}
+      <span 
+        class="breadcrumb-item ${isLast ? 'current' : ''}"
+        data-uuid="${item.uuid}"
+        data-index="${index}"
+        @click=${isLast ? undefined : this.handleBreadcrumbClick}
+      >
+        ${index === 0 ? html`<span class="breadcrumb-icon">📁</span>` : ''}
+        ${item.name}
+      </span>
     `;
   }
   
   /**
-   * Render folder children (files and folders)
+   * Handle breadcrumb click - P4a: Method reference instead of arrow
+   */
+  private handleBreadcrumbClick(event: Event): void {
+    const target = event.currentTarget as HTMLElement;
+    const uuid = target.dataset.uuid || '';
+    const index = parseInt(target.dataset.index || '0', 10);
+    this.breadcrumbNavigate(uuid, index);
+  }
+  
+  /**
+   * Render folder children (files and folders) - P4a: No arrow functions
    */
   private renderChildren(): TemplateResult {
     if (!this.model?.children || this.model.children.length === 0) {
@@ -268,30 +294,52 @@ export class FolderOverView extends LitElement {
       `;
     }
     
-    // Sort: folders first, then files
-    const sorted = [...this.model.children].sort((a, b) => {
+    // P4a: Use function comparator instead of arrow
+    function compareChildren(a: FolderChildReference, b: FolderChildReference): number {
       if (a.isFolder && !b.isFolder) return -1;
       if (!a.isFolder && b.isFolder) return 1;
       return a.name.localeCompare(b.name);
-    });
+    }
     
+    // Sort: folders first, then files
+    const sorted = [...this.model.children].sort(compareChildren);
+    
+    // P4a: Build template parts using for...of instead of map with arrow
+    const parts: TemplateResult[] = [];
+    for (const child of sorted) {
+      parts.push(this.renderChildItem(child));
+    }
+    
+    return html`${parts}`;
+  }
+  
+  /**
+   * Render a single child item (file or folder) - P4a: Separate method
+   */
+  private renderChildItem(child: FolderChildReference): TemplateResult {
+    if (child.isFolder) {
+      return html`
+        <folder-item-view
+          .childRef=${child}
+          @item-select=${this.handleItemSelect}
+          @item-navigate=${this.handleItemNavigate}
+        ></folder-item-view>
+      `;
+    }
     return html`
-      ${sorted.map(child => 
-        child.isFolder
-          ? html`
-              <folder-item-view
-                .childRef=${child}
-                @item-select=${this.handleItemSelect}
-                @item-navigate=${this.handleItemNavigate}
-              ></folder-item-view>
-            `
-          : html`
-              <file-item-view
-                .model=${{ ...child, filename: child.name, path: '', createdAt: 0, modifiedAt: 0, isLink: false, linkTarget: null, contentHash: null }}
-                @item-select=${this.handleItemSelect}
-              ></file-item-view>
-            `
-      )}
+      <file-item-view
+        .model=${{ 
+          ...child, 
+          filename: child.name, 
+          path: '', 
+          createdAt: 0, 
+          modifiedAt: 0, 
+          isLink: false, 
+          linkTarget: null, 
+          contentHash: null 
+        }}
+        @item-select=${this.handleItemSelect}
+      ></file-item-view>
     `;
   }
   
@@ -314,10 +362,15 @@ export class FolderOverView extends LitElement {
     // Try to use Container.pathFromRoot() if available
     if (this.container && 'pathFromRoot' in this.container) {
       const path = (this.container as Container<unknown>).pathFromRoot();
-      this.breadcrumbPath = path.map(node => ({
-        name: (node as any).displayName || (node as any).model?.name || 'Folder',
-        uuid: (node as any).uuid || (node as any).model?.uuid || ''
-      }));
+      // P4a: Use for...of instead of map with arrow
+      const breadcrumbs: { name: string; uuid: string }[] = [];
+      for (const node of path) {
+        breadcrumbs.push({
+          name: (node as any).displayName || (node as any).model?.name || 'Folder',
+          uuid: (node as any).uuid || (node as any).model?.uuid || ''
+        });
+      }
+      this.breadcrumbPath = breadcrumbs;
       return;
     }
     
@@ -346,10 +399,15 @@ export class FolderOverView extends LitElement {
       composed: true
     }));
     
-    // Reset animation after transition
-    setTimeout(() => {
-      this.isAnimating = false;
-    }, 300);
+    // Reset animation after transition - P4a: Use bound method
+    setTimeout(this.animationReset.bind(this), 300);
+  }
+  
+  /**
+   * Reset animation state - P4a: Method for setTimeout callback
+   */
+  private animationReset(): void {
+    this.isAnimating = false;
   }
   
   /**
@@ -376,10 +434,8 @@ export class FolderOverView extends LitElement {
       composed: true
     }));
     
-    // Reset animation after transition
-    setTimeout(() => {
-      this.isAnimating = false;
-    }, 300);
+    // Reset animation after transition - P4a: Use bound method
+    setTimeout(this.animationReset.bind(this), 300);
   }
   
   /**
@@ -431,9 +487,8 @@ export class FolderOverView extends LitElement {
     this.isAnimating = true;
     this.model = folderModel;
     
-    setTimeout(() => {
-      this.isAnimating = false;
-    }, 300);
+    // P4a: Use bound method instead of arrow
+    setTimeout(this.animationReset.bind(this), 300);
   }
 }
 

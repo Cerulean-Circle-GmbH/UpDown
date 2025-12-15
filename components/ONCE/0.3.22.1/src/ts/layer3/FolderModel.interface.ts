@@ -15,6 +15,7 @@
 
 import { Model } from './Model.interface.js';
 import { Reference } from './Reference.interface.js';
+import { Collection } from './Collection.interface.js';
 import { FolderChildReference } from './FolderChildReference.interface.js';
 
 // Re-export for backwards compatibility
@@ -33,8 +34,8 @@ export interface FolderModel extends Model {
   /** Folder name */
   folderName: string;
   
-  /** Child references (files and folders) */
-  children: FolderChildReference[];
+  /** Child references (files and folders) - P22: Collection<T> */
+  children: Collection<FolderChildReference>;
   
   /** Parent folder UUID (null for root) */
   parentUuid: Reference<string>;
