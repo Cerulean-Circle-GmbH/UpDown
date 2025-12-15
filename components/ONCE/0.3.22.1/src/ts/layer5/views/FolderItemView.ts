@@ -7,17 +7,19 @@
  * - RIGHT: Navigate "›" (if has children)
  * 
  * Web4 Principles:
- * - P4: Radical OOP - View IS a LitElement component
+ * - P4: Radical OOP - View IS a UcpView component
  * - P27: Web Components ARE Radical OOP
  * - P30: Works with Tree interface - shows "›" if hasChildren
- * - P31: Universal Drop Support (inherits from base)
+ * - P31: Universal Drop Support (via UcpView base)
+ * - P33: Separation of Concerns (external CSS)
  * 
  * @ior ior:esm:/ONCE/{version}/FolderItemView
  * @pdca 2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md
  */
 
-import { LitElement, html, css, TemplateResult } from 'lit';
+import { html, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { UcpView } from './UcpView.js';
 import { FolderModel, FolderChildReference } from '../../layer3/FolderModel.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 
@@ -37,106 +39,12 @@ import { Reference } from '../../layer3/Reference.interface.js';
  * - 'item-drag-start': Fired when drag begins
  */
 @customElement('folder-item-view')
-export class FolderItemView extends LitElement {
+export class FolderItemView extends UcpView<FolderModel> {
   
-  static styles = css`
-    :host {
-      display: block;
-      --item-height: 56px;
-      --icon-size: 40px;
-      --border-radius: 8px;
-    }
-    
-    .folder-item {
-      display: flex;
-      align-items: center;
-      height: var(--item-height);
-      padding: 0 12px;
-      background: var(--color-surface, #ffffff);
-      border-radius: var(--border-radius);
-      margin-bottom: 4px;
-      cursor: pointer;
-      transition: background 0.15s ease;
-    }
-    
-    .folder-item:hover {
-      background: var(--color-surface-hover, #f5f5f5);
-    }
-    
-    .folder-item.selected {
-      background: var(--color-primary-light, #e3f2fd);
-    }
-    
-    .drag-handle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: var(--icon-size);
-      height: var(--icon-size);
-      font-size: 24px;
-      cursor: grab;
-      user-select: none;
-      flex-shrink: 0;
-    }
-    
-    .drag-handle:active {
-      cursor: grabbing;
-    }
-    
-    .content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 0 12px;
-      min-width: 0; /* Enable text truncation */
-    }
-    
-    .name {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--color-text-primary, #212121);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    .details {
-      font-size: 12px;
-      color: var(--color-text-secondary, #757575);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    .navigate {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: var(--item-height);
-      font-size: 20px;
-      color: var(--color-text-secondary, #757575);
-      flex-shrink: 0;
-      cursor: pointer;
-      transition: color 0.15s ease;
-    }
-    
-    .navigate:hover {
-      color: var(--color-primary, #1976d2);
-    }
-    
-    .spacer {
-      width: 32px;
-      flex-shrink: 0;
-    }
-  `;
+  /** CSS path for external styles (P33: Separation of Concerns) */
+  static cssPath = 'FolderItemView.css';
   
-  /** Folder model data */
-  @property({ type: Object })
-  model: Reference<FolderModel> = null;
-  
-  /** Or use lightweight reference (from parent listing) */
+  /** Lightweight reference (from parent listing) */
   @property({ type: Object })
   childRef: Reference<FolderChildReference> = null;
   
@@ -248,5 +156,6 @@ declare global {
     'folder-item-view': FolderItemView;
   }
 }
+
 
 

@@ -24,3 +24,4 @@ export enum NavigationDirection {
   /** No animation (initial state) */
   None = 'none'
 }
+

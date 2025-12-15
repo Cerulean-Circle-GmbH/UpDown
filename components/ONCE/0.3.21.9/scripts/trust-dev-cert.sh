@@ -34,3 +34,4 @@ else
     echo "   2. Drag $CERT_PATH into 'login' keychain"
     echo "   3. Double-click the cert, expand 'Trust', set SSL to 'Always Trust'"
 fi
+

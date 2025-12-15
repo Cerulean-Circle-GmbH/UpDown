@@ -17,3 +17,4 @@ import type { DefaultFolder } from '../layer2/DefaultFolder.js';
  * Used for Tree<T> children where T can be either a file or folder.
  */
 export type FileSystemNode = DefaultFile | DefaultFolder;
+

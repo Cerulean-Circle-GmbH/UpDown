@@ -7,17 +7,19 @@
  * - RIGHT: Navigate "›" (only if has children - files don't)
  * 
  * Web4 Principles:
- * - P4: Radical OOP - View IS a LitElement component
+ * - P4: Radical OOP - View IS a UcpView component
  * - P27: Web Components ARE Radical OOP
  * - P30: Works with Tree interface
- * - P31: Universal Drop Support (inherits from base)
+ * - P31: Universal Drop Support (via UcpView base)
+ * - P33: Separation of Concerns (external CSS)
  * 
  * @ior ior:esm:/ONCE/{version}/FileItemView
  * @pdca 2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md
  */
 
-import { LitElement, html, css, TemplateResult } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { html, TemplateResult } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { UcpView } from './UcpView.js';
 import { FileModel } from '../../layer3/FileModel.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 
@@ -51,94 +53,17 @@ const MIMETYPE_ICONS: Record<string, string> = {
  * - 'item-drag-start': Fired when drag begins
  */
 @customElement('file-item-view')
-export class FileItemView extends LitElement {
+export class FileItemView extends UcpView<FileModel> {
   
-  static styles = css`
-    :host {
-      display: block;
-      --item-height: 56px;
-      --icon-size: 40px;
-      --border-radius: 8px;
-    }
-    
-    .file-item {
-      display: flex;
-      align-items: center;
-      height: var(--item-height);
-      padding: 0 12px;
-      background: var(--color-surface, #ffffff);
-      border-radius: var(--border-radius);
-      margin-bottom: 4px;
-      cursor: pointer;
-      transition: background 0.15s ease;
-    }
-    
-    .file-item:hover {
-      background: var(--color-surface-hover, #f5f5f5);
-    }
-    
-    .file-item.selected {
-      background: var(--color-primary-light, #e3f2fd);
-    }
-    
-    .drag-handle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: var(--icon-size);
-      height: var(--icon-size);
-      font-size: 24px;
-      cursor: grab;
-      user-select: none;
-      flex-shrink: 0;
-    }
-    
-    .drag-handle:active {
-      cursor: grabbing;
-    }
-    
-    .content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 0 12px;
-      min-width: 0; /* Enable text truncation */
-    }
-    
-    .name {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--color-text-primary, #212121);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    .details {
-      font-size: 12px;
-      color: var(--color-text-secondary, #757575);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    .spacer {
-      width: 24px;
-      flex-shrink: 0;
-    }
-  `;
-  
-  /** File model data */
-  @property({ type: Object })
-  model: Reference<FileModel> = null;
+  /** CSS path for external styles (P33: Separation of Concerns) */
+  static cssPath = 'FileItemView.css';
   
   /** Is this item selected? */
   @property({ type: Boolean, reflect: true })
   selected = false;
   
   render(): TemplateResult {
-    if (!this.model) {
+    if (!this.hasModel) {
       return html`<div class="file-item">Loading...</div>`;
     }
     
@@ -232,5 +157,6 @@ declare global {
     'file-item-view': FileItemView;
   }
 }
+
 
 

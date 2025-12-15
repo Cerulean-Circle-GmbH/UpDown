@@ -16,3 +16,4 @@ import type { Model } from './Model.interface.js';
  */
 export type ComponentConstructor<TModel extends Model = Model> = 
   new () => UcpComponent<TModel>;
+

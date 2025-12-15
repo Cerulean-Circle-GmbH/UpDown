@@ -1370,6 +1370,14 @@ Views must separate concerns into external files:
 - Each file type in its own file (P19: One File One Type)
 - TypeScript files contain only logic
 
+### Exception: Lit HTML Binding
+
+**ONLY exception:** Lit framework requires inline `html` template literals in `render()` methods due to framework limitations. This is the ONLY acceptable inline template.
+
+- **CSS:** MUST be external - no exception
+- **HTML in Lit:** Inline `html` template literal in `render()` is accepted (framework limitation)
+- **Future:** Vanilla views will have full separation with external HTML files
+
 ### Why
 
 - **Maintainability:** CSS/HTML can be edited without touching TypeScript
@@ -1385,46 +1393,40 @@ Views must separate concerns into external files:
 class ItemView extends LitElement {
   static styles = css`
     .item { color: red; }
-  `;  // BAD - inline CSS!
+  `;  // BAD - inline CSS! MUST be external file!
 }
 ```
 
-❌ **WRONG:** Inline HTML template
+✅ **CORRECT:** External CSS (required)
 ```typescript
-render() {
-  return html`
-    <div class="item">${this.model.name}</div>
-  `;  // BAD - inline template! (Note: Lit limitation accepted)
-}
-```
-
-✅ **CORRECT:** External files
-```typescript
-// ItemView.ts (TypeScript only)
+// ItemView.ts
 import { ItemViewCSS } from './css/ItemView.css.js';
-import { ItemViewHTML } from './webBeans/ItemView.html.js';
 
 class ItemView extends AbstractWebBean {
-  static styles = [ItemViewCSS];
-  
-  render() {
-    return ItemViewHTML(this.model);
-  }
+  static styles = [ItemViewCSS];  // External CSS file
 }
 
 // css/ItemView.css (CSS only)
 .item { color: red; }
-
-// webBeans/ItemView.html (HTML template only)
-export function ItemViewHTML(model) { ... }
 ```
 
-### Note on Lit Framework
+✅ **ACCEPTED (Lit limitation):** Inline HTML template in `render()`
+```typescript
+// Lit requires inline html template literals
+render() {
+  return html`
+    <div class="item">${this.model.name}</div>
+  `;  // Accepted - Lit framework limitation
+}
+```
 
-Lit framework has an accepted limitation: inline `html` templates in `render()` methods are acceptable because:
-- Lit's template system requires JavaScript template literals
-- This is a framework constraint, not ideal architecture
-- Vanilla views (future) will have full separation with external HTML files
+❌ **WRONG (for non-Lit):** Inline HTML template when external is possible
+```typescript
+// Vanilla views should use external HTML files
+render() {
+  return ItemViewHTML(this.model);  // External template
+}
+```
 
 ### Examples
 
@@ -1443,4 +1445,5 @@ Lit framework has an accepted limitation: inline `html` templates in `render()` 
 ---
 
 **"Never 2 1 (TO ONE). Always 4 2 (FOR TWO)."** 🤝✨
+
 

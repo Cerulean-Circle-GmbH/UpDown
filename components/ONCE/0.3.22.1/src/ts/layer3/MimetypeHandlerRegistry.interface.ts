@@ -37,3 +37,4 @@ export interface MimetypeHandlerRegistry {
    */
   handlersAll(): MimetypeHandler[];
 }
+

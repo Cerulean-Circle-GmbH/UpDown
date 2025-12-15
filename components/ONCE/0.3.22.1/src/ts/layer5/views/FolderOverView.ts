@@ -8,17 +8,19 @@
  * - Portrait screen optimized
  * 
  * Web4 Principles:
- * - P4: Radical OOP - View IS a LitElement component
+ * - P4: Radical OOP - View IS a UcpView component
  * - P27: Web Components ARE Radical OOP
  * - P30: Works with Container interface (Tree with navigation)
- * - P31: Universal Drop Support
+ * - P31: Universal Drop Support (via UcpView base)
+ * - P33: Separation of Concerns (external CSS)
  * 
  * @ior ior:esm:/ONCE/{version}/FolderOverView
  * @pdca 2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md
  */
 
-import { LitElement, html, css, TemplateResult, PropertyValues } from 'lit';
+import { html, TemplateResult, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { UcpView } from './UcpView.js';
 import { FolderModel, FolderChildReference } from '../../layer3/FolderModel.interface.js';
 import { Container } from '../../layer3/Container.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
@@ -47,127 +49,10 @@ import './FolderItemView.js';
  * - Tap breadcrumb: Jump to ancestor folder
  */
 @customElement('folder-over-view')
-export class FolderOverView extends LitElement {
+export class FolderOverView extends UcpView<FolderModel> {
   
-  static styles = css`
-    :host {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      background: var(--color-background, #fafafa);
-      overflow: hidden;
-    }
-    
-    /* Breadcrumb */
-    .breadcrumb {
-      display: flex;
-      align-items: center;
-      padding: 12px 16px;
-      background: var(--color-surface, #ffffff);
-      border-bottom: 1px solid var(--color-border, #e0e0e0);
-      overflow-x: auto;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    
-    .breadcrumb-item {
-      display: inline-flex;
-      align-items: center;
-      font-size: 14px;
-      color: var(--color-text-secondary, #757575);
-      cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 4px;
-      transition: background 0.15s ease, color 0.15s ease;
-    }
-    
-    .breadcrumb-item:hover {
-      background: var(--color-surface-hover, #f5f5f5);
-      color: var(--color-primary, #1976d2);
-    }
-    
-    .breadcrumb-item.current {
-      color: var(--color-text-primary, #212121);
-      font-weight: 500;
-      cursor: default;
-    }
-    
-    .breadcrumb-item.current:hover {
-      background: transparent;
-      color: var(--color-text-primary, #212121);
-    }
-    
-    .breadcrumb-separator {
-      margin: 0 4px;
-      color: var(--color-text-disabled, #bdbdbd);
-    }
-    
-    .breadcrumb-icon {
-      margin-right: 4px;
-    }
-    
-    /* Panel container */
-    .panel-container {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-      touch-action: pan-y;
-    }
-    
-    .panel {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      padding: 8px 16px;
-      overflow-y: auto;
-      transition: transform 0.3s ease-out;
-    }
-    
-    .panel.entering-forward {
-      transform: translateX(100%);
-    }
-    
-    .panel.entering-back {
-      transform: translateX(-100%);
-    }
-    
-    .panel.leaving-forward {
-      transform: translateX(-100%);
-    }
-    
-    .panel.leaving-back {
-      transform: translateX(100%);
-    }
-    
-    .panel.active {
-      transform: translateX(0);
-    }
-    
-    /* Empty state */
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 200px;
-      color: var(--color-text-secondary, #757575);
-    }
-    
-    .empty-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
-    
-    .empty-text {
-      font-size: 14px;
-    }
-  `;
-  
-  /** Current folder model */
-  @property({ type: Object })
-  model: Reference<FolderModel> = null;
+  /** CSS path for external styles (P33: Separation of Concerns) */
+  static cssPath = 'FolderOverView.css';
   
   /** Container reference (if using Tree/Container pattern) */
   @property({ type: Object })
@@ -493,5 +378,6 @@ declare global {
     'folder-over-view': FolderOverView;
   }
 }
+
 
 

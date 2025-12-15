@@ -39,3 +39,4 @@ export interface FolderChildReference {
   /** Has nested children? (for folders - shows ">" icon) */
   hasChildren: boolean;
 }
+

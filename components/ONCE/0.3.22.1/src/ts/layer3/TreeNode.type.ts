@@ -21,3 +21,4 @@ import { Tree } from './Tree.interface.js';
  * @typeParam T - The domain type
  */
 export type TreeNode<T> = T & Tree<T>;
+
