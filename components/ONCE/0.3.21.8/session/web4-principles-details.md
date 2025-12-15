@@ -1108,6 +1108,195 @@ const interfaces = TypeRegistry.interfacesOf(object);
 
 ---
 
+## Principle 29: IDProvider Pattern
+
+> ID generation via RelatedObjects lookup, NOT direct `crypto.randomUUID()` calls.
+
+**Checklist:** [web4-principles-checklist.md](./web4-principles-checklist.md)
+
+### Details
+
+UcpComponent provides ID generation as a fundamental capability:
+- **UUIDProvider** - Random RFC 4122 v4 UUIDs via `this.uuidCreate()`
+- **ContentIDProvider** - Content-based hashing via `this.contentIdCreate(content)`
+- Providers registered in RelatedObjects for polymorphic lookup
+- Override `idProvidersRegister()` to use custom providers
+
+### Why
+
+- **Testability:** Mock providers in tests for deterministic IDs
+- **Flexibility:** Swap UUID → ULID → custom without code changes
+- **Radical OOP:** ID generation is an object responsibility, not a function call
+- **DRY:** Single implementation shared across all components
+
+### Anti-Patterns
+
+❌ **WRONG:** Direct crypto API call
+```typescript
+modelDefault(): FileModel {
+  return { uuid: crypto.randomUUID() };
+}
+```
+
+✅ **CORRECT:** Via UcpComponent method
+```typescript
+modelDefault(): FileModel {
+  return { uuid: this.uuidCreate() };
+}
+
+// For content hashing:
+const hash = await this.contentIdCreate(fileContent);
+```
+
+### Architecture
+
+```
+UcpComponent (base)
+├── static uuidProviderInstance: UUIDProvider (singleton)
+├── static sha256ProviderInstance: SHA256Provider (singleton)
+├── idProvidersRegister() → registers in RelatedObjects
+├── uuidCreate() → looks up IDProvider
+├── contentIdCreate(content) → looks up ContentIDProvider
+└── contentIdCreateSync(content) → sync version
+```
+
+### Examples
+
+- **Code:** [UcpComponent.ts](../../../../ONCE/0.3.22.1/src/ts/layer2/UcpComponent.ts)
+- **Code:** [SHA256Provider.ts](../../../../ONCE/0.3.22.1/src/ts/layer2/SHA256Provider.ts)
+- **Code:** [ContentIDProvider.interface.ts](../../../../ONCE/0.3.22.1/src/ts/layer3/ContentIDProvider.interface.ts)
+
+---
+
+## Principle 30: Tree & Container Pattern
+
+> Hierarchical data uses `Tree<T>` interface. Navigable hierarchies use `Container<T>`.
+
+**Checklist:** [web4-principles-checklist.md](./web4-principles-checklist.md)
+
+### Details
+
+For any hierarchical/tree-structured data:
+- **Tree<T>** - Base interface with `parent`, `children`, `childAdd()`, `childRemove()`
+- **Container<T>** - Extends Tree for navigable OverViews with `pathFromRoot()`, `navigateTo()`
+- Parent is `Reference<Tree<T>>` (null for root)
+- Children is `Collection<T>` (Web4 Principle 22)
+
+### Why
+
+- **Reusability:** Breadcrumbs, OverViews work on any Tree implementation
+- **Consistency:** Same navigation pattern for folders, menus, org charts
+- **Polymorphism:** Components work with Tree interface, not concrete types
+- **Mobile UX:** Container enables animated panel transitions
+
+### Anti-Patterns
+
+❌ **WRONG:** Custom hierarchy without interfaces
+```typescript
+class Folder {
+  parentFolder: Folder;
+  childFolders: Folder[];
+}
+```
+
+✅ **CORRECT:** Implement Tree interface
+```typescript
+class DefaultFolder implements Tree<FileSystemNode>, Container<FileSystemNode> {
+  get parent(): Reference<Tree<FileSystemNode>> { ... }
+  get children(): Collection<FileSystemNode> { ... }
+  childAdd(child: FileSystemNode): void { ... }
+  pathFromRoot(): Container<FileSystemNode>[] { ... }
+}
+```
+
+### Architecture
+
+```
+Tree<T> Interface
+├── parent: Reference<Tree<T>>
+├── children: Collection<T>
+├── childAdd(child: T): void
+├── childRemove(child: T): boolean
+├── hasChildren: boolean
+└── childCount: number
+
+Container<T> extends Tree<T>
+├── displayName: string
+├── uuid: string
+├── pathFromRoot(): Container<T>[]  ← For breadcrumb
+└── navigateTo(child: T): boolean   ← For animated panels
+```
+
+### Examples
+
+- **Code:** [Tree.interface.ts](../../../../ONCE/0.3.22.1/src/ts/layer3/Tree.interface.ts)
+- **Code:** [Container.interface.ts](../../../../ONCE/0.3.22.1/src/ts/layer3/Container.interface.ts)
+- **Code:** [DefaultFolder.ts](../../../../ONCE/0.3.22.1/src/ts/layer2/DefaultFolder.ts)
+
+---
+
+## Principle 31: Universal Drop Support
+
+> ALL UcpViews accept file drops by default. Use `dropDisabled="true"` to opt out.
+
+**Checklist:** [web4-principles-checklist.md](./web4-principles-checklist.md)
+
+### Details
+
+Every view in Web4 is a drop target:
+- **Default enabled:** All views handle `dragover` and `drop` events
+- **Opt-out:** Set `dropDisabled="true"` attribute to disable
+- **Processing:** Drop triggers `view.add(file)` which creates components via FileSystem
+- **No DropZoneView:** No special drop zone component needed
+
+### Why
+
+- **User Experience:** Drag files anywhere, not just designated zones
+- **Simplicity:** Drop handling centralized in UcpView base
+- **Consistency:** Same drop behavior across entire application
+- **Intuitive:** Every view accepts content by default
+
+### Anti-Patterns
+
+❌ **WRONG:** Special drop zone component
+```typescript
+<folder-view>
+  <drop-zone-view onDrop="${this.handleDrop}"></drop-zone-view>
+</folder-view>
+```
+
+✅ **CORRECT:** Views accept drops natively
+```typescript
+// UcpView base class handles drops
+<folder-view>  <!-- Accepts drops by default -->
+</folder-view>
+
+// Disable if needed
+<read-only-view dropDisabled="true"></read-only-view>
+```
+
+### Drop Flow
+
+```
+User drops file → UcpView.handleDrop()
+                      ↓
+              view.add(file)
+                      ↓
+         FileSystem.componentFromFile()
+                      ↓
+        MimetypeRegistry.handlerLookup()
+                      ↓
+         Component created + initialized
+                      ↓
+         view.appendChild(component.view)
+```
+
+### Examples
+
+- **PDCA:** [2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md](../../../../ONCE/0.3.22.1/session/2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md)
+
+---
+
 ## How to Use This Document
 
 1. **Reference from checklist:** Use links in [web4-principles-checklist.md](./web4-principles-checklist.md) to jump to details
