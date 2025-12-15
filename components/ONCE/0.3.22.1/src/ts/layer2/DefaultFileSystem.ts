@@ -26,12 +26,6 @@ import {
 } from './DefaultMimetypeHandlerRegistry.js';
 import { MimetypeHandler, ComponentConstructor } from '../layer3/MimetypeHandler.interface.js';
 
-/**
- * Generate UUID (browser-compatible)
- */
-function generateUUID(): string {
-  return crypto.randomUUID();
-}
 
 /**
  * DefaultFileSystem - Virtual filesystem for Web4
@@ -66,7 +60,7 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
   }
   
   /** Root folder */
-  private _rootFolder: Reference<DefaultFolder> = null;
+  private rootFolderInstance: Reference<DefaultFolder> = null;
   
   // ═══════════════════════════════════════════════════════════════
   // Initialization
@@ -77,7 +71,7 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
    */
   protected modelDefault(): FileSystemModel {
     return {
-      uuid: generateUUID(),
+      uuid: crypto.randomUUID(),
       name: 'FileSystem',
       rootFolderUuid: '',
       basePath: '/scenarios/type/File',
@@ -95,11 +89,11 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
     await super.init(scenario);
     
     // Create root folder if not exists
-    if (!this._rootFolder) {
-      this._rootFolder = new DefaultFolder();
-      await this._rootFolder.init({
+    if (!this.rootFolderInstance) {
+      this.rootFolderInstance = new DefaultFolder();
+      await this.rootFolderInstance.init({
         model: {
-          uuid: generateUUID(),
+          uuid: crypto.randomUUID(),
           name: 'Root',
           path: '',
           folderName: '',
@@ -111,7 +105,7 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
           linkTarget: null
         }
       });
-      this.model.rootFolderUuid = this._rootFolder.model.uuid;
+      this.model.rootFolderUuid = this.rootFolderInstance.model.uuid;
     }
     
     return this;
@@ -140,7 +134,7 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
     await file.initFromBlob(blob, filename, mimetype);
     
     // Add to parent folder
-    const parent = parentFolder || this._rootFolder;
+    const parent = parentFolder || this.rootFolderInstance;
     if (parent) {
       parent.childAdd(file);
     }
@@ -163,12 +157,12 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
     const folder = new DefaultFolder();
     folder.initSync({
       model: {
-        uuid: generateUUID(),
+        uuid: crypto.randomUUID(),
         name,
-        path: (parentFolder || this._rootFolder)?.fullPath || '/',
+        path: (parentFolder || this.rootFolderInstance)?.fullPath || '/',
         folderName: name,
         children: [],
-        parentUuid: (parentFolder || this._rootFolder)?.model.uuid || null,
+        parentUuid: (parentFolder || this.rootFolderInstance)?.model.uuid || null,
         createdAt: Date.now(),
         modifiedAt: Date.now(),
         isLink: false,
@@ -177,7 +171,7 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
     });
     
     // Add to parent folder
-    const parent = parentFolder || this._rootFolder;
+    const parent = parentFolder || this.rootFolderInstance;
     if (parent) {
       parent.childAdd(folder);
     }
@@ -288,7 +282,7 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
    * Get root folder
    */
   get rootFolder(): Reference<DefaultFolder> {
-    return this._rootFolder;
+    return this.rootFolderInstance;
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -299,9 +293,9 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
    * Release resources
    */
   dispose(): void {
-    if (this._rootFolder) {
-      this._rootFolder.dispose();
-      this._rootFolder = null;
+    if (this.rootFolderInstance) {
+      this.rootFolderInstance.dispose();
+      this.rootFolderInstance = null;
     }
     // Note: Registry is singleton, not cleared on FileSystem dispose
   }

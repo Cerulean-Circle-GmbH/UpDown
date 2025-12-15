@@ -42,7 +42,7 @@ import {
 export class DefaultMimetypeHandlerRegistry implements MimetypeHandlerRegistry {
   
   /** Singleton instance */
-  private static _instance: DefaultMimetypeHandlerRegistry | null = null;
+  private static singletonInstance: DefaultMimetypeHandlerRegistry | null = null;
   
   /** Registered handlers (sorted by priority descending) */
   private handlers: MimetypeHandler[] = [];
@@ -51,17 +51,17 @@ export class DefaultMimetypeHandlerRegistry implements MimetypeHandlerRegistry {
    * Get singleton instance
    */
   static get instance(): DefaultMimetypeHandlerRegistry {
-    if (!this._instance) {
-      this._instance = new DefaultMimetypeHandlerRegistry();
+    if (!this.singletonInstance) {
+      this.singletonInstance = new DefaultMimetypeHandlerRegistry();
     }
-    return this._instance;
+    return this.singletonInstance;
   }
   
   /**
    * Reset singleton (for testing)
    */
   static reset(): void {
-    this._instance = null;
+    this.singletonInstance = null;
   }
   
   /**

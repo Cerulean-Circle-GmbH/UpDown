@@ -27,13 +27,6 @@ import { Reference } from '../layer3/Reference.interface.js';
 import type { DefaultFolder } from './DefaultFolder.js';
 
 /**
- * Generate UUID (browser-compatible)
- */
-function generateUUID(): string {
-  return crypto.randomUUID();
-}
-
-/**
  * DefaultFile - File component for Web4 FileSystem
  * 
  * File is a LEAF node:
@@ -58,7 +51,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
   // ═══════════════════════════════════════════════════════════════
   
   /** Parent folder (set when added to a folder) */
-  private _parent: Reference<DefaultFolder> = null;
+  private parentFolder: Reference<DefaultFolder> = null;
   
   /**
    * Get parent folder
@@ -66,7 +59,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
    * Returns null for orphan files (not yet added to a folder).
    */
   get parent(): Reference<DefaultFolder> {
-    return this._parent;
+    return this.parentFolder;
   }
   
   /**
@@ -74,7 +67,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
    * @internal
    */
   parentSet(folder: Reference<DefaultFolder>): void {
-    this._parent = folder;
+    this.parentFolder = folder;
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -82,7 +75,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
   // ═══════════════════════════════════════════════════════════════
   
   /** Runtime file content */
-  private _content: Reference<FileContent> = null;
+  private fileContent: Reference<FileContent> = null;
   
   // ═══════════════════════════════════════════════════════════════
   // Initialization
@@ -94,7 +87,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
   protected modelDefault(): FileModel {
     const now = Date.now();
     return {
-      uuid: generateUUID(),
+      uuid: crypto.randomUUID(),
       name: 'New File',
       path: '/',
       filename: 'untitled',
@@ -128,7 +121,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
     this.model.modifiedAt = Date.now();
     
     // Store content
-    this._content = {
+    this.fileContent = {
       blob,
       objectUrl: null,
       arrayBuffer: null
@@ -148,35 +141,35 @@ export class DefaultFile extends UcpComponent<FileModel> {
    * Get file content (loads if not in memory)
    */
   get content(): Reference<FileContent> {
-    return this._content;
+    return this.fileContent;
   }
   
   /**
    * Check if content is loaded
    */
   get hasContent(): boolean {
-    return this._content !== null;
+    return this.fileContent !== null;
   }
   
   /**
    * Get Object URL for display (creates if needed)
    */
   get objectUrl(): Reference<string> {
-    if (!this._content) return null;
+    if (!this.fileContent) return null;
     
-    if (!this._content.objectUrl) {
-      this._content.objectUrl = URL.createObjectURL(this._content.blob);
+    if (!this.fileContent.objectUrl) {
+      this.fileContent.objectUrl = URL.createObjectURL(this.fileContent.blob);
     }
-    return this._content.objectUrl;
+    return this.fileContent.objectUrl;
   }
   
   /**
    * Revoke Object URL when no longer needed
    */
   objectUrlRevoke(): void {
-    if (this._content?.objectUrl) {
-      URL.revokeObjectURL(this._content.objectUrl);
-      this._content.objectUrl = null;
+    if (this.fileContent?.objectUrl) {
+      URL.revokeObjectURL(this.fileContent.objectUrl);
+      this.fileContent.objectUrl = null;
     }
   }
   
@@ -189,12 +182,12 @@ export class DefaultFile extends UcpComponent<FileModel> {
    * Used for Artefact content hash (deduplication)
    */
   async contentHashCompute(): Promise<string> {
-    if (!this._content?.blob) {
+    if (!this.fileContent?.blob) {
       throw new Error('[DefaultFile] No content to hash');
     }
     
-    const arrayBuffer = await this._content.blob.arrayBuffer();
-    this._content.arrayBuffer = arrayBuffer;
+    const arrayBuffer = await this.fileContent.blob.arrayBuffer();
+    this.fileContent.arrayBuffer = arrayBuffer;
     
     // Compute SHA-256
     const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
@@ -220,7 +213,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
     link.initSync({
       model: {
         ...this.modelDefault(),
-        uuid: generateUUID(),
+        uuid: crypto.randomUUID(),
         path: linkPath,
         filename: this.model.filename,
         name: this.model.name,
@@ -291,6 +284,6 @@ export class DefaultFile extends UcpComponent<FileModel> {
    */
   dispose(): void {
     this.objectUrlRevoke();
-    this._content = null;
+    this.fileContent = null;
   }
 }

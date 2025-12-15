@@ -29,13 +29,6 @@ import { Tree } from '../layer3/Tree.interface.js';
 import { Container } from '../layer3/Container.interface.js';
 
 /**
- * Generate UUID (browser-compatible)
- */
-function generateUUID(): string {
-  return crypto.randomUUID();
-}
-
-/**
  * FileSystemNode - Union type for files and folders
  */
 export type FileSystemNode = DefaultFile | DefaultFolder;
@@ -62,10 +55,10 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   // ═══════════════════════════════════════════════════════════════
   
   /** Parent folder (null for root) */
-  private _parent: Reference<DefaultFolder> = null;
+  private parentFolder: Reference<DefaultFolder> = null;
   
   /** Child components cache (by UUID) */
-  private _children: Map<string, FileSystemNode> = new Map();
+  private childrenCache: Map<string, FileSystemNode> = new Map();
   
   // ═══════════════════════════════════════════════════════════════
   // Initialization
@@ -77,7 +70,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   protected modelDefault(): FolderModel {
     const now = Date.now();
     return {
-      uuid: generateUUID(),
+      uuid: crypto.randomUUID(),
       name: 'New Folder',
       path: '/',
       folderName: 'untitled',
@@ -98,7 +91,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * Get parent folder (Tree interface)
    */
   get parent(): Reference<Tree<FileSystemNode>> {
-    return this._parent;
+    return this.parentFolder;
   }
   
   /**
@@ -106,7 +99,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * @internal
    */
   parentSet(folder: Reference<DefaultFolder>): void {
-    this._parent = folder;
+    this.parentFolder = folder;
     if (folder) {
       this.model.parentUuid = folder.model.uuid;
     }
@@ -116,7 +109,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * Get children as Collection (Tree interface)
    */
   get children(): Collection<FileSystemNode> {
-    return Array.from(this._children.values());
+    return Array.from(this.childrenCache.values());
   }
   
   /**
@@ -153,7 +146,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     }
     
     // Cache the component
-    this._children.set(childModel.uuid, child);
+    this.childrenCache.set(childModel.uuid, child);
   }
   
   /**
@@ -175,7 +168,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     child.parentSet(null);
     
     // Remove from cache
-    this._children.delete(uuid);
+    this.childrenCache.delete(uuid);
     
     return true;
   }
@@ -184,7 +177,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * Remove child by UUID (convenience method)
    */
   childRemoveByUuid(uuid: string): Reference<FileSystemNode> {
-    const child = this._children.get(uuid);
+    const child = this.childrenCache.get(uuid);
     if (!child) return null;
     
     this.childRemove(child);
@@ -195,21 +188,21 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * Get child by UUID (from cache)
    */
   childGet(uuid: string): Reference<FileSystemNode> {
-    return this._children.get(uuid) || null;
+    return this.childrenCache.get(uuid) || null;
   }
   
   /**
    * Check if folder has any children (Tree interface)
    */
   get hasChildren(): boolean {
-    return this._children.size > 0 || this.model.children.length > 0;
+    return this.childrenCache.size > 0 || this.model.children.length > 0;
   }
   
   /**
    * Get number of children (Tree interface)
    */
   get childCount(): number {
-    return this._children.size || this.model.children.length;
+    return this.childrenCache.size || this.model.children.length;
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -241,7 +234,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     
     while (current) {
       path.unshift(current);
-      current = current._parent;
+      current = current.parentFolder;
     }
     
     return path;
@@ -253,7 +246,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * For OverViews: triggers navigation/animation.
    */
   navigateTo(child: FileSystemNode): boolean {
-    const exists = this._children.has(child.model.uuid);
+    const exists = this.childrenCache.has(child.model.uuid);
     // Navigation logic handled by OverView, we just validate
     return exists;
   }
@@ -311,7 +304,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     link.initSync({
       model: {
         ...this.modelDefault(),
-        uuid: generateUUID(),
+        uuid: crypto.randomUUID(),
         path: linkPath,
         folderName: this.model.folderName,
         name: this.model.name,
@@ -361,7 +354,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     this.model.modifiedAt = Date.now();
     
     // Update cached children paths
-    this._children.forEach(child => {
+    this.childrenCache.forEach(child => {
       if (child instanceof DefaultFolder) {
         child.model.path = this.childPath;
       } else {
@@ -390,11 +383,11 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    */
   dispose(): void {
     // Dispose all cached children
-    this._children.forEach(child => {
+    this.childrenCache.forEach(child => {
       if ('dispose' in child) {
         (child as any).dispose();
       }
     });
-    this._children.clear();
+    this.childrenCache.clear();
   }
 }
