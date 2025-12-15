@@ -22,13 +22,9 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { FolderModel, FolderChildReference } from '../../layer3/FolderModel.interface.js';
 import { Container } from '../../layer3/Container.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
+import { NavigationDirection } from '../../layer3/NavigationDirection.enum.js';
 import './FileItemView.js';
 import './FolderItemView.js';
-
-/**
- * NavigationDirection - Animation direction
- */
-type NavigationDirection = 'forward' | 'back' | 'none';
 
 /**
  * FolderOverView - Animated folder browser with breadcrumb
@@ -183,7 +179,7 @@ export class FolderOverView extends LitElement {
   
   /** Animation direction for panel transitions */
   @state()
-  private animationDirection: NavigationDirection = 'none';
+  private animationDirection: NavigationDirection = NavigationDirection.None;
   
   /** Is animating? */
   @state()
@@ -350,7 +346,7 @@ export class FolderOverView extends LitElement {
     if (!this.isAnimating) return 'active';
     
     // During animation, apply the entering class
-    return this.animationDirection === 'forward' 
+    return this.animationDirection === NavigationDirection.Forward 
       ? 'entering-forward active'
       : 'entering-back active';
   }
@@ -390,11 +386,11 @@ export class FolderOverView extends LitElement {
    */
   private breadcrumbNavigate(uuid: string, index: number): void {
     // Navigate back to ancestor
-    this.animationDirection = 'back';
+    this.animationDirection = NavigationDirection.Back;
     this.isAnimating = true;
     
     this.dispatchEvent(new CustomEvent('folder-navigate', {
-      detail: { uuid, index, direction: 'back' },
+      detail: { uuid, index, direction: NavigationDirection.Back },
       bubbles: true,
       composed: true
     }));
@@ -425,11 +421,11 @@ export class FolderOverView extends LitElement {
    * Handle item navigate (open folder)
    */
   private handleItemNavigate(event: CustomEvent): void {
-    this.animationDirection = 'forward';
+    this.animationDirection = NavigationDirection.Forward;
     this.isAnimating = true;
     
     this.dispatchEvent(new CustomEvent('folder-navigate', {
-      detail: { ...event.detail, direction: 'forward' },
+      detail: { ...event.detail, direction: NavigationDirection.Forward },
       bubbles: true,
       composed: true
     }));
@@ -482,7 +478,7 @@ export class FolderOverView extends LitElement {
   /**
    * Public: Navigate to a specific folder
    */
-  navigateTo(folderModel: FolderModel, direction: NavigationDirection = 'forward'): void {
+  navigateTo(folderModel: FolderModel, direction: NavigationDirection = NavigationDirection.Forward): void {
     this.animationDirection = direction;
     this.isAnimating = true;
     this.model = folderModel;

@@ -1297,6 +1297,142 @@ User drops file → UcpView.handleDrop()
 
 ---
 
+## Principle 32: Enums Over String Literals
+
+> NO string literal type unions. Always use enums for type safety and maintainability.
+
+**Checklist:** [web4-principles-checklist.md](./web4-principles-checklist.md)
+
+### Details
+
+String literal types (`'value1' | 'value2'`) are forbidden. Use enums instead:
+- Enums provide type safety and autocomplete
+- Enums are maintainable - change in one place
+- Enums follow P19: One File One Type
+- Enums enable polymorphism and extension
+
+### Why
+
+- **Type safety:** Compiler catches typos and invalid values
+- **Maintainability:** Change enum value in one place
+- **Discoverability:** IDE autocomplete shows all valid values
+- **Consistency:** Aligns with P19 (One File One Type)
+- **Refactoring:** Easier to rename or restructure values
+
+### Anti-Patterns
+
+❌ **WRONG:** String literal type union
+```typescript
+interface Action {
+  style: 'primary' | 'secondary' | 'danger';  // BAD!
+}
+
+function getStyle(style: 'primary' | 'secondary'): string {  // BAD!
+  return style;
+}
+```
+
+✅ **CORRECT:** Enum in separate file
+```typescript
+// ActionStyle.enum.ts (P19: One file one type)
+export enum ActionStyle {
+  PRIMARY = 'primary',
+  SECONDARY = 'secondary',
+  DANGER = 'danger',
+  WARNING = 'warning'
+}
+
+// Action.interface.ts
+import { ActionStyle } from './ActionStyle.enum.js';
+interface Action {
+  style: ActionStyle;  // Type-safe enum
+}
+```
+
+### Examples
+
+- **PDCA:** [2025-12-03-UTC-1200.mvc-lit3-views.pdca.md](./2025-12-03-UTC-1200.mvc-lit3-views.pdca.md)
+- **Code:** ActionStyle.enum.ts, ViewTab.enum.ts (mentioned in PDCA)
+
+---
+
+## Principle 33: Separation of Concerns
+
+> NO inline CSS or HTML templates. External files only. Violates P19 (One File One Type) and Separation of Concerns.
+
+**Checklist:** [web4-principles-checklist.md](./web4-principles-checklist.md)
+
+### Details
+
+Views must separate concerns into external files:
+- **NO inline CSS** in TypeScript files - use external `.css` files
+- **NO inline HTML templates** in TypeScript files - use external `.html` files
+- Each file type in its own file (P19: One File One Type)
+- TypeScript files contain only logic
+
+### Why
+
+- **Maintainability:** CSS/HTML can be edited without touching TypeScript
+- **Reusability:** Styles/templates can be shared across views
+- **Tooling:** CSS/HTML editors work better with separate files
+- **P19 Compliance:** Each file contains one type (TS/CSS/HTML)
+- **Organization:** Clear separation of structure (HTML), style (CSS), behavior (TS)
+
+### Anti-Patterns
+
+❌ **WRONG:** Inline CSS in TypeScript
+```typescript
+class ItemView extends LitElement {
+  static styles = css`
+    .item { color: red; }
+  `;  // BAD - inline CSS!
+}
+```
+
+❌ **WRONG:** Inline HTML template
+```typescript
+render() {
+  return html`
+    <div class="item">${this.model.name}</div>
+  `;  // BAD - inline template! (Note: Lit limitation accepted)
+}
+```
+
+✅ **CORRECT:** External files
+```typescript
+// ItemView.ts (TypeScript only)
+import { ItemViewCSS } from './css/ItemView.css.js';
+import { ItemViewHTML } from './webBeans/ItemView.html.js';
+
+class ItemView extends AbstractWebBean {
+  static styles = [ItemViewCSS];
+  
+  render() {
+    return ItemViewHTML(this.model);
+  }
+}
+
+// css/ItemView.css (CSS only)
+.item { color: red; }
+
+// webBeans/ItemView.html (HTML template only)
+export function ItemViewHTML(model) { ... }
+```
+
+### Note on Lit Framework
+
+Lit framework has an accepted limitation: inline `html` templates in `render()` methods are acceptable because:
+- Lit's template system requires JavaScript template literals
+- This is a framework constraint, not ideal architecture
+- Vanilla views (future) will have full separation with external HTML files
+
+### Examples
+
+- **PDCA:** [2025-12-03-UTC-1200.mvc-lit3-views.pdca.md](./2025-12-03-UTC-1200.mvc-lit3-views.pdca.md)
+- **PDCA:** [2025-12-03-UTC-1400.lit-css-preload.pdca.md](./2025-12-03-UTC-1400.lit-css-preload.pdca.md)
+
+---
+
 ## How to Use This Document
 
 1. **Reference from checklist:** Use links in [web4-principles-checklist.md](./web4-principles-checklist.md) to jump to details

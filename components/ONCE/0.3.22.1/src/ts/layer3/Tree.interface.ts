@@ -74,12 +74,3 @@ export interface Tree<T> {
    */
   readonly childCount: number;
 }
-
-/**
- * TreeNode<T> - Helper type for tree nodes
- * 
- * Combines the node type T with Tree interface.
- */
-export type TreeNode<T> = T & Tree<T>;
-
-
