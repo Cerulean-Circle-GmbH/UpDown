@@ -12,14 +12,10 @@
  * @pdca 2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md
  */
 
-import { UcpComponent } from '../layer2/UcpComponent.js';
-import type { Model } from './Model.interface.js';
+import { ComponentConstructor } from './ComponentConstructor.type.js';
 
-/**
- * ComponentConstructor - Type for UcpComponent class constructors
- */
-export type ComponentConstructor<TModel extends Model = Model> = 
-  new () => UcpComponent<TModel>;
+// Re-export for backwards compatibility
+export type { ComponentConstructor };
 
 /**
  * MimetypeHandler - Maps mimetype patterns to component classes
@@ -70,33 +66,6 @@ export interface MimetypeHandler {
    * Description of what this handler does
    */
   description?: string;
-}
-
-/**
- * MimetypeHandlerRegistry - Interface for handler lookup
- */
-export interface MimetypeHandlerRegistry {
-  /**
-   * Register a handler for a mimetype pattern
-   */
-  handlerRegister(handler: MimetypeHandler): void;
-  
-  /**
-   * Unregister a handler
-   */
-  handlerUnregister(pattern: string): void;
-  
-  /**
-   * Lookup handler for a specific mimetype
-   * 
-   * Returns the highest-priority matching handler, or null.
-   */
-  handlerLookup(mimetype: string): MimetypeHandler | null;
-  
-  /**
-   * Get all registered handlers
-   */
-  handlersAll(): MimetypeHandler[];
 }
 
 

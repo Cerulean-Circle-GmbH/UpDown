@@ -12,11 +12,8 @@
  * @pdca 2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md
  */
 
-import { 
-  MimetypeHandler, 
-  MimetypeHandlerRegistry,
-  ComponentConstructor 
-} from '../layer3/MimetypeHandler.interface.js';
+import { MimetypeHandler, ComponentConstructor } from '../layer3/MimetypeHandler.interface.js';
+import { MimetypeHandlerRegistry } from '../layer3/MimetypeHandlerRegistry.interface.js';
 
 /**
  * DefaultMimetypeHandlerRegistry - Singleton registry for mimetype handlers

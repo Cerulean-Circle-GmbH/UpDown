@@ -64,20 +64,4 @@ export interface Container<T> extends Tree<T> {
   navigateTo(child: T): boolean;
 }
 
-/**
- * ContainerModel - Model interface for Container components
- * 
- * Extends base Model with container-specific properties.
- */
-export interface ContainerModel {
-  /** Unique identifier */
-  uuid: string;
-  
-  /** Display name */
-  name: string;
-  
-  /** Parent container UUID (null for root) */
-  parentUuid: Reference<string>;
-}
-
 

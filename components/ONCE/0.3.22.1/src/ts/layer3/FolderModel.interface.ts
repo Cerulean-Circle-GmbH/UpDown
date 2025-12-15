@@ -15,32 +15,10 @@
 
 import { Model } from './Model.interface.js';
 import { Reference } from './Reference.interface.js';
+import { FolderChildReference } from './FolderChildReference.interface.js';
 
-/**
- * FolderChildReference - Reference to a child file or folder
- * 
- * Lightweight reference for folder listing.
- * Full component loaded on navigation.
- */
-export interface FolderChildReference {
-  /** UUID of the child component */
-  uuid: string;
-  
-  /** Name for display */
-  name: string;
-  
-  /** Is this a folder? (vs file) */
-  isFolder: boolean;
-  
-  /** MIME type (for files only) */
-  mimetype: Reference<string>;
-  
-  /** Size in bytes (for files only) */
-  size: Reference<number>;
-  
-  /** Has nested children? (for folders - shows ">" icon) */
-  hasChildren: boolean;
-}
+// Re-export for backwards compatibility
+export type { FolderChildReference };
 
 /**
  * FolderModel - Data model for Folder component

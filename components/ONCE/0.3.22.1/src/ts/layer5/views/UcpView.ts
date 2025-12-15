@@ -36,7 +36,11 @@ import { LitElement, css, CSSResultGroup } from 'lit';
 import { property } from 'lit/decorators.js';
 import { View } from '../../layer3/View.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
+import { FileDropDetail } from '../../layer3/FileDropDetail.interface.js';
 import { CSSLoader } from '../../layer2/CSSLoader.js';
+
+// Re-export for backwards compatibility
+export type { FileDropDetail };
 
 /**
  * UcpView - Base class for all Web4 Views
@@ -45,22 +49,6 @@ import { CSSLoader } from '../../layer2/CSSLoader.js';
  * 
  * Layer 5 - All methods are SYNCHRONOUS!
  */
-/**
- * FileDropDetail - Event detail for file-drop events
- */
-export interface FileDropDetail {
-  /** The dropped file */
-  file: File;
-  /** MIME type of the file */
-  mimetype: string;
-  /** File name */
-  filename: string;
-  /** File size in bytes */
-  size: number;
-  /** The view that received the drop */
-  targetView: UcpView<any>;
-}
-
 export abstract class UcpView<TModel = any> extends LitElement implements View<TModel> {
   
   /**
