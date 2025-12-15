@@ -73,3 +73,5 @@ export interface FolderModel extends Model {
   /** If isLink, the target path (stable reference) */
   linkTarget: Reference<string>;
 }
+
+

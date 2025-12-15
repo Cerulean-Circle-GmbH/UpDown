@@ -3,7 +3,8 @@
  * Web4 Principle 20: Radical OOP ID Generation
  * 
  * UUID implementation of IDProvider interface.
- * Uses Node.js built-in crypto.randomUUID() for RFC 4122 v4 UUIDs.
+ * Uses Web Crypto API crypto.randomUUID() for RFC 4122 v4 UUIDs.
+ * Works in both browser and Node.js environments.
  * 
  * Example:
  *   const provider = new UUIDProvider();
@@ -11,17 +12,18 @@
  *   provider.validate(id); // true
  */
 
-import { randomUUID } from 'node:crypto';
 import { IDProvider } from '../layer3/IDProvider.interface.js';
 
 export class UUIDProvider implements IDProvider {
     /**
      * Create a new RFC 4122 v4 UUID
-     * Uses Node.js crypto.randomUUID() for cryptographically strong random values
+     * Uses Web Crypto API crypto.randomUUID() for cryptographically strong random values.
+     * Available in all modern browsers and Node.js 19+.
      * @returns A UUID string in format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
      */
     public create(): string {
-        return randomUUID();
+        // Web Crypto API - works in browser and Node.js
+        return crypto.randomUUID();
     }
 
     /**

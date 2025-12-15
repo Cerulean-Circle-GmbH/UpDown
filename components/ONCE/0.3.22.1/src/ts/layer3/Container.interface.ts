@@ -79,3 +79,5 @@ export interface ContainerModel {
   /** Parent container UUID (null for root) */
   parentUuid: Reference<string>;
 }
+
+

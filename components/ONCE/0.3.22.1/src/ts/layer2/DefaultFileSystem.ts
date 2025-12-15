@@ -300,3 +300,5 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
     // Note: Registry is singleton, not cleared on FileSystem dispose
   }
 }
+
+

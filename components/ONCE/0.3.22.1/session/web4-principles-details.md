@@ -1162,9 +1162,9 @@ UcpComponent (base)
 
 ### Examples
 
-- **Code:** [UcpComponent.ts](../../../../ONCE/0.3.22.1/src/ts/layer2/UcpComponent.ts)
-- **Code:** [SHA256Provider.ts](../../../../ONCE/0.3.22.1/src/ts/layer2/SHA256Provider.ts)
-- **Code:** [ContentIDProvider.interface.ts](../../../../ONCE/0.3.22.1/src/ts/layer3/ContentIDProvider.interface.ts)
+- **Code:** [UcpComponent.ts](../src/ts/layer2/UcpComponent.ts)
+- **Code:** [SHA256Provider.ts](../src/ts/layer2/SHA256Provider.ts)
+- **Code:** [ContentIDProvider.interface.ts](../src/ts/layer3/ContentIDProvider.interface.ts)
 
 ---
 
@@ -1229,9 +1229,9 @@ Container<T> extends Tree<T>
 
 ### Examples
 
-- **Code:** [Tree.interface.ts](../../../../ONCE/0.3.22.1/src/ts/layer3/Tree.interface.ts)
-- **Code:** [Container.interface.ts](../../../../ONCE/0.3.22.1/src/ts/layer3/Container.interface.ts)
-- **Code:** [DefaultFolder.ts](../../../../ONCE/0.3.22.1/src/ts/layer2/DefaultFolder.ts)
+- **Code:** [Tree.interface.ts](../src/ts/layer3/Tree.interface.ts)
+- **Code:** [Container.interface.ts](../src/ts/layer3/Container.interface.ts)
+- **Code:** [DefaultFolder.ts](../src/ts/layer2/DefaultFolder.ts)
 
 ---
 
@@ -1293,7 +1293,7 @@ User drops file → UcpView.handleDrop()
 
 ### Examples
 
-- **PDCA:** [2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md](../../../../ONCE/0.3.22.1/session/2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md)
+- **PDCA:** [2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md](./2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md)
 
 ---
 
@@ -1307,4 +1307,3 @@ User drops file → UcpView.handleDrop()
 ---
 
 **"Never 2 1 (TO ONE). Always 4 2 (FOR TWO)."** 🤝✨
-

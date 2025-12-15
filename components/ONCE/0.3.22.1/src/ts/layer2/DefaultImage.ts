@@ -210,3 +210,5 @@ export class DefaultImage extends UcpComponent<ImageModel> {
 
 // Auto-register mimetype handler when module is loaded
 DefaultImage.registerMimetypeHandler();
+
+

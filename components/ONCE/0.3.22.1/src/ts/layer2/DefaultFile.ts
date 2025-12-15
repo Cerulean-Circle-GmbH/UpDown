@@ -285,3 +285,5 @@ export class DefaultFile extends UcpComponent<FileModel> {
     this.fileContent = null;
   }
 }
+
+

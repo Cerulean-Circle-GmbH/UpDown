@@ -77,3 +77,5 @@ export interface FileContent {
   /** ArrayBuffer for processing */
   arrayBuffer: Reference<ArrayBuffer>;
 }
+
+

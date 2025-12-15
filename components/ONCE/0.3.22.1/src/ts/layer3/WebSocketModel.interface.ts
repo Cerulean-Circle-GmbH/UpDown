@@ -54,3 +54,5 @@ export interface WebSocketModel extends Model {
   /** Timestamp when connection was established */
   connectedAt: Reference<Date>;
 }
+
+

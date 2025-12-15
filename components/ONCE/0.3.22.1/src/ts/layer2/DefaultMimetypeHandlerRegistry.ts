@@ -178,3 +178,5 @@ export class DefaultMimetypeHandlerRegistry implements MimetypeHandlerRegistry {
  * Convenience export for singleton access
  */
 export const mimetypeRegistry = DefaultMimetypeHandlerRegistry.instance;
+
+
