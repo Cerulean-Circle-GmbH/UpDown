@@ -1,44 +1,57 @@
 /**
- * UnitModel Interface - Unit component model extending base Model
+ * UnitModel.interface.ts - Unit Component Model
  * 
- * ✅ Web4 Principle 1: Everything is a Scenario
- * ✅ Web4 Principle 19: One File One Type
+ * A Unit represents an instance of a component with its scenario data.
+ * Units are linked to Artefacts (content-addressable) for deduplication.
  * 
- * Purpose: Unit-specific model with MOF classification and storage tracking
+ * Web4 Principles:
+ * - P1: Everything is a Scenario - Units ARE scenarios
+ * - P5: Reference<T> for nullable
+ * - P19: One File One Type
  * 
- * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
+ * @ior ior:esm:/ONCE/{version}/UnitModel
+ * @pdca 2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md
  */
 
-import type { Model } from './Model.interface.js';
-import type { TypeM3 } from './TypeM3.enum.js';
-import type { UnitReference } from './UnitReference.interface.js';
+import { Model } from './Model.interface.js';
+import { Reference } from './Reference.interface.js';
+import { UnitReference } from './UnitReference.interface.js';
 
+/**
+ * UnitModel - Data model for Unit component
+ * 
+ * A Unit is a named instance that links:
+ * - Component type (class name)
+ * - Component IOR (for method invocation)
+ * - Artefact (content hash for deduplication)
+ * - File (if file-based component)
+ */
 export interface UnitModel extends Model {
-  // Inherited from Model: uuid, name
+  /** Component type (class name, e.g., 'Image', 'File') */
+  componentType: string;
   
-  /** IOR string for unit origin (e.g., git commit) */
-  origin: string;
+  /** IOR to the component */
+  componentIor: string;
   
-  /** IOR string for unit definition (e.g., file:line:col) */
-  definition: string;
+  /** UUID of linked Artefact (content hash) */
+  artefactUuid: Reference<string>;
   
-  /** MOF M3/M2/M1 hierarchy classification */
-  typeM3?: TypeM3;
+  /** UUID of linked File (if file-based) */
+  fileUuid: Reference<string>;
   
-  /** Path to this unit in scenarios/index/ */
-  indexPath: string;
+  /** Creation timestamp */
+  createdAt: number;
   
-  /** Unified reference tracking (symlinks, named links) */
+  /** Last modification timestamp */
+  modifiedAt: number;
+  
+  /** Scenario storage path (symlink target) */
+  storagePath: Reference<string>;
+  
+  /** Index path for scenario storage */
+  indexPath: Reference<string>;
+  
+  /** References to related scenarios */
   references: UnitReference[];
-  
-  /** ISO timestamp of creation */
-  createdAt: string;
-  
-  /** ISO timestamp of last update */
-  updatedAt: string;
 }
-
-
-
-
 

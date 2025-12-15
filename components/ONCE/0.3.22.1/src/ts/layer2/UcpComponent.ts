@@ -388,6 +388,125 @@ export abstract class UcpComponent<TModel extends Model> {
   }
   
   // ═══════════════════════════════════════════════════════════════
+  // Scenario Creation (FS.6: Unit + Artefact)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /** Unit instance for this component (lazy-created) */
+  private unitInstance: Reference<UcpComponent<UnitModel>> = null;
+  
+  /** Artefact instance (if content-based) */
+  private artefactInstance: Reference<UcpComponent<any>> = null;
+  
+  /**
+   * Create scenario (Unit + Artefact) for this component
+   * 
+   * Call after component is initialized with content.
+   * Creates:
+   * - Unit: Named instance linking component, artefact, file
+   * - Artefact: Content-addressable storage (if has content hash)
+   * 
+   * Stores in RelatedObjects for access via:
+   *   this.controller.relatedObjectLookupFirst(DefaultUnit)
+   *   this.controller.relatedObjectLookupFirst(DefaultArtefact)
+   * 
+   * @param contentHash Optional content hash for Artefact
+   * @param contentSize Optional content size for Artefact
+   * @param mimetype Optional mimetype for Artefact
+   */
+  async scenarioCreate(
+    contentHash?: string,
+    contentSize?: number,
+    mimetype?: string
+  ): Promise<void> {
+    // Lazy import to avoid circular dependency
+    const { DefaultUnit } = await import('./DefaultUnit.js');
+    const { DefaultArtefact } = await import('./DefaultArtefact.js');
+    
+    // 1. Create Unit for this component
+    const unit = new DefaultUnit();
+    unit.initForComponent(
+      this.constructor.name,
+      this.iorGet()?.toString() || '',
+      (this.model as any).uuid || this.uuidCreate()
+    );
+    
+    // 2. Create Artefact if content hash provided
+    if (contentHash) {
+      const artefact = new DefaultArtefact();
+      artefact.initFromHash(
+        contentHash,
+        contentSize || 0,
+        mimetype || 'application/octet-stream',
+        unit.model.uuid
+      );
+      
+      // Link artefact to unit
+      unit.artefactLink(artefact.model.uuid);
+      
+      // Store artefact in RelatedObjects
+      this.controller.relatedObjectRegister(DefaultArtefact, artefact);
+      this.artefactInstance = artefact;
+    }
+    
+    // 3. Store unit in RelatedObjects
+    this.controller.relatedObjectRegister(DefaultUnit, unit);
+    this.unitInstance = unit;
+  }
+  
+  /**
+   * Store scenario to server
+   * 
+   * Saves Unit + Artefact scenarios with symlinks:
+   * - /scenarios/type/{ComponentType}/{version}/{uuid}.scenario.json
+   * - /scenarios/domain/{domain}/{uuid}.scenario.json
+   * - /scenarios/artefact/{hash-prefix}/{hash}.artefact.json
+   * 
+   * @param basePath Base path for scenario storage
+   * @param version Component version
+   */
+  async scenarioStore(basePath: string = '/scenarios', version: string = '0.0.0.0'): Promise<void> {
+    if (!this.storage) {
+      console.warn('[UcpComponent.scenarioStore] No storage configured');
+      return;
+    }
+    
+    // Lazy import
+    const { DefaultUnit } = await import('./DefaultUnit.js');
+    const { DefaultArtefact } = await import('./DefaultArtefact.js');
+    
+    // Store Unit
+    const unit = this.controller.relatedObjectLookupFirst(DefaultUnit);
+    if (unit) {
+      const unitPath = (unit as any).storagePathCompute(basePath, version);
+      const unitData = (unit as any).scenarioData();
+      
+      // Create symlinks for type and domain
+      const symlinkPaths = [
+        `${basePath}/type/${this.constructor.name}/${version}`,
+        `${basePath}/domain/local`
+      ];
+      
+      await this.storage.scenarioSave(unit.model.uuid, unitData, symlinkPaths);
+    }
+    
+    // Store Artefact
+    const artefact = this.controller.relatedObjectLookupFirst(DefaultArtefact);
+    if (artefact) {
+      const artefactPath = (artefact as any).storagePathCompute(basePath);
+      const artefactData = (artefact as any).scenarioData();
+      
+      await this.storage.scenarioSave(artefact.model.uuid, artefactData, [artefactPath]);
+    }
+  }
+  
+  /**
+   * Get the Unit for this component
+   */
+  get unit(): Reference<UcpComponent<UnitModel>> {
+    return this.unitInstance;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
   // Lifecycle & Serialization
   // ═══════════════════════════════════════════════════════════════
   
