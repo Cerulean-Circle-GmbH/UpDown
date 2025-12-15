@@ -14,6 +14,7 @@
 
 import { MimetypeHandler, ComponentConstructor } from '../layer3/MimetypeHandler.interface.js';
 import { MimetypeHandlerRegistry } from '../layer3/MimetypeHandlerRegistry.interface.js';
+import { Reference } from '../layer3/Reference.interface.js';
 
 /**
  * DefaultMimetypeHandlerRegistry - Singleton registry for mimetype handlers
@@ -121,7 +122,7 @@ export class DefaultMimetypeHandlerRegistry implements MimetypeHandlerRegistry {
    * Returns the highest-priority matching handler.
    * Checks patterns in priority order.
    */
-  handlerLookup(mimetype: string): MimetypeHandler | null {
+  handlerLookup(mimetype: string): Reference<MimetypeHandler> {
     for (const handler of this.handlers) {
       if (this.patternMatches(mimetype, handler.pattern)) {
         return handler;

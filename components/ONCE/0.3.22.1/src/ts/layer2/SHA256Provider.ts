@@ -13,6 +13,7 @@
  */
 
 import { ContentIDProvider } from '../layer3/ContentIDProvider.interface.js';
+import { Reference } from '../layer3/Reference.interface.js';
 
 /**
  * SHA256Provider - SHA-256 content hashing (like git)
@@ -94,7 +95,7 @@ export class SHA256Provider implements ContentIDProvider {
    * @param content Content to hash
    * @returns Hash string or null if sync not available
    */
-  contentIdCreateSync(content: ArrayBuffer | string | Uint8Array): string | null {
+  contentIdCreateSync(content: ArrayBuffer | string | Uint8Array): Reference<string> {
     // Check if Node.js crypto is available
     if (typeof process !== 'undefined' && process.versions?.node) {
       try {

@@ -10,6 +10,7 @@
  */
 
 import { MimetypeHandler } from './MimetypeHandler.interface.js';
+import { Reference } from './Reference.interface.js';
 
 /**
  * MimetypeHandlerRegistry - Interface for handler lookup
@@ -29,8 +30,9 @@ export interface MimetypeHandlerRegistry {
    * Lookup handler for a specific mimetype
    * 
    * Returns the highest-priority matching handler, or null.
+   * P5: Use Reference<T> for nullable return
    */
-  handlerLookup(mimetype: string): MimetypeHandler | null;
+  handlerLookup(mimetype: string): Reference<MimetypeHandler>;
   
   /**
    * Get all registered handlers

@@ -18,6 +18,7 @@
  */
 
 import { IDProvider } from './IDProvider.interface.js';
+import { Reference } from './Reference.interface.js';
 
 /**
  * ContentIDProvider - Content-based unique identifier generation
@@ -54,11 +55,12 @@ export interface ContentIDProvider extends IDProvider {
    * 
    * Note: Browser crypto.subtle only supports async.
    * Node.js crypto supports sync. Returns null if sync not available.
+   * P5: Use Reference<T> for nullable return
    * 
    * @param content Content to hash
    * @returns Hash string or null if sync not available
    */
-  contentIdCreateSync(content: ArrayBuffer | string | Uint8Array): string | null;
+  contentIdCreateSync(content: ArrayBuffer | string | Uint8Array): Reference<string>;
   
   /**
    * Get the algorithm name (e.g., "SHA-256", "MD5")
