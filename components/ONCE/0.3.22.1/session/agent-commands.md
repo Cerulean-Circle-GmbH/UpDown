@@ -226,6 +226,18 @@ Now FolderOverView can:
 1. Fetch JSON directory listings via `?format=json`
 2. Browser navigation gets HTML (SPA)
 
+---
+
+## Session: 2025-12-16 ~18:45 UTC (after crash #5)
+
+### Crash Analysis
+Last completed action: Shell - curl tests (SUCCESSFUL)
+Crash occurred: After successful testing, before commit
+Cause: Unknown - crashes seem random, not tied to specific tool
+
+### Step 18: Commit the fix
+- Tool: `Shell` - git commit
+
 
 
 
