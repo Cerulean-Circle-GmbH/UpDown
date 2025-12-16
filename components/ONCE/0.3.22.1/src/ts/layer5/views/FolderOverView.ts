@@ -119,9 +119,22 @@ export class FolderOverView extends UcpView<FolderModel> {
       this.rootPath = this.defaultPath || '/EAMD.ucp';
     }
     
-    const pathToLoad = this.cwd || this.rootPath;
+    // Priority for path to load:
+    // 1. Current URL pathname (if under rootPath) - for direct navigation
+    // 2. cwd property (for initial route)
+    // 3. rootPath (fallback)
+    const currentUrl = window.location.pathname;
+    let pathToLoad: string;
     
-    console.log('[FolderOverView] rootPath:', this.rootPath, 'cwd:', this.cwd, 'pathToLoad:', pathToLoad);
+    if (currentUrl.startsWith(this.rootPath) && currentUrl !== '/EAMD.ucp') {
+      // Direct navigation to a subfolder - use URL path
+      pathToLoad = currentUrl;
+    } else {
+      // Initial load via route - use cwd or rootPath
+      pathToLoad = this.cwd || this.rootPath;
+    }
+    
+    console.log('[FolderOverView] rootPath:', this.rootPath, 'cwd:', this.cwd, 'url:', currentUrl, 'pathToLoad:', pathToLoad);
     
     // Always load folder if cwd/rootPath is set
     // Note: UcpRouter sets browserModel on all views, so we ignore that and load our own model
@@ -760,6 +773,9 @@ declare global {
     'folder-over-view': FolderOverView;
   }
 }
+
+
+
 
 
 

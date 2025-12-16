@@ -215,12 +215,46 @@ export class Route {
   
   /**
    * Match URL path against this route's pattern
+   * Supports:
+   * - Exact match: /foo/bar
+   * - Dynamic segments: /foo/:id
+   * - Wildcard suffix: /foo/* (matches /foo/anything/here)
+   * 
    * @returns params if match, null if no match
    */
   pathMatch(path: string): Record<string, string> | null {
     const patternParts = this.pattern.split('/');
     const pathParts = path.split('/');
     
+    // Check for wildcard pattern (ends with /*)
+    const hasWildcard = patternParts.length > 0 && patternParts[patternParts.length - 1] === '*';
+    
+    if (hasWildcard) {
+      // Wildcard: pattern parts (minus *) must be prefix of path
+      const patternPrefix = patternParts.slice(0, -1);
+      if (pathParts.length < patternPrefix.length) {
+        return null;
+      }
+      
+      const params: Record<string, string> = {};
+      
+      for (let i = 0; i < patternPrefix.length; i++) {
+        const patternPart = patternPrefix[i];
+        const pathPart = pathParts[i];
+        
+        if (patternPart.startsWith(':')) {
+          params[patternPart.slice(1)] = pathPart;
+        } else if (patternPart !== pathPart) {
+          return null;
+        }
+      }
+      
+      // Capture remaining path as 'wildcard' param
+      params['*'] = pathParts.slice(patternPrefix.length).join('/');
+      return params;
+    }
+    
+    // Exact match: segment counts must be equal
     if (patternParts.length !== pathParts.length) {
       return null;
     }

@@ -161,13 +161,23 @@ export class BrowserOnceOrchestrator {
     });
     
     // File browser - folder overview for browsing EAMD.ucp file system
+    // Uses wildcard pattern to match all sub-paths: /EAMD.ucp/*
     // @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.1
     // viewProps are passed to the view element as properties
-    await (this.router as any).routeRegister('/EAMD.ucp', 'folder-over-view', { 
+    await (this.router as any).routeRegister('/EAMD.ucp/*', 'folder-over-view', { 
       title: 'File Browser',
       viewProps: {
         rootPath: '/EAMD.ucp',  // Navigation boundary - cannot navigate above
         cwd: `/EAMD.ucp/components/ONCE/${this.component.browserModel.version || '0.3.22.1'}/src/assets`  // Initial folder
+      }
+    });
+    
+    // Also register exact /EAMD.ucp path (no trailing content)
+    await (this.router as any).routeRegister('/EAMD.ucp', 'folder-over-view', { 
+      title: 'File Browser',
+      viewProps: {
+        rootPath: '/EAMD.ucp',
+        cwd: `/EAMD.ucp/components/ONCE/${this.component.browserModel.version || '0.3.22.1'}/src/assets`
       }
     });
     

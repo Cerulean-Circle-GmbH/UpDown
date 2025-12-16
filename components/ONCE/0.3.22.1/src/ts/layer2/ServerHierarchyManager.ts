@@ -337,8 +337,8 @@ export class ServerHierarchyManager {
         this.httpRouter.registerRoute(eamdRoute2);
         
         // ✅ Route 7d: File Browser catch-all for deep folder paths
-        // Handles direct navigation to /EAMD.ucp/components/.../folder/
-        // Only matches paths ending with / (directories), not files
+        // Handles direct navigation to /EAMD.ucp/components/.../folder
+        // Matches directory paths (with or without trailing slash), not files
         // @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md
         const eamdCatchAll = new HTMLRoute();
         eamdCatchAll.model.uuid = this.idProvider.create();
@@ -346,13 +346,15 @@ export class ServerHierarchyManager {
         // Custom matcher for directory paths under /EAMD.ucp/
         eamdCatchAll.matches = function(urlPath: string, method: HttpMethod): boolean {
             if (method !== HttpMethod.GET) return false;
-            // Must start with /EAMD.ucp/ and end with / (directory)
-            // Must NOT have file extension in last segment
+            // Must start with /EAMD.ucp/
             if (!urlPath.startsWith('/EAMD.ucp/')) return false;
-            if (!urlPath.endsWith('/')) return false;
-            const lastSegment = urlPath.split('/').filter(s => s.length > 0).pop() || '';
-            // If last segment has a dot followed by 2-4 chars, it's likely a file
-            if (/\.[a-zA-Z]{2,4}$/.test(lastSegment)) return false;
+            // Get last segment (handles both with and without trailing slash)
+            const segments = urlPath.split('/').filter(s => s.length > 0);
+            const lastSegment = segments[segments.length - 1] || '';
+            // File extensions to exclude (serve via StaticFileRoute instead)
+            const fileExtensions = /\.(js|ts|css|html|json|svg|png|jpg|jpeg|gif|webp|ico|woff|woff2|ttf|eot|map|md|txt|sh|xml)$/i;
+            if (fileExtensions.test(lastSegment)) return false;
+            // Otherwise it's a directory path - serve SPA
             return true;
         };
         eamdCatchAll.setProvider(() => this.component!.serveDemoLit());
