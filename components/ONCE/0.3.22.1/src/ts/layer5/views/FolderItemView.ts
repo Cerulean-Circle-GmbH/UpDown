@@ -108,8 +108,9 @@ export class FolderItemView extends UcpView<FolderModel> {
    */
   private handleSelect(): void {
     const data = this.getDisplayData();
+    if (!data) return; // Guard against uninitialized state
     this.dispatchEvent(new CustomEvent('item-select', {
-      detail: { model: this.model, childRef: this.childRef, uuid: data?.uuid },
+      detail: { model: this.hasModel ? this.model : null, childRef: this.childRef, uuid: data.uuid },
       bubbles: true,
       composed: true
     }));
@@ -122,8 +123,9 @@ export class FolderItemView extends UcpView<FolderModel> {
     event.stopPropagation(); // Don't trigger select
     
     const data = this.getDisplayData();
+    if (!data) return; // Guard against uninitialized state
     this.dispatchEvent(new CustomEvent('item-navigate', {
-      detail: { model: this.model, childRef: this.childRef, uuid: data?.uuid },
+      detail: { model: this.hasModel ? this.model : null, childRef: this.childRef, uuid: data.uuid },
       bubbles: true,
       composed: true
     }));
@@ -145,7 +147,7 @@ export class FolderItemView extends UcpView<FolderModel> {
     event.dataTransfer!.effectAllowed = 'move';
     
     this.dispatchEvent(new CustomEvent('item-drag-start', {
-      detail: { model: this.model, childRef: this.childRef, event },
+      detail: { model: this.hasModel ? this.model : null, childRef: this.childRef, event },
       bubbles: true,
       composed: true
     }));
@@ -157,6 +159,7 @@ declare global {
     'folder-item-view': FolderItemView;
   }
 }
+
 
 
 

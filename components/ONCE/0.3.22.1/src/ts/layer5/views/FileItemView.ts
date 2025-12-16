@@ -123,6 +123,7 @@ export class FileItemView extends UcpView<FileModel> {
    * Handle tap on middle content zone (select)
    */
   private handleSelect(): void {
+    if (!this.hasModel) return; // Guard against uninitialized state
     this.dispatchEvent(new CustomEvent('item-select', {
       detail: { model: this.model },
       bubbles: true,
@@ -134,7 +135,7 @@ export class FileItemView extends UcpView<FileModel> {
    * Handle drag start from left icon
    */
   private handleDragStart(event: DragEvent): void {
-    if (!this.model) return;
+    if (!this.hasModel) return; // Guard against uninitialized state
     
     // Set drag data
     event.dataTransfer?.setData('application/json', JSON.stringify({
@@ -157,6 +158,7 @@ declare global {
     'file-item-view': FileItemView;
   }
 }
+
 
 
 
