@@ -98,10 +98,17 @@ export class FolderOverView extends UcpView<FolderModel> {
   private touchStartX = 0;
   private touchStartY = 0;
   
+  /** Bound popstate handler for cleanup */
+  private boundPopstateHandler: ((e: PopStateEvent) => void) | null = null;
+  
   connectedCallback(): void {
     super.connectedCallback();
     this.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
     this.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: true });
+    
+    // Handle browser back/forward buttons
+    this.boundPopstateHandler = this.handlePopstate.bind(this);
+    window.addEventListener('popstate', this.boundPopstateHandler);
     
     // Load paths from properties (set by viewProps in UcpRouter.viewCreate)
     // @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.2
@@ -128,6 +135,27 @@ export class FolderOverView extends UcpView<FolderModel> {
     super.disconnectedCallback();
     this.removeEventListener('touchstart', this.handleTouchStart.bind(this));
     this.removeEventListener('touchend', this.handleTouchEnd.bind(this));
+    
+    // Clean up popstate listener
+    if (this.boundPopstateHandler) {
+      window.removeEventListener('popstate', this.boundPopstateHandler);
+      this.boundPopstateHandler = null;
+    }
+  }
+  
+  /**
+   * Handle browser back/forward navigation
+   * @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md
+   */
+  private handlePopstate(event: PopStateEvent): void {
+    const path = event.state?.path || window.location.pathname;
+    
+    // Only handle paths within our root
+    if (this.navigationAllowed(path)) {
+      console.log('[FolderOverView] Popstate navigation to:', path);
+      this.animationDirection = NavigationDirection.Back;
+      this.folderLoad(path);
+    }
   }
   
   updated(changedProperties: PropertyValues): void {
@@ -384,6 +412,12 @@ export class FolderOverView extends UcpView<FolderModel> {
       
       // Update breadcrumb from path
       this.breadcrumbFromPath(folderPath);
+      
+      // Update browser URL to reflect current path
+      // @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md
+      if (window.history && folderPath !== window.location.pathname) {
+        window.history.pushState({ path: folderPath }, '', folderPath);
+      }
       
     } catch (error) {
       this.errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -726,6 +760,7 @@ declare global {
     'folder-over-view': FolderOverView;
   }
 }
+
 
 
 

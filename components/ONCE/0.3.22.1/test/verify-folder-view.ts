@@ -1,6 +1,6 @@
 /**
  * Quick verification script for FolderOverView
- * Run with: npx ts-node test/verify-folder-view.ts
+ * Run with: npx tsx test/verify-folder-view.ts
  */
 
 import { chromium } from 'playwright';
@@ -14,22 +14,31 @@ async function verify(): Promise<void> {
   const context = await browser.newContext({ ignoreHTTPSErrors: true });
   const page = await context.newPage();
   
-  // Capture console logs
+  // Capture ALL console logs
   page.on('console', msg => {
-    if (msg.text().includes('FolderOverView')) {
-      console.log(`[Browser] ${msg.text()}`);
-    }
+    console.log(`[Browser] ${msg.text()}`);
   });
   
-  console.log('Navigating to /EAMD.ucp...');
+  // First, test the directory listing endpoint directly
+  console.log('=== Testing Directory Listing Endpoint ===');
+  const apiResponse = await page.goto('https://localhost:42777/EAMD.ucp/components/ONCE/0.3.22.1/src/assets/', {
+    timeout: 10000
+  });
+  const apiContent = await apiResponse?.text();
+  console.log('Directory listing response:', apiContent?.substring(0, 500));
+  
+  console.log('\n=== Navigating to /EAMD.ucp ===');
   await page.goto('https://localhost:42777/EAMD.ucp', { 
     waitUntil: 'networkidle',
     timeout: 30000 
   });
   
-  // Wait for router
+  // Wait for router and folder view to load
   await page.waitForSelector('ucp-router', { timeout: 10000 });
   console.log('✅ ucp-router found');
+  
+  // Wait a bit for async folder loading
+  await page.waitForTimeout(2000);
   
   // Check shadow DOM
   const result = await page.evaluate(() => {
@@ -44,20 +53,47 @@ async function verify(): Promise<void> {
     
     const folderShadow = folderView.shadowRoot;
     
+    // Get the folder model specifically
+    const folderModel = folderView.model;
+    
+    // Check FileItemViews inside
+    const fileItemViews = folderShadow?.querySelectorAll('file-item-view') || [];
+    const fileItemStates = Array.from(fileItemViews).map((fiv: any) => {
+      const fileItemShadow = fiv.shadowRoot;
+      const computedStyle = fileItemShadow ? 
+        getComputedStyle(fileItemShadow.querySelector('.file-item') || fiv) : null;
+      
+      return {
+        hasModel: fiv.hasModel,
+        model: fiv.hasModel ? {
+          name: fiv.model?.name,
+          filename: fiv.model?.filename
+        } : null,
+        adoptedStyleSheetsCount: fileItemShadow?.adoptedStyleSheets?.length || 0,
+        computedStyles: computedStyle ? {
+          display: computedStyle.display,
+          height: computedStyle.height,
+          visibility: computedStyle.visibility,
+          color: computedStyle.color
+        } : null,
+        innerHTML: fileItemShadow?.innerHTML?.substring(0, 300)
+      };
+    });
+    
     return {
       found: true,
-      route: folderView.route ? {
-        pattern: folderView.route.pattern,
-        viewTag: folderView.route.viewTag,
-        model: folderView.route.model
-      } : null,
       rootPath: folderView.rootPath,
       cwd: folderView.cwd,
       currentPath: folderView.currentPath,
       isLoading: folderView.isLoading,
       errorMessage: folderView.errorMessage,
-      model: folderView.model,
-      shadowHTML: folderShadow?.innerHTML?.substring(0, 500)
+      modelType: folderModel?.folderName ? 'FolderModel' : (folderModel?.environment ? 'BrowserModel' : 'Unknown'),
+      modelName: folderModel?.name,
+      modelPath: folderModel?.path,
+      childrenCount: folderModel?.children?.length || 0,
+      children: folderModel?.children?.slice(0, 3),
+      fileItemViewCount: fileItemViews.length,
+      fileItemStates: fileItemStates.slice(0, 3)
     };
   });
   
@@ -71,4 +107,5 @@ verify().catch(err => {
   console.error('Error:', err);
   process.exit(1);
 });
+
 
