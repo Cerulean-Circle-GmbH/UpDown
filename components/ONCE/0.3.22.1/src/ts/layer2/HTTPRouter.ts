@@ -109,12 +109,15 @@ export class HTTPRouter {
         
         try {
             const url = parseUrl(req.url || '/', true);
-            const path = url.pathname || '/';
+            const pathname = url.pathname || '/';
+            // Pass full URL to matches() so routes can check query params
+            const fullUrl = req.url || '/';
             const method = (req.method?.toUpperCase() as HttpMethod) || HttpMethod.GET;
             const hostname = this.hostnameExtract(req);
             
             // Find matching route (with domain support)
-            const matchedRoute = this.findMatchingRoute(path, method, hostname);
+            // Pass fullUrl so routes can check query params (e.g., ?format=json)
+            const matchedRoute = this.findMatchingRoute(fullUrl, method, hostname);
             
             if (matchedRoute) {
                 // ✅ ONE LINE DELEGATION!
@@ -130,7 +133,7 @@ export class HTTPRouter {
                 });
                 res.end(JSON.stringify({ 
                     error: 'Not Found',
-                    path,
+                    path: pathname,
                     method,
                     availableRoutes: Array.from(this.routes.keys())
                 }));

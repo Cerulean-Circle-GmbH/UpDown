@@ -405,7 +405,9 @@ export class FolderOverView extends UcpView<FolderModel> {
     try {
       // Fetch directory listing from server
       // StaticFileRoute returns JSON for directory requests
-      const response = await fetch(folderPath);
+      // Use ?format=json to bypass SPA catch-all route
+      const fetchUrl = folderPath + (folderPath.includes('?') ? '&' : '?') + 'format=json';
+      const response = await fetch(fetchUrl);
       
       if (!response.ok) {
         throw new Error(`Failed to load folder: ${response.status}`);
@@ -773,6 +775,11 @@ declare global {
     'folder-over-view': FolderOverView;
   }
 }
+
+
+
+
+
 
 
 

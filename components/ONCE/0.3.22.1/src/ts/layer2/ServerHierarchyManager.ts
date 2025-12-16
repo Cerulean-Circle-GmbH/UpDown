@@ -344,12 +344,17 @@ export class ServerHierarchyManager {
         eamdCatchAll.model.uuid = this.idProvider.create();
         eamdCatchAll.model.name = 'EAMD.ucp Folder Browser Catch-All';
         // Custom matcher for directory paths under /EAMD.ucp/
+        // Serves SPA for browser navigation, skips API requests (?format=json)
         eamdCatchAll.matches = function(urlPath: string, method: HttpMethod): boolean {
             if (method !== HttpMethod.GET) return false;
+            // Skip API requests that want JSON (FolderOverView uses this)
+            if (urlPath.includes('?format=json') || urlPath.includes('&format=json')) return false;
+            // Extract path without query string
+            const pathOnly = urlPath.split('?')[0];
             // Must start with /EAMD.ucp/
-            if (!urlPath.startsWith('/EAMD.ucp/')) return false;
+            if (!pathOnly.startsWith('/EAMD.ucp/')) return false;
             // Get last segment (handles both with and without trailing slash)
-            const segments = urlPath.split('/').filter(s => s.length > 0);
+            const segments = pathOnly.split('/').filter(s => s.length > 0);
             const lastSegment = segments[segments.length - 1] || '';
             // File extensions to exclude (serve via StaticFileRoute instead)
             const fileExtensions = /\.(js|ts|css|html|json|svg|png|jpg|jpeg|gif|webp|ico|woff|woff2|ttf|eot|map|md|txt|sh|xml)$/i;
