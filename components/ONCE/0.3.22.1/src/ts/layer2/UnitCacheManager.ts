@@ -114,7 +114,10 @@ export class UnitCacheManager {
    */
   public unitPut(ior: string, response: Response, unitType: UnitType): Promise<void> {
     if (!this.cache) {
-      return Promise.reject(new Error('Cache not opened'));
+      // Cache not yet opened (install in progress) - skip silently
+      // This is normal during SW startup, caching will work after install completes
+      console.debug('[UnitCacheManager] Skipping cache (not yet open):', ior);
+      return Promise.resolve();
     }
     
     // Clone response since it can only be used once
