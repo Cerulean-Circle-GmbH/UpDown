@@ -58,7 +58,15 @@ export class FolderOverView extends UcpView<FolderModel> {
   @property({ type: Object })
   container: Reference<Container<unknown>> = null;
   
-  /** Default path to load on mount (e.g., from route options) */
+  /** Root path boundary - cannot navigate above this (e.g., '/EAMD.ucp') */
+  @property({ type: String, attribute: 'root-path' })
+  rootPath: string = '';
+  
+  /** Current working directory - initial folder to display */
+  @property({ type: String, attribute: 'cwd' })
+  cwd: string = '';
+  
+  /** @deprecated Use rootPath instead */
   @property({ type: String, attribute: 'default-path' })
   defaultPath: string = '';
   
@@ -95,13 +103,22 @@ export class FolderOverView extends UcpView<FolderModel> {
     this.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
     this.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: true });
     
-    // Load default path from route options or property
+    // Load paths from route options or properties
     // Route options are passed via (view as any).route = route in UcpRouter.viewCreate()
-    const routeDefaultPath = (this as any).route?.model?.defaultPath;
-    const pathToLoad = this.defaultPath || routeDefaultPath;
+    const routeOptions = (this as any).route?.model;
+    
+    // Root path (navigation boundary) - @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.2
+    const rootPathFromRoute = routeOptions?.rootPath;
+    const rootPathFromProperty = this.rootPath || this.defaultPath;
+    this.rootPath = rootPathFromRoute || rootPathFromProperty || '/EAMD.ucp';
+    
+    // Current working directory (initial folder)
+    const cwdFromRoute = routeOptions?.cwd;
+    const cwdFromProperty = this.cwd;
+    const pathToLoad = cwdFromRoute || cwdFromProperty || this.rootPath;
     
     if (pathToLoad && !this.model) {
-      console.log(`[FolderOverView] Loading default path: ${pathToLoad}`);
+      console.log(`[FolderOverView] Root: ${this.rootPath}, Loading cwd: ${pathToLoad}`);
       this.folderLoad(pathToLoad);
     }
   }
@@ -165,8 +182,10 @@ export class FolderOverView extends UcpView<FolderModel> {
   private retryLoad(): void {
     if (this.currentPath) {
       this.folderLoad(this.currentPath);
-    } else if (this.defaultPath) {
-      this.folderLoad(this.defaultPath);
+    } else if (this.cwd) {
+      this.folderLoad(this.cwd);
+    } else if (this.rootPath) {
+      this.folderLoad(this.rootPath);
     }
   }
   
@@ -477,12 +496,32 @@ export class FolderOverView extends UcpView<FolderModel> {
   
   /**
    * Build breadcrumb from path string
+   * Only shows path from rootPath to current folder
+   * @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.3
    */
   private breadcrumbFromPath(folderPath: string): void {
-    const parts = folderPath.split('/').filter(Boolean);
-    const breadcrumbs: { name: string; uuid: string }[] = [];
-    let currentPath = '';
+    // Normalize paths
+    const normalizedRoot = this.rootPath.replace(/\/$/, '');
+    const normalizedPath = folderPath.replace(/\/$/, '');
     
+    // Get relative path from root
+    let relativePath = normalizedPath;
+    if (normalizedPath.startsWith(normalizedRoot)) {
+      relativePath = normalizedPath.slice(normalizedRoot.length);
+    }
+    
+    const parts = relativePath.split('/').filter(Boolean);
+    const breadcrumbs: { name: string; uuid: string }[] = [];
+    
+    // Always start with root
+    const rootName = normalizedRoot.split('/').pop() || 'Root';
+    breadcrumbs.push({
+      name: rootName,
+      uuid: normalizedRoot
+    });
+    
+    // Add remaining path parts
+    let currentPath = normalizedRoot;
     for (const part of parts) {
       currentPath += '/' + part;
       breadcrumbs.push({
@@ -492,6 +531,28 @@ export class FolderOverView extends UcpView<FolderModel> {
     }
     
     this.breadcrumbPath = breadcrumbs;
+  }
+  
+  /**
+   * Check if navigation to path is allowed (within rootPath boundary)
+   * @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.4
+   */
+  private navigationAllowed(targetPath: string): boolean {
+    const normalizedRoot = this.rootPath.replace(/\/$/, '');
+    const normalizedTarget = targetPath.replace(/\/$/, '');
+    
+    // Target must start with root (or be root)
+    return normalizedTarget === normalizedRoot || 
+           normalizedTarget.startsWith(normalizedRoot + '/');
+  }
+  
+  /**
+   * Check if at root boundary
+   */
+  private isAtRoot(): boolean {
+    const normalizedRoot = this.rootPath.replace(/\/$/, '');
+    const normalizedCurrent = this.currentPath.replace(/\/$/, '');
+    return normalizedCurrent === normalizedRoot;
   }
   
   /**
@@ -519,17 +580,28 @@ export class FolderOverView extends UcpView<FolderModel> {
   
   /**
    * Navigate via breadcrumb click
+   * @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.3
    */
   private breadcrumbNavigate(uuid: string, index: number): void {
+    // Check if navigation is allowed within rootPath boundary
+    if (!this.navigationAllowed(uuid)) {
+      console.log(`[FolderOverView] Navigation blocked: ${uuid} outside root ${this.rootPath}`);
+      return;
+    }
+    
     // Navigate back to ancestor
     this.animationDirection = NavigationDirection.Back;
     this.isAnimating = true;
     
+    // Dispatch event for external handlers
     this.dispatchEvent(new CustomEvent('folder-navigate', {
       detail: { uuid, index, direction: NavigationDirection.Back },
       bubbles: true,
       composed: true
     }));
+    
+    // Load the folder contents
+    this.folderLoad(uuid);
     
     // Reset animation after transition - P4a: Use bound method
     setTimeout(this.animationReset.bind(this), 300);
@@ -555,16 +627,28 @@ export class FolderOverView extends UcpView<FolderModel> {
   
   /**
    * Handle item navigate (open folder)
+   * @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.3
    */
   private handleItemNavigate(event: CustomEvent): void {
+    const targetPath = event.detail?.uuid || event.detail?.path;
+    
+    if (!targetPath) {
+      console.warn('[FolderOverView] No target path in navigate event');
+      return;
+    }
+    
     this.animationDirection = NavigationDirection.Forward;
     this.isAnimating = true;
     
+    // Dispatch event for external handlers
     this.dispatchEvent(new CustomEvent('folder-navigate', {
       detail: { ...event.detail, direction: NavigationDirection.Forward },
       bubbles: true,
       composed: true
     }));
+    
+    // Load the folder contents
+    this.folderLoad(targetPath);
     
     // Reset animation after transition - P4a: Use bound method
     setTimeout(this.animationReset.bind(this), 300);
@@ -602,12 +686,24 @@ export class FolderOverView extends UcpView<FolderModel> {
   
   /**
    * Handle swipe back gesture (navigate to parent)
+   * Respects rootPath boundary - won't navigate above it
+   * @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.4
    */
   private swipeBack(): void {
+    // Don't navigate if at root boundary
+    if (this.isAtRoot()) {
+      console.log('[FolderOverView] At root boundary, cannot navigate back');
+      return;
+    }
+    
     if (this.breadcrumbPath.length > 1) {
       const parentIndex = this.breadcrumbPath.length - 2;
       const parent = this.breadcrumbPath[parentIndex];
-      this.breadcrumbNavigate(parent.uuid, parentIndex);
+      
+      // Double-check navigation is allowed
+      if (this.navigationAllowed(parent.uuid)) {
+        this.breadcrumbNavigate(parent.uuid, parentIndex);
+      }
     }
   }
   

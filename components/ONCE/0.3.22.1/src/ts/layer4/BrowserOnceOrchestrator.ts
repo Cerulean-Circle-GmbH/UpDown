@@ -160,11 +160,12 @@ export class BrowserOnceOrchestrator {
       title: 'Peer Details' 
     });
     
-    // File browser - folder overview for browsing assets
-    // @pdca 2025-12-16-UTC-1130.e2e-folder-image-drop-test.pdca.md F.1
-    await (this.router as any).routeRegister('/browse', 'folder-over-view', { 
+    // File browser - folder overview for browsing EAMD.ucp file system
+    // @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.1
+    await (this.router as any).routeRegister('/EAMD.ucp', 'folder-over-view', { 
       title: 'File Browser',
-      defaultPath: `/EAMD.ucp/components/ONCE/${this.component.browserModel.version || '0.3.22.1'}/src/assets`
+      rootPath: '/EAMD.ucp',  // Navigation boundary - cannot navigate above
+      cwd: `/EAMD.ucp/components/ONCE/${this.component.browserModel.version || '0.3.22.1'}/src/assets`  // Initial folder
     });
     
     console.log('[Orchestrator] ✅ Routes registered');

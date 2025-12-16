@@ -319,22 +319,22 @@ export class ServerHierarchyManager {
         logRoute2.model.priority = 50;
         this.httpRouter.registerRoute(logRoute2);
         
-        // ✅ Route 7b: File Browser ("/browse") - Folder browser SPA
-        // @pdca 2025-12-16-UTC-1130.e2e-folder-image-drop-test.pdca.md F.1
-        const browseRoute = new HTMLRoute();
-        browseRoute.model.uuid = this.idProvider.create();
-        browseRoute.setPattern('/browse', HttpMethod.GET);
-        browseRoute.setProvider(() => this.component!.serveDemoLit()); // Use same SPA as /demo
-        browseRoute.model.priority = 50;
-        this.httpRouter.registerRoute(browseRoute);
+        // ✅ Route 7b: File Browser ("/EAMD.ucp") - Folder browser SPA
+        // @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.1
+        const eamdRoute = new HTMLRoute();
+        eamdRoute.model.uuid = this.idProvider.create();
+        eamdRoute.setPattern('/EAMD.ucp', HttpMethod.GET);
+        eamdRoute.setProvider(() => this.component!.serveDemoLit()); // Use same SPA as /demo
+        eamdRoute.model.priority = 50;
+        this.httpRouter.registerRoute(eamdRoute);
         
-        // ✅ Route 7c: File Browser with trailing slash ("/browse/")
-        const browseRoute2 = new HTMLRoute();
-        browseRoute2.model.uuid = this.idProvider.create();
-        browseRoute2.setPattern('/browse/', HttpMethod.GET);
-        browseRoute2.setProvider(() => this.component!.serveDemoLit());
-        browseRoute2.model.priority = 50;
-        this.httpRouter.registerRoute(browseRoute2);
+        // ✅ Route 7c: File Browser with trailing slash ("/EAMD.ucp/")
+        const eamdRoute2 = new HTMLRoute();
+        eamdRoute2.model.uuid = this.idProvider.create();
+        eamdRoute2.setPattern('/EAMD.ucp/', HttpMethod.GET);
+        eamdRoute2.setProvider(() => this.component!.serveDemoLit());
+        eamdRoute2.model.priority = 50;
+        this.httpRouter.registerRoute(eamdRoute2);
         
         // ✅ Route 8: Health endpoint ("/health") - Returns Scenario
         const healthRoute = new ScenarioRoute();
