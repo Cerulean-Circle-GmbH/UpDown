@@ -58,6 +58,22 @@ export class FolderOverView extends UcpView<FolderModel> {
   @property({ type: Object })
   container: Reference<Container<unknown>> = null;
   
+  /** Default path to load on mount (e.g., from route options) */
+  @property({ type: String, attribute: 'default-path' })
+  defaultPath: string = '';
+  
+  /** Current folder path being displayed */
+  @state()
+  private currentPath: string = '';
+  
+  /** Loading state */
+  @state()
+  private isLoading = false;
+  
+  /** Error message if loading fails */
+  @state()
+  private errorMessage: string = '';
+  
   /** Breadcrumb path (computed from Container.pathFromRoot or manual) */
   @state()
   private breadcrumbPath: { name: string; uuid: string }[] = [];
@@ -78,6 +94,11 @@ export class FolderOverView extends UcpView<FolderModel> {
     super.connectedCallback();
     this.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
     this.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: true });
+    
+    // Load default path if specified
+    if (this.defaultPath && !this.model) {
+      this.folderLoad(this.defaultPath);
+    }
   }
   
   disconnectedCallback(): void {
@@ -100,10 +121,48 @@ export class FolderOverView extends UcpView<FolderModel> {
       
       <div class="panel-container">
         <div class="panel ${this.getPanelClass()}">
-          ${this.renderChildren()}
+          ${this.isLoading ? this.renderLoading() : 
+            this.errorMessage ? this.renderError() : 
+            this.renderChildren()}
         </div>
       </div>
     `;
+  }
+  
+  /**
+   * Render loading state
+   */
+  private renderLoading(): TemplateResult {
+    return html`
+      <div class="loading-state">
+        <span class="loading-spinner">⏳</span>
+        <span class="loading-text">Loading folder...</span>
+      </div>
+    `;
+  }
+  
+  /**
+   * Render error state
+   */
+  private renderError(): TemplateResult {
+    return html`
+      <div class="error-state">
+        <span class="error-icon">❌</span>
+        <span class="error-text">${this.errorMessage}</span>
+        <button @click=${this.retryLoad}>Retry</button>
+      </div>
+    `;
+  }
+  
+  /**
+   * Retry loading folder - P4a: Method for click handler
+   */
+  private retryLoad(): void {
+    if (this.currentPath) {
+      this.folderLoad(this.currentPath);
+    } else if (this.defaultPath) {
+      this.folderLoad(this.defaultPath);
+    }
   }
   
   /**
@@ -267,6 +326,193 @@ export class FolderOverView extends UcpView<FolderModel> {
   }
   
   /**
+   * Load folder contents from a path
+   * Fetches directory listing from server and populates model
+   * 
+   * @pdca 2025-12-16-UTC-1130.e2e-folder-image-drop-test.pdca.md F.1
+   */
+  async folderLoad(folderPath: string): Promise<void> {
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.currentPath = folderPath;
+    
+    try {
+      // Fetch directory listing from server
+      // StaticFileRoute returns JSON for directory requests
+      const response = await fetch(folderPath);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to load folder: ${response.status}`);
+      }
+      
+      const contentType = response.headers.get('content-type') || '';
+      
+      if (contentType.includes('application/json')) {
+        // Server returned JSON directory listing
+        const data = await response.json();
+        this.folderModelFromListing(data, folderPath);
+      } else {
+        // Server returned HTML - parse for links (fallback)
+        const html = await response.text();
+        this.folderModelFromHtml(html, folderPath);
+      }
+      
+      // Update breadcrumb from path
+      this.breadcrumbFromPath(folderPath);
+      
+    } catch (error) {
+      this.errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('[FolderOverView] Load error:', error);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+  
+  /**
+   * Create folder model from directory listing JSON
+   */
+  private folderModelFromListing(data: any, folderPath: string): void {
+    const folderName = folderPath.split('/').filter(Boolean).pop() || 'Root';
+    
+    // Handle different listing formats
+    let entries: Array<{ name: string; isFile?: boolean; isDirectory?: boolean; type?: string }> = [];
+    
+    if (Array.isArray(data)) {
+      entries = data;
+    } else if (data.entries) {
+      entries = data.entries;
+    } else if (data.files || data.folders) {
+      // Combined format
+      entries = [
+        ...(data.folders || []).map((f: string | { name: string }) => ({ 
+          name: typeof f === 'string' ? f : f.name, 
+          isDirectory: true 
+        })),
+        ...(data.files || []).map((f: string | { name: string }) => ({ 
+          name: typeof f === 'string' ? f : f.name, 
+          isFile: true 
+        }))
+      ];
+    }
+    
+    // Build FolderModel with children
+    const children: FolderChildReference[] = [];
+    for (const entry of entries) {
+      const name = typeof entry === 'string' ? entry : entry.name;
+      const isFolder = entry.isDirectory === true || entry.type === 'directory' || name.endsWith('/');
+      
+      children.push({
+        uuid: `${folderPath}/${name.replace(/\/$/, '')}`,
+        name: name.replace(/\/$/, ''),
+        isFolder,
+        hasChildren: isFolder, // Assume folders have children
+        mimetype: isFolder ? 'inode/directory' : this.mimetypeGuess(name),
+        size: 0
+      });
+    }
+    
+    this.model = {
+      uuid: folderPath,
+      name: folderName,
+      folderName: folderName,
+      path: folderPath,
+      children,
+      createdAt: 0,
+      modifiedAt: 0,
+      parentUuid: null,
+      isLink: false,
+      linkTarget: null
+    };
+  }
+  
+  /**
+   * Create folder model from HTML directory listing (fallback)
+   */
+  private folderModelFromHtml(html: string, folderPath: string): void {
+    const folderName = folderPath.split('/').filter(Boolean).pop() || 'Root';
+    const children: FolderChildReference[] = [];
+    
+    // Parse links from HTML
+    const linkRegex = /<a[^>]+href=["']([^"']+)["'][^>]*>([^<]+)<\/a>/gi;
+    let match;
+    
+    while ((match = linkRegex.exec(html)) !== null) {
+      const href = match[1];
+      const name = match[2].trim();
+      
+      // Skip parent directory links
+      if (href === '..' || href === '../' || name === 'Parent Directory') {
+        continue;
+      }
+      
+      const isFolder = href.endsWith('/');
+      children.push({
+        uuid: `${folderPath}/${href.replace(/\/$/, '')}`,
+        name: name.replace(/\/$/, ''),
+        isFolder,
+        hasChildren: isFolder,
+        mimetype: isFolder ? 'inode/directory' : this.mimetypeGuess(name),
+        size: 0
+      });
+    }
+    
+    this.model = {
+      uuid: folderPath,
+      name: folderName,
+      folderName: folderName,
+      path: folderPath,
+      children,
+      createdAt: 0,
+      modifiedAt: 0,
+      parentUuid: null,
+      isLink: false,
+      linkTarget: null
+    };
+  }
+  
+  /**
+   * Build breadcrumb from path string
+   */
+  private breadcrumbFromPath(folderPath: string): void {
+    const parts = folderPath.split('/').filter(Boolean);
+    const breadcrumbs: { name: string; uuid: string }[] = [];
+    let currentPath = '';
+    
+    for (const part of parts) {
+      currentPath += '/' + part;
+      breadcrumbs.push({
+        name: part,
+        uuid: currentPath
+      });
+    }
+    
+    this.breadcrumbPath = breadcrumbs;
+  }
+  
+  /**
+   * Guess mimetype from filename extension
+   */
+  private mimetypeGuess(filename: string): string {
+    const ext = filename.split('.').pop()?.toLowerCase() || '';
+    const mimetypes: Record<string, string> = {
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'png': 'image/png',
+      'gif': 'image/gif',
+      'webp': 'image/webp',
+      'svg': 'image/svg+xml',
+      'pdf': 'application/pdf',
+      'txt': 'text/plain',
+      'html': 'text/html',
+      'css': 'text/css',
+      'js': 'application/javascript',
+      'ts': 'text/typescript',
+      'json': 'application/json'
+    };
+    return mimetypes[ext] || 'application/octet-stream';
+  }
+  
+  /**
    * Navigate via breadcrumb click
    */
   private breadcrumbNavigate(uuid: string, index: number): void {
@@ -378,6 +624,7 @@ declare global {
     'folder-over-view': FolderOverView;
   }
 }
+
 
 
 

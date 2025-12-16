@@ -160,6 +160,13 @@ export class BrowserOnceOrchestrator {
       title: 'Peer Details' 
     });
     
+    // File browser - folder overview for browsing assets
+    // @pdca 2025-12-16-UTC-1130.e2e-folder-image-drop-test.pdca.md F.1
+    await (this.router as any).routeRegister('/browse', 'folder-over-view', { 
+      title: 'File Browser',
+      defaultPath: `/EAMD.ucp/components/ONCE/${this.component.browserModel.version || '0.3.22.1'}/src/assets`
+    });
+    
     console.log('[Orchestrator] ✅ Routes registered');
   }
   
@@ -235,6 +242,11 @@ export class BrowserOnceOrchestrator {
     await import(`${basePath}/OnceLoggerView.js`);
     await import(`${basePath}/OnceServerStatusView.js`);
     await import(`${basePath}/OncePeerDetailsView.js`);
+    // File browser views - @pdca 2025-12-16-UTC-1130.e2e-folder-image-drop-test.pdca.md F.1
+    await import(`${basePath}/FolderOverView.js`);
+    await import(`${basePath}/FolderItemView.js`);
+    await import(`${basePath}/FileItemView.js`);
+    await import(`${basePath}/ImageDefaultView.js`);
     
     console.log('[Orchestrator] ✅ View components imported');
   }
