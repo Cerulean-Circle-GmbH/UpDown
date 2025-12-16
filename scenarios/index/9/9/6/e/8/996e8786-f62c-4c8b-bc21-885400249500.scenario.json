@@ -1,0 +1,62 @@
+{
+  "ior": {
+    "protocol": "https",
+    "host": "McDonges-3.fritz.box",
+    "port": 0,
+    "path": "/ONCE/0.3.22.1/996e8786-f62c-4c8b-bc21-885400249500",
+    "uuid": "996e8786-f62c-4c8b-bc21-885400249500",
+    "iorString": "ior:https://McDonges-3.fritz.box:undefined/ONCE/0.3.22.1/996e8786-f62c-4c8b-bc21-885400249500"
+  },
+  "owner": {
+    "userId": "system",
+    "timestamp": "2025-12-16T17:59:08.534Z"
+  },
+  "model": {
+    "uuid": "996e8786-f62c-4c8b-bc21-885400249500",
+    "version": "0.3.22.1",
+    "state": {
+      "uuid": "996e8786-f62c-4c8b-bc21-885400249500",
+      "pid": 51730,
+      "state": "running",
+      "platform": {
+        "platform": "node",
+        "version": "v22.20.0",
+        "capabilities": [
+          "server",
+          "websocket",
+          "p2p"
+        ],
+        "isOnline": true
+      },
+      "domain": "box.fritz",
+      "hostname": "McDonges-3",
+      "host": "McDonges-3.fritz.box",
+      "ip": "192.168.178.49",
+      "capabilities": [
+        {
+          "capability": "httpsPort",
+          "port": 8080
+        }
+      ],
+      "isPrimaryServer": false
+    },
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/9/9/6/e/8/996e8786-f62c-4c8b-bc21-885400249500.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.22.1",
+      "domain/box/fritz/McDonges-3/ONCE/0.3.22.1"
+    ],
+    "updatedAt": "2025-12-16T17:59:08.542Z"
+  },
+  "unit": {
+    "indexPath": "9/9/6/e/8/996e8786-f62c-4c8b-bc21-885400249500.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.22.1",
+      "domain/box/fritz/McDonges-3/ONCE/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "ONCE/0.3.22.1",
+    "createdAt": "2025-12-16T17:59:08.539Z",
+    "updatedAt": "2025-12-16T17:59:08.539Z"
+  }
+}

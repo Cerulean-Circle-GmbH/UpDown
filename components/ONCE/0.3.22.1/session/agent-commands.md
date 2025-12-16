@@ -237,6 +237,26 @@ Cause: Unknown - crashes seem random, not tied to specific tool
 
 ### Step 18: Commit the fix
 - Tool: `Shell` - git commit
+- ✅ DONE - Already committed as 731f5b43
+
+## Summary of Fix
+
+**Problem**: FolderOverView showed empty file lists because:
+1. `eamdCatchAll` route intercepted ALL `/EAMD.ucp/*` requests
+2. FolderOverView's fetch for JSON was blocked by HTML route
+3. HTTPRouter stripped query string before calling `matches()`
+
+**Solution** (3 parts):
+1. FolderOverView adds `?format=json` to fetch requests
+2. `eamdCatchAll.matches()` skips URLs with `?format=json`
+3. HTTPRouter passes `req.url` (with query) instead of `pathname`
+
+**Commits**:
+- 86f81b8f: Wildcard SPA route /EAMD.ucp/*
+- 731f5b43: HTTPRouter query string fix
+- 9adc9670: Agent commands log
+
+**User Action**: Hard refresh browser (Cmd+Shift+R) to test
 
 
 
