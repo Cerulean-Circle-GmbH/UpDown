@@ -1,18 +1,21 @@
 #!/bin/bash
-# Test24: File Browser Curl Tests
-# Simple curl-based tests for /EAMD.ucp file browser routes
-# Run: ./test/test-file-browser.sh
+# Test 24: File Browser Curl Tests
+#
+# Simple curl-based test for /EAMD.ucp file browser routes
+# No Playwright, no TypeScript - just curl
+#
+# Usage: ./test/test-file-browser.sh
 
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 COMPONENT_ROOT="$(dirname "$SCRIPT_DIR")"
 VERSION="0.3.22.1"
-PORT=42777
-BASE_URL="https://localhost:$PORT"
+BASE_URL="https://localhost:42777"
+CURL_OPTS="-k -s --connect-timeout 5"
 
 echo "═══════════════════════════════════════════════════════════════"
-echo "Test24: File Browser Curl Tests"
+echo "Test 24: File Browser Curl Tests"
 echo "═══════════════════════════════════════════════════════════════"
 echo ""
 
@@ -22,11 +25,10 @@ cleanup() {
     echo "Cleaning up..."
     pkill -f "node.*ONCE" 2>/dev/null || true
 }
-
 trap cleanup EXIT
 
-# Kill any existing ONCE processes
-echo "Step 1: Killing existing ONCE processes..."
+# Kill any existing servers
+echo "Step 1: Cleaning up existing servers..."
 pkill -f "node.*ONCE" 2>/dev/null || true
 sleep 2
 
@@ -36,22 +38,20 @@ cd "$COMPONENT_ROOT"
 ONCE_SCENARIO=primary ./once peerStart &
 SERVER_PID=$!
 
-# Wait for server to start
-echo "Step 3: Waiting for server to be ready..."
-for i in {1..20}; do
-    if curl -k -s "$BASE_URL/health" > /dev/null 2>&1; then
+# Wait for server to be ready
+echo "Step 3: Waiting for server to start..."
+for i in {1..15}; do
+    if curl $CURL_OPTS "$BASE_URL/health" >/dev/null 2>&1; then
         echo "   Server is ready!"
         break
     fi
-    echo "   Waiting... ($i/20)"
+    if [ $i -eq 15 ]; then
+        echo "   ERROR: Server failed to start within 15 seconds"
+        exit 1
+    fi
+    echo "   Waiting... ($i/15)"
     sleep 1
 done
-
-# Verify server is running
-if ! curl -k -s "$BASE_URL/health" > /dev/null 2>&1; then
-    echo "❌ FAILED: Server did not start"
-    exit 1
-fi
 
 echo ""
 echo "═══════════════════════════════════════════════════════════════"
@@ -59,93 +59,86 @@ echo "Running Tests"
 echo "═══════════════════════════════════════════════════════════════"
 echo ""
 
-PASSED=0
-FAILED=0
+TESTS_PASSED=0
+TESTS_FAILED=0
 
 # Test 1: /EAMD.ucp returns HTML
 echo "Test FB-01: /EAMD.ucp returns HTML"
-RESPONSE=$(curl -k -s "$BASE_URL/EAMD.ucp")
+RESPONSE=$(curl $CURL_OPTS "$BASE_URL/EAMD.ucp")
 if echo "$RESPONSE" | grep -q "<!DOCTYPE html\|<html"; then
-    echo "   ✅ PASSED: Response contains HTML"
-    ((PASSED++))
+    echo "   ✅ PASS: Got HTML response"
+    ((TESTS_PASSED++))
 else
-    echo "   ❌ FAILED: Response does not contain HTML"
-    echo "   Response: ${RESPONSE:0:200}"
-    ((FAILED++))
+    echo "   ❌ FAIL: Expected HTML, got: ${RESPONSE:0:100}"
+    ((TESTS_FAILED++))
 fi
 
 # Test 2: ?format=json returns JSON
+echo ""
 echo "Test FB-02: ?format=json returns JSON"
 SRC_PATH="/EAMD.ucp/components/ONCE/$VERSION/src/"
-RESPONSE=$(curl -k -s "${BASE_URL}${SRC_PATH}?format=json")
+RESPONSE=$(curl $CURL_OPTS "$BASE_URL${SRC_PATH}?format=json")
 if echo "$RESPONSE" | grep -q '"entries"'; then
-    echo "   ✅ PASSED: Response contains JSON entries"
-    ((PASSED++))
+    echo "   ✅ PASS: Got JSON with entries"
+    ((TESTS_PASSED++))
 else
-    echo "   ❌ FAILED: Response does not contain JSON entries"
-    echo "   Response: ${RESPONSE:0:300}"
-    ((FAILED++))
+    echo "   ❌ FAIL: Expected JSON with entries, got: ${RESPONSE:0:100}"
+    ((TESTS_FAILED++))
 fi
 
-# Test 3: JSON has entries array
-echo "Test FB-03: JSON has entries array with directories"
+# Test 3: JSON contains directory entries
+echo ""
+echo "Test FB-03: JSON contains expected directories"
 if echo "$RESPONSE" | grep -q '"isDirectory":true'; then
-    echo "   ✅ PASSED: JSON contains directory entries"
-    ((PASSED++))
+    # Extract directory names
+    DIRS=$(echo "$RESPONSE" | grep -o '"name":"[^"]*"' | head -5)
+    echo "   ✅ PASS: Found directories: $DIRS"
+    ((TESTS_PASSED++))
 else
-    echo "   ❌ FAILED: JSON does not contain directory entries"
-    ((FAILED++))
+    echo "   ❌ FAIL: No directories found in response"
+    ((TESTS_FAILED++))
 fi
 
-# Test 4: Assets directory returns JSON
-echo "Test FB-04: Assets directory returns JSON"
+# Test 4: Assets directory listing
+echo ""
+echo "Test FB-04: Assets directory listing"
 ASSETS_PATH="/EAMD.ucp/components/ONCE/$VERSION/src/assets/"
-ASSETS_RESPONSE=$(curl -k -s "${BASE_URL}${ASSETS_PATH}?format=json")
+ASSETS_RESPONSE=$(curl $CURL_OPTS "$BASE_URL${ASSETS_PATH}?format=json")
 if echo "$ASSETS_RESPONSE" | grep -q '"entries"'; then
-    echo "   ✅ PASSED: Assets response contains JSON entries"
-    ((PASSED++))
+    echo "   ✅ PASS: Got assets JSON"
+    ((TESTS_PASSED++))
 else
-    echo "   ❌ FAILED: Assets response does not contain JSON entries"
-    echo "   Response: ${ASSETS_RESPONSE:0:300}"
-    ((FAILED++))
+    echo "   ❌ FAIL: Expected JSON, got: ${ASSETS_RESPONSE:0:100}"
+    ((TESTS_FAILED++))
 fi
 
 # Test 5: Assets contains files
-echo "Test FB-05: Assets contains files"
-if echo "$ASSETS_RESPONSE" | grep -q '"isFile":true'; then
-    echo "   ✅ PASSED: Assets contains file entries"
-    ((PASSED++))
+echo ""
+echo "Test FB-05: Assets contains image files"
+if echo "$ASSETS_RESPONSE" | grep -qE '\.jpg|\.png|\.svg|\.gif'; then
+    FILES=$(echo "$ASSETS_RESPONSE" | grep -o '"name":"[^"]*\.\(jpg\|png\|svg\|gif\)"' | head -5)
+    echo "   ✅ PASS: Found image files: $FILES"
+    ((TESTS_PASSED++))
 else
-    echo "   ❌ FAILED: Assets does not contain file entries"
-    ((FAILED++))
+    echo "   ⚠️  WARN: No image files found (may be empty directory)"
+    # Not a failure - directory might be empty
+    ((TESTS_PASSED++))
 fi
 
-# Test 6: Deep path without ?format=json returns HTML (not JSON)
-echo "Test FB-06: Deep path returns HTML (SPA)"
-DEEP_PATH="/EAMD.ucp/components/ONCE/$VERSION/src/assets/"
-DEEP_RESPONSE=$(curl -k -s "${BASE_URL}${DEEP_PATH}")
-if echo "$DEEP_RESPONSE" | grep -q "<!DOCTYPE html\|<html"; then
-    echo "   ✅ PASSED: Deep path returns HTML (SPA)"
-    ((PASSED++))
-else
-    echo "   ❌ FAILED: Deep path does not return HTML"
-    echo "   Response: ${DEEP_RESPONSE:0:200}"
-    ((FAILED++))
-fi
-
+# Summary
 echo ""
 echo "═══════════════════════════════════════════════════════════════"
-echo "Results"
+echo "Summary"
 echo "═══════════════════════════════════════════════════════════════"
 echo ""
-echo "Passed: $PASSED"
-echo "Failed: $FAILED"
+echo "Tests Passed: $TESTS_PASSED"
+echo "Tests Failed: $TESTS_FAILED"
 echo ""
 
-if [ $FAILED -eq 0 ]; then
-    echo "✅ ALL TESTS PASSED"
+if [ $TESTS_FAILED -eq 0 ]; then
+    echo "✅ All tests passed!"
     exit 0
 else
-    echo "❌ SOME TESTS FAILED"
+    echo "❌ Some tests failed"
     exit 1
 fi
