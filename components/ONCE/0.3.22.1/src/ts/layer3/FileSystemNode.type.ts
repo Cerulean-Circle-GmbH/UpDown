@@ -18,3 +18,4 @@ import type { DefaultFolder } from '../layer2/DefaultFolder.js';
  */
 export type FileSystemNode = DefaultFile | DefaultFolder;
 
+

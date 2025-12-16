@@ -35,3 +35,4 @@ else
     echo "   3. Double-click the cert, expand 'Trust', set SSL to 'Always Trust'"
 fi
 
+
