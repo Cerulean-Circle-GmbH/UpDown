@@ -175,9 +175,16 @@ export class StaticFileRoute extends Route {
             return false;
         }
         
-        // Must have file extension
+        // Check if it's a file (has extension) or directory (no extension)
         const ext = this.extensionFrom(urlPath);
-        if (!STATIC_FILE_EXTENSIONS.includes(ext)) {
+        const isFile = STATIC_FILE_EXTENSIONS.includes(ext);
+        // Directory: no file extension, or ends with /
+        // Check last segment for file extension, not whole path (version numbers have dots)
+        const lastSegment = urlPath.split('/').filter(s => s.length > 0).pop() || '';
+        const lastSegmentHasExtension = lastSegment.includes('.') && STATIC_FILE_EXTENSIONS.includes('.' + lastSegment.split('.').pop()?.toLowerCase());
+        const isDirectory = !isFile && (urlPath.endsWith('/') || !lastSegmentHasExtension);
+        
+        if (!isFile && !isDirectory) {
             return false;
         }
         
@@ -193,8 +200,8 @@ export class StaticFileRoute extends Route {
         // Example: /ONCE/0.3.21.9/dist/ts/layer1/ONCE.js
         // Example: /ONCE/0.3.21.9/package.json
         const parts = urlPath.split('/').filter(p => p.length > 0);
-        if (parts.length < 3) {
-            return false; // Need at least: Component, version, file
+        if (parts.length < 2) {
+            return false; // Need at least: Component, version (+ optional path for directories)
         }
         
         // parts[0] = Component name (PascalCase)
@@ -257,11 +264,30 @@ export class StaticFileRoute extends Route {
                 return;
             }
             
-            // Check file exists
+            // Check file/directory exists
             if (!fs.existsSync(filePath)) {
                 console.log(`[StaticFileRoute] NOT FOUND: ${filePath}`);
                 res.writeHead(404, { 'Content-Type': 'text/plain' });
                 res.end('Not Found');
+                return;
+            }
+            
+            // Handle directory listing
+            // @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md
+            const stats = fs.statSync(filePath);
+            if (stats.isDirectory()) {
+                const entries = fs.readdirSync(filePath, { withFileTypes: true });
+                const listing = entries.map(function(entry) {
+                    return {
+                        name: entry.name,
+                        isDirectory: entry.isDirectory(),
+                        isFile: entry.isFile(),
+                        isSymbolicLink: entry.isSymbolicLink()
+                    };
+                });
+                
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ entries: listing }));
                 return;
             }
             

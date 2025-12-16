@@ -162,10 +162,13 @@ export class BrowserOnceOrchestrator {
     
     // File browser - folder overview for browsing EAMD.ucp file system
     // @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.1
+    // viewProps are passed to the view element as properties
     await (this.router as any).routeRegister('/EAMD.ucp', 'folder-over-view', { 
       title: 'File Browser',
-      rootPath: '/EAMD.ucp',  // Navigation boundary - cannot navigate above
-      cwd: `/EAMD.ucp/components/ONCE/${this.component.browserModel.version || '0.3.22.1'}/src/assets`  // Initial folder
+      viewProps: {
+        rootPath: '/EAMD.ucp',  // Navigation boundary - cannot navigate above
+        cwd: `/EAMD.ucp/components/ONCE/${this.component.browserModel.version || '0.3.22.1'}/src/assets`  // Initial folder
+      }
     });
     
     console.log('[Orchestrator] ✅ Routes registered');

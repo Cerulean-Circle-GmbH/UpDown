@@ -103,22 +103,23 @@ export class FolderOverView extends UcpView<FolderModel> {
     this.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
     this.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: true });
     
-    // Load paths from route options or properties
-    // Route options are passed via (view as any).route = route in UcpRouter.viewCreate()
-    const routeOptions = (this as any).route?.model;
+    // Load paths from properties (set by viewProps in UcpRouter.viewCreate)
+    // @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.2
     
-    // Root path (navigation boundary) - @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.2
-    const rootPathFromRoute = routeOptions?.rootPath;
-    const rootPathFromProperty = this.rootPath || this.defaultPath;
-    this.rootPath = rootPathFromRoute || rootPathFromProperty || '/EAMD.ucp';
+    // rootPath and cwd are set as properties via viewProps before connectedCallback
+    // Fallback to defaults if not set
+    if (!this.rootPath) {
+      this.rootPath = this.defaultPath || '/EAMD.ucp';
+    }
     
-    // Current working directory (initial folder)
-    const cwdFromRoute = routeOptions?.cwd;
-    const cwdFromProperty = this.cwd;
-    const pathToLoad = cwdFromRoute || cwdFromProperty || this.rootPath;
+    const pathToLoad = this.cwd || this.rootPath;
     
-    if (pathToLoad && !this.model) {
-      console.log(`[FolderOverView] Root: ${this.rootPath}, Loading cwd: ${pathToLoad}`);
+    console.log('[FolderOverView] rootPath:', this.rootPath, 'cwd:', this.cwd, 'pathToLoad:', pathToLoad);
+    
+    // Always load folder if cwd/rootPath is set
+    // Note: UcpRouter sets browserModel on all views, so we ignore that and load our own model
+    if (pathToLoad) {
+      console.log(`[FolderOverView] Loading folder: ${pathToLoad}`);
       this.folderLoad(pathToLoad);
     }
   }
@@ -725,6 +726,7 @@ declare global {
     'folder-over-view': FolderOverView;
   }
 }
+
 
 
 
