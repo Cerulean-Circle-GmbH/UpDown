@@ -336,6 +336,29 @@ export class ServerHierarchyManager {
         eamdRoute2.model.priority = 50;
         this.httpRouter.registerRoute(eamdRoute2);
         
+        // ✅ Route 7d: File Browser catch-all for deep folder paths
+        // Handles direct navigation to /EAMD.ucp/components/.../folder/
+        // Only matches paths ending with / (directories), not files
+        // @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md
+        const eamdCatchAll = new HTMLRoute();
+        eamdCatchAll.model.uuid = this.idProvider.create();
+        eamdCatchAll.model.name = 'EAMD.ucp Folder Browser Catch-All';
+        // Custom matcher for directory paths under /EAMD.ucp/
+        eamdCatchAll.matches = function(urlPath: string, method: HttpMethod): boolean {
+            if (method !== HttpMethod.GET) return false;
+            // Must start with /EAMD.ucp/ and end with / (directory)
+            // Must NOT have file extension in last segment
+            if (!urlPath.startsWith('/EAMD.ucp/')) return false;
+            if (!urlPath.endsWith('/')) return false;
+            const lastSegment = urlPath.split('/').filter(s => s.length > 0).pop() || '';
+            // If last segment has a dot followed by 2-4 chars, it's likely a file
+            if (/\.[a-zA-Z]{2,4}$/.test(lastSegment)) return false;
+            return true;
+        };
+        eamdCatchAll.setProvider(() => this.component!.serveDemoLit());
+        eamdCatchAll.model.priority = 4; // Lower number = higher priority than StaticFileRoute (5)
+        this.httpRouter.registerRoute(eamdCatchAll);
+        
         // ✅ Route 8: Health endpoint ("/health") - Returns Scenario
         const healthRoute = new ScenarioRoute();
         healthRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
