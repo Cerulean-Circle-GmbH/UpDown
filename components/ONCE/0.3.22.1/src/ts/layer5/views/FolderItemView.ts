@@ -81,7 +81,8 @@ export class FolderItemView extends UcpView<FolderModel> {
    * Get display data from model or childRef
    */
   private getDisplayData(): { name: string; itemCount: number; hasChildren: boolean; uuid: string } | null {
-    if (this.model) {
+    // Use hasModel to check safely without throwing
+    if (this.hasModel) {
       return {
         name: this.model.folderName || this.model.name,
         itemCount: this.model.children?.length || 0,
@@ -156,6 +157,14 @@ declare global {
     'folder-item-view': FolderItemView;
   }
 }
+
+
+
+
+
+
+
+
 
 
 
