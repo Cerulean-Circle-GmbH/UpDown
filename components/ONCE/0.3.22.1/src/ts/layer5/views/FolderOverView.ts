@@ -95,9 +95,14 @@ export class FolderOverView extends UcpView<FolderModel> {
     this.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
     this.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: true });
     
-    // Load default path if specified
-    if (this.defaultPath && !this.model) {
-      this.folderLoad(this.defaultPath);
+    // Load default path from route options or property
+    // Route options are passed via (view as any).route = route in UcpRouter.viewCreate()
+    const routeDefaultPath = (this as any).route?.model?.defaultPath;
+    const pathToLoad = this.defaultPath || routeDefaultPath;
+    
+    if (pathToLoad && !this.model) {
+      console.log(`[FolderOverView] Loading default path: ${pathToLoad}`);
+      this.folderLoad(pathToLoad);
     }
   }
   
@@ -624,6 +629,7 @@ declare global {
     'folder-over-view': FolderOverView;
   }
 }
+
 
 
 
