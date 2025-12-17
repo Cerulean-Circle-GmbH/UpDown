@@ -26,6 +26,7 @@ import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
 import { ServerHierarchyManager } from './ServerHierarchyManager.js';
 import { ScenarioManager } from './ScenarioManager.js';
 import { ONCEModel } from '../layer3/ONCEModel.interface.js';
+import type { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
 import { User } from '../layer3/User.interface.js';
 import { MethodSignature } from '../layer3/MethodSignature.interface.js';
 import { DefaultUser } from './DefaultUser.js';
@@ -514,65 +515,49 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
   }
 
   /**
-   * ✅ TRUE Radical OOP: toScenario() - Return Web4 Standard format wrapping legacy
+   * ✅ TRUE Radical OOP: toScenario() - Return Web4 Standard format with ONCEPeerModel
    * ✅ Uses insourced DefaultUser for owner generation
    * ✅ Async to support User.toScenario()
-   * @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
+   * @pdca 2025-12-17-UTC-1750.browseronce-oncekernel-interface.pdca.md
    * @cliHide
    */
-  async toScenario(): Promise<Scenario<LegacyONCEScenario>> {
-    // 1️⃣ Generate legacy scenario (current format)
-    const legacyScenario: LegacyONCEScenario = this.createCurrentScenario();
+  async toScenario(): Promise<Scenario<ONCEPeerModel>> {
+    // 1️⃣ Get unified peer model
+    const peerModel = this.getPeerModel();
     
     // 2️⃣ Generate owner using insourced DefaultUser (Web4 pattern)
     let ownerData: string;
     try {
       const infrastructure = new NodeOSInfrastructure();
       await infrastructure.init();
-      const env = await infrastructure.detectEnvironment();
-      const username = 'system';  // ✅ Fallback - no process.env in production code
+      const username = 'system';
       
-      // ✅ Pass projectRoot and ScenarioService to ensure User saves correctly
-      // @pdca 2025-12-08-UTC-1000.scenario-unit-unification.pdca.md
       const projectRoot = this.serverHierarchyManager.getProjectRoot();
       const scenarioService = this.scenarioServiceGet();
       const user = await DefaultUser.create(username, infrastructure, projectRoot, scenarioService || undefined);
       
-      // User is now saved at: scenarios/{domain}/{hostname}/User/0.3.21.1/{uuid}.scenario.json
       const userScenario = await user.toScenario();
       const ownerJson = JSON.stringify(userScenario);
       ownerData = Buffer.from(ownerJson).toString('base64');
     } catch (error) {
       // ✅ Fallback: Generate minimal User-like scenario
-      // ✅ Still NO process.env - use fallback values from infrastructure
       const fallbackJson = JSON.stringify({
-        ior: {
-          uuid: legacyScenario.uuid,
-          component: 'User',
-          version: '0.3.21.1',
-          timestamp: new Date().toISOString()
-        },
-        owner: '',  // No nested owner in fallback
-        model: {
-          user: 'system',  // ✅ Hardcoded fallback, not process.env
-          hostname: legacyScenario.metadata.host || 'localhost',
-          uuid: legacyScenario.uuid,
-          component: legacyScenario.objectType,
-          version: legacyScenario.version
-        }
+        ior: { uuid: peerModel.uuid, component: 'User', version: '0.3.21.1' },
+        owner: '',
+        model: { user: 'system', hostname: peerModel.host, uuid: peerModel.uuid }
       });
       ownerData = Buffer.from(fallbackJson).toString('base64');
     }
     
-    // 3️⃣ Return Web4 Standard format
+    // 3️⃣ Return Web4 Standard format with ONCEPeerModel
     return {
       ior: {
-        uuid: legacyScenario.uuid,
-        component: legacyScenario.objectType,
-        version: legacyScenario.version
+        uuid: peerModel.uuid,
+        component: 'ONCE',
+        version: peerModel.version
       },
-      owner: ownerData,  // ✅ Full User scenario (or fallback)
-      model: legacyScenario  // ✅ ENTIRE legacy scenario
+      owner: ownerData,
+      model: peerModel
     };
   }
 
@@ -692,10 +677,14 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
    * Start server with automatic port management (domain logic from 0.2.0.0)
    * @cliSyntax scenario
    */
-  async startServer(scenario?: string | LegacyONCEScenario): Promise<void> {
+  async startServer(scenario?: string | LegacyONCEScenario | Scenario<ONCEPeerModel>): Promise<void> {
     console.warn('⚠️  startServer() is deprecated, use peerStart() instead');
     console.log('🚀 Starting ONCE server...');
-    return this._startPeerInternal(scenario);
+    // Convert Scenario<ONCEPeerModel> to LegacyONCEScenario for internal use if needed
+    const legacyScenario = (scenario && typeof scenario !== 'string' && 'ior' in scenario) 
+      ? scenario as unknown as LegacyONCEScenario 
+      : scenario;
+    return this._startPeerInternal(legacyScenario as string | LegacyONCEScenario | undefined);
   }
 
   /**
@@ -792,9 +781,61 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
 
   /**
    * Get current server model (domain logic from 0.2.0.0)
+   * @deprecated Use getPeerModel() for unified access
    */
   getServerModel(): ONCEServerModel {
     return this.serverHierarchyManager.getServerModel();
+  }
+
+  /**
+   * Get unified peer model
+   * Converts ONCEModel + ONCEServerModel to ONCEPeerModel
+   * @pdca session/2025-12-17-UTC-1750.browseronce-oncekernel-interface.pdca.md
+   */
+  getPeerModel(): ONCEPeerModel {
+    const serverModel = this.serverHierarchyManager.getServerModel();
+    return {
+      // Identity
+      uuid: this.model.uuid,
+      name: this.model.name || 'NodeJsONCEKernel',
+      
+      // Version
+      version: this.model.version || '0.0.0.0',
+      
+      // Environment
+      environment: serverModel.platform,
+      
+      // Lifecycle
+      state: this.model.state || LifecycleState.CREATED,
+      startTime: new Date(),
+      connectionTime: null,
+      
+      // Network
+      host: serverModel.host,
+      port: serverModel.capabilities?.find(c => c.capability === 'httpPort')?.port || 42777,
+      isPrimary: serverModel.isPrimaryServer,
+      primaryPeerUuid: serverModel.primaryServerIOR || null,
+      
+      // P2P
+      peers: this.serverHierarchyManager.getRegisteredServers().map(s => ({
+        uuid: s.uuid,
+        name: s.hostname,
+        version: '0.0.0.0',
+        environment: s.platform,
+        state: s.state,
+        startTime: new Date(),
+        connectionTime: null,
+        host: s.host,
+        port: s.capabilities?.find(c => c.capability === 'httpPort')?.port || 0,
+        isPrimary: s.isPrimaryServer,
+        primaryPeerUuid: null,
+        peers: []
+      })),
+      
+      // Node-specific
+      pid: serverModel.pid,
+      capabilities: serverModel.capabilities
+    };
   }
 
   /**
@@ -812,15 +853,15 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
   
   // Placeholder implementations for ONCE interface methods (domain logic from 0.2.0.0)
 
-  async startComponent(componentIOR: IOR, scenario?: LegacyONCEScenario): Promise<Component> {
+  async startComponent(componentIOR: IOR, scenario?: Scenario<ONCEPeerModel>): Promise<Component> {
     throw new Error(`startComponent not implemented in v${this.model.version}`);
   }
 
-  async saveAsScenario(component: Component): Promise<Scenario<LegacyONCEScenario>> {
+  async saveAsScenario(component: Component): Promise<Scenario<ONCEPeerModel>> {
     throw new Error(`saveAsScenario not implemented in v${this.model.version}`);
   }
 
-  async loadScenario(scenario: LegacyONCEScenario): Promise<Component> {
+  async loadScenario(scenario: Scenario<ONCEPeerModel>): Promise<Component> {
     throw new Error(`loadScenario not implemented in v${this.model.version}`);
   }
 
@@ -844,7 +885,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
     console.log(`🤝 Peer connection: ${peerIOR.uuid}`);
   }
 
-  async exchangeScenario(peerIOR: IOR, scenario: LegacyONCEScenario): Promise<void> {
+  async exchangeScenario(peerIOR: IOR, scenario: Scenario<ONCEPeerModel>): Promise<void> {
     console.log(`🔄 Scenario exchange with ${peerIOR.uuid}`);
   }
 

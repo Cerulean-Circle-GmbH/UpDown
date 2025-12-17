@@ -5,7 +5,7 @@
  * 
  * Web4 Architecture:
  * - Empty constructor (Radical OOP)
- * - State in this.model
+ * - State in this.model (ONCEPeerModel)
  * - Methods operate on model
  * - NO arrow functions
  * - NO callbacks (except WebSocket event handlers)
@@ -14,11 +14,12 @@
  * 
  * @layer2
  * @pattern Concrete Kernel Implementation
- * @pdca session/2025-11-25-UTC-1930.iteration-01.10-once-naming-convention-standardization.pdca.md
+ * @pdca session/2025-12-17-UTC-1750.browseronce-oncekernel-interface.pdca.md
  */
 
 import { DefaultOnceKernel } from './DefaultOnceKernel.js';
-import type { BrowserOnceModel } from '../layer3/BrowserOnceModel.interface.js';
+import type { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
+import type { ONCEKernel } from '../layer3/ONCE.interface.js';
 import { EnvironmentType } from '../layer3/EnvironmentType.enum.js';
 import { DefaultEnvironmentInfo } from './DefaultEnvironmentInfo.js';
 import { LifecycleState } from '../layer3/LifecycleState.enum.js';
@@ -31,16 +32,25 @@ import { PersistenceManager } from '../layer3/PersistenceManager.interface.js';
 import type { StorageScenario } from '../layer3/StorageScenario.interface.js';
 import type { LitElement } from 'lit';
 import type { Reference } from '../layer3/Reference.interface.js';
+import type { Scenario } from '../layer3/Scenario.interface.js';
+import type { EnvironmentInfo } from '../layer3/EnvironmentInfo.interface.js';
+import type { Component } from '../layer3/Component.interface.js';
+import type { IOR } from '../layer3/IOR.js';
+import type { ComponentQuery } from '../layer3/ComponentQuery.interface.js';
+import type { PerformanceMetrics } from '../layer3/PerformanceMetrics.interface.js';
+import type { LifecycleObserver } from '../layer3/LifecycleObserver.interface.js';
+import type { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
 
-export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
-    // Model type is BrowserOnceModel via generic inheritance
+export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCEKernel {
+    // Model type is ONCEPeerModel via generic inheritance
     // Access via this.model getter from UcpComponent
     
     /**
      * Default model for BrowserOnce
      * Required by UcpComponent (abstract in DefaultOnceKernel)
+     * @pdca session/2025-12-17-UTC-1750.browseronce-oncekernel-interface.pdca.md - ONCEPeerModel
      */
-    protected modelDefault(): BrowserOnceModel {
+    protected modelDefault(): ONCEPeerModel {
         // Extract version from script URL (Web4 Path Authority pattern)
         const scriptUrl = import.meta.url;
         const versionMatch = scriptUrl.match(/\/(\d+\.\d+\.\d+\.\d+)\//);
@@ -51,46 +61,82 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
             uuid: this.generateUUID(),
             name: 'BrowserONCEKernel',
             
-            // Kernel properties (from ONCEKernelModel)
+            // Version
             version: detectedVersion,
-            state: LifecycleState.CREATED,
+            
+            // Environment
             environment: DefaultEnvironmentInfo.createBrowserEnvironment(
                 navigator.userAgent
             ).getModel(),
-            peers: [],
-            connectionTime: null,
+            
+            // Lifecycle
+            state: LifecycleState.CREATED,
             startTime: new Date(),
-            stats: {
-                messagesSent: 0,
-                messagesReceived: 0,
-                acknowledgmentsSent: 0,
-                errorsCount: 0
-            },
+            connectionTime: null,
             
-            // Browser-specific properties
-            peerHost: window.location.host,
-            peerUUID: null,
-            peerVersion: 'unknown',
-            isConnected: false,
-            primaryPeer: null,
+            // Network
+            host: window.location.hostname,
+            port: parseInt(window.location.port) || (window.location.protocol === 'https:' ? 443 : 80),
+            isPrimary: false,
+            primaryPeerUuid: null,
+            
+            // P2P
+            peers: [],
+            
+            // Browser-specific (optional in interface)
             ws: null,
-            
-            // UI elements (for display updates)
-            elements: {
-                connectionStatus: null,
-                primaryConnection: null,
-                connectedPeers: null,
-                messageLog: null,
-                messagesSent: null,
-                messagesReceived: null,
-                acknowledgmentsSent: null,
-                connectionTime: null
-            },
-            
-            // Messages cache
-            messages: []
+            isConnected: false,
+            peerHost: window.location.host,  // @deprecated - use host
+            peerUUID: null,                   // @deprecated - use uuid
+            peerVersion: 'unknown',           // @deprecated - use version
+            primaryPeer: null                 // @deprecated - use primaryPeerUuid
         };
     }
+    
+    // ========================================
+    // LEGACY UI SUPPORT (to be migrated to views)
+    // ========================================
+    
+    /**
+     * UI elements cache for legacy demo-hub.html support
+     * @deprecated Views should use UcpModel reactivity instead
+     */
+    private uiElements: {
+        connectionStatus: HTMLElement | null;
+        primaryConnection: HTMLElement | null;
+        connectedPeers: HTMLElement | null;
+        messageLog: HTMLElement | null;
+        messagesSent: HTMLElement | null;
+        messagesReceived: HTMLElement | null;
+        acknowledgmentsSent: HTMLElement | null;
+        connectionTime: HTMLElement | null;
+    } = {
+        connectionStatus: null,
+        primaryConnection: null,
+        connectedPeers: null,
+        messageLog: null,
+        messagesSent: null,
+        messagesReceived: null,
+        acknowledgmentsSent: null,
+        connectionTime: null
+    };
+    
+    /**
+     * Legacy stats tracking
+     * @deprecated Use proper metrics via getMetrics()
+     */
+    private legacyStats = {
+        messagesSent: 0,
+        messagesReceived: 0,
+        acknowledgmentsSent: 0,
+        errorsCount: 0
+    };
+    
+    /**
+     * Messages cache for legacy support
+     * @deprecated
+     */
+    private messagesCache: any[] = [];
     
     /**
      * Layer 4 Orchestrator - handles ALL async operations
@@ -132,10 +178,18 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
     }
     
     /**
-     * Get the browser model - public access for orchestrator
+     * Get the peer model - public access for orchestrator
      * ✅ Web4: TypeScript getter (P16)
+     * ✅ ONCEKernel interface implementation
      */
-    get browserModel(): BrowserOnceModel {
+    getPeerModel(): ONCEPeerModel {
+        return this.model;
+    }
+    
+    /**
+     * @deprecated Use getPeerModel() instead
+     */
+    get browserModel(): ONCEPeerModel {
         return this.model;
     }
     
@@ -253,7 +307,7 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
     // REPLACEMENT: this.model.xxx = value triggers views automatically
     // ═══════════════════════════════════════════════════════════════
     
-    async init(scenario?: any): Promise<this> {
+    async init(scenario?: Scenario<ONCEPeerModel>): Promise<this> {
         // ✅ Transition to INITIALIZING state
         this.transitionTo(LifecycleState.INITIALIZING, LifecycleEventType.BEFORE_INIT);
         
@@ -262,8 +316,12 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
         
         // ✅ Update model state and apply scenario overrides
         this.model.state = LifecycleState.INITIALIZING;
-        if (scenario?.peerHost) {
-            this.model.peerHost = scenario.peerHost;
+        if (scenario?.model?.peerHost) {
+            this.model.peerHost = scenario.model.peerHost;
+        }
+        if (scenario?.model?.host) {
+            this.model.host = scenario.model.host;
+            this.model.peerHost = scenario.model.host; // backwards compat
         }
         
         // 0. Initialize scenario storage (Web4 Principle 24)
@@ -388,20 +446,227 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
         console.log('[BrowserONCEKernel] Kernel stopped');
     }
     
+    // ═══════════════════════════════════════════════════════════════
+    // ONCEKernel Interface Implementation
+    // @pdca session/2025-12-17-UTC-1750.browseronce-oncekernel-interface.pdca.md
+    // ═══════════════════════════════════════════════════════════════
+    
+    /**
+     * Start a component by loading and initializing it
+     * @param componentIOR - Internet Object Reference to component
+     * @param scenario - Initial scenario for component
+     */
+    async startComponent(componentIOR: IOR, scenario?: Scenario<ONCEPeerModel>): Promise<Component> {
+        // TODO: Implement component loading via IOR
+        // This will be implemented to load IdealMinimalComponent as test target
+        console.warn('[BrowserOnce] startComponent not yet implemented:', componentIOR);
+        throw new Error('startComponent not implemented in BrowserOnce');
+    }
+    
+    /**
+     * Save component state as scenario
+     */
+    async saveAsScenario(component: Component): Promise<Scenario<ONCEPeerModel>> {
+        // Delegate to component's toScenario if available
+        console.warn('[BrowserOnce] saveAsScenario not yet implemented');
+        return {
+            ior: { uuid: this.model.uuid, component: 'ONCE', version: this.model.version },
+            owner: this.model.uuid,
+            model: this.model
+        };
+    }
+    
+    /**
+     * Load component from scenario
+     */
+    async loadScenario(scenario: Scenario<ONCEPeerModel>): Promise<Component> {
+        console.warn('[BrowserOnce] loadScenario not yet implemented');
+        throw new Error('loadScenario not implemented in BrowserOnce');
+    }
+    
+    /**
+     * Get current environment information
+     */
+    getEnvironment(): EnvironmentInfo {
+        return this.model.environment;
+    }
+    
+    /**
+     * Register component for discovery
+     */
+    async registerComponent(component: Component, ior: IOR): Promise<void> {
+        if (!this.model.components) {
+            this.model.components = new Map();
+        }
+        this.model.components.set(ior.uuid, component);
+        console.log('[BrowserOnce] Component registered:', ior.uuid);
+    }
+    
+    /**
+     * Discover components in the network
+     */
+    async discoverComponents(query?: ComponentQuery): Promise<IOR[]> {
+        // Browser discovers components via primary peer
+        console.warn('[BrowserOnce] discoverComponents not yet implemented');
+        return [];
+    }
+    
+    /**
+     * Enable P2P communication with other ONCE kernels
+     */
+    async connectPeer(peerIOR: IOR): Promise<void> {
+        // Browser connects to peers via WebSocket
+        console.warn('[BrowserOnce] connectPeer not yet implemented');
+    }
+    
+    /**
+     * Exchange scenarios with peer
+     */
+    async exchangeScenario(peerIOR: IOR, scenario: Scenario<ONCEPeerModel>): Promise<void> {
+        // Send scenario via WebSocket if connected
+        if (this.model.ws && this.model.ws.readyState === WebSocket.OPEN) {
+            this.model.ws.send(JSON.stringify(scenario));
+            console.log('[BrowserOnce] Scenario exchanged with peer:', peerIOR.uuid);
+        } else {
+            console.warn('[BrowserOnce] Cannot exchange scenario - WebSocket not connected');
+        }
+    }
+    
+    /**
+     * Hibernate ONCE kernel state
+     */
+    async toScenario(): Promise<Scenario<ONCEPeerModel>> {
+        return {
+            ior: { uuid: this.model.uuid, component: 'ONCE', version: this.model.version },
+            owner: this.model.uuid,
+            model: this.model
+        };
+    }
+    
+    /**
+     * Check if ONCE is initialized
+     */
+    isInitialized(): boolean {
+        return this.model.state === LifecycleState.INITIALIZED || 
+               this.model.state === LifecycleState.RUNNING;
+    }
+    
+    /**
+     * Get ONCE kernel version
+     */
+    getVersion(): string {
+        return this.model.version;
+    }
+    
+    /**
+     * Get performance metrics
+     */
+    getMetrics(): PerformanceMetrics {
+        return {
+            initializationTime: 0, // TODO: track actual init time
+            memoryUsage: 0,
+            componentsLoaded: this.model.components?.size || 0,
+            peersConnected: this.model.peers.length,
+            scenariosExchanged: this.legacyStats.messagesReceived
+        };
+    }
+    
+    /**
+     * Pause a running component
+     */
+    async pauseComponent(component: Component): Promise<void> {
+        console.warn('[BrowserOnce] pauseComponent not yet implemented');
+    }
+    
+    /**
+     * Resume a paused component
+     */
+    async resumeComponent(component: Component): Promise<void> {
+        console.warn('[BrowserOnce] resumeComponent not yet implemented');
+    }
+    
+    /**
+     * Stop a component
+     */
+    async stopComponent(component: Component): Promise<void> {
+        console.warn('[BrowserOnce] stopComponent not yet implemented');
+    }
+    
+    /**
+     * Get current server model
+     * @deprecated Use getPeerModel() instead
+     */
+    getServerModel(): ONCEServerModel {
+        console.warn('[BrowserOnce] getServerModel() called - browser is not a server, use getPeerModel()');
+        // Return minimal server model for compatibility
+        return {
+            uuid: this.model.uuid,
+            host: this.model.host,
+            hostname: this.model.host.split('.')[0],
+            pid: 0,
+            state: this.model.state,
+            platform: this.model.environment,
+            domain: 'local.once',
+            ip: '127.0.0.1',
+            capabilities: [{
+                capability: 'httpPort',
+                port: this.model.port
+            }],
+            isPrimaryServer: false
+        };
+    }
+    
+    /**
+     * Start server - NO-OP in browser
+     * Per TRON decision: log warning and no-op for server methods in browser
+     */
+    async startServer(scenario?: Scenario<ONCEPeerModel>): Promise<void> {
+        console.warn('[BrowserOnce] startServer() called - browser cannot be a server, no-op');
+    }
+    
+    /**
+     * Register with primary server
+     */
+    async registerWithPrimaryServer(): Promise<void> {
+        // Browser registers via WebSocket connection
+        if (this.model.ws && this.model.ws.readyState === WebSocket.OPEN) {
+            console.log('[BrowserOnce] Already connected to primary via WebSocket');
+        } else {
+            await this.connectWebSocket();
+        }
+    }
+    
+    /**
+     * Check if this instance is the primary server
+     */
+    isPrimaryServer(): boolean {
+        // Browser is never the primary server
+        return false;
+    }
+    
+    /**
+     * Get all registered peer instances
+     * @deprecated Use getPeerModel().peers instead
+     */
+    getRegisteredServers(): ONCEServerModel[] {
+        console.warn('[BrowserOnce] getRegisteredServers() deprecated - use getPeerModel().peers');
+        return [];
+    }
+    
     // ========================================
     // INITIALIZATION METHODS
     // ========================================
     
     private initializeUIElements(): void {
-        // Map DOM elements to model
-        this.model.elements.connectionStatus = document.getElementById('connectionStatus');
-        this.model.elements.primaryConnection = document.getElementById('primaryConnection');
-        this.model.elements.connectedPeers = document.getElementById('connectedServers'); // TODO: rename in HTML
-        this.model.elements.messageLog = document.getElementById('messageLog');
-        this.model.elements.messagesSent = document.getElementById('messagesSent');
-        this.model.elements.messagesReceived = document.getElementById('messagesReceived');
-        this.model.elements.acknowledgmentsSent = document.getElementById('acknowledgmentsSent');
-        this.model.elements.connectionTime = document.getElementById('connectionTime');
+        // Map DOM elements to legacy UI cache
+        this.uiElements.connectionStatus = document.getElementById('connectionStatus');
+        this.uiElements.primaryConnection = document.getElementById('primaryConnection');
+        this.uiElements.connectedPeers = document.getElementById('connectedServers'); // TODO: rename in HTML
+        this.uiElements.messageLog = document.getElementById('messageLog');
+        this.uiElements.messagesSent = document.getElementById('messagesSent');
+        this.uiElements.messagesReceived = document.getElementById('messagesReceived');
+        this.uiElements.acknowledgmentsSent = document.getElementById('acknowledgmentsSent');
+        this.uiElements.connectionTime = document.getElementById('connectionTime');
     }
     
     private async getHealthAndPeerInfo(): Promise<void> {
@@ -441,7 +706,7 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
         } catch (error) {
             this.addMessageToLog('error', `❌ Connection failed: ${(error as Error).message}`);
             this.model.isConnected = false;
-            this.model.stats.errorsCount++;
+            this.legacyStats.errorsCount++;
         }
     }
     
@@ -468,7 +733,7 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
         } catch (error) {
             console.error('Peers fetch failed:', error);
             this.model.peers = [];
-            this.model.stats.errorsCount++;
+            this.legacyStats.errorsCount++;
             this.updatePeersDisplay();
         }
     }
@@ -501,7 +766,7 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
         this.model.ws.onerror = function(error) {
             console.error('WebSocket error:', error);
             self.addMessageToLog('error', '❌ WebSocket error');
-            self.model.stats.errorsCount++;
+            self.legacyStats.errorsCount++;
         };
     }
     
@@ -520,7 +785,7 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
                 self.handleScenarioUpdate(scenario);
             } catch (error) {
                 console.error('Failed to parse scenario:', error);
-                self.model.stats.errorsCount++;
+                self.legacyStats.errorsCount++;
             }
         };
     }
@@ -638,8 +903,8 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
         const message = scenario.model;
         
         // ✅ Update stats
-        this.model.stats.messagesReceived++;
-        this.model.messages.push(message);
+        this.legacyStats.messagesReceived++;
+        this.messagesCache.push(message);
         
         // ✅ Display message
         const from = message.from?.peerHost || 'unknown';
@@ -655,7 +920,7 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
     
     private updateHealthDisplay(health: any): void {
         // ✅ Method operating on model
-        const el = this.model.elements.connectionStatus;
+        const el = this.uiElements.connectionStatus;
         if (!el) return;
         
         if (health.status === 'healthy') {
@@ -669,7 +934,7 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
     
     private updatePrimaryDisplay(): void {
         // Update primary peer connection info
-        const el = this.model.elements.primaryConnection;
+        const el = this.uiElements.primaryConnection;
         if (!el || !this.model.primaryPeer) return;
         
         el.textContent = `Primary: ${this.model.primaryPeer.host}:${this.model.primaryPeer.port}`;
@@ -677,7 +942,7 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
     
     private updatePeersDisplay(): void {
         // ✅ Update peers display (NOT "servers")
-        const el = this.model.elements.connectedPeers;
+        const el = this.uiElements.connectedPeers;
         if (!el) return;
         
         const peerCount = this.model.peers.length;
@@ -699,7 +964,7 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
     
     private updateConnectionTime(): void {
         // Update connection timer
-        const el = this.model.elements.connectionTime;
+        const el = this.uiElements.connectionTime;
         if (!el || !this.model.connectionTime) return;
         
         const now = new Date();
@@ -714,20 +979,20 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
     
     private updateStatsDisplay(): void {
         // Update statistics display
-        if (this.model.elements.messagesSent) {
-            this.model.elements.messagesSent.textContent = String(this.model.stats.messagesSent);
+        if (this.uiElements.messagesSent) {
+            this.uiElements.messagesSent.textContent = String(this.legacyStats.messagesSent);
         }
-        if (this.model.elements.messagesReceived) {
-            this.model.elements.messagesReceived.textContent = String(this.model.stats.messagesReceived);
+        if (this.uiElements.messagesReceived) {
+            this.uiElements.messagesReceived.textContent = String(this.legacyStats.messagesReceived);
         }
-        if (this.model.elements.acknowledgmentsSent) {
-            this.model.elements.acknowledgmentsSent.textContent = String(this.model.stats.acknowledgmentsSent);
+        if (this.uiElements.acknowledgmentsSent) {
+            this.uiElements.acknowledgmentsSent.textContent = String(this.legacyStats.acknowledgmentsSent);
         }
     }
     
     public addMessageToLog(type: string, text: string): void {
         // Add message to log (method, not function)
-        const el = this.model.elements.messageLog;
+        const el = this.uiElements.messageLog;
         if (!el) return;
         
         const now = new Date();
@@ -747,7 +1012,7 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
     
     public clearLog(): void {
         // Clear message log
-        const el = this.model.elements.messageLog;
+        const el = this.uiElements.messageLog;
         if (!el) return;
         
         el.innerHTML = '';
@@ -781,15 +1046,15 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
             this.model.ws.send(JSON.stringify(messageScenario));
             
             // ✅ Update local model (increment stats)
-            this.model.stats.messagesSent++;
-            this.model.messages.push(messageScenario.model);
+            this.legacyStats.messagesSent++;
+            this.messagesCache.push(messageScenario.model);
             
             // ✅ Update UI
             this.updateStatsDisplay();
             this.addMessageToLog('broadcast', '📡 Broadcast sent to all peers');
         } else {
             this.addMessageToLog('error', '❌ WebSocket not connected');
-            this.model.stats.errorsCount++;
+            this.legacyStats.errorsCount++;
         }
     }
     
@@ -818,13 +1083,13 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
         
         if (this.model.ws && this.model.ws.readyState === WebSocket.OPEN) {
             this.model.ws.send(JSON.stringify(messageScenario));
-            this.model.stats.messagesSent++;
-            this.model.messages.push(messageScenario.model);
+            this.legacyStats.messagesSent++;
+            this.messagesCache.push(messageScenario.model);
             this.updateStatsDisplay();
             this.addMessageToLog('message', '🔄 Relay message sent via primary');
         } else {
             this.addMessageToLog('error', '❌ WebSocket not connected');
-            this.model.stats.errorsCount++;
+            this.legacyStats.errorsCount++;
         }
     }
     
@@ -852,13 +1117,13 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
         
         if (this.model.ws && this.model.ws.readyState === WebSocket.OPEN) {
             this.model.ws.send(JSON.stringify(messageScenario));
-            this.model.stats.messagesSent++;
-            this.model.messages.push(messageScenario.model);
+            this.legacyStats.messagesSent++;
+            this.messagesCache.push(messageScenario.model);
             this.updateStatsDisplay();
             this.addMessageToLog('message', '🔗 P2P direct message sent');
         } else {
             this.addMessageToLog('error', '❌ WebSocket not connected');
-            this.model.stats.errorsCount++;
+            this.legacyStats.errorsCount++;
         }
     }
     
@@ -886,7 +1151,7 @@ export class BrowserOnce extends DefaultOnceKernel<BrowserOnceModel> {
         // ✅ Send ACK via WebSocket
         if (this.model.ws && this.model.ws.readyState === WebSocket.OPEN) {
             this.model.ws.send(JSON.stringify(ackScenario));
-            this.model.stats.acknowledgmentsSent++;
+            this.legacyStats.acknowledgmentsSent++;
             this.updateStatsDisplay();
         }
     }

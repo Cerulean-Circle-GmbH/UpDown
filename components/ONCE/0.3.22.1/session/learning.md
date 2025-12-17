@@ -97,6 +97,41 @@ StaticFileRoute matches → Shadows IORRoute → NOT FOUND
 
 **Fix Required:** `StaticFileRoute.matches()` should check for IOR pattern (4 segments, UUID format) and reject.
 
+### **L10: TRON Decides Backlog - Not Agent**
+**Date:** 2025-12-17  
+**Source:** User correction  
+**Lesson:** The agent does NOT decide what goes to backlog. TRON (user) makes all prioritization decisions.
+
+**Wrong behavior:**
+- Agent decides "this is low priority, moving to backlog"
+- Agent applies "duct tape" fixes without asking
+- Agent defers decisions unilaterally
+
+**Correct behavior:**
+- Agent presents options with tradeoffs
+- Agent asks: "Do you want to (a) fix now, (b) backlog, or (c) other?"
+- Agent waits for TRON decision before proceeding
+
+### **L11: No Duct Tape Without Permission**
+**Date:** 2025-12-17  
+**Source:** User correction (ONCE.ts type assertion)  
+**Lesson:** Never apply workarounds (like `as unknown as Type`) without asking first.
+
+**Example of violation:**
+```typescript
+// I added this without asking:
+return new BrowserOnce() as unknown as ONCEKernel;
+// Comment: "⚠️ TECHNICAL DEBT"
+```
+
+**Correct approach:**
+1. Identify the problem (BrowserOnce doesn't implement ONCEKernel)
+2. Create PDCA with options
+3. ASK user which option to pursue
+4. Only then implement
+
+---
+
 ### **L9: DRY Violation - Duplicate Route Registrations**
 **Date:** 2025-12-17  
 **Source:** ServerHierarchyManager.registerRoutes()  

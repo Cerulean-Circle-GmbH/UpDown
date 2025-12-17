@@ -5,18 +5,21 @@
  * 
  * @layer3
  * @pattern Interface Contract
- * @pdca session/2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md
+ * @pdca session/2025-12-17-UTC-1750.browseronce-oncekernel-interface.pdca.md
  */
 
-import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
 import { Scenario } from './Scenario.interface.js';
 import { Component } from './Component.interface.js';
 import { IOR } from './IOR.js';
 import { LifecycleObserver } from './LifecycleObserver.interface.js';
-import { ONCEServerModel } from './ONCEServerModel.interface.js';
+import { ONCEPeerModel } from './ONCEPeerModel.interface.js';
 import { EnvironmentInfo } from './EnvironmentInfo.interface.js';
 import { ComponentQuery } from './ComponentQuery.interface.js';
 import { PerformanceMetrics } from './PerformanceMetrics.interface.js';
+
+// @deprecated - kept for backwards compatibility during migration
+import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
+import { ONCEServerModel } from './ONCEServerModel.interface.js';
 
 /**
  * ONCE - Core kernel functionality for Web4 component system
@@ -27,14 +30,14 @@ export interface ONCE {
      * Initialize ONCE kernel with scenario
      * Web4 pattern: Objects initialize from scenarios, not constructors
      */
-    init(scenario?: LegacyONCEScenario): Promise<ONCE>;
+    init(scenario?: Scenario<ONCEPeerModel>): Promise<ONCE>;
 
     /**
      * Start a component by loading and initializing it
      * @param componentIOR - Internet Object Reference to component
      * @param scenario - Initial scenario for component
      */
-    startComponent(componentIOR: IOR, scenario?: LegacyONCEScenario): Promise<Component>;
+    startComponent(componentIOR: IOR, scenario?: Scenario<ONCEPeerModel>): Promise<Component>;
 
     /**
      * Save component state as scenario
@@ -44,14 +47,14 @@ export interface ONCE {
      * ✅ **RESOLVED**: Async implementations moved to Layer 4 (Orchestrators)
      * @see session/2025-12-17-UTC-1613.web4-principles-review.pdca.md - Decision 1c
      */
-    saveAsScenario(component: Component): Promise<Scenario<LegacyONCEScenario>>;
+    saveAsScenario(component: Component): Promise<Scenario<ONCEPeerModel>>;
 
     /**
      * Load component from scenario
-     * @param scenario - LegacyONCEScenario containing component state
+     * @param scenario - Scenario containing component state
      * @returns Restored component instance
      */
-    loadScenario(scenario: LegacyONCEScenario): Promise<Component>;
+    loadScenario(scenario: Scenario<ONCEPeerModel>): Promise<Component>;
 
     /**
      * Get current environment information
@@ -81,9 +84,9 @@ export interface ONCE {
     /**
      * Exchange scenarios with peer
      * @param peerIOR - Target peer
-     * @param scenario - LegacyONCEScenario to send
+     * @param scenario - Scenario to send
      */
-    exchangeScenario(peerIOR: IOR, scenario: LegacyONCEScenario): Promise<void>;
+    exchangeScenario(peerIOR: IOR, scenario: Scenario<ONCEPeerModel>): Promise<void>;
 
     /**
      * Hibernate ONCE kernel state
@@ -92,7 +95,7 @@ export interface ONCE {
      * ✅ **RESOLVED**: Async implementations moved to Layer 4 (Orchestrators)
      * @see session/2025-12-17-UTC-1613.web4-principles-review.pdca.md - Decision 1c
      */
-    toScenario(): Promise<Scenario<LegacyONCEScenario>>;
+    toScenario(): Promise<Scenario<ONCEPeerModel>>;
 
     /**
      * Check if ONCE is initialized
@@ -143,13 +146,14 @@ export interface ONCE {
 
     /**
      * Get current server model with all server instance information
+     * @deprecated Use getPeerModel() for unified access
      */
     getServerModel(): ONCEServerModel;
 
     /**
      * Start server with automatic port management (42777 → 8080+)
      */
-    startServer(scenario?: LegacyONCEScenario): Promise<void>;
+    startServer(scenario?: Scenario<ONCEPeerModel>): Promise<void>;
 
     /**
      * Register with primary server if this is a client server
@@ -163,24 +167,15 @@ export interface ONCE {
 
     /**
      * Get all registered peer instances (only available on primary peer)
+     * @deprecated Use getPeerModel().peers instead
      */
     getRegisteredServers(): ONCEServerModel[];
     
     /**
-     * Register a listener for model changes
-     * ✅ Web4 Observer Pattern - views register to receive updates
-     * Called when peer state changes (WebSocket scenario received)
-     * @param listener - Callback to invoke on model change
-     * @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
+     * Get unified peer model
+     * Replaces getServerModel() for unified Browser/Node access
      */
-    onModelChange?(listener: () => void): void;
-    
-    /**
-     * Unregister a model change listener
-     * @param listener - Previously registered listener
-     * @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
-     */
-    offModelChange?(listener: () => void): void;
+    getPeerModel(): ONCEPeerModel;
 }
 
 /**
