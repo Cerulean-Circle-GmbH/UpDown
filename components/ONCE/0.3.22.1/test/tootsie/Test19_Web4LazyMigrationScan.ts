@@ -20,6 +20,7 @@
  * - P3: Underscore prefix properties → use descriptive suffix
  * - P26: Factory functions → should be `new Class().init(scenario)`
  * - P1: Separate Config objects → should be part of Scenario
+ * - P7: fetch() calls outside layer4 → should use HTTPSLoader from layer4
  * 
  * @pdca session/2025-12-08-UTC-1100.jsinterface-type-descriptors.pdca.md
  */
@@ -58,7 +59,8 @@ interface ScanPattern {
   principle: string;
   regex: RegExp;
   suggestion: string;
-  exclude?: RegExp;
+  exclude?: RegExp;        // Exclude if line content matches
+  fileExclude?: RegExp;    // Exclude if file path matches (P7 layer check)
 }
 
 /**
@@ -280,6 +282,20 @@ export class Test19_Web4LazyMigrationScan extends ONCETestCase {
         regex: /declare\s+global\s*\{[^}]*HTMLElementTagNameMap/g,
         suggestion: '@customElement decorator handles registration. Remove declare global pattern.',
       },
+      
+      // ═══════════════════════════════════════════════════════════════
+      // P7: Async Operations Only in Layer 4
+      // ═══════════════════════════════════════════════════════════════
+      
+      {
+        name: 'fetch() outside layer4',
+        principle: 'P7',
+        // Matches: fetch( but only report when found in layer1/2/3 files
+        // fileExclude filters by file path, not line content
+        regex: /\bfetch\s*\(/g,
+        suggestion: 'Use HTTPSLoader from layer4 instead of direct fetch(). Exception: OnceServiceWorker.ts',
+        fileExclude: /layer4|OnceServiceWorker\.ts|\.test\.|\.spec\./,
+      },
     ];
   }
   
@@ -351,6 +367,11 @@ export class Test19_Web4LazyMigrationScan extends ONCETestCase {
     for (const pattern of this.testModel.scanPatterns) {
       // Reset regex state
       pattern.regex.lastIndex = 0;
+      
+      // Skip entire file if fileExclude matches (P7 layer check)
+      if (pattern.fileExclude && pattern.fileExclude.test(relativePath)) {
+        continue;
+      }
       
       for (let lineNum = 0; lineNum < lines.length; lineNum++) {
         const line = lines[lineNum];
