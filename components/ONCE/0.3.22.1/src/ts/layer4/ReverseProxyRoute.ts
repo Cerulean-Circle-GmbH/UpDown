@@ -23,6 +23,8 @@ import { IncomingMessage, ServerResponse } from 'http';
 import { ProxyRoute } from './ProxyRoute.js';
 import { HrefRewriter } from '../layer2/HrefRewriter.js';
 import { RewriteContext } from '../layer2/HeaderRewriter.js';
+import { Scenario } from '../layer3/Scenario.interface.js';
+import { ProxyRouteModel } from '../layer3/ProxyRouteModel.interface.js';
 
 /**
  * ReverseProxyRoute - Reverse proxy with HTML body rewriting
@@ -40,8 +42,17 @@ export class ReverseProxyRoute extends ProxyRoute {
     
     constructor() {
         super();
+    }
+    
+    /**
+     * Initialize with scenario
+     * Web4 P6: Empty constructor + init()
+     */
+    public override init(scenario?: Scenario<ProxyRouteModel>): this {
+        super.init(scenario);
         this.hrefRewriter = new HrefRewriter();
         this.model.name = 'ReverseProxyRoute';
+        return this;
     }
     
     /**

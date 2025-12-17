@@ -44,8 +44,6 @@ export class ProxyRoute extends Route {
     
     constructor() {
         super();
-        this.headerRewriter = new HeaderRewriter();
-        this.model.name = 'ProxyRoute';
     }
     
     /**
@@ -54,6 +52,8 @@ export class ProxyRoute extends Route {
      */
     public override init(scenario?: Scenario<ProxyRouteModel>): this {
         super.init(scenario);
+        this.headerRewriter = new HeaderRewriter();
+        this.model.name = 'ProxyRoute';
         return this;
     }
     
