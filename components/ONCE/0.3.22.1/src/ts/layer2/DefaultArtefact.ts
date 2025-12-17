@@ -150,3 +150,6 @@ export class DefaultArtefact extends UcpComponent<ArtefactModel> {
 
 
 
+
+
+
