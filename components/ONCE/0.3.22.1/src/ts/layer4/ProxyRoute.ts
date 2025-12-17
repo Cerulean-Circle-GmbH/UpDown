@@ -39,7 +39,7 @@ import { Scenario } from '../layer3/Scenario.interface.js';
 export class ProxyRoute extends Route {
     public override model!: ProxyRouteModel;
     
-    protected headerRewriter: HeaderRewriter;
+    protected headerRewriter!: HeaderRewriter;
     private upstreamIndex: number = 0;  // For round-robin load balancing
     
     constructor() {

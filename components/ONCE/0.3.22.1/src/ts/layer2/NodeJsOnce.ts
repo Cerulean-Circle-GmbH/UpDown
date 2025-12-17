@@ -23,6 +23,7 @@ import { LifecycleObserver } from '../layer3/LifecycleObserver.interface.js';
 type LifecycleEventHandler = (event: any) => void | Promise<void>;
 type LifecycleHooks = Record<string, LifecycleEventHandler>;
 import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
+import type { ServerCapability } from '../layer3/ServerCapability.interface.js';
 import { ServerHierarchyManager } from './ServerHierarchyManager.js';
 import { ScenarioManager } from './ScenarioManager.js';
 import { ONCEModel } from '../layer3/ONCEModel.interface.js';
@@ -722,7 +723,9 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
       // Save current state as scenario (Web4 Standard format)
       // @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
       const web4Scenario = await this.toScenario();
-      await this.scenarioManager.saveScenario(web4Scenario);
+      // TODO: MC.3 - Update ScenarioManager to accept Scenario<ONCEPeerModel> natively
+      // @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md
+      await this.scenarioManager.saveScenario(web4Scenario as unknown as Scenario<LegacyONCEScenario>);
       
       // ✅ Transition to RUNNING state
       this.transitionTo(LifecycleState.RUNNING, LifecycleEventType.AFTER_START);
@@ -793,7 +796,26 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
    * @pdca session/2025-12-17-UTC-1750.browseronce-oncekernel-interface.pdca.md
    */
   getPeerModel(): ONCEPeerModel {
-    const serverModel = this.serverHierarchyManager.getServerModel();
+    const serverModel = this.serverHierarchyManager?.getServerModel();
+    
+    // Handle case where server model not yet initialized
+    if (!serverModel) {
+      return {
+        uuid: this.model.uuid || 'uninitialized',
+        name: this.model.name || 'NodeJsONCEKernel',
+        version: this.model.version || '0.0.0.0',
+        environment: new DefaultEnvironmentInfo(),
+        state: this.model.state || LifecycleState.CREATED,
+        startTime: new Date(),
+        connectionTime: null,
+        host: 'localhost',
+        port: 42777,
+        isPrimary: false,
+        primaryPeerUuid: null,
+        peers: []
+      };
+    }
+    
     return {
       // Identity
       uuid: this.model.uuid,
@@ -826,7 +848,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
         startTime: new Date(),
         connectionTime: null,
         host: s.host,
-        port: s.capabilities?.find(c => c.capability === 'httpPort')?.port || 0,
+        port: s.capabilities?.find((c: ServerCapability) => c.capability === 'httpPort')?.port || 0,
         isPrimary: s.isPrimaryServer,
         primaryPeerUuid: null,
         peers: []

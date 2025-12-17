@@ -76,47 +76,57 @@ export class ScenarioManager {
      * ✅ Falls back to legacy direct write if ScenarioService unavailable
      * @pdca 2025-12-08-UTC-1000.scenario-unit-unification.pdca.md
      */
-    async saveScenario(scenario: LegacyONCEScenario | Scenario<LegacyONCEScenario>): Promise<string> {
-        // Use type guard to extract legacy data
+    async saveScenario(scenario: LegacyONCEScenario | Scenario<LegacyONCEScenario> | Scenario<any>): Promise<string> {
+        // Use type guard to extract model data
         const guard = new ScenarioTypeGuard();
         guard.init(scenario);
         
-        let legacyData: LegacyONCEScenario;
-        if (guard.isWeb4()) {
-            // Extract legacy from Web4 wrapper
-            const web4 = guard.asWeb4<LegacyONCEScenario>()!;
-            legacyData = web4.model;
+        let modelData: any;
+        let isWeb4 = guard.isWeb4();
+        if (isWeb4) {
+            // Extract model from Web4 wrapper
+            const web4 = guard.asWeb4<any>()!;
+            modelData = web4.model;
         } else {
             // Already legacy format
-            legacyData = guard.asLegacy()!;
+            modelData = guard.asLegacy()!;
         }
         
-        const componentType = legacyData.objectType;
-        const version = legacyData.version;
-        const uuid = legacyData.uuid;
+        // Handle both LegacyONCEScenario and ONCEPeerModel formats
+        // @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - MC.3 compatibility
+        const isLegacyFormat = 'objectType' in modelData && 'metadata' in modelData;
         
-        // Extract domain and hostname from metadata
-        const fqdn = legacyData.metadata.host || 'localhost';
+        const componentType = isLegacyFormat ? modelData.objectType : 'ONCE';
+        const version = modelData.version;
+        const uuid = modelData.uuid;
+        
+        // Extract domain and hostname - handle both formats
+        const fqdn = isLegacyFormat 
+            ? (modelData.metadata?.host || 'localhost')
+            : (modelData.host || 'localhost');
         const { domainPath, hostname } = this.parseFqdnToDomainPath(fqdn);
         
-        // Extract port for logging
-        const httpCapability = legacyData.state.capabilities?.find((c: any) => c.capability === 'httpPort');
-        const port = httpCapability?.port || legacyData.state.httpPort || 'unknown';
+        // Extract port for logging - handle both formats
+        const capabilities = isLegacyFormat ? modelData.state?.capabilities : modelData.capabilities;
+        const httpCapability = capabilities?.find((c: any) => c.capability === 'httpPort');
+        const port = httpCapability?.port || (isLegacyFormat ? modelData.state?.httpPort : modelData.port) || 'unknown';
 
         // ✅ Try to use ScenarioService (single point of truth)
         const scenarioService = this.component?.scenarioServiceGet?.();
         if (scenarioService) {
             try {
-                // Update modified timestamp
-                legacyData.metadata.modified = new Date().toISOString();
+                // Update modified timestamp (only for legacy format)
+                if (isLegacyFormat && modelData.metadata) {
+                    modelData.metadata.modified = new Date().toISOString();
+                }
                 
                 // Build Web4 scenario if not already
-                const web4Scenario = guard.isWeb4() 
-                    ? scenario as Scenario<LegacyONCEScenario>
+                const web4Scenario = isWeb4 
+                    ? scenario as Scenario<any>
                     : {
                         ior: { uuid, component: componentType, version },
                         owner: 'system',
-                        model: legacyData
+                        model: modelData
                     };
                 
                 // Build symlink paths using ScenarioService's path builders
@@ -145,7 +155,7 @@ export class ScenarioManager {
         }
         
         // ✅ Fallback: Legacy direct file write
-        return this.saveScenarioLegacy(scenario, legacyData, componentType, version, uuid, domainPath, hostname, port);
+        return this.saveScenarioLegacy(scenario, modelData, componentType, version, uuid, domainPath, hostname, port);
     }
     
     /**
@@ -169,8 +179,8 @@ export class ScenarioManager {
      * @deprecated Use PersistenceManager when available
      */
     private saveScenarioLegacy(
-        scenario: LegacyONCEScenario | Scenario<LegacyONCEScenario>,
-        legacyData: LegacyONCEScenario,
+        scenario: LegacyONCEScenario | Scenario<LegacyONCEScenario> | Scenario<any>,
+        modelData: any,
         componentType: string,
         version: string,
         uuid: string,
@@ -196,8 +206,10 @@ export class ScenarioManager {
 
         const scenarioPath = join(scenarioDir, `${uuid}.scenario.json`);
 
-        // Update modified timestamp
-        legacyData.metadata.modified = new Date().toISOString();
+        // Update modified timestamp (only for legacy format with metadata)
+        if (modelData.metadata) {
+            modelData.metadata.modified = new Date().toISOString();
+        }
 
         // Save the ORIGINAL format (preserve what was passed in)
         writeFileSync(scenarioPath, JSON.stringify(scenario, null, 2));

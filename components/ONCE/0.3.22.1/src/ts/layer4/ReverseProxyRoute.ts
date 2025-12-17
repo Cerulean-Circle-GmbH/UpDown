@@ -38,7 +38,7 @@ import { ProxyRouteModel } from '../layer3/ProxyRouteModel.interface.js';
  */
 export class ReverseProxyRoute extends ProxyRoute {
     
-    private hrefRewriter: HrefRewriter;
+    private hrefRewriter!: HrefRewriter;
     
     constructor() {
         super();

@@ -53,11 +53,20 @@ export interface ONCEPeerModel extends Model {
     connectionTime: Reference<Date>;
     
     // === NETWORK ===
-    /** Hostname (e.g., "McDonges-3.fritz.box") */
+    /** Fully qualified hostname (e.g., "McDonges-3.fritz.box") */
     host: string;
     
     /** Primary port number */
     port: number;
+    
+    /** Reverse internet domain (e.g., "local.once") - Node.js only */
+    domain?: string;
+    
+    /** Extracted hostname - first part of FQDN (e.g., "McDonges-3") - Node.js only */
+    hostname?: string;
+    
+    /** IP address (e.g., "127.0.0.1") - Node.js only */
+    ip?: string;
     
     /** Is this the primary peer in the network? */
     isPrimary: boolean;
