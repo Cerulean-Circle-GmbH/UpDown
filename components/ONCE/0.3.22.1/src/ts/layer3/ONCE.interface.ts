@@ -41,10 +41,8 @@ export interface ONCE {
      * @param component - Component to hibernate
      * @returns Web4 Standard format scenario
      * 
-     * ⚠️ **ARCHITECTURAL DEBT**: Async in Layer 2 (Implementation)
-     * ⚠️ Web4 principle: "Only Layer 4 should be async"
-     * @see session/2025-11-19-UTC-1545.refactor-async-to-layer4.pdca.md - Future migration plan
-     * @pdca session/2025-11-19-UTC-1600.pragmatic-async-interface-fix.pdca.md
+     * ✅ **RESOLVED**: Async implementations moved to Layer 4 (Orchestrators)
+     * @see session/2025-12-17-UTC-1613.web4-principles-review.pdca.md - Decision 1c
      */
     saveAsScenario(component: Component): Promise<Scenario<LegacyONCEScenario>>;
 
@@ -91,11 +89,8 @@ export interface ONCE {
      * Hibernate ONCE kernel state
      * @returns Complete kernel state as Web4 Standard scenario
      * 
-     * ⚠️ **ARCHITECTURAL DEBT**: Async in Layer 2 (generates User scenario)
-     * ⚠️ Web4 principle: "Only Layer 4 should be async"
-     * ⚠️ Should be synchronous with pre-injected owner data
-     * @see session/2025-11-19-UTC-1545.refactor-async-to-layer4.pdca.md - Future migration plan
-     * @pdca session/2025-11-19-UTC-1600.pragmatic-async-interface-fix.pdca.md
+     * ✅ **RESOLVED**: Async implementations moved to Layer 4 (Orchestrators)
+     * @see session/2025-12-17-UTC-1613.web4-principles-review.pdca.md - Decision 1c
      */
     toScenario(): Promise<Scenario<LegacyONCEScenario>>;
 

@@ -16,15 +16,7 @@
 import { Loader } from '../layer3/Loader.interface.js';
 import { LoaderModel } from '../layer3/LoaderModel.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
-
-/**
- * IOR Profile
- * Multiple host:port pairs for failover
- */
-interface IORProfile {
-    host: string;
-    port: number;
-}
+import { IORProfile } from '../layer3/IORProfile.interface.js';
 
 /**
  * HTTPSLoader

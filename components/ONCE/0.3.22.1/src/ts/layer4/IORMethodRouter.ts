@@ -17,20 +17,11 @@
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { Model } from '../layer3/Model.interface.js';
 import { IDProvider } from '../layer3/IDProvider.interface.js';
+import { IORMethodCall } from '../layer3/IORMethodCall.interface.js';
 import { UUIDProvider } from '../layer2/UUIDProvider.js';
 
-/**
- * Parsed IOR Method Call
- * 
- * Extracted from URL path and query string
- */
-export interface IORMethodCall {
-    componentName: string;
-    componentVersion: string;
-    instanceUuid: string;
-    methodName: string;
-    params: Record<string, string>;
-}
+// Re-export for backwards compatibility
+export type { IORMethodCall } from '../layer3/IORMethodCall.interface.js';
 
 /**
  * IORMethodRouter
