@@ -214,6 +214,19 @@ export class StaticFileRoute extends Route {
             return false;
         }
         
+        // ⚠️ FIX 16: Reject IOR patterns to prevent route shadowing
+        // IOR pattern: /{Component}/{version}/{uuid}/{method}
+        // IOR URLs have 4+ segments, UUID in position 3, no file extension
+        // @pdca 2025-12-17-UTC-1613.web4-principles-review.pdca.md Fix 16
+        if (parts.length >= 4 && !lastSegmentHasExtension) {
+            const potentialUuid = parts[2];
+            // UUID pattern: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+            const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+            if (uuidPattern.test(potentialUuid)) {
+                return false; // This is an IOR URL, let IORRoute handle it
+            }
+        }
+        
         return true;
     }
     

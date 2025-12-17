@@ -26,6 +26,85 @@
 **Source:** Context creation  
 **Lesson:** Keep agent context minimal by linking to authoritative sources instead of duplicating content. 726 lines → 190 lines by linking.
 
+### **L4: Vitest ≠ Violation — It's Infrastructure for Tootsie**
+**Date:** 2025-12-17  
+**Source:** User correction on TM.4  
+**Lesson:** Vitest is **NOT** a violation of P25 (Tootsie Tests Only). The relationship is:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  VITEST = Infrastructure Layer                              │
+│  ├── Test runner (beforeAll, afterAll, describe, it)       │
+│  ├── Test isolation setup (once-test-isolation-setup.test) │
+│  ├── Creates test/data/ with components & symlinks         │
+│  └── Timeouts, parallelism control, reporters               │
+├─────────────────────────────────────────────────────────────┤
+│  TOOTSIE = Functional Test Layer                            │
+│  ├── ONCETestCase extends DefaultWeb4TestCase              │
+│  ├── Web4Requirement for acceptance criteria                │
+│  ├── Black-box testing (IOR calls, CLI commands)           │
+│  └── Uses test/data/ SET UP by Vitest                      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Key Files:**
+- `test/vitest/once-test-isolation-setup.test.ts` - Sets up `test/data/`
+- `vitest.config.ts` - Configures test runner
+- `test/tootsie/ONCETestCase.ts` - Tootsie base class using `this.testDataDir`
+
+**Critical Insight:** "Getting it right first is 100x better than fixing it later. Keep self-informing."
+
+### **L5: Test Migration ≠ Just Moving Files**
+**Date:** 2025-12-17  
+**Source:** User correction on TM.1  
+**Lesson:** Tests in `/src/ts/tests/` are NOT Tootsie tests - they use a custom framework. Migration requires:
+1. Add `extends ONCETestCase`
+2. Rename `run()` → `executeTestLogic()`
+3. Replace `console.log()` → `this.logEvidence()`
+4. Replace `throw new Error()` → `this.requirement()` + `validateCriterion()`
+5. Move to `/test/tootsie/`
+
+**Effort difference:** "Move" = 30 min vs "Migrate" = 4-6 hours. Always verify actual code structure first!
+
+### **L6: Route Shadowing - StaticFileRoute vs IORRoute**
+**Date:** 2025-12-17  
+**Source:** Test02 DEMO-10 failure  
+**Lesson:** `StaticFileRoute.matches()` incorrectly matches IOR URLs because it classifies paths without extensions as "directories".
+
+**The Bug:**
+```
+URL: /ONCE/0.3.22.1/633db3c2-.../peerStopAll
+lastSegment = 'peerStopAll'
+lastSegment.includes('.') === false  // No dot
+isDirectory = true  // WRONG!
+StaticFileRoute matches → Shadows IORRoute → NOT FOUND
+```
+
+**Fix Required:** `StaticFileRoute.matches()` should check for IOR pattern (4 segments, UUID format) and reject.
+
+### **L7: DRY Violation - Duplicate Route Registrations**
+**Date:** 2025-12-17  
+**Source:** ServerHierarchyManager.registerRoutes()  
+**Lesson:** Massive DRY violations in route registration:
+
+1. **Trailing slash duplication** (8 duplicate routes):
+   - `/demo` AND `/demo/` (identical)
+   - `/once` AND `/once/` (identical)
+   - `/onceCommunicationLog` AND `/onceCommunicationLog/` (identical)
+   - `/EAMD.ucp` AND `/EAMD.ucp/` (identical)
+
+2. **Identical boilerplate** (12+ routes):
+   ```typescript
+   const route = new HTMLRoute();
+   route.model.uuid = this.idProvider.create();
+   route.setPattern('/path', HttpMethod.GET);
+   route.setProvider(() => this.component!.someMethod());
+   route.model.priority = 50;
+   this.httpRouter.registerRoute(route);
+   ```
+
+**Fix:** Create `this.registerHTMLRoute(pattern, provider, priority?)` helper.
+
 ---
 
 ## **🔴 Common Web4 Violations Found**

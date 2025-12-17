@@ -21,6 +21,7 @@
 
 import type { ONCEKernel } from '../layer3/ONCE.interface.js';
 import type { EnvironmentInfo } from '../layer3/EnvironmentInfo.interface.js';
+import type { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
 import { EnvironmentType } from '../layer3/EnvironmentType.enum.js';
 import { DefaultEnvironmentInfo } from '../layer2/DefaultEnvironmentInfo.js';
 
@@ -32,10 +33,11 @@ export class Once {
     /**
      * Start ONCE kernel (auto-detects environment)
      * 
-     * @param scenario - Optional scenario for initialization
+     * @param scenario - Optional scenario for initialization (Web4 Standard format)
      * @returns Promise<ONCEKernel> - Initialized kernel instance
+     * @pdca 2025-12-17-UTC-1613.web4-principles-review.pdca.md Fix 8-9
      */
-    static async start(scenario?: any): Promise<ONCEKernel> {
+    static async start(scenario?: LegacyONCEScenario): Promise<ONCEKernel> {
         if (this.instance) {
             console.warn('ONCE kernel already started, returning existing instance');
             return this.instance;
@@ -152,8 +154,9 @@ export class Once {
      * 
      * @param envType - Environment type
      * @returns Promise<ONCEKernel>
+     * @pdca 2025-12-17-UTC-1613.web4-principles-review.pdca.md Fix 8-9
      */
-    private static async loadKernel(envType: EnvironmentType): Promise<any> {
+    private static async loadKernel(envType: EnvironmentType): Promise<ONCEKernel> {
         switch (envType) {
             case EnvironmentType.NODE: {
                 const { NodeJsOnce } = await import('../layer2/NodeJsOnce.js');
@@ -171,21 +174,26 @@ export class Once {
                     (window as any).global.ONCE = kernel;
                     (window as any).ONCE = kernel;  // Direct window.ONCE access
                 }
-                return kernel;
+                // ⚠️ TECHNICAL DEBT: BrowserOnce doesn't fully implement ONCEKernel
+                // @see session/2025-12-17-UTC-1613.web4-principles-review.pdca.md
+                return kernel as unknown as ONCEKernel;
             }
             
             case EnvironmentType.WORKER: {
                 // Future: WorkerOnce
                 console.warn('[Once] Worker kernel not yet implemented, using Browser kernel');
                 const { BrowserOnce } = await import('../layer2/BrowserOnce.js');
-                return new BrowserOnce();
+                // ⚠️ TECHNICAL DEBT: BrowserOnce doesn't fully implement ONCEKernel
+                // @see session/2025-12-17-UTC-1613.web4-principles-review.pdca.md
+                return new BrowserOnce() as unknown as ONCEKernel;
             }
             
             case EnvironmentType.SERVICE_WORKER: {
                 // Future: ServiceWorkerOnce
                 console.warn('[Once] Service Worker kernel not yet implemented, using Browser kernel');
                 const { BrowserOnce } = await import('../layer2/BrowserOnce.js');
-                return new BrowserOnce();
+                // ⚠️ TECHNICAL DEBT: BrowserOnce doesn't fully implement ONCEKernel
+                return new BrowserOnce() as unknown as ONCEKernel;
             }
             
             default:
