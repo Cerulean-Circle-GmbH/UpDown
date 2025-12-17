@@ -12,7 +12,7 @@
 import { Route } from './Route.js';
 import { IncomingMessage, ServerResponse } from 'http';
 import { HttpMethod } from '../layer3/HttpMethod.enum.js';
-import { IORMethodRouter } from './IORMethodRouter.js';
+import { IORMethodRouter } from '../layer4/IORMethodRouter.js';
 import { parse as parseUrl } from 'url';
 
 /**

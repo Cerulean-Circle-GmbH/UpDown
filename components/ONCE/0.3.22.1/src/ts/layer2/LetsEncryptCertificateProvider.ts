@@ -23,7 +23,7 @@
  */
 
 import * as crypto from 'crypto';
-import { HTTPSLoader } from './HTTPSLoader.js';
+import { HTTPSLoader } from '../layer4/HTTPSLoader.js';
 import { LetsEncryptCertificateProviderModel } from '../layer3/LetsEncryptCertificateProviderModel.interface.js';
 import { DomainCertificateModel } from '../layer3/DomainCertificateModel.interface.js';
 import { DomainConfigurationModel } from '../layer3/DomainConfigurationModel.interface.js';

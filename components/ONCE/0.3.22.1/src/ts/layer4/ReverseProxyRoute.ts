@@ -21,8 +21,8 @@
 
 import { IncomingMessage, ServerResponse } from 'http';
 import { ProxyRoute } from './ProxyRoute.js';
-import { HrefRewriter } from './HrefRewriter.js';
-import { RewriteContext } from './HeaderRewriter.js';
+import { HrefRewriter } from '../layer2/HrefRewriter.js';
+import { RewriteContext } from '../layer2/HeaderRewriter.js';
 
 /**
  * ReverseProxyRoute - Reverse proxy with HTML body rewriting

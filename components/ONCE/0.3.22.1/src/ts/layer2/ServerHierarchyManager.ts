@@ -32,7 +32,7 @@ import { ScenarioTypeGuard } from '../layer1/ScenarioTypeGuard.js';
 import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { HostnameParser } from '../layer1/HostnameParser.js';
-import { IORMethodRouter } from './IORMethodRouter.js';
+import { IORMethodRouter } from '../layer4/IORMethodRouter.js';
 import { HTTPServer } from './HTTPServer.js';
 import { HTTPSServer } from './HTTPSServer.js';
 import { HTTPRouter } from './HTTPRouter.js';

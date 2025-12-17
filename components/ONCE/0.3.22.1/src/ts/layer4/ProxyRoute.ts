@@ -22,8 +22,8 @@
 import * as http from 'http';
 import * as https from 'https';
 import { IncomingMessage, ServerResponse } from 'http';
-import { Route } from './Route.js';
-import { HeaderRewriter, RewriteContext } from './HeaderRewriter.js';
+import { Route } from '../layer2/Route.js';
+import { HeaderRewriter, RewriteContext } from '../layer2/HeaderRewriter.js';
 import { ProxyRouteModel } from '../layer3/ProxyRouteModel.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 

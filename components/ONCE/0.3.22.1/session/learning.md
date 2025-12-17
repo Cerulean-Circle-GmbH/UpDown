@@ -54,7 +54,22 @@
 
 **Critical Insight:** "Getting it right first is 100x better than fixing it later. Keep self-informing."
 
-### **L5: Test Migration ≠ Just Moving Files**
+### **L5: Git Commit Message = PDCA Filename Only**
+**Date:** 2025-12-17  
+**Source:** User correction  
+**Lesson:** Git commit messages should be JUST the PDCA filename, nothing more.
+
+**Correct:**
+```bash
+git commit -m "2025-12-17-UTC-1613.web4-principles-review.pdca.md"
+```
+
+**Wrong:**
+```bash
+git commit -m "2025-12-17-UTC-1613.web4-principles-review.pdca.md Phase A: Critical Fixes..."
+```
+
+### **L7: Test Migration ≠ Just Moving Files**
 **Date:** 2025-12-17  
 **Source:** User correction on TM.1  
 **Lesson:** Tests in `/src/ts/tests/` are NOT Tootsie tests - they use a custom framework. Migration requires:
@@ -66,7 +81,7 @@
 
 **Effort difference:** "Move" = 30 min vs "Migrate" = 4-6 hours. Always verify actual code structure first!
 
-### **L6: Route Shadowing - StaticFileRoute vs IORRoute**
+### **L8: Route Shadowing - StaticFileRoute vs IORRoute**
 **Date:** 2025-12-17  
 **Source:** Test02 DEMO-10 failure  
 **Lesson:** `StaticFileRoute.matches()` incorrectly matches IOR URLs because it classifies paths without extensions as "directories".
@@ -82,7 +97,7 @@ StaticFileRoute matches → Shadows IORRoute → NOT FOUND
 
 **Fix Required:** `StaticFileRoute.matches()` should check for IOR pattern (4 segments, UUID format) and reject.
 
-### **L7: DRY Violation - Duplicate Route Registrations**
+### **L9: DRY Violation - Duplicate Route Registrations**
 **Date:** 2025-12-17  
 **Source:** ServerHierarchyManager.registerRoutes()  
 **Lesson:** Massive DRY violations in route registration:

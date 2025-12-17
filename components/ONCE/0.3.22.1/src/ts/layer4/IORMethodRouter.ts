@@ -17,7 +17,7 @@
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { Model } from '../layer3/Model.interface.js';
 import { IDProvider } from '../layer3/IDProvider.interface.js';
-import { UUIDProvider } from './UUIDProvider.js';
+import { UUIDProvider } from '../layer2/UUIDProvider.js';
 
 /**
  * Parsed IOR Method Call
