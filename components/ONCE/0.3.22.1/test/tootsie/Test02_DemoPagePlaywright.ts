@@ -173,6 +173,7 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
     demoReq.addCriterion('DEMO-08', `IOR version matches component version (${this.testModel.version})`);
     demoReq.addCriterion('DEMO-09', 'Shutdown button sends IOR with correct version');
     demoReq.addCriterion('DEMO-10', 'Server shuts down via IOR call');
+    demoReq.addCriterion('DEMO-11', 'Server process exits after shutdown');
 
     // ═══════════════════════════════════════════════════════════════
     // SETUP: Start fresh server
@@ -1230,16 +1231,79 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
         // Server should be down after shutdown
         demoReq.validateCriterion('DEMO-10', serverDown, actualShutdownEvidence);
         
-        // Mark that server was shut down by IOR (not by test cleanup)
+        // ═══════════════════════════════════════════════════════════════
+        // TEST 9: Verify Server Process Exits (DEMO-11)
+        // ═══════════════════════════════════════════════════════════════
+        
         if (serverDown) {
+          this.logEvidence('step', 'Verifying server process has exited');
+          
+          // ✅ CRITICAL: Close browser first to release TCP connections
+          // Otherwise the server can't fully exit while connections are held
+          if (this.page) {
+            await this.page.close();
+            this.page = null;
+          }
+          if (this.browser) {
+            await this.browser.close();
+            this.browser = null;
+          }
+          
+          // Wait for process to fully exit (server logs then calls process.exit with 100ms delay)
+          await this.sleep(2000);
+          
+          // Check if port is completely free (no process listening)
+          let portFree = false;
+          let lsofOutput = '';
+          let lsofError = '';
+          try {
+            const { execSync } = await import('child_process');
+            // Try to check if port 42777 is in use
+            lsofOutput = execSync(`lsof -i :${this.testModel.primaryPort} -P -n 2>&1`, { 
+              encoding: 'utf8',
+              timeout: 5000 
+            }).trim();
+            // If lsof returns output, something is still using the port
+            portFree = lsofOutput.length === 0;
+          } catch (e: any) {
+            // lsof returns exit code 1 if nothing found (port is free)
+            lsofError = e.message || String(e);
+            portFree = true;
+          }
+          
+          console.log(`[Test] Port check - portFree: ${portFree}, lsofOutput: "${lsofOutput}", lsofError: "${lsofError}"`);
+          
+          const processExitEvidence = {
+            portFree,
+            port: this.testModel.primaryPort,
+            lsofOutput: lsofOutput.substring(0, 200),
+            lsofError: lsofError.substring(0, 200),
+            message: portFree 
+              ? `Port ${this.testModel.primaryPort} is free - process has exited` 
+              : `Port ${this.testModel.primaryPort} still in use - process may not have exited`
+          };
+          
+          this.logEvidence('output', 'Process exit verification', processExitEvidence);
+          demoReq.validateCriterion('DEMO-11', portFree, processExitEvidence);
+          
+          // Mark that server was shut down by IOR (not by test cleanup)
           this.testModel.startedByTest = false;  // Don't call serverStop() in finally since IOR shutdown worked
+        } else {
+          // If server didn't shut down, DEMO-11 also fails
+          demoReq.validateCriterion('DEMO-11', false, { 
+            error: 'Cannot verify process exit - server did not shut down'
+          });
         }
       } else {
-        // Skip DEMO-10 if server was already running (can't guarantee UUID match)
-        this.logEvidence('info', 'Skipping DEMO-10: Server was already running (UUID may not match)');
+        // Skip DEMO-10 and DEMO-11 if server was already running (can't guarantee UUID match)
+        this.logEvidence('info', 'Skipping DEMO-10/11: Server was already running (UUID may not match)');
         demoReq.validateCriterion('DEMO-10', true, { 
           skipped: true, 
           reason: 'Server was already running - use fresh server for shutdown test' 
+        });
+        demoReq.validateCriterion('DEMO-11', true, { 
+          skipped: true, 
+          reason: 'Server was already running - use fresh server for process exit test' 
         });
       }
 
