@@ -17,8 +17,6 @@ import { EnvironmentInfo } from './EnvironmentInfo.interface.js';
 import { ComponentQuery } from './ComponentQuery.interface.js';
 import { PerformanceMetrics } from './PerformanceMetrics.interface.js';
 
-// @deprecated - kept for backwards compatibility during migration
-import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
 import { ONCEServerModel } from './ONCEServerModel.interface.js';
 
 /**

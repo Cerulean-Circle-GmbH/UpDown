@@ -1,17 +1,14 @@
 /**
- * Scenario Manager v0.3.21.1 - Handles scenario-based configuration and storage
- * ✅ Supports both legacy and Web4 Standard formats
- * @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
+ * Scenario Manager v0.3.22.1 - Handles scenario-based configuration and storage
+ * ✅ Uses Scenario<ONCEPeerModel> exclusively (no legacy formats)
+ * @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - Complete legacy elimination
  */
 
-import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
-import { ScenarioTypeGuard } from '../layer1/ScenarioTypeGuard.js';
 import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
 import { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
-import { DefaultUser } from './DefaultUser.js';
-import { legacyToScenario, normalizeToWeb4, isLegacyScenario } from './ScenarioMigrationHelper.js';
-import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
+import { LifecycleState } from '../layer3/LifecycleState.enum.js';
+import { DefaultEnvironmentInfo } from './DefaultEnvironmentInfo.js';
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
 import { join, dirname, resolve, basename } from 'path';
 import { fileURLToPath } from 'url';
@@ -75,62 +72,29 @@ export class ScenarioManager {
     /**
      * Save scenario to organized directory structure
      * ✅ Uses ScenarioService (single point of truth) for storage
-     * ✅ Falls back to legacy direct write if ScenarioService unavailable
-     * @pdca 2025-12-08-UTC-1000.scenario-unit-unification.pdca.md
+     * ✅ Accepts only Scenario<ONCEPeerModel> (no legacy formats)
+     * @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - Complete legacy elimination
      */
-    async saveScenario(scenario: LegacyONCEScenario | Scenario<LegacyONCEScenario> | Scenario<any>): Promise<string> {
-        // Use type guard to extract model data
-        const guard = new ScenarioTypeGuard();
-        guard.init(scenario);
+    async saveScenario(scenario: Scenario<ONCEPeerModel>): Promise<string> {
+        const model = scenario.model;
         
-        let modelData: any;
-        let isWeb4 = guard.isWeb4();
-        if (isWeb4) {
-            // Extract model from Web4 wrapper
-            const web4 = guard.asWeb4<any>()!;
-            modelData = web4.model;
-        } else {
-            // Already legacy format
-            modelData = guard.asLegacy()!;
-        }
+        const componentType = scenario.ior?.component || 'ONCE';
+        const version = model.version;
+        const uuid = model.uuid;
         
-        // Handle both LegacyONCEScenario and ONCEPeerModel formats
-        // @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - MC.3 compatibility
-        const isLegacyFormat = 'objectType' in modelData && 'metadata' in modelData;
-        
-        const componentType = isLegacyFormat ? modelData.objectType : 'ONCE';
-        const version = modelData.version;
-        const uuid = modelData.uuid;
-        
-        // Extract domain and hostname - handle both formats
-        const fqdn = isLegacyFormat 
-            ? (modelData.metadata?.host || 'localhost')
-            : (modelData.host || 'localhost');
+        // Extract domain and hostname from ONCEPeerModel
+        const fqdn = model.host || 'localhost';
         const { domainPath, hostname } = this.parseFqdnToDomainPath(fqdn);
         
-        // Extract port for logging - handle both formats
-        const capabilities = isLegacyFormat ? modelData.state?.capabilities : modelData.capabilities;
+        // Extract port from ONCEPeerModel
+        const capabilities = model.capabilities;
         const httpCapability = capabilities?.find((c: any) => c.capability === 'httpPort');
-        const port = httpCapability?.port || (isLegacyFormat ? modelData.state?.httpPort : modelData.port) || 'unknown';
+        const port = httpCapability?.port || model.port || 'unknown';
 
         // ✅ Try to use ScenarioService (single point of truth)
         const scenarioService = this.component?.scenarioServiceGet?.();
         if (scenarioService) {
             try {
-                // Update modified timestamp (only for legacy format)
-                if (isLegacyFormat && modelData.metadata) {
-                    modelData.metadata.modified = new Date().toISOString();
-                }
-                
-                // Build Web4 scenario if not already
-                const web4Scenario = isWeb4 
-                    ? scenario as Scenario<any>
-                    : {
-                        ior: { uuid, component: componentType, version },
-                        owner: 'system',
-                        model: modelData
-                    };
-                
                 // Build symlink paths using ScenarioService's path builders
                 const symlinkPaths: string[] = [
                     scenarioService.typePathBuild(componentType, version),
@@ -146,18 +110,18 @@ export class ScenarioManager {
                     );
                 }
                 
-                await scenarioService.scenarioSave(web4Scenario, symlinkPaths);
+                await scenarioService.scenarioSave(scenario, symlinkPaths);
                 const indexPath = join(this.projectRoot, 'scenarios', 'index');
                 console.log(`📝 [PERSISTENCE] ScenarioManager saved ${uuid} via ScenarioService`);
                 logAction('💾', uuid, 'Scenario saved (index)', `${serverIdentity(hostname, Number(port) || 0)}`);
                 return indexPath; // Return index location
             } catch (error) {
-                console.warn(`⚠️ ScenarioService failed, falling back to legacy: ${error}`);
+                console.warn(`⚠️ ScenarioService failed, falling back to direct write: ${error}`);
             }
         }
         
-        // ✅ Fallback: Legacy direct file write
-        return this.saveScenarioLegacy(scenario, modelData, componentType, version, uuid, domainPath, hostname, port);
+        // ✅ Fallback: Direct file write
+        return this.saveScenarioDirect(scenario, componentType, version, uuid, domainPath, hostname, port);
     }
     
     /**
@@ -177,12 +141,10 @@ export class ScenarioManager {
     }
     
     /**
-     * Legacy save method (fallback when PersistenceManager not available)
-     * @deprecated Use PersistenceManager when available
+     * Direct file save (fallback when ScenarioService not available)
      */
-    private saveScenarioLegacy(
-        scenario: LegacyONCEScenario | Scenario<LegacyONCEScenario> | Scenario<any>,
-        modelData: any,
+    private saveScenarioDirect(
+        scenario: Scenario<ONCEPeerModel>,
         componentType: string,
         version: string,
         uuid: string,
@@ -208,16 +170,11 @@ export class ScenarioManager {
 
         const scenarioPath = join(scenarioDir, `${uuid}.scenario.json`);
 
-        // Update modified timestamp (only for legacy format with metadata)
-        if (modelData.metadata) {
-            modelData.metadata.modified = new Date().toISOString();
-        }
-
-        // Save the ORIGINAL format (preserve what was passed in)
+        // Save the scenario
         writeFileSync(scenarioPath, JSON.stringify(scenario, null, 2));
-        console.log(`📝 [WRITE] ScenarioManager.saveScenarioLegacy() projectRoot=${this.projectRoot} → ${scenarioPath}`);
+        console.log(`📝 [WRITE] ScenarioManager.saveScenarioDirect() projectRoot=${this.projectRoot} → ${scenarioPath}`);
         
-        logAction('💾', uuid, 'Scenario saved (legacy)', `${serverIdentity(hostname, Number(port) || 0)} → ${basename(scenarioPath)}`);
+        logAction('💾', uuid, 'Scenario saved', `${serverIdentity(hostname, Number(port) || 0)} → ${basename(scenarioPath)}`);
         return scenarioPath;
     }
 
@@ -237,9 +194,9 @@ export class ScenarioManager {
         const content = readFileSync(scenarioPath, 'utf8');
         const data = JSON.parse(content);
         
-        // Use migration helper to normalize any format to Scenario<ONCEPeerModel>
+        // Directly return as Scenario<ONCEPeerModel>
         console.log(`📂 Loading scenario: ${basename(scenarioPath)}`);
-        return normalizeToWeb4(data);
+        return data as Scenario<ONCEPeerModel>;
     }
     
     /**
@@ -290,33 +247,38 @@ export class ScenarioManager {
 
     /**
      * Create scenario from server model
-     * ✅ Returns legacy format (will be wrapped by DefaultONCE.toScenario)
+     * ✅ Returns Scenario<ONCEPeerModel> (no legacy format)
+     * @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - Complete legacy elimination
      */
-    createScenarioFromServerModel(serverModel: ONCEServerModel): LegacyONCEScenario {
-        return {
+    createScenarioFromServerModel(serverModel: ONCEServerModel): Scenario<ONCEPeerModel> {
+        const peerModel: ONCEPeerModel = {
             uuid: serverModel.uuid,
-            name: serverModel.hostname || `ONCE-${serverModel.uuid.slice(0, 8)}`, // Web4 Principle 1a: Model requires name
-            objectType: 'ONCE',
-            version: this.version, // ✅ Use dynamic version
-            state: {
-                ...serverModel,
-                // Remove circular references and non-serializable data
-                platform: {
-                    ...serverModel.platform,
-                    // Keep only serializable platform data
-                }
+            name: serverModel.hostname || `ONCE-${serverModel.uuid.slice(0, 8)}`,
+            version: this.version,
+            environment: serverModel.platform || new DefaultEnvironmentInfo(),
+            state: serverModel.state || LifecycleState.CREATED,
+            startTime: new Date(),
+            connectionTime: null,
+            host: serverModel.host,
+            port: serverModel.capabilities?.find(c => c.capability === 'httpPort')?.port || 0,
+            isPrimary: serverModel.isPrimaryServer,
+            primaryPeerUuid: serverModel.primaryServerIOR || null,
+            peers: [],
+            domain: serverModel.domain,
+            hostname: serverModel.hostname,
+            ip: serverModel.ip,
+            pid: serverModel.pid,
+            capabilities: serverModel.capabilities
+        };
+
+        return {
+            ior: {
+                uuid: serverModel.uuid,
+                component: 'ONCE',
+                version: this.version
             },
-            metadata: {
-                created: new Date().toISOString(),
-                modified: new Date().toISOString(),
-                creator: `ONCE-v${this.version}`, // ✅ Use dynamic version
-                description: `ONCE server ${serverModel.isPrimaryServer ? 'Primary' : 'Client'} server instance`,
-                tags: ['server', 'once', serverModel.isPrimaryServer ? 'primary' : 'client'],
-                domain: serverModel.domain,
-                host: serverModel.host,
-                port: serverModel.capabilities.find(c => c.capability === 'httpPort')?.port,
-                isPrimaryServer: serverModel.isPrimaryServer
-            }
+            owner: `ONCE-v${this.version}`,
+            model: peerModel
         };
     }
 

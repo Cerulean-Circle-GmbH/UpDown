@@ -13,7 +13,6 @@ import type { EnvironmentInfo } from '../layer3/EnvironmentInfo.interface.js';
 import { DefaultEnvironmentInfo } from './DefaultEnvironmentInfo.js';
 import type { ComponentQuery } from '../layer3/ComponentQuery.interface.js';
 import type { PerformanceMetrics } from '../layer3/PerformanceMetrics.interface.js';
-import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { Component } from '../layer3/Component.interface.js';
 import { IOR } from '../layer3/IOR.js';
@@ -26,7 +25,6 @@ import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
 import type { ServerCapability } from '../layer3/ServerCapability.interface.js';
 import { ServerHierarchyManager } from './ServerHierarchyManager.js';
 import { ScenarioManager } from './ScenarioManager.js';
-import { legacyToScenario } from './ScenarioMigrationHelper.js';
 import { ONCEModel } from '../layer3/ONCEModel.interface.js';
 import type { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
 import { User } from '../layer3/User.interface.js';
@@ -440,7 +438,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
    * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md - B.6 UcpComponent base
    * @cliHide
    */
-  async init(scenario?: Scenario<any> | LegacyONCEScenario): Promise<this> {
+  async init(scenario?: Scenario<ONCEPeerModel>): Promise<this> {
     // Paths already discovered in constructor via _discoverPaths()
     
     // ✅ Always transition to INITIALIZING (even without scenario)
@@ -448,19 +446,15 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
       this.transitionTo(LifecycleState.INITIALIZING, LifecycleEventType.BEFORE_INIT);
     }
     
-    // Process scenario (may override paths from CLI)
+    // Process scenario (Scenario<ONCEPeerModel> format)
     if (scenario && typeof scenario === 'object' && 'model' in scenario) {
-      // Web4TSComponent-style scenario with model property
-      const web4Scenario = scenario as any;
-      if (web4Scenario.model) {
-        console.log(`🔍 [PATH] DefaultONCE.init() BEFORE: projectRoot=${this.model.projectRoot} componentRoot=${this.model.componentRoot}`);
-        // Merge scenario into model via Object.assign (triggers UcpModel proxy updates)
-        Object.assign(this.model, web4Scenario.model);
-        console.log(`🔍 [PATH] DefaultONCE.init() AFTER: projectRoot=${this.model.projectRoot} componentRoot=${this.model.componentRoot} isTestIsolation=${this.model.isTestIsolation}`);
+      console.log(`🔍 [PATH] DefaultONCE.init() BEFORE: projectRoot=${this.model.projectRoot} componentRoot=${this.model.componentRoot}`);
+      // Store the scenario and merge model data
+      this.model.scenario = scenario;
+      if (scenario.model) {
+        Object.assign(this.model, scenario.model);
       }
-    } else if (scenario) {
-      // ONCE-style scenario from v0.2.0.0 (legacy format)
-      this.model.scenario = scenario as LegacyONCEScenario;
+      console.log(`🔍 [PATH] DefaultONCE.init() AFTER: projectRoot=${this.model.projectRoot} componentRoot=${this.model.componentRoot} isTestIsolation=${this.model.isTestIsolation}`);
     }
     
     // Discover methods for CLI completion (redundant if called in constructor, but safe)
@@ -472,19 +466,16 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
     // ✅ Web4 Principle 24: Initialize PersistenceManager and register in RelatedObjects
     await this.storageInitialize();
 
-    // Initialize ONCE kernel if scenario provided (domain logic from 0.2.0.0)
+    // Initialize ONCE kernel if scenario provided
     if (this.model.scenario && !this.model.initialized) {
       const startTime = Date.now();
       console.log(`🚀 Initializing ONCE v${this.model.version}...`);
 
       try {
-        console.log(`📂 Loading from scenario: ${this.model.scenario.uuid}`);
+        const scenarioUuid = this.model.scenario.ior?.uuid || this.model.scenario.model?.uuid;
+        console.log(`📂 Loading from scenario: ${scenarioUuid}`);
         
-        // Convert legacy scenario to Scenario<ONCEPeerModel> using migration helper
-        // @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - MC.3
-        const web4Scenario = legacyToScenario(this.model.scenario);
-        
-        await this.loadFromScenario(web4Scenario);
+        await this.loadFromScenario(this.model.scenario);
 
         this.model.initialized = true;
         this.model.initializationTime = Date.now() - startTime;
@@ -663,7 +654,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
    * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/peerStart
    * @cliSyntax peerStart [scenario]
    */
-  async peerStart(scenario?: string | LegacyONCEScenario): Promise<void> {
+  async peerStart(scenario?: string | Scenario<ONCEPeerModel>): Promise<void> {
     console.log('🚀 Starting ONCE peer...');
     return this._startPeerInternal(scenario);
   }
@@ -673,21 +664,17 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
    * Start server with automatic port management (domain logic from 0.2.0.0)
    * @cliSyntax scenario
    */
-  async startServer(scenario?: string | LegacyONCEScenario | Scenario<ONCEPeerModel>): Promise<void> {
+  async startServer(scenario?: string | Scenario<ONCEPeerModel>): Promise<void> {
     console.warn('⚠️  startServer() is deprecated, use peerStart() instead');
     console.log('🚀 Starting ONCE server...');
-    // Convert Scenario<ONCEPeerModel> to LegacyONCEScenario for internal use if needed
-    const legacyScenario = (scenario && typeof scenario !== 'string' && 'ior' in scenario) 
-      ? scenario as unknown as LegacyONCEScenario 
-      : scenario;
-    return this._startPeerInternal(legacyScenario as string | LegacyONCEScenario | undefined);
+    return this._startPeerInternal(scenario);
   }
 
   /**
    * Internal peer start implementation
    * @internal
    */
-  private async _startPeerInternal(scenario?: string | LegacyONCEScenario): Promise<void> {
+  private async _startPeerInternal(scenario?: string | Scenario<ONCEPeerModel>): Promise<void> {
     
     try {
       // Initialize if not already initialized
@@ -695,7 +682,8 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
         // ✅ Filter out CLI keywords that are not scenarios
         // "primary" and "client" are command keywords, not scenario paths
         const isKeyword = typeof scenario === 'string' && ['primary', 'client'].includes(scenario.toLowerCase());
-        await this.init(scenario && !isKeyword ? { model: { scenario } } as any : undefined);
+        const initScenario = (scenario && typeof scenario !== 'string' && !isKeyword) ? scenario : undefined;
+        await this.init(initScenario);
       }
       
       // ✅ Transition to STARTING state (after init if needed)
@@ -716,11 +704,8 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
       this.model.uuid = this.model.serverModel.uuid;
       
       // Save current state as scenario (Web4 Standard format)
-      // @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
       const web4Scenario = await this.toScenario();
-      // TODO: MC.3 - Update ScenarioManager to accept Scenario<ONCEPeerModel> natively
-      // @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md
-      await this.scenarioManager.saveScenario(web4Scenario as unknown as Scenario<LegacyONCEScenario>);
+      await this.scenarioManager.saveScenario(web4Scenario);
       
       // ✅ Transition to RUNNING state
       this.transitionTo(LifecycleState.RUNNING, LifecycleEventType.AFTER_START);
@@ -856,10 +841,10 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
   }
 
   /**
-   * Create scenario from current state (domain logic from 0.2.0.0)
+   * Create scenario from current state
    * @cliHide
    */
-  private createCurrentScenario(): LegacyONCEScenario {
+  private createCurrentScenario(): Scenario<ONCEPeerModel> {
     const serverModel = this.serverHierarchyManager.getServerModel();
     return this.scenarioManager.createScenarioFromServerModel(serverModel);
   }

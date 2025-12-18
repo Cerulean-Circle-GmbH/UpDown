@@ -28,11 +28,8 @@ import { logAction, logBroadcast, logRegistration, logConnection, logDisconnecti
 // @pdca 2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md - Iteration 1.6.2
 import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
 import { EnvironmentModel } from '../layer3/EnvironmentModel.interface.js';
-import { ScenarioTypeGuard } from '../layer1/ScenarioTypeGuard.js';
-import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import type { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
-import { normalizeToWeb4, isLegacyScenario, isWeb4Scenario } from './ScenarioMigrationHelper.js';
 import { HostnameParser } from '../layer1/HostnameParser.js';
 import { IORMethodRouter } from '../layer4/IORMethodRouter.js';
 import { HTTPServer } from './HTTPServer.js';
@@ -1135,10 +1132,10 @@ export class ServerHierarchyManager {
                 if (this.serverModel.isPrimaryServer && this.serverRegistry.size > 0) {
                     // Primary can help route P2P
                     const firstClient = Array.from(this.serverRegistry.values())[0];
-                    // Extract capabilities from scenario (MC.3: Use normalized ONCEPeerModel)
-                    const normalizedScenario = normalizeToWeb4(firstClient.scenario);
-                    const capabilities = normalizedScenario.model.capabilities;
-                    const port = capabilities?.find((c: any) => c.capability === 'httpPort')?.port || normalizedScenario.model.port;
+                    // Extract capabilities from scenario (Scenario<ONCEPeerModel>)
+                    const model = firstClient.scenario.model;
+                    const capabilities = model.capabilities;
+                    const port = capabilities?.find((c: any) => c.capability === 'httpPort')?.port || model.port;
                     if (port) {
                         this.sendScenarioToPeer(message.scenario, port);
                     }
@@ -1345,10 +1342,9 @@ export class ServerHierarchyManager {
      * ✅ Protocol-Less: No message types, just scenarios
      * @pdca 2025-11-22-UTC-1600.iteration-01.6.4d-scenario-state-transfer.pdca.md
      */
-    private handleScenarioStateUpdate(ws: WebSocket, scenario: any): void {
-        // MC.3: Normalize to ONCEPeerModel for consistent field access
-        const normalized = normalizeToWeb4(scenario);
-        const model = normalized.model;
+    private handleScenarioStateUpdate(ws: WebSocket, scenario: Scenario<ONCEPeerModel>): void {
+        // Direct access to ONCEPeerModel
+        const model = scenario.model;
         
         const state = model.state;
         const uuid = model.uuid;
@@ -2003,11 +1999,10 @@ export class ServerHierarchyManager {
                         continue;
                     }
                     
-                    const scenarioData = JSON.parse(fs.readFileSync(scenarioPath, 'utf8'));
+                    const scenarioData = JSON.parse(fs.readFileSync(scenarioPath, 'utf8')) as Scenario<ONCEPeerModel>;
                     
-                    // MC.3: Normalize to ONCEPeerModel for consistent field access
-                    const normalized = normalizeToWeb4(scenarioData);
-                    const model = normalized.model;
+                    // Direct access to ONCEPeerModel
+                    const model = scenarioData.model;
                     
                     const state = model.state;
                     const uuid = model.uuid;
@@ -2267,18 +2262,10 @@ export class ServerHierarchyManager {
             );
             
             if (fs.existsSync(mainScenarioPath)) {
-                const scenarioData = JSON.parse(fs.readFileSync(mainScenarioPath, 'utf8'));
+                const scenarioData = JSON.parse(fs.readFileSync(mainScenarioPath, 'utf8')) as Scenario<ONCEPeerModel>;
                 
-                // MC.3: Handle both legacy and Web4 Scenario<ONCEPeerModel> formats
-                if (isLegacyScenario(scenarioData)) {
-                    // Legacy format - has nested state.state
-                    scenarioData.state.state = state;
-                    scenarioData.metadata.modified = new Date().toISOString();
-                } else if (isWeb4Scenario(scenarioData)) {
-                    // Web4 Scenario<ONCEPeerModel> - state is direct property
-                    scenarioData.model.state = state;
-                    // No metadata in ONCEPeerModel, update startTime as proxy
-                }
+                // Update state in ONCEPeerModel
+                scenarioData.model.state = state;
                 
                 fs.writeFileSync(mainScenarioPath, JSON.stringify(scenarioData, null, 2));
                 console.log(`💾 Updated scenario state to: ${state}`);

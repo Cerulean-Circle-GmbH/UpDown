@@ -5,7 +5,8 @@
  */
 
 import { Model } from './Model.interface.js';
-import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
+import type { Scenario } from './Scenario.interface.js';
+import type { ONCEPeerModel } from './ONCEPeerModel.interface.js';
 import { LifecycleEventType } from './LifecycleEventType.enum.js';
 import { LifecycleState } from './LifecycleState.enum.js';
 import { LifecycleObserver } from './LifecycleObserver.interface.js';
@@ -61,7 +62,7 @@ export interface ONCEModel extends Model {
   state?: LifecycleState;                              // ✅ Current lifecycle state
   initialized?: boolean;                           // ONCE kernel initialization flag
   initializationTime?: number;                     // Time taken for initialization (ms)
-  scenario?: LegacyONCEScenario;                             // Current ONCE scenario
+  scenario?: Scenario<ONCEPeerModel>;                        // Current ONCE scenario
   serverModel?: ONCEServerModel;                   // Server model for hierarchy
   eventHandlers?: Map<LifecycleEventType, LifecycleEventHandler[]>; // ⚠️ DEPRECATED: Use observers instead
   observers?: LifecycleObserver[];                 // ✅ TRUE Radical OOP: Observer pattern (replaces eventHandlers)
