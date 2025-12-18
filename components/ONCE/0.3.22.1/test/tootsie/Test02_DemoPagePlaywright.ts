@@ -1236,21 +1236,15 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
         // ═══════════════════════════════════════════════════════════════
         
         if (serverDown) {
-          this.logEvidence('step', 'Verifying server process has exited');
+          this.logEvidence('step', 'Verifying server process exits WITH active connections');
           
-          // ✅ CRITICAL: Close browser first to release TCP connections
-          // Otherwise the server can't fully exit while connections are held
-          if (this.page) {
-            await this.page.close();
-            this.page = null;
-          }
-          if (this.browser) {
-            await this.browser.close();
-            this.browser = null;
-          }
+          // ✅ CRITICAL: DO NOT close browser first!
+          // The test must verify server can shut down even with active connections.
+          // This tests the socket destruction fix in HTTPSServer.stop()
+          // (Before the fix, server.close() would hang waiting for connections to close)
           
-          // Wait for process to fully exit (server logs then calls process.exit with 100ms delay)
-          await this.sleep(2000);
+          // Wait for process to fully exit (server destroys sockets, then process.exit with 100ms delay)
+          await this.sleep(3000);
           
           // Check if port is completely free (no process listening)
           let portFree = false;
@@ -1271,16 +1265,20 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
             portFree = true;
           }
           
-          console.log(`[Test] Port check - portFree: ${portFree}, lsofOutput: "${lsofOutput}", lsofError: "${lsofError}"`);
+          console.log(`[Test] Port check (with active browser connections) - portFree: ${portFree}`);
+          if (!portFree) {
+            console.log(`[Test] lsofOutput: "${lsofOutput}"`);
+          }
           
           const processExitEvidence = {
             portFree,
             port: this.testModel.primaryPort,
-            lsofOutput: lsofOutput.substring(0, 200),
+            browserStillOpen: this.browser !== null,
+            lsofOutput: lsofOutput.substring(0, 300),
             lsofError: lsofError.substring(0, 200),
             message: portFree 
-              ? `Port ${this.testModel.primaryPort} is free - process has exited` 
-              : `Port ${this.testModel.primaryPort} still in use - process may not have exited`
+              ? `Port ${this.testModel.primaryPort} is free - server exited despite active connections` 
+              : `Port ${this.testModel.primaryPort} still in use - socket destruction may have failed`
           };
           
           this.logEvidence('output', 'Process exit verification', processExitEvidence);
