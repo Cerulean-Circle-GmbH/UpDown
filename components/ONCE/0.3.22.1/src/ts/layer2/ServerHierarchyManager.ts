@@ -2223,9 +2223,11 @@ export class ServerHierarchyManager {
                 // Update scenario to SHUTDOWN state for housekeeping
                 await this.updateScenarioState(LifecycleState.SHUTDOWN);
                 
-                // Exit process after cleanup (for client servers)
+                // Exit process after cleanup
                 // Don't exit in test environment
-                if (!this.serverModel.isPrimaryServer && process.env.NODE_ENV !== 'test' && !process.env.VITEST) {
+                if (process.env.NODE_ENV !== 'test' && !process.env.VITEST) {
+                    const role = this.serverModel.isPrimaryServer ? 'Primary' : 'Client';
+                    console.log(`✅ ${role} server shutdown complete`);
                     setTimeout(() => process.exit(0), 100);
                 }
             } catch (error) {
