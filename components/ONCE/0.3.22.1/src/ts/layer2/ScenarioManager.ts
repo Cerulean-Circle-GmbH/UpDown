@@ -8,7 +8,9 @@ import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { ScenarioTypeGuard } from '../layer1/ScenarioTypeGuard.js';
 import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
+import { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
 import { DefaultUser } from './DefaultUser.js';
+import { legacyToScenario, normalizeToWeb4, isLegacyScenario } from './ScenarioMigrationHelper.js';
 import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
 import { join, dirname, resolve, basename } from 'path';
@@ -223,9 +225,11 @@ export class ScenarioManager {
      * Load scenario from file
      * ✅ Supports both legacy and Web4 formats (backward compatibility)
      * ✅ Transparently migrates legacy format on load
+     * ✅ Returns Scenario<ONCEPeerModel> (MC.3 migration)
      * @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
+     * @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - MC.3
      */
-    async loadScenario(scenarioPath: string): Promise<Scenario<LegacyONCEScenario>> {
+    async loadScenario(scenarioPath: string): Promise<Scenario<ONCEPeerModel>> {
         if (!existsSync(scenarioPath)) {
             throw new Error(`Scenario file not found: ${scenarioPath}`);
         }
@@ -233,85 +237,23 @@ export class ScenarioManager {
         const content = readFileSync(scenarioPath, 'utf8');
         const data = JSON.parse(content);
         
-        // Use type guard to detect format
-        const guard = new ScenarioTypeGuard();
-        guard.init(data);
-        
-        if (guard.isLegacy()) {
-            // Legacy format - migrate transparently
-            console.log(`📂 Loading legacy scenario: ${basename(scenarioPath)}`);
-            return await this.migrateLegacyScenario(guard.asLegacy()!);
-        } else {
-            // Already Web4 format
-            console.log(`📂 Loading Web4 scenario: ${basename(scenarioPath)}`);
-            return guard.asWeb4<LegacyONCEScenario>()!;
-        }
+        // Use migration helper to normalize any format to Scenario<ONCEPeerModel>
+        console.log(`📂 Loading scenario: ${basename(scenarioPath)}`);
+        return normalizeToWeb4(data);
     }
     
     /**
-     * Migrate legacy scenario to Web4 format
-     * ✅ Uses insourced DefaultUser for owner generation
-     * @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
-     */
-    private async migrateLegacyScenario(legacy: LegacyONCEScenario): Promise<Scenario<LegacyONCEScenario>> {
-        // Generate owner using insourced DefaultUser (same pattern as DefaultONCE.toScenario)
-        let ownerData: string;
-        try {
-            const infrastructure = new NodeOSInfrastructure();
-            await infrastructure.init();
-            const env = await infrastructure.detectEnvironment();
-            const username = 'system';  // ✅ Fallback - no process.env in production code
-            
-            // Pass projectRoot and PersistenceManager to ensure User saves correctly
-            const persistenceManager = this.component?.persistenceManagerGet?.();
-            const user = await DefaultUser.create(username, infrastructure, this.projectRoot, persistenceManager || undefined);
-            const userScenario = await user.toScenario();
-            const ownerJson = JSON.stringify(userScenario);
-            ownerData = Buffer.from(ownerJson).toString('base64');
-        } catch (error) {
-            // Fallback: Generate minimal User-like scenario
-            const fallbackJson = JSON.stringify({
-                ior: {
-                    uuid: legacy.uuid,
-                    component: 'User',
-                    version: '0.3.21.1',
-                    timestamp: new Date().toISOString()
-                },
-                owner: '',
-                model: {
-                    user: 'system',
-                    hostname: legacy.metadata.host || 'localhost',
-                    uuid: legacy.uuid,
-                    component: legacy.objectType,
-                    version: legacy.version
-                }
-            });
-            ownerData = Buffer.from(fallbackJson).toString('base64');
-        }
-        
-        // Return Web4 Standard format
-        return {
-            ior: {
-                uuid: legacy.uuid,
-                component: legacy.objectType,
-                version: legacy.version
-            },
-            owner: ownerData,
-            model: legacy  // ✅ ENTIRE legacy scenario
-        };
-    }
-
-    /**
      * Load scenario by UUID, domain/hostname, component, and version
      * Note: This method needs domain AND hostname or full FQDN to construct the path
-     * ✅ Returns Web4 format (migrates legacy transparently)
+     * ✅ Returns Scenario<ONCEPeerModel> (MC.3 migration)
+     * @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - MC.3
      */
     async loadScenarioByUUID(
         uuid: string, 
         fqdn: string = 'localhost',
         component: string = 'ONCE', 
         version?: string
-    ): Promise<Scenario<LegacyONCEScenario>> {
+    ): Promise<Scenario<ONCEPeerModel>> {
         // ✅ Use dynamic version if not provided
         const actualVersion = version || this.version;
         
@@ -380,14 +322,32 @@ export class ScenarioManager {
 
     /**
      * Create server model from scenario
-     * ✅ Accepts Web4 Standard format
+     * ✅ Accepts Scenario<ONCEPeerModel> (MC.3 migration)
+     * @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - MC.3
      */
-    createServerModelFromScenario(scenario: Scenario<LegacyONCEScenario>): ONCEServerModel {
+    createServerModelFromScenario(scenario: Scenario<ONCEPeerModel>): ONCEServerModel {
         if (scenario.ior.component !== 'ONCE') {
             throw new Error(`Invalid scenario type for server model: ${scenario.ior.component}`);
         }
 
-        return scenario.model.state as ONCEServerModel;
+        const model = scenario.model;
+        
+        // Convert ONCEPeerModel to ONCEServerModel for backwards compatibility
+        // Note: ONCEServerModel doesn't have 'name' or 'peers' fields
+        return {
+            uuid: model.uuid,
+            host: model.host,
+            domain: model.domain || 'localhost',
+            hostname: model.hostname || model.host,
+            ip: model.ip || '127.0.0.1',
+            pid: model.pid || 0,
+            state: model.state,
+            platform: model.environment,
+            isPrimaryServer: model.isPrimary,
+            primaryServer: model.primaryPeerUuid ? { host: model.host, port: model.port } : undefined,
+            primaryServerIOR: model.primaryPeerUuid || undefined,
+            capabilities: model.capabilities || []
+        };
     }
 
     /**

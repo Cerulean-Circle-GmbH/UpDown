@@ -26,6 +26,7 @@ import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
 import type { ServerCapability } from '../layer3/ServerCapability.interface.js';
 import { ServerHierarchyManager } from './ServerHierarchyManager.js';
 import { ScenarioManager } from './ScenarioManager.js';
+import { legacyToScenario } from './ScenarioMigrationHelper.js';
 import { ONCEModel } from '../layer3/ONCEModel.interface.js';
 import type { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
 import { User } from '../layer3/User.interface.js';
@@ -479,16 +480,9 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
       try {
         console.log(`📂 Loading from scenario: ${this.model.scenario.uuid}`);
         
-        // Wrap legacy scenario in Web4 format for loadFromScenario
-        const web4Scenario: Scenario<LegacyONCEScenario> = {
-          ior: {
-            uuid: this.model.scenario.uuid,
-            component: this.model.scenario.objectType,
-            version: this.model.scenario.version
-          },
-          owner: '', // Empty for legacy scenarios
-          model: this.model.scenario
-        };
+        // Convert legacy scenario to Scenario<ONCEPeerModel> using migration helper
+        // @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - MC.3
+        const web4Scenario = legacyToScenario(this.model.scenario);
         
         await this.loadFromScenario(web4Scenario);
 
@@ -648,9 +642,10 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
 
   /**
    * Load ONCE from scenario (domain logic from 0.2.0.0)
+   * ✅ MC.3: Now accepts Scenario<ONCEPeerModel>
    * @cliHide
    */
-  private async loadFromScenario(scenario: Scenario<LegacyONCEScenario>): Promise<void> {
+  private async loadFromScenario(scenario: Scenario<ONCEPeerModel>): Promise<void> {
     if (scenario.ior.component !== 'ONCE') {
       throw new Error(`Invalid scenario type: ${scenario.ior.component}`);
     }
@@ -1046,10 +1041,10 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
         return;
       }
       
-      // Extract server info from scenario
-      const serverUUID = loadedScenario.model.state?.uuid;
-      const port = loadedScenario.model.state?.capabilities?.find((c: any) => c.capability === 'httpPort')?.port;
-      const isPrimary = loadedScenario.model.state?.isPrimaryServer === true;
+      // Extract server info from scenario (MC.3: ONCEPeerModel fields)
+      const serverUUID = loadedScenario.model.uuid;
+      const port = loadedScenario.model.capabilities?.find((c: any) => c.capability === 'httpPort')?.port || loadedScenario.model.port;
+      const isPrimary = loadedScenario.model.isPrimary === true;
       
       if (!port) {
         console.error(`❌ No port found in scenario ${uuid}`);

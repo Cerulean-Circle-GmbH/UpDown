@@ -31,6 +31,8 @@ import { EnvironmentModel } from '../layer3/EnvironmentModel.interface.js';
 import { ScenarioTypeGuard } from '../layer1/ScenarioTypeGuard.js';
 import { LegacyONCEScenario } from '../layer3/LegacyONCEScenario.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
+import type { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
+import { normalizeToWeb4, isLegacyScenario, isWeb4Scenario } from './ScenarioMigrationHelper.js';
 import { HostnameParser } from '../layer1/HostnameParser.js';
 import { IORMethodRouter } from '../layer4/IORMethodRouter.js';
 import { HTTPServer } from './HTTPServer.js';
@@ -60,7 +62,7 @@ const SECONDARY_PORT_START = 8080;  // Secondary HTTPS servers
  * @pdca 2025-11-22-UTC-1500.iteration-01.6.4b-protocol-less-registry.pdca.md
  */
 export interface ServerRegistryEntry {
-    scenario: any;  // Scenario<LegacyONCEScenario> - full scenario object
+    scenario: Scenario<ONCEPeerModel>;  // MC.3: Now uses ONCEPeerModel
     lastSeen: string;
     websocket?: WebSocket;  // KEEP for browser peers (NOT for peer kernel registration)
 }
@@ -1133,13 +1135,10 @@ export class ServerHierarchyManager {
                 if (this.serverModel.isPrimaryServer && this.serverRegistry.size > 0) {
                     // Primary can help route P2P
                     const firstClient = Array.from(this.serverRegistry.values())[0];
-                    // Extract capabilities from scenario
-                    const guard = new ScenarioTypeGuard();
-                    guard.init(firstClient.scenario);
-                    const capabilities = guard.isLegacy() 
-                        ? guard.asLegacy()!.state?.capabilities
-                        : guard.asWeb4<LegacyONCEScenario>()!.model.state?.capabilities;
-                    const port = capabilities?.find((c: any) => c.capability === 'httpPort')?.port;
+                    // Extract capabilities from scenario (MC.3: Use normalized ONCEPeerModel)
+                    const normalizedScenario = normalizeToWeb4(firstClient.scenario);
+                    const capabilities = normalizedScenario.model.capabilities;
+                    const port = capabilities?.find((c: any) => c.capability === 'httpPort')?.port || normalizedScenario.model.port;
                     if (port) {
                         this.sendScenarioToPeer(message.scenario, port);
                     }
@@ -1347,22 +1346,14 @@ export class ServerHierarchyManager {
      * @pdca 2025-11-22-UTC-1600.iteration-01.6.4d-scenario-state-transfer.pdca.md
      */
     private handleScenarioStateUpdate(ws: WebSocket, scenario: any): void {
-        const guard = new ScenarioTypeGuard();
-        guard.init(scenario);
+        // MC.3: Normalize to ONCEPeerModel for consistent field access
+        const normalized = normalizeToWeb4(scenario);
+        const model = normalized.model;
         
-        const state = guard.isLegacy() 
-            ? guard.asLegacy()!.state?.state
-            : guard.asWeb4<LegacyONCEScenario>()!.model.state?.state;
-        
-        const uuid = guard.isLegacy()
-            ? guard.asLegacy()!.uuid
-            : guard.asWeb4<LegacyONCEScenario>()!.model.uuid;
-        
-        const capabilities = guard.isLegacy()
-            ? guard.asLegacy()!.state?.capabilities
-            : guard.asWeb4<LegacyONCEScenario>()!.model.state?.capabilities;
-        
-        const port = capabilities?.find((c: any) => c.capability === 'httpPort')?.port;
+        const state = model.state;
+        const uuid = model.uuid;
+        const capabilities = model.capabilities;
+        const port = capabilities?.find((c: any) => c.capability === 'httpPort')?.port || model.port;
         
         if (!uuid) {
             console.warn('⚠️  Received scenario without UUID');
@@ -2014,26 +2005,13 @@ export class ServerHierarchyManager {
                     
                     const scenarioData = JSON.parse(fs.readFileSync(scenarioPath, 'utf8'));
                     
-                    // Use type guard to handle both formats
-                    // @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
-                    const guard = new ScenarioTypeGuard();
-                    guard.init(scenarioData);
+                    // MC.3: Normalize to ONCEPeerModel for consistent field access
+                    const normalized = normalizeToWeb4(scenarioData);
+                    const model = normalized.model;
                     
-                    let state: string;
-                    let uuid: string;
-                    let port: number | undefined;
-                    
-                    if (guard.isLegacy()) {
-                        const legacy = guard.asLegacy()!;
-                        state = legacy.state?.state;
-                        uuid = legacy.uuid;
-                        port = legacy.state?.capabilities?.find((c: any) => c.capability === 'httpPort')?.port;
-                    } else {
-                        const web4 = guard.asWeb4<LegacyONCEScenario>()!;
-                        state = web4.model.state?.state;
-                        uuid = web4.model.uuid;
-                        port = web4.model.state?.capabilities?.find((c: any) => c.capability === 'httpPort')?.port;
-                    }
+                    const state = model.state;
+                    const uuid = model.uuid;
+                    const port = model.capabilities?.find((c: any) => c.capability === 'httpPort')?.port || model.port;
                     
                     if (state === LifecycleState.SHUTDOWN || state === LifecycleState.STOPPED) {
                         // Delete shutdown/stopped server scenarios (both main file and symlink)
@@ -2291,24 +2269,18 @@ export class ServerHierarchyManager {
             if (fs.existsSync(mainScenarioPath)) {
                 const scenarioData = JSON.parse(fs.readFileSync(mainScenarioPath, 'utf8'));
                 
-                // Use type guard to handle both formats
-                const guard = new ScenarioTypeGuard();
-                guard.init(scenarioData);
-                
-                if (guard.isLegacy()) {
-                    // Legacy format
-                    const legacy = guard.asLegacy()!;
-                    legacy.state.state = state;
-                    legacy.metadata.modified = new Date().toISOString();
-                    fs.writeFileSync(mainScenarioPath, JSON.stringify(legacy, null, 2));
-                } else {
-                    // Web4 Standard format
-                    const web4 = guard.asWeb4<LegacyONCEScenario>()!;
-                    web4.model.state.state = state;
-                    web4.model.metadata.modified = new Date().toISOString();
-                    fs.writeFileSync(mainScenarioPath, JSON.stringify(web4, null, 2));
+                // MC.3: Handle both legacy and Web4 Scenario<ONCEPeerModel> formats
+                if (isLegacyScenario(scenarioData)) {
+                    // Legacy format - has nested state.state
+                    scenarioData.state.state = state;
+                    scenarioData.metadata.modified = new Date().toISOString();
+                } else if (isWeb4Scenario(scenarioData)) {
+                    // Web4 Scenario<ONCEPeerModel> - state is direct property
+                    scenarioData.model.state = state;
+                    // No metadata in ONCEPeerModel, update startTime as proxy
                 }
                 
+                fs.writeFileSync(mainScenarioPath, JSON.stringify(scenarioData, null, 2));
                 console.log(`💾 Updated scenario state to: ${state}`);
             }
         } catch (error) {
@@ -2329,10 +2301,11 @@ export class ServerHierarchyManager {
         const shutdownPromises: Promise<void>[] = [];
         
         for (const [uuid, entry] of this.serverRegistry.entries()) {
-            // Extract port from scenario capabilities
-            const capabilities = entry.scenario?.model?.state?.capabilities || [];
+            // Extract port from scenario - MC.3: ONCEPeerModel has capabilities at model level
+            const model = entry.scenario?.model;
+            const capabilities = model?.capabilities || [];
             const portCap = capabilities.find(function(c: any) { return c.capability === 'httpPort'; });
-            const port = portCap?.port;
+            const port = portCap?.port || model?.port;
             if (!port) {
                 console.log(`⚠️  No port found for client ${uuid.substring(0, 8)}, skipping`);
                 continue;

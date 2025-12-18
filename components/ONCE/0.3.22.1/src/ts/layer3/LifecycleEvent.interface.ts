@@ -5,11 +5,13 @@
  * Represents a lifecycle event that occurs during component execution.
  * 
  * @version 0.3.21.2
+ * @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - MC.3
  */
 
 import { LifecycleEventType } from './LifecycleEventType.enum.js';
 import { Component } from './Component.interface.js';
-import { LegacyONCEScenario } from './LegacyONCEScenario.interface.js';
+import type { Scenario } from './Scenario.interface.js';
+import type { ONCEPeerModel } from './ONCEPeerModel.interface.js';
 
 export interface LifecycleEvent {
   /**
@@ -29,8 +31,9 @@ export interface LifecycleEvent {
   
   /**
    * Scenario involved in the event (optional)
+   * MC.3: Now uses Scenario<ONCEPeerModel>
    */
-  scenario?: LegacyONCEScenario;
+  scenario?: Scenario<ONCEPeerModel>;
   
   /**
    * Additional event data (optional)

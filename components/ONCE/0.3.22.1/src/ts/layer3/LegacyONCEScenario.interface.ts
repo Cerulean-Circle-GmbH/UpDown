@@ -5,8 +5,11 @@
  * 
  * Extends Model (Web4 Principle 1a: All models extend base Model)
  * 
- * @deprecated Use Scenario<ONCEModel> instead
+ * @deprecated Use Scenario<ONCEPeerModel> instead - see MC.3 migration
+ * @see ONCEPeerModel.interface.ts for the unified model
+ * @see ScenarioMigrationHelper.ts for conversion utilities
  * @pdca 2025-11-19-UTC-1342.migrate-scenarios-to-ior-owner-format.pdca.md
+ * @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - MC.3 deprecation
  */
 
 import type { Model } from './Model.interface.js';
