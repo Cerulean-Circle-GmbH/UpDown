@@ -54,6 +54,9 @@ export class HTTPSServer extends HTTPServer {
     /** SNI callback for multi-domain certificate selection */
     private sniCallback: SNICallback | null = null;
     
+    /** Track active sockets for forceful shutdown */
+    private activeSockets: Set<any> = new Set();
+    
     constructor() {
         super();
         this.certificateLoader = new TLSCertificateLoader();
@@ -142,6 +145,9 @@ export class HTTPSServer extends HTTPServer {
         // ✅ FIX: Set parent's server reference so WebSocketServer can attach
         // @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md
         this.server = this.httpsServer as any;  // https.Server is compatible with http.Server
+        
+        // Track active sockets for forceful shutdown
+        this.httpsServer.on('connection', this.socketTrackAdd.bind(this));
         
         this.httpsServer.listen(port, bindInterface, this.listenCallback.bind(this, port, resolve));
         this.httpsServer.on('error', this.errorCallback.bind(this, reject));
@@ -241,8 +247,21 @@ export class HTTPSServer extends HTTPServer {
     
     /**
      * Stop HTTPS server (overrides HTTPServer.stop)
+     * 
+     * ✅ CRITICAL: Destroys all active sockets to prevent deadlock
+     * Node.js server.close() only stops accepting NEW connections,
+     * it waits for existing connections to close naturally.
+     * This causes deadlock when shutdown is triggered by an IOR request
+     * (the request connection stays open waiting for response).
      */
     public override async stop(): Promise<this> {
+        // ✅ First, destroy all active sockets to allow server.close() to complete
+        console.log(`🔌 Closing ${this.activeSockets.size} active socket(s)...`);
+        for (const socket of this.activeSockets) {
+            socket.destroy();
+        }
+        this.activeSockets.clear();
+        
         const promises: Promise<void>[] = [];
         
         if (this.httpsServer) {
@@ -258,6 +277,23 @@ export class HTTPSServer extends HTTPServer {
         console.log(`🛑 HTTPSServer stopped on port ${this.model.port}`);
         
         return this;
+    }
+    
+    /**
+     * Track socket when connection is established
+     * Web4 P4: Bound method (not arrow function)
+     */
+    private socketTrackAdd(socket: any): void {
+        this.activeSockets.add(socket);
+        socket.on('close', this.socketTrackRemove.bind(this, socket));
+    }
+    
+    /**
+     * Remove socket from tracking when it closes
+     * Web4 P4: Bound method (not arrow function)
+     */
+    private socketTrackRemove(socket: any): void {
+        this.activeSockets.delete(socket);
     }
     
     /**
