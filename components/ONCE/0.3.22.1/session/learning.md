@@ -238,6 +238,41 @@ return new BrowserOnce() as unknown as ONCEKernel;
 
 **Pattern:** `read_file` costs tokens but prevents mistakes that cost MORE tokens to fix.
 
+### **L17: Component Anatomy — Fetch is NEVER in Views**
+**Date:** 2025-12-19  
+**Source:** TRON clarification on F.1 PDCA  
+**Lesson:** Correct component architecture for fetch:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Layer 2 = Component (main implementation)                  │
+│  ├── Manages views                                          │
+│  ├── Owns the model                                         │
+│  └── Has methods that TRIGGER layer4 async                  │
+├─────────────────────────────────────────────────────────────┤
+│  Layer 5 = Views                                            │
+│  ├── Model → View rendering ONLY                            │
+│  ├── Event handling (onClick, etc.) ONLY                    │
+│  └── If needs data → ASK component, NEVER fetch directly    │
+├─────────────────────────────────────────────────────────────┤
+│  Layer 4 = Orchestrators (ONLY async layer)                 │
+│  ├── fetch() lives HERE                                     │
+│  ├── Triggered BY component methods                         │
+│  └── Calls component SYNC callback when resolved            │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Flow:**
+1. View needs data → calls `component.methodName()`
+2. Component triggers `layer4Orchestrator.asyncMethod()`
+3. Layer4 does `fetch()` → resolves promise
+4. Layer4 calls `component.syncCallback(data)`
+5. Component updates model
+6. Controller triggers view re-render
+
+**Wrong:** View has `await fetch('/api/...')` ❌
+**Right:** View calls `this.component.loadData()` → component triggers layer4 ✅
+
 **Wrong (premature checkbox):**
 ```markdown
 - [x] MC.1.2: Update ServerHierarchyManager to use ONCEPeerModel ✅
