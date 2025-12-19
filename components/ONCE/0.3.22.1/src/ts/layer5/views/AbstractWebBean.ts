@@ -22,6 +22,7 @@
 import { CSSResult, unsafeCSS } from 'lit';
 import { UcpView } from './UcpView.js';
 import { Reference } from '../../layer3/Reference.interface.js';
+import { FileOrchestrator } from '../../layer4/FileOrchestrator.js';
 
 /**
  * AbstractWebBean - Base class for Lit web components with external CSS/HTML
@@ -98,17 +99,18 @@ export abstract class AbstractWebBean<TModel = any> extends UcpView<TModel> {
   }
   
   /**
-   * Generic file loader
+   * Generic file loader - F.3: Delegate to layer4 orchestrator
    * @param filePath Path to file
    * @returns File content as string
    */
   private async fileLoad(filePath: string): Promise<string> {
-    const response = await fetch(filePath);
-    if (!response.ok) {
-      console.warn(`Failed to load ${filePath}: ${response.status}`);
+    try {
+      const orchestrator = new FileOrchestrator();
+      return await orchestrator.fileLoadFromServer(filePath);
+    } catch (error: any) {
+      console.warn(`Failed to load ${filePath}: ${error.message}`);
       return '';
     }
-    return response.text();
   }
   
   /**

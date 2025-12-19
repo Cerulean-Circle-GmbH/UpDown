@@ -29,6 +29,7 @@ import { ActionMetadata } from '../../layer3/ActionMetadata.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 import { Collection } from '../../layer3/Collection.interface.js';
 import { LifecycleState } from '../../layer3/LifecycleState.enum.js';
+import { DefaultIOR } from '../../layer2/DefaultIOR.js';
 
 /**
  * ONCEModel - Model for ONCE kernel
@@ -436,21 +437,18 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * @deprecated Use orchestrator.iorCall() instead - views should dispatch events
-   * Make IOR call to server
+   * Make IOR call to server - F.3: Use IOR.load() (intermediate fix)
+   * TODO: Full fix would have a component delegate to layer4 orchestrator
    */
   private async iorCall(host: string, port: number, method: string, uuid?: string): Promise<void> {
-    // Use version from model (no hardcoding!)
     const version = this.model?.version || '0.0.0.0';
     const url = uuid 
       ? `https://${host}:${port}/ONCE/${version}/${uuid}/${method}`
       : `https://${host}:${port}/${method}`;
     
     try {
-      const response = await fetch(url, { method: 'GET' });
-      if (!response.ok) {
-        console.error(`❌ IOR call failed: ${response.status}`);
-      }
+      const ior = await new DefaultIOR().init(url);
+      await ior.load();
     } catch (error) {
       console.error(`❌ IOR call error:`, error);
     }
@@ -465,7 +463,8 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
   }
   
   /**
-   * Fetch initial server list
+   * Fetch initial server list - F.3: Use IOR.load() (intermediate fix)
+   * TODO: Full fix would have a component delegate to layer4 orchestrator
    * ✅ Web4: Flat model design - maps API response to OncePeerModel
    */
   private async serversFetch(): Promise<void> {
@@ -473,8 +472,10 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
     const port = 42777;
     
     try {
-      const response = await fetch(`https://${host}:${port}/servers`);
-      const data = await response.json();
+      // F.3: Use IOR.load() instead of fetch()
+      const ior = await new DefaultIOR().init(`https://${host}:${port}/servers`);
+      const responseText = await ior.load<string>();
+      const data = JSON.parse(responseText);
       
       // Add primary server - ✅ Web4: Flat model
       const primaryModel: OncePeerModel = {

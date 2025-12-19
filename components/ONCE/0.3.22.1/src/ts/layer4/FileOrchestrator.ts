@@ -270,6 +270,53 @@ export class FileOrchestrator {
       img.src = objectUrl;
     });
   }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Folder Loading (F.3: Views delegate fetch to layer4)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Load folder contents from server
+   * 
+   * Layer 5 views should call this instead of fetching directly.
+   * Returns { contentType, data } for flexible parsing by caller.
+   * 
+   * @param folderPath URL path to folder
+   * @returns Object with contentType and data (string)
+   * @pdca 2025-12-17-UTC-1740.fetch-centralization-dry.pdca.md
+   */
+  async folderLoadFromServer(folderPath: string): Promise<{ contentType: string; data: string }> {
+    // Import IOR dynamically to avoid circular dependency
+    const { DefaultIOR } = await import('../layer2/DefaultIOR.js');
+    
+    // Use ?format=json to bypass SPA catch-all route
+    const fetchUrl = folderPath + (folderPath.includes('?') ? '&' : '?') + 'format=json';
+    
+    const ior = await new DefaultIOR().init(fetchUrl);
+    const data = await ior.load<string>();
+    
+    // Determine content type from response (simple heuristic)
+    const isJson = data.trim().startsWith('{') || data.trim().startsWith('[');
+    const contentType = isJson ? 'application/json' : 'text/html';
+    
+    return { contentType, data };
+  }
+  
+  /**
+   * Load file contents from server
+   * 
+   * Layer 5 views should call this instead of fetching directly.
+   * 
+   * @param filePath URL path to file
+   * @returns File contents as string
+   * @pdca 2025-12-17-UTC-1740.fetch-centralization-dry.pdca.md
+   */
+  async fileLoadFromServer(filePath: string): Promise<string> {
+    const { DefaultIOR } = await import('../layer2/DefaultIOR.js');
+    
+    const ior = await new DefaultIOR().init(filePath);
+    return await ior.load<string>();
+  }
 }
 
 

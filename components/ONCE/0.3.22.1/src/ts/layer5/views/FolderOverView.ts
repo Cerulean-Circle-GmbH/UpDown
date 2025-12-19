@@ -25,6 +25,7 @@ import { FolderModel, FolderChildReference } from '../../layer3/FolderModel.inte
 import { Container } from '../../layer3/Container.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 import { NavigationDirection } from '../../layer3/NavigationDirection.enum.js';
+import { FileOrchestrator } from '../../layer4/FileOrchestrator.js';
 import './FileItemView.js';
 import './FolderItemView.js';
 
@@ -403,26 +404,17 @@ export class FolderOverView extends UcpView<FolderModel> {
     this.currentPath = folderPath;
     
     try {
-      // Fetch directory listing from server
-      // StaticFileRoute returns JSON for directory requests
-      // Use ?format=json to bypass SPA catch-all route
-      const fetchUrl = folderPath + (folderPath.includes('?') ? '&' : '?') + 'format=json';
-      const response = await fetch(fetchUrl);
-      
-      if (!response.ok) {
-        throw new Error(`Failed to load folder: ${response.status}`);
-      }
-      
-      const contentType = response.headers.get('content-type') || '';
+      // F.3: Delegate fetch to layer4 orchestrator (views NEVER fetch directly)
+      const orchestrator = new FileOrchestrator();
+      const { contentType, data } = await orchestrator.folderLoadFromServer(folderPath);
       
       if (contentType.includes('application/json')) {
         // Server returned JSON directory listing
-        const data = await response.json();
-        this.folderModelFromListing(data, folderPath);
+        const jsonData = JSON.parse(data);
+        this.folderModelFromListing(jsonData, folderPath);
       } else {
         // Server returned HTML - parse for links (fallback)
-        const html = await response.text();
-        this.folderModelFromHtml(html, folderPath);
+        this.folderModelFromHtml(data, folderPath);
       }
       
       // Update breadcrumb from path
