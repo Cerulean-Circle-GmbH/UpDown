@@ -206,6 +206,19 @@ return new BrowserOnce() as unknown as ONCEKernel;
 
 **Applies to:** Code, PDCAs, plans, stacks — ALL information. CMM3 = consistent templates, not floating CMM2 variations.
 
+### **L14: Lazy Web4 Migration — Fix Violations Incrementally**
+**Date:** 2025-12-19  
+**Source:** User request to add Test19 to per-prompt checklist  
+**Lesson:** Run `./once tootsie file 19` if token budget allows. Fix 1-2 violations BEFORE each commit.
+
+**Per-Prompt Step (Phase 3.5):**
+```bash
+./once tootsie file 19   # Run Web4 lazy migration scan
+# Review violations, pick 1-2 quick wins, fix them, THEN commit
+```
+
+**Benefit:** Gradual codebase cleanup without dedicated refactoring time. 1000+ violations → 0 through incremental fixes.
+
 ---
 
 ## **🔴 Common Web4 Violations Found**
