@@ -163,10 +163,13 @@ return new BrowserOnce() as unknown as ONCEKernel;
 **The 6-Step Post-Prompt Protocol (MANDATORY):**
 1. **UPDATE** all checkboxes in affected PDCAs (`[ ]` → `[x]`)
 2. **UPDATE** fractal stack in tracking PDCA
-3. **EXTRACT** deferred items to backlog (100% completion rule)
+3. **EXTRACT** deferred items → add to **FRACTAL STACK as 🔶 QUEUED (HIGH PRIORITY)**, NOT buried in someday backlog
 4. **COMMIT** with `git add . && git commit -m "PDCAfilename.pdca.md" && git push`
 5. **VERIFY** git status shows clean state
 6. **PROVIDE** dual links for all PDCAs touched
+
+**Deferred Items Priority Rule:**
+> Extracted/deferred tasks are **NEXT HIGHEST PRIORITY** unless user explicitly says otherwise.
 
 **Critical Rule:**
 > DO NOT ask "Ready for next?" until ALL 6 steps are complete.

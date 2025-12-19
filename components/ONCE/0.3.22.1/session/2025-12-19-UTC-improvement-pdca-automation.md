@@ -39,9 +39,10 @@ Per [§/howto.fractal.pdca.md](../../../../../Web4Articles/scrum.pmo/roles/_shar
    - [ ] Completed items marked `✅`
    - [ ] `🔵 CURRENT →` pointer moved to next item
 
-3. **Backlog Extraction**
+3. **Backlog Extraction → PRIORITY QUEUE (Not "Someday")**
    - [ ] Deferred items extracted from completed PDCAs
-   - [ ] Added to tracking PDCA backlog section
+   - [ ] Added to **FRACTAL STACK as 🔶 QUEUED (Recently Deferred - HIGH PRIORITY)**
+   - [ ] NOT buried in backlog section (that's for old/low-priority items)
    - [ ] Linked back to source PDCA
 
 4. **Git Protocol**
