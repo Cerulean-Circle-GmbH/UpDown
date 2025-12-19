@@ -58,7 +58,7 @@ export class DefaultUser implements User {
   public async detectEnvironment(): Promise<void> {
     try {
       const env: EnvironmentModel = await this.infrastructure.detectEnvironment();
-      this.model.hostname = env.getFqdn();
+      this.model.hostname = env.fqdn;
     } catch (error) {
       console.warn('⚠️  Failed to detect hostname, using fallback:', error);
       this.model.hostname = process.env.HOSTNAME || 'localhost';

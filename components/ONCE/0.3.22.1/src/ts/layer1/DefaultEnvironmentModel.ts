@@ -1,73 +1,74 @@
 /**
- * DefaultEnvironmentModel - JavaBean implementation
+ * DefaultEnvironmentModel - Implementation with TypeScript accessors
  * Web4 EAM Layer 1 - Infrastructure model with encapsulation
  * 
  * @pdca 2025-11-19-UTC-1100.user-migration-layer1.pdca.md
+ * @web4 P16 - TypeScript Accessors
  */
 
 import { EnvironmentModel } from '../layer3/EnvironmentModel.interface.js';
 import { EnvironmentScenario } from '../layer3/EnvironmentScenario.interface.js';
 
 export class DefaultEnvironmentModel implements EnvironmentModel {
-  private hostname: string;
-  private fqdn: string;
-  private primaryIP: string;
-  private domain: string;
+  private hostnameField: string;
+  private fqdnField: string;
+  private primaryIPField: string;
+  private domainField: string;
   
   constructor() {
-    this.hostname = '';
-    this.fqdn = '';
-    this.primaryIP = '';
-    this.domain = '';
+    this.hostnameField = '';
+    this.fqdnField = '';
+    this.primaryIPField = '';
+    this.domainField = '';
   }
   
-  public getHostname(): string {
-    return this.hostname;
+  public get hostname(): string {
+    return this.hostnameField;
   }
   
-  public setHostname(hostname: string): void {
-    this.hostname = hostname;
+  public set hostname(value: string) {
+    this.hostnameField = value;
   }
   
-  public getFqdn(): string {
-    return this.fqdn;
+  public get fqdn(): string {
+    return this.fqdnField;
   }
   
-  public setFqdn(fqdn: string): void {
-    this.fqdn = fqdn;
+  public set fqdn(value: string) {
+    this.fqdnField = value;
   }
   
-  public getPrimaryIP(): string {
-    return this.primaryIP;
+  public get primaryIP(): string {
+    return this.primaryIPField;
   }
   
-  public setPrimaryIP(ip: string): void {
-    this.primaryIP = ip;
+  public set primaryIP(value: string) {
+    this.primaryIPField = value;
   }
   
-  public getDomain(): string {
-    return this.domain;
+  public get domain(): string {
+    return this.domainField;
   }
   
-  public setDomain(domain: string): void {
-    this.domain = domain;
+  public set domain(value: string) {
+    this.domainField = value;
   }
   
   public toScenario(): EnvironmentScenario {
     return {
-      hostname: this.hostname,
-      fqdn: this.fqdn,
-      primaryIP: this.primaryIP,
-      domain: this.domain
+      hostname: this.hostnameField,
+      fqdn: this.fqdnField,
+      primaryIP: this.primaryIPField,
+      domain: this.domainField
     };
   }
   
   public init(scenario?: EnvironmentScenario): this {
     if (scenario) {
-      this.hostname = scenario.hostname;
-      this.fqdn = scenario.fqdn;
-      this.primaryIP = scenario.primaryIP;
-      this.domain = scenario.domain;
+      this.hostnameField = scenario.hostname;
+      this.fqdnField = scenario.fqdn;
+      this.primaryIPField = scenario.primaryIP;
+      this.domainField = scenario.domain;
     }
     return this;
   }

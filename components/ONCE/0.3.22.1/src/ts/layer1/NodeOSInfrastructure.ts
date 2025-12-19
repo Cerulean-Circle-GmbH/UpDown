@@ -32,10 +32,10 @@ export class NodeOSInfrastructure {
     const primaryIP: string = this.detectPrimaryIP(os);
     const domain: string = this.extractDomain(fqdn);
     
-    this.model.setHostname(hostname);
-    this.model.setFqdn(fqdn);
-    this.model.setPrimaryIP(primaryIP);
-    this.model.setDomain(domain);
+    this.model.hostname = hostname;
+    this.model.fqdn = fqdn;
+    this.model.primaryIP = primaryIP;
+    this.model.domain = domain;
     
     return this.model;
   }

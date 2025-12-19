@@ -133,10 +133,10 @@ export class ServerHierarchyManager {
      */
     public async detectAndSetEnvironment(): Promise<void> {
         const env: EnvironmentModel = await this.infrastructure.detectEnvironment();
-        this.serverModel.hostname = env.getHostname();
-        this.serverModel.host = env.getFqdn();
-        this.serverModel.ip = env.getPrimaryIP();
-        this.serverModel.domain = env.getDomain();
+        this.serverModel.hostname = env.hostname;
+        this.serverModel.host = env.fqdn;
+        this.serverModel.ip = env.primaryIP;
+        this.serverModel.domain = env.domain;
     }
     
     /**
