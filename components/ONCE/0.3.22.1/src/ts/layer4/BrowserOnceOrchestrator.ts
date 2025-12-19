@@ -22,6 +22,7 @@ import type { UcpRouter } from '../layer5/views/UcpRouter.js';
 import type { ServerDefaultModel } from '../layer5/views/OncePeerDefaultView.js';
 import type { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
 import { LifecycleState } from '../layer3/LifecycleState.enum.js';
+import { DefaultIOR } from '../layer2/DefaultIOR.js';
 
 /**
  * BrowserOnceOrchestrator
@@ -201,23 +202,23 @@ export class BrowserOnceOrchestrator {
       const version = this.component.browserModel.version || '0.3.21.9';
       const basePath = `/EAMD.ucp/components/ONCE/${version}`;
       
-      // Try component.json first (Web4 Unit integration)
+      // Try component.json first (Web4 Unit integration) - F.4: Use IOR.load()
       try {
-        const componentResponse = await fetch(`${basePath}/ONCE.component.json`);
-        if (componentResponse.ok) {
-          const componentJson = await componentResponse.json();
-          const cssUnits = componentJson.model?.units?.css || [];
-          cssFiles = cssUnits.map((unit: { path: string }) => `${basePath}/${unit.path}`);
-          console.log(`[Orchestrator] Using component.json units: ${cssFiles.length} CSS files`);
-        }
+        const componentIor = await new DefaultIOR().init(`${basePath}/ONCE.component.json`);
+        const componentText = await componentIor.load<string>();
+        const componentJson = JSON.parse(componentText);
+        const cssUnits = componentJson.model?.units?.css || [];
+        cssFiles = cssUnits.map((unit: { path: string }) => `${basePath}/${unit.path}`);
+        console.log(`[Orchestrator] Using component.json units: ${cssFiles.length} CSS files`);
       } catch (e) {
         console.log('[Orchestrator] component.json not available, trying asset-manifest');
       }
       
-      // Fallback to /asset-manifest
+      // Fallback to /asset-manifest - F.4: Use IOR.load()
       if (cssFiles.length === 0) {
-        const response = await fetch('/asset-manifest');
-        const data = await response.json();
+        const assetIor = await new DefaultIOR().init('/asset-manifest');
+        const assetText = await assetIor.load<string>();
+        const data = JSON.parse(assetText);
         cssFiles = data.model?.css || data.css || [];
         console.log(`[Orchestrator] Using asset-manifest: ${cssFiles.length} CSS files`);
       }
@@ -360,13 +361,12 @@ export class BrowserOnceOrchestrator {
       console.log('[Orchestrator] peerHost:', peerHost);
       console.log('[Orchestrator] primaryPeer:', primaryPeer);
       
-      const response = await fetch(endpoint);
-      console.log('[Orchestrator] Fetch response status:', response.status, response.statusText);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
+      // F.4: Use IOR.load() for DRY
+      const ior = await new DefaultIOR().init(endpoint);
+      const responseText = await ior.load<string>();
+      console.log('[Orchestrator] IOR load complete');
       
-      const data = await response.json();
+      const data = JSON.parse(responseText);
       const servers = data.model?.servers || data.servers || [];
       
       // Check if primaryServer is returned separately in response
@@ -490,12 +490,11 @@ export class BrowserOnceOrchestrator {
         endpoint = `https://${primaryPeer.host}:${primaryPeer.port}/servers`;
       }
       
-      const response = await fetch(endpoint);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
+      // F.4: Use IOR.load() for DRY
+      const ior = await new DefaultIOR().init(endpoint);
+      const responseText = await ior.load<string>();
       
-      const data = await response.json();
+      const data = JSON.parse(responseText);
       const servers = data.model?.servers || data.servers || [];
       
       // Update component model
@@ -510,7 +509,7 @@ export class BrowserOnceOrchestrator {
   }
   
   /**
-   * Make IOR call to server
+   * Make IOR call to server - F.4: Use IOR.load() for DRY
    */
   async iorCall(host: string, port: number, method: string, uuid?: string): Promise<any> {
     const version = this.component.browserModel.version;
@@ -522,12 +521,9 @@ export class BrowserOnceOrchestrator {
     console.log(`[Orchestrator] iorCall URL: ${url}`);
     
     try {
-      const response = await fetch(url, { method: 'GET' });
-      if (!response.ok) {
-        console.error(`[Orchestrator] IOR call failed: ${response.status}`);
-        return null;
-      }
-      return await response.json();
+      const ior = await new DefaultIOR().init(url);
+      const responseText = await ior.load<string>();
+      return JSON.parse(responseText);
     } catch (error) {
       console.error('[Orchestrator] IOR call error:', error);
       return null;
@@ -535,17 +531,15 @@ export class BrowserOnceOrchestrator {
   }
   
   /**
-   * Health check
+   * Health check - F.4: Use IOR.load() for DRY
    */
   async healthFetch(): Promise<any> {
     const peerHost = this.component.browserModel.peerHost || window.location.host;
     
     try {
-      const response = await fetch(`https://${peerHost}/health`);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-      return await response.json();
+      const ior = await new DefaultIOR().init(`https://${peerHost}/health`);
+      const responseText = await ior.load<string>();
+      return JSON.parse(responseText);
     } catch (error) {
       console.error('[Orchestrator] Health check failed:', error);
       return { status: 'error', error: String(error) };
