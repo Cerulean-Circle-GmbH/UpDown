@@ -18,6 +18,7 @@
  * - P19: declare global HTMLElementTagNameMap → use @customElement decorator only
  * - P4: Arrow functions in forEach/map/filter → should be method references
  * - P3: Underscore prefix properties → use descriptive suffix
+ * - P3: String literal types → should be enums (HttpMethod, LifecycleState)
  * - P26: Factory functions → should be `new Class().init(scenario)`
  * - P1: Separate Config objects → should be part of Scenario
  * - P7: fetch() calls outside layer4 → should use HTTPSLoader from layer4
@@ -242,6 +243,20 @@ export class Test19_Web4LazyMigrationScan extends ONCETestCase {
         // Matches: private _propertyName or this._property
         regex: /(?:private|protected|public)?\s*_\w+\s*[=:;]|this\._\w+/g,
         suggestion: 'Use descriptive suffix: `propertyField` instead of `_property`',
+      },
+      {
+        name: 'String literal type union',
+        principle: 'P3',
+        // Matches: : 'GET' | 'POST' or = 'running' | 'stopped' (3+ string literals in union)
+        regex: /:\s*['"][^'"]+['"]\s*\|\s*['"][^'"]+['"]\s*\|/g,
+        suggestion: 'Use typed enum instead of string literal union (e.g., HttpMethod, LifecycleState)',
+      },
+      {
+        name: 'Hardcoded HTTP method string',
+        principle: 'P3',
+        // Matches: method: 'GET' or method === 'POST' (common HTTP methods as strings)
+        regex: /(?:method|Method)\s*[:=!]==?\s*['"](?:GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)['"]/g,
+        suggestion: 'Use HttpMethod enum: `HttpMethod.GET` instead of string literal',
       },
       
       // ═══════════════════════════════════════════════════════════════
