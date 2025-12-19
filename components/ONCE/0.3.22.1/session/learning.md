@@ -224,6 +224,16 @@ return new BrowserOnce() as unknown as ONCEKernel;
 **Source:** User caught discrepancy between PDCA claims and actual code state  
 **Lesson:** Before marking a task complete, **verify with grep** that the work is actually done.
 
+### **L16: Self-Re-Inform When Context Summarized**
+**Date:** 2025-12-19  
+**Source:** User guidance after context summary  
+**Lesson:** When context was summarized (losing details), immediately re-read key files:
+1. **Tracking PDCA** → fractal stack, what's next
+2. **Agent context** → per-prompt checklist
+3. **howto.fractal.pdca.md** → methodology
+
+**Pattern:** `read_file` costs tokens but prevents mistakes that cost MORE tokens to fix.
+
 **Wrong (premature checkbox):**
 ```markdown
 - [x] MC.1.2: Update ServerHierarchyManager to use ONCEPeerModel ✅
