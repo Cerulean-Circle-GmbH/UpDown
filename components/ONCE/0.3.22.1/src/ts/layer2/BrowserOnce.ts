@@ -28,6 +28,7 @@ import { CSSLoader } from './CSSLoader.js';
 import { HTMLTemplateLoader } from './HTMLTemplateLoader.js';
 import { BrowserOnceOrchestrator } from '../layer4/BrowserOnceOrchestrator.js';
 import { BrowserScenarioStorage } from './BrowserScenarioStorage.js';
+import { DefaultIOR } from './DefaultIOR.js';
 import { PersistenceManager } from '../layer3/PersistenceManager.interface.js';
 import type { StorageScenario } from '../layer3/StorageScenario.interface.js';
 import type { LitElement } from 'lit';
@@ -245,11 +246,12 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
     private async assetsPreload(): Promise<void> {
         console.log('[BrowserOnce] Preloading assets...');
         
-        // Fetch asset manifest from server
+        // Fetch asset manifest from server via IOR (F.2a)
         let manifest: { css: string[], templates: string[] } = { css: [], templates: [] };
         try {
-            const response = await fetch('/asset-manifest');
-            const data = await response.json();
+            const ior = await new DefaultIOR().init('/asset-manifest');
+            const responseText = await ior.load<string>();
+            const data = JSON.parse(responseText);
             manifest = data.model || { css: [], templates: [] };
             console.log('[BrowserOnce] Asset manifest:', manifest);
         } catch (e) {
@@ -406,14 +408,12 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
     }
     
     async getHealth(): Promise<any> {
-        // ✅ Get health status from peer (HTTPS by default)
-        // @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md
+        // ✅ Get health status from peer via IOR (F.2a)
+        // @pdca 2025-12-17-UTC-1740.fetch-centralization-dry.pdca.md
         try {
-            const response = await fetch(`https://${this.model.peerHost}/health`);
-            if (!response || !response.ok) {
-                throw new Error('Health check failed');
-            }
-            const health = await response.json();
+            const ior = await new DefaultIOR().init(`https://${this.model.peerHost}/health`);
+            const responseText = await ior.load<string>();
+            const health = JSON.parse(responseText);
             this.updateHealthDisplay(health);
             return health;
         } catch (error) {
@@ -708,11 +708,10 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
                 endpoint = `https://${this.model.primaryPeer.host}:${this.model.primaryPeer.port}/servers`;
             }
             
-            const response = await fetch(endpoint);
-            if (!response || !response.ok) {
-                throw new Error('Peers fetch failed');
-            }
-            const data = await response.json();
+            // Fetch peers via IOR (F.2a)
+            const ior = await new DefaultIOR().init(endpoint);
+            const responseText = await ior.load<string>();
+            const data = JSON.parse(responseText);
             
             this.model.peers = data.servers || [];  // TODO: API should return "peers" not "servers"
             this.updatePeersDisplay();

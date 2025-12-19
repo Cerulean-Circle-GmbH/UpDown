@@ -24,6 +24,7 @@
  */
 
 import { Reference } from '../layer3/Reference.interface.js';
+import { DefaultIOR } from './DefaultIOR.js';
 
 /**
  * CSSLoader - Preloads CSS files for Lit components
@@ -91,25 +92,25 @@ export class CSSLoader {
   
   /**
    * Fetch CSS and parse into CSSStyleSheet
+   * Via IOR (F.2b)
    * @param cssPath URL path to CSS file
    * @returns Parsed CSSStyleSheet
    */
   private static async fetchAndParse(cssPath: string): Promise<CSSStyleSheet> {
-    const response = await fetch(cssPath);
-    
-    if (!response.ok) {
-      console.warn(`[CSSLoader] Failed to load ${cssPath}: ${response.status}`);
+    try {
+      const ior = await new DefaultIOR().init(cssPath);
+      const cssText = await ior.load<string>();
+      const sheet = new CSSStyleSheet();
+      sheet.replaceSync(cssText);
+      
+      console.log(`[CSSLoader] ✅ Loaded: ${cssPath}`);
+      return sheet;
+    } catch (error: any) {
+      console.warn(`[CSSLoader] Failed to load ${cssPath}: ${error.message}`);
       // Return empty stylesheet on error
       const emptySheet = new CSSStyleSheet();
       return emptySheet;
     }
-    
-    const cssText = await response.text();
-    const sheet = new CSSStyleSheet();
-    sheet.replaceSync(cssText);
-    
-    console.log(`[CSSLoader] ✅ Loaded: ${cssPath}`);
-    return sheet;
   }
   
   /**
