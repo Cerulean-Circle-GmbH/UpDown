@@ -751,14 +751,14 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
   /**
    * Check if this instance is the primary server (domain logic from 0.2.0.0)
    */
-  isPrimaryServer(): boolean {
-    return this.serverHierarchyManager.isPrimaryServer();
+  isPrimary(): boolean {
+    return this.serverHierarchyManager.isPrimary();
   }
 
   /**
    * Get all registered server instances (domain logic from 0.2.0.0)
    */
-  getRegisteredServers(): ONCEServerModel[] {
+  getRegisteredServers(): any[] {
     return this.serverHierarchyManager.getRegisteredServers();
   }
 
@@ -766,7 +766,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
    * Get current server model (domain logic from 0.2.0.0)
    * @deprecated Use getPeerModel() for unified access
    */
-  getServerModel(): ONCEServerModel {
+  getServerModel(): ONCEPeerModel {
     return this.serverHierarchyManager.getServerModel();
   }
 
@@ -805,7 +805,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
       version: this.model.version || '0.0.0.0',
       
       // Environment
-      environment: serverModel.platform,
+      environment: serverModel.environment,
       
       // Lifecycle
       state: this.model.state || LifecycleState.CREATED,
@@ -815,21 +815,22 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
       // Network
       host: serverModel.host,
       port: serverModel.capabilities?.find(c => c.capability === 'httpPort')?.port || 42777,
-      isPrimary: serverModel.isPrimaryServer,
-      primaryPeerUuid: serverModel.primaryServerIOR || null,
+      isPrimary: serverModel.isPrimary,
+      primaryPeerUuid: serverModel.primaryPeerUuid || null,
       
       // P2P
       peers: this.serverHierarchyManager.getRegisteredServers().map(s => ({
-        uuid: s.uuid,
-        name: s.hostname,
-        version: '0.0.0.0',
-        environment: s.platform,
-        state: s.state,
+        uuid: s.uuid || s.model?.uuid,
+        name: s.hostname || s.model?.hostname,
+        version: s.version || s.model?.version || '0.0.0.0',
+        environment: s.environment || s.model?.environment || s.platform,
+        state: s.state || s.model?.state,
         startTime: new Date(),
         connectionTime: null,
-        host: s.host,
-        port: s.capabilities?.find((c: ServerCapability) => c.capability === 'httpPort')?.port || 0,
-        isPrimary: s.isPrimaryServer,
+        host: s.host || s.model?.host,
+        port: s.capabilities?.find((c: ServerCapability) => c.capability === 'httpPort')?.port 
+              || s.model?.capabilities?.find((c: ServerCapability) => c.capability === 'httpPort')?.port || 0,
+        isPrimary: s.isPrimary ?? s.model?.isPrimary,
         primaryPeerUuid: null,
         peers: []
       })),
@@ -1177,7 +1178,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
     await this.startServer();
     
     const serverModel = this.serverHierarchyManager.getServerModel();
-    const httpCapability = serverModel.capabilities.find(c => c.capability === 'httpPort');
+    const httpCapability = serverModel.capabilities?.find(c => c.capability === 'httpPort');
     
     if (httpCapability) {
       const port = httpCapability.port;
@@ -1188,10 +1189,10 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
       console.log(`   🌐 URL: ${url}`);
       console.log(`   🏠 Domain: ${serverModel.domain}`);
       console.log(`   📋 UUID: ${serverModel.uuid}`);
-      console.log(`   ⚡ Type: ${serverModel.isPrimaryServer ? '🟢 Primary Server (42777)' : '🔵 Client Server'}`);
+      console.log(`   ⚡ Type: ${serverModel.isPrimary ? '🟢 Primary Server (42777)' : '🔵 Client Server'}`);
       console.log('');
       
-      if (serverModel.isPrimaryServer) {
+      if (serverModel.isPrimary) {
         console.log('🎯 This is the PRIMARY server - other instances will register with this one');
       } else {
         console.log('🔗 This server registered with the primary server on port 42777');
@@ -1210,7 +1211,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
       console.log(`   Root:    ${url}/`);
       console.log(`   Health:  ${url}/health`);
       console.log(`   Client:  ${url}/once`);
-      if (serverModel.isPrimaryServer) {
+      if (serverModel.isPrimary) {
         console.log(`   Servers: ${url}/servers`);
       }
       console.log('');
@@ -1333,7 +1334,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
               console.log('   🚀 Starting ONCE server...');
               await this.startServer();
               const serverModel = this.serverHierarchyManager.getServerModel();
-              const httpCapability = serverModel.capabilities.find(c => c.capability === 'httpPort');
+              const httpCapability = serverModel.capabilities?.find(c => c.capability === 'httpPort');
               if (httpCapability) {
                 console.log(`   ✅ Server started on port ${httpCapability.port}`);
               }
@@ -1346,7 +1347,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
             // Open browser
             console.log('   🌐 Opening browser...');
             const serverModel = this.serverHierarchyManager.getServerModel();
-            const httpCapability = serverModel.capabilities.find(c => c.capability === 'httpPort');
+            const httpCapability = serverModel.capabilities?.find(c => c.capability === 'httpPort');
             if (httpCapability) {
               const url = `http://localhost:${httpCapability.port}`;
               await this.openBrowser(url);
@@ -1365,7 +1366,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
               await clientOnce.startServer();
               clientServers.push(clientOnce);
               const clientModel = clientOnce.getServerModel();
-              const clientCapability = clientModel.capabilities.find(c => c.capability === 'httpPort');
+              const clientCapability = clientModel.capabilities?.find(c => c.capability === 'httpPort');
               if (clientCapability) {
                 console.log(`   ✅ Client server started on port ${clientCapability.port}`);
               }
@@ -1377,11 +1378,11 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
           case 'd':
             // Discover peers
             console.log('   🔍 Discovering peers...');
-            if (this.isPrimaryServer()) {
+            if (this.isPrimary()) {
               const registeredServers = this.getRegisteredServers();
               console.log(`   📋 Registered servers: ${registeredServers.length}`);
               for (const server of registeredServers) {
-                console.log(`      • ${server.uuid} on ${server.capabilities.find(c => c.capability === 'httpPort')?.port}`);
+                console.log(`      • ${server.uuid} on ${server.capabilities?.find((c: ServerCapability) => c.capability === 'httpPort')?.port}`);
               }
             } else {
               console.log('   ⚠️  Only primary server can discover peers');
@@ -1882,10 +1883,10 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
             
             await this.startServer();
             const serverModel = this.serverHierarchyManager.getServerModel();
-            const httpCapability = serverModel.capabilities.find(c => c.capability === 'httpPort');
+            const httpCapability = serverModel.capabilities?.find(c => c.capability === 'httpPort');
             if (httpCapability) {
               console.log(`✅ Server started on port ${httpCapability.port}`);
-              console.log(`   ${serverModel.isPrimaryServer ? '🟢 Primary Server' : '🔵 Client Server'}`);
+              console.log(`   ${serverModel.isPrimary ? '🟢 Primary Server' : '🔵 Client Server'}`);
             }
           } else {
             console.log('🛑 Stopping ONCE server...');
@@ -1898,7 +1899,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
           // Launch browser
           console.log('🌐 Launching browser...');
           const serverModel = this.serverHierarchyManager.getServerModel();
-          const httpCapability = serverModel.capabilities.find(c => c.capability === 'httpPort');
+          const httpCapability = serverModel.capabilities?.find(c => c.capability === 'httpPort');
           if (httpCapability) {
             const url = `http://localhost:${httpCapability.port}`;
             await this.openBrowser(url);
@@ -1923,7 +1924,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
             await clientOnce.init();
             await clientOnce.startServer();
             const clientModel = clientOnce.getServerModel();
-            const clientCapability = clientModel.capabilities.find(c => c.capability === 'httpPort');
+            const clientCapability = clientModel.capabilities?.find(c => c.capability === 'httpPort');
             if (clientCapability) {
               console.log(`✅ Client server started on port ${clientCapability.port}`);
               // Store in model for cleanup
@@ -1939,7 +1940,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
           console.log('🌐 Opening demo hub...');
           if (this.model.serverModel) {
             const sm = this.serverHierarchyManager.getServerModel();
-            const port = sm.isPrimaryServer ? 42777 : sm.capabilities.find(c => c.capability === 'httpPort')?.port;
+            const port = sm.isPrimary ? 42777 : sm.capabilities?.find(c => c.capability === 'httpPort')?.port;
             if (port) {
               await this.openBrowser(`http://localhost:${port}/demo`);
               console.log(`✅ Demo hub opened: http://localhost:${port}/demo`);
@@ -1965,7 +1966,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
           console.log('🔧 Status: Interactive demo active');
           if (this.model.serverModel) {
             const sm = this.serverHierarchyManager.getServerModel();
-            console.log(`🌐 Server: ${sm.isPrimaryServer ? 'Primary (42777)' : 'Client'}`);
+            console.log(`🌐 Server: ${sm.isPrimary ? 'Primary (42777)' : 'Client'}`);
             const clients = ((this.model.serverModel as any).clientServers as any[]);
             console.log(`🔵 Client servers: ${clients ? clients.length : 0}`);
           }
@@ -2147,9 +2148,9 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
     const serverModel = this.serverHierarchyManager.getServerModel();
     
     // Client servers include primary connection info
-    const primaryInfo = serverModel.isPrimaryServer ? null : {
-      host: serverModel.primaryServer?.host || 'localhost',
-      port: serverModel.primaryServer?.port || 42777,
+    const primaryInfo = serverModel.isPrimary ? null : {
+      host: serverModel.primaryPeer?.host || 'localhost',
+      port: serverModel.primaryPeer?.port || 42777,
       connected: !!(this.serverHierarchyManager as any).primaryServerConnection,
       domain: serverModel.domain
     };
@@ -2157,7 +2158,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
     return {
       status: 'running',
       uuid: serverModel.uuid,
-      isPrimaryServer: serverModel.isPrimaryServer,
+      isPrimary: serverModel.isPrimary,
       state: serverModel.state,
       capabilities: serverModel.capabilities,
       domain: serverModel.domain,
@@ -2240,7 +2241,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
 
     const serverModel = this.serverHierarchyManager.getServerModel();
     
-    if (!serverModel.isPrimaryServer) {
+    if (!serverModel.isPrimary) {
       throw new Error('Only primary server can list all servers');
     }
 
@@ -2353,7 +2354,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
     const uuid = this.serverHierarchyManager.getServerModel().uuid;
     const hostname = this.serverHierarchyManager.getServerModel().hostname || 'localhost';
     const domain = this.serverHierarchyManager.getServerModel().domain || 'local.once';
-    const isPrimary = this.serverHierarchyManager.isPrimaryServer();
+    const isPrimary = this.serverHierarchyManager.isPrimary();
     const capabilities = this.serverHierarchyManager.getServerModel().capabilities || [];
     const httpCap = capabilities.find((c: any) => c.capability === 'httpPort');
     const peerHost = `${hostname}:${httpCap?.port || 42777}`;
@@ -2402,7 +2403,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
       hostname: '${hostname}',
       domain: '${domain}',
       lifecycleState: 'running',
-      isPrimaryServer: ${isPrimary},
+      isPrimary: ${isPrimary},
       capabilities: ${capsJson},
       peerCount: ${peerCount},
       peerHost: '${peerHost}'
@@ -2459,7 +2460,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
           state: 'STARTING',
           capabilities: []
         },
-        isPrimaryServer: false,
+        isPrimary: false,
         spawnedAt: new Date().toISOString(),
         spawnedBy: this.model.uuid
       }
@@ -2701,7 +2702,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
       await client.startServer();
       clients.push(client);
       const clientModel = client.getServerModel();
-      const port = clientModel.capabilities.find(c => c.capability === 'httpPort')?.port;
+      const port = clientModel.capabilities?.find(c => c.capability === 'httpPort')?.port;
       console.log(`   ✅ Client ${i + 1}: ${clientModel.uuid} on port ${port}`);
     }
     console.log('');
@@ -2751,10 +2752,10 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
           type: 'relay',
           from: { 
             uuid: client1Model.uuid, 
-            port: client1Model.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0,
+            port: client1Model.capabilities?.find((c: any) => c.capability === 'httpPort')?.port || 0,
             host: client1Model.host // ✅ Add host field
           },
-          to: { uuid: client2Model.uuid, port: client2Model.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0 },
+          to: { uuid: client2Model.uuid, port: client2Model.capabilities?.find((c: any) => c.capability === 'httpPort')?.port || 0 },
           content: `Relay message from client 1 to client 2 via primary`,
           timestamp: new Date().toISOString(),
           sequence: 2
@@ -2781,14 +2782,14 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
       console.log('🔗 Pattern 3: P2P (Client → Client Direct)');
       const client1Model = clients[0].getServerModel();
       const client2Model = clients[1].getServerModel();
-      const p2pPort = client2Model.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0;
+      const p2pPort = client2Model.capabilities?.find((c: any) => c.capability === 'httpPort')?.port || 0;
       const p2pScenario: any = {
         uuid: this.idProvider.create(), // ✅ Web4 Principle 20
         objectType: 'ONCEMessage',
         version: this.model.version || 'unknown', // ✅ Use dynamic version
         state: {
           type: 'p2p',
-          from: { uuid: client1Model.uuid, port: client1Model.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0 },
+          from: { uuid: client1Model.uuid, port: client1Model.capabilities?.find((c: any) => c.capability === 'httpPort')?.port || 0 },
           to: { uuid: client2Model.uuid, port: p2pPort },
           content: `Direct P2P message from client 1 to client 2`,
           timestamp: new Date().toISOString(),
@@ -2826,7 +2827,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
         primary: { uuid: primaryModel.uuid, port: 42777 },
         clients: clients.map(c => {
           const m = c.getServerModel();
-          return { uuid: m.uuid, port: m.capabilities.find((cap: any) => cap.capability === 'httpPort')?.port };
+          return { uuid: m.uuid, port: m.capabilities?.find((cap: any) => cap.capability === 'httpPort')?.port };
         })
       },
       messages: this.model.messageTracker.sent,
@@ -2851,7 +2852,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
     console.log(`   Primary: http://localhost:42777/once`);
     for (let i = 0; i < clients.length; i++) {
       const clientModel = clients[i].getServerModel();
-      const port = clientModel.capabilities.find((c: any) => c.capability === 'httpPort')?.port || 0;
+      const port = clientModel.capabilities?.find((c: any) => c.capability === 'httpPort')?.port || 0;
       console.log(`   Client ${i + 1}: http://localhost:${port}/once`);
     }
     console.log('');

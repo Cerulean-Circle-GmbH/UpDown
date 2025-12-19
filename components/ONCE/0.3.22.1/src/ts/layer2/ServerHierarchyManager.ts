@@ -13,6 +13,8 @@ import { WebSocketServer, WebSocket } from 'ws';
 import { exec } from 'child_process';
 import { PortManager } from './PortManager.js';
 import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
+import { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
+import { ServerCapability } from '../layer3/ServerCapability.interface.js';
 import { LifecycleState } from '../layer3/LifecycleEvents.js';
 import { IOR, iorToUrl } from '../layer3/IOR.js';
 import { IDProvider } from '../layer3/IDProvider.interface.js';
@@ -29,7 +31,6 @@ import { logAction, logBroadcast, logRegistration, logConnection, logDisconnecti
 import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
 import { EnvironmentModel } from '../layer3/EnvironmentModel.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
-import type { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
 import { HostnameParser } from '../layer1/HostnameParser.js';
 import { IORMethodRouter } from '../layer4/IORMethodRouter.js';
 import { HTTPServer } from './HTTPServer.js';
@@ -76,7 +77,7 @@ export interface ServerRegistryEntry {
  * @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md
  */
 export class ServerHierarchyManager {
-    private serverModel: ONCEServerModel;
+    private serverModel: ONCEPeerModel;
     private httpServer?: HTTPServer; // ✅ Web4 Radical OOP HTTPServer (HTTPS by default)
     private httpRouter: HTTPRouter; // ✅ Web4 Radical OOP HTTPRouter
     private httpRedirectServer?: http.Server; // ✅ HTTP→HTTPS redirect (primary only, port 42000)
@@ -109,19 +110,42 @@ export class ServerHierarchyManager {
             ? componentDirName 
             : '0.0.0.0';  // Known fallback for development (not a bug-hiding fallback)
         
-        // Initialize peer model with defaults (inlined from ONCEServerModel.ts)
+        // Initialize peer model with defaults (ONCEPeerModel - Web4 unified model)
         this.serverModel = {
-            uuid: this.idProvider.create(), // ✅ Web4 Principle 20: Radical OOP ID generation
-            pid: process.pid,
+            // Identity (from Model)
+            uuid: this.idProvider.create(), // ✅ Web4 Principle 29: IDProvider pattern
+            name: 'ONCE',
+            
+            // Version
+            version: this.version,
+            
+            // Environment
+            environment: this.detectEnvironment(),
+            
+            // Lifecycle
             state: LifecycleState.CREATED,
-            platform: this.detectEnvironment(),
+            startTime: new Date(),  // Reference<Date> = Date | null
+            connectionTime: null,   // Not yet connected
+            
+            // Network
+            host: 'localhost', // ✅ Will be detected dynamically
+            port: 42777, // ✅ Will be assigned dynamically
             domain: 'local.once', // ✅ Will be detected dynamically
             hostname: 'localhost', // ✅ Will be detected dynamically
-            host: 'localhost', // ✅ Will be detected dynamically
             ip: '127.0.0.1', // ✅ Will be detected dynamically
-            capabilities: [],
-            isPrimaryServer: false
-        } as ONCEServerModel;
+            
+            // P2P
+            isPrimary: false,
+            primaryPeerUuid: null, // Reference<string> = string | null
+            peers: [],
+            
+            // Node-specific
+            pid: process.pid,
+            capabilities: [] as ServerCapability[],
+        };
+        
+        // Assert non-null capabilities after initialization
+        this.serverModel.capabilities = this.serverModel.capabilities || [];
         
         // ✅ FIX: Call synchronous hostname detection immediately in constructor
         this.detectAndSetEnvironmentSync();
@@ -477,11 +501,11 @@ export class ServerHierarchyManager {
     
     /**
      * Register routes that are only available on primary server
-     * Called AFTER port binding determines isPrimaryServer status
+     * Called AFTER port binding determines isPrimary status
      * @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
      */
     private registerPrimaryOnlyRoutes(): void {
-        if (!this.serverModel.isPrimaryServer) {
+        if (!this.serverModel.isPrimary) {
             return;
         }
         
@@ -527,7 +551,7 @@ export class ServerHierarchyManager {
             // Start WebSocket peer communication
             await this.startWebSocketServer();
             
-            if (this.serverModel.isPrimaryServer) {
+            if (this.serverModel.isPrimary) {
                 // ✅ Register primary-only routes after port is bound
                 this.registerPrimaryOnlyRoutes();
                 
@@ -551,7 +575,7 @@ export class ServerHierarchyManager {
             
             // ✅ FIX: Notify primary of RUNNING state (for registry acceptance)
             // @pdca 2025-12-03-UTC-1930.websocket-scenario-broadcast.pdca.md
-            if (!this.serverModel.isPrimaryServer) {
+            if (!this.serverModel.isPrimary) {
                 this.notifyPrimaryOfStateChange();
                 console.log(`📤 Notified primary of RUNNING state`);
             }
@@ -585,8 +609,8 @@ export class ServerHierarchyManager {
         // First try primary port 42777 (HTTPS)
         try {
             await this.startHttpServer(PRIMARY_HTTPS_PORT);
-            this.serverModel.isPrimaryServer = true;
-            this.serverModel.capabilities.push({
+            this.serverModel.isPrimary = true;
+            this.serverModel.capabilities!.push({
                 capability: 'httpsPort',  // ✅ Changed from httpPort to httpsPort
                 port: PRIMARY_HTTPS_PORT
             });
@@ -606,8 +630,8 @@ export class ServerHierarchyManager {
         for (let port = SECONDARY_PORT_START; port < SECONDARY_PORT_START + MAX_RETRIES; port++) {
             try {
                 await this.startHttpServer(port);
-                this.serverModel.isPrimaryServer = false;
-                this.serverModel.capabilities.push({
+                this.serverModel.isPrimary = false;
+                this.serverModel.capabilities!.push({
                     capability: 'httpsPort',  // ✅ Changed from httpPort to httpsPort
                     port
                 });
@@ -668,7 +692,7 @@ export class ServerHierarchyManager {
      * @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md H.2
      */
     private async httpRedirectServerStart(): Promise<void> {
-        if (!this.serverModel.isPrimaryServer) {
+        if (!this.serverModel.isPrimary) {
             return; // Only primary server has HTTP redirect
         }
         
@@ -688,7 +712,7 @@ export class ServerHierarchyManager {
                 console.log(`🔀 HTTP→HTTPS redirect server started on port ${HTTP_REDIRECT_PORT}`);
                 console.log(`   All requests to http://*:${HTTP_REDIRECT_PORT} → https://*:${PRIMARY_HTTPS_PORT}`);
                 
-                this.serverModel.capabilities.push({
+                this.serverModel.capabilities!.push({
                     capability: 'httpRedirect',
                     port: HTTP_REDIRECT_PORT
                 });
@@ -797,9 +821,9 @@ export class ServerHierarchyManager {
         this.wsServer = new WebSocketServer({ server: this.httpServer.server });
         
         // Add WebSocket capability
-        const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
+        const httpCapability = this.serverModel.capabilities!.find(c => c.capability === 'httpPort');
         if (httpCapability) {
-            this.serverModel.capabilities.push({
+            this.serverModel.capabilities!.push({
                 capability: 'wsPort',
                 port: httpCapability.port
             });
@@ -927,17 +951,17 @@ export class ServerHierarchyManager {
      * Getters for template placeholders - Radical OOP model-driven
      */
     private get httpPort(): string {
-        const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
+        const httpCapability = this.serverModel.capabilities!.find(c => c.capability === 'httpPort');
         return httpCapability?.port?.toString() || 'Unknown';
     }
 
     private get wsPort(): string {
-        const wsCapability = this.serverModel.capabilities.find(c => c.capability === 'wsPort');
+        const wsCapability = this.serverModel.capabilities!.find(c => c.capability === 'wsPort');
         return wsCapability?.port?.toString() || 'Unknown';
     }
 
     private get capabilitiesHTML(): string {
-        return this.serverModel.capabilities.map(cap => 
+        return (this.serverModel.capabilities || []).map(cap => 
             `<p><strong>${cap.capability}:</strong> ${cap.port || 'Active'}</p>`
         ).join('');
     }
@@ -1083,7 +1107,7 @@ export class ServerHierarchyManager {
                     : message.scenario;       // Legacy format: model directly
                 
                 if (scenarioModel.state?.type === 'broadcast') {
-                    if (this.serverModel.isPrimaryServer) {
+                    if (this.serverModel.isPrimary) {
                         // Primary received broadcast (from browser or client) - broadcast to all
                         console.log(`📡 Primary broadcasting scenario ${message.scenario.uuid}`);
                         // Broadcast to all registered client servers
@@ -1117,7 +1141,7 @@ export class ServerHierarchyManager {
                 break;
             case 'scenario-relay':
                 // @pdca 2025-11-11-UTC-2322.pdca.md - Relay message to target
-                if (this.serverModel.isPrimaryServer) {
+                if (this.serverModel.isPrimary) {
                     this.relayScenario(message.scenario, message.targetUUID);
                 } else {
                     // Client forwards to primary for relay
@@ -1129,7 +1153,7 @@ export class ServerHierarchyManager {
             case 'scenario-p2p':
                 // @pdca 2025-11-11-UTC-2322.pdca.md - P2P direct message
                 // Find a peer and send directly
-                if (this.serverModel.isPrimaryServer && this.serverRegistry.size > 0) {
+                if (this.serverModel.isPrimary && this.serverRegistry.size > 0) {
                     // Primary can help route P2P
                     const firstClient = Array.from(this.serverRegistry.values())[0];
                     // Extract capabilities from scenario (Scenario<ONCEPeerModel>)
@@ -1243,12 +1267,12 @@ export class ServerHierarchyManager {
      */
     private getHttpPort(): number {
         // Check for HTTPS port first (new default)
-        const httpsCapability = this.serverModel.capabilities.find(c => c.capability === 'httpsPort');
+        const httpsCapability = this.serverModel.capabilities!.find(c => c.capability === 'httpsPort');
         if (httpsCapability?.port) {
             return httpsCapability.port;
         }
         // Fall back to HTTP port (legacy scenarios)
-        const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
+        const httpCapability = this.serverModel.capabilities!.find(c => c.capability === 'httpPort');
         return httpCapability?.port || 0;
     }
     
@@ -1301,7 +1325,7 @@ export class ServerHierarchyManager {
      * @pdca 2025-11-22-UTC-1600.iteration-01.6.4d-scenario-state-transfer.pdca.md
      */
     private notifyPrimaryOfStateChange(): void {
-        if (this.serverModel.isPrimaryServer) return;  // Primary doesn't notify itself
+        if (this.serverModel.isPrimary) return;  // Primary doesn't notify itself
         
         if (this.primaryServerConnection && this.primaryServerConnection.readyState === WebSocket.OPEN) {
             // Generate scenario directly from current state
@@ -1323,10 +1347,10 @@ export class ServerHierarchyManager {
             ior: {
                 protocol: 'https',
                 host: this.serverModel.host,
-                port: this.serverModel.capabilities.find(c => c.capability === 'httpPort')?.port || 0,
+                port: this.serverModel.capabilities!.find(c => c.capability === 'httpPort')?.port || 0,
                 path: `/ONCE/${this.version}/${this.serverModel.uuid}`,
                 uuid: this.serverModel.uuid,
-                iorString: `ior:https://${this.serverModel.host}:${this.serverModel.capabilities.find(c => c.capability === 'httpPort')?.port}/ONCE/${this.version}/${this.serverModel.uuid}`
+                iorString: `ior:https://${this.serverModel.host}:${this.serverModel.capabilities!.find(c => c.capability === 'httpPort')?.port}/ONCE/${this.version}/${this.serverModel.uuid}`
             },
             owner: { userId: 'system', timestamp: new Date().toISOString() },  // Default owner
             model: {
@@ -1474,7 +1498,7 @@ export class ServerHierarchyManager {
      * @pdca 2025-11-22-UTC-1600.iteration-01.6.4d-scenario-state-transfer.pdca.md
      */
     private async registerWithPrimaryServer(): Promise<void> {
-        if (this.serverModel.isPrimaryServer) {
+        if (this.serverModel.isPrimary) {
             return; // Primary server doesn't register with itself
         }
 
@@ -1510,13 +1534,16 @@ export class ServerHierarchyManager {
             const message = JSON.parse(data.toString());
             if (message.type === 'registration-confirmed') {
               console.log('✅ Registration confirmed with primary server');
-              this.serverModel.primaryServerIOR = this.createPrimaryServerIOR(message.primaryServerModel);
               
-              // Store primary server connection info for browser clients
+              // Store primary server UUID (ONCEPeerModel) - Reference<string> = string | null
+              this.serverModel.primaryPeerUuid = message.primaryServerModel.uuid || null;
+              
+              // Store primary server connection info for browser clients (deprecated but backwards compat)
               const primaryHttpPort = message.primaryServerModel.capabilities.find((c: any) => c.capability === 'httpPort')?.port;
-              this.serverModel.primaryServer = {
+              this.serverModel.primaryPeer = {
                 host: message.primaryServerModel.hostname || message.primaryServerModel.host || 'localhost',
-                port: primaryHttpPort || 42777
+                port: primaryHttpPort || 42777,
+                uuid: message.primaryServerModel.uuid || ''
               };
               
               this.serverModel.state = LifecycleState.REGISTERED;
@@ -1571,7 +1598,7 @@ export class ServerHierarchyManager {
      * @pdca 2025-12-08-UTC-1000.scenario-unit-unification.pdca.md
      */
     private async loadOrCreateScenario(): Promise<void> {
-        const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
+        const httpCapability = this.serverModel.capabilities!.find(c => c.capability === 'httpPort');
         if (!httpCapability) return;
 
         const uuid = this.serverModel.uuid;
@@ -1611,7 +1638,7 @@ export class ServerHierarchyManager {
         }
 
         try {
-            const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
+            const httpCapability = this.serverModel.capabilities!.find(c => c.capability === 'httpPort');
             const uuid = this.serverModel.uuid;
             const version = this.versionFromComponent;
             const component = 'ONCE';
@@ -1664,11 +1691,11 @@ export class ServerHierarchyManager {
      */
     private async saveScenarioLegacy(): Promise<void> {
         try {
-            const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
+            const httpCapability = this.serverModel.capabilities!.find(c => c.capability === 'httpPort');
             if (!httpCapability) return;
 
             const domainParts = this.getDetectDomainPath();
-            const hostname = this.serverModel.hostname;
+            const hostname = this.serverModel.hostname || 'localhost';
             
             const mainScenarioDir = path.join(
                 this.projectRoot, 
@@ -1696,11 +1723,11 @@ export class ServerHierarchyManager {
                     created: new Date().toISOString(),
                     modified: new Date().toISOString(),
                     creator: `ONCE-v${this.versionFromComponent}`,
-                    description: `ONCE server scenario - ${this.serverModel.isPrimaryServer ? 'Primary' : 'Client'} server`,
+                    description: `ONCE server scenario - ${this.serverModel.isPrimary ? 'Primary' : 'Client'} server`,
                     domain: this.serverModel.domain,
                     host: this.serverModel.host,
                     port: httpCapability?.port,
-                    isPrimaryServer: this.serverModel.isPrimaryServer,
+                    isPrimary: this.serverModel.isPrimary,
                     capabilities: this.serverModel.capabilities
                 }
             };
@@ -1731,7 +1758,7 @@ export class ServerHierarchyManager {
      *   - "localhost" -> ["local", "once"]
      */
     public getDetectDomainPath(): string[] {
-        const domain = this.serverModel.domain;
+        const domain = this.serverModel.domain || 'local.once';
         if (domain === 'local.once') {
             return ['local', 'once'];
         }
@@ -1740,16 +1767,17 @@ export class ServerHierarchyManager {
 
     /**
      * Get current server model
+     * @returns ONCEPeerModel - unified peer model
      */
-    getServerModel(): ONCEServerModel {
+    getServerModel(): ONCEPeerModel {
         return { ...this.serverModel };
     }
 
     /**
      * Check if this is the primary server
      */
-    isPrimaryServer(): boolean {
-        return this.serverModel.isPrimaryServer;
+    isPrimary(): boolean {
+        return this.serverModel.isPrimary;
     }
 
     /**
@@ -1758,7 +1786,7 @@ export class ServerHierarchyManager {
      * @pdca 2025-11-22-UTC-1500.iteration-01.6.4b-protocol-less-registry.pdca.md
      */
     getRegisteredServers(): any[] {  // Returns Scenario[] instead of ONCEServerModel[]
-        if (!this.serverModel.isPrimaryServer) {
+        if (!this.serverModel.isPrimary) {
             return [];
         }
         return Array.from(this.serverRegistry.values()).map(entry => entry.scenario);
@@ -1771,7 +1799,7 @@ export class ServerHierarchyManager {
      * @deprecated Will be replaced with scenario replication in Iteration 1.6.3
      */
     broadcastScenario(scenario: any): void {
-        if (!this.serverModel.isPrimaryServer) {
+        if (!this.serverModel.isPrimary) {
             console.log('⚠️  Only primary server can broadcast');
             return;
         }
@@ -1850,7 +1878,7 @@ export class ServerHierarchyManager {
      * @deprecated Will be replaced with scenario replication in Iteration 1.6.3
      */
     relayScenario(scenario: any, targetUUID: string): void {
-        if (!this.serverModel.isPrimaryServer) {
+        if (!this.serverModel.isPrimary) {
             // Client sends to primary for relay
             if (this.primaryServerConnection && this.primaryServerConnection.readyState === WebSocket.OPEN) {
                 console.log(`🔄 Relaying scenario ${scenario.uuid} via primary to ${targetUUID}`);
@@ -1919,7 +1947,7 @@ export class ServerHierarchyManager {
         
         try {
             const domainParts = this.getDetectDomainPath();
-            const hostname = this.serverModel.hostname;
+            const hostname = this.serverModel.hostname || 'localhost';
             const onceBaseDir = path.join(
                 this.projectRoot,
                 'scenarios',
@@ -2226,7 +2254,7 @@ export class ServerHierarchyManager {
                 // Exit process after cleanup
                 // Don't exit in test environment
                 if (process.env.NODE_ENV !== 'test' && !process.env.VITEST) {
-                    const role = this.serverModel.isPrimaryServer ? 'Primary' : 'Client';
+                    const role = this.serverModel.isPrimary ? 'Primary' : 'Client';
                     console.log(`✅ ${role} server shutdown complete`);
                     setTimeout(() => process.exit(0), 100);
                 }
@@ -2245,11 +2273,11 @@ export class ServerHierarchyManager {
      */
     private async updateScenarioState(state: LifecycleState): Promise<void> {
         try {
-            const httpCapability = this.serverModel.capabilities.find(c => c.capability === 'httpPort');
+            const httpCapability = this.serverModel.capabilities!.find(c => c.capability === 'httpPort');
             if (!httpCapability) return;
             
             const domainParts = this.getDetectDomainPath();
-            const hostname = this.serverModel.hostname;
+            const hostname = this.serverModel.hostname || 'localhost';
             
             // Update main scenario file (not the symlink)
             const mainScenarioPath = path.join(

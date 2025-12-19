@@ -63,7 +63,7 @@ export interface ONCEModel extends Model {
   initialized?: boolean;                           // ONCE kernel initialization flag
   initializationTime?: number;                     // Time taken for initialization (ms)
   scenario?: Scenario<ONCEPeerModel>;                        // Current ONCE scenario
-  serverModel?: ONCEServerModel;                   // Server model for hierarchy
+  serverModel?: ONCEPeerModel;                   // Server model for hierarchy (unified ONCEPeerModel)
   eventHandlers?: Map<LifecycleEventType, LifecycleEventHandler[]>; // ⚠️ DEPRECATED: Use observers instead
   observers?: LifecycleObserver[];                 // ✅ TRUE Radical OOP: Observer pattern (replaces eventHandlers)
   

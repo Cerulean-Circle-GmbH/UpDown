@@ -145,8 +145,9 @@ export interface ONCE {
     /**
      * Get current server model with all server instance information
      * @deprecated Use getPeerModel() for unified access
+     * @web4 Returns ONCEPeerModel (unified model) instead of ONCEServerModel
      */
-    getServerModel(): ONCEServerModel;
+    getServerModel(): ONCEPeerModel;
 
     /**
      * Start server with automatic port management (42777 → 8080+)
@@ -160,8 +161,9 @@ export interface ONCE {
 
     /**
      * Check if this instance is the primary server (port 42777)
+     * @web4 Renamed from isPrimaryServer() to isPrimary() for ONCEPeerModel consistency
      */
-    isPrimaryServer(): boolean;
+    isPrimary(): boolean;
 
     /**
      * Get all registered peer instances (only available on primary peer)

@@ -246,34 +246,14 @@ export class ScenarioManager {
     }
 
     /**
-     * Create scenario from server model
-     * ✅ Returns Scenario<ONCEPeerModel> (no legacy format)
-     * @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - Complete legacy elimination
+     * Create scenario from peer model (unified ONCEPeerModel)
+     * ✅ Accepts ONCEPeerModel directly (MC.1 migration complete)
+     * @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - MC.1
      */
-    createScenarioFromServerModel(serverModel: ONCEServerModel): Scenario<ONCEPeerModel> {
-        const peerModel: ONCEPeerModel = {
-            uuid: serverModel.uuid,
-            name: serverModel.hostname || `ONCE-${serverModel.uuid.slice(0, 8)}`,
-            version: this.version,
-            environment: serverModel.platform || new DefaultEnvironmentInfo(),
-            state: serverModel.state || LifecycleState.CREATED,
-            startTime: new Date(),
-            connectionTime: null,
-            host: serverModel.host,
-            port: serverModel.capabilities?.find(c => c.capability === 'httpPort')?.port || 0,
-            isPrimary: serverModel.isPrimaryServer,
-            primaryPeerUuid: serverModel.primaryServerIOR || null,
-            peers: [],
-            domain: serverModel.domain,
-            hostname: serverModel.hostname,
-            ip: serverModel.ip,
-            pid: serverModel.pid,
-            capabilities: serverModel.capabilities
-        };
-
+    createScenarioFromServerModel(peerModel: ONCEPeerModel): Scenario<ONCEPeerModel> {
         return {
             ior: {
-                uuid: serverModel.uuid,
+                uuid: peerModel.uuid,
                 component: 'ONCE',
                 version: this.version
             },
@@ -284,32 +264,16 @@ export class ScenarioManager {
 
     /**
      * Create server model from scenario
-     * ✅ Accepts Scenario<ONCEPeerModel> (MC.3 migration)
-     * @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - MC.3
+     * ✅ Returns ONCEPeerModel directly (MC.1 migration complete)
+     * @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - MC.1
      */
-    createServerModelFromScenario(scenario: Scenario<ONCEPeerModel>): ONCEServerModel {
+    createServerModelFromScenario(scenario: Scenario<ONCEPeerModel>): ONCEPeerModel {
         if (scenario.ior.component !== 'ONCE') {
             throw new Error(`Invalid scenario type for server model: ${scenario.ior.component}`);
         }
 
-        const model = scenario.model;
-        
-        // Convert ONCEPeerModel to ONCEServerModel for backwards compatibility
-        // Note: ONCEServerModel doesn't have 'name' or 'peers' fields
-        return {
-            uuid: model.uuid,
-            host: model.host,
-            domain: model.domain || 'localhost',
-            hostname: model.hostname || model.host,
-            ip: model.ip || '127.0.0.1',
-            pid: model.pid || 0,
-            state: model.state,
-            platform: model.environment,
-            isPrimaryServer: model.isPrimary,
-            primaryServer: model.primaryPeerUuid ? { host: model.host, port: model.port } : undefined,
-            primaryServerIOR: model.primaryPeerUuid || undefined,
-            capabilities: model.capabilities || []
-        };
+        // Return the model directly - ONCEPeerModel is now the unified model
+        return scenario.model;
     }
 
     /**

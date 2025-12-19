@@ -593,27 +593,13 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
     }
     
     /**
-     * Get current server model
+     * Get current server model (returns ONCEPeerModel)
      * @deprecated Use getPeerModel() instead
+     * @web4 Returns ONCEPeerModel (unified model) for consistency
      */
-    getServerModel(): ONCEServerModel {
-        console.warn('[BrowserOnce] getServerModel() called - browser is not a server, use getPeerModel()');
-        // Return minimal server model for compatibility
-        return {
-            uuid: this.model.uuid,
-            host: this.model.host,
-            hostname: this.model.host.split('.')[0],
-            pid: 0,
-            state: this.model.state,
-            platform: this.model.environment,
-            domain: 'local.once',
-            ip: '127.0.0.1',
-            capabilities: [{
-                capability: 'httpPort',
-                port: this.model.port
-            }],
-            isPrimaryServer: false
-        };
+    getServerModel(): ONCEPeerModel {
+        console.warn('[BrowserOnce] getServerModel() called - use getPeerModel() instead');
+        return this.model;
     }
     
     /**
@@ -637,10 +623,11 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
     }
     
     /**
-     * Check if this instance is the primary server
+     * Check if this instance is the primary peer
+     * @web4 Renamed from isPrimaryServer() to isPrimary() for ONCEPeerModel consistency
      */
-    isPrimaryServer(): boolean {
-        // Browser is never the primary server
+    isPrimary(): boolean {
+        // Browser is never the primary peer
         return false;
     }
     
