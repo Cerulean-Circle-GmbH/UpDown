@@ -273,6 +273,13 @@ return new BrowserOnce() as unknown as ONCEKernel;
 **Wrong:** View has `await fetch('/api/...')` ❌
 **Right:** View calls `this.component.loadData()` → component triggers layer4 ✅
 
+**Reactive Re-render:**
+```typescript
+// Component sets model → UcpModel proxy detects → Controller triggers View.render()
+this.model.data = data;  // ← This ALONE triggers re-render. No callback needed.
+```
+`onDataLoaded()` is optional interceptor for logging/transformation, NOT for triggering render.
+
 **Wrong (premature checkbox):**
 ```markdown
 - [x] MC.1.2: Update ServerHierarchyManager to use ONCEPeerModel ✅
