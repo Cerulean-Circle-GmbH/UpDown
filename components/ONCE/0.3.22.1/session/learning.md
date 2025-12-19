@@ -228,9 +228,13 @@ return new BrowserOnce() as unknown as ONCEKernel;
 **Date:** 2025-12-19  
 **Source:** User guidance after context summary  
 **Lesson:** When context was summarized (losing details), immediately re-read key files:
+
 1. **Tracking PDCA** → fractal stack, what's next
+   - [§/session/2025-12-12-UTC-2100.iteration-tracking.pdca.md](./2025-12-12-UTC-2100.iteration-tracking.pdca.md)
 2. **Agent context** → per-prompt checklist
-3. **howto.fractal.pdca.md** → methodology
+   - [§/session/2025-12-17-UTC-1200.agent-context.md](./2025-12-17-UTC-1200.agent-context.md)
+3. **Methodology** → howto.fractal.pdca.md
+   - [§/scrum.pmo/.../howto.fractal.pdca.md](../../../../../Web4Articles/scrum.pmo/roles/_shared/howto.fractal.pdca.md)
 
 **Pattern:** `read_file` costs tokens but prevents mistakes that cost MORE tokens to fix.
 
