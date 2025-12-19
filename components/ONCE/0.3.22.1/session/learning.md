@@ -178,6 +178,34 @@ return new BrowserOnce() as unknown as ONCEKernel;
 
 **Reference:** [§/session/2025-12-19-UTC-improvement-pdca-automation.md](./2025-12-19-UTC-improvement-pdca-automation.md)
 
+### **L13: DRY Applies to PDCAs, Stacks, and Plans — No Duplicates**
+**Date:** 2025-12-19  
+**Source:** User correction after agent created duplicate entries  
+**Lesson:** When reorganizing information, **MOVE** don't **DUPLICATE**.
+
+**Wrong (creates inconsistencies):**
+```markdown
+- 🔵 QUEUED → I.1 ActionBar — [→ Section]        ← DUPLICATE #1
+...many lines later...
+- 🔵 I.1 ActionBar — PENDING — [→ Section]       ← DUPLICATE #2
+```
+
+**Correct (single source of truth):**
+```markdown
+- 🔵 **I.1 ActionBar**: Dynamic Actions — **QUEUED** — [→ Section]
+```
+
+**Consistent Format Pattern:**
+```
+[icon] **[ID] [Name]**: [Description] — **[STATUS]** — [→ Link]
+```
+
+**Status values:** NEXT, QUEUED, PENDING, IN PROGRESS, COMPLETE, DEFERRED, PLANNED
+
+**Key Rule:** QUEUED is a STATUS like COMPLETE — not a prefix before `→`.
+
+**Applies to:** Code, PDCAs, plans, stacks — ALL information. CMM3 = consistent templates, not floating CMM2 variations.
+
 ---
 
 ## **🔴 Common Web4 Violations Found**
