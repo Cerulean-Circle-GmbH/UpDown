@@ -219,6 +219,25 @@ return new BrowserOnce() as unknown as ONCEKernel;
 
 **Benefit:** Gradual codebase cleanup without dedicated refactoring time. 1000+ violations → 0 through incremental fixes.
 
+### **L15: Verify Before Marking Complete — grep > checkbox**
+**Date:** 2025-12-19  
+**Source:** User caught discrepancy between PDCA claims and actual code state  
+**Lesson:** Before marking a task complete, **verify with grep** that the work is actually done.
+
+**Wrong (premature checkbox):**
+```markdown
+- [x] MC.1.2: Update ServerHierarchyManager to use ONCEPeerModel ✅
+```
+Meanwhile: `grep ONCEServerModel | wc -l` → 38 usages remain
+
+**Correct (verify first):**
+```bash
+# Before checking a box:
+grep -r "ONCEServerModel" src/ | wc -l  # Should be 0 or only deprecated uses
+```
+
+**Rule:** `grep` output is truth. Checkboxes are claims. Verify claims before committing.
+
 ---
 
 ## **🔴 Common Web4 Violations Found**
