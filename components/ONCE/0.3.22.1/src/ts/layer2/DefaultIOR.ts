@@ -2,12 +2,18 @@
  * DefaultIOR - Internet Object Reference Implementation
  * Web4 Radical OOP: Empty constructor, all state in model
  * 
+ * IOR is THE unified entry point for all remote operations:
+ * - new DefaultIOR().init(urlOrIorString).load()
+ * - Internally chains loaders based on protocol stack
+ * 
  * @layer2
- * @version 0.3.21.6
- * @pdca session/2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md
+ * @version 0.3.22.1
+ * @pdca session/2025-12-17-UTC-1740.fetch-centralization-dry.pdca.md
  */
 
-import { IOR, IORModel, IORProfile } from '../layer3/IOR.interface.js';
+import { IOR, IORModel, IORProfile, IOROptions } from '../layer3/IOR.interface.js';
+import { Loader } from '../layer3/Loader.interface.js';
+import { HTTPSLoader } from '../layer4/HTTPSLoader.js';
 
 /**
  * DefaultIOR - Web4 Compliant IOR Implementation
@@ -22,6 +28,15 @@ export class DefaultIOR implements IOR {
     /** Object state (Radical OOP: ALL state in model) */
     model: IORModel;
     
+    /** 
+     * Static loader registry (shared across all IOR instances)
+     * F.1.3: Internal loader registry
+     */
+    private static loaders: Map<string, Loader> = new Map();
+    
+    /** Flag to track if default loaders have been registered */
+    private static loadersInitialized = false;
+    
     /**
      * Empty constructor (Radical OOP pattern)
      * State initialization happens in init()
@@ -33,6 +48,29 @@ export class DefaultIOR implements IOR {
             version: '',
             uuid: ''
         };
+        
+        // F.1.7: Register default loaders on first use
+        if (!DefaultIOR.loadersInitialized) {
+            this.initDefaultLoaders();
+        }
+    }
+    
+    /**
+     * Initialize default loaders (F.1.7)
+     * Called once on first IOR instantiation
+     */
+    private initDefaultLoaders(): void {
+        DefaultIOR.loadersInitialized = true;
+        
+        // Register HTTPSLoader for 'https' protocol
+        const httpsLoader = new HTTPSLoader();
+        httpsLoader.init();
+        DefaultIOR.loaders.set('https', httpsLoader);
+        
+        // Register for 'http' as well (same loader, different protocol name)
+        DefaultIOR.loaders.set('http', httpsLoader);
+        
+        console.log('🔗 [IOR] Default loaders registered: https, http');
     }
     
     /**
@@ -307,6 +345,219 @@ export class DefaultIOR implements IOR {
         this.model.iorString = undefined;  // Clear cache
         
         return this;
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════════════
+    // F.1: IOR as Unified Entry Point (fetch centralization)
+    // ═══════════════════════════════════════════════════════════════════════════
+    
+    /**
+     * Register a loader for a protocol (F.1.3)
+     * 
+     * @param protocol - Protocol name (e.g., 'https', 'scenario', 'REST')
+     * @param loader - Loader instance
+     */
+    registerLoader(protocol: string, loader: Loader): void {
+        DefaultIOR.loaders.set(protocol, loader);
+        console.log(`🔗 [IOR] Loader registered: ${protocol}`);
+    }
+    
+    /**
+     * Get registered loader for a protocol
+     * 
+     * @param protocol - Protocol name
+     * @returns Loader instance or undefined if not registered
+     */
+    getLoader(protocol: string): Loader | undefined {
+        return DefaultIOR.loaders.get(protocol);
+    }
+    
+    /**
+     * Parse protocol chain from IOR string (F.1.4)
+     * 
+     * @example
+     * 'ior:scenario:REST:https://host/path' → ['scenario', 'REST', 'https']
+     * 'https://host/path' → ['https']
+     * 
+     * @returns Array of protocol names in order (outermost to innermost)
+     */
+    private parseProtocolChain(): string[] {
+        const iorString = this.model.iorString || this.computeIorString();
+        
+        // Check for protocol chain: ior:proto1:proto2:proto3://host/path
+        const chainMatch = iorString.match(/^(?:ior:)?([a-zA-Z:]+):\/\//);
+        if (!chainMatch) {
+            // Fallback to simple protocol
+            return [this.model.protocol || 'https'];
+        }
+        
+        const chainStr = chainMatch[1];
+        const protocols = chainStr.split(':').filter(function filterEmptyStrings(p: string): boolean { 
+            return p.length > 0; 
+        });
+        
+        return protocols;
+    }
+    
+    /**
+     * Load data via IOR with automatic protocol chain resolution (F.1.5)
+     * 
+     * THE entry point for all remote data loading in Web4.
+     * Parses protocol chain and delegates to appropriate loaders.
+     * 
+     * @param options - Optional load options (headers, timeout, etc.)
+     * @returns Loaded data (type depends on protocol chain)
+     */
+    async load<T = any>(options?: IOROptions): Promise<T> {
+        const protocols = this.parseProtocolChain();
+        const skipProtocols = options?.skipProtocols || [];
+        
+        // Filter out skipped protocols
+        const activeProtocols = protocols.filter(function filterSkipped(p: string): boolean {
+            return !skipProtocols.includes(p);
+        });
+        
+        if (activeProtocols.length === 0) {
+            throw new Error('[IOR] No active protocols in chain after filtering');
+        }
+        
+        // Get the transport protocol (last in chain, e.g., 'https')
+        const transportProtocol = activeProtocols[activeProtocols.length - 1];
+        const loader = this.getLoader(transportProtocol);
+        
+        if (!loader) {
+            throw new Error(`[IOR] No loader registered for protocol: ${transportProtocol}`);
+        }
+        
+        console.log(`📡 [IOR] Loading via chain: ${activeProtocols.join(' → ')}`);
+        
+        // Build the URL for transport layer
+        const url = this.toUrl();
+        
+        // Load via transport loader
+        const rawData = await loader.load(url, {
+            method: options?.method || 'GET',
+            headers: options?.headers,
+            timeout: options?.timeout
+        });
+        
+        // Process through higher-level loaders (in reverse order, excluding transport)
+        let result: any = rawData;
+        
+        // If we have higher-level protocols, process them
+        for (let i = activeProtocols.length - 2; i >= 0; i--) {
+            const protocol = activeProtocols[i];
+            const protocolLoader = this.getLoader(protocol);
+            
+            if (protocolLoader) {
+                // Each loader transforms the data
+                result = await protocolLoader.load(result, options);
+            } else {
+                // No loader for this protocol - try built-in transforms
+                result = this.applyBuiltInTransform(protocol, result, 'load');
+            }
+        }
+        
+        return result as T;
+    }
+    
+    /**
+     * Save data via IOR with automatic protocol chain resolution (F.1.6)
+     * 
+     * THE entry point for all remote data saving in Web4.
+     * 
+     * @param data - Data to save
+     * @param options - Optional save options (headers, method, etc.)
+     */
+    async save(data: any, options?: IOROptions): Promise<void> {
+        const protocols = this.parseProtocolChain();
+        const skipProtocols = options?.skipProtocols || [];
+        
+        // Filter out skipped protocols
+        const activeProtocols = protocols.filter(function filterSkipped(p: string): boolean {
+            return !skipProtocols.includes(p);
+        });
+        
+        if (activeProtocols.length === 0) {
+            throw new Error('[IOR] No active protocols in chain after filtering');
+        }
+        
+        // Get the transport protocol (last in chain)
+        const transportProtocol = activeProtocols[activeProtocols.length - 1];
+        const loader = this.getLoader(transportProtocol);
+        
+        if (!loader) {
+            throw new Error(`[IOR] No loader registered for protocol: ${transportProtocol}`);
+        }
+        
+        console.log(`📤 [IOR] Saving via chain: ${activeProtocols.join(' → ')}`);
+        
+        // Process through higher-level loaders (in forward order, excluding transport)
+        let processedData: any = data;
+        
+        for (let i = 0; i < activeProtocols.length - 1; i++) {
+            const protocol = activeProtocols[i];
+            const protocolLoader = this.getLoader(protocol);
+            
+            if (protocolLoader) {
+                // Each loader transforms the data for saving
+                processedData = await protocolLoader.save(processedData, '', options);
+            } else {
+                // No loader for this protocol - try built-in transforms
+                processedData = this.applyBuiltInTransform(protocol, processedData, 'save');
+            }
+        }
+        
+        // Ensure data is string for transport
+        const stringData = typeof processedData === 'string' 
+            ? processedData 
+            : JSON.stringify(processedData);
+        
+        // Save via transport loader
+        const url = this.toUrl();
+        await loader.save(stringData, url, {
+            method: options?.method || 'POST',
+            headers: options?.headers || { 'Content-Type': 'application/json' },
+            timeout: options?.timeout
+        });
+    }
+    
+    /**
+     * Apply built-in transform for common protocols
+     * Used when no explicit loader is registered
+     * 
+     * @param protocol - Protocol name
+     * @param data - Data to transform
+     * @param direction - 'load' or 'save'
+     * @returns Transformed data
+     */
+    private applyBuiltInTransform(protocol: string, data: any, direction: 'load' | 'save'): any {
+        switch (protocol) {
+            case 'scenario':
+                // Parse/stringify JSON for scenario protocol
+                if (direction === 'load') {
+                    return typeof data === 'string' ? JSON.parse(data) : data;
+                } else {
+                    return typeof data === 'string' ? data : JSON.stringify(data);
+                }
+                
+            case 'REST':
+                // REST is just a marker for HTTP verbs, no transform needed
+                return data;
+                
+            case 'json':
+                // Explicit JSON transform
+                if (direction === 'load') {
+                    return typeof data === 'string' ? JSON.parse(data) : data;
+                } else {
+                    return typeof data === 'string' ? data : JSON.stringify(data);
+                }
+                
+            default:
+                // Unknown protocol - pass through
+                console.warn(`[IOR] Unknown protocol '${protocol}' - passing data through`);
+                return data;
+        }
     }
 }
 

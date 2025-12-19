@@ -4,10 +4,17 @@
  * 
  * Enhanced from CORBA IOR with failover profiles support
  * 
+ * IOR is THE unified entry point for all remote operations:
+ * - new IOR().init(urlOrIorString).load()
+ * - Internally chains loaders based on protocol stack
+ * - Protocol chain: ior:scenario:REST:https:// → ScenarioLoader → RESTLoader → HTTPSLoader
+ * 
  * @layer3
- * @version 0.3.21.6
- * @pdca session/2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md
+ * @version 0.3.22.1
+ * @pdca session/2025-12-17-UTC-1740.fetch-centralization-dry.pdca.md
  */
+
+import { Loader } from './Loader.interface.js';
 
 /**
  * IOR Profile - Network location for object access (CORBA 2.3+ pattern)
@@ -22,6 +29,24 @@ export interface IORProfile {
     
     /** Optional protocol override for this profile */
     protocol?: string;
+}
+
+/**
+ * IOR Load/Save Options
+ * Options for IOR.load() and IOR.save() operations
+ */
+export interface IOROptions {
+    /** HTTP method (GET, POST, PUT, DELETE) - default: GET for load, POST for save */
+    method?: string;
+    
+    /** HTTP headers */
+    headers?: Record<string, string>;
+    
+    /** Request timeout in milliseconds - default: 5000 */
+    timeout?: number;
+    
+    /** Skip specific protocols in chain (e.g., ['scenario'] to get raw JSON) */
+    skipProtocols?: string[];
 }
 
 /**
@@ -125,9 +150,58 @@ export interface IOR {
      * @returns this for chaining
      */
     fromUrl(url: string): this;
+    
+    // ═══════════════════════════════════════════════════════════════════════════
+    // F.1: IOR as Unified Entry Point (fetch centralization)
+    // ═══════════════════════════════════════════════════════════════════════════
+    
+    /**
+     * Load data via IOR with automatic protocol chain resolution
+     * 
+     * THE entry point for all remote data loading in Web4.
+     * Parses protocol chain and delegates to appropriate loaders.
+     * 
+     * @example
+     * // Simple URL
+     * const data = await new IOR().init('https://host/path').load();
+     * 
+     * // Full IOR with protocol chain
+     * const scenario = await new IOR().init('ior:scenario:REST:https://host/Component/1.0.0/uuid').load();
+     * 
+     * @param options - Optional load options (headers, timeout, etc.)
+     * @returns Loaded data (type depends on protocol chain - string, JSON, or Scenario<T>)
+     */
+    load<T = any>(options?: IOROptions): Promise<T>;
+    
+    /**
+     * Save data via IOR with automatic protocol chain resolution
+     * 
+     * THE entry point for all remote data saving in Web4.
+     * Parses protocol chain and delegates to appropriate loaders.
+     * 
+     * @example
+     * // Save scenario
+     * await new IOR().init('ior:scenario:REST:https://host/Component/1.0.0/uuid').save(scenario);
+     * 
+     * @param data - Data to save
+     * @param options - Optional save options (headers, method, etc.)
+     */
+    save(data: any, options?: IOROptions): Promise<void>;
+    
+    /**
+     * Register a loader for a protocol
+     * 
+     * @param protocol - Protocol name (e.g., 'https', 'scenario', 'REST')
+     * @param loader - Loader instance
+     */
+    registerLoader(protocol: string, loader: Loader): void;
+    
+    /**
+     * Get registered loader for a protocol
+     * 
+     * @param protocol - Protocol name
+     * @returns Loader instance or undefined if not registered
+     */
+    getLoader(protocol: string): Loader | undefined;
 }
-
-
-
-
 
