@@ -5,7 +5,7 @@
  */
 
 import { Scenario } from '../layer3/Scenario.interface.js';
-import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
+// ONCEServerModel removed - using ONCEPeerModel (MC.1 complete)
 import { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
 import { LifecycleState } from '../layer3/LifecycleState.enum.js';
 import { DefaultEnvironmentInfo } from './DefaultEnvironmentInfo.js';

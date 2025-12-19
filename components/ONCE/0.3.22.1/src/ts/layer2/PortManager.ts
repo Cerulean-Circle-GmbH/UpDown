@@ -6,7 +6,7 @@
 import { createServer } from 'http';
 
 /**
- * Port configuration constants (inlined from ONCEServerModel.ts)
+ * Port configuration constants
  * @pdca session/2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md
  */
 const PRIMARY_PORT = 42777;

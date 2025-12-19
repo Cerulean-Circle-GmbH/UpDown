@@ -21,7 +21,7 @@ import { LifecycleObserver } from '../layer3/LifecycleObserver.interface.js';
 // ⚠️ DEPRECATED imports (functional pattern, will be removed):
 type LifecycleEventHandler = (event: any) => void | Promise<void>;
 type LifecycleHooks = Record<string, LifecycleEventHandler>;
-import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
+// ONCEServerModel removed - using ONCEPeerModel (MC.1 complete)
 import type { ServerCapability } from '../layer3/ServerCapability.interface.js';
 import { ServerHierarchyManager } from './ServerHierarchyManager.js';
 import { ScenarioManager } from './ScenarioManager.js';
@@ -772,7 +772,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
 
   /**
    * Get unified peer model
-   * Converts ONCEModel + ONCEServerModel to ONCEPeerModel
+   * Returns unified ONCEPeerModel from current state
    * @pdca session/2025-12-17-UTC-1750.browseronce-oncekernel-interface.pdca.md
    */
   getPeerModel(): ONCEPeerModel {

@@ -39,7 +39,7 @@ import type { IOR } from '../layer3/IOR.js';
 import type { ComponentQuery } from '../layer3/ComponentQuery.interface.js';
 import type { PerformanceMetrics } from '../layer3/PerformanceMetrics.interface.js';
 import type { LifecycleObserver } from '../layer3/LifecycleObserver.interface.js';
-import type { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
+// ONCEServerModel removed - using ONCEPeerModel (MC.1 complete)
 
 export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCEKernel {
     // Model type is ONCEPeerModel via generic inheritance
@@ -635,7 +635,7 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
      * Get all registered peer instances
      * @deprecated Use getPeerModel().peers instead
      */
-    getRegisteredServers(): ONCEServerModel[] {
+    getRegisteredServers(): ONCEPeerModel[] {
         console.warn('[BrowserOnce] getRegisteredServers() deprecated - use getPeerModel().peers');
         return [];
     }

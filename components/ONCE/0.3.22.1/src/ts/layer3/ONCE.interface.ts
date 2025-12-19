@@ -17,7 +17,7 @@ import { EnvironmentInfo } from './EnvironmentInfo.interface.js';
 import { ComponentQuery } from './ComponentQuery.interface.js';
 import { PerformanceMetrics } from './PerformanceMetrics.interface.js';
 
-import { ONCEServerModel } from './ONCEServerModel.interface.js';
+// ONCEServerModel removed - using ONCEPeerModel (MC.1 complete)
 
 /**
  * ONCE - Core kernel functionality for Web4 component system
@@ -145,7 +145,7 @@ export interface ONCE {
     /**
      * Get current server model with all server instance information
      * @deprecated Use getPeerModel() for unified access
-     * @web4 Returns ONCEPeerModel (unified model) instead of ONCEServerModel
+     * @web4 Returns ONCEPeerModel (unified model)
      */
     getServerModel(): ONCEPeerModel;
 
@@ -169,7 +169,7 @@ export interface ONCE {
      * Get all registered peer instances (only available on primary peer)
      * @deprecated Use getPeerModel().peers instead
      */
-    getRegisteredServers(): ONCEServerModel[];
+    getRegisteredServers(): ONCEPeerModel[];
     
     /**
      * Get unified peer model

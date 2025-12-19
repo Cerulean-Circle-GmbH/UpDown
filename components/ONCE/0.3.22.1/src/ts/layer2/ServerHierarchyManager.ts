@@ -12,7 +12,6 @@ import { createServer, Server } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
 import { exec } from 'child_process';
 import { PortManager } from './PortManager.js';
-import { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
 import { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
 import { ServerCapability } from '../layer3/ServerCapability.interface.js';
 import { LifecycleState } from '../layer3/LifecycleEvents.js';
@@ -1299,7 +1298,7 @@ export class ServerHierarchyManager {
      * @pdca 2025-11-22-UTC-1500.iteration-01.6.4b-protocol-less-registry.pdca.md
      * @deprecated Use filesystem scenario discovery instead
      */
-    private async handleServerRegistration(ws: WebSocket, clientServerModel: ONCEServerModel): Promise<void> {
+    private async handleServerRegistration(ws: WebSocket, clientServerModel: ONCEPeerModel): Promise<void> {
         console.warn('⚠️  handleServerRegistration deprecated - use filesystem scenario discovery');
         // ❌ REMOVED: Protocol-based registration
         // Servers are discovered via performHousekeeping() filesystem scan
@@ -1572,8 +1571,8 @@ export class ServerHierarchyManager {
     /**
      * Create IOR for primary server
      */
-    private createPrimaryServerIOR(primaryServerModel: ONCEServerModel): string {
-        const httpCapability = primaryServerModel.capabilities.find(c => c.capability === 'httpPort');
+    private createPrimaryServerIOR(primaryServerModel: ONCEPeerModel): string {
+        const httpCapability = primaryServerModel.capabilities?.find(c => c.capability === 'httpPort');
         if (!httpCapability) {
             throw new Error('Primary server has no HTTP capability');
         }
@@ -1785,7 +1784,7 @@ export class ServerHierarchyManager {
      * ✅ PROTOCOL-LESS: Returns scenarios (not models)
      * @pdca 2025-11-22-UTC-1500.iteration-01.6.4b-protocol-less-registry.pdca.md
      */
-    getRegisteredServers(): any[] {  // Returns Scenario[] instead of ONCEServerModel[]
+    getRegisteredServers(): any[] {  // Returns Scenario<ONCEPeerModel>[]
         if (!this.serverModel.isPrimary) {
             return [];
         }

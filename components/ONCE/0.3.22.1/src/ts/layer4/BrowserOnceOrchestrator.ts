@@ -20,7 +20,7 @@ import { Reference } from '../layer3/Reference.interface.js';
 import type { BrowserOnce } from '../layer2/BrowserOnce.js';
 import type { UcpRouter } from '../layer5/views/UcpRouter.js';
 import type { ServerDefaultModel } from '../layer5/views/OncePeerDefaultView.js';
-import type { ONCEServerModel } from '../layer3/ONCEServerModel.interface.js';
+import type { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
 import { LifecycleState } from '../layer3/LifecycleState.enum.js';
 
 /**
@@ -370,7 +370,7 @@ export class BrowserOnceOrchestrator {
       const servers = data.model?.servers || data.servers || [];
       
       // Check if primaryServer is returned separately in response
-      let primaryServerModel: ONCEServerModel | null = null;
+      let primaryServerModel: ONCEPeerModel | null = null;
       
       if (data.model?.primaryServer) {
         // Primary server returned separately
@@ -394,7 +394,7 @@ export class BrowserOnceOrchestrator {
         throw new Error('[Orchestrator] No primary server found in /servers response - cannot render server status');
       }
       
-      // Map ONCEServerModel to ServerDefaultModel
+      // Map ONCEPeerModel to ServerDefaultModel
       this.serverModel = this.mapToServerDefaultModel(primaryServerModel, servers.length);
       
       console.log('[Orchestrator] Server model fetched:', this.serverModel);
@@ -414,14 +414,14 @@ export class BrowserOnceOrchestrator {
   }
   
   /**
-   * Map ONCEServerModel to ServerDefaultModel
+   * Map ONCEPeerModel to ServerDefaultModel
    * ✅ Web4 P4: No arrow functions - uses method binding
    */
-  private mapToServerDefaultModel(onceModel: ONCEServerModel, peerCount: number): ServerDefaultModel {
-    // Map capabilities format: ONCEServerModel.capabilities already has { capability: string, port: number }
+  private mapToServerDefaultModel(onceModel: ONCEPeerModel, peerCount: number): ServerDefaultModel {
+    // Map capabilities format: ONCEPeerModel.capabilities already has { capability: string, port: number }
     // ServerDefaultModel expects same format, so we can use directly
     const capabilities = (onceModel.capabilities || []).map(function(cap: any) {
-      // Ensure capability field exists (should already be there from ONCEServerModel)
+      // Ensure capability field exists (should already be there from ONCEPeerModel)
       return {
         capability: cap.capability || 'httpPort',
         port: cap.port
@@ -469,7 +469,7 @@ export class BrowserOnceOrchestrator {
       hostname: onceModel.hostname || onceModel.host || 'localhost',
       domain: onceModel.domain || 'local.once',
       lifecycleState: lifecycleState,
-      isPrimaryServer: onceModel.isPrimaryServer || false,
+      isPrimaryServer: onceModel.isPrimary || false,
       capabilities: capabilities,
       peerCount: peerCount,
       peerHost: peerHost

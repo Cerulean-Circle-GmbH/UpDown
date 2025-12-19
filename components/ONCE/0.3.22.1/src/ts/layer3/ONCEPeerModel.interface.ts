@@ -7,7 +7,7 @@
  * Replaces/consolidates:
  * - ONCEModel (deprecated)
  * - ONCEKernelModel (deprecated)
- * - ONCEServerModel (kept as subset for server-specific data)
+ * - ONCEServerModel (DELETED - migrated to ONCEPeerModel)
  * - BrowserOnceModel (migrated)
  * 
  * @layer3

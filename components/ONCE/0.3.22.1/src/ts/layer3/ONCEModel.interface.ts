@@ -10,7 +10,7 @@ import type { ONCEPeerModel } from './ONCEPeerModel.interface.js';
 import { LifecycleEventType } from './LifecycleEventType.enum.js';
 import { LifecycleState } from './LifecycleState.enum.js';
 import { LifecycleObserver } from './LifecycleObserver.interface.js';
-import { ONCEServerModel } from './ONCEServerModel.interface.js';
+// ONCEServerModel removed - using ONCEPeerModel (MC.1 complete)
 
 // ⚠️ DEPRECATED: Keeping type definition for backward compatibility until Iteration 1.6.3
 // @pdca 2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md - Iteration 1.6.2
