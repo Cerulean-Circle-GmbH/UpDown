@@ -58,24 +58,18 @@ export interface FileModel extends Model {
   
   /** If isLink, the target path (stable reference) */
   linkTarget: Reference<string>;
-}
-
-/**
- * FileContent - Runtime content (NOT stored in model)
- * 
- * Kept separate from FileModel because:
- * - Blobs can't be serialized to JSON scenarios
- * - Content loaded on-demand via FileOrchestrator
- */
-export interface FileContent {
-  /** Binary content as Blob */
-  blob: Blob;
   
-  /** Object URL for display (created from Blob) */
-  objectUrl: Reference<string>;
-  
-  /** ArrayBuffer for processing */
-  arrayBuffer: Reference<ArrayBuffer>;
+  /**
+   * File content as native Blob
+   * 
+   * IndexedDB supports native Blob storage — no Base64 encoding needed!
+   * This enables proper PWA offline file caching.
+   * 
+   * Note: JSON serialization excludes Blob. IndexedDB handles it natively.
+   * 
+   * @pdca 2025-12-20-UTC-1900.pwa-file-scenario-caching.pdca.md I.8.1
+   */
+  content: Reference<Blob>;
 }
 
 

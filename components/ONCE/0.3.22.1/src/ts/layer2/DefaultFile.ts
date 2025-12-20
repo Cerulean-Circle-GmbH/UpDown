@@ -20,7 +20,7 @@
  */
 
 import { UcpComponent } from './UcpComponent.js';
-import { FileModel, FileContent } from '../layer3/FileModel.interface.js';
+import { FileModel } from '../layer3/FileModel.interface.js';
 import { Reference } from '../layer3/Reference.interface.js';
 
 // Forward declaration to avoid circular import
@@ -74,8 +74,11 @@ export class DefaultFile extends UcpComponent<FileModel> {
   // Runtime Content (NOT in model - can't serialize Blobs)
   // ═══════════════════════════════════════════════════════════════
   
-  /** Runtime file content */
-  private fileContent: Reference<FileContent> = null;
+  /** Runtime object URL for display (created from content Blob) */
+  private runtimeObjectUrl: Reference<string> = null;
+  
+  /** Runtime array buffer (created on demand for hashing) */
+  private runtimeArrayBuffer: Reference<ArrayBuffer> = null;
   
   // ═══════════════════════════════════════════════════════════════
   // Initialization
@@ -97,7 +100,8 @@ export class DefaultFile extends UcpComponent<FileModel> {
       createdAt: now,
       modifiedAt: now,
       isLink: false,
-      linkTarget: null
+      linkTarget: null,
+      content: null
     };
   }
   
@@ -120,12 +124,8 @@ export class DefaultFile extends UcpComponent<FileModel> {
     this.model.size = blob.size;
     this.model.modifiedAt = Date.now();
     
-    // Store content
-    this.fileContent = {
-      blob,
-      objectUrl: null,
-      arrayBuffer: null
-    };
+    // Store content in model (IndexedDB supports native Blob)
+    this.model.content = blob;
     
     // Compute content hash
     await this.contentHashCompute();
@@ -138,38 +138,45 @@ export class DefaultFile extends UcpComponent<FileModel> {
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Get file content (loads if not in memory)
+   * Get file content Blob
    */
-  get content(): Reference<FileContent> {
-    return this.fileContent;
+  get content(): Reference<Blob> {
+    return this.model.content;
+  }
+  
+  /**
+   * Set file content Blob
+   */
+  set content(blob: Reference<Blob>) {
+    this.model.content = blob;
   }
   
   /**
    * Check if content is loaded
    */
   get hasContent(): boolean {
-    return this.fileContent !== null;
+    return this.model.content !== null;
   }
   
   /**
    * Get Object URL for display (creates if needed)
    */
   get objectUrl(): Reference<string> {
-    if (!this.fileContent) return null;
+    if (!this.model.content) return null;
     
-    if (!this.fileContent.objectUrl) {
-      this.fileContent.objectUrl = URL.createObjectURL(this.fileContent.blob);
+    if (!this.runtimeObjectUrl) {
+      this.runtimeObjectUrl = URL.createObjectURL(this.model.content);
     }
-    return this.fileContent.objectUrl;
+    return this.runtimeObjectUrl;
   }
   
   /**
    * Revoke Object URL when no longer needed
    */
   objectUrlRevoke(): void {
-    if (this.fileContent?.objectUrl) {
-      URL.revokeObjectURL(this.fileContent.objectUrl);
-      this.fileContent.objectUrl = null;
+    if (this.runtimeObjectUrl) {
+      URL.revokeObjectURL(this.runtimeObjectUrl);
+      this.runtimeObjectUrl = null;
     }
   }
   
@@ -182,15 +189,14 @@ export class DefaultFile extends UcpComponent<FileModel> {
    * Used for Artefact content hash (deduplication)
    */
   async contentHashCompute(): Promise<string> {
-    if (!this.fileContent?.blob) {
+    if (!this.model.content) {
       throw new Error('[DefaultFile] No content to hash');
     }
     
-    const arrayBuffer = await this.fileContent.blob.arrayBuffer();
-    this.fileContent.arrayBuffer = arrayBuffer;
+    this.runtimeArrayBuffer = await this.model.content.arrayBuffer();
     
     // Use ContentIDProvider for SHA-256 (via UcpComponent)
-    const hashHex = await this.contentIdCreate(arrayBuffer);
+    const hashHex = await this.contentIdCreate(this.runtimeArrayBuffer);
     
     this.model.contentHash = hashHex;
     return hashHex;
@@ -282,7 +288,8 @@ export class DefaultFile extends UcpComponent<FileModel> {
    */
   dispose(): void {
     this.objectUrlRevoke();
-    this.fileContent = null;
+    this.model.content = null;
+    this.runtimeArrayBuffer = null;
   }
 }
 
