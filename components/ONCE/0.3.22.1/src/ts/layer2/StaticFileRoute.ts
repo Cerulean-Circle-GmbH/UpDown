@@ -421,11 +421,13 @@ export class StaticFileRoute extends Route {
         }
         
         // Create and register the unit
+        // @fix I.8.6: Use proper UUIDv4, not path as UUID
+        // @pdca 2025-12-20-UTC-1900.pwa-file-scenario-caching.pdca.md
         const now = new Date().toISOString();
         const unit: CachedUnitModel = {
-            uuid: urlPath,
+            uuid: crypto.randomUUID(),  // Proper UUIDv4 (not path!)
             name: this.nameFromPath(urlPath),
-            ior: urlPath,
+            ior: urlPath,               // IOR is the path (separate property)
             unitType: this.unitTypeFromMime(mimeType),
             cacheStrategy: CacheStrategy.CACHE_FIRST,
             version: this.componentVersion,
