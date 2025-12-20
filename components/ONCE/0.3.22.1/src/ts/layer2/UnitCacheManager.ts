@@ -130,10 +130,12 @@ export class UnitCacheManager {
     const now = new Date().toISOString();
     
     // Create metadata for this unit
+    // @fix I.8.3: Use proper UUIDv4 for uuid, IOR is separate property
+    // @pdca 2025-12-20-UTC-1900.pwa-file-scenario-caching.pdca.md
     const metadata: CachedUnitModel = {
-      uuid: ior, // Use IOR as UUID
+      uuid: this.uuidGenerate(),  // Proper UUIDv4 (not IOR path!)
       name: this.nameFromIor(ior),
-      ior: ior,
+      ior: ior,                   // IOR path stored separately
       unitType: unitType,
       cacheStrategy: this.strategyForType(unitType),
       version: this.model.cacheVersion,
@@ -146,6 +148,7 @@ export class UnitCacheManager {
       accessCount: 0
     };
     
+    // Map IOR → metadata (for lookup by path)
     this.unitMetadata.set(ior, metadata);
     this.model.cachedIors.push(ior);
     this.model.unitCount = this.model.unitCount + 1;
