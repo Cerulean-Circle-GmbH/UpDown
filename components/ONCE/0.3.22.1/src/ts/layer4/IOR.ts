@@ -33,6 +33,9 @@ import { ReferenceState } from '../layer3/ReferenceState.enum.js';
 import type { Loader } from '../layer3/Loader.interface.js';
 import type { IORInterface, IORModel, IORProfile, IOROptions } from '../layer3/IOR.interface.js';
 import { HTTPSLoader } from './HTTPSLoader.js';
+import { ScenarioLoader } from './ScenarioLoader.js';
+import { WebSocketLoader } from './WebSocketLoader.js';
+import { FileLoader } from './FileLoader.js';
 
 /**
  * IOR<T> - Unified Reference/IOR Implementation
@@ -102,7 +105,23 @@ export class IOR<T = any> implements IORInterface {
         IOR.loaders.set('https', httpsLoader);
         IOR.loaders.set('http', httpsLoader);
         
-        console.log('🔗 [IOR] Default loaders registered: https, http');
+        // Register ScenarioLoader for 'scenario' protocol
+        const scenarioLoader = new ScenarioLoader();
+        scenarioLoader.init();
+        IOR.loaders.set('scenario', scenarioLoader);
+        
+        // Register WebSocketLoader for 'wss' and 'ws' protocols
+        const wsLoader = new WebSocketLoader();
+        wsLoader.init();
+        IOR.loaders.set('wss', wsLoader);
+        IOR.loaders.set('ws', wsLoader);
+        
+        // Register FileLoader for 'file' protocol (Node.js only)
+        const fileLoader = new FileLoader();
+        fileLoader.init();
+        IOR.loaders.set('file', fileLoader);
+        
+        console.log('🔗 [IOR] Default loaders registered: https, http, scenario, wss, ws, file');
     }
     
     // ═══════════════════════════════════════════════════════════════
