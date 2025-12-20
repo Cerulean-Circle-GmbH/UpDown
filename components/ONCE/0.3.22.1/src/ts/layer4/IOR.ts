@@ -36,6 +36,7 @@ import type { IORModel } from '../layer3/IORModel.interface.js';
 import type { IORProfile } from '../layer3/IORProfile.interface.js';
 import type { IOROptions } from '../layer3/IOROptions.interface.js';
 import { HttpMethod } from '../layer3/HttpMethod.enum.js';
+import type { Scenario } from '../layer3/Scenario.interface.js';
 import { HTTPSLoader } from './HTTPSLoader.js';
 import { ScenarioLoader } from './ScenarioLoader.js';
 import { WebSocketLoader } from './WebSocketLoader.js';
@@ -386,6 +387,14 @@ export class IOR<T = any> implements IORInterface {
     
     /**
      * Store resolved result in PWA cache (I.7.2)
+     * 
+     * Creates proper Scenario<T> structure with:
+     * - ior: {uuid, component, version}
+     * - owner: 'browser-cache'
+     * - model: the resolved data
+     * - unit: undefined (file-specific unit created by StaticFileRoute)
+     * 
+     * @pdca 2025-12-20-UTC-1900.pwa-file-scenario-caching.pdca.md I.8.4
      */
     private async cacheStore(result: T): Promise<void> {
         // Only in browser context
@@ -404,16 +413,19 @@ export class IOR<T = any> implements IORInterface {
                 return;
             }
             
-            // Build scenario structure
+            // Build proper Scenario structure (I.8.4)
+            // Note: For FileModel, the full Scenario<UnitModel> unit is created by StaticFileRoute
+            // Type assertion needed because T may not extend Model at IOR level
             const scenario = {
                 ior: {
                     uuid: this.model.uuid,
-                    component: this.model.component,
-                    version: this.model.version
+                    component: this.model.component || 'IOR',
+                    version: this.model.version || '1.0.0'
                 },
                 owner: 'browser-cache',
-                model: result
-            };
+                model: result,
+                unit: undefined  // File-specific unit created by StaticFileRoute (I.8.6)
+            } as Scenario<any>;
             
             await storage.scenarioSave(this.model.uuid, scenario, []);
             console.log(`💾 [IOR] Cached: ${this.model.uuid}`);
