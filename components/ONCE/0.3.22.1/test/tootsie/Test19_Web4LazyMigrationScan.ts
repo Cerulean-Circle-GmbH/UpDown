@@ -19,6 +19,7 @@
  * - P4: Arrow functions in forEach/map/filter → should be method references
  * - P3: Underscore prefix properties → use descriptive suffix
  * - P3: String literal types → should be enums (HttpMethod, LifecycleState)
+ * - P5: Nullable types without Reference<T> → should be Reference<T>
  * - P26: Factory functions → should be `new Class().init(scenario)`
  * - P1: Separate Config objects → should be part of Scenario
  * - P7: fetch() calls outside layer4 → should use HTTPSLoader from layer4
@@ -257,6 +258,27 @@ export class Test19_Web4LazyMigrationScan extends ONCETestCase {
         // Matches: method: 'GET' or method === 'POST' (common HTTP methods as strings)
         regex: /(?:method|Method)\s*[:=!]==?\s*['"](?:GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)['"]/g,
         suggestion: 'Use HttpMethod enum: `HttpMethod.GET` instead of string literal',
+      },
+      
+      // ═══════════════════════════════════════════════════════════════
+      // P5: Reference<T> for Nullables
+      // ═══════════════════════════════════════════════════════════════
+      
+      {
+        name: 'Nullable type without Reference',
+        principle: 'P5',
+        // Matches: : SomeType | null or : string | null = null (excluding Reference<)
+        regex: /:\s*([A-Z]\w+)\s*\|\s*null\b/g,
+        suggestion: 'Use `Reference<$1>` instead of `$1 | null`',
+        exclude: /Reference</,  // Exclude already-correct Reference types
+      },
+      {
+        name: 'Nullable primitive without Reference',
+        principle: 'P5',
+        // Matches: : string | null or : number | null
+        regex: /:\s*(string|number|boolean)\s*\|\s*null\b/g,
+        suggestion: 'Use `Reference<$1>` instead of `$1 | null`',
+        exclude: /Reference</,
       },
       
       // ═══════════════════════════════════════════════════════════════
