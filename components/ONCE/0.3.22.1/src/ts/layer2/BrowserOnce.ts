@@ -777,6 +777,12 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
     }
     
     private handleScenarioUpdate(scenario: any): void {
+        // I.7.6: Handle cache-invalidate messages from server
+        if (scenario.type === 'cache-invalidate') {
+            this.handleCacheInvalidate(scenario);
+            return;
+        }
+        
         // ✅ Determine scenario type from IOR component
         const component = scenario.ior?.component;
         
@@ -794,6 +800,58 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
         // ✅ Update legacy UI (for demo-hub.html)
         this.updatePeersDisplay();
         this.updateStatsDisplay();
+    }
+    
+    /**
+     * Handle cache-invalidate message from server (I.7.6)
+     * Invalidates the local BrowserScenarioStorage cache and triggers re-resolve
+     * @pdca 2025-12-20-UTC-1315.ior-infrastructure-universal-access.pdca.md
+     */
+    private async handleCacheInvalidate(message: any): Promise<void> {
+        const { uuid, component, version } = message;
+        console.log(`🔄 [I.7.6] Cache invalidate received: ${uuid} (${component}/${version})`);
+        
+        try {
+            // Delete from local cache
+            const storage = await this.browserStorageGet();
+            if (storage) {
+                await storage.scenarioDelete(uuid);
+                console.log(`🗑️ [I.7.6] Deleted from cache: ${uuid}`);
+            }
+            
+            // Re-resolve via IOR (will fetch fresh from server)
+            const ior = await new IOR().init({
+                uuid: uuid,
+                component: component || 'Unknown',
+                version: version || '0.0.0.0'
+            });
+            
+            const freshData = await ior.load();
+            console.log(`✅ [I.7.6] Re-resolved: ${uuid}`, freshData ? 'success' : 'null');
+            
+        } catch (error: any) {
+            console.warn(`[I.7.6] Cache invalidate failed for ${uuid}: ${error.message}`);
+        }
+    }
+    
+    /**
+     * Get BrowserScenarioStorage instance (lazy init)
+     * @private
+     */
+    private async browserStorageGet(): Promise<any> {
+        try {
+            const { BrowserScenarioStorage } = await import('./BrowserScenarioStorage.js');
+            const storage = new BrowserScenarioStorage();
+            await storage.init({
+                ior: { uuid: 'browser-once-cache', component: 'ONCE', version: this.model.version },
+                owner: 'BrowserOnce',
+                model: { uuid: 'browser-once-cache', projectRoot: '', indexBaseDir: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
+            });
+            return storage;
+        } catch (error) {
+            console.warn('[BrowserOnce] Failed to get BrowserScenarioStorage:', error);
+            return null;
+        }
     }
     
     /**

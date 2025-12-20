@@ -821,6 +821,78 @@ export class IOR<T = any> implements IORInterface {
         // Update local cached value
         this.resolvedValue = data;
         this.referenceState = ReferenceState.RESOLVED;
+        
+        // I.7.3: Save to BrowserScenarioStorage (PWA offline sync)
+        await this.cacheStoreSave(data);
+        
+        // I.7.4: Notify via WebSocket (if connected)
+        await this.webSocketNotifySave();
+    }
+    
+    /**
+     * Save data to browser cache (I.7.3)
+     * @private
+     */
+    private async cacheStoreSave(data: any): Promise<void> {
+        if (typeof indexedDB === 'undefined') { return; }
+        if (!this.model.uuid) { return; }
+        
+        try {
+            const storage = await this.browserStorageGet();
+            if (!storage) { return; }
+            
+            const now = new Date().toISOString();
+            const scenario: Scenario<any> = {
+                ior: {
+                    uuid: this.model.uuid,
+                    component: this.model.component || 'IOR',
+                    version: this.model.version || '0.3.22.1'
+                },
+                owner: 'browser-cache',
+                model: data
+            };
+            
+            await storage.scenarioSave(this.model.uuid, scenario, [`type/${this.model.component}/${this.model.version}`]);
+            console.log(`💾 [IOR] Saved to browser cache: ${this.model.uuid}`);
+            
+        } catch (error: any) {
+            console.warn(`[IOR] Browser cache save failed: ${error.message}`);
+        }
+    }
+    
+    /**
+     * Notify server via WebSocket about saved scenario (I.7.4)
+     * @private
+     */
+    private async webSocketNotifySave(): Promise<void> {
+        if (typeof WebSocket === 'undefined') { return; }
+        if (!this.model.uuid) { return; }
+        
+        try {
+            const wsLoader = IOR.loaders.get('wss') as any;
+            if (!wsLoader) { return; }
+            
+            // Find active WebSocket connection to our server
+            const wsUrl = `wss://${this.model.host || 'localhost'}:${this.model.port || 443}/ws`;
+            const state = wsLoader.getState ? wsLoader.getState(wsUrl) : 'DISCONNECTED';
+            
+            if (state !== 'CONNECTED') { return; }
+            
+            // Send update notification
+            await wsLoader.save({
+                type: 'scenario-update',
+                uuid: this.model.uuid,
+                version: this.model.version,
+                component: this.model.component,
+                timestamp: new Date().toISOString()
+            }, wsUrl, {});
+            
+            console.log(`📡 [IOR] WebSocket notified: ${this.model.uuid}`);
+            
+        } catch (error: any) {
+            // WebSocket notify is best-effort, don't fail save
+            console.warn(`[IOR] WebSocket notify failed: ${error.message}`);
+        }
     }
     
     // ═══════════════════════════════════════════════════════════════

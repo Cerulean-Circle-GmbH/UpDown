@@ -1093,6 +1093,10 @@ export class ServerHierarchyManager {
         
         // Legacy protocol handling (for backward compatibility / deprecation warnings)
         switch (message.type) {
+            case 'scenario-update':
+                // I.7.5: Broadcast scenario update to all browser clients with same UUID
+                this.handleScenarioUpdateNotification(ws, message);
+                break;
             case 'server-registration':
                 // ❌ DEPRECATED: Protocol-based server registration
                 console.warn('⚠️  server-registration deprecated - send scenario directly');
@@ -1853,6 +1857,67 @@ export class ServerHierarchyManager {
                 client.send(JSON.stringify(scenario));  // ✅ Pure state transfer
             }
         });
+    }
+
+    /**
+     * Handle scenario-update notification from browser client (I.7.5)
+     * Broadcasts cache invalidation message to all other browser clients
+     * @pdca 2025-12-20-UTC-1315.ior-infrastructure-universal-access.pdca.md
+     */
+    private handleScenarioUpdateNotification(sender: WebSocket, message: any): void {
+        const { uuid, version, component, timestamp } = message;
+        
+        console.log(`📡 [I.7.5] Scenario update notification: ${uuid} (${component}/${version})`);
+        
+        // Broadcast to all browser clients EXCEPT the sender
+        let broadcastCount = 0;
+        this.browserClients.forEach((client: WebSocket) => {
+            if (client !== sender && client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({
+                    type: 'cache-invalidate',
+                    uuid: uuid,
+                    version: version,
+                    component: component,
+                    timestamp: timestamp,
+                    source: 'server'
+                }));
+                broadcastCount++;
+            }
+        });
+        
+        console.log(`📡 [I.7.5] Cache invalidation sent to ${broadcastCount} browser clients`);
+        
+        // If this is a client server, also forward to primary for cross-server broadcast
+        if (!this.serverModel.isPrimary && this.primaryServerConnection && 
+            this.primaryServerConnection.readyState === WebSocket.OPEN) {
+            this.primaryServerConnection.send(JSON.stringify({
+                type: 'scenario-update-relay',
+                uuid: uuid,
+                version: version,
+                component: component,
+                timestamp: timestamp,
+                sourceServer: this.serverModel.uuid
+            }));
+            console.log(`📡 [I.7.5] Forwarded to primary server`);
+        }
+        
+        // If this is primary server, broadcast to all registered client servers
+        if (this.serverModel.isPrimary) {
+            this.serverRegistry.forEach((entry: ServerRegistryEntry, _serverUuid: string) => {
+                if (entry.websocket && entry.websocket !== sender && 
+                    entry.websocket.readyState === WebSocket.OPEN) {
+                    entry.websocket.send(JSON.stringify({
+                        type: 'scenario-update',
+                        uuid: uuid,
+                        version: version,
+                        component: component,
+                        timestamp: timestamp,
+                        fromPrimary: true
+                    }));
+                }
+            });
+            console.log(`📡 [I.7.5] Forwarded to ${this.serverRegistry.size} client servers`);
+        }
     }
 
     /**
