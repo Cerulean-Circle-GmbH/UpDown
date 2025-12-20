@@ -1,91 +1,115 @@
 /**
- * IOR v0.2.0.0 - Internet Object Reference
- * Enhanced from 0.1.0.2 with server hierarchy support
- */
-
-/**
- * Internet Object Reference - Universal object locator
- */
-/**
+ * IOR.ts - Simple IOR utilities (deprecated)
+ * 
  * @deprecated Use IOR class from layer4/IOR.ts instead
  * This simple interface is kept for backwards compatibility
+ * 
+ * Web4 Principles:
+ * - P4a: No standalone functions - use static methods
+ * - P19: One File One Type (SimpleIOR + SimpleIORUtils)
+ */
+
+/**
+ * @deprecated Use IOR class from layer4/IOR.ts instead
  */
 export interface SimpleIOR {
-    /**
-     * Protocol (web4, http, https, ws, wss)
-     */
+    /** Protocol (web4, http, https, ws, wss) */
     protocol: string;
 
-    /**
-     * Host (domain name or IP)
-     */
+    /** Host (domain name or IP) */
     host: string;
 
-    /**
-     * Port number
-     */
+    /** Port number */
     port: number;
 
-    /**
-     * Path to object
-     */
+    /** Path to object */
     path: string;
 
-    /**
-     * Object UUID
-     */
+    /** Object UUID */
     uuid: string;
 
-    /**
-     * Object type
-     */
+    /** Object type */
     objectType: string;
 
-    /**
-     * Object version
-     */
+    /** Object version */
     version: string;
 
-    /**
-     * Additional parameters
-     */
+    /** Additional parameters */
     params?: Record<string, string>;
 }
 
 /**
- * Convert IOR to URL string
+ * SimpleIOR Utilities
+ * 
+ * @deprecated Use IOR class from layer4/IOR.ts instead
+ * 
+ * Web4 P4a: Static methods instead of standalone functions
  */
-export function iorToUrl(ior: SimpleIOR): string {
-    const baseUrl = `${ior.protocol}://${ior.host}:${ior.port}${ior.path}`;
-    const params = new URLSearchParams({
-        uuid: ior.uuid,
-        type: ior.objectType,
-        version: ior.version,
-        ...ior.params
-    });
-    return `${baseUrl}?${params.toString()}`;
+export class SimpleIORUtils {
+    
+    /**
+     * Convert IOR to URL string
+     * @deprecated Use new IOR().init(model).toUrl() instead
+     */
+    static toUrl(ior: SimpleIOR): string {
+        const baseUrl = `${ior.protocol}://${ior.host}:${ior.port}${ior.path}`;
+        const params = new URLSearchParams({
+            uuid: ior.uuid,
+            type: ior.objectType,
+            version: ior.version,
+            ...ior.params
+        });
+        return `${baseUrl}?${params.toString()}`;
+    }
+    
+    /**
+     * Parse URL string to IOR
+     * @deprecated Use new IOR().init(url) instead
+     */
+    static fromUrl(url: string): SimpleIOR {
+        const parsed = new URL(url);
+        const params = Object.fromEntries(parsed.searchParams);
+        
+        return {
+            protocol: parsed.protocol.replace(':', ''),
+            host: parsed.hostname,
+            port: parseInt(parsed.port) || 80,
+            path: parsed.pathname,
+            uuid: params.uuid || '',
+            objectType: params.type || '',
+            version: params.version || '',
+            params: SimpleIORUtils.filterReservedParams(params)
+        };
+    }
+    
+    /**
+     * Filter out reserved params (uuid, type, version)
+     * P4a: Named function instead of arrow
+     */
+    private static filterReservedParams(params: Record<string, string>): Record<string, string> {
+        const reserved = ['uuid', 'type', 'version'];
+        const result: Record<string, string> = {};
+        
+        for (const key of Object.keys(params)) {
+            if (!reserved.includes(key)) {
+                result[key] = params[key];
+            }
+        }
+        
+        return result;
+    }
 }
 
 /**
- * Parse URL string to IOR
+ * @deprecated Use SimpleIORUtils.toUrl() instead
  */
-export function urlToIor(url: string): SimpleIOR {
-    const parsed = new URL(url);
-    const params = Object.fromEntries(parsed.searchParams);
-    
-    return {
-        protocol: parsed.protocol.replace(':', ''),
-        host: parsed.hostname,
-        port: parseInt(parsed.port) || 80,
-        path: parsed.pathname,
-        uuid: params.uuid || '',
-        objectType: params.type || '',
-        version: params.version || '',
-        params: Object.fromEntries(
-            Object.entries(params).filter(([key]) => 
-                !['uuid', 'type', 'version'].includes(key)
-            )
-        )
-    };
+export function iorToUrl(ior: SimpleIOR): string {
+    return SimpleIORUtils.toUrl(ior);
 }
 
+/**
+ * @deprecated Use SimpleIORUtils.fromUrl() instead
+ */
+export function urlToIor(url: string): SimpleIOR {
+    return SimpleIORUtils.fromUrl(url);
+}
