@@ -28,14 +28,20 @@ import type { Model } from '../layer3/Model.interface.js';
 /** Database name */
 const DB_NAME = 'once-scenarios';
 
-/** Database version */
-const DB_VERSION = 1;
+/** 
+ * Database version
+ * v1: Initial schema (scenarios-index, type, domain, capability)
+ * v2: Added artefacts store for Blob content (I.9.2)
+ */
+const DB_VERSION = 2;
 
 /** Object store names */
 const STORE_INDEX = 'scenarios-index';
 const STORE_TYPE = 'scenarios-type';
 const STORE_DOMAIN = 'scenarios-domain';
 const STORE_CAPABILITY = 'scenarios-capability';
+/** Artefact store: content-addressable Blob storage (I.9.2) */
+const STORE_ARTEFACTS = 'artefacts';
 
 /**
  * BrowserScenarioStorage - IndexedDB implementation of PersistenceManager
@@ -124,6 +130,14 @@ export class BrowserScenarioStorage implements PersistenceManager {
         if (!db.objectStoreNames.contains(STORE_CAPABILITY)) {
           const capStore = db.createObjectStore(STORE_CAPABILITY, { keyPath: 'key' });
           capStore.createIndex('uuid', 'uuid', { unique: false });
+        }
+        
+        // I.9.2: Artefact store for content-addressable Blob storage
+        // Key is contentHash (SHA-256), enables deduplication
+        if (!db.objectStoreNames.contains(STORE_ARTEFACTS)) {
+          const artefactStore = db.createObjectStore(STORE_ARTEFACTS, { keyPath: 'contentHash' });
+          artefactStore.createIndex('unitUuid', 'unitUuid', { unique: false });
+          artefactStore.createIndex('mimetype', 'mimetype', { unique: false });
         }
         
         console.log('[BrowserScenarioStorage] Created IndexedDB stores');
@@ -343,6 +357,111 @@ export class BrowserScenarioStorage implements PersistenceManager {
     } catch {
       return false;
     }
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Artefact Storage (I.9.2-I.9.5)
+  // Content-addressable Blob storage for deduplication
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Save artefact with Blob content (I.9.3)
+   * 
+   * Key is contentHash (SHA-256) - same content = same artefact
+   * IndexedDB natively supports Blob storage
+   * 
+   * @param contentHash SHA-256 hash of content
+   * @param blob Content as Blob
+   * @param metadata Artefact metadata (size, mimetype, unitUuid)
+   */
+  async artefactSave(
+    contentHash: string,
+    blob: Blob,
+    metadata: { size: number; mimetype: string; unitUuid: string }
+  ): Promise<void> {
+    const db = await this.dbOpen();
+    
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(STORE_ARTEFACTS, 'readwrite');
+      const store = transaction.objectStore(STORE_ARTEFACTS);
+      
+      const artefactRecord = {
+        contentHash,
+        content: blob,  // IndexedDB natively stores Blob
+        size: metadata.size,
+        mimetype: metadata.mimetype,
+        unitUuid: metadata.unitUuid,
+        createdAt: Date.now()
+      };
+      
+      store.put(artefactRecord);
+      
+      transaction.oncomplete = () => {
+        console.log(`[BrowserScenarioStorage] 📦 Artefact saved: ${contentHash.substring(0, 16)}...`);
+        resolve();
+      };
+      transaction.onerror = () => {
+        reject(new Error(`Failed to save artefact: ${transaction.error}`));
+      };
+    });
+  }
+  
+  /**
+   * Load artefact by content hash (I.9.4)
+   * 
+   * @param contentHash SHA-256 hash
+   * @returns Artefact with Blob content, or null if not found
+   */
+  async artefactLoad(contentHash: string): Promise<{ content: Blob; size: number; mimetype: string; unitUuid: string } | null> {
+    const db = await this.dbOpen();
+    
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(STORE_ARTEFACTS, 'readonly');
+      const store = transaction.objectStore(STORE_ARTEFACTS);
+      const request = store.get(contentHash);
+      
+      request.onsuccess = () => {
+        if (request.result) {
+          resolve({
+            content: request.result.content,
+            size: request.result.size,
+            mimetype: request.result.mimetype,
+            unitUuid: request.result.unitUuid
+          });
+        } else {
+          resolve(null);
+        }
+      };
+      
+      request.onerror = () => {
+        reject(new Error(`Failed to load artefact: ${request.error}`));
+      };
+    });
+  }
+  
+  /**
+   * Check if artefact exists (I.9.5)
+   * Used for deduplication - don't re-store same content
+   * 
+   * @param contentHash SHA-256 hash
+   * @returns true if artefact exists
+   */
+  async artefactExists(contentHash: string): Promise<boolean> {
+    const db = await this.dbOpen();
+    
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(STORE_ARTEFACTS, 'readonly');
+      const store = transaction.objectStore(STORE_ARTEFACTS);
+      const request = store.count(IDBKeyRange.only(contentHash));
+      
+      request.onsuccess = () => {
+        resolve(request.result > 0);
+      };
+      
+      request.onerror = () => {
+        reject(new Error(`Failed to check artefact: ${request.error}`));
+      };
+    });
   }
   
   /**
