@@ -294,6 +294,37 @@ grep -r "ONCEServerModel" src/ | wc -l  # Should be 0 or only deprecated uses
 
 **Rule:** `grep` output is truth. Checkboxes are claims. Verify claims before committing.
 
+### **L18: Run Test19 BEFORE Commit — Not After**
+**Date:** 2025-12-20  
+**Source:** User correction  
+**Lesson:** Before committing, run `./once tootsie file 19` to check for Web4 violations. Fix 1-2 violations BEFORE commit, not as a separate task.
+
+**Correct Order:**
+```
+1. Code changes
+2. tsc --noEmit
+3. Run Test02 (or relevant test)
+4. Run Test19 → fix 1-2 violations  ← BEFORE COMMIT!
+5. git add && git commit -m "PDCAfilename.pdca.md"
+6. git push && git status
+```
+
+### **L19: Follow L5 — Commit Message = PDCA Filename**
+**Date:** 2025-12-20  
+**Source:** User correction  
+**Lesson:** L5 exists but I didn't follow it! Descriptive commit messages are WRONG. Always use:
+
+```bash
+git commit -m "2025-12-20-UTC-1315.ior-infrastructure-universal-access.pdca.md"
+```
+
+NOT:
+```bash
+git commit -m "I.4 COMPLETE: Router DRY + P4/P6 compliance"  # ❌ WRONG
+```
+
+**Action:** Re-read learnings before each commit. Document and follow, don't just document.
+
 ---
 
 ## **🔴 Common Web4 Violations Found**
