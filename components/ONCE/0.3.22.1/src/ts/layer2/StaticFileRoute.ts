@@ -46,6 +46,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type { UnitsRoute } from './UnitsRoute.js';
 import type { CachedUnitModel } from '../layer3/CachedUnitModel.interface.js';
+import type { Reference } from '../layer3/Reference.interface.js';
 import { UnitType } from '../layer3/UnitType.enum.js';
 import { CacheStrategy } from '../layer3/CacheStrategy.enum.js';
 
@@ -84,7 +85,7 @@ import { CacheStrategy } from '../layer3/CacheStrategy.enum.js';
  */
 export class StaticFileRoute extends Route {
     private projectRoot: string = '';
-    private unitsRoute: UnitsRoute | null = null;
+    private unitsRoute: Reference<UnitsRoute> = null;
     private registeredUnits: Set<string> = new Set();
     private componentVersion: string = '0.3.22.1';
     
