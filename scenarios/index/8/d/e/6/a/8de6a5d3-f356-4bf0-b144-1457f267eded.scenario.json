@@ -1,0 +1,62 @@
+{
+  "ior": {
+    "uuid": "8de6a5d3-f356-4bf0-b144-1457f267eded",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkxTFRFeUxUSXdWREU0T2pVMU9qSTFMalF6T0ZvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwibmFtZSI6ImRvbmdlcyIsInVzZXJuYW1lIjoic3lzdGVtIiwiaG9zdG5hbWUiOiJNY0Rvbmdlcy0zLmZyaXR6LmJveCJ9fQ==",
+  "model": {
+    "uuid": "8de6a5d3-f356-4bf0-b144-1457f267eded",
+    "name": "NodeJsONCEKernel",
+    "version": "0.3.22.1",
+    "environment": {
+      "platform": "node",
+      "version": "v22.20.0",
+      "capabilities": [
+        "server",
+        "websocket",
+        "p2p"
+      ],
+      "isOnline": true
+    },
+    "state": "starting",
+    "startTime": "2025-12-20T18:55:25.431Z",
+    "connectionTime": null,
+    "host": "McDonges-3.fritz.box",
+    "port": 42777,
+    "isPrimary": true,
+    "primaryPeerUuid": null,
+    "peers": [],
+    "pid": 79323,
+    "capabilities": [
+      {
+        "capability": "httpsPort",
+        "port": 42777
+      },
+      {
+        "capability": "httpRedirect",
+        "port": 42000
+      }
+    ],
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/8/d/e/6/a/8de6a5d3-f356-4bf0-b144-1457f267eded.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.22.1",
+      "domain/box/fritz/McDonges-3/ONCE/0.3.22.1",
+      "domain/box/fritz/McDonges-3/ONCE/0.3.22.1/capability/httpPort/42777"
+    ],
+    "updatedAt": "2025-12-20T18:55:25.438Z"
+  },
+  "unit": {
+    "indexPath": "8/d/e/6/a/8de6a5d3-f356-4bf0-b144-1457f267eded.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.22.1",
+      "domain/box/fritz/McDonges-3/ONCE/0.3.22.1",
+      "domain/box/fritz/McDonges-3/ONCE/0.3.22.1/capability/httpPort/42777"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "ONCE/0.3.22.1",
+    "createdAt": "2025-12-20T18:55:25.438Z",
+    "updatedAt": "2025-12-20T18:55:25.438Z"
+  }
+}

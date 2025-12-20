@@ -289,6 +289,7 @@ export class IOR<T = any> implements IORInterface {
     
     /**
      * Perform the actual resolution via loader chain
+     * With PWA caching for offline support (I.7)
      * @param options Optional load options (signal, timeout, headers)
      */
     private async performResolution(options?: IOROptions): Promise<T | null> {
@@ -296,6 +297,13 @@ export class IOR<T = any> implements IORInterface {
         
         if (protocols.length === 0) {
             throw new Error('[IOR] No protocols in chain');
+        }
+        
+        // I.7.1: Check PWA cache first (browser only)
+        const cached = await this.cacheCheck();
+        if (cached !== undefined) {
+            console.log(`💾 [IOR] Cache hit: ${this.model.uuid}`);
+            return cached;
         }
         
         // Get the transport protocol (last in chain, e.g., 'https')
@@ -332,7 +340,112 @@ export class IOR<T = any> implements IORInterface {
             }
         }
         
+        // I.7.2: Cache result in PWA storage (browser only)
+        await this.cacheStore(result);
+        
         return result as T;
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
+    // I.7: PWA Cache Integration (BrowserScenarioStorage)
+    // ═══════════════════════════════════════════════════════════════
+    
+    /** Static BrowserScenarioStorage instance (browser only) */
+    private static browserStorage: any = null;
+    private static browserStorageInitialized = false;
+    
+    /**
+     * Check PWA cache for existing scenario (I.7.1)
+     * Returns undefined if not cached (not null - that means cached null)
+     */
+    private async cacheCheck(): Promise<T | undefined> {
+        // Only in browser context
+        if (typeof indexedDB === 'undefined') {
+            return undefined;
+        }
+        
+        // Skip cache for non-scenario protocols (REST, wss, etc.)
+        const protocols = this.parseProtocolChain();
+        if (!protocols.includes('scenario') && !this.model.uuid) {
+            return undefined;
+        }
+        
+        try {
+            const storage = await this.browserStorageGet();
+            if (!storage || !this.model.uuid) {
+                return undefined;
+            }
+            
+            const scenario = await storage.scenarioLoad(this.model.uuid);
+            return scenario?.model as T;
+        } catch {
+            // Not cached or error - proceed with network fetch
+            return undefined;
+        }
+    }
+    
+    /**
+     * Store resolved result in PWA cache (I.7.2)
+     */
+    private async cacheStore(result: T): Promise<void> {
+        // Only in browser context
+        if (typeof indexedDB === 'undefined') {
+            return;
+        }
+        
+        // Only cache scenarios with UUID
+        if (!this.model.uuid || !result) {
+            return;
+        }
+        
+        try {
+            const storage = await this.browserStorageGet();
+            if (!storage) {
+                return;
+            }
+            
+            // Build scenario structure
+            const scenario = {
+                ior: {
+                    uuid: this.model.uuid,
+                    component: this.model.component,
+                    version: this.model.version
+                },
+                owner: 'browser-cache',
+                model: result
+            };
+            
+            await storage.scenarioSave(this.model.uuid, scenario, []);
+            console.log(`💾 [IOR] Cached: ${this.model.uuid}`);
+        } catch (error) {
+            console.warn(`[IOR] Cache store failed:`, error);
+        }
+    }
+    
+    /**
+     * Get or initialize BrowserScenarioStorage (lazy)
+     */
+    private async browserStorageGet(): Promise<any> {
+        if (IOR.browserStorageInitialized) {
+            return IOR.browserStorage;
+        }
+        
+        IOR.browserStorageInitialized = true;
+        
+        try {
+            // Dynamic import to avoid loading in Node.js
+            const { BrowserScenarioStorage } = await import('../layer2/BrowserScenarioStorage.js');
+            const now = new Date().toISOString();
+            IOR.browserStorage = new BrowserScenarioStorage().init({
+                ior: { uuid: 'ior-cache', component: 'IOR', version: '1.0.0' },
+                owner: 'ior-cache',
+                model: { uuid: 'ior-cache', projectRoot: '', indexBaseDir: '', createdAt: now, updatedAt: now }
+            });
+            return IOR.browserStorage;
+        } catch (error) {
+            console.warn('[IOR] BrowserScenarioStorage not available:', error);
+            return null;
+        }
     }
     
     // ═══════════════════════════════════════════════════════════════
