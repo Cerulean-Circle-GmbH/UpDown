@@ -44,6 +44,10 @@ import { HttpMethod } from '../layer3/HttpMethod.enum.js';
 import { MIME_TYPES, STATIC_FILE_EXTENSIONS } from '../layer3/MIMETypes.js';
 import * as fs from 'fs';
 import * as path from 'path';
+import type { UnitsRoute } from './UnitsRoute.js';
+import type { CachedUnitModel } from '../layer3/CachedUnitModel.interface.js';
+import { UnitType } from '../layer3/UnitType.enum.js';
+import { CacheStrategy } from '../layer3/CacheStrategy.enum.js';
 
 /**
  * StaticFileRoute
@@ -80,6 +84,9 @@ import * as path from 'path';
  */
 export class StaticFileRoute extends Route {
     private projectRoot: string = '';
+    private unitsRoute: UnitsRoute | null = null;
+    private registeredUnits: Set<string> = new Set();
+    private componentVersion: string = '0.3.22.1';
     
     /**
      * Empty constructor - Web4 Principle 6
@@ -88,6 +95,23 @@ export class StaticFileRoute extends Route {
     constructor() {
         super();
         // Empty - Web4 Principle 6
+    }
+    
+    /**
+     * Set the UnitsRoute for unit registration
+     * Web4 P16: Object-Action naming
+     */
+    public unitsRouteSet(route: UnitsRoute): this {
+        this.unitsRoute = route;
+        return this;
+    }
+    
+    /**
+     * Set component version for IOR generation
+     */
+    public componentVersionSet(version: string): this {
+        this.componentVersion = version;
+        return this;
     }
     
     /**
@@ -321,6 +345,9 @@ export class StaticFileRoute extends Route {
             });
             res.end(content);
             
+            // Register as Unit for ServiceWorker caching (I.6)
+            this.unitRegisterForPath(urlPath, mimeType, content.length);
+            
         } catch (error: any) {
             console.error(`[StaticFileRoute] Error serving ${urlPath}:`, error.message);
             res.writeHead(500, { 'Content-Type': 'text/plain' });
@@ -367,5 +394,72 @@ export class StaticFileRoute extends Route {
         // URL: {Component}/{version}/...
         // FileSystem: {projectRoot}/components/{Component}/{version}/...
         return path.join(this.projectRoot, 'components', relativePath);
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
+    // Unit Registration (I.6)
+    // ═══════════════════════════════════════════════════════════════
+    
+    /**
+     * Register a served file as a Unit for ServiceWorker caching
+     * Only registers each path once (deduplicated)
+     * 
+     * @param urlPath URL path of the served file
+     * @param mimeType MIME type
+     * @param size File size in bytes
+     */
+    private unitRegisterForPath(urlPath: string, mimeType: string, size: number): void {
+        // Skip if no UnitsRoute configured
+        if (!this.unitsRoute) {
+            return;
+        }
+        
+        // Skip if already registered (deduplication)
+        if (this.registeredUnits.has(urlPath)) {
+            return;
+        }
+        
+        // Create and register the unit
+        const now = new Date().toISOString();
+        const unit: CachedUnitModel = {
+            uuid: urlPath,
+            name: this.nameFromPath(urlPath),
+            ior: urlPath,
+            unitType: this.unitTypeFromMime(mimeType),
+            cacheStrategy: CacheStrategy.CACHE_FIRST,
+            version: this.componentVersion,
+            hash: '', // Would compute from content
+            size: size,
+            mimeType: mimeType,
+            dependencies: [],
+            cachedAt: now,
+            lastAccessedAt: now,
+            accessCount: 1
+        };
+        
+        this.unitsRoute.unitRegister(unit);
+        this.registeredUnits.add(urlPath);
+        console.log(`[StaticFileRoute] 📦 Unit registered: ${urlPath}`);
+    }
+    
+    /**
+     * Extract filename from path
+     */
+    private nameFromPath(urlPath: string): string {
+        const parts = urlPath.split('/');
+        return parts[parts.length - 1] || 'unknown';
+    }
+    
+    /**
+     * Determine UnitType from MIME type
+     */
+    private unitTypeFromMime(mimeType: string): UnitType {
+        if (mimeType.includes('javascript')) return UnitType.JAVASCRIPT;
+        if (mimeType.includes('css')) return UnitType.CSS;
+        if (mimeType.includes('html')) return UnitType.HTML;
+        if (mimeType.includes('json')) return UnitType.JSON;
+        if (mimeType.includes('image')) return UnitType.IMAGE;
+        if (mimeType.includes('font')) return UnitType.FONT;
+        return UnitType.OTHER;
     }
 }

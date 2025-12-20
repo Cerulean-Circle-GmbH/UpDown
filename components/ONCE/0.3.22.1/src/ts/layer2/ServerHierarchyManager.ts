@@ -232,6 +232,24 @@ export class ServerHierarchyManager {
      * @pdca 2025-12-01-UTC-0950.iteration-05-phase5-7-httpserver-router-refactoring.pdca.md
      */
     private registerRoutes(): void {
+        // Create UnitsRoute first so other routes can register units (I.6)
+        const unitsRoute = new UnitsRoute();
+        unitsRoute.init();
+        unitsRoute.model.uuid = this.idProvider.create();
+        unitsRoute.componentVersionSet(this.version);
+        // Register critical units for offline support
+        unitsRoute.unitsFromFilesGenerate('/EAMD.ucp/components/ONCE/' + this.version, [
+            'dist/ts/layer2/BrowserOnce.js',
+            'dist/ts/layer4/BrowserOnceOrchestrator.js',
+            'dist/ts/layer5/views/OnceOverView.js',
+            'dist/ts/layer5/views/OncePeerDefaultView.js',
+            'dist/ts/layer5/views/OncePeerItemView.js',
+            'dist/ts/layer5/views/ItemView.js',
+            'dist/ts/layer5/views/DefaultItemView.js',
+            'dist/ts/layer5/views/css/OncePeerItemView.css',
+            'dist/ts/layer5/views/css/DefaultItemView.css'
+        ]);
+        
         // ✅ Route 0: Static Files (HIGHEST PRIORITY)
         // Serves .js, .css, .html, etc. with correct MIME types
         // Priority 5 - higher than IOR (10) to prevent mismatching file paths
@@ -239,6 +257,8 @@ export class ServerHierarchyManager {
         staticRoute.routeInit(); // Web4 Principle 6: init after empty constructor
         staticRoute.model.uuid = this.idProvider.create();
         staticRoute.componentRootSet(this.component!.model.componentRoot || '');
+        staticRoute.componentVersionSet(this.version); // I.6: for unit IOR generation
+        staticRoute.unitsRouteSet(unitsRoute); // I.6: enable unit registration
         this.httpRouter.registerRoute(staticRoute);
         
         // ✅ Route 1: IOR Method Invocation
@@ -477,22 +497,7 @@ export class ServerHierarchyManager {
         this.httpRouter.registerRoute(manifestRoute);
         
         // ✅ Route 13: Units Registry ("/units") - For Service Worker precache
-        const unitsRoute = new UnitsRoute();
-        unitsRoute.init();
-        unitsRoute.model.uuid = this.idProvider.create();
-        unitsRoute.componentVersionSet(this.version);
-        // Register critical units for offline support
-        unitsRoute.unitsFromFilesGenerate('/EAMD.ucp/components/ONCE/' + this.version, [
-            'dist/ts/layer2/BrowserOnce.js',
-            'dist/ts/layer4/BrowserOnceOrchestrator.js',
-            'dist/ts/layer5/views/OnceOverView.js',
-            'dist/ts/layer5/views/OncePeerDefaultView.js',
-            'dist/ts/layer5/views/OncePeerItemView.js',
-            'dist/ts/layer5/views/DefaultItemView.js',
-            'dist/ts/layer5/views/css/OnceOverView.css',
-            'dist/ts/layer5/views/css/OncePeerItemView.css',
-            'dist/ts/layer5/views/css/DefaultItemView.css'
-        ]);
+        // Note: unitsRoute created at start of registerRoutes() to allow StaticFileRoute to register units (I.6)
         this.httpRouter.registerRoute(unitsRoute);
         
         // Note: /servers route registered after port is bound (see registerPrimaryOnlyRoutes)
