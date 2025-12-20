@@ -644,8 +644,17 @@ export class IOR<T = any> implements IORInterface {
     
     /**
      * Parse IOR string and update model
+     * Handles:
+     * - Full URLs: https://host:port/path
+     * - IOR strings: ior:https://host:port/path
+     * - Relative URLs: /path (uses current host in browser, localhost in Node)
      */
     parseIorString(iorString: string): this {
+        // Handle relative URLs (starting with /)
+        if (iorString.startsWith('/') && !iorString.startsWith('//')) {
+            return this.parseRelativeUrl(iorString);
+        }
+        
         // Remove 'ior:' prefix
         const withoutPrefix = iorString.replace(/^ior:/, '');
         
@@ -682,6 +691,41 @@ export class IOR<T = any> implements IORInterface {
         this.model.uuid = pathParts[2] || '';
         this.model.profiles = failoverProfiles.length > 0 ? failoverProfiles : undefined;
         this.model.iorString = iorString;
+        
+        return this;
+    }
+    
+    /**
+     * Parse relative URL and use current browser location or defaults
+     * @param path Relative path (e.g., /asset-manifest, /ONCE/0.3.22.1/...)
+     */
+    private parseRelativeUrl(path: string): this {
+        // Detect environment and get current location
+        const isBrowser = typeof window !== 'undefined' && window.location;
+        
+        let protocol = 'https';
+        let host = 'localhost';
+        let port = 443;
+        
+        if (isBrowser) {
+            protocol = window.location.protocol.replace(':', '');
+            host = window.location.hostname;
+            const locationPort = window.location.port;
+            port = locationPort ? parseInt(locationPort) : (protocol === 'https' ? 443 : 80);
+        }
+        
+        // Parse path parts (component/version/uuid/method) if applicable
+        const pathParts = path.split('/').filter(function filterEmpty(p: string): boolean { return p.length > 0; });
+        
+        // Update model
+        this.model.protocol = protocol;
+        this.model.host = host;
+        this.model.port = port;
+        this.model.path = path;
+        this.model.component = pathParts[0] || '';
+        this.model.version = pathParts[1] || '';
+        this.model.uuid = pathParts[2] || '';
+        this.model.iorString = `${protocol}://${host}:${port}${path}`;
         
         return this;
     }
@@ -904,7 +948,8 @@ export class IOR<T = any> implements IORInterface {
                str.startsWith('http://') || 
                str.startsWith('https://') ||
                str.startsWith('wss://') ||
-               str.startsWith('ws://');
+               str.startsWith('ws://') ||
+               str.startsWith('/');  // Relative URLs are remote references on current host
     }
     
     private isIORModel(value: any): value is IORModel {

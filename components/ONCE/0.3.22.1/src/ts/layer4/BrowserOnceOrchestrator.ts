@@ -205,8 +205,16 @@ export class BrowserOnceOrchestrator {
       // Try component.json first (Web4 Unit integration) - F.4: Use IOR.load()
       try {
         const componentIor = await new IOR().init(`${basePath}/ONCE.component.json`);
-        const componentText = await componentIor.load<string>();
-        const componentJson = JSON.parse(componentText);
+        const componentResult = await componentIor.load<any>();
+        
+        // Handle both string (raw JSON) and object (already parsed) responses
+        let componentJson: any;
+        if (typeof componentResult === 'string') {
+          componentJson = JSON.parse(componentResult);
+        } else {
+          componentJson = componentResult;
+        }
+        
         const cssUnits = componentJson.model?.units?.css || [];
         cssFiles = cssUnits.map((unit: { path: string }) => `${basePath}/${unit.path}`);
         console.log(`[Orchestrator] Using component.json units: ${cssFiles.length} CSS files`);
@@ -217,8 +225,16 @@ export class BrowserOnceOrchestrator {
       // Fallback to /asset-manifest - F.4: Use IOR.load()
       if (cssFiles.length === 0) {
         const assetIor = await new IOR().init('/asset-manifest');
-        const assetText = await assetIor.load<string>();
-        const data = JSON.parse(assetText);
+        const assetResult = await assetIor.load<any>();
+        
+        // Handle both string (raw JSON) and object (already parsed) responses
+        let data: any;
+        if (typeof assetResult === 'string') {
+          data = JSON.parse(assetResult);
+        } else {
+          data = assetResult;
+        }
+        
         cssFiles = data.model?.css || data.css || [];
         console.log(`[Orchestrator] Using asset-manifest: ${cssFiles.length} CSS files`);
       }
