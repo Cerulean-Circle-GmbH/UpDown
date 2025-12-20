@@ -356,7 +356,9 @@ export class IOR<T = any> implements IORInterface {
     private static browserStorageInitialized = false;
     
     /**
-     * Check PWA cache for existing scenario (I.7.1)
+     * Check PWA cache for existing scenario (I.7.1 + I.9.7)
+     * 
+     * I.9.7: Now supports lookup by UnitReference.linkLocation (URL path)
      * Returns undefined if not cached (not null - that means cached null)
      */
     private async cacheCheck(): Promise<T | undefined> {
@@ -365,20 +367,38 @@ export class IOR<T = any> implements IORInterface {
             return undefined;
         }
         
-        // Skip cache for non-scenario protocols (REST, wss, etc.)
-        const protocols = this.parseProtocolChain();
-        if (!protocols.includes('scenario') && !this.model.uuid) {
-            return undefined;
-        }
-        
         try {
             const storage = await this.browserStorageGet();
-            if (!storage || !this.model.uuid) {
+            if (!storage) {
                 return undefined;
             }
             
-            const scenario = await storage.scenarioLoad(this.model.uuid);
-            return scenario?.model as T;
+            // Try 1: Direct UUID lookup
+            if (this.model.uuid) {
+                try {
+                    const scenario = await storage.scenarioLoad(this.model.uuid);
+                    if (scenario?.model) {
+                        console.log(`💾 [IOR] Cache hit (UUID): ${this.model.uuid}`);
+                        return scenario.model as T;
+                    }
+                } catch {
+                    // Not found by UUID, try by URL
+                }
+            }
+            
+            // Try 2: Lookup by URL reference (I.9.7)
+            // Search for Unit with matching linkLocation
+            const url = this.toUrl();
+            if (url) {
+                const linkLocation = `ior:url:${url}`;
+                const unit = await this.unitFindByReference(storage, linkLocation);
+                if (unit?.model?._cachedData) {
+                    console.log(`💾 [IOR] Cache hit (URL): ${url}`);
+                    return unit.model._cachedData as T;
+                }
+            }
+            
+            return undefined;
         } catch {
             // Not cached or error - proceed with network fetch
             return undefined;
@@ -386,15 +406,44 @@ export class IOR<T = any> implements IORInterface {
     }
     
     /**
-     * Store resolved result in PWA cache (I.7.2)
+     * Find Unit by UnitReference.linkLocation (I.9.7)
+     * Scans all scenarios to find one with matching reference
      * 
-     * Creates proper Scenario<T> structure with:
-     * - ior: {uuid, component, version}
+     * @param storage BrowserScenarioStorage instance
+     * @param linkLocation IOR string like "ior:url:/EAMD.ucp/..."
+     */
+    private async unitFindByReference(storage: any, linkLocation: string): Promise<any | null> {
+        try {
+            // Query all Units
+            const units = await storage.scenarioFind({ component: 'Unit' });
+            
+            for (const unit of units) {
+                const references = unit.model?.references || [];
+                for (const ref of references) {
+                    if (ref.linkLocation === linkLocation) {
+                        return unit;
+                    }
+                }
+            }
+            
+            return null;
+        } catch {
+            return null;
+        }
+    }
+    
+    /**
+     * Store resolved result in PWA cache (I.7.2 + I.9.6)
+     * 
+     * I.9.6: Creates Unit scenario with UnitReferences for all access paths
+     * 
+     * Creates proper Scenario<UnitModel> structure with:
+     * - ior: {uuid, component: 'Unit', version}
      * - owner: 'browser-cache'
-     * - model: the resolved data
-     * - unit: undefined (file-specific unit created by StaticFileRoute)
+     * - model: UnitModel with componentIor, references
+     * - references: [{ linkLocation: "ior:url:...", linkTarget: "ior:unit:..." }]
      * 
-     * @pdca 2025-12-20-UTC-1900.pwa-file-scenario-caching.pdca.md I.8.4
+     * @pdca 2025-12-20-UTC-2100.unit-based-pwa-caching.pdca.md I.9.6
      */
     private async cacheStore(result: T): Promise<void> {
         // Only in browser context
@@ -402,8 +451,8 @@ export class IOR<T = any> implements IORInterface {
             return;
         }
         
-        // Only cache scenarios with UUID
-        if (!this.model.uuid || !result) {
+        // Only cache if we have a result
+        if (!result) {
             return;
         }
         
@@ -413,25 +462,114 @@ export class IOR<T = any> implements IORInterface {
                 return;
             }
             
-            // Build proper Scenario structure (I.8.4)
-            // Note: For FileModel, the full Scenario<UnitModel> unit is created by StaticFileRoute
-            // Type assertion needed because T may not extend Model at IOR level
-            const scenario = {
+            // Generate Unit UUID if not provided
+            const unitUuid = this.model.uuid || crypto.randomUUID();
+            const url = this.toUrl();
+            const now = Date.now();
+            
+            // Build Unit scenario (I.9.6)
+            // Links the cached data with its access paths
+            const unitScenario = {
                 ior: {
-                    uuid: this.model.uuid,
-                    component: this.model.component || 'IOR',
-                    version: this.model.version || '1.0.0'
+                    uuid: unitUuid,
+                    component: 'Unit',
+                    version: '0.3.22.1'
                 },
                 owner: 'browser-cache',
-                model: result,
-                unit: undefined  // File-specific unit created by StaticFileRoute (I.8.6)
+                model: {
+                    uuid: unitUuid,
+                    componentType: this.model.component || 'IOR',
+                    componentIor: url || '',
+                    artefactUuid: null,  // Set if storing Blob content
+                    fileUuid: null,
+                    createdAt: now,
+                    modifiedAt: now,
+                    storagePath: null,
+                    indexPath: null,
+                    // UnitReferences for all access paths
+                    references: [
+                        {
+                            linkLocation: `ior:url:${url}`,
+                            linkTarget: `ior:unit:${unitUuid}`,
+                            syncStatus: 'SYNCED'
+                        }
+                    ],
+                    // Store the actual data in a transient property
+                    // (This is a simplification - full implementation would use Artefact)
+                    _cachedData: result
+                }
             } as Scenario<any>;
             
-            await storage.scenarioSave(this.model.uuid, scenario, []);
-            console.log(`💾 [IOR] Cached: ${this.model.uuid}`);
+            // Build symlink paths for indexing
+            const symlinkPaths = [
+                `type/Unit/0.3.22.1`
+            ];
+            
+            await storage.scenarioSave(unitUuid, unitScenario, symlinkPaths);
+            console.log(`💾 [IOR] Cached Unit: ${unitUuid} → ${url}`);
         } catch (error) {
             console.warn(`[IOR] Cache store failed:`, error);
         }
+    }
+    
+    /**
+     * Create blob: URL from Blob and register as UnitReference (I.9.8)
+     * 
+     * BlobUrls are just another UnitReference with SyncStatus.RUNTIME
+     * They exist only during the browser session
+     * 
+     * Usage:
+     * ```typescript
+     * const ior = new IOR<Blob>().initLocal(myBlob);
+     * const blobUrl = ior.blobUrlCreate();
+     * img.src = blobUrl;
+     * // Later: ior.blobUrlRevoke(blobUrl);
+     * ```
+     * 
+     * @param blob Blob to create URL for
+     * @returns blob: URL string
+     */
+    blobUrlCreate(blob: Blob): string {
+        const blobUrl = URL.createObjectURL(blob);
+        
+        // Track the blob URL in our references (if we have a resolved unit)
+        if (this.resolvedValue && typeof this.resolvedValue === 'object') {
+            const model = this.resolvedValue as any;
+            if (Array.isArray(model.references)) {
+                model.references.push({
+                    linkLocation: `ior:blob:${blobUrl}`,
+                    linkTarget: `ior:unit:${this.model.uuid || 'unknown'}`,
+                    syncStatus: 'RUNTIME'  // SyncStatus.RUNTIME - runtime only
+                });
+            }
+        }
+        
+        console.log(`🖼️ [IOR] Created blob URL: ${blobUrl.substring(0, 40)}...`);
+        return blobUrl;
+    }
+    
+    /**
+     * Revoke blob: URL to free memory (I.9.8)
+     * 
+     * @param blobUrl The blob URL to revoke
+     */
+    blobUrlRevoke(blobUrl: string): void {
+        URL.revokeObjectURL(blobUrl);
+        
+        // Remove from references if tracked
+        if (this.resolvedValue && typeof this.resolvedValue === 'object') {
+            const model = this.resolvedValue as any;
+            if (Array.isArray(model.references)) {
+                const idx = model.references.findIndex(
+                    (ref: any) => ref.linkLocation === `ior:blob:${blobUrl}`
+                );
+                if (idx >= 0) {
+                    model.references.splice(idx, 1);
+                }
+            }
+        }
+        
+        console.log(`🗑️ [IOR] Revoked blob URL`);
     }
     
     /**
