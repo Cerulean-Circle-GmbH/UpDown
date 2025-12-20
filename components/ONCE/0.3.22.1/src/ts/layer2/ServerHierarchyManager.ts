@@ -248,7 +248,8 @@ export class ServerHierarchyManager {
             this.iorRouter.init(undefined, this.component, this.idProvider);
         }
         
-        const iorRoute = new IORRoute(this.iorRouter);
+        // Web4 P6: new Route().init().setXyz() pattern
+        const iorRoute = new IORRoute().init().iorRouterSet(this.iorRouter);
         iorRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         iorRoute.model.pattern = '/{component}/{version}/{uuid}/{method}'; // Documentation only
         iorRoute.model.method = HttpMethod.GET; // Accepts all methods

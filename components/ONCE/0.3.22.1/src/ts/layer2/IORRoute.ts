@@ -29,13 +29,33 @@ import { parse as parseUrl } from 'url';
  * Priority: 10 (highest - checked before HTML and Scenario routes)
  */
 export class IORRoute extends Route {
-    private iorRouter: IORMethodRouter;
+    private iorRouter!: IORMethodRouter;
     
-    constructor(iorRouter: IORMethodRouter) {
+    /**
+     * Empty constructor - Web4 P6
+     */
+    constructor() {
         super();
+        // Web4 P6: Empty constructor - properties set in init()
+    }
+    
+    /**
+     * Initialize route with IOR router
+     * Web4 P6: Empty constructor + init()
+     */
+    public override init(): this {
+        super.init();
         this.model.name = 'IORRoute';
         this.model.priority = 10; // Highest priority
-        this.iorRouter = iorRouter;
+        return this;
+    }
+    
+    /**
+     * Set the IOR method router (P16: nameVerb)
+     */
+    public iorRouterSet(router: IORMethodRouter): this {
+        this.iorRouter = router;
+        return this;
     }
     
     /**
