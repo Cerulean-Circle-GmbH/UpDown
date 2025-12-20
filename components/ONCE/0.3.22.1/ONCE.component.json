@@ -26,10 +26,38 @@
           "mimetype": "text/css"
         },
         {
+          "uuid": "fc2db7d0-c205-4472-ae4d-3c301ce95090",
+          "name": "FileItemView.css",
+          "path": "src/ts/layer5/views/css/FileItemView.css",
+          "unitPath": "src/ts/layer5/views/css/FileItemView.css.unit",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "989be876-989e-44bd-88d2-80c77aa9394b",
+          "name": "FolderItemView.css",
+          "path": "src/ts/layer5/views/css/FolderItemView.css",
+          "unitPath": "src/ts/layer5/views/css/FolderItemView.css.unit",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "384175a6-c9ad-4a33-bf65-596a9e4c1167",
+          "name": "FolderOverView.css",
+          "path": "src/ts/layer5/views/css/FolderOverView.css",
+          "unitPath": "src/ts/layer5/views/css/FolderOverView.css.unit",
+          "mimetype": "text/css"
+        },
+        {
           "uuid": "666d7e1a-d420-4242-bd71-d182074b5413",
           "name": "ItemView.css",
           "path": "src/ts/layer5/views/css/ItemView.css",
           "unitPath": "src/ts/layer5/views/css/ItemView.css.unit",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "3fd23f19-3466-4635-baad-c4713fdc506b",
+          "name": "OnceLoggerView.css",
+          "path": "src/ts/layer5/views/css/OnceLoggerView.css",
+          "unitPath": "src/ts/layer5/views/css/OnceLoggerView.css.unit",
           "mimetype": "text/css"
         },
         {
@@ -47,10 +75,31 @@
           "mimetype": "text/css"
         },
         {
+          "uuid": "80c9daea-5c96-4801-994f-ef0725cf13c9",
+          "name": "OncePeerDetailsView.css",
+          "path": "src/ts/layer5/views/css/OncePeerDetailsView.css",
+          "unitPath": "src/ts/layer5/views/css/OncePeerDetailsView.css.unit",
+          "mimetype": "text/css"
+        },
+        {
           "uuid": "7a1844bc-f025-4f0e-a44c-98d117d88cec",
           "name": "OncePeerItemView.css",
           "path": "src/ts/layer5/views/css/OncePeerItemView.css",
           "unitPath": "src/ts/layer5/views/css/OncePeerItemView.css.unit",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "c42d3aa4-0ca8-4152-adb0-0ef1b84ee570",
+          "name": "OnceServerStatusView.css",
+          "path": "src/ts/layer5/views/css/OnceServerStatusView.css",
+          "unitPath": "src/ts/layer5/views/css/OnceServerStatusView.css.unit",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "bf8f9364-e844-43ba-8b63-b76b3dfcea2d",
+          "name": "RouteItemView.css",
+          "path": "src/ts/layer5/views/css/RouteItemView.css",
+          "unitPath": "src/ts/layer5/views/css/RouteItemView.css.unit",
           "mimetype": "text/css"
         },
         {
@@ -72,6 +121,62 @@
           "name": "themeBase.css",
           "path": "src/ts/layer5/views/css/themeBase.css",
           "unitPath": "src/ts/layer5/views/css/themeBase.css.unit",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "ac3e013c-cbf8-4797-ac0e-ffe6e61afaf4",
+          "name": "DefaultItemView.css",
+          "path": "test/data/components/ONCE/0.3.22.1/src/ts/layer5/views/css/DefaultItemView.css",
+          "unitPath": "test/data/components/ONCE/0.3.22.1/src/ts/layer5/views/css/DefaultItemView.css.unit",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "666d7e1a-d420-4242-bd71-d182074b5413",
+          "name": "ItemView.css",
+          "path": "test/data/components/ONCE/0.3.22.1/src/ts/layer5/views/css/ItemView.css",
+          "unitPath": "test/data/components/ONCE/0.3.22.1/src/ts/layer5/views/css/ItemView.css.unit",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "71261c96-b3c2-48f8-a096-be1e45dc54d6",
+          "name": "OnceOverView.css",
+          "path": "test/data/components/ONCE/0.3.22.1/src/ts/layer5/views/css/OnceOverView.css",
+          "unitPath": "test/data/components/ONCE/0.3.22.1/src/ts/layer5/views/css/OnceOverView.css.unit",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "36c08866-bda5-4f72-8ed8-034ee52eb504",
+          "name": "OncePeerDefaultView.css",
+          "path": "test/data/components/ONCE/0.3.22.1/src/ts/layer5/views/css/OncePeerDefaultView.css",
+          "unitPath": "test/data/components/ONCE/0.3.22.1/src/ts/layer5/views/css/OncePeerDefaultView.css.unit",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "7a1844bc-f025-4f0e-a44c-98d117d88cec",
+          "name": "OncePeerItemView.css",
+          "path": "test/data/components/ONCE/0.3.22.1/src/ts/layer5/views/css/OncePeerItemView.css",
+          "unitPath": "test/data/components/ONCE/0.3.22.1/src/ts/layer5/views/css/OncePeerItemView.css.unit",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "9a442caa-f1e4-4149-91e9-b61ad894c0b8",
+          "name": "RouteOverView.css",
+          "path": "test/data/components/ONCE/0.3.22.1/src/ts/layer5/views/css/RouteOverView.css",
+          "unitPath": "test/data/components/ONCE/0.3.22.1/src/ts/layer5/views/css/RouteOverView.css.unit",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "4c4fbbe0-5bd6-4f3f-a8e0-0955e121565e",
+          "name": "UcpRouter.css",
+          "path": "test/data/components/ONCE/0.3.22.1/src/ts/layer5/views/css/UcpRouter.css",
+          "unitPath": "test/data/components/ONCE/0.3.22.1/src/ts/layer5/views/css/UcpRouter.css.unit",
+          "mimetype": "text/css"
+        },
+        {
+          "uuid": "623914a6-ac71-4120-a0ae-4369bef53750",
+          "name": "themeBase.css",
+          "path": "test/data/components/ONCE/0.3.22.1/src/ts/layer5/views/css/themeBase.css",
+          "unitPath": "test/data/components/ONCE/0.3.22.1/src/ts/layer5/views/css/themeBase.css.unit",
           "mimetype": "text/css"
         }
       ],
@@ -116,6 +221,48 @@
           "name": "server-status.html",
           "path": "src/view/html/server-status.html",
           "unitPath": "src/view/html/server-status.html.unit",
+          "mimetype": "text/html"
+        },
+        {
+          "uuid": "02688037-0c01-4336-8205-ce52444865ce",
+          "name": "demo-hub.html",
+          "path": "test/data/components/ONCE/0.3.22.1/src/view/html/demo-hub.html",
+          "unitPath": "test/data/components/ONCE/0.3.22.1/src/view/html/demo-hub.html.unit",
+          "mimetype": "text/html"
+        },
+        {
+          "uuid": "e0320d06-8d3d-4e3f-981d-8049e3c89687",
+          "name": "demo-lit.html",
+          "path": "test/data/components/ONCE/0.3.22.1/src/view/html/demo-lit.html",
+          "unitPath": "test/data/components/ONCE/0.3.22.1/src/view/html/demo-lit.html.unit",
+          "mimetype": "text/html"
+        },
+        {
+          "uuid": "54262628-bcf7-49cd-9c9f-5f1b17c4c54a",
+          "name": "index.html",
+          "path": "test/data/components/ONCE/0.3.22.1/src/view/html/index.html",
+          "unitPath": "test/data/components/ONCE/0.3.22.1/src/view/html/index.html.unit",
+          "mimetype": "text/html"
+        },
+        {
+          "uuid": "01c429df-69f5-4ad1-996e-db4160f8135a",
+          "name": "once-client.html",
+          "path": "test/data/components/ONCE/0.3.22.1/src/view/html/once-client.html",
+          "unitPath": "test/data/components/ONCE/0.3.22.1/src/view/html/once-client.html.unit",
+          "mimetype": "text/html"
+        },
+        {
+          "uuid": "89d2e918-99c3-4346-b3ee-b5177461a8cb",
+          "name": "once-minimal.html",
+          "path": "test/data/components/ONCE/0.3.22.1/src/view/html/once-minimal.html",
+          "unitPath": "test/data/components/ONCE/0.3.22.1/src/view/html/once-minimal.html.unit",
+          "mimetype": "text/html"
+        },
+        {
+          "uuid": "938486d5-42b9-4fe7-8e5e-92c7a29a5757",
+          "name": "server-status.html",
+          "path": "test/data/components/ONCE/0.3.22.1/src/view/html/server-status.html",
+          "unitPath": "test/data/components/ONCE/0.3.22.1/src/view/html/server-status.html.unit",
           "mimetype": "text/html"
         }
       ],
