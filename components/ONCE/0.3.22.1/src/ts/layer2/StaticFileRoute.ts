@@ -49,6 +49,12 @@ import type { CachedUnitModel } from '../layer3/CachedUnitModel.interface.js';
 import type { Reference } from '../layer3/Reference.interface.js';
 import { UnitType } from '../layer3/UnitType.enum.js';
 import { CacheStrategy } from '../layer3/CacheStrategy.enum.js';
+import { sha256Provider } from './SHA256Provider.js';
+import { SyncStatus } from '../layer3/SyncStatus.enum.js';
+import type { Scenario } from '../layer3/Scenario.interface.js';
+import type { FileModel } from '../layer3/FileModel.interface.js';
+import type { ArtefactModel } from '../layer3/ArtefactModel.interface.js';
+import type { UnitModel } from '../layer3/UnitModel.interface.js';
 
 /**
  * StaticFileRoute
@@ -346,8 +352,8 @@ export class StaticFileRoute extends Route {
             });
             res.end(content);
             
-            // Register as Unit for ServiceWorker caching (I.6)
-            this.unitRegisterForPath(urlPath, mimeType, content.length);
+            // Register as Unit for ServiceWorker caching (I.6 + I.9.9-I.9.13)
+            this.unitRegisterForPath(urlPath, filePath, content, mimeType);
             
         } catch (error: any) {
             console.error(`[StaticFileRoute] Error serving ${urlPath}:`, error.message);
@@ -398,51 +404,143 @@ export class StaticFileRoute extends Route {
     }
     
     // ═══════════════════════════════════════════════════════════════
-    // Unit Registration (I.6)
+    // Unit Registration (I.6 + I.9.9-I.9.13)
+    // Creates proper Scenario<FileModel> + Scenario<ArtefactModel> + Scenario<UnitModel>
     // ═══════════════════════════════════════════════════════════════
     
     /**
-     * Register a served file as a Unit for ServiceWorker caching
-     * Only registers each path once (deduplicated)
+     * Register a served file as a Unit for ServiceWorker caching (I.9.9-I.9.13)
+     * 
+     * Creates the full Web4 scenario structure:
+     * - Scenario<FileModel>: file metadata
+     * - Scenario<ArtefactModel>: content-addressable storage (deduplication)
+     * - Scenario<UnitModel>: links File + Artefact + references
+     * 
+     * Only registers each path once (deduplicated by URL path)
      * 
      * @param urlPath URL path of the served file
+     * @param filePath Absolute filesystem path
+     * @param content File content as Buffer
      * @param mimeType MIME type
-     * @param size File size in bytes
      */
-    private unitRegisterForPath(urlPath: string, mimeType: string, size: number): void {
+    private unitRegisterForPath(
+        urlPath: string, 
+        filePath: string,
+        content: Buffer,
+        mimeType: string
+    ): void {
         // Skip if no UnitsRoute configured
         if (!this.unitsRoute) {
             return;
         }
         
-        // Skip if already registered (deduplication)
+        // Skip if already registered (deduplication by URL)
         if (this.registeredUnits.has(urlPath)) {
             return;
         }
         
-        // Create and register the unit
-        // @fix I.8.6: Use proper UUIDv4, not path as UUID
-        // @pdca 2025-12-20-UTC-1900.pwa-file-scenario-caching.pdca.md
-        const now = new Date().toISOString();
-        const unit: CachedUnitModel = {
-            uuid: crypto.randomUUID(),  // Proper UUIDv4 (not path!)
+        const now = Date.now();
+        const nowIso = new Date().toISOString();
+        
+        // I.9.10: Compute content hash (for Artefact deduplication)
+        const contentHash = sha256Provider.contentIdCreateSync(content) || crypto.randomUUID();
+        
+        // Generate UUIDs
+        const fileUuid = crypto.randomUUID();
+        const unitUuid = crypto.randomUUID();
+        // Note: Artefact UUID = contentHash (content-addressable!)
+        
+        const filename = this.nameFromPath(urlPath);
+        
+        // I.9.9: Create Scenario<FileModel>
+        const fileScenario: Scenario<FileModel> = {
+            ior: { uuid: fileUuid, component: 'File', version: this.componentVersion },
+            owner: 'ONCE/' + this.componentVersion,
+            model: {
+                uuid: fileUuid,
+                name: filename,           // Required by Model
+                path: filePath,
+                filename: filename,
+                mimetype: mimeType,
+                size: content.length,
+                contentHash: contentHash,
+                createdAt: now,
+                modifiedAt: now,
+                isLink: false,            // Not a symlink
+                linkTarget: null,         // No link target
+                content: null             // Server-side: content served directly, not stored in model
+            }
+        };
+        
+        // I.9.10: Create Scenario<ArtefactModel> (content-addressable)
+        const artefactScenario: Scenario<ArtefactModel> = {
+            ior: { uuid: contentHash, component: 'Artefact', version: this.componentVersion },
+            owner: 'ONCE/' + this.componentVersion,
+            model: {
+                uuid: contentHash,        // Artefact UUID = content hash!
+                name: `Artefact-${contentHash.substring(0, 8)}`,  // Required by Model
+                contentHash: contentHash,
+                algorithm: 'SHA-256',
+                size: content.length,
+                unitUuid: unitUuid,
+                createdAt: now,
+                mimetype: mimeType
+            }
+        };
+        
+        // I.9.11: Create Scenario<UnitModel> linking File + Artefact
+        const unitScenario: Scenario<UnitModel> = {
+            ior: { uuid: unitUuid, component: 'Unit', version: this.componentVersion },
+            owner: 'ONCE/' + this.componentVersion,
+            model: {
+                uuid: unitUuid,
+                name: `Unit-${filename}`,   // Required by Model
+                componentType: 'File',
+                componentIor: `ior:esm:/File/${this.componentVersion}/${fileUuid}`,
+                artefactUuid: contentHash,
+                fileUuid: fileUuid,
+                createdAt: now,
+                modifiedAt: now,
+                storagePath: null,
+                indexPath: null,
+                // I.9.12: Add references for filesystem path and URL path
+                references: [
+                    {
+                        linkLocation: `ior:fs:${filePath}`,
+                        linkTarget: `ior:unit:${unitUuid}`,
+                        syncStatus: SyncStatus.SYNCED
+                    },
+                    {
+                        linkLocation: `ior:url:${urlPath}`,
+                        linkTarget: `ior:unit:${unitUuid}`,
+                        syncStatus: SyncStatus.SYNCED
+                    }
+                ]
+            }
+        };
+        
+        // I.9.13: Register Unit with UnitsRoute for ServiceWorker
+        // Convert to CachedUnitModel format for UnitsRoute
+        const cachedUnit: CachedUnitModel = {
+            uuid: unitUuid,
             name: this.nameFromPath(urlPath),
-            ior: urlPath,               // IOR is the path (separate property)
+            ior: urlPath,
             unitType: this.unitTypeFromMime(mimeType),
             cacheStrategy: CacheStrategy.CACHE_FIRST,
             version: this.componentVersion,
-            hash: '', // Would compute from content
-            size: size,
+            hash: contentHash,
+            size: content.length,
             mimeType: mimeType,
             dependencies: [],
-            cachedAt: now,
-            lastAccessedAt: now,
+            cachedAt: nowIso,
+            lastAccessedAt: nowIso,
             accessCount: 1
         };
         
-        this.unitsRoute.unitRegister(unit);
+        this.unitsRoute.unitRegister(cachedUnit);
         this.registeredUnits.add(urlPath);
-        console.log(`[StaticFileRoute] 📦 Unit registered: ${urlPath}`);
+        
+        console.log(`[StaticFileRoute] 📦 Unit: ${unitUuid.substring(0, 8)}... File: ${fileUuid.substring(0, 8)}... Artefact: ${contentHash.substring(0, 16)}...`);
     }
     
     /**
