@@ -6,6 +6,8 @@
  * 
  * Web4 Principles:
  * - P6: Empty Constructor + init()
+ * - P7: Async delegates to layer4 (resolve() → IOR.load() → HTTPSLoader)
+ * - P19: One File One Type (ReferenceState moved to separate file)
  * - P34: IOR as Unified Entry Point - Reference can be remote
  * - P5: Reference<T> for Nullable References
  * 
@@ -27,19 +29,10 @@
  * @pdca 2025-12-20-UTC-1315.ior-infrastructure-universal-access.pdca.md
  */
 
-import type { IOR } from '../layer3/IOR.interface.js';
+import { ReferenceState } from '../layer3/ReferenceState.enum.js';
 
-/**
- * ReferenceState - Enum for reference state tracking
- */
-export enum ReferenceState {
-    /** No value set */
-    NULL = 'NULL',
-    /** Local value set */
-    LOCAL = 'LOCAL',
-    /** Remote IOR set */
-    REMOTE = 'REMOTE'
-}
+// Re-export for convenience
+export { ReferenceState };
 
 /**
  * DefaultReference<T> - Reference that can be local or remote

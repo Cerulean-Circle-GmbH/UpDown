@@ -20,7 +20,8 @@
  */
 export type Reference<T> = T | null;
 
-// Re-export DefaultReference for convenience
-// Usage: import { Reference, DefaultReference } from '../layer3/Reference.interface.js';
-export { DefaultReference, ReferenceState } from '../layer2/DefaultReference.js';
+// Re-export DefaultReference and ReferenceState for convenience
+// Usage: import { Reference, DefaultReference, ReferenceState } from '../layer3/Reference.interface.js';
+export { DefaultReference } from '../layer2/DefaultReference.js';
+export { ReferenceState } from './ReferenceState.enum.js';
 
