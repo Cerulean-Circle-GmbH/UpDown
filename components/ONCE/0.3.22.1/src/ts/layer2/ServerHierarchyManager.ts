@@ -15,7 +15,7 @@ import { PortManager } from './PortManager.js';
 import { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
 import { ServerCapability } from '../layer3/ServerCapability.interface.js';
 import { LifecycleState } from '../layer3/LifecycleEvents.js';
-import { IOR, iorToUrl } from '../layer3/IOR.js';
+import { SimpleIOR, iorToUrl } from '../layer3/IOR.js';
 import { IDProvider } from '../layer3/IDProvider.interface.js';
 import { UUIDProvider } from './UUIDProvider.js';
 import * as fs from 'fs';
@@ -1577,7 +1577,7 @@ export class ServerHierarchyManager {
             throw new Error('Primary server has no HTTP capability');
         }
 
-        const ior: IOR = {
+        const ior: SimpleIOR = {
             protocol: 'web4',
             host: primaryServerModel.host,
             port: httpCapability.port,

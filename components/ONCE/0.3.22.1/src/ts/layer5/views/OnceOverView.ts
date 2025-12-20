@@ -29,7 +29,7 @@ import { ActionMetadata } from '../../layer3/ActionMetadata.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 import { Collection } from '../../layer3/Collection.interface.js';
 import { LifecycleState } from '../../layer3/LifecycleState.enum.js';
-import { DefaultIOR } from '../../layer2/DefaultIOR.js';
+import { IOR } from '../../layer4/IOR.js';
 
 /**
  * ONCEModel - Model for ONCE kernel
@@ -447,7 +447,7 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
       : `https://${host}:${port}/${method}`;
     
     try {
-      const ior = await new DefaultIOR().init(url);
+      const ior = await new IOR().init(url);
       await ior.load();
     } catch (error) {
       console.error(`❌ IOR call error:`, error);
@@ -473,7 +473,7 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
     
     try {
       // F.3: Use IOR.load() instead of fetch()
-      const ior = await new DefaultIOR().init(`https://${host}:${port}/servers`);
+      const ior = await new IOR().init(`https://${host}:${port}/servers`);
       const responseText = await ior.load<string>();
       const data = JSON.parse(responseText);
       

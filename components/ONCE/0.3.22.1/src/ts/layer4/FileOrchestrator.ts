@@ -287,12 +287,12 @@ export class FileOrchestrator {
    */
   async folderLoadFromServer(folderPath: string): Promise<{ contentType: string; data: string }> {
     // Import IOR dynamically to avoid circular dependency
-    const { DefaultIOR } = await import('../layer2/DefaultIOR.js');
+    const { IOR } = await import('./IOR.js');
     
     // Use ?format=json to bypass SPA catch-all route
     const fetchUrl = folderPath + (folderPath.includes('?') ? '&' : '?') + 'format=json';
     
-    const ior = await new DefaultIOR().init(fetchUrl);
+    const ior = await new IOR().init(fetchUrl);
     const data = await ior.load<string>();
     
     // Determine content type from response (simple heuristic)
@@ -312,9 +312,9 @@ export class FileOrchestrator {
    * @pdca 2025-12-17-UTC-1740.fetch-centralization-dry.pdca.md
    */
   async fileLoadFromServer(filePath: string): Promise<string> {
-    const { DefaultIOR } = await import('../layer2/DefaultIOR.js');
+    const { IOR } = await import('./IOR.js');
     
-    const ior = await new DefaultIOR().init(filePath);
+    const ior = await new IOR().init(filePath);
     return await ior.load<string>();
   }
 }

@@ -10,7 +10,7 @@
 
 import { Scenario } from './Scenario.interface.js';
 import { Component } from './Component.interface.js';
-import { IOR } from './IOR.js';
+import type { IOR } from '../layer4/IOR.js';
 import { LifecycleObserver } from './LifecycleObserver.interface.js';
 import { ONCEPeerModel } from './ONCEPeerModel.interface.js';
 import { EnvironmentInfo } from './EnvironmentInfo.interface.js';

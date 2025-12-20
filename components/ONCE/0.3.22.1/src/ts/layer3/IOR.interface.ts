@@ -94,7 +94,7 @@ export interface IORModel {
  * - All methods operate on model
  * - Stateless operations
  */
-export interface IOR {
+export interface IORInterface {
     /** Object state (Radical OOP: ALL state in model) */
     model: IORModel;
     

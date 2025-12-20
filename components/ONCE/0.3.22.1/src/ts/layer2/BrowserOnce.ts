@@ -28,7 +28,7 @@ import { CSSLoader } from './CSSLoader.js';
 import { HTMLTemplateLoader } from './HTMLTemplateLoader.js';
 import { BrowserOnceOrchestrator } from '../layer4/BrowserOnceOrchestrator.js';
 import { BrowserScenarioStorage } from './BrowserScenarioStorage.js';
-import { DefaultIOR } from './DefaultIOR.js';
+import { IOR } from '../layer4/IOR.js';
 import { PersistenceManager } from '../layer3/PersistenceManager.interface.js';
 import type { StorageScenario } from '../layer3/StorageScenario.interface.js';
 import type { LitElement } from 'lit';
@@ -36,7 +36,7 @@ import type { Reference } from '../layer3/Reference.interface.js';
 import type { Scenario } from '../layer3/Scenario.interface.js';
 import type { EnvironmentInfo } from '../layer3/EnvironmentInfo.interface.js';
 import type { Component } from '../layer3/Component.interface.js';
-import type { IOR } from '../layer3/IOR.js';
+// IOR now imported from layer4/IOR.ts (unified Reference/IOR)
 import type { ComponentQuery } from '../layer3/ComponentQuery.interface.js';
 import type { PerformanceMetrics } from '../layer3/PerformanceMetrics.interface.js';
 import type { LifecycleObserver } from '../layer3/LifecycleObserver.interface.js';
@@ -249,7 +249,7 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
         // Fetch asset manifest from server via IOR (F.2a)
         let manifest: { css: string[], templates: string[] } = { css: [], templates: [] };
         try {
-            const ior = await new DefaultIOR().init('/asset-manifest');
+            const ior = await new IOR().init('/asset-manifest');
             const responseText = await ior.load<string>();
             const data = JSON.parse(responseText);
             manifest = data.model || { css: [], templates: [] };
@@ -411,7 +411,7 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
         // ✅ Get health status from peer via IOR (F.2a)
         // @pdca 2025-12-17-UTC-1740.fetch-centralization-dry.pdca.md
         try {
-            const ior = await new DefaultIOR().init(`https://${this.model.peerHost}/health`);
+            const ior = await new IOR().init(`https://${this.model.peerHost}/health`);
             const responseText = await ior.load<string>();
             const health = JSON.parse(responseText);
             this.updateHealthDisplay(health);
@@ -498,8 +498,8 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
         if (!this.model.components) {
             this.model.components = new Map();
         }
-        this.model.components.set(ior.uuid, component);
-        console.log('[BrowserOnce] Component registered:', ior.uuid);
+        this.model.components.set(ior.model.uuid, component);
+        console.log('[BrowserOnce] Component registered:', ior.model.uuid);
     }
     
     /**
@@ -526,7 +526,7 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
         // Send scenario via WebSocket if connected
         if (this.model.ws && this.model.ws.readyState === WebSocket.OPEN) {
             this.model.ws.send(JSON.stringify(scenario));
-            console.log('[BrowserOnce] Scenario exchanged with peer:', peerIOR.uuid);
+            console.log('[BrowserOnce] Scenario exchanged with peer:', peerIOR.model.uuid);
         } else {
             console.warn('[BrowserOnce] Cannot exchange scenario - WebSocket not connected');
         }
@@ -709,7 +709,7 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
             }
             
             // Fetch peers via IOR (F.2a)
-            const ior = await new DefaultIOR().init(endpoint);
+            const ior = await new IOR().init(endpoint);
             const responseText = await ior.load<string>();
             const data = JSON.parse(responseText);
             

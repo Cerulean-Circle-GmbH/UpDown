@@ -6,7 +6,11 @@
 /**
  * Internet Object Reference - Universal object locator
  */
-export interface IOR {
+/**
+ * @deprecated Use IOR class from layer4/IOR.ts instead
+ * This simple interface is kept for backwards compatibility
+ */
+export interface SimpleIOR {
     /**
      * Protocol (web4, http, https, ws, wss)
      */
@@ -51,7 +55,7 @@ export interface IOR {
 /**
  * Convert IOR to URL string
  */
-export function iorToUrl(ior: IOR): string {
+export function iorToUrl(ior: SimpleIOR): string {
     const baseUrl = `${ior.protocol}://${ior.host}:${ior.port}${ior.path}`;
     const params = new URLSearchParams({
         uuid: ior.uuid,
@@ -65,7 +69,7 @@ export function iorToUrl(ior: IOR): string {
 /**
  * Parse URL string to IOR
  */
-export function urlToIor(url: string): IOR {
+export function urlToIor(url: string): SimpleIOR {
     const parsed = new URL(url);
     const params = Object.fromEntries(parsed.searchParams);
     

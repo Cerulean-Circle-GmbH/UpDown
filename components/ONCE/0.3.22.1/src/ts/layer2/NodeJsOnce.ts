@@ -15,7 +15,8 @@ import type { ComponentQuery } from '../layer3/ComponentQuery.interface.js';
 import type { PerformanceMetrics } from '../layer3/PerformanceMetrics.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { Component } from '../layer3/Component.interface.js';
-import { IOR } from '../layer3/IOR.js';
+import { SimpleIOR } from '../layer3/IOR.js';
+import { IOR } from '../layer4/IOR.js';
 import { LifecycleEventType, LifecycleState } from '../layer3/LifecycleEvents.js';
 import { LifecycleObserver } from '../layer3/LifecycleObserver.interface.js';
 // ⚠️ DEPRECATED imports (functional pattern, will be removed):
@@ -885,11 +886,11 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
   }
 
   async connectPeer(peerIOR: IOR): Promise<void> {
-    console.log(`🤝 Peer connection: ${peerIOR.uuid}`);
+    console.log(`🤝 Peer connection: ${peerIOR.model.uuid}`);
   }
 
   async exchangeScenario(peerIOR: IOR, scenario: Scenario<ONCEPeerModel>): Promise<void> {
-    console.log(`🔄 Scenario exchange with ${peerIOR.uuid}`);
+    console.log(`🔄 Scenario exchange with ${peerIOR.model.uuid}`);
   }
 
   isInitialized(): boolean {

@@ -22,7 +22,7 @@ import type { UcpRouter } from '../layer5/views/UcpRouter.js';
 import type { ServerDefaultModel } from '../layer5/views/OncePeerDefaultView.js';
 import type { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
 import { LifecycleState } from '../layer3/LifecycleState.enum.js';
-import { DefaultIOR } from '../layer2/DefaultIOR.js';
+import { IOR } from './IOR.js';
 
 /**
  * BrowserOnceOrchestrator
@@ -204,7 +204,7 @@ export class BrowserOnceOrchestrator {
       
       // Try component.json first (Web4 Unit integration) - F.4: Use IOR.load()
       try {
-        const componentIor = await new DefaultIOR().init(`${basePath}/ONCE.component.json`);
+        const componentIor = await new IOR().init(`${basePath}/ONCE.component.json`);
         const componentText = await componentIor.load<string>();
         const componentJson = JSON.parse(componentText);
         const cssUnits = componentJson.model?.units?.css || [];
@@ -216,7 +216,7 @@ export class BrowserOnceOrchestrator {
       
       // Fallback to /asset-manifest - F.4: Use IOR.load()
       if (cssFiles.length === 0) {
-        const assetIor = await new DefaultIOR().init('/asset-manifest');
+        const assetIor = await new IOR().init('/asset-manifest');
         const assetText = await assetIor.load<string>();
         const data = JSON.parse(assetText);
         cssFiles = data.model?.css || data.css || [];
@@ -362,7 +362,7 @@ export class BrowserOnceOrchestrator {
       console.log('[Orchestrator] primaryPeer:', primaryPeer);
       
       // F.4: Use IOR.load() for DRY
-      const ior = await new DefaultIOR().init(endpoint);
+      const ior = await new IOR().init(endpoint);
       const responseText = await ior.load<string>();
       console.log('[Orchestrator] IOR load complete');
       
@@ -491,7 +491,7 @@ export class BrowserOnceOrchestrator {
       }
       
       // F.4: Use IOR.load() for DRY
-      const ior = await new DefaultIOR().init(endpoint);
+      const ior = await new IOR().init(endpoint);
       const responseText = await ior.load<string>();
       
       const data = JSON.parse(responseText);
@@ -521,7 +521,7 @@ export class BrowserOnceOrchestrator {
     console.log(`[Orchestrator] iorCall URL: ${url}`);
     
     try {
-      const ior = await new DefaultIOR().init(url);
+      const ior = await new IOR().init(url);
       const responseText = await ior.load<string>();
       return JSON.parse(responseText);
     } catch (error) {
@@ -537,7 +537,7 @@ export class BrowserOnceOrchestrator {
     const peerHost = this.component.browserModel.peerHost || window.location.host;
     
     try {
-      const ior = await new DefaultIOR().init(`https://${peerHost}/health`);
+      const ior = await new IOR().init(`https://${peerHost}/health`);
       const responseText = await ior.load<string>();
       return JSON.parse(responseText);
     } catch (error) {

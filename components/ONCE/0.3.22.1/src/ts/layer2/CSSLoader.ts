@@ -24,7 +24,7 @@
  */
 
 import { Reference } from '../layer3/Reference.interface.js';
-import { DefaultIOR } from './DefaultIOR.js';
+import { IOR } from '../layer4/IOR.js';
 
 /**
  * CSSLoader - Preloads CSS files for Lit components
@@ -98,7 +98,7 @@ export class CSSLoader {
    */
   private static async fetchAndParse(cssPath: string): Promise<CSSStyleSheet> {
     try {
-      const ior = await new DefaultIOR().init(cssPath);
+      const ior = await new IOR().init(cssPath);
       const cssText = await ior.load<string>();
       const sheet = new CSSStyleSheet();
       sheet.replaceSync(cssText);
