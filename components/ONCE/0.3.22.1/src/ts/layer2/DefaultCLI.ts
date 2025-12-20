@@ -40,14 +40,14 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
    * ⚠️ TODO: Properly implement IOR generation in init() method
    * @pdca session/2025-11-19-UTC-1805.iteration-01-layer3-split.pdca.md - Stub added for compilation
    */
-  ior: import("../layer3/SimpleIOR.interface.js").SimpleIOR = {
+  ior: import("../layer3/IORModel.interface.js").IORModel = {
+    component: 'CLI',
+    version: '0.0.0',
+    uuid: '',
     protocol: 'web4',
     host: 'localhost',
     port: 0,
-    path: '/',
-    uuid: '',
-    objectType: 'CLI',
-    version: '0.0.0'
+    path: '/'
   };
   
   /**

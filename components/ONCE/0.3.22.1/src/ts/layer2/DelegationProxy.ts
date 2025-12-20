@@ -39,15 +39,15 @@ export class DelegationProxy<T extends Component> implements Component {
    * Interoperable Object Reference (IOR)
    * Delegates to target component's IOR
    */
-  get ior(): import("../layer3/SimpleIOR.interface.js").SimpleIOR {
+  get ior(): import("../layer3/IORModel.interface.js").IORModel {
     return this.model.target?.ior || {
+      component: 'DelegationProxy',
+      version: '0.0.0',
+      uuid: '',
       protocol: 'web4',
       host: 'localhost',
       port: 0,
-      path: '/',
-      uuid: '',
-      objectType: 'DelegationProxy',
-      version: '0.0.0'
+      path: '/'
     };
   }
   

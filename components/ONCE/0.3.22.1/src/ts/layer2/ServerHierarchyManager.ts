@@ -15,7 +15,6 @@ import { PortManager } from './PortManager.js';
 import { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
 import { ServerCapability } from '../layer3/ServerCapability.interface.js';
 import { LifecycleState } from '../layer3/LifecycleEvents.js';
-import { SimpleIOR } from '../layer3/SimpleIOR.interface.js';
 import { IOR } from '../layer4/IOR.js';
 import { IDProvider } from '../layer3/IDProvider.interface.js';
 import { UUIDProvider } from './UUIDProvider.js';
@@ -1573,22 +1572,24 @@ export class ServerHierarchyManager {
      * Create IOR for primary server
      */
     private createPrimaryServerIOR(primaryServerModel: ONCEPeerModel): string {
-        const httpCapability = primaryServerModel.capabilities?.find(c => c.capability === 'httpPort');
+        const httpCapability = primaryServerModel.capabilities?.find(
+            function findHttp(c: ServerCapability): boolean { return c.capability === 'httpPort'; }
+        );
         if (!httpCapability) {
             throw new Error('Primary server has no HTTP capability');
         }
 
-        const ior: SimpleIOR = {
-            protocol: 'web4',
-            host: primaryServerModel.host,
-            port: httpCapability.port,
-            path: '/once',
-            uuid: primaryServerModel.uuid,
-            objectType: 'ONCE',
-            version: this.versionFromComponent
-        };
+        const ior = new IOR();
+        ior.initLocal(null);  // Initialize model
+        ior.model.component = 'ONCE';
+        ior.model.version = this.versionFromComponent;
+        ior.model.uuid = primaryServerModel.uuid;
+        ior.model.protocol = 'web4';
+        ior.model.host = primaryServerModel.host;
+        ior.model.port = httpCapability.port;
+        ior.model.path = '/once';
 
-        return IOR.simpleToUrl(ior);
+        return ior.toUrl();
     }
 
     /**

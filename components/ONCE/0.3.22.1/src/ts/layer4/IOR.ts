@@ -650,51 +650,5 @@ export class IOR<T = any> implements IORInterface {
         return this;
     }
     
-    // ═══════════════════════════════════════════════════════════════
-    // Static Methods (for legacy SimpleIOR support)
-    // ═══════════════════════════════════════════════════════════════
-    
-    /**
-     * Convert SimpleIOR to URL string
-     * @deprecated Use new IOR().init(model).toUrl() instead
-     */
-    static simpleToUrl(ior: { protocol: string; host: string; port: number; path: string; uuid: string; objectType: string; version: string; params?: Record<string, string> }): string {
-        const baseUrl = `${ior.protocol}://${ior.host}:${ior.port}${ior.path}`;
-        const params = new URLSearchParams({
-            uuid: ior.uuid,
-            type: ior.objectType,
-            version: ior.version,
-            ...ior.params
-        });
-        return `${baseUrl}?${params.toString()}`;
-    }
-    
-    /**
-     * Parse URL to SimpleIOR
-     * @deprecated Use new IOR().init(url) instead
-     */
-    static simpleFromUrl(url: string): { protocol: string; host: string; port: number; path: string; uuid: string; objectType: string; version: string; params?: Record<string, string> } {
-        const parsed = new URL(url);
-        const allParams = Object.fromEntries(parsed.searchParams);
-        const reserved = ['uuid', 'type', 'version'];
-        const otherParams: Record<string, string> = {};
-        
-        for (const key of Object.keys(allParams)) {
-            if (!reserved.includes(key)) {
-                otherParams[key] = allParams[key];
-            }
-        }
-        
-        return {
-            protocol: parsed.protocol.replace(':', ''),
-            host: parsed.hostname,
-            port: parseInt(parsed.port) || 80,
-            path: parsed.pathname,
-            uuid: allParams.uuid || '',
-            objectType: allParams.type || '',
-            version: allParams.version || '',
-            params: Object.keys(otherParams).length > 0 ? otherParams : undefined
-        };
-    }
 }
 

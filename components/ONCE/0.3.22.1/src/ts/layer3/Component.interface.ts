@@ -15,7 +15,7 @@
 import { Scenario } from './Scenario.interface.js';
 import { Model } from './Model.interface.js';
 import { MethodSignature } from './MethodSignature.interface.js';
-import { SimpleIOR } from './SimpleIOR.interface.js';
+import type { IORModel } from './IORModel.interface.js';
 
 /**
  * Base interface for all Web4 components
@@ -31,7 +31,7 @@ export interface Component<TModel extends Model = Model> {
    * Unique identifier for this component instance in the Web4 network
    * @pdca session/2025-11-19-UTC-1805.iteration-01-layer3-split.pdca.md
    */
-  ior: SimpleIOR;
+  ior: IORModel;
   
   /**
    * Component's internal model/state (REQUIRED)
