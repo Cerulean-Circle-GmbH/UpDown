@@ -55,7 +55,14 @@ export class ManifestRoute extends Route {
    */
   constructor() {
     super();
-    
+    // Web4 P6: Empty constructor - model properties set in init()
+    this.manifest = null as any;
+  }
+  
+  /**
+   * Initialize the manifest route (Web4 P6)
+   */
+  public override init(scenario?: { model?: Partial<RouteModel> }): this {
     // Default manifest
     this.manifest = {
       name: 'ONCE - Open Network Computing Environment',
@@ -72,12 +79,6 @@ export class ManifestRoute extends Route {
       lang: 'en',
       dir: 'ltr'
     };
-  }
-  
-  /**
-   * Initialize the manifest route
-   */
-  public override init(scenario?: { model?: Partial<RouteModel> }): this {
     const now = new Date().toISOString();
     
     this.model = {

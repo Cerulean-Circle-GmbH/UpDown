@@ -257,7 +257,8 @@ export class ServerHierarchyManager {
         
         // ✅ Route 2: Home page ("/") - Lit-based OncePeerDefaultView
         // @pdca 2025-11-19-UTC-1800.iteration-tracking.pdca.md
-        const homeRoute = new HTMLRoute();
+        // Web4 P6: new Route().init() pattern
+        const homeRoute = new HTMLRoute().init();
         homeRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         homeRoute.setPattern('/', HttpMethod.GET);
         // ✅ Web4: Use once.html SPA - UcpRouter handles view selection
@@ -269,7 +270,7 @@ export class ServerHierarchyManager {
         
         // ✅ Route 3: Demo Hub ("/demo") - NOW serves Lit MVC view
         // @pdca 2025-12-05-UTC-1600.phase-a1-oncepeeritemview-relatedobjects.pdca.md - A.3
-        const demoRoute = new HTMLRoute();
+        const demoRoute = new HTMLRoute().init();
         demoRoute.model.uuid = this.idProvider.create();
         demoRoute.setPattern('/demo', HttpMethod.GET);
         demoRoute.setProvider(() => this.component!.serveDemoLit()); // ✅ Now serves Lit view
@@ -277,7 +278,7 @@ export class ServerHierarchyManager {
         this.httpRouter.registerRoute(demoRoute);
         
         // ✅ Route 3b: Demo Hub with trailing slash ("/demo/")
-        const demoRoute2 = new HTMLRoute();
+        const demoRoute2 = new HTMLRoute().init();
         demoRoute2.model.uuid = this.idProvider.create();
         demoRoute2.setPattern('/demo/', HttpMethod.GET);
         demoRoute2.setProvider(() => this.component!.serveDemoLit()); // ✅ Now serves Lit view
@@ -285,7 +286,7 @@ export class ServerHierarchyManager {
         this.httpRouter.registerRoute(demoRoute2);
         
         // ✅ Route 3c: Demo Lit MVC ("/demo-lit") - Alias for /demo
-        const demoLitRoute = new HTMLRoute();
+        const demoLitRoute = new HTMLRoute().init();
         demoLitRoute.model.uuid = this.idProvider.create();
         demoLitRoute.setPattern('/demo-lit', HttpMethod.GET);
         demoLitRoute.setProvider(() => this.component!.serveDemoLit());
@@ -293,7 +294,7 @@ export class ServerHierarchyManager {
         this.httpRouter.registerRoute(demoLitRoute);
         
         // ✅ Route 3d: Legacy demo-hub ("/demo-legacy") - Old demo-hub.html
-        const demoLegacyRoute = new HTMLRoute();
+        const demoLegacyRoute = new HTMLRoute().init();
         demoLegacyRoute.model.uuid = this.idProvider.create();
         demoLegacyRoute.setPattern('/demo-legacy', HttpMethod.GET);
         demoLegacyRoute.setProvider(() => this.component!.serveDemoHub()); // Old demo
@@ -302,7 +303,7 @@ export class ServerHierarchyManager {
         
         // ✅ Route 3e: ONCE App ("/app") - Minimal SPA entry point
         // @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
-        const appRoute = new HTMLRoute();
+        const appRoute = new HTMLRoute().init();
         appRoute.model.uuid = this.idProvider.create();
         appRoute.setPattern('/app', HttpMethod.GET);
         appRoute.setProvider(() => this.component!.serveOnceApp());
@@ -310,7 +311,7 @@ export class ServerHierarchyManager {
         this.httpRouter.registerRoute(appRoute);
         
         // ✅ Route 4: ONCE Minimal ("/once")
-        const onceRoute = new HTMLRoute();
+        const onceRoute = new HTMLRoute().init();
         onceRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         onceRoute.setPattern('/once', HttpMethod.GET);
         onceRoute.setProvider(() => this.component!.serveOnceMinimal());
@@ -318,7 +319,7 @@ export class ServerHierarchyManager {
         this.httpRouter.registerRoute(onceRoute);
         
         // ✅ Route 5: ONCE Minimal with trailing slash ("/once/")
-        const onceRoute2 = new HTMLRoute();
+        const onceRoute2 = new HTMLRoute().init();
         onceRoute2.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         onceRoute2.setPattern('/once/', HttpMethod.GET);
         onceRoute2.setProvider(() => this.component!.serveOnceMinimal());
@@ -326,7 +327,7 @@ export class ServerHierarchyManager {
         this.httpRouter.registerRoute(onceRoute2);
         
         // ✅ Route 6: Communication Log ("/onceCommunicationLog")
-        const logRoute = new HTMLRoute();
+        const logRoute = new HTMLRoute().init();
         logRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         logRoute.setPattern('/onceCommunicationLog', HttpMethod.GET);
         logRoute.setProvider(() => this.component!.serveOnceCommunicationLog());
@@ -334,7 +335,7 @@ export class ServerHierarchyManager {
         this.httpRouter.registerRoute(logRoute);
         
         // ✅ Route 7: Communication Log with trailing slash ("/onceCommunicationLog/")
-        const logRoute2 = new HTMLRoute();
+        const logRoute2 = new HTMLRoute().init();
         logRoute2.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         logRoute2.setPattern('/onceCommunicationLog/', HttpMethod.GET);
         logRoute2.setProvider(() => this.component!.serveOnceCommunicationLog());
@@ -343,7 +344,7 @@ export class ServerHierarchyManager {
         
         // ✅ Route 7b: File Browser ("/EAMD.ucp") - Folder browser SPA
         // @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.1
-        const eamdRoute = new HTMLRoute();
+        const eamdRoute = new HTMLRoute().init();
         eamdRoute.model.uuid = this.idProvider.create();
         eamdRoute.setPattern('/EAMD.ucp', HttpMethod.GET);
         eamdRoute.setProvider(() => this.component!.serveDemoLit()); // Use same SPA as /demo
@@ -351,7 +352,7 @@ export class ServerHierarchyManager {
         this.httpRouter.registerRoute(eamdRoute);
         
         // ✅ Route 7c: File Browser with trailing slash ("/EAMD.ucp/")
-        const eamdRoute2 = new HTMLRoute();
+        const eamdRoute2 = new HTMLRoute().init();
         eamdRoute2.model.uuid = this.idProvider.create();
         eamdRoute2.setPattern('/EAMD.ucp/', HttpMethod.GET);
         eamdRoute2.setProvider(() => this.component!.serveDemoLit());
@@ -362,7 +363,7 @@ export class ServerHierarchyManager {
         // Handles direct navigation to /EAMD.ucp/components/.../folder
         // Matches directory paths (with or without trailing slash), not files
         // @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md
-        const eamdCatchAll = new HTMLRoute();
+        const eamdCatchAll = new HTMLRoute().init();
         eamdCatchAll.model.uuid = this.idProvider.create();
         eamdCatchAll.model.name = 'EAMD.ucp Folder Browser Catch-All';
         // Custom matcher for directory paths under /EAMD.ucp/
@@ -389,7 +390,7 @@ export class ServerHierarchyManager {
         this.httpRouter.registerRoute(eamdCatchAll);
         
         // ✅ Route 8: Health endpoint ("/health") - Returns Scenario
-        const healthRoute = new ScenarioRoute();
+        const healthRoute = new ScenarioRoute().init();
         healthRoute.model.uuid = this.idProvider.create(); // ✅ Web4 Principle 20
         healthRoute.setPattern('/health', HttpMethod.GET);
         healthRoute.setProvider(async () => {
@@ -409,7 +410,7 @@ export class ServerHierarchyManager {
         
         // ✅ Route 9: Asset Manifest ("/asset-manifest") - CSS and HTML template discovery
         // @pdca 2025-12-03-UTC-1400.lit-css-preload.pdca.md
-        const assetManifestRoute = new ScenarioRoute();
+        const assetManifestRoute = new ScenarioRoute().init();
         assetManifestRoute.model.uuid = this.idProvider.create();
         assetManifestRoute.setPattern('/asset-manifest', HttpMethod.GET);
         assetManifestRoute.setProvider(async () => {
@@ -430,7 +431,7 @@ export class ServerHierarchyManager {
         
         // ✅ Route 10: Routes list ("/routes") - Returns HTTP routes for browser UI
         // @pdca 2025-12-12-UTC-1103.http-routes-display.pdca.md RO.HTTP.2
-        const routesRoute = new ScenarioRoute();
+        const routesRoute = new ScenarioRoute().init();
         routesRoute.model.uuid = this.idProvider.create();
         routesRoute.setPattern('/routes', HttpMethod.GET);
         routesRoute.setProvider(async () => {
@@ -509,7 +510,7 @@ export class ServerHierarchyManager {
         }
         
         // ✅ Route: Servers list ("/servers") - Returns Scenario (Primary only)
-        const serversRoute = new ScenarioRoute();
+        const serversRoute = new ScenarioRoute().init();
         serversRoute.model.uuid = this.idProvider.create();
         serversRoute.setPattern('/servers', HttpMethod.GET);
         serversRoute.setProvider(async () => {

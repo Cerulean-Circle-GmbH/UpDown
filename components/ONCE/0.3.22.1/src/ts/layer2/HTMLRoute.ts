@@ -35,7 +35,16 @@ export class HTMLRoute extends Route {
     
     constructor() {
         super();
+        // Web4 P6: Empty constructor - model.name set in init()
+    }
+    
+    /**
+     * Initialize the route (Web4 P6)
+     */
+    public override init(): this {
+        super.init();
         this.model.name = 'HTMLRoute';
+        return this;
     }
     
     /**

@@ -112,11 +112,8 @@ export class IORMethodRouter {
             
             const [componentName, componentVersion, instanceUuid, methodName] = pathParts;
             
-            // Parse query params
-            const params: Record<string, string> = {};
-            urlObj.searchParams.forEach((value, key) => {
-                params[key] = value;
-            });
+            // Parse query params (P4a: no arrow functions)
+            const params: Record<string, string> = Object.fromEntries(urlObj.searchParams);
             
             return {
                 componentName,

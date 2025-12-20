@@ -34,8 +34,17 @@ export class ErrorRoute extends Route {
     
     constructor() {
         super();
+        // Web4 P6: Empty constructor - model properties set in init()
+    }
+    
+    /**
+     * Initialize the route (Web4 P6)
+     */
+    public override init(): this {
+        super.init();
         this.model.pattern = '/**';  // Matches all paths (for error handling)
         this.model.priority = 999;   // Lowest priority - only for errors
+        return this;
     }
     
     /**

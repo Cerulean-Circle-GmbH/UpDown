@@ -35,12 +35,21 @@ export class AutomaticCertificateManagementEnvironmentChallengeRoute extends Rou
      */
     constructor() {
         super();
+        // Web4 P6: Empty constructor - model properties set in init()
+        this.certificateProvider = null;
+    }
+    
+    /**
+     * Initialize the route (Web4 P6)
+     */
+    public override init(): this {
+        super.init();
         this.model.name = 'AutomaticCertificateManagementEnvironmentChallengeRoute';
         this.model.iorComponent = 'AutomaticCertificateManagementEnvironmentChallengeRoute';
         this.model.pattern = '/.well-known/acme-challenge/{token}';
         this.model.method = HttpMethod.GET;
         this.model.priority = 1;  // Highest priority - must handle before other routes
-        this.certificateProvider = null;
+        return this;
     }
     
     /**

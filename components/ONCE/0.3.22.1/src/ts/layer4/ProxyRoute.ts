@@ -212,8 +212,17 @@ export class ProxyRoute extends Route {
     }
     
     /**
+     * Load balancing strategies (P4b: polymorphism via map, no switch)
+     */
+    private loadBalancingStrategies: Record<string, (upstreams: string[]) => string> = {
+        'round-robin': this.selectRoundRobin.bind(this),
+        'random': this.selectRandom.bind(this),
+        'least-connections': this.selectRoundRobin.bind(this), // Not implemented - fallback
+    };
+    
+    /**
      * Select upstream (load balancing)
-     * Supports: round-robin, random
+     * Web4 P4b: Strategy pattern via map, no switch statement
      */
     protected upstreamSelect(): string {
         const upstreams = this.model.upstreams || [this.model.upstream];
@@ -222,22 +231,20 @@ export class ProxyRoute extends Route {
             return upstreams[0];
         }
         
-        switch (this.model.loadBalancing) {
-            case 'round-robin':
-                this.upstreamIndex = (this.upstreamIndex + 1) % upstreams.length;
-                return upstreams[this.upstreamIndex];
-                
-            case 'random':
-                return upstreams[Math.floor(Math.random() * upstreams.length)];
-                
-            case 'least-connections':
-                // Not implemented - fall back to round-robin
-                this.upstreamIndex = (this.upstreamIndex + 1) % upstreams.length;
-                return upstreams[this.upstreamIndex];
-                
-            default:
-                return upstreams[0];
+        const strategy = this.loadBalancingStrategies[this.model.loadBalancing || 'round-robin'];
+        if (strategy) {
+            return strategy(upstreams);
         }
+        return upstreams[0];
+    }
+    
+    private selectRoundRobin(upstreams: string[]): string {
+        this.upstreamIndex = (this.upstreamIndex + 1) % upstreams.length;
+        return upstreams[this.upstreamIndex];
+    }
+    
+    private selectRandom(upstreams: string[]): string {
+        return upstreams[Math.floor(Math.random() * upstreams.length)];
     }
     
     /**
