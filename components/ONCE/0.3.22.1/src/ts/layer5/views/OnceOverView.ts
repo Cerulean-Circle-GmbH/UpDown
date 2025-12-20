@@ -472,7 +472,7 @@ export class OnceOverView extends AbstractWebBean<ONCEModel> {
     const port = 42777;
     
     try {
-      // F.3: Use IOR.load() instead of fetch()
+      // Using IOR.load() for data access (P7/P34 compliant)
       const ior = await new IOR().init(`https://${host}:${port}/servers`);
       const responseText = await ior.load<string>();
       const data = JSON.parse(responseText);

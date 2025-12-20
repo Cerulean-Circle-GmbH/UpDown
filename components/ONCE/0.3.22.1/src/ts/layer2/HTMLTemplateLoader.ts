@@ -18,6 +18,7 @@
  */
 
 import { Reference } from '../layer3/Reference.interface.js';
+import { IOR } from '../layer4/IOR.js';
 
 /**
  * HTMLTemplateLoader - Preloads HTML templates for Lit components
@@ -76,22 +77,20 @@ export class HTMLTemplateLoader {
   }
   
   /**
-   * Fetch HTML template content
+   * Fetch HTML template content via IOR
    * @param templatePath URL path to HTML template file
    * @returns Template content as string
    */
   private static async fetchTemplate(templatePath: string): Promise<string> {
-    const response = await fetch(templatePath);
-    
-    if (!response.ok) {
-      console.warn(`[HTMLTemplateLoader] Failed to load ${templatePath}: ${response.status}`);
-      // Return empty string on error
+    try {
+      const ior = await new IOR().init(templatePath);
+      const htmlText = await ior.load<string>();
+      console.log(`[HTMLTemplateLoader] ✅ Loaded: ${templatePath}`);
+      return htmlText;
+    } catch (error: any) {
+      console.warn(`[HTMLTemplateLoader] Failed to load ${templatePath}: ${error.message}`);
       return '';
     }
-    
-    const htmlText = await response.text();
-    console.log(`[HTMLTemplateLoader] ✅ Loaded: ${templatePath}`);
-    return htmlText;
   }
   
   /**

@@ -238,8 +238,10 @@ export class IOR<T = any> implements IORInterface {
      * 1. State → RESOLVED
      * 2. Value cached
      * 3. (Future: nested refs → local, next level prefetched)
+     * 
+     * @param options Optional load options (signal, timeout, headers)
      */
-    async resolve(): Promise<T | null> {
+    async resolve(options?: IOROptions): Promise<T | null> {
         // Already resolved or local - return cached value
         if (this.isLocal || this.isResolved) {
             return this.resolvedValue;
@@ -257,7 +259,7 @@ export class IOR<T = any> implements IORInterface {
         
         // Start resolution
         this.referenceState = ReferenceState.RESOLVING;
-        this.resolutionPromise = this.performResolution();
+        this.resolutionPromise = this.performResolution(options);
         
         try {
             const result = await this.resolutionPromise;
@@ -278,8 +280,9 @@ export class IOR<T = any> implements IORInterface {
     
     /**
      * Perform the actual resolution via loader chain
+     * @param options Optional load options (signal, timeout, headers)
      */
-    private async performResolution(): Promise<T | null> {
+    private async performResolution(options?: IOROptions): Promise<T | null> {
         const protocols = this.parseProtocolChain();
         
         if (protocols.length === 0) {
@@ -299,9 +302,11 @@ export class IOR<T = any> implements IORInterface {
         // Build the URL for transport layer
         const url = this.toUrl();
         
-        // Load via transport loader
+        // Load via transport loader with options (signal, headers, etc.)
         const rawData = await loader.load(url, {
-            method: 'GET'
+            method: options?.method || 'GET',
+            headers: options?.headers,
+            signal: options?.signal
         });
         
         // Process through higher-level loaders (in reverse order, excluding transport)
@@ -486,11 +491,10 @@ export class IOR<T = any> implements IORInterface {
     }
     
     /**
-     * Load data via IOR (alias for resolve)
-     * @deprecated Use resolve() instead
+     * Load data via IOR (alias for resolve with options)
      */
     async load<R = T>(options?: IOROptions): Promise<R> {
-        const result = await this.resolve();
+        const result = await this.resolve(options);
         return result as unknown as R;
     }
     

@@ -45,6 +45,9 @@ export interface IOROptions {
     /** Request timeout in milliseconds - default: 5000 */
     timeout?: number;
     
+    /** AbortSignal for request cancellation */
+    signal?: AbortSignal;
+    
     /** Skip specific protocols in chain (e.g., ['scenario'] to get raw JSON) */
     skipProtocols?: string[];
 }

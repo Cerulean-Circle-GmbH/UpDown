@@ -2548,21 +2548,14 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
     try {
       // Use AbortController for timeout - the server may close connection during shutdown
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout
+      const timeoutId = setTimeout(function abortTimeout() { controller.abort(); }, 3000); // 3s timeout
       
-      const response = await fetch(iorUrl, { 
-        method: 'GET',
-        signal: controller.signal 
-      });
+      const ior = await new IOR().init(iorUrl);
+      await ior.load({ signal: controller.signal });
       
       clearTimeout(timeoutId);
-      
-      if (response.ok) {
-        console.log('✅ Shutdown request sent successfully');
-        console.log('🛑 All peers should be shutting down...');
-      } else {
-        console.error(`❌ Shutdown request failed: ${response.status} ${response.statusText}`);
-      }
+      console.log('✅ Shutdown request sent successfully');
+      console.log('🛑 All peers should be shutting down...');
     } catch (error: any) {
       // Connection refused likely means server already stopped
       // Abort errors are expected - server may close connection during shutdown

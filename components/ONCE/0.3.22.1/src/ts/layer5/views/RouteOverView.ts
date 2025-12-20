@@ -26,6 +26,7 @@ import { UcpView } from './UcpView.js';
 import type { RouteModel } from '../../layer3/RouteScenario.interface.js';
 import type { Reference } from '../../layer3/Reference.interface.js';
 import './RouteItemView.js';  // Import to register custom element
+import { IOR } from '../../layer4/IOR.js';
 
 /** Route with class info for JsInterface grouping */
 interface RouteWithClass {
@@ -105,27 +106,22 @@ export class RouteOverView extends UcpView<any> {
     }
   
     /**
-     * Fetch HTTP routes from /routes endpoint
-     * Web4 P7: Uses .then() pattern (registration is sync)
+     * Fetch HTTP routes from /routes endpoint via IOR
+     * Web4 P7: Uses IOR.load() for data access
      */
     private httpRoutesFetch(): void {
         this.loading = true;
-        fetch('/routes')
-            .then(this.httpResponseHandle.bind(this))
+        new IOR().init('/routes')
+            .then(this.iorLoadRoutes.bind(this))
+            .catch(this.httpErrorHandle.bind(this));
+    }
+    
+    private iorLoadRoutes(ior: IOR): void {
+        ior.load()
+            .then(this.httpDataHandle.bind(this))
             .catch(this.httpErrorHandle.bind(this));
     }
   
-    /**
-     * Handle HTTP response
-     * Web4 P4: Method reference
-     */
-    private httpResponseHandle(response: Response): void {
-        if (response.ok) {
-            response.json().then(this.httpDataHandle.bind(this));
-        } else {
-            this.loading = false;
-        }
-    }
   
     /**
      * Handle parsed JSON data

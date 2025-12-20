@@ -18,6 +18,7 @@ import { html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UcpView } from './UcpView.js';
 import type { Reference } from '../../layer3/Reference.interface.js';
+import { IOR } from '../../layer4/IOR.js';
 
 interface ServerMetrics {
     uptime: number;
@@ -51,18 +52,18 @@ export class OnceServerStatusView extends UcpView<ServerMetrics> {
     // ═══════════════════════════════════════════════════════════════
     
     /**
-     * Fetch server status from /health endpoint
+     * Fetch server status from /health endpoint via IOR
      */
     statusFetch(): void {
         this.refreshing = true;
         
-        fetch('/health')
-            .then(this.healthResponseHandle.bind(this))
+        new IOR().init('/health')
+            .then(this.iorLoadHealth.bind(this))
             .catch(this.healthErrorHandle.bind(this));
     }
     
-    private healthResponseHandle(response: Response): void {
-        response.json()
+    private iorLoadHealth(ior: IOR): void {
+        ior.load()
             .then(this.healthDataHandle.bind(this))
             .catch(this.healthErrorHandle.bind(this));
     }

@@ -18,6 +18,7 @@ import { html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UcpView } from './UcpView.js';
 import type { Reference } from '../../layer3/Reference.interface.js';
+import { IOR } from '../../layer4/IOR.js';
 
 interface PeerModel {
     uuid: string;
@@ -70,20 +71,14 @@ export class OncePeerDetailsView extends UcpView<PeerModel> {
         this.loading = true;
         this.error = '';
         
-        // For now, use /health as it contains peer info
-        // Future: use IOR like /ONCE/{version}/{uuid}/toScenario
-        fetch('/health')
-            .then(this.peerResponseHandle.bind(this))
+        // Use IOR for peer health info
+        new IOR().init('/health')
+            .then(this.iorLoadPeer.bind(this))
             .catch(this.peerErrorHandle.bind(this));
     }
     
-    private peerResponseHandle(response: Response): void {
-        if (!response.ok) {
-            this.error = `HTTP ${response.status}`;
-            this.loading = false;
-            return;
-        }
-        response.json()
+    private iorLoadPeer(ior: IOR): void {
+        ior.load()
             .then(this.peerDataHandle.bind(this))
             .catch(this.peerErrorHandle.bind(this));
     }

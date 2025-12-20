@@ -76,7 +76,8 @@ export class HTTPSLoader implements Loader {
                 const response = await fetch(url, {
                     method: options?.method || 'GET',
                     headers: options?.headers || {},
-                    body: options?.body
+                    body: options?.body,
+                    signal: options?.signal
                 });
                 
                 if (!response.ok) {
