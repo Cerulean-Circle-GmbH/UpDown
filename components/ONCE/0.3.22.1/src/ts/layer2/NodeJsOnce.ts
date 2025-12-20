@@ -2170,6 +2170,86 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
   }
 
   /**
+   * Clear all browser caches and trigger server shutdown
+   * 
+   * For debugging: completely resets browser state and restarts server.
+   * Browser must execute the returned instructions to clear:
+   * - Cache Storage (all caches)
+   * - IndexedDB (all databases)
+   * - Service Worker (unregister)
+   * 
+   * Server shuts down after response is sent (caller must restart).
+   * 
+   * @returns Instructions for browser cache clearing + shutdown confirmation
+   * @ior ior:https://{host}:{port}/ONCE/{version}/{uuid}/cacheClear
+   * @pdca 2025-12-20-UTC-2100.css-loading-verification.pdca.md
+   */
+  async cacheClear(): Promise<any> {
+    console.log('🧹 [cacheClear] Clearing all caches and shutting down server...');
+    
+    // Schedule server shutdown after response is sent
+    setTimeout(async () => {
+      console.log('🛑 [cacheClear] Shutting down server...');
+      if (this.serverHierarchyManager) {
+        await this.serverHierarchyManager.stopServer();
+      }
+      // Force exit after graceful shutdown attempt
+      setTimeout(() => {
+        console.log('👋 [cacheClear] Server shutdown complete. Restart manually.');
+        process.exit(0);
+      }, 500);
+    }, 100);
+    
+    // Return instructions for browser to execute
+    return {
+      action: 'cache-clear',
+      instructions: {
+        clearCacheStorage: true,
+        clearIndexedDB: true,
+        unregisterServiceWorker: true,
+        serverShutdown: true
+      },
+      // JavaScript code for browser to execute (convenience)
+      browserScript: `
+        (async function() {
+          console.log('🧹 Clearing all browser caches...');
+          
+          // 1. Clear Cache Storage
+          if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames.map(name => caches.delete(name)));
+            console.log('✅ Cache Storage cleared:', cacheNames.length, 'caches');
+          }
+          
+          // 2. Clear IndexedDB
+          if ('indexedDB' in window) {
+            const databases = await indexedDB.databases();
+            for (const db of databases) {
+              if (db.name) {
+                indexedDB.deleteDatabase(db.name);
+                console.log('✅ IndexedDB deleted:', db.name);
+              }
+            }
+          }
+          
+          // 3. Unregister Service Worker
+          if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (const registration of registrations) {
+              await registration.unregister();
+              console.log('✅ Service Worker unregistered:', registration.scope);
+            }
+          }
+          
+          console.log('🧹 All caches cleared! Server is shutting down. Restart manually.');
+          alert('Caches cleared! Server is shutting down. Restart with: ./once peerStart');
+        })();
+      `,
+      message: 'Cache clear initiated. Server will shutdown after this response.'
+    };
+  }
+
+  /**
    * Get asset manifest for CSS and HTML template preloading
    * Returns list of CSS files and HTML templates in layer5/views/
    * @returns Asset manifest with css and templates arrays

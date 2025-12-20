@@ -500,6 +500,92 @@ export class ServerHierarchyManager {
         // Note: unitsRoute created at start of registerRoutes() to allow StaticFileRoute to register units (I.6)
         this.httpRouter.registerRoute(unitsRoute);
         
+        // ✅ Route 14: Cache Clear ("/cache-clear") - Clears browser caches + shuts down server
+        // For debugging: completely resets browser state and restarts server
+        const cacheServerUuid = this.serverModel.uuid || '';
+        const cacheVersion = this.version || '0.3.22.1';
+        const cacheClearRoute = new HTMLRoute().init();
+        cacheClearRoute.model.uuid = this.idProvider.create();
+        cacheClearRoute.setPattern('/cache-clear', HttpMethod.GET);
+        cacheClearRoute.setProvider(() => `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONCE Cache Clear</title>
+    <style>
+        body { font-family: system-ui; background: #1a1a2e; color: #eee; padding: 40px; text-align: center; }
+        h1 { color: #16c79a; }
+        .status { background: #0f3460; padding: 20px; border-radius: 8px; margin: 20px auto; max-width: 600px; }
+        .done { color: #16c79a; }
+        .error { color: #e94560; }
+        button { background: #e94560; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 8px; cursor: pointer; margin-top: 20px; }
+        button:hover { background: #c73e54; }
+    </style>
+</head>
+<body>
+    <h1>🧹 ONCE Cache Clear</h1>
+    <div class="status" id="status">
+        <p>Click button to clear all browser caches and restart server...</p>
+        <button onclick="clearCaches()">Clear All Caches & Restart</button>
+    </div>
+    <script>
+        async function clearCaches() {
+            const status = document.getElementById('status');
+            status.innerHTML = '<p>🧹 Clearing caches...</p>';
+            
+            try {
+                // 1. Clear Cache Storage
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    await Promise.all(cacheNames.map(name => caches.delete(name)));
+                    status.innerHTML += '<p class="done">✅ Cache Storage cleared: ' + cacheNames.length + ' caches</p>';
+                }
+                
+                // 2. Clear IndexedDB
+                if ('indexedDB' in window) {
+                    const databases = await indexedDB.databases();
+                    for (const db of databases) {
+                        if (db.name) {
+                            indexedDB.deleteDatabase(db.name);
+                            status.innerHTML += '<p class="done">✅ IndexedDB deleted: ' + db.name + '</p>';
+                        }
+                    }
+                }
+                
+                // 3. Unregister Service Worker
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (const registration of registrations) {
+                        await registration.unregister();
+                        status.innerHTML += '<p class="done">✅ Service Worker unregistered: ' + registration.scope + '</p>';
+                    }
+                }
+                
+                status.innerHTML += '<p class="done">🧹 All caches cleared!</p>';
+                status.innerHTML += '<p>🛑 Shutting down server...</p>';
+                
+                // 4. Call server cacheClear IOR to shut down
+                try {
+                    await fetch('/ONCE/${cacheVersion}/${cacheServerUuid}/cacheClear');
+                } catch (e) {
+                    // Expected - server shuts down before response
+                }
+                
+                status.innerHTML += '<p class="done">✅ Server shutdown initiated!</p>';
+                status.innerHTML += '<p><strong>Restart server with:</strong> <code>./once peerStart</code></p>';
+                status.innerHTML += '<p>Then refresh this page.</p>';
+                
+            } catch (error) {
+                status.innerHTML += '<p class="error">❌ Error: ' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>`);
+        cacheClearRoute.model.priority = 100;
+        this.httpRouter.registerRoute(cacheClearRoute);
+        
         // Note: /servers route registered after port is bound (see registerPrimaryOnlyRoutes)
         
         console.log(`📍 Registered ${this.httpRouter.model.routes.length} routes in HTTPRouter`);

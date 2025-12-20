@@ -216,7 +216,17 @@ export class BrowserOnceOrchestrator {
         }
         
         const cssUnits = componentJson.model?.units?.css || [];
-        cssFiles = cssUnits.map((unit: { path: string }) => `${basePath}/${unit.path}`);
+        // Handle both string IORs and legacy object format
+        cssFiles = cssUnits.map(function mapCssUnit(unit: string | { path: string }): string {
+          if (typeof unit === 'string') {
+            // New format: IOR string (relative path)
+            // If it starts with '/' it's already absolute, otherwise prepend basePath
+            return unit.startsWith('/') ? unit : `${basePath}/${unit}`;
+          } else {
+            // Legacy format: { path: "..." }
+            return `${basePath}/${unit.path}`;
+          }
+        });
         console.log(`[Orchestrator] Using component.json units: ${cssFiles.length} CSS files`);
       } catch (e) {
         console.log('[Orchestrator] component.json not available, trying asset-manifest');
