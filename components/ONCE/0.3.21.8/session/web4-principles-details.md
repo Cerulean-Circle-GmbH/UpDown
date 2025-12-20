@@ -1444,6 +1444,119 @@ render() {
 
 ---
 
+## Principle 34: IOR as Unified Entry Point
+
+> "ALL resource access goes through IOR. Never use fetch() directly. IOR resolves protocol chains internally."
+
+**Checklist:** [web4-principles-checklist.md](./web4-principles-checklist.md)
+
+### Details
+
+IOR (Internet Object Reference) is the **single entry point** for ALL data access:
+
+1. **Files**: `new IOR().init('/ONCE/0.3.22.1/css/style.css').load()`
+2. **REST APIs**: `new IOR().init('https://api.example.com/users').load()`
+3. **Scenarios**: `new IOR().init('scenario://uuid').load()`
+4. **WebSocket**: `new IOR().init('ior:wss://host:port/ws').load()`
+
+### Protocol Chain Resolution
+
+IOR URLs can specify protocol chains:
+```
+ior:wss:https://host:port/ws
+      ↓        ↓
+   WebSocket  Transport
+   Loader     Loader
+```
+
+IOR internally resolves the chain by invoking loaders in sequence.
+
+### Loaders
+
+| Protocol | Loader | Purpose |
+|----------|--------|---------|
+| `https` | HTTPSLoader | HTTP/HTTPS requests |
+| `scenario` | ScenarioLoader | Load scenarios by UUID |
+| `wss` | WebSocketLoader | WebSocket connections |
+| `file` | FileLoader | Local file system (Node.js) |
+
+### Reference<T> — Local OR Remote
+
+```typescript
+// Old (duct tape type)
+type Reference<T> = T | null;
+
+// New (real Web4 class)
+class Reference<T> {
+    private _local: T | null = null;
+    private _ior: IOR<T> | null = null;
+    
+    async resolve(): Promise<T | null> {
+        if (this._local) return this._local;
+        if (this._ior) return await this._ior.load();
+        return null;
+    }
+    
+    get isLocal(): boolean { return this._local !== null; }
+    get isRemote(): boolean { return this._ior !== null; }
+}
+```
+
+Usage:
+```typescript
+const user: Reference<User> = getUserRef();
+const resolved = await user.resolve(); // Works for local OR remote
+```
+
+### Why
+
+- **DRY**: Single point for all data access
+- **Testability**: Mock IOR, not fetch()
+- **Protocol-agnostic**: Views don't know about HTTP/WS
+- **Caching**: IOR can cache via ServiceWorker Units
+- **P7 Compliance**: Async only in layer4 (IOR delegates to layer4 loaders)
+
+### Anti-Patterns
+
+❌ **WRONG:** Direct fetch in views
+```typescript
+// In layer5 view - VIOLATES P7 and P34
+const response = await fetch('/api/users');
+```
+
+✅ **CORRECT:** IOR in orchestrator, called by component
+```typescript
+// In layer2 component
+async loadUsers(): Promise<void> {
+    const ior = await new IOR().init('/api/users');
+    this.model.users = await ior.load();
+}
+```
+
+❌ **WRONG:** Multiple fetch implementations
+```typescript
+// Scattered fetch() calls with different error handling
+```
+
+✅ **CORRECT:** Single IOR with unified error handling
+```typescript
+// All data access via IOR, consistent error handling in loaders
+```
+
+### Related Principles
+
+- **P7**: Async Only in Layer 4 — IOR delegates to layer4 loaders
+- **P11**: Protocol-Less Communication — Views use IOR, not protocols
+- **P12**: IOR-based Method Invocation — Extends to data loading
+
+### Examples
+
+- [IOR Infrastructure PDCA](../../../../ONCE/0.3.22.1/session/2025-12-20-UTC-1315.ior-infrastructure-universal-access.pdca.md)
+- [Fetch Centralization PDCA](../../../../ONCE/0.3.22.1/session/2025-12-17-UTC-1740.fetch-centralization-dry.pdca.md)
+- [DefaultIOR.ts](../../../../ONCE/0.3.22.1/src/ts/layer2/DefaultIOR.ts)
+
+---
+
 **"Never 2 1 (TO ONE). Always 4 2 (FOR TWO)."** 🤝✨
 
 
