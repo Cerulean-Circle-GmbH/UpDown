@@ -45,6 +45,10 @@ export class CSSLoader {
   /** Loading promises to prevent duplicate fetches */
   private static loading: Map<string, Promise<CSSStyleSheet>> = new Map();
   
+  /** Retry configuration */
+  private static readonly MAX_RETRIES = 3;
+  private static readonly INITIAL_DELAY_MS = 100;
+  
   /**
    * Empty constructor - Web4 Principle 6
    * Use static methods for loading
@@ -91,26 +95,55 @@ export class CSSLoader {
   }
   
   /**
-   * Fetch CSS and parse into CSSStyleSheet
+   * Fetch CSS and parse into CSSStyleSheet with retry logic
    * Via IOR (F.2b)
    * @param cssPath URL path to CSS file
    * @returns Parsed CSSStyleSheet
    */
   private static async fetchAndParse(cssPath: string): Promise<CSSStyleSheet> {
-    try {
-      const ior = await new IOR().init(cssPath);
-      const cssText = await ior.load<string>();
-      const sheet = new CSSStyleSheet();
-      sheet.replaceSync(cssText);
-      
-      console.log(`[CSSLoader] ✅ Loaded: ${cssPath}`);
-      return sheet;
-    } catch (error: any) {
-      console.warn(`[CSSLoader] Failed to load ${cssPath}: ${error.message}`);
-      // Return empty stylesheet on error
-      const emptySheet = new CSSStyleSheet();
-      return emptySheet;
+    let lastError: Error | null = null;
+    
+    for (let attempt = 0; attempt < this.MAX_RETRIES; attempt++) {
+      try {
+        const ior = await new IOR().init(cssPath);
+        const cssText = await ior.load<string>();
+        const sheet = new CSSStyleSheet();
+        sheet.replaceSync(cssText);
+        
+        if (attempt > 0) {
+          console.log(`[CSSLoader] ✅ Loaded after ${attempt + 1} attempts: ${cssPath}`);
+        } else {
+          console.log(`[CSSLoader] ✅ Loaded: ${cssPath}`);
+        }
+        return sheet;
+      } catch (error: any) {
+        lastError = error;
+        if (attempt < this.MAX_RETRIES - 1) {
+          const delay = this.INITIAL_DELAY_MS * Math.pow(2, attempt);
+          console.warn(`[CSSLoader] Retry ${attempt + 1}/${this.MAX_RETRIES} for ${cssPath} in ${delay}ms`);
+          await this.delay(delay);
+        }
+      }
     }
+    
+    console.error(`[CSSLoader] ❌ Failed after ${this.MAX_RETRIES} attempts: ${cssPath}`, lastError);
+    // Return empty stylesheet on final failure
+    const emptySheet = new CSSStyleSheet();
+    return emptySheet;
+  }
+  
+  /**
+   * Delay helper for retry backoff (P4: no arrow function)
+   */
+  private static delay(ms: number): Promise<void> {
+    return new Promise(this.resolveAfterDelay.bind(this, ms));
+  }
+  
+  /**
+   * Resolve callback for delay (P4: bound method)
+   */
+  private static resolveAfterDelay(ms: number, resolve: () => void): void {
+    setTimeout(resolve, ms);
   }
   
   /**
