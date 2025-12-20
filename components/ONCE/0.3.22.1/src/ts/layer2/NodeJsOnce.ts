@@ -15,7 +15,7 @@ import type { ComponentQuery } from '../layer3/ComponentQuery.interface.js';
 import type { PerformanceMetrics } from '../layer3/PerformanceMetrics.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { Component } from '../layer3/Component.interface.js';
-import { SimpleIOR } from '../layer3/IOR.js';
+import { SimpleIOR } from '../layer3/SimpleIOR.interface.js';
 import { IOR } from '../layer4/IOR.js';
 import { LifecycleEventType, LifecycleState } from '../layer3/LifecycleEvents.js';
 import { LifecycleObserver } from '../layer3/LifecycleObserver.interface.js';

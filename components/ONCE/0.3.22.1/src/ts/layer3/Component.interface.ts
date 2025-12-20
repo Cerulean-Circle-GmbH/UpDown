@@ -15,7 +15,7 @@
 import { Scenario } from './Scenario.interface.js';
 import { Model } from './Model.interface.js';
 import { MethodSignature } from './MethodSignature.interface.js';
-import { SimpleIOR } from './IOR.js';
+import { SimpleIOR } from './SimpleIOR.interface.js';
 
 /**
  * Base interface for all Web4 components
