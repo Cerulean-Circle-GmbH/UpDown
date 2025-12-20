@@ -31,7 +31,11 @@
 
 import { ReferenceState } from '../layer3/ReferenceState.enum.js';
 import type { Loader } from '../layer3/Loader.interface.js';
-import type { IORInterface, IORModel, IORProfile, IOROptions } from '../layer3/IOR.interface.js';
+import type { IORInterface } from '../layer3/IOR.interface.js';
+import type { IORModel } from '../layer3/IORModel.interface.js';
+import type { IORProfile } from '../layer3/IORProfile.interface.js';
+import type { IOROptions } from '../layer3/IOROptions.interface.js';
+import { HttpMethod } from '../layer3/HttpMethod.enum.js';
 import { HTTPSLoader } from './HTTPSLoader.js';
 import { ScenarioLoader } from './ScenarioLoader.js';
 import { WebSocketLoader } from './WebSocketLoader.js';
@@ -80,23 +84,21 @@ export class IOR<T = any> implements IORInterface {
      * State initialization happens in init() methods
      */
     constructor() {
-        this.model = {
-            component: '',
-            version: '',
-            uuid: ''
-        };
-        
-        // Register default loaders on first use
-        if (!IOR.loadersInitialized) {
-            this.initDefaultLoaders();
-        }
+        // P6: Empty constructor - model initialized to minimal valid state
+        // Actual initialization happens in init() methods
+        this.model = undefined as unknown as IORModel;
     }
     
+    // ═══════════════════════════════════════════════════════════════
+    // Static Loader Initialization (called on first use)
+    // ═══════════════════════════════════════════════════════════════
+    
     /**
-     * Initialize default loaders
-     * Called once on first IOR instantiation
+     * Ensure default loaders are registered (lazy initialization)
+     * Called from init() methods, not constructor
      */
-    private initDefaultLoaders(): void {
+    private static ensureLoadersInitialized(): void {
+        if (IOR.loadersInitialized) return;
         IOR.loadersInitialized = true;
         
         // Register HTTPSLoader for 'https' and 'http' protocols
@@ -174,6 +176,8 @@ export class IOR<T = any> implements IORInterface {
      * @returns this for chaining
      */
     initLocal(value: T): this {
+        IOR.ensureLoadersInitialized();
+        this.model = { component: '', version: '', uuid: '' };
         this.resolvedValue = value;
         this.referenceState = ReferenceState.LOCAL;
         this.resolutionPromise = null;
@@ -186,6 +190,8 @@ export class IOR<T = any> implements IORInterface {
      * @returns this for chaining
      */
     initRemote(iorString: string): this {
+        IOR.ensureLoadersInitialized();
+        this.model = { component: '', version: '', uuid: '' };
         this.parseIorString(iorString);
         this.referenceState = ReferenceState.REMOTE;
         this.resolvedValue = null;
@@ -200,6 +206,9 @@ export class IOR<T = any> implements IORInterface {
      * @returns this for chaining (async for IOR parsing)
      */
     async init(valueOrIor: T | IORModel | string | null): Promise<this> {
+        IOR.ensureLoadersInitialized();
+        this.model = { component: '', version: '', uuid: '' };
+        
         if (valueOrIor === null) {
             this.referenceState = ReferenceState.NULL;
             this.resolvedValue = null;
@@ -304,7 +313,7 @@ export class IOR<T = any> implements IORInterface {
         
         // Load via transport loader with options (signal, headers, etc.)
         const rawData = await loader.load(url, {
-            method: options?.method || 'GET',
+            method: options?.method || HttpMethod.GET,
             headers: options?.headers,
             signal: options?.signal
         });
@@ -541,7 +550,7 @@ export class IOR<T = any> implements IORInterface {
         
         const url = this.toUrl();
         await loader.save(stringData, url, {
-            method: options?.method || 'POST',
+            method: options?.method || HttpMethod.POST,
             headers: options?.headers || { 'Content-Type': 'application/json' },
             timeout: options?.timeout
         });
@@ -584,20 +593,35 @@ export class IOR<T = any> implements IORInterface {
         return protocols;
     }
     
+    /**
+     * Apply built-in transform for protocols without registered loaders
+     * P4b: Uses Map-based dispatch instead of switch
+     */
     private applyBuiltInTransform(protocol: string, data: any, direction: 'load' | 'save'): any {
-        switch (protocol) {
-            case 'scenario':
-            case 'json':
-                if (direction === 'load') {
-                    return typeof data === 'string' ? JSON.parse(data) : data;
-                } else {
-                    return typeof data === 'string' ? data : JSON.stringify(data);
-                }
-            case 'REST':
-                return data;
-            default:
-                console.warn(`[IOR] Unknown protocol '${protocol}' - passing data through`);
-                return data;
+        // P4b: Map dispatch instead of switch
+        const jsonTransform = this.transformJson.bind(this, data, direction);
+        const passthrough = function passthroughTransform(): any { return data; };
+        
+        const transforms: Record<string, () => any> = {
+            'scenario': jsonTransform,
+            'json': jsonTransform,
+            'REST': passthrough
+        };
+        
+        const transform = transforms[protocol];
+        if (transform) {
+            return transform();
+        }
+        
+        console.warn(`[IOR] Unknown protocol '${protocol}' - passing data through`);
+        return data;
+    }
+    
+    private transformJson(data: any, direction: 'load' | 'save'): any {
+        if (direction === 'load') {
+            return typeof data === 'string' ? JSON.parse(data) : data;
+        } else {
+            return typeof data === 'string' ? data : JSON.stringify(data);
         }
     }
     

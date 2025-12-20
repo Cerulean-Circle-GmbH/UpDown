@@ -1,5 +1,6 @@
 /**
- * IOR Interface - Internet Object Reference
+ * IOR.interface.ts - Internet Object Reference Interface
+ * 
  * Web4 Radical OOP: All state in model, methods operate on model
  * 
  * Enhanced from CORBA IOR with failover profiles support
@@ -9,84 +10,22 @@
  * - Internally chains loaders based on protocol stack
  * - Protocol chain: ior:scenario:REST:https:// → ScenarioLoader → RESTLoader → HTTPSLoader
  * 
+ * Web4 Principles:
+ * - P19: One File One Type (other types extracted)
+ * - P34: IOR as Unified Entry Point
+ * 
  * @layer3
  * @version 0.3.22.1
- * @pdca session/2025-12-17-UTC-1740.fetch-centralization-dry.pdca.md
+ * @pdca session/2025-12-20-UTC-1315.ior-infrastructure-universal-access.pdca.md
  */
 
-import { Loader } from './Loader.interface.js';
+import type { Loader } from './Loader.interface.js';
+import type { IORProfile } from './IORProfile.interface.js';
+import type { IOROptions } from './IOROptions.interface.js';
+import type { IORModel } from './IORModel.interface.js';
 
-/**
- * IOR Profile - Network location for object access (CORBA 2.3+ pattern)
- * Enables failover and load balancing across multiple endpoints
- */
-export interface IORProfile {
-    /** Host address (domain or IP) */
-    host: string;
-    
-    /** Port number */
-    port: number;
-    
-    /** Optional protocol override for this profile */
-    protocol?: string;
-}
-
-/**
- * IOR Load/Save Options
- * Options for IOR.load() and IOR.save() operations
- */
-export interface IOROptions {
-    /** HTTP method (GET, POST, PUT, DELETE) - default: GET for load, POST for save */
-    method?: string;
-    
-    /** HTTP headers */
-    headers?: Record<string, string>;
-    
-    /** Request timeout in milliseconds - default: 5000 */
-    timeout?: number;
-    
-    /** AbortSignal for request cancellation */
-    signal?: AbortSignal;
-    
-    /** Skip specific protocols in chain (e.g., ['scenario'] to get raw JSON) */
-    skipProtocols?: string[];
-}
-
-/**
- * IOR Model - All state for Internet Object Reference
- * Represents a Web4 object's network location(s) and identity
- */
-export interface IORModel {
-    /** Component name (e.g., "ONCE", "User") */
-    component: string;
-    
-    /** Component version (e.g., "0.3.21.6") */
-    version: string;
-    
-    /** Instance UUID (unique identifier for this object instance) */
-    uuid: string;
-    
-    /** Primary protocol (e.g., "https", "wss", "ior:https:ssl:udp") */
-    protocol?: string;
-    
-    /** Primary host (domain or IP) */
-    host?: string;
-    
-    /** Primary port number */
-    port?: number;
-    
-    /** URL path (e.g., "/ONCE/0.3.21.6/uuid-here") */
-    path?: string;
-    
-    /** Failover profiles for high availability (CORBA 2.3+ pattern) */
-    profiles?: IORProfile[];
-    
-    /** Precomputed IOR string (cached URL representation) */
-    iorString?: string;
-    
-    /** Query parameters for method invocation */
-    params?: Record<string, string>;
-}
+// Re-export for backwards compatibility
+export type { IORProfile, IOROptions, IORModel };
 
 /**
  * IOR Interface - Internet Object Reference Component
@@ -207,4 +146,3 @@ export interface IORInterface {
      */
     getLoader(protocol: string): Loader | undefined;
 }
-

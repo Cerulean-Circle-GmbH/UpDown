@@ -1,21 +1,29 @@
 /**
  * IORProfile.interface.ts
  * 
- * IOR Profile - Multiple host:port pairs for failover
- * Used by loaders to support CORBA 2.3+ style failover patterns
+ * IOR Profile - Network location for object access (CORBA 2.3+ pattern)
+ * Enables failover and load balancing across multiple endpoints
+ * 
+ * Web4 Principles:
+ * - P19: One File One Type
  * 
  * @layer3
- * @pattern Interface Contract
- * Web4 P19: One File One Type
- * @pdca session/2025-12-17-UTC-1613.web4-principles-review.pdca.md Fix 1
+ * @version 0.3.22.1
  */
 
 /**
- * IOR Profile
- * Represents a single endpoint for an Internet Object Reference
+ * IOR Profile - Network location for failover support
  */
 export interface IORProfile {
+    /** Host address (domain or IP) */
     host: string;
+    
+    /** Port number */
     port: number;
+    
+    /** Optional protocol override for this profile */
+    protocol?: string;
+    
+    /** Optional priority for load balancing (higher = preferred) */
+    priority?: number;
 }
-
