@@ -32,6 +32,9 @@ export interface ManifestUnit {
 
 /**
  * Units section in component manifest
+ * 
+ * ⚠️ TEMPORARY: This interface has P19/P22 violations - see PDCA:
+ * [§/session/2025-12-21-UTC-0100.component-json-ior-format.pdca.md]
  */
 export interface ManifestUnits {
   /** CSS stylesheet units */
