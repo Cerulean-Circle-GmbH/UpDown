@@ -671,5 +671,38 @@ await component.init();
       }
     });
   }
+
+  // ═══════════════════════════════════════════════════════════════
+  // BATCH B: start() (WM.2.B) — set/get/from/find/upgrade deferred
+  // @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
+  // ═══════════════════════════════════════════════════════════════
+
+  /**
+   * Execute start command in loaded component context
+   * Build and run the loaded component using its build system
+   */
+  async start(): Promise<this> {
+    // RADICAL OOP: Context required for start
+    if (!(this.model as any).context) {
+      throw new Error('No component context loaded. Use "on <component> <version>" first.');
+    }
+
+    const componentPath = this.model!.targetComponentRoot!;
+    
+    console.log(`🚀 Starting ${this.model!.component} ${this.model!.version?.toString()}...`);
+    
+    try {
+      execSync('npm start', { 
+        cwd: componentPath, 
+        stdio: 'inherit',
+      });
+      console.log(`✅ Started ${this.model!.component} ${this.model!.version?.toString()}`);
+    } catch (error) {
+      console.error(`❌ Failed to start ${this.model!.component} ${this.model!.version?.toString()}`);
+      throw error;
+    }
+
+    return this;
+  }
 }
 
