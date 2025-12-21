@@ -26,6 +26,7 @@ import type { ServerCapability } from '../layer3/ServerCapability.interface.js';
 import { ServerHierarchyManager } from './ServerHierarchyManager.js';
 import { ScenarioManager } from './ScenarioManager.js';
 import { ONCEModel } from '../layer3/ONCEModel.interface.js';
+import { SemanticVersion } from './SemanticVersion.js';
 import type { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
 import { User } from '../layer3/User.interface.js';
 import { MethodSignature } from '../layer3/MethodSignature.interface.js';
@@ -339,6 +340,15 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
     web4ts.model!.targetDirectory = projectRoot;
     web4ts.model!.targetComponentRoot = componentRoot;
     web4ts.model!.componentsDirectory = path.dirname(path.dirname(componentRoot));
+    // WM.3 Fix: Set version to match ONCE component version
+    if (this.model.version) {
+      const semVer = new SemanticVersion().init();
+      semVer.parse(this.model.version);
+      web4ts.model!.version = semVer;
+      web4ts.model!.displayVersion = this.model.version;
+    }
+    web4ts.model!.displayName = this.model.component || 'ONCE';
+    web4ts.model!.component = this.model.component || 'ONCE';
     this.web4ts = web4ts;
 
     return this.web4ts;
