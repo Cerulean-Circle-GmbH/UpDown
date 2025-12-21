@@ -171,7 +171,9 @@ export class DefaultWeb4TSComponent
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Tootsie: Quality consciousness testing (alias for test)
+   * Tootsie: Quality consciousness testing with test isolation
+   * 🔒 SECURITY: ALWAYS runs in test isolation (test/data as projectRoot)
+   * 
    * @param scope Test scope: 'all', 'file', 'describe', or 'itCase'
    * @param references Test file numbers or name patterns to execute
    * @cliSyntax scope references
@@ -181,11 +183,277 @@ export class DefaultWeb4TSComponent
    * @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
    */
   async tootsie(scope: string = 'all', ...references: string[]): Promise<this> {
-    return this.test(scope, ...references);
+    const componentRoot = this.model!.componentRoot || this.model!.targetComponentRoot;
+    
+    if (!componentRoot) {
+      throw new Error('Component root not set - cannot determine test isolation path');
+    }
+    
+    const testDataRoot = path.join(componentRoot, 'test', 'data');
+    const alreadyInTestIsolation = this.model!.projectRoot?.includes('/test/data') || false;
+    
+    if (alreadyInTestIsolation) {
+      console.log(`🔒 [TOOTSIE TEST ISOLATION] Already in test/data environment`);
+      console.log(`   Project Root: ${this.model!.projectRoot}`);
+    } else {
+      console.log(`🔒 [TOOTSIE TEST ISOLATION] Enforcing test/data isolation`);
+      console.log(`   Production Root: ${this.model!.projectRoot}`);
+      console.log(`   Test Data Root: ${testDataRoot}`);
+      console.log(`   ⚠️  Tests will ONLY run in isolated environment`);
+      console.log(`   ⚠️  Production files CANNOT be affected\n`);
+      
+      const originalProjectRoot = this.model!.projectRoot;
+      const originalIsTestIsolation = this.model!.isTestIsolation;
+      
+      try {
+        this.model!.projectRoot = testDataRoot;
+        this.model!.isTestIsolation = true;
+        (this.model as any).testIsolationContext = `${this.model!.component} v${this.model!.version?.toString()}`;
+        
+        console.log(`   Switched to Test Isolation Mode ✅`);
+        console.log(`   All operations scoped to: ${testDataRoot}\n`);
+        
+        await this.executeTootsieInIsolation(scope, references);
+      } finally {
+        this.model!.projectRoot = originalProjectRoot;
+        this.model!.isTestIsolation = originalIsTestIsolation;
+      }
+      
+      return this;
+    }
+    
+    await this.executeTootsieInIsolation(scope, references);
+    return this;
   }
   
   /**
-   * Run component tests
+   * Execute Tootsie tests in test isolation context
+   * @cliHide
+   */
+  private async executeTootsieInIsolation(scope: string, references: string[]): Promise<void> {
+    console.log(`🎯 Tootsie: Quality consciousness testing for ${this.model!.component}...`);
+    console.log(`   Scope: ${scope}`);
+    if (references.length > 0) {
+      console.log(`   References: ${references.join(', ')}`);
+    }
+    console.log(`   Test Isolation: ${this.model!.isTestIsolation ? '✅ ENABLED' : '❌ DISABLED'}`);
+    console.log(`   Project Root: ${this.model!.projectRoot}\n`);
+    
+    const discoveryResult = await this.discoverTestFile(scope, references);
+    
+    if (!discoveryResult) {
+      if (references.length > 0 || scope !== 'file') {
+        console.log(`❌ No test file found for: ${scope} ${references.join(' ')}\n`);
+      }
+      return;
+    }
+    
+    const testFile = discoveryResult;
+    console.log(`📄 Test File: ${testFile}\n`);
+    
+    console.log(`📦 Loading Tootsie component...`);
+    const tootsie = await this.loadTootsieComponent();
+    
+    if (!tootsie) {
+      console.log(`❌ Failed to load Tootsie component\n`);
+      return;
+    }
+    
+    console.log(`✅ Tootsie loaded: ${tootsie.constructor.name}\n`);
+    
+    console.log(`🧪 Executing test file...`);
+    try {
+      await this.executeTestFile(testFile);
+      console.log(`\n✅ Test execution completed\n`);
+    } catch (error) {
+      console.log(`\n❌ Test execution failed: ${error}\n`);
+      throw error;
+    }
+  }
+  
+  /**
+   * Execute a test file via TootsieTestRunner
+   * @cliHide
+   */
+  private async executeTestFile(testFilePath: string): Promise<void> {
+    console.log(`   Loading test class from: ${testFilePath}`);
+    
+    const componentRoot = this.model!.componentRoot || this.model!.targetComponentRoot;
+    if (componentRoot) {
+      console.log(`🔨 Ensuring component is built before tests...`);
+      try {
+        execSync('npx tsc --build', {
+          cwd: componentRoot,
+          encoding: 'utf-8',
+          stdio: 'inherit'
+        });
+        console.log(`✅ Component built\n`);
+      } catch (buildError: any) {
+        console.error(`❌ Build failed - tests may fail due to missing .js files`);
+      }
+    }
+    
+    const tootsieRunnerPath = path.join(
+      this.model!.componentsDirectory || path.join(this.model!.projectRoot || '', 'components'),
+      'Tootsie',
+      '0.3.20.6',
+      'src',
+      'ts',
+      'layer4',
+      'TootsieTestRunner.ts'
+    );
+    
+    console.log(`   Using Tootsie runner: ${tootsieRunnerPath}\n`);
+    
+    try {
+      const command = `npx tsx ${tootsieRunnerPath} ${testFilePath}`;
+      
+      execSync(command, {
+        cwd: this.model!.projectRoot || process.cwd(),
+        encoding: 'utf-8',
+        stdio: 'inherit'
+      });
+      
+      console.log(`\n   ✅ Test PASSED`);
+    } catch (error: any) {
+      console.log(`\n   ❌ Test FAILED (exit code: ${error.status})`);
+      throw error;
+    }
+  }
+  
+  /**
+   * Load Tootsie component dynamically
+   * @cliHide
+   */
+  private async loadTootsieComponent(): Promise<any> {
+    const context = (this.model as any).context;
+    
+    if (context && typeof context.componentLoad === 'function') {
+      try {
+        console.log(`   Using context.componentLoad() for Tootsie`);
+        const tootsie = await context.componentLoad('Tootsie', '0.3.20.6');
+        return tootsie;
+      } catch (error) {
+        console.log(`   ⚠️  Context componentLoad() failed: ${error}`);
+        console.log(`   Falling back to direct import`);
+      }
+    }
+    
+    try {
+      const componentRoot = this.model!.componentRoot || this.model!.targetComponentRoot;
+      if (!componentRoot) {
+        throw new Error('Component root not set');
+      }
+      
+      const componentsDir = path.dirname(path.dirname(componentRoot));
+      const tootsiePath = path.join(componentsDir, 'Tootsie', '0.3.20.6', 'dist', 'ts', 'layer2', 'DefaultTootsie.js');
+      
+      console.log(`   Direct import: ${tootsiePath}`);
+      
+      const tootsieModule = await import(tootsiePath);
+      const TootsieClass = tootsieModule.DefaultTootsie;
+      
+      if (!TootsieClass) {
+        throw new Error('DefaultTootsie class not found in module');
+      }
+      
+      const tootsie = new TootsieClass();
+      await tootsie.init();
+      
+      return tootsie;
+    } catch (error) {
+      console.log(`   ❌ Failed to load Tootsie: ${error}`);
+      return null;
+    }
+  }
+  
+  /**
+   * Discover test file by number, name, or hierarchical token
+   * @cliHide
+   */
+  private async discoverTestFile(scope: string, references: string[]): Promise<string | null> {
+    const componentRoot = this.model!.componentRoot || this.model!.targetComponentRoot;
+    
+    if (!componentRoot) {
+      console.log(`❌ Component root not set`);
+      return null;
+    }
+    
+    const testDir = path.join(componentRoot, 'test', 'tootsie');
+    
+    try {
+      await fs.promises.access(testDir);
+    } catch {
+      console.log(`❌ Test directory not found: ${testDir}`);
+      return null;
+    }
+    
+    if (references.length === 0 && scope === 'file') {
+      console.log(`⚠️  No test reference provided`);
+      console.log(`\n📋 Available test files:\n`);
+      
+      const files = await fs.promises.readdir(testDir);
+      const testFiles = files.filter((f: string) => f.startsWith('Test') && f.endsWith('.ts')).sort();
+      
+      testFiles.forEach(function listTestFile(file: string, index: number) {
+        const num = file.match(/Test(\d+)_/)?.[1] || (index + 1);
+        const name = file.replace(/Test\d+_/, '').replace('.ts', '');
+        console.log(`   ${num}: ${name}`);
+      });
+      
+      console.log(`\n💡 Usage: once tootsie file <number>`);
+      console.log(`   Example: once tootsie file 1\n`);
+      
+      return null;
+    }
+    
+    if (references.length === 0) {
+      console.log(`⚠️  No test reference provided`);
+      return null;
+    }
+    
+    const reference = references[0];
+    
+    const files = await fs.promises.readdir(testDir);
+    const testFiles = files.filter((f: string) => f.startsWith('Test') && f.endsWith('.ts'));
+    
+    if (/^\d+$/.test(reference)) {
+      const fileNumber = reference.padStart(2, '0');
+      const pattern = `Test${fileNumber}_`;
+      const match = testFiles.find((f: string) => f.startsWith(pattern));
+      
+      if (match) {
+        return path.join(testDir, match);
+      }
+    }
+    
+    const match = testFiles.find((f: string) => 
+      f.toLowerCase().includes(reference.toLowerCase())
+    );
+    
+    if (match) {
+      return path.join(testDir, match);
+    }
+    
+    if (/^\d+[a-z]\d*$/.test(reference)) {
+      const fileNumber = reference.match(/^\d+/)?.[0].padStart(2, '0');
+      if (fileNumber) {
+        const pattern = `Test${fileNumber}_`;
+        const hierarchicalMatch = testFiles.find((f: string) => f.startsWith(pattern));
+        
+        if (hierarchicalMatch) {
+          return path.join(testDir, hierarchicalMatch);
+        }
+      }
+    }
+    
+    console.log(`❌ No test file found matching: ${reference}`);
+    console.log(`   Available tests: ${testFiles.join(', ')}`);
+    return null;
+  }
+  
+  /**
+   * Run component tests (simple version — use tootsie() for full quality framework)
    */
   async test(scope?: string, ...references: string[]): Promise<this> {
     const componentRoot = this.model!.targetComponentRoot || this.model!.componentRoot;
@@ -193,7 +461,6 @@ export class DefaultWeb4TSComponent
     console.log(`🧪 Running tests for ${this.model!.displayName} v${this.model!.displayVersion}...`);
     
     try {
-      // Use Tootsie for testing (Web4 Principle 25)
       if (scope === 'file' && references.length > 0) {
         const testRef = references[0];
         execSync(`npx tsx test/tootsie/Test${testRef.padStart(2, '0')}*.ts`, {
@@ -201,11 +468,10 @@ export class DefaultWeb4TSComponent
           stdio: 'inherit',
         });
       } else {
-        // Run all Tootsie tests
         const testDir = path.join(componentRoot, 'test', 'tootsie');
         if (fs.existsSync(testDir)) {
           const testFiles = fs.readdirSync(testDir)
-            .filter(f => f.startsWith('Test') && f.endsWith('.ts'));
+            .filter(function filterTestFiles(f: string) { return f.startsWith('Test') && f.endsWith('.ts'); });
           
           for (const testFile of testFiles) {
             console.log(`📄 Running ${testFile}...`);

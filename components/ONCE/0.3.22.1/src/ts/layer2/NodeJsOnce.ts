@@ -327,24 +327,19 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
     this.model.targetComponentRoot = componentRoot;
     this.model.isTestIsolation = isTestIsolation;
 
-    // Import Web4TSComponent dynamically
-    // WM.3 BLOCKED: tootsie() requires TootsieTestRunner integration
+    // WM.3: Use ONCE's inline DefaultWeb4TSComponent (no external dependency)
     // @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
-    const web4tscomponentModule = await import(
-      `${projectRoot}/components/Web4TSComponent/latest/dist/ts/layer2/DefaultWeb4TSComponent.js`
-    );
-    const { DefaultWeb4TSComponent } = web4tscomponentModule;
+    const { DefaultWeb4TSComponent } = await import('./DefaultWeb4TSComponent.js');
 
     // ✅ CRITICAL: Initialize Web4TSComponent for delegation
-    // ✅ Single Source of Truth: Let Web4TSComponent discover its OWN version
-    // @pdca 2025-11-21-UTC-1600.version-discovery-symlink-resolution.pdca.md
-    this.web4ts = new DefaultWeb4TSComponent().init({
-      model: {
-        componentRoot: componentRoot,
-        projectRoot: projectRoot,
-        targetDirectory: projectRoot
-      }
-    });
+    const web4ts = new DefaultWeb4TSComponent();
+    await web4ts.init();
+    web4ts.model!.componentRoot = componentRoot;
+    web4ts.model!.projectRoot = projectRoot;
+    web4ts.model!.targetDirectory = projectRoot;
+    web4ts.model!.targetComponentRoot = componentRoot;
+    web4ts.model!.componentsDirectory = path.dirname(path.dirname(componentRoot));
+    this.web4ts = web4ts;
 
     return this.web4ts;
   }
