@@ -952,6 +952,35 @@ ${'='.repeat(80)}
       targetScenario.model.implementationClassName = targetComponent.constructor.name;
     }
     
+    // ═══════════════════════════════════════════════════════════════
+    // CD.3: Fix owner format — Base64(JSON(Scenario<UserModel>))
+    // @pdca 2025-12-21-UTC-0200.component-descriptor-refactor.pdca.md
+    // ═══════════════════════════════════════════════════════════════
+    const ownerScenario = {
+      ior: {
+        uuid: randomUUID(),
+        component: 'User',
+        version: '0.3.21.1'
+      },
+      owner: '', // User has no nested owner
+      model: {
+        user: process.env.USER || 'system',
+        hostname: process.env.HOSTNAME || 'localhost',
+        uuid: randomUUID()
+      }
+    };
+    const ownerJson = JSON.stringify(ownerScenario);
+    targetScenario.owner = Buffer.from(ownerJson).toString('base64');
+    console.log(`   ✅ Owner: Base64(Scenario<UserModel>)`);
+    
+    // ═══════════════════════════════════════════════════════════════
+    // CD.3: Discover units and add as flat IOR paths
+    // @pdca 2025-12-21-UTC-0200.component-descriptor-refactor.pdca.md
+    // ═══════════════════════════════════════════════════════════════
+    const units = await this.unitsDiscoverForDescriptor(componentRoot, componentName, componentVersion);
+    targetScenario.model.units = units;
+    console.log(`   ✅ Units: ${units.length} IOR paths discovered`);
+    
     // Generate UUID for scenario
     const scenarioUuid = randomUUID();
     
@@ -986,6 +1015,72 @@ ${'='.repeat(80)}
     console.log(`✅ Component descriptor created successfully`);
     
     return this;
+  }
+  
+  /**
+   * Discover units for component descriptor (CD.3)
+   * Returns flat array of IOR paths (e.g., "/EAMD.ucp/components/ONCE/0.3.22.1/...")
+   * 
+   * @pdca 2025-12-21-UTC-0200.component-descriptor-refactor.pdca.md
+   */
+  private async unitsDiscoverForDescriptor(
+    componentRoot: string,
+    componentName: string,
+    componentVersion: string
+  ): Promise<string[]> {
+    const units: string[] = [];
+    
+    // Unit file patterns to discover
+    const patterns: { dir: string; extensions: string[] }[] = [
+      { dir: 'src/ts/layer5/views/css', extensions: ['.css'] },
+      { dir: 'src/ts/layer5/views/html', extensions: ['.html'] },
+      { dir: 'src/ts/layer5/views/templates', extensions: ['.html', '.hbs'] },
+      { dir: 'dist/ts', extensions: ['.js'] },
+      { dir: 'src/ts', extensions: ['.ts'] },
+    ];
+    
+    for (const pattern of patterns) {
+      const dirPath = path.join(componentRoot, pattern.dir);
+      if (!fs.existsSync(dirPath)) continue;
+      
+      try {
+        const files = this.filesRecursive(dirPath, pattern.extensions);
+        for (const file of files) {
+          // Create IOR path: /EAMD.ucp/components/{Name}/{Version}/{relativePath}
+          const relativePath = path.relative(componentRoot, file);
+          const iorPath = `/EAMD.ucp/components/${componentName}/${componentVersion}/${relativePath}`;
+          units.push(iorPath);
+        }
+      } catch (error) {
+        // Directory doesn't exist or not readable - skip
+      }
+    }
+    
+    return units;
+  }
+  
+  /**
+   * Recursively find files with given extensions
+   */
+  private filesRecursive(dir: string, extensions: string[]): string[] {
+    const results: string[] = [];
+    
+    if (!fs.existsSync(dir)) return results;
+    
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        results.push(...this.filesRecursive(fullPath, extensions));
+      } else if (entry.isFile()) {
+        const ext = path.extname(entry.name).toLowerCase();
+        if (extensions.includes(ext)) {
+          results.push(fullPath);
+        }
+      }
+    }
+    
+    return results;
   }
   
   /**
