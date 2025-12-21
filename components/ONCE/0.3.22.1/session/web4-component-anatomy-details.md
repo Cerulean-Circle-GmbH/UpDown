@@ -197,6 +197,112 @@ for (const cssPath of cssUnits) {
 
 ---
 
+## Current State Analysis (2025-12-21)
+
+### ONCE's Inline `DefaultWeb4TSComponent.ts` — 9 methods
+
+| Method | Purpose | Notes |
+|--------|---------|-------|
+| `init()` | Initialize component with scenario | ✅ |
+| `test()` | Run tootsie tests | ✅ (calls `npx tsx test/tootsie/...`) |
+| `build()` | Compile TypeScript | ✅ |
+| `clean()` | Remove build artifacts | ✅ |
+| `tree()` | Show component tree | ✅ |
+| `links()` | Manage symlinks | ✅ |
+| `unitsDiscover()` | Find and create units | ✅ |
+| `manifestUpdate()` | Write asset-manifest | ⚠️ To be replaced by `descriptorUpdate()` |
+| `cliWrapperGenerate()` | Create CLI wrapper script | ✅ |
+
+### Methods to Migrate for Component Descriptor
+
+| Method | Source | Purpose |
+|--------|--------|---------|
+| `toScenario()` | UcpComponent.ts (line 518) | ✅ Inherited — converts component to `Scenario<Web4TSComponentModel>` |
+| `componentDescriptorUpdate()` | External Web4TSComponent | Writes `{Name}.component.json` with proper `{ ior, owner, model, unit }` structure |
+| `componentDescriptorRead()` | External Web4TSComponent | Reads descriptor from disk |
+| `componentStart()` | External Web4TSComponent | Build + ensure component ready |
+| `start()` | External Web4TSComponent | Static entry point for component lifecycle |
+
+### `toScenario()` vs `componentDescriptorUpdate()`
+
+- **`toScenario()`**: Creates in-memory `Scenario<Web4TSComponentModel>` — EXISTS in UcpComponent
+- **`componentDescriptorUpdate()`**: Writes `{Name}.component.json` to disk with:
+  - `{ ior, owner, model, unit }` structure
+  - `model.units: Collection<IOR>` — flat array of `/EAMD.ucp/...` paths
+  - `unit: Scenario<UnitModel>` — the descriptor's OWN unit
+
+### Key Decision: `componentStart()` Location
+
+**Option A**: Keep in Web4TSComponent (delegated)
+- NodeJsOnce continues to delegate via `web4ts.componentStart()`
+- Clean separation between "ONCE kernel" and "component management"
+
+**Option B**: Move to ONCE (inline)
+- Eliminates external dependency
+- ONCE becomes fully self-sufficient
+
+**Current State**: Delegated at `NodeJsOnce.ts:3069`
+```typescript
+await web4ts.componentStart(componentName, version);
+```
+
+---
+
+## Descriptor Format Gap (D1, D4)
+
+### Current `ONCE.component.json` (WRONG)
+
+```json
+{
+  "ior": { "uuid": "...", "component": "Web4TSComponent", "version": "0.3.22.1" },
+  "owner": "system",
+  "model": {
+    // ... model fields ...
+  }
+  // ❌ MISSING: "unit" field
+}
+```
+
+### Required Format (CORRECT)
+
+```json
+{
+  "ior": { "uuid": "...", "component": "Web4TSComponent", "version": "0.3.22.1" },
+  "owner": "system",
+  "model": {
+    "uuid": "...",
+    "name": "ONCE",
+    "version": "0.3.22.1",
+    "units": [
+      "/EAMD.ucp/components/ONCE/0.3.22.1/src/ts/layer5/views/css/FileItemView.css",
+      "/EAMD.ucp/components/ONCE/0.3.22.1/package.json"
+    ]
+    // ... other model fields ...
+  },
+  "unit": {
+    "ior": { "uuid": "descriptor-unit-uuid-v4", "component": "Unit", "version": "0.3.22.1" },
+    "owner": "system",
+    "model": {
+      "uuid": "descriptor-unit-uuid-v4",
+      "name": "ONCE.component.json",
+      "origin": "ior:git:github.com/.../ONCE.component.json",
+      "filePath": "ONCE.component.json",
+      "mimetype": "application/json",
+      "symlinkPaths": ["components/ONCE/0.3.22.1/ONCE.component.json.unit"]
+    }
+  }
+}
+```
+
+### Fix Path
+
+1. Migrate `componentDescriptorUpdate()` from external Web4TSComponent
+2. Modify to output `{ ior, owner, model, unit }` structure
+3. Ensure `model.units` is flat `Collection<IOR>` (no categories)
+4. Create `ONCE.component.json.unit` symlink
+
+---
+
 ## References
 
 - **Unit README**: [§/components/Unit/0.3.0.5/README.md](../../../Unit/0.3.0.5/README.md)
