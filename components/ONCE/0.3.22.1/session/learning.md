@@ -452,6 +452,44 @@ uuid: crypto.randomUUID()  // ✅ Always UUIDv4
 
 **Reference:** Compare `web4-principles-checklist.md` (correct) vs my first attempt (wrong).
 
+### **L25: Tests Import REAL Code — No Fake Duplicates**
+**Date:** 2025-12-21  
+**Source:** User correction on Test14  
+**Lesson:** Tests should NOT define arbitrary stable test types. Tests MUST import REAL src files to test REAL code.
+
+**Wrong (fake types just for tests):**
+```typescript
+// In test file:
+interface Test14Model {  // ❌ FAKE - duplicates real model
+  componentRoot: string;
+  projectRoot: string;
+  // ... arbitrary test-specific fields
+}
+```
+
+**Correct (import real types):**
+```typescript
+// In test file:
+import { Web4TSComponentModel } from '../../src/ts/layer3/Web4TSComponentModel.interface.js';
+import { DefaultWeb4TSComponent } from '../../src/ts/layer2/DefaultWeb4TSComponent.js';
+
+// Use the REAL types:
+const component = new DefaultWeb4TSComponent();
+await component.init();
+```
+
+**Test Pattern for componentDescriptorUpdate:**
+```typescript
+// 1. Check if descriptor exists
+// 2. If yes, delete it
+// 3. Run componentDescriptorUpdate() — REAL method
+// 4. Verify descriptor was created with correct format
+```
+
+**Principle:** Tests that use fake types can pass even when real code is broken. Tests that use real code catch real bugs.
+
+**Future PDCA:** Test Migration with P27 (Real Types Only) as key principle.
+
 ---
 
 ## **🔴 Common Web4 Violations Found**
