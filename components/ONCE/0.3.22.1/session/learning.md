@@ -452,6 +452,39 @@ uuid: crypto.randomUUID()  // ✅ Always UUIDv4
 
 **Reference:** Compare `web4-principles-checklist.md` (correct) vs my first attempt (wrong).
 
+### **L26: MOVE Don't Restructure — Format Changes Require Permission**
+**Date:** 2025-12-21  
+**Source:** User correction after I reorganized PDCA stack  
+**Lesson:** When asked to "move" items in a document, ONLY MOVE them. Do NOT:
+- Change the structure or format
+- Split into sections (MAIN/QUEUED/PENDING when there was one stack)
+- Copy information (creates duplicates)
+- Delete information
+
+**Wrong (I did this):**
+```markdown
+### 🔴 CURRENT + NEXT
+- 📁 Main PDCA...
+### 🔵 QUEUED (Next Priority)  ← Created new section!
+- ...
+### 🔵 PENDING (Future)  ← Created new section!
+```
+
+**Correct (what was asked):**
+```markdown
+## FRACTAL PDCA STACK
+- 📁 Main PDCA...
+  - 🟡 IN PROGRESS — CD...
+  - 🔵 QUEUED — I.1...      ← Just moved, same format
+  - 🔵 PENDING — I.11...    ← Just moved, same format
+```
+
+**Rule:** If user says "move X to bottom" → cut+paste X to bottom. Nothing else.
+
+**Key Principle:** DRY + consistency. Moving = same format. Never copy. If format change is needed → ASK FIRST.
+
+---
+
 ### **L25: Tests Import REAL Code — No Fake Duplicates**
 **Date:** 2025-12-21  
 **Source:** User correction on Test14  
