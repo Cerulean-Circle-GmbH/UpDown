@@ -704,5 +704,38 @@ await component.init();
 
     return this;
   }
+
+  // ═══════════════════════════════════════════════════════════════
+  // BATCH C: Testing (WM.2.C) — testCompletion only
+  // @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
+  // tootsie, testShell, releaseTest DEFERRED — complex dependencies
+  // ═══════════════════════════════════════════════════════════════
+
+  /**
+   * Run comprehensive TAB completion test suite
+   */
+  async testCompletion(): Promise<this> {
+    const componentRoot = this.model!.projectRoot;
+    const testSuitePath = path.join(componentRoot || '', 'test/sh/test-completion-suite.sh');
+    
+    console.log('🧪 Running TAB completion test suite...');
+    console.log(`📂 Component: ${this.model!.component} ${this.model!.version?.toString()}`);
+    console.log(`📂 Test Suite: ${testSuitePath}`);
+    console.log();
+    
+    try {
+      execSync(`bash "${testSuitePath}"`, {
+        cwd: componentRoot || undefined,
+        stdio: 'inherit',
+      });
+      
+      console.log('\n✅ TAB completion test suite completed successfully');
+    } catch (error) {
+      console.error('\n❌ TAB completion test suite failed');
+      throw error;
+    }
+    
+    return this;
+  }
 }
 
