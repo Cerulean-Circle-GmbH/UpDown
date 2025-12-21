@@ -424,22 +424,9 @@ export class DefaultWeb4TSComponent
     return this;
   }
   
-  /**
-   * Update component manifest with discovered units
-   */
-  async manifestUpdate(): Promise<this> {
-    if (!this.unitDiscoveryService) {
-      await this.unitsDiscover();
-    }
-    
-    const componentRoot = this.model!.targetComponentRoot || this.model!.componentRoot;
-    const manifestPath = path.join(componentRoot, `${this.model!.component}.component.json`);
-    
-    await this.unitDiscoveryService!.manifestUpdate(manifestPath);
-    console.log(`📋 Updated manifest: ${path.basename(manifestPath)}`);
-    
-    return this;
-  }
+  // manifestUpdate() REMOVED — replaced by componentDescriptorUpdate()
+  // component.json IS the manifest (better version)
+  // @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
   
   // ═══════════════════════════════════════════════════════════════
   // WEB4TSCOMPONENT SPECIFIC METHODS
@@ -467,6 +454,222 @@ await component.init();
   targetDirectorySet(directory: string): void {
     this.model!.targetDirectory = directory;
     this.model!.componentsDirectory = path.join(directory, 'components');
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // COMPONENT DESCRIPTOR METHODS (WM.2.A)
+  // @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Print quick header for CLI output
+   * Simplified version without colors
+   */
+  protected printQuickHeader(): void {
+    let header = `Web4 ${this.model!.displayName} CLI Tool`;
+    header += ` v${this.model!.displayVersion}`;
+    
+    if (this.model!.isDelegation && (this.model as any).delegationInfo) {
+      header += ` (${(this.model as any).delegationInfo})`;
+    }
+    
+    header += ' - Dynamic Method Discovery';
+    console.log(header);
+    
+    if ((this.model as any).testIsolationContext) {
+      console.log(`⚠️  TEST ISOLATION MODE (${(this.model as any).testIsolationContext})`);
+    }
+    
+    console.log('');
+  }
+  
+  /**
+   * Generate component.json scenario file for existing components
+   * 
+   * Usage: ./once on ONCE latest componentDescriptorUpdate
+   * 
+   * Web4 Principles:
+   * - Principle 1: "Everything is a Scenario" - all components need scenario files
+   * - Principle 16: Object-Action naming
+   * 
+   * @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
+   */
+  async componentDescriptorUpdate(): Promise<this> {
+    this.printQuickHeader();
+    
+    // Must have context loaded via on()
+    if (!(this.model as any).context) {
+      console.error('❌ Error: No component context loaded');
+      console.log('   Usage: ./once on <Component> <Version> componentDescriptorUpdate');
+      throw new Error('componentDescriptorUpdate requires context from on() command');
+    }
+    
+    const targetComponent = (this.model as any).context;
+    const componentName = targetComponent.model.component;
+    const componentVersion = targetComponent.model.version.toString();
+    const componentRoot = this.model!.targetComponentRoot || this.model!.componentRoot;
+    
+    console.log(`📄 Generating component descriptor for ${componentName} ${componentVersion}...`);
+    
+    // Generate scenario for TARGET component
+    const targetScenario = await targetComponent.toScenario();
+    
+    // Ensure implementationClassName is set
+    if (!targetScenario.model.implementationClassName) {
+      targetScenario.model.implementationClassName = targetComponent.constructor.name;
+    }
+    
+    // Generate UUID for scenario
+    const scenarioUuid = randomUUID();
+    
+    // Path Authority: Use projectRoot from model
+    const projectRoot = this.model!.projectRoot || '';
+    const scenariosRoot = path.join(projectRoot, 'scenarios');
+    const scenarioDir = path.join(scenariosRoot, componentName, componentVersion);
+    
+    // Create directory
+    fs.mkdirSync(scenarioDir, { recursive: true });
+    
+    // Write scenario
+    const scenarioPath = path.join(scenarioDir, `${scenarioUuid}.scenario.json`);
+    fs.writeFileSync(scenarioPath, JSON.stringify(targetScenario, null, 2));
+    
+    // Create or update symlink
+    const symlinkPath = path.join(componentRoot, `${componentName}.component.json`);
+    const relativePath = path.relative(componentRoot, scenarioPath);
+    
+    try {
+      // Remove existing symlink if present
+      if (fs.existsSync(symlinkPath)) {
+        fs.unlinkSync(symlinkPath);
+      }
+      fs.symlinkSync(relativePath, symlinkPath);
+      console.log(`   ✅ Scenario: ${scenarioUuid}.scenario.json`);
+      console.log(`   🔗 Symlink: ${componentName}.component.json → scenarios/${componentName}/${componentVersion}/`);
+    } catch (error: any) {
+      console.warn(`   ⚠️  Could not create symlink:`, error.message);
+    }
+    
+    console.log(`✅ Component descriptor created successfully`);
+    
+    return this;
+  }
+  
+  /**
+   * Read component descriptor (component.json → scenario)
+   * Returns scenario with implementationClassName for dynamic loading
+   * 
+   * Usage: ./once componentDescriptorRead <Component> <Version>
+   * 
+   * @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
+   * @param componentName Component name (e.g., "ONCE", "Unit")
+   * @param version Component version (e.g., "0.3.21.7")
+   * @returns Scenario or null if no descriptor exists
+   */
+  async componentDescriptorRead(componentName: string, version: string): Promise<any> {
+    // Resolve component path (respects delegation context)
+    const projectRoot = (this.model as any).context?.model?.projectRoot || this.model!.projectRoot;
+    const componentPath = path.join(projectRoot, 'components', componentName, version);
+    const descriptorPath = path.join(componentPath, `${componentName}.component.json`);
+    
+    // Check if descriptor exists
+    if (!fs.existsSync(descriptorPath)) {
+      console.log(`⚠️  No component.json for ${componentName}/${version}`);
+      return null;
+    }
+    
+    // Read descriptor (component.json is symlink to scenario file)
+    try {
+      const descriptorContent = fs.readFileSync(descriptorPath, 'utf-8');
+      const descriptor = JSON.parse(descriptorContent);
+      console.log(`📋 Loaded descriptor for ${componentName}/${version}`);
+      if (descriptor.model?.implementationClassName) {
+        console.log(`   Implementation: ${descriptor.model.implementationClassName}`);
+      }
+      return descriptor;
+    } catch (error: any) {
+      console.error(`❌ Failed to read descriptor:`, error.message);
+      throw new Error(`Failed to read descriptor for ${componentName}/${version}: ${error.message}`);
+    }
+  }
+  
+  /**
+   * Start a component (ensures it's built and ready for import)
+   * Does NOT run npm start script - just ensures dist/ exists
+   * 
+   * Usage: ./once componentStart <Component> <Version>
+   * 
+   * @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
+   * @param componentName Component name (e.g., "Unit", "ONCE")
+   * @param version Component version (e.g., "0.3.19.1")
+   */
+  async componentStart(componentName: string, version: string): Promise<this> {
+    // Resolve component path (respects delegation context)
+    const projectRoot = (this.model as any).context?.model?.projectRoot || this.model!.projectRoot;
+    const componentPath = path.join(projectRoot, 'components', componentName, version);
+    
+    // 1. Check if component exists
+    if (!fs.existsSync(componentPath)) {
+      throw new Error(`Component not found: ${componentName}/${version} at ${componentPath}`);
+    }
+    
+    // 2. Check if already built
+    const distPath = path.join(componentPath, 'dist');
+    if (fs.existsSync(distPath)) {
+      console.log(`✅ ${componentName}/${version} already built`);
+      return this;
+    }
+    
+    console.log(`🔨 Building ${componentName}/${version}...`);
+    
+    // 3. Install dependencies if needed
+    const nodeModulesPath = path.join(componentPath, 'node_modules');
+    if (!fs.existsSync(nodeModulesPath)) {
+      console.log(`📦 Installing dependencies for ${componentName}/${version}...`);
+      await this.dependenciesInstall(componentPath);
+    }
+    
+    // 4. Compile TypeScript
+    console.log(`🔨 Compiling TypeScript for ${componentName}/${version}...`);
+    await this.compile(componentPath);
+    
+    console.log(`✅ ${componentName}/${version} built and ready for import`);
+    
+    return this;
+  }
+  
+  /**
+   * Install dependencies in component directory
+   * @param componentPath Full path to component
+   */
+  private async dependenciesInstall(componentPath: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        execSync('npm install', { cwd: componentPath, stdio: 'inherit' });
+        console.log(`✅ Dependencies installed`);
+        resolve();
+      } catch (error: any) {
+        console.error(`❌ npm install failed`);
+        reject(new Error(`npm install failed: ${error.message}`));
+      }
+    });
+  }
+  
+  /**
+   * Compile TypeScript in component directory
+   * @param componentPath Full path to component
+   */
+  private async compile(componentPath: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        execSync('npx tsc', { cwd: componentPath, stdio: 'inherit' });
+        console.log(`✅ TypeScript compiled`);
+        resolve();
+      } catch (error: any) {
+        console.error(`❌ TypeScript compilation failed`);
+        reject(new Error(`tsc failed: ${error.message}`));
+      }
+    });
   }
 }
 

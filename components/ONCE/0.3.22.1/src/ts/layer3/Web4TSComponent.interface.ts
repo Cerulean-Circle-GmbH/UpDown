@@ -88,8 +88,19 @@ export interface Web4TSComponent {
   unitsDiscover(): Promise<this>;
   
   /**
-   * Update component manifest with discovered units
+   * Generate component.json scenario file (replaces manifestUpdate)
+   * @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
    */
-  manifestUpdate(): Promise<this>;
+  componentDescriptorUpdate(): Promise<this>;
+  
+  /**
+   * Read component descriptor from component.json
+   */
+  componentDescriptorRead(componentName: string, version: string): Promise<any>;
+  
+  /**
+   * Start a component (ensures it's built and ready for import)
+   */
+  componentStart(componentName: string, version: string): Promise<this>;
 }
 
