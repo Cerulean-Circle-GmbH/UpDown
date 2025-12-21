@@ -32,18 +32,18 @@
 
 ## Component Descriptor: `{Name}.component.json`
 
-The descriptor IS a `Scenario<Web4TSComponentModel>` with its own `unit`:
+The descriptor IS a `Scenario<Web4TSComponentModel>` with its own `unit` as a full `Scenario<UnitModel>`:
 
 ```json
 {
   "ior": {
-    "uuid": "once-0.3.22.1-component",
+    "uuid": "a1b2c3d4-...",
     "component": "Web4TSComponent",
     "version": "0.3.20.6"
   },
   "owner": "system",
   "model": {
-    "uuid": "once-0.3.22.1-component",
+    "uuid": "a1b2c3d4-...",
     "name": "ONCE",
     "version": "0.3.22.1",
     "description": "Open Network Compute Environment - Web4 Kernel",
@@ -53,30 +53,38 @@ The descriptor IS a `Scenario<Web4TSComponentModel>` with its own `unit`:
       "node": "dist/ts/layer2/NodeJsOnce.js",
       "browser": "dist/ts/layer2/BrowserOnce.js"
     },
-    "units": {
-      "css": [ /* Unit UUIDs or IORs */ ],
-      "templates": [ /* Unit UUIDs or IORs */ ],
-      "typescript": [ /* Unit UUIDs or IORs */ ],
-      "configuration": [ /* package.json, tsconfig.json */ ],
-      "lifecycle": [ /* build.sh, install-deps.sh, clean.sh */ ]
-    },
+    "units": [
+      "/EAMD.ucp/components/ONCE/0.3.22.1/src/ts/layer5/views/css/FileItemView.css",
+      "/EAMD.ucp/components/ONCE/0.3.22.1/src/ts/layer5/views/css/ActionBar.css",
+      "/EAMD.ucp/components/ONCE/0.3.22.1/package.json",
+      "/EAMD.ucp/components/ONCE/0.3.22.1/tsconfig.json"
+    ],
     "dependencies": {
       "lit": "^3.2.0",
       "typescript": "^5.0.0"
     }
   },
   "unit": {
-    "indexPath": "index/{uuid-path}/{uuid}.scenario.json",
-    "symlinkPaths": [
-      "type/Web4TSComponent/0.3.20.6",
-      "components/ONCE/0.3.22.1/ONCE.component.json.unit"
-    ],
-    "references": [],
-    "schemaVersion": "1.1.0",
-    "createdBy": "Web4TSComponent/0.3.20.6"
+    "ior": { "uuid": "e5f6g7h8-...", "component": "Unit", "version": "0.3.22.1" },
+    "owner": "system",
+    "model": {
+      "uuid": "e5f6g7h8-...",
+      "name": "ONCE.component.json",
+      "origin": "ior:git:github.com/.../ONCE.component.json",
+      "filePath": "ONCE.component.json",
+      "mimetype": "application/json",
+      "symlinkPaths": ["components/ONCE/0.3.22.1/ONCE.component.json.unit"]
+    }
   }
 }
 ```
+
+### Key Points
+
+- **`units`**: `Collection<IOR>` — ALL units as IOR path strings, NO categories
+- **IOR paths**: Always `/EAMD.ucp/components/{Name}/{Version}/{path}`
+- **`unit`**: Full `Scenario<UnitModel>` — the descriptor is itself a unit
+- **Server translation**: `/EAMD.ucp/...` → physical file path on server
 
 ---
 
@@ -128,76 +136,54 @@ The scenario contains:
 
 ---
 
-## Unit Categories
-
-### CSS Units
-- Purpose: Stylesheets for views
-- Discovery: `**/*.css` in `src/`
-- Loaded by: CSS Preloader via component descriptor
-
-### Template Units  
-- Purpose: HTML templates for views
-- Discovery: `**/*.html` in `src/view/`
-- Loaded by: HTMLTemplateLoader
-
-### TypeScript Units
-- Purpose: Implementation code
-- Discovery: `**/*.ts` in `src/ts/`
-- Built by: `tsc` via `build.sh`
-
-### Configuration Units
-- Purpose: Tool configuration
-- Files: `package.json`, `tsconfig.json`, `vitest.config.ts`
-- Used by: npm, tsc, vitest
-
-### Lifecycle Units
-- Purpose: Component lifecycle management
-- Files: `src/sh/build.sh`, `install-deps.sh`, `clean.sh`, `start.sh`
-- Stages: Download → Install → Build → Test → Start → Clean → Uninstall
-
----
-
 ## Generator Flow
 
-Units are NOT manually created. The flow is:
+Units are NOT manually created. `DefaultWeb4TSComponent` handles all:
 
 ```
 1. Developer creates file
    └── src/ts/layer5/views/css/NewView.css
 
-2. UnitDiscoveryService.unitsDiscover()
-   └── Finds files matching patterns (*.css, *.html, *.ts)
+2. DefaultWeb4TSComponent.unitsDiscover()
+   └── Finds ALL files in component
 
-3. UnitDiscoveryService.unitCreate()
-   └── Creates scenario with UUID, origin IOR, filePath
+3. DefaultWeb4TSComponent.unitCreate()
+   └── Creates Scenario<UnitModel> with UUIDv4, origin IOR, filePath
 
-4. UnitDiscoveryService.unitSave()
+4. DefaultWeb4TSComponent.unitSave()
    └── Saves to scenarios/index/{uuid-path}/
    └── Creates {file}.unit symlink
 
-5. UnitDiscoveryService.manifestUpdate()
-   └── Updates {Name}.component.json with all units
+5. DefaultWeb4TSComponent.descriptorUpdate()
+   └── Writes {Name}.component.json
+   └── model.units = ["/EAMD.ucp/...path...", ...] (IOR paths)
 
 Triggered by: `./once build` or `Test14_CSSUnitCreation`
 ```
+
+**Key**: `UnitDiscoveryService` → moved INTO `DefaultWeb4TSComponent` (no standalone service)
 
 ---
 
 ## CSS Preloader Integration
 
-The CSS preloader reads the component descriptor to find CSS units:
+The CSS preloader reads the component descriptor and filters for CSS units:
 
 ```typescript
 // In BrowserOnceOrchestrator.assetsPreload()
-const componentJson = await new IOR().init('/ONCE/0.3.22.1/ONCE.component.json').load();
-const cssUnits = componentJson.model.units.css;
+const componentJson = await new IOR().init('/EAMD.ucp/components/ONCE/0.3.22.1/ONCE.component.json').load();
+const allUnits: string[] = componentJson.model.units;
 
-for (const unitRef of cssUnits) {
-  // Load each CSS unit via IOR
-  const cssIOR = new IOR().init(unitRef);
-  await cssIOR.load();
+// Filter CSS files by extension
+const cssUnits = allUnits.filter(path => path.endsWith('.css'));
+
+for (const cssPath of cssUnits) {
+  // Load each CSS via IOR (path is already /EAMD.ucp/...)
+  await new IOR().init(cssPath).load();
 }
 ```
+
+**Key**: No category separation — filter by file extension at runtime
 
 ---
 
@@ -215,6 +201,7 @@ for (const unitRef of cssUnits) {
 
 - **Unit README**: [§/components/Unit/0.3.0.5/README.md](../../../Unit/0.3.0.5/README.md)
 - **Web4TSComponent README**: [§/components/Web4TSComponent/0.3.20.6/README.md](../../../Web4TSComponent/0.3.20.6/README.md)
-- **UnitDiscoveryService**: `src/ts/layer2/UnitDiscoveryService.ts`
+- **Generator**: `src/ts/layer2/DefaultWeb4TSComponent.ts` (units live here)
+- **Legacy**: `src/ts/layer2/UnitDiscoveryService.ts` (to be deprecated/removed)
 - **Test14**: `test/tootsie/Test14_CSSUnitCreation.ts`
 
