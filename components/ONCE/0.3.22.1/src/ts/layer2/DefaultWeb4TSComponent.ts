@@ -1170,5 +1170,574 @@ ${'='.repeat(80)}
     
     return this;
   }
+
+  // ═══════════════════════════════════════════════════════════════
+  // MANDATORY METHODS — User requested 2025-12-21
+  // @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
+  // upgrade, completion, removeVersion, removeComponent, 
+  // targetVersionParameterCompletion, getContext
+  // ═══════════════════════════════════════════════════════════════
+
+  /**
+   * Get CLI instance
+   * @cliHide
+   */
+  private getCLI(): any {
+    return (this as any).cli || this;
+  }
+
+  /**
+   * Update model with calculated paths for target component
+   * @cliHide
+   */
+  private updateModelPaths(): void {
+    if ((this.model as any).context) {
+      this.model!.component = (this.model as any).context.model.component;
+      this.model!.version = (this.model as any).context.model.version;
+    }
+    
+    const cli = this.getCLI();
+    
+    if (!this.model!.projectRoot) {
+      this.model!.projectRoot = path.dirname(path.dirname(path.dirname(this.model!.componentRoot || '')));
+    }
+    if (!this.model!.targetDirectory) {
+      this.model!.targetDirectory = this.model!.projectRoot;
+    }
+    if (!this.model!.componentsDirectory) {
+      this.model!.componentsDirectory = path.join(this.model!.targetDirectory, 'components');
+    }
+    
+    this.model!.targetComponentRoot = path.join(
+      cli.model?.componentsDirectory || this.model!.componentsDirectory || '',
+      this.model!.component || '',
+      this.model!.version?.toString() || ''
+    );
+  }
+
+  /**
+   * Get available versions for a component
+   * @cliHide
+   */
+  private getAvailableVersions(componentDir: string): string[] {
+    try {
+      const entries = fs.readdirSync(componentDir);
+      return entries.filter(entry => {
+        if (SemanticVersion.SEMANTIC_LINKS_SET.has(entry as any)) {
+          return false;
+        }
+        const entryPath = path.join(componentDir, entry);
+        try {
+          const stats = fs.lstatSync(entryPath);
+          return stats.isDirectory() && entry.match(/^\d+\.\d+\.\d+\.\d+$/) !== null;
+        } catch {
+          return false;
+        }
+      }).sort((a, b) => SemanticVersion.compare(a, b));
+    } catch {
+      return [];
+    }
+  }
+
+  /**
+   * Get highest version from array of versions
+   * @cliHide
+   */
+  private getHighestVersion(versions: string[]): string {
+    return SemanticVersion.getHighest(versions);
+  }
+
+  /**
+   * Tab completion for target version parameter
+   * @cliHide
+   */
+  async targetVersionParameterCompletion(): Promise<string[]> {
+    return Array.from(SemanticVersion.SEMANTIC_LINKS);
+  }
+
+  /**
+   * Get current component context from working directory
+   * @param format Output format: 'json' or 'bash'
+   * @cliSyntax format
+   * @cliValues format json bash
+   */
+  async getContext(format: string = 'json'): Promise<void> {
+    const { DefaultCLI } = await import('./DefaultCLI.js');
+    const cli = new (class extends DefaultCLI {
+      async execute() {}
+      showUsage() {}
+    })();
+    
+    await cli.getContext(format);
+  }
+
+  /**
+   * Test and discover tab completions for debugging
+   * @param what Type of completion: "method" or "parameter"
+   * @param filter Optional prefix to filter results
+   * @cliSyntax what filter
+   * @cliValues what method parameter
+   */
+  async completion(what: string, filter?: string): Promise<this> {
+    console.log(`🔍 Discovering ${what === 'method' ? 'methods' : 'parameter completions'} on ${this.model!.component} ${this.model!.version?.toString()}${filter ? ` (filter: ${filter})` : ''}`);
+    console.log(`---`);
+    
+    if (!(this.model as any).context) {
+      // List methods from this component
+      const methods = this.methodsList();
+      const filtered = filter ? methods.filter(m => m.startsWith(filter)) : methods;
+      filtered.forEach(m => console.log(m));
+    } else {
+      // Use context component's CLI
+      const componentPath = this.model!.targetComponentRoot!;
+      console.log(`   Context: ${componentPath}`);
+      // Simple method listing for now
+      const methods = this.methodsList();
+      const filtered = filter ? methods.filter(m => m.startsWith(filter)) : methods;
+      filtered.forEach(m => console.log(m));
+    }
+    
+    return this;
+  }
+
+  /**
+   * Remove a specific version of a component
+   * @param component Component name (or 'current' to use context)
+   * @param version Version to remove (or 'current' to use context)
+   * @cliSyntax component version
+   */
+  async removeVersion(component: string = 'current', version: string = 'current'): Promise<this> {
+    let targetComponent: string;
+    let targetVersion: string;
+
+    if (component === 'current' || version === 'current') {
+      if (!(this.model as any).context) {
+        throw new Error('No component context loaded. Use "on <component> <version>" first.');
+      }
+      const target = (this.model as any).context;
+      targetComponent = component === 'current' ? target.model.component : component;
+      targetVersion = version === 'current' ? target.model.version.toString() : version;
+    } else {
+      targetComponent = component;
+      targetVersion = version;
+    }
+
+    const componentDir = path.join(this.model!.componentsDirectory || '', targetComponent);
+    const versionDir = path.join(componentDir, targetVersion);
+
+    if (!fs.existsSync(versionDir)) {
+      throw new Error(`Version ${targetVersion} of ${targetComponent} does not exist at ${versionDir}`);
+    }
+
+    console.log(`🗑️ Removing ${targetComponent} ${targetVersion}...`);
+    console.log(`   Directory: ${versionDir}`);
+
+    await fs.promises.rm(versionDir, { recursive: true, force: true });
+    console.log(`✅ Removed ${targetComponent} ${targetVersion}`);
+
+    // Update symlinks
+    const versions = this.getAvailableVersions(componentDir);
+    const highestVersion = versions.length > 0 ? this.getHighestVersion(versions) : null;
+    
+    for (const linkName of SemanticVersion.SEMANTIC_LINKS) {
+      const symlinkPath = path.join(componentDir, linkName);
+      
+      try {
+        const stats = fs.lstatSync(symlinkPath);
+        if (stats.isSymbolicLink()) {
+          const linkTarget = await fs.promises.readlink(symlinkPath);
+          if (linkTarget === targetVersion) {
+            await fs.promises.unlink(symlinkPath);
+            
+            if (linkName === 'latest' && highestVersion) {
+              await fs.promises.symlink(highestVersion, symlinkPath);
+              console.log(`🔗 Updated ${linkName}: ${targetVersion} → ${highestVersion}`);
+            } else {
+              console.log(`🔗 Removed ${linkName} symlink`);
+            }
+          }
+        }
+      } catch {
+        // Symlink doesn't exist
+      }
+    }
+
+    await this.cleanupVersionScriptSymlinks(targetComponent, targetVersion);
+
+    return this;
+  }
+
+  /**
+   * Cleanup version-specific script symlinks
+   * @cliHide
+   */
+  private async cleanupVersionScriptSymlinks(componentName: string, version: string): Promise<void> {
+    const projectRoot = this.model!.projectRoot || '';
+    const versionsDir = path.join(projectRoot, 'scripts', 'versions');
+    
+    if (!fs.existsSync(versionsDir)) {
+      return;
+    }
+
+    const componentLowerCase = componentName.toLowerCase();
+    const versionScriptName = `${componentLowerCase}-v${version}`;
+    const versionScriptPath = path.join(versionsDir, versionScriptName);
+
+    try {
+      fs.lstatSync(versionScriptPath);
+      await fs.promises.unlink(versionScriptPath);
+      console.log(`🔗 Removed version script symlink: ${versionScriptName}`);
+    } catch {
+      // Doesn't exist
+    }
+
+    // Check if main script points to this version
+    const mainScriptPath = path.join(versionsDir, componentLowerCase);
+    if (fs.existsSync(mainScriptPath)) {
+      try {
+        const linkTarget = await fs.promises.readlink(mainScriptPath);
+        if (linkTarget.includes(versionScriptName)) {
+          const componentDir = path.join(this.model!.componentsDirectory || '', componentName);
+          const versions = this.getAvailableVersions(componentDir);
+          const highestVersion = versions.length > 0 ? this.getHighestVersion(versions) : null;
+          
+          await fs.promises.unlink(mainScriptPath);
+          
+          if (highestVersion) {
+            const newTarget = `${componentLowerCase}-v${highestVersion}`;
+            await fs.promises.symlink(newTarget, mainScriptPath);
+            console.log(`🔗 Repointed main script: ${componentLowerCase} → ${newTarget}`);
+          }
+        }
+      } catch {
+        // Silent fail
+      }
+    }
+  }
+
+  /**
+   * Remove an entire component and all its versions
+   * @param component Component name (or 'current' to use context)
+   * @cliSyntax component
+   */
+  async removeComponent(component: string = 'current'): Promise<this> {
+    let targetComponent: string;
+
+    if (component === 'current') {
+      if (!(this.model as any).context) {
+        throw new Error('No component context loaded. Use "on <component> <version>" first.');
+      }
+      targetComponent = (this.model as any).context.model.component;
+    } else {
+      targetComponent = component;
+    }
+
+    const componentDir = path.join(this.model!.componentsDirectory || '', targetComponent);
+
+    if (!fs.existsSync(componentDir)) {
+      throw new Error(`Component ${targetComponent} does not exist at ${componentDir}`);
+    }
+
+    console.log(`🗑️ Removing entire component: ${targetComponent}...`);
+    console.log(`   Directory: ${componentDir}`);
+
+    const versions = this.getAvailableVersions(componentDir);
+    
+    await fs.promises.rm(componentDir, { recursive: true, force: true });
+    console.log(`✅ Removed component ${targetComponent} and all versions`);
+
+    await this.cleanupAllComponentScriptSymlinks(targetComponent, versions);
+
+    // Clear context if we removed the loaded component
+    if ((this.model as any).context?.model?.component === targetComponent) {
+      (this.model as any).context = undefined;
+      this.updateModelPaths();
+      console.log(`🔧 Cleared component context`);
+    }
+
+    return this;
+  }
+
+  /**
+   * Cleanup all script symlinks for a component
+   * @cliHide
+   */
+  private async cleanupAllComponentScriptSymlinks(componentName: string, versions: string[]): Promise<void> {
+    const scriptsDir = path.join(this.model!.targetDirectory || '', 'scripts');
+    const versionsDir = path.join(scriptsDir, 'versions');
+    
+    if (!fs.existsSync(versionsDir)) {
+      return;
+    }
+
+    const componentLowerCase = componentName.toLowerCase();
+
+    // Remove all version-specific symlinks
+    for (const version of versions) {
+      const versionScriptName = `${componentLowerCase}-v${version}`;
+      const versionScriptPath = path.join(versionsDir, versionScriptName);
+
+      try {
+        fs.lstatSync(versionScriptPath);
+        await fs.promises.unlink(versionScriptPath);
+        console.log(`🔗 Removed version script symlink: ${versionScriptName}`);
+      } catch {
+        // Doesn't exist
+      }
+    }
+
+    // Remove main script symlink
+    const mainScriptPath = path.join(scriptsDir, componentLowerCase);
+    try {
+      fs.lstatSync(mainScriptPath);
+      await fs.promises.unlink(mainScriptPath);
+      console.log(`🔗 Removed main script symlink: ${componentLowerCase}`);
+    } catch {
+      // Doesn't exist
+    }
+  }
+
+  /**
+   * Upgrade component to next version with semantic version control
+   * @param versionPromotion Version type: 'nextBuild', 'nextPatch', 'nextMinor', 'nextMajor', or specific version
+   * @cliSyntax versionPromotion
+   * @cliValues versionPromotion nextPatch nextMinor nextMajor nextBuild
+   */
+  async upgrade(versionPromotion: string = 'nextPatch'): Promise<this> {
+    this.printQuickHeader();
+    
+    const target = this.getTarget();
+    const targetComponent = target.model!.component || this.model!.component || '';
+    const targetVersion = target.model!.version || this.model!.version;
+    
+    const nextVersion = await SemanticVersion.promote(targetVersion?.toString() || '0.0.0.0', versionPromotion);
+    console.log(`🔧 Upgrading ${targetComponent}: ${targetVersion?.toString()} → ${nextVersion}`);
+    
+    (this.model as any).toVersion = nextVersion;
+    
+    if (target !== this) {
+      this.model!.component = targetComponent;
+      this.model!.version = targetVersion;
+    }
+    
+    await this.createVersionFromExisting();
+    await this.updateSymlinks();
+    
+    console.log(`✅ ${targetComponent} ${nextVersion} created successfully`);
+    console.log(`   Location: components/${targetComponent}/${nextVersion}`);
+    
+    if ((this.model as any).context) {
+      (this.model as any).context.model.version = SemanticVersion.fromString(nextVersion);
+      (this.model as any).context.model.origin = `components/${targetComponent}/${nextVersion}`;
+    }
+    
+    return this;
+  }
+
+  /**
+   * Create new version from existing
+   * @cliHide
+   */
+  private async createVersionFromExisting(): Promise<void> {
+    const sourcePath = path.join(this.model!.componentsDirectory || '', this.model!.component || '', this.model!.version?.toString() || '');
+    const targetPath = path.join(this.model!.componentsDirectory || '', this.model!.component || '', (this.model as any).toVersion);
+    
+    if (fs.existsSync(targetPath)) {
+      console.error(`❌ ERROR: Version ${(this.model as any).toVersion} already exists!`);
+      throw new Error(`Version ${(this.model as any).toVersion} already exists`);
+    }
+    
+    await this.copyDirectory(sourcePath, targetPath);
+    await this.updatePackageJsonVersion(targetPath);
+    await this.updateCLIScriptVersion(targetPath);
+  }
+
+  /**
+   * Copy directory recursively
+   * @cliHide
+   */
+  private async copyDirectory(source: string, target: string, componentRoot?: string): Promise<void> {
+    await fs.promises.mkdir(target, { recursive: true });
+    const entries = await fs.promises.readdir(source, { withFileTypes: true });
+    
+    if (!componentRoot) {
+      componentRoot = source;
+    }
+    
+    const relativePath = path.relative(componentRoot, source);
+    
+    // Skip patterns
+    const skipPatterns = ['node_modules', '.git', 'dist', '*.scenario.json'];
+    
+    for (const entry of entries) {
+      const srcPath = path.join(source, entry.name);
+      const destPath = path.join(target, entry.name);
+      
+      // Skip node_modules, .git, dist
+      if (skipPatterns.some(p => entry.name === p || (p.startsWith('*') && entry.name.endsWith(p.slice(1))))) {
+        continue;
+      }
+      
+      if (entry.isDirectory()) {
+        await this.copyDirectory(srcPath, destPath, componentRoot);
+      } else if (entry.isSymbolicLink()) {
+        const linkTarget = await fs.promises.readlink(srcPath);
+        try {
+          await fs.promises.symlink(linkTarget, destPath);
+        } catch {
+          // Silent fail for symlinks
+        }
+      } else {
+        await fs.promises.copyFile(srcPath, destPath);
+      }
+    }
+  }
+
+  /**
+   * Update package.json version field
+   * @cliHide
+   */
+  private async updatePackageJsonVersion(targetPath: string): Promise<void> {
+    const packageJsonPath = path.join(targetPath, 'package.json');
+    if (fs.existsSync(packageJsonPath)) {
+      const packageContent = JSON.parse(await fs.promises.readFile(packageJsonPath, 'utf-8'));
+      packageContent.version = (this.model as any).toVersion;
+      await fs.promises.writeFile(packageJsonPath, JSON.stringify(packageContent, null, 2));
+    }
+  }
+
+  /**
+   * Update CLI script COMPONENT_VERSION variable
+   * @cliHide
+   */
+  private async updateCLIScriptVersion(targetPath: string): Promise<void> {
+    try {
+      const cliScripts = await fs.promises.readdir(targetPath);
+      const cliScript = cliScripts.find(file => 
+        file.endsWith('.sh') || 
+        (!file.includes('.') && !['node_modules', 'spec', 'src', 'test', 'dist'].includes(file))
+      );
+      
+      if (cliScript) {
+        const cliScriptPath = path.join(targetPath, cliScript);
+        const stats = await fs.promises.stat(cliScriptPath);
+        if (stats.isFile()) {
+          let cliContent = await fs.promises.readFile(cliScriptPath, 'utf-8');
+          cliContent = cliContent.replace(
+            /COMPONENT_VERSION="[^"]+"/,
+            `COMPONENT_VERSION="${(this.model as any).toVersion}"`
+          );
+          await fs.promises.writeFile(cliScriptPath, cliContent);
+          console.log(`   ✅ CLI script updated: ${cliScript}`);
+        }
+      }
+    } catch {
+      // CLI script update is optional
+    }
+  }
+
+  /**
+   * Update symlinks for component version
+   * @cliHide
+   */
+  private async updateSymlinks(): Promise<void> {
+    try {
+      await this.updateLatestSymlink();
+      await this.updateScriptsSymlinks();
+      console.log(`   🔗 Symlinks updated: latest → ${(this.model as any).toVersion}`);
+    } catch (error: any) {
+      console.log(`   ⚠️ Symlink update had issues: ${error.message}`);
+    }
+  }
+
+  /**
+   * Update latest symlink in component directory
+   * @cliHide
+   */
+  private async updateLatestSymlink(): Promise<void> {
+    const componentDir = path.join(this.model!.componentsDirectory || '', this.model!.component || '');
+    const latestPath = path.join(componentDir, 'latest');
+    
+    try {
+      if (fs.existsSync(latestPath)) {
+        await fs.promises.unlink(latestPath);
+      }
+      await fs.promises.symlink((this.model as any).toVersion, latestPath);
+    } catch (error: any) {
+      console.log(`   ⚠️ Could not update latest symlink: ${error.message}`);
+    }
+  }
+
+  /**
+   * Update scripts and scripts/versions symlinks
+   * @cliHide
+   */
+  private async updateScriptsSymlinks(): Promise<void> {
+    try {
+      await this.createVersionScriptSymlink();
+      await this.updateMainScriptSymlink();
+    } catch (error: any) {
+      console.log(`   ⚠️ Could not update scripts symlinks: ${error.message}`);
+    }
+  }
+
+  /**
+   * Create version-specific script symlink
+   * @cliHide
+   */
+  private async createVersionScriptSymlink(version: string = (this.model as any).toVersion): Promise<void> {
+    const projectRoot = this.model!.projectRoot || '';
+    const versionsDir = path.join(projectRoot, 'scripts', 'versions');
+    
+    await fs.promises.mkdir(versionsDir, { recursive: true });
+    
+    const componentLower = (this.model!.component || '').toLowerCase();
+    const scriptName = `${componentLower}-v${version}`;
+    const scriptPath = path.join(versionsDir, scriptName);
+    
+    const componentVersionDir = path.join(projectRoot, 'components', this.model!.component || '', version);
+    const possibleScripts = [`${componentLower}.sh`, componentLower, 'cli.sh', 'cli'];
+    
+    let targetScript = '';
+    for (const script of possibleScripts) {
+      const scriptFile = path.join(componentVersionDir, script);
+      if (fs.existsSync(scriptFile)) {
+        targetScript = script;
+        break;
+      }
+    }
+    
+    if (!targetScript) return;
+    
+    try {
+      try { await fs.promises.unlink(scriptPath); } catch { /* doesn't exist */ }
+      const relativePath = path.relative(versionsDir, path.join(componentVersionDir, targetScript));
+      await fs.promises.symlink(relativePath, scriptPath);
+    } catch (error: any) {
+      console.log(`   ❌ Could not create version script symlink: ${error.message}`);
+    }
+  }
+
+  /**
+   * Update main script symlink to point to latest
+   * @cliHide
+   */
+  private async updateMainScriptSymlink(): Promise<void> {
+    const scriptsDir = path.join(this.model!.targetDirectory || '', 'scripts');
+    const componentLower = (this.model!.component || '').toLowerCase();
+    const mainScriptPath = path.join(scriptsDir, componentLower);
+    
+    const componentDir = path.join(this.model!.componentsDirectory || '', this.model!.component || '');
+    const targetPath = path.relative(scriptsDir, path.join(componentDir, 'latest', componentLower));
+    
+    try {
+      if (fs.existsSync(mainScriptPath)) {
+        await fs.promises.unlink(mainScriptPath);
+      }
+      await fs.promises.symlink(targetPath, mainScriptPath);
+    } catch (error: any) {
+      console.log(`   ⚠️ Could not update main script symlink: ${error.message}`);
+    }
+  }
 }
 
