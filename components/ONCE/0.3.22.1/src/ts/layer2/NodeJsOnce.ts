@@ -328,6 +328,8 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
     this.model.isTestIsolation = isTestIsolation;
 
     // Import Web4TSComponent dynamically
+    // WM.3 BLOCKED: tootsie() requires TootsieTestRunner integration
+    // @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
     const web4tscomponentModule = await import(
       `${projectRoot}/components/Web4TSComponent/latest/dist/ts/layer2/DefaultWeb4TSComponent.js`
     );

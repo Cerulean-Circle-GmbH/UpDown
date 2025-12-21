@@ -203,6 +203,42 @@ export class SemanticVersion implements Version {
     return SemanticVersion.SEMANTIC_LINKS_SET.has(link as typeof SemanticVersion.SEMANTIC_LINKS[number]);
   }
 
+  /**
+   * Resolve version string to actual version number
+   * Handles: actual versions, semantic links, 'current' keyword
+   * @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
+   */
+  static async resolveVersion(
+    versionString: string,
+    componentDir: string,
+    currentVersion: SemanticVersion
+  ): Promise<string> {
+    const { existsSync, lstatSync, readlinkSync } = await import('fs');
+    const path = await import('path');
+    
+    if (versionString === 'current') {
+      return currentVersion.toString();
+    }
+    
+    const versionPattern = /^\d+\.\d+\.\d+\.\d+$/;
+    if (versionPattern.test(versionString)) {
+      return versionString;
+    }
+    
+    if (SemanticVersion.isSemanticLink(versionString)) {
+      const linkPath = path.join(componentDir, versionString);
+      if (existsSync(linkPath) && lstatSync(linkPath).isSymbolicLink()) {
+        const resolvedVersion = readlinkSync(linkPath);
+        const versionMatch = resolvedVersion.match(/(\d+\.\d+\.\d+\.\d+)/);
+        return versionMatch ? versionMatch[1] : resolvedVersion;
+      } else {
+        throw new Error(`Semantic link '${versionString}' does not exist or is not a symlink`);
+      }
+    }
+    
+    return versionString;
+  }
+
   /** Convert to scenario for persistence */
   async toScenario(name?: string): Promise<Scenario<VersionModel>> {
     return {

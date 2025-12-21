@@ -117,7 +117,7 @@ export class DefaultWeb4TSComponent
         return typeof prototype[name] === 'function';
       })
       .filter((name) => !name.startsWith('_') && name !== 'constructor')
-      .filter((name) => !['init', 'hasMethod', 'methodSignatureGet', 'methodsList', 'methodsDiscover'].includes(name));
+      .filter((name) => !['init', 'hasMethod', 'methodSignatureGet', 'methodsList', 'methodsDiscover', 'listMethods', 'getMethodSignature'].includes(name));
 
     for (const methodName of methodNames) {
       const method = prototype[methodName];
@@ -150,9 +150,39 @@ export class DefaultWeb4TSComponent
     return Array.from(this.methods.keys());
   }
   
+  /**
+   * Alias for methodsList — ONCECLI compatibility
+   * @deprecated Use methodsList() (P16)
+   */
+  listMethods(): string[] {
+    return this.methodsList();
+  }
+  
+  /**
+   * Alias for methodSignatureGet — ONCECLI compatibility
+   * @deprecated Use methodSignatureGet() (P16)
+   */
+  getMethodSignature(name: string): MethodSignature | null {
+    return this.methodSignatureGet(name);
+  }
+  
   // ═══════════════════════════════════════════════════════════════
   // DEVELOPMENT METHODS (Web4TSComponent interface)
   // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Tootsie: Quality consciousness testing (alias for test)
+   * @param scope Test scope: 'all', 'file', 'describe', or 'itCase'
+   * @param references Test file numbers or name patterns to execute
+   * @cliSyntax scope references
+   * @cliDefault scope all
+   * @cliValues scope all file describe itCase
+   * @cliExample once tootsie file 1
+   * @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
+   */
+  async tootsie(scope: string = 'all', ...references: string[]): Promise<this> {
+    return this.test(scope, ...references);
+  }
   
   /**
    * Run component tests
@@ -335,6 +365,49 @@ export class DefaultWeb4TSComponent
     return this;
   }
   
+  /**
+   * Set CI/CD semantic links for a component version
+   * @param targetVersion Semantic link to set: 'dev', 'latest', 'prod', 'test'
+   * @param version Version to set for the link (default: current version)
+   * @cliValues targetVersion dev latest prod test
+   * @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
+   */
+  async setCICDVersion(targetVersion: string, version: string = 'current'): Promise<this> {
+    this.printQuickHeader();
+    
+    const componentDir = path.dirname(this.model!.componentRoot);
+    const actualVersion = await SemanticVersion.resolveVersion(
+      version,
+      componentDir,
+      this.model!.version
+    );
+    
+    if (!SemanticVersion.isSemanticLink(targetVersion)) {
+      throw new Error(`Invalid targetVersion: ${targetVersion}. Must be one of: ${SemanticVersion.SEMANTIC_LINKS.join(', ')}`);
+    }
+    
+    console.log(`🔗 Setting ${targetVersion} symlink for ${this.model!.component}:`);
+    console.log(`   Target: ${actualVersion}`);
+    
+    const fsp = await import('fs/promises');
+    const linkPath = path.join(componentDir, targetVersion);
+    const targetDir = path.join(componentDir, actualVersion);
+    
+    if (!fs.existsSync(targetDir)) {
+      throw new Error(`Target version ${actualVersion} does not exist at ${targetDir}`);
+    }
+    
+    try {
+      await fsp.unlink(linkPath).catch(function noopOnError() {});
+      await fsp.symlink(actualVersion, linkPath);
+      console.log(`   ✅ ${targetVersion} → ${actualVersion}`);
+    } catch (error) {
+      throw new Error(`Failed to set ${targetVersion} link: ${error}`);
+    }
+    
+    return this;
+  }
+  
   // ═══════════════════════════════════════════════════════════════
   // UNIT DISCOVERY & CREATION
   // ═══════════════════════════════════════════════════════════════
@@ -481,6 +554,100 @@ await component.init();
     }
     
     console.log('');
+  }
+  
+  /**
+   * Get the target component instance for operations
+   * Single source of truth for context resolution (Radical OOP principle)
+   * Returns context if set (delegation mode), otherwise returns this
+   * @cliHide
+   */
+  protected getTarget(): DefaultWeb4TSComponent {
+    return ((this.model as any).context as DefaultWeb4TSComponent) || this;
+  }
+  
+  /**
+   * Show Web4 standards - STUB (FUTURE)
+   * @cliHide
+   */
+  showStandard(): void {
+    console.log('📋 Web4 Standards documentation - see howto.fractal.pdca.md');
+  }
+  
+  /**
+   * Show Web4 guidelines - STUB (FUTURE)
+   * @cliHide
+   */
+  showGuidelines(): void {
+    console.log('📋 Web4 Guidelines documentation - see web4-principles-checklist.md');
+  }
+  
+  /**
+   * Display component information
+   * @param topic Topic to display: 'model' (default), 'standard', 'guidelines'
+   * @cliDefault topic model
+   */
+  async info(topic: string = 'model'): Promise<this> {
+    this.printQuickHeader();
+    
+    const target = this.getTarget();
+    const targetModel = target.model!;
+    const isContextMode = !!(this.model as any).context;
+    
+    switch (topic) {
+      case 'standard':
+      case 'standards':
+        this.showStandard();
+        break;
+      case 'guidelines':
+      case 'guide':
+        this.showGuidelines();
+        break;
+      case 'model':
+      case 'overview':
+      default:
+        console.log(`
+${'='.repeat(80)}
+📊 Component Model Information
+${'='.repeat(80)}
+`);
+        
+        if (isContextMode) {
+          console.log(`🎯 Context Mode: Showing context.model (delegated component)\n`);
+        }
+        
+        console.log(`🏷️  Component Identity:`);
+        console.log(`   Name:         ${targetModel.name || 'N/A'}`);
+        console.log(`   Component:    ${targetModel.component || 'N/A'}`);
+        console.log(`   Version:      ${targetModel.version?.toString() || 'N/A'}`);
+        console.log(`   UUID:         ${targetModel.uuid || 'N/A'}`);
+        console.log();
+        
+        console.log(`📂 Paths:`);
+        console.log(`   Project Root:     ${targetModel.projectRoot || 'N/A'}`);
+        console.log(`   Component Root:   ${targetModel.componentRoot || 'N/A'}`);
+        console.log(`   Target Directory: ${targetModel.targetDirectory || 'N/A'}`);
+        console.log();
+        
+        console.log(`⚙️  Configuration:`);
+        console.log(`   Origin:       ${(targetModel as any).origin || 'N/A'}`);
+        console.log(`   Definition:   ${(targetModel as any).definition || 'N/A'}`);
+        console.log();
+        
+        if (isContextMode) {
+          console.log(`🔗 Context Delegation:`);
+          console.log(`   Caller Component: ${targetModel.component}`);
+          console.log(`   Caller Version:   ${targetModel.version?.toString() || 'N/A'}`);
+          console.log(`   Target Component: ${this.model!.component}`);
+          console.log(`   Target Version:   ${this.model!.version.toString()}`);
+          console.log();
+        }
+        
+        console.log(`${'='.repeat(80)}\n`);
+        break;
+    }
+    
+    return this;
   }
   
   /**
