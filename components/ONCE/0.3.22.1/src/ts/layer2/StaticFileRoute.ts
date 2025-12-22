@@ -55,6 +55,7 @@ import type { Scenario } from '../layer3/Scenario.interface.js';
 import type { FileModel } from '../layer3/FileModel.interface.js';
 import type { ArtefactModel } from '../layer3/ArtefactModel.interface.js';
 import type { UnitModel } from '../layer3/UnitModel.interface.js';
+import { IOR } from '../layer4/IOR.js';  // FsM.2: IOR-based file loading
 
 /**
  * StaticFileRoute
@@ -339,10 +340,19 @@ export class StaticFileRoute extends Route {
             const ext = this.extensionFrom(urlPath);
             const mimeType = MIME_TYPES[ext] || 'application/octet-stream';
             
-            // Read and serve file
-            const content = fs.readFileSync(filePath);
+            // FsM.2: Read file via IOR (P2P pattern)
+            // Uses FileLoader on Node.js, HTTPSLoader fallback on browser
+            const fileIor = new IOR<Buffer>().initRemote(`ior:fs:file://${filePath}`);
+            const content = await fileIor.resolve();
             
-            console.log(`[StaticFileRoute] ✅ ${urlPath} → ${mimeType}`);
+            if (!content) {
+                console.log(`[StaticFileRoute] IOR returned null for: ${filePath}`);
+                res.writeHead(404, { 'Content-Type': 'text/plain' });
+                res.end('Not Found');
+                return;
+            }
+            
+            console.log(`[StaticFileRoute] ✅ ${urlPath} → ${mimeType} (via IOR)`);
             
             res.writeHead(200, {
                 'Content-Type': mimeType,
