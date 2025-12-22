@@ -27,6 +27,7 @@ import type { StorageScenario } from '../layer3/StorageScenario.interface.js';
 import type { MethodSignature } from '../layer3/MethodSignature.interface.js';
 import type { UnitFilePattern } from '../layer3/UnitDefinition.interface.js';
 import { TypeM3 } from '../layer3/TypeM3.enum.js';
+import { IOR } from '../layer4/IOR.js';  // FsM.6: IOR-based content ops
 import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
@@ -992,9 +993,10 @@ ${'='.repeat(80)}
     // Create directory
     fs.mkdirSync(scenarioDir, { recursive: true });
     
-    // Write scenario
+    // FsM.6: Save scenario via IOR (P2P pattern)
     const scenarioPath = path.join(scenarioDir, `${scenarioUuid}.scenario.json`);
-    fs.writeFileSync(scenarioPath, JSON.stringify(targetScenario, null, 2));
+    const saveIor = new IOR<string>().initRemote(`ior:fs:file://${scenarioPath}`);
+    await saveIor.save(targetScenario);
     
     // Create or update symlink
     const symlinkPath = path.join(componentRoot, `${componentName}.component.json`);
@@ -1106,9 +1108,14 @@ ${'='.repeat(80)}
       return null;
     }
     
-    // Read descriptor (component.json is symlink to scenario file)
+    // FsM.6: Load descriptor via IOR (P2P pattern)
     try {
-      const descriptorContent = fs.readFileSync(descriptorPath, 'utf-8');
+      const loadIor = new IOR<string>().initRemote(`ior:fs:file://${descriptorPath}`);
+      const descriptorContent = await loadIor.resolve();
+      if (!descriptorContent) {
+        console.log(`⚠️  Could not read component.json for ${componentName}/${version}`);
+        return null;
+      }
       const descriptor = JSON.parse(descriptorContent);
       console.log(`📋 Loaded descriptor for ${componentName}/${version}`);
       if (descriptor.model?.implementationClassName) {
