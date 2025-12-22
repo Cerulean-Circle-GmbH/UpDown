@@ -119,12 +119,16 @@ export class IOR<T = any> implements IORInterface {
         IOR.loaders.set('wss', wsLoader);
         IOR.loaders.set('ws', wsLoader);
         
-        // Register FileLoader for 'file' protocol (Node.js only)
+        // Register FileLoader for 'file' AND 'fs' protocols (Node.js only)
+        // 'fs' is used in P2P protocol chain: ior:fs:https://... 
+        // - Node.js: 'fs' available → use directly
+        // - Browser: 'fs' not available → skip to 'https'
         const fileLoader = new FileLoader();
         fileLoader.init();
         IOR.loaders.set('file', fileLoader);
+        IOR.loaders.set('fs', fileLoader);  // P2P alias for Web4 chain
         
-        console.log('🔗 [IOR] Default loaders registered: https, http, scenario, wss, ws, file');
+        console.log('🔗 [IOR] Default loaders registered: https, http, scenario, wss, ws, file, fs');
     }
     
     // ═══════════════════════════════════════════════════════════════
