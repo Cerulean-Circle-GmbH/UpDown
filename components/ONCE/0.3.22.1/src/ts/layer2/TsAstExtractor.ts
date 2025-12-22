@@ -20,6 +20,7 @@ import * as ts from 'typescript';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
+import { IOR } from '../layer4/IOR.js';  // FsM.7: IOR-based file ops
 import type { TypeDescriptorModel } from '../layer3/TypeDescriptorModel.interface.js';
 import type { AttributeDescriptor } from '../layer3/AttributeDescriptor.interface.js';
 import type { PropertyDescriptor } from '../layer3/PropertyDescriptor.interface.js';
@@ -99,7 +100,13 @@ export class TsAstExtractor {
     };
     
     try {
-      const content = fs.readFileSync(filePath, 'utf-8');
+      // FsM.7: Load via IOR (P2P pattern)
+      const loadIor = new IOR<string>().initRemote(`ior:fs:file://${filePath}`);
+      const content = await loadIor.resolve();
+      if (!content) {
+        result.errors.push(`Could not read file: ${filePath}`);
+        return result;
+      }
       const sourceFile = ts.createSourceFile(
         filePath,
         content,
@@ -629,9 +636,10 @@ export class TsAstExtractor {
           model: typeModel,
         };
         
-        // Save to index
+        // FsM.7: Save to index via IOR (P2P pattern)
         const indexPath = path.join(this.scenariosDir, typeModel.indexPath.replace('scenarios/', ''));
-        fs.writeFileSync(indexPath, JSON.stringify(scenario, null, 2));
+        const saveIor = new IOR<string>().initRemote(`ior:fs:file://${indexPath}`);
+        await saveIor.save(scenario);
         
         // Create symlink in type directory
         for (const symlinkPath of typeModel.symlinkPaths) {

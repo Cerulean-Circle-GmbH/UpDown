@@ -14,6 +14,7 @@ import { Route } from './Route.js';
 import { HttpMethod } from '../layer3/HttpMethod.enum.js';
 import type { IncomingMessage, ServerResponse } from 'http';
 import type { RouteModel } from '../layer3/RouteModel.interface.js';
+import { IOR } from '../layer4/IOR.js';  // FsM.7: IOR-based file loading
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -81,16 +82,24 @@ export class ServiceWorkerRoute extends Route {
    * Handle the /sw.js request
    * Serves the compiled OnceServiceWorker.js with appropriate headers
    */
-  protected override handleRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  protected override async handleRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
     // Check if SW file exists
     if (!this.swFilePath || !fs.existsSync(this.swFilePath)) {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
       res.end('Service Worker not found. Run tsc to compile.');
-      return Promise.resolve();
+      return;
     }
     
     try {
-      const content = fs.readFileSync(this.swFilePath, 'utf-8');
+      // FsM.7: Load via IOR (P2P pattern)
+      const loadIor = new IOR<string>().initRemote(`ior:fs:file://${this.swFilePath}`);
+      const content = await loadIor.resolve();
+      
+      if (!content) {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('Service Worker not found.');
+        return;
+      }
       
       res.writeHead(200, {
         'Content-Type': 'application/javascript',

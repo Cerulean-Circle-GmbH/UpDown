@@ -14,6 +14,7 @@ import { NodeOSInfrastructure } from '../layer1/NodeOSInfrastructure.js';
 import { EnvironmentModel } from '../layer3/EnvironmentModel.interface.js';
 import type { PersistenceManager } from '../layer3/PersistenceManager.interface.js';
 import type { ScenarioService } from './ScenarioService.js';
+import { IOR } from '../layer4/IOR.js';  // FsM.7: IOR-based scenario save
 
 export class DefaultUser implements User {
   private model: UserModel;
@@ -260,10 +261,11 @@ export class DefaultUser implements User {
       fs.mkdirSync(scenarioDir, { recursive: true });
     }
     
-    // Save scenario
-    fs.writeFileSync(scenarioPath, JSON.stringify(scenario, null, 2));
-    console.log(`📝 [WRITE] DefaultUser.saveScenarioLegacy() projectRoot=${projectRoot} → ${scenarioPath}`);
-    console.log(`💾 User scenario saved (legacy): ${path.basename(scenarioPath)}`);
+    // FsM.7: Save scenario via IOR (P2P pattern)
+    const saveIor = new IOR<string>().initRemote(`ior:fs:file://${scenarioPath}`);
+    await saveIor.save(scenario);
+    console.log(`📝 [WRITE] DefaultUser.saveScenarioLegacy() via IOR → ${scenarioPath}`);
+    console.log(`💾 User scenario saved (legacy via IOR): ${path.basename(scenarioPath)}`);
     
     return scenarioPath;
   }

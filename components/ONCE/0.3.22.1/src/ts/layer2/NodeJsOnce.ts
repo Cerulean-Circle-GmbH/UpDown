@@ -2923,8 +2923,10 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
     if (!fs.existsSync(reportDir)) {
       fs.mkdirSync(reportDir, { recursive: true });
     }
-    fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`💾 JSON report saved: ${reportPath}`);
+    // FsM.7: Save report via IOR (P2P pattern)
+    const saveIor = new IOR<string>().initRemote(`ior:fs:file://${reportPath}`);
+    await saveIor.save(report);
+    console.log(`💾 JSON report saved via IOR: ${reportPath}`);
     console.log('');
 
     console.log('🔒 Demo complete! Servers running. Press [q] or Ctrl+C to stop.');
