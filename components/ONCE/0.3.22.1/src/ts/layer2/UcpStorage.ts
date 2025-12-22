@@ -25,6 +25,7 @@ import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import * as path from 'path';
 import * as crypto from 'crypto';
+import { IOR } from '../layer4/IOR.js';  // FsM.3: IOR-based storage
 
 /**
  * UcpStorage - UUID index-based scenario storage
@@ -133,9 +134,10 @@ export class UcpStorage extends Storage {
       }
     };
 
-    // Save scenario to index
-    await fs.writeFile(scenarioPath, JSON.stringify(scenarioWithStorage, null, 2), 'utf-8');
-    console.log(`[UcpStorage] Saved scenario to: ${scenarioPath}`);
+    // FsM.3: Save scenario via IOR (P2P pattern)
+    const saveIor = new IOR<string>().initRemote(`ior:fs:file://${scenarioPath}`);
+    await saveIor.save(scenarioWithStorage);
+    console.log(`[UcpStorage] Saved scenario via IOR: ${scenarioPath}`);
 
     // Create symbolic links - linkPath is relative like "type/Component/version"
     // Full path: {projectRoot}/scenarios/{linkPath}/{uuid}.scenario.json
@@ -155,7 +157,12 @@ export class UcpStorage extends Storage {
    */
   async scenarioLoad<T extends Model>(uuid: string): Promise<Scenario<T>> {
     const scenarioPath = this.scenarioIndexPathGet(uuid);
-    const content = await fs.readFile(scenarioPath, 'utf-8');
+    // FsM.3: Load scenario via IOR (P2P pattern)
+    const loadIor = new IOR<string>().initRemote(`ior:fs:file://${scenarioPath}`);
+    const content = await loadIor.resolve();
+    if (!content) {
+      throw new Error(`[UcpStorage] Scenario not found: ${uuid}`);
+    }
     return JSON.parse(content);
   }
   
@@ -196,8 +203,12 @@ export class UcpStorage extends Storage {
       const files = await this.scenarioFilesFind(searchPath);
       for (const file of files) {
         try {
-          const content = await fs.readFile(file, 'utf-8');
-          results.push(JSON.parse(content));
+          // FsM.3: Load via IOR (P2P pattern)
+          const fileIor = new IOR<string>().initRemote(`ior:fs:file://${file}`);
+          const content = await fileIor.resolve();
+          if (content) {
+            results.push(JSON.parse(content));
+          }
         } catch (error) {
           console.warn(`[UcpStorage] Failed to load: ${file}`, error);
         }
@@ -409,7 +420,11 @@ export class UcpStorage extends Storage {
     try {
       const currentDir = path.dirname(fileURLToPath(import.meta.url));
       const packageJsonPath = path.resolve(currentDir, '../../../package.json');
-      const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'));
+      // FsM.3: Load via IOR (P2P pattern)
+      const pkgIor = new IOR<string>().initRemote(`ior:fs:file://${packageJsonPath}`);
+      const content = await pkgIor.resolve();
+      if (!content) return '0.3.21.9';
+      const packageJson = JSON.parse(content);
       return packageJson.version || '0.3.21.9';
     } catch (error) {
       return '0.3.21.9'; // Fallback version
@@ -423,7 +438,11 @@ export class UcpStorage extends Storage {
     try {
       const currentDir = path.dirname(fileURLToPath(import.meta.url));
       const packageJsonPath = path.resolve(currentDir, '../../../package.json');
-      const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'));
+      // FsM.3: Load via IOR (P2P pattern)
+      const pkgIor = new IOR<string>().initRemote(`ior:fs:file://${packageJsonPath}`);
+      const content = await pkgIor.resolve();
+      if (!content) return 'ONCE';
+      const packageJson = JSON.parse(content);
       return packageJson.name?.split('/').pop()?.replace('@web4/', '') || 'ONCE';
     } catch (error) {
       return 'ONCE'; // Fallback name
