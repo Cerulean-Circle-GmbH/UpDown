@@ -489,20 +489,24 @@ export class StaticFileRoute extends Route {
         };
         
         // I.9.11: Create Scenario<UnitModel> linking File + Artefact
+        // UnitModel from Unit/0.3.0.5 MASTER: createdAt/updatedAt are ISO strings, not numbers
         const unitScenario: Scenario<UnitModel> = {
             ior: { uuid: unitUuid, component: 'Unit', version: this.componentVersion },
             owner: 'ONCE/' + this.componentVersion,
             model: {
                 uuid: unitUuid,
                 name: `Unit-${filename}`,   // Required by Model
+                origin: `ior:fs:${filePath}`,  // Unit/0.3.0.5 MASTER
+                definition: `ior:url:${urlPath}`,  // Unit/0.3.0.5 MASTER
+                indexPath: '',  // Will be set when stored
+                createdAt: nowIso,  // ISO string, not number
+                updatedAt: nowIso,  // ISO string, not number (was modifiedAt)
+                // ONCE-specific extensions (optional)
                 componentType: 'File',
                 componentIor: `ior:esm:/File/${this.componentVersion}/${fileUuid}`,
                 artefactUuid: contentHash,
                 fileUuid: fileUuid,
-                createdAt: now,
-                modifiedAt: now,
                 storagePath: null,
-                indexPath: null,
                 // I.9.12: Add references for filesystem path and URL path
                 references: [
                     {
