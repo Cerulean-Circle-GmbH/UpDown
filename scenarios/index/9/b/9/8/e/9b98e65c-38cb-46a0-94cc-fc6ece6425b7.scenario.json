@@ -1,0 +1,58 @@
+{
+  "ior": {
+    "uuid": "9b98e65c-38cb-46a0-94cc-fc6ece6425b7",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkxTFRFeUxUSXhWREV5T2pRMU9qTXhMamMxTmxvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwibmFtZSI6ImRvbmdlcyIsInVzZXJuYW1lIjoic3lzdGVtIiwiaG9zdG5hbWUiOiJNY0Rvbmdlcy0zLmZyaXR6LmJveCJ9fQ==",
+  "model": {
+    "uuid": "9b98e65c-38cb-46a0-94cc-fc6ece6425b7",
+    "name": "NodeJsONCEKernel",
+    "version": "0.3.22.1",
+    "environment": {
+      "platform": "node",
+      "version": "v22.20.0",
+      "capabilities": [
+        "server",
+        "websocket",
+        "p2p"
+      ],
+      "isOnline": true
+    },
+    "state": "starting",
+    "startTime": "2025-12-21T12:45:31.734Z",
+    "connectionTime": null,
+    "host": "McDonges-3.fritz.box",
+    "port": 42777,
+    "isPrimary": false,
+    "primaryPeerUuid": null,
+    "peers": [],
+    "pid": 92713,
+    "capabilities": [
+      {
+        "capability": "httpsPort",
+        "port": 8080
+      }
+    ],
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/9/b/9/8/e/9b98e65c-38cb-46a0-94cc-fc6ece6425b7.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.22.1",
+      "domain/box/fritz/McDonges-3/ONCE/0.3.22.1",
+      "domain/box/fritz/McDonges-3/ONCE/0.3.22.1/capability/httpPort/42777"
+    ],
+    "updatedAt": "2025-12-21T12:45:31.761Z"
+  },
+  "unit": {
+    "indexPath": "9/b/9/8/e/9b98e65c-38cb-46a0-94cc-fc6ece6425b7.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.22.1",
+      "domain/box/fritz/McDonges-3/ONCE/0.3.22.1",
+      "domain/box/fritz/McDonges-3/ONCE/0.3.22.1/capability/httpPort/42777"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "ONCE/0.3.22.1",
+    "createdAt": "2025-12-21T12:45:31.756Z",
+    "updatedAt": "2025-12-21T12:45:31.756Z"
+  }
+}
