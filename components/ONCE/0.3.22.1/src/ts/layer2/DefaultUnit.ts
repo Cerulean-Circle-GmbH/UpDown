@@ -31,6 +31,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { existsSync, readlinkSync } from 'fs';
 import { dirname } from 'path';
+import { IOR } from '../layer4/IOR.js';  // FsM.4: IOR-based unit ops
 
 // Type for unit identifier (UUID string or .unit file path)
 type UnitIdentifier = string;
@@ -440,7 +441,12 @@ export class DefaultUnit extends UcpComponent<UnitModel> {
     const indexPath = this.indexPathBuild(uuid);
     const scenarioPath = path.join(projectRoot, 'scenarios', 'index', indexPath, `${uuid}.scenario.json`);
     
-    const content = await fs.readFile(scenarioPath, 'utf-8');
+    // FsM.4: Load via IOR (P2P pattern)
+    const loadIor = new IOR<string>().initRemote(`ior:fs:file://${scenarioPath}`);
+    const content = await loadIor.resolve();
+    if (!content) {
+      throw new Error(`[DefaultUnit] Scenario not found: ${uuid}`);
+    }
     return JSON.parse(content);
   }
   
@@ -458,6 +464,8 @@ export class DefaultUnit extends UcpComponent<UnitModel> {
     // Update indexPath in model
     scenario.model.indexPath = scenarioPath;
     
-    await fs.writeFile(scenarioPath, JSON.stringify(scenario, null, 2));
+    // FsM.4: Save via IOR (P2P pattern)
+    const saveIor = new IOR<string>().initRemote(`ior:fs:file://${scenarioPath}`);
+    await saveIor.save(scenario);
   }
 }
