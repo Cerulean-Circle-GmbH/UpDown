@@ -2186,7 +2186,12 @@ export class ServerHierarchyManager {
                         continue;
                     }
                     
-                    const scenarioData = JSON.parse(fs.readFileSync(scenarioPath, 'utf8')) as Scenario<ONCEPeerModel>;
+                    // FsM.5: Load via IOR (P2P pattern)
+                    const loadIor = new IOR<string>().initRemote(`ior:fs:file://${scenarioPath}`);
+                    const content = await loadIor.resolve();
+                    if (!content) continue;
+                    
+                    const scenarioData = JSON.parse(content) as Scenario<ONCEPeerModel>;
                     
                     // Direct access to ONCEPeerModel
                     const model = scenarioData.model;
@@ -2451,12 +2456,19 @@ export class ServerHierarchyManager {
             );
             
             if (fs.existsSync(mainScenarioPath)) {
-                const scenarioData = JSON.parse(fs.readFileSync(mainScenarioPath, 'utf8')) as Scenario<ONCEPeerModel>;
+                // FsM.5: Load via IOR (P2P pattern)
+                const loadIor = new IOR<string>().initRemote(`ior:fs:file://${mainScenarioPath}`);
+                const content = await loadIor.resolve();
+                if (!content) return;
+                
+                const scenarioData = JSON.parse(content) as Scenario<ONCEPeerModel>;
                 
                 // Update state in ONCEPeerModel
                 scenarioData.model.state = state;
                 
-                fs.writeFileSync(mainScenarioPath, JSON.stringify(scenarioData, null, 2));
+                // FsM.5: Save via IOR (P2P pattern)
+                const saveIor = new IOR<string>().initRemote(`ior:fs:file://${mainScenarioPath}`);
+                await saveIor.save(scenarioData);
                 console.log(`💾 Updated scenario state to: ${state}`);
             }
         } catch (error) {
