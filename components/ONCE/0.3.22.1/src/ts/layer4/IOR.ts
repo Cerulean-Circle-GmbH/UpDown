@@ -295,10 +295,16 @@ export class IOR<T = any> implements IORInterface {
     /**
      * Perform the actual resolution via loader chain
      * With PWA caching for offline support (I.7)
+     * 
+     * FsM.1: Environment-aware protocol fallback
+     * - For 'ior:fs:https://...' chains:
+     *   - Node.js: 'fs' available → use FileLoader directly
+     *   - Browser: 'fs' NOT available → skip to 'https' → use HTTPSLoader
+     * 
      * @param options Optional load options (signal, timeout, headers)
      */
     private async performResolution(options?: IOROptions): Promise<T | null> {
-        const protocols = this.parseProtocolChain();
+        let protocols = this.parseProtocolChain();
         
         if (protocols.length === 0) {
             throw new Error('[IOR] No protocols in chain');
@@ -310,6 +316,23 @@ export class IOR<T = any> implements IORInterface {
             console.log(`💾 [IOR] Cache hit: ${this.model.uuid}`);
             return cached;
         }
+        
+        // ═══════════════════════════════════════════════════════════════
+        // FsM.1: ENVIRONMENT-AWARE PROTOCOL FALLBACK
+        // For P2P code: same code runs on browser AND server
+        // ═══════════════════════════════════════════════════════════════
+        const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+        
+        if (protocols[0] === 'fs' && !isNodeJs) {
+            // Browser context: 'fs' not available, skip to next protocol
+            protocols = protocols.slice(1);
+            console.log(`📡 [IOR] Browser: skipping 'fs', using: ${protocols.join(' → ')}`);
+        }
+        
+        if (protocols.length === 0) {
+            throw new Error('[IOR] No available protocols after fallback');
+        }
+        // ═══════════════════════════════════════════════════════════════
         
         // Get the transport protocol (last in chain, e.g., 'https')
         const transportProtocol = protocols[protocols.length - 1];
