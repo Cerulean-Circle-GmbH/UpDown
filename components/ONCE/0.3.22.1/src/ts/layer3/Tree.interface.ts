@@ -5,15 +5,16 @@
  * Used by Folder (files), OverViews (navigation), and Containers.
  * 
  * Web4 Principles:
- * - P5: Reference<T> for nullable parent
+ * - P34: LazyReference<T> for parent (ISR pattern)
  * - P19: One File One Type
  * - P22: Collection<T> for children
  * 
  * @ior ior:esm:/ONCE/{version}/Tree
  * @pdca 2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md
+ * @pdca 2025-12-22-UTC-1100.file-folder-inheritance.pdca.md
  */
 
-import { Reference } from './Reference.interface.js';
+import { LazyReference } from './LazyReference.interface.js';
 import { Collection } from './Collection.interface.js';
 
 /**
@@ -34,11 +35,17 @@ import { Collection } from './Collection.interface.js';
 export interface Tree<T> {
   
   /**
-   * Parent node (null for root)
+   * Parent node (null for root, or IOR string for lazy loading)
+   * 
+   * LazyReference enables ISR pattern:
+   * - string: IOR "ior:scenario:uuid" (unresolved)
+   * - IOR<Tree<T>>: resolving in background
+   * - Tree<T>: resolved instance
+   * - null: root node (no parent)
    * 
    * Used for breadcrumb navigation (walk up to root).
    */
-  readonly parent: Reference<Tree<T>>;
+  readonly parent: LazyReference<Tree<T>>;
   
   /**
    * Child nodes
