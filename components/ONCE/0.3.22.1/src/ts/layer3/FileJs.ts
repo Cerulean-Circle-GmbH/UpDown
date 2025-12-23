@@ -1,38 +1,39 @@
 /**
- * FileJsInterface.ts - Runtime Interface for File Components
+ * FileJs.ts - Runtime Interface for File Components
  * 
  * ✅ Web4 Principle 35: JsInterface for Runtime Interfaces
  * 
  * This is the RUNTIME representation of File.interface.ts.
+ * Named "FileJs" to avoid collision with browser's global File type.
  * 
  * Pattern: JsInterface Pattern
  * - File (File.interface.ts): Compile-time contract, erased at runtime
- * - FileJsInterface (this file): Abstract class extending JsInterface, implements File
- * - DefaultFile: Concrete class, implements FileJsInterface (and thus File)
+ * - FileJs (this file): Abstract class extending JsInterface, implements File
+ * - DefaultFile: Concrete class, implements FileJs (and thus File)
  * 
- * TypeScript interfaces are erased at runtime. FileJsInterface extends JsInterface
+ * TypeScript interfaces are erased at runtime. FileJs extends JsInterface
  * to exist at runtime for:
- * - RelatedObjects: `image.relatedObjectRegister(FileJsInterface, imageFile)`
- * - Implementation lookup: `FileJsInterface.implementations` → [DefaultFile, DefaultFolder]
- * - Runtime polymorphism: Both DefaultFile and DefaultFolder implement FileJsInterface
+ * - RelatedObjects: `image.relatedObjectRegister(FileJs, imageFile)`
+ * - Implementation lookup: `FileJs.implementations` → [DefaultFile, DefaultFolder]
+ * - Runtime polymorphism: Both DefaultFile and DefaultFolder implement FileJs
  * 
  * IMPORTANT: Folder IS-A File!
- * - DefaultFile implements FileJsInterface (leaf node)
- * - DefaultFolder implements FileJsInterface (can have children)
- * - Both register with `FileJsInterface.implementationRegister(ClassName)`
+ * - DefaultFile implements FileJs (leaf node)
+ * - DefaultFolder implements FileJs (can have children)
+ * - Both declare in `static implements() { return [FileJs]; }`
  * 
  * Usage:
  * ```typescript
  * // In Image component - store related file
- * image.relatedObjectRegister(FileJsInterface, imageFile);
+ * image.relatedObjectRegister(FileJs, imageFile);
  * 
  * // Lookup later
- * const file = image.relatedObjectLookupFirst(FileJsInterface);
+ * const file = image.relatedObjectLookupFirst(FileJs);
  * ```
  * 
  * @see session/web4-jsinterface-pattern.md for full pattern documentation
- * @see session/web4-component-anatomy-details.md for component anatomy
- * @ior ior:esm:/ONCE/{version}/FileJsInterface
+ * @see session/2025-12-22-UTC-1400.jsinterface-naming-impact.pdca.md
+ * @ior ior:esm:/ONCE/{version}/FileJs
  * @pdca 2025-12-22-UTC-1100.file-folder-inheritance.pdca.md
  */
 
@@ -41,16 +42,16 @@ import type { File } from './File.interface.js';
 import type { Model } from './Model.interface.js';
 
 /**
- * FileJsInterface - Runtime interface for file system nodes
+ * FileJs - Runtime interface for file system nodes
  * 
  * Both DefaultFile and DefaultFolder implement this interface.
  * - Extends JsInterface for runtime type introspection
  * - Implements File for compile-time contract enforcement
  * 
- * Note: Abstract methods use `FileJsInterface` (runtime type) not `File` (erased)
+ * Note: Abstract methods use `FileJs` (runtime type) not `File` (erased)
  * for parameters that need to exist at runtime.
  */
-export abstract class FileJsInterface extends JsInterface implements File {
+export abstract class FileJs extends JsInterface implements File {
   
   // ═══════════════════════════════════════════════════════════════
   // Core Properties
@@ -114,9 +115,9 @@ export abstract class FileJsInterface extends JsInterface implements File {
   
   /**
    * Set parent folder reference
-   * Called by FolderJsInterface.childAdd() and FolderJsInterface.childRemove()
+   * Called by FolderJs.childAdd() and FolderJs.childRemove()
    */
-  abstract parentSet(folder: FileJsInterface | null): void;
+  abstract parentSet(folder: FileJs | null): void;
   
   /**
    * Set the path of this file/folder

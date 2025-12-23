@@ -2,12 +2,12 @@
  * File.interface.ts - TypeScript Interface for File Components
  * 
  * This is the COMPILE-TIME contract for file-like objects.
- * It is ERASED at runtime — for runtime existence, see FileJsInterface.ts.
+ * It is ERASED at runtime — for runtime existence, see FileJs.ts.
  * 
  * Pattern: JsInterface Pattern (P35)
  * - File (this file): Compile-time contract, erased at runtime
- * - FileJsInterface (FileJsInterface.ts): Abstract class extending JsInterface, implements File
- * - DefaultFile: Concrete class, implements FileJsInterface (and thus File)
+ * - FileJs (FileJs.ts): Abstract class extending JsInterface, implements File
+ * - DefaultFile: Concrete class, implements FileJs (and thus File)
  * 
  * Web4 Principles:
  * - P19: One File One Type

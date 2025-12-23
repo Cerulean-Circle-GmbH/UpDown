@@ -30,7 +30,7 @@ import { Reference } from '../layer3/Reference.interface.js';
 import type { LazyReference } from '../layer3/LazyReference.interface.js';
 import { SyncStatus } from '../layer3/SyncStatus.enum.js';
 import { Once } from '../layer1/ONCE.js';
-import { FileJsInterface } from '../layer3/FileJsInterface.js';
+import { FileJs } from '../layer3/FileJs.js';
 import type { File } from '../layer3/File.interface.js';
 
 // Forward declaration to avoid circular import
@@ -54,17 +54,25 @@ import type { DefaultFolder } from './DefaultFolder.js';
  * - Loaded on-demand via contentLoad()
  * - objectUrl created for display
  */
-export class DefaultFile extends UcpComponent<FileModel> implements FileJsInterface {
+export class DefaultFile extends UcpComponent<FileModel> implements FileJs {
   
   // ═══════════════════════════════════════════════════════════════
   // Static Registration (P35: JsInterface for Runtime Interfaces)
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Register DefaultFile as implementation of File JsInterface
+   * Declare JsInterfaces this class implements
+   * @pdca 2025-12-22-UTC-1400.jsinterface-naming-impact.pdca.md
+   */
+  static implements() {
+    return [FileJs];
+  }
+  
+  /**
+   * Called when class is loaded - auto-registers with JsInterfaces
    */
   static start(): void {
-    FileJsInterface.implementationRegister(DefaultFile);
+    super.start();  // Auto-registers with FileJs
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -87,7 +95,7 @@ export class DefaultFile extends UcpComponent<FileModel> implements FileJsInterf
    * Set parent folder (called by Folder.childAdd)
    * File interface implementation
    */
-  parentSet(folder: FileJsInterface | null): void {
+  parentSet(folder: FileJs | null): void {
     this.parentFolder = folder as Reference<DefaultFolder>;
   }
   

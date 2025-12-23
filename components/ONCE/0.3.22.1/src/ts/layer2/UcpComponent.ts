@@ -29,8 +29,10 @@ import type { UnitReference } from '../layer3/UnitReference.interface.js';
 import type { Storage } from '../layer3/Storage.interface.js';
 import type { IDProvider } from '../layer3/IDProvider.interface.js';
 import type { ContentIDProvider } from '../layer3/ContentIDProvider.interface.js';
+import type { AbstractConstructor } from '../layer3/InterfaceConstructor.type.js';
 import { UUIDProvider } from './UUIDProvider.js';
 import { SHA256Provider } from './SHA256Provider.js';
+import { JsInterface } from '../layer3/JsInterface.js';
 
 /**
  * UcpComponent - Abstract base class for all Web4 components
@@ -58,12 +60,40 @@ export abstract class UcpComponent<TModel extends Model> {
   static type: TypeDescriptor;
   
   /**
+   * Declare which JsInterface classes this component implements.
+   * Override in subclasses to register with runtime interfaces.
+   * 
+   * @example
+   * ```typescript
+   * static implements() { 
+   *   return [FileJs, FolderJs]; 
+   * }
+   * ```
+   * 
+   * @returns Array of JsInterface classes this component implements
+   * @pdca 2025-12-22-UTC-1400.jsinterface-naming-impact.pdca.md
+   */
+  static implements(): AbstractConstructor<JsInterface>[] {
+    return [];  // Default: no JsInterfaces
+  }
+  
+  /**
    * Static start method - called when class is loaded
-   * Initializes type descriptor and registers with TypeRegistry
+   * Initializes type descriptor and auto-registers with declared JsInterfaces
    */
   static start(): void {
     if (!this.type) {
       this.type = new TypeDescriptor().init({ name: this.name });
+    }
+    
+    // Auto-register with all declared JsInterfaces
+    // Note: 'this' is the concrete subclass (DefaultFile, etc.), not UcpComponent
+    for (const jsInterface of this.implements()) {
+      if (typeof (jsInterface as typeof JsInterface).implementationRegister === 'function') {
+        (jsInterface as typeof JsInterface).implementationRegister(
+          this as unknown as Parameters<typeof JsInterface.implementationRegister>[0]
+        );
+      }
     }
   }
   

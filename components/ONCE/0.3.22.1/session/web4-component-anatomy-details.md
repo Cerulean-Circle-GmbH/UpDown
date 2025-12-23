@@ -312,13 +312,14 @@ For runtime interfaces that need to exist in JavaScript (for RelatedObjects, imp
 - **Pattern Document**: [§/session/web4-jsinterface-pattern.md](./web4-jsinterface-pattern.md)
 - **Naming Convention**:
   - `Xxx.interface.ts` → `interface Xxx` (compile-time)
-  - `XxxJsInterface.ts` → `abstract class XxxJsInterface extends JsInterface implements Xxx` (runtime)
-  - `DefaultXxx.ts` → `class DefaultXxx extends UcpComponent<XxxModel> implements XxxJsInterface`
+  - `XxxJs.ts` → `abstract class XxxJs extends JsInterface implements Xxx` (runtime, for collision types)
+  - `DefaultXxx.ts` → `class DefaultXxx extends UcpComponent<XxxModel> implements XxxJs`
+- **Auto-Registration**: `static implements() { return [XxxJs]; }` + `super.start()`
 
-**Example**: File/Folder hierarchy
+**Example**: File/Folder hierarchy (collision with browser's File)
 - `File.interface.ts` → `interface File`
-- `FileJsInterface.ts` → `abstract class FileJsInterface extends JsInterface implements File`
-- `DefaultFile.ts` → `class DefaultFile extends UcpComponent<FileModel> implements FileJsInterface`
+- `FileJs.ts` → `abstract class FileJs extends JsInterface implements File`
+- `DefaultFile.ts` → `class DefaultFile implements FileJs` with `static implements() { return [FileJs]; }`
 
 ---
 

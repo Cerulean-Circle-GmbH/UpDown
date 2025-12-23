@@ -2,12 +2,12 @@
  * Folder.interface.ts - TypeScript Interface for Folder Components
  * 
  * Extends File with container capabilities.
- * This is the COMPILE-TIME contract — see FolderJsInterface.ts for runtime existence.
+ * This is the COMPILE-TIME contract — see FolderJs.ts for runtime existence.
  * 
  * Pattern: JsInterface Pattern (P35)
  * - Folder (this file): Compile-time contract, erased at runtime
- * - FolderJsInterface (FolderJsInterface.ts): Abstract class extending FileJsInterface, implements Folder
- * - DefaultFolder: Concrete class, implements FolderJsInterface (and thus Folder)
+ * - FolderJs (FolderJs.ts): Abstract class extending FileJs, implements Folder
+ * - DefaultFolder: Concrete class, implements FolderJs (and thus Folder)
  * 
  * Web4 Principles:
  * - P19: One File One Type

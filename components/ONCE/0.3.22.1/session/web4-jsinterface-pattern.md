@@ -61,13 +61,18 @@ TypeScript interfaces are erased at runtime. This creates problems for:
 | Layer | File Name | Type Name | Purpose |
 |-------|-----------|-----------|---------|
 | **Interface** | `Xxx.interface.ts` | `Xxx` | Compile-time contract |
-| **JsInterface** | `XxxJsInterface.ts` | `XxxJsInterface` | Runtime existence |
+| **JsInterface** | `XxxJs.ts` | `XxxJs` | Runtime existence (for collision types) |
 | **Implementation** | `DefaultXxx.ts` | `DefaultXxx` | Concrete class |
 
-**Example**:
+**Collision-Only Rule**: Only types that collide with browser globals use `Js` suffix:
+- `File` → `FileJs` (collides with DOM `File`)
+- `Worker` → `WorkerJs` (collides with DOM `Worker`)
+- `User`, `Unit`, etc. → Keep simple names (no collision)
+
+**Example** (File/Folder - collision types):
 - `File.interface.ts` → `interface File`
-- `FileJsInterface.ts` → `abstract class FileJsInterface extends JsInterface implements File`
-- `DefaultFile.ts` → `class DefaultFile extends UcpComponent<FileModel> implements FileJsInterface`
+- `FileJs.ts` → `abstract class FileJs extends JsInterface implements File`
+- `DefaultFile.ts` → `class DefaultFile implements FileJs` with `static implements() { return [FileJs]; }`
 
 ---
 
@@ -114,7 +119,7 @@ export interface File {
 }
 ```
 
-### Layer 2: JsInterface Class (`FileJsInterface.ts`)
+### Layer 2: JsInterface Class (`FileJs.ts`)
 
 **Purpose**: Make the interface exist at runtime by extending `JsInterface`.
 
@@ -122,24 +127,24 @@ export interface File {
 - ✅ `extends JsInterface` — provides runtime existence
 - ✅ `implements File` — enforces compile-time contract
 - ✅ All methods are `abstract` — implementations must provide them
-- ✅ Registers implementations via `FileJsInterface.implementationRegister()`
-- ✅ Name is `XxxJsInterface` to clearly indicate runtime representation
+- ✅ Auto-registration via `static implements()` in subclasses
+- ✅ Name is `XxxJs` for collision types (shorter than `XxxJsInterface`)
 
 ```typescript
-// layer3/FileJsInterface.ts
+// layer3/FileJs.ts
 import { JsInterface } from './JsInterface.js';
 import type { File } from './File.interface.js';
 import type { Model } from './Model.interface.js';
 
 /**
- * FileJsInterface - Runtime interface for file system nodes
+ * FileJs - Runtime interface for file system nodes
  * 
  * This abstract class:
  * 1. EXISTS at runtime (unlike TypeScript interfaces)
  * 2. IMPLEMENTS File (enforces compile-time contract)
- * 3. REGISTERS implementations via FileJsInterface.implementationRegister()
+ * 3. Named "FileJs" to avoid collision with browser's File
  */
-export abstract class FileJsInterface extends JsInterface implements File {
+export abstract class FileJs extends JsInterface implements File {
   
   abstract get uuid(): string;
   abstract get name(): string;
@@ -149,15 +154,12 @@ export abstract class FileJsInterface extends JsInterface implements File {
   
   /**
    * Model with covariant return type
-   * 
-   * File interface defines: readonly model: Model
-   * DefaultFile returns: FileModel (extends Model)
    */
   abstract get model(): Model;
   
   abstract exists(): boolean;
   abstract delete(): Promise<void>;
-  abstract parentSet(parent: FileJsInterface | null): void;
+  abstract parentSet(parent: FileJs | null): void;
   abstract pathSet(newPath: string): void;
 }
 ```
@@ -168,32 +170,38 @@ export abstract class FileJsInterface extends JsInterface implements File {
 
 **Rules**:
 - ✅ `extends UcpComponent<FileModel>` — standard Web4 component pattern
-- ✅ `implements FileJsInterface` — fulfills the runtime interface
-- ✅ Registers in `static start()` — JsInterface pattern
+- ✅ `implements FileJs` — fulfills the runtime interface
+- ✅ `static implements()` — declares JsInterfaces (auto-registered by `super.start()`)
 - ✅ Returns concrete model type (covariant)
 
 ```typescript
 // layer2/DefaultFile.ts
 import { UcpComponent } from './UcpComponent.js';
-import { FileJsInterface } from '../layer3/FileJsInterface.js';
+import { FileJs } from '../layer3/FileJs.js';
 import type { FileModel } from '../layer3/FileModel.interface.js';
 
 /**
  * DefaultFile - Concrete file implementation
  * 
- * Implements FileJsInterface, which in turn implements File.
+ * Implements FileJs, which in turn implements File.
  * Complete type-safe chain:
  * 
- * File (interface) ← FileJsInterface (JsInterface) ← DefaultFile (implementation)
+ * File (interface) ← FileJs (JsInterface) ← DefaultFile (implementation)
  */
-export class DefaultFile extends UcpComponent<FileModel> implements FileJsInterface {
+export class DefaultFile extends UcpComponent<FileModel> implements FileJs {
   
   /**
-   * Register with JsInterface on class load
+   * Declare JsInterfaces this class implements
+   */
+  static implements() {
+    return [FileJs];
+  }
+  
+  /**
+   * Auto-registers with declared JsInterfaces
    */
   static start(): void {
-    super.start();
-    FileJsInterface.implementationRegister(DefaultFile);
+    super.start();  // Auto-calls FileJs.implementationRegister(DefaultFile)
   }
   
   get uuid(): string { return this.model.uuid; }
@@ -202,21 +210,18 @@ export class DefaultFile extends UcpComponent<FileModel> implements FileJsInterf
   get isFile(): boolean { return true; }
   get isFolder(): boolean { return false; }
   
-  /**
-   * Covariant return: FileJsInterface.model returns Model, we return FileModel
-   */
   get model(): FileModel { return this._model; }
   
   exists(): boolean { /* ... */ }
   async delete(): Promise<void> { /* ... */ }
-  parentSet(parent: FileJsInterface | null): void { /* ... */ }
+  parentSet(parent: FileJs | null): void { /* ... */ }
   pathSet(newPath: string): void { this.model.path = newPath; }
 }
 ```
 
 ---
 
-## Inheritance Pattern: FolderJsInterface extends FileJsInterface
+## Inheritance Pattern: FolderJs extends FileJs
 
 When an interface extends another interface, the pattern mirrors this:
 
@@ -225,7 +230,7 @@ File (interface)          Folder (interface)
      │                          │
      │ implements               │ implements
      ▼                          ▼
-FileJsInterface    ─────► FolderJsInterface
+   FileJs    ────────────►  FolderJs
      │                          │
      │ implements               │ implements
      ▼                          ▼
@@ -248,37 +253,40 @@ export interface Folder extends File {
 }
 ```
 
-### FolderJsInterface extends FileJsInterface
+### FolderJs extends FileJs
 
 ```typescript
-// layer3/FolderJsInterface.ts
-import { FileJsInterface } from './FileJsInterface.js';
+// layer3/FolderJs.ts
+import { FileJs } from './FileJs.js';
 import type { Folder } from './Folder.interface.js';
 import type { Collection } from './Collection.interface.js';
 
 /**
- * FolderJsInterface - Runtime interface for folder components
+ * FolderJs - Runtime interface for folder components
  */
-export abstract class FolderJsInterface extends FileJsInterface implements Folder {
-  abstract get children(): FileJsInterface[];
-  abstract get childReferences(): Collection<FileJsInterface>;
-  abstract childAdd(child: FileJsInterface): void;
-  abstract childRemove(child: FileJsInterface): boolean;
-  abstract childGet(uuid: string): FileJsInterface | null;
+export abstract class FolderJs extends FileJs implements Folder {
+  abstract get children(): FileJs[];
+  abstract get childReferences(): Collection<FileJs>;
+  abstract childAdd(child: FileJs): void;
+  abstract childRemove(child: FileJs): boolean;
+  abstract childGet(uuid: string): FileJs | null;
 }
 ```
 
-### DefaultFolder implements FolderJsInterface
+### DefaultFolder implements FolderJs
 
 ```typescript
 // layer2/DefaultFolder.ts
 export class DefaultFolder extends UcpComponent<FolderModel> 
-  implements Container<FileJsInterface>, FileJsInterface, FolderJsInterface {
+  implements Container<FileJs>, FolderJs {
+  // NOTE: No need to list FileJs - FolderJs extends FileJs!
+  
+  static implements() {
+    return [FileJs, FolderJs];  // Declare both for registration
+  }
   
   static start(): void {
-    super.start();
-    FileJsInterface.implementationRegister(DefaultFolder);
-    FolderJsInterface.implementationRegister(DefaultFolder);
+    super.start();  // Auto-registers with both FileJs and FolderJs
   }
   
   get isFile(): boolean { return true; }   // A folder IS a file
@@ -357,16 +365,16 @@ class DefaultFile implements File {
 image.relatedObjectRegister(File, file);  // File doesn't exist at runtime!
 ```
 
-### ❌ WRONG: Abstract class without JsInterface suffix
+### ❌ WRONG: Collision with browser types
 
 ```typescript
-// BAD: Confusing naming
+// BAD: "File" collides with browser's File type
 abstract class File extends JsInterface implements IFile {
   // ...
 }
 
-// GOOD: Clear naming
-abstract class FileJsInterface extends JsInterface implements File {
+// GOOD: "FileJs" avoids collision
+abstract class FileJs extends JsInterface implements File {
   // ...
 }
 ```
@@ -374,15 +382,29 @@ abstract class FileJsInterface extends JsInterface implements File {
 ### ❌ WRONG: Using interface type in JsInterface parameters
 
 ```typescript
-// BAD: File is erased at runtime, can't instanceof check
-abstract class FileJsInterface extends JsInterface {
+// BAD: File (interface) is erased at runtime
+abstract class FileJs extends JsInterface {
   abstract parentSet(parent: File | null): void;  // ❌ File erased!
 }
 
 // GOOD: Use runtime type
-abstract class FileJsInterface extends JsInterface {
-  abstract parentSet(parent: FileJsInterface | null): void;  // ✅ exists at runtime
+abstract class FileJs extends JsInterface {
+  abstract parentSet(parent: FileJs | null): void;  // ✅ exists at runtime
 }
+```
+
+### ❌ WRONG: Manual registration instead of static implements()
+
+```typescript
+// BAD: Manual, repetitive, easy to forget
+static start(): void {
+  super.start();
+  FileJs.implementationRegister(DefaultFile);  // ❌ Manual
+}
+
+// GOOD: Declarative, auto-registered
+static implements() { return [FileJs]; }
+static start(): void { super.start(); }  // ✅ Auto-registers
 ```
 
 ---
@@ -391,10 +413,11 @@ abstract class FileJsInterface extends JsInterface {
 
 1. **Compile-time safety**: TypeScript interface enforces contract
 2. **Runtime existence**: JsInterface class exists in JavaScript
-3. **Clear naming**: `XxxJsInterface` clearly indicates runtime representation
-4. **Implementation registry**: `FileJsInterface.implementations` returns all implementing classes
-5. **RelatedObjects compatibility**: Can use `FileJsInterface` as key in registrations
-6. **Type covariance**: Implementations can return more specific types
+3. **Short naming**: `XxxJs` is clear and avoids browser collisions
+4. **Auto-registration**: `static implements()` + `super.start()` = DRY
+5. **Implementation registry**: `FileJs.implementations` returns all implementing classes
+6. **RelatedObjects compatibility**: Can use `FileJs` as key in registrations
+7. **Type covariance**: Implementations can return more specific types
 
 ---
 
@@ -404,8 +427,10 @@ abstract class FileJsInterface extends JsInterface {
 - **Component Anatomy**: [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/session/web4-component-anatomy-details.md) | [§/.../web4-component-anatomy-details.md](./web4-component-anatomy-details.md)
 - **P35 Details**: [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/session/web4-principles-details.md#principle-35-jsinterface-for-runtime-interfaces) | [§/.../web4-principles-details.md](./web4-principles-details.md#principle-35-jsinterface-for-runtime-interfaces)
 - **JsInterface.ts**: [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer3/JsInterface.ts) | [§/.../layer3/JsInterface.ts](../src/ts/layer3/JsInterface.ts)
+- **FileJs.ts**: [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer3/FileJs.ts) | [§/.../layer3/FileJs.ts](../src/ts/layer3/FileJs.ts)
+- **Impact PDCA**: [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/session/2025-12-22-UTC-1400.jsinterface-naming-impact.pdca.md) | [§/.../jsinterface-naming-impact.pdca.md](./2025-12-22-UTC-1400.jsinterface-naming-impact.pdca.md)
 - **File/Folder PDCA**: [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/session/2025-12-22-UTC-1100.file-folder-inheritance.pdca.md) | [§/.../file-folder-inheritance.pdca.md](./2025-12-22-UTC-1100.file-folder-inheritance.pdca.md)
 
 ---
 
-**"TypeScript erases interfaces. JsInterface makes them real — with clear `XxxJsInterface` naming."** 🏛️
+**"TypeScript erases interfaces. JsInterface makes them real — with clear `XxxJs` naming and auto-registration."** 🏛️
