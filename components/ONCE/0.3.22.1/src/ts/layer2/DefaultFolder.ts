@@ -4,10 +4,10 @@
  * Represents a folder/directory in the Web4 FileSystem.
  * Manages child files and folders, supports link operations.
  * 
- * Folder implements Tree<FileSystemNode>:
- * - Folders ARE Files (specialized)
- * - Files CANNOT have children (leaf nodes)
- * - Folders CAN add files/folders as children
+ * Folder implements Container<File>, File:
+ * - Folder IS-A File (specialized for directories)
+ * - Container extends Tree (parent/children navigation)
+ * - Files are leaf nodes, Folders can have children
  * 
  * Cross-Platform:
  * - Same code runs on Node.js, Browser, and Service Worker
@@ -50,11 +50,11 @@ export type FileSystemNode = DefaultFile | DefaultFolder;
 /**
  * DefaultFolder - Folder component for Web4 FileSystem
  * 
- * Implements Tree<FileSystemNode>:
- * - parent: Reference<DefaultFolder> (from Tree)
- * - children: Collection<FileSystemNode> (from Tree)
+ * Implements Container<File>, File:
+ * - parent: Reference<Tree<File>> (from Container→Tree)
+ * - children: Collection<File> (from Container→Tree)
  * 
- * Implements Container<FileSystemNode>:
+ * Container<File> provides:
  * - pathFromRoot(): for breadcrumb navigation
  * - navigateTo(): for animated panel transitions
  * 
@@ -62,7 +62,7 @@ export type FileSystemNode = DefaultFile | DefaultFolder;
  * Full child components resolved on-demand via IOR.resolve().
  */
 export class DefaultFolder extends UcpComponent<FolderModel> 
-  implements Tree<FileSystemNode>, Container<FileSystemNode>, File {
+  implements Container<File>, File {
   
   // ═══════════════════════════════════════════════════════════════
   // Static Registration (P35: JsInterface for Runtime Interfaces)
@@ -111,9 +111,9 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Get parent folder (Tree interface)
+   * Get parent folder (from Container→Tree interface)
    */
-  get parent(): Reference<Tree<FileSystemNode>> {
+  get parent(): Reference<Tree<File>> {
     return this.parentFolder;
   }
   
@@ -265,8 +265,8 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * 
    * Used for breadcrumb navigation.
    */
-  pathFromRoot(): Container<FileSystemNode>[] {
-    const path: Container<FileSystemNode>[] = [];
+  pathFromRoot(): Container<File>[] {
+    const path: Container<File>[] = [];
     let current: Reference<DefaultFolder> = this;
     
     while (current) {
