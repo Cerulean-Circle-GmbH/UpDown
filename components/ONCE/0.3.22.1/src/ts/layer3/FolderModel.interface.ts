@@ -18,7 +18,8 @@
  */
 
 import { Model } from './Model.interface.js';
-import { Reference, IORReference } from './Reference.interface.js';
+import { Reference } from './Reference.interface.js';
+import { LazyReference } from './LazyReference.interface.js';
 import { Collection } from './Collection.interface.js';
 import type { FileSystemNode } from './FileSystemNode.type.js';
 
@@ -46,9 +47,9 @@ export interface FolderModel extends Model {
    * ISR Pattern: References start as IOR strings, become IOR objects 
    * when accessed, then self-replace with resolved instances.
    * 
-   * Uses IORReference<T> — can be string, IOR, or instance.
+   * Uses LazyReference<T> — can be string, IOR, or instance.
    */
-  children: Collection<IORReference<FileSystemNode>>;
+  children: Collection<LazyReference<FileSystemNode>>;
   
   /** Parent folder UUID (null for root) */
   parentUuid: Reference<string>;
