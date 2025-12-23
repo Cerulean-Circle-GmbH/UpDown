@@ -28,6 +28,7 @@ import { UcpComponent } from './UcpComponent.js';
 import { FileModel } from '../layer3/FileModel.interface.js';
 import { Reference } from '../layer3/Reference.interface.js';
 import { SyncStatus } from '../layer3/SyncStatus.enum.js';
+import { Once } from '../layer1/ONCE.js';
 
 // Forward declaration to avoid circular import
 import type { DefaultFolder } from './DefaultFolder.js';
@@ -264,7 +265,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
    * @returns New File component representing the symlink
    */
   async symlinkCreate(symlinkPath: string): Promise<DefaultFile> {
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     // 1. Create filesystem symlink
     if (isNodeJs) {
@@ -316,7 +317,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
    * @returns true if this is a filesystem symlink
    */
   isSymlink(): boolean {
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     if (isNodeJs) {
       try {
@@ -341,7 +342,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
    * @returns Target path or null if not a symlink
    */
   symlinkTarget(): Reference<string> {
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     if (isNodeJs && this.isSymlink()) {
       try {
@@ -354,6 +355,70 @@ export class DefaultFile extends UcpComponent<FileModel> {
     }
     
     return this.model.linkTarget;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Type Mirror Operations (FFM.3.5) - scenarios/type/ structure
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Create symlink in scenarios/type/ mirror for this file
+   * 
+   * FFM.3.5: Dual symlinks
+   * - Original file stays in components/{Component}/{version}/...
+   * - Unit scenario in scenarios/index/{uuid-path}/
+   * - Type mirror symlink: scenarios/type/{Component}/{version}/.../{filename}.unit → scenarios/index/...
+   * 
+   * TRON: "°folder.unit and {filename}.unit are ONLY in scenarios/type/, NOT in component!"
+   * 
+   * @param projectRoot Project root path (§/)
+   * @param componentName Component name (e.g., 'ONCE')
+   * @param componentVersion Component version (e.g., '0.3.22.1')
+   * @param unitScenarioPath Path to the unit scenario in scenarios/index/
+   */
+  async typeMirrorCreate(
+    projectRoot: string,
+    componentName: string,
+    componentVersion: string,
+    unitScenarioPath: string
+  ): Promise<void> {
+    const isNodeJs = Once.isNode;
+    if (!isNodeJs) return; // Browser: handled by PWA cache
+    
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const fs = require('fs');
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const path = require('path');
+      
+      // Calculate relative path from component root
+      const componentRoot = path.join(projectRoot, 'components', componentName, componentVersion);
+      const relativePath = path.relative(componentRoot, this.fullPath);
+      
+      // Type mirror path: scenarios/type/{Component}/{version}/{relativePath}.unit
+      const typeMirrorPath = path.join(
+        projectRoot,
+        'scenarios',
+        'type',
+        componentName,
+        componentVersion,
+        relativePath + '.unit'
+      );
+      
+      // Ensure parent directory exists
+      const typeMirrorDir = path.dirname(typeMirrorPath);
+      if (!fs.existsSync(typeMirrorDir)) {
+        fs.mkdirSync(typeMirrorDir, { recursive: true });
+      }
+      
+      // Create symlink: scenarios/type/.../file.unit → scenarios/index/.../uuid.scenario.json
+      if (!fs.existsSync(typeMirrorPath)) {
+        fs.symlinkSync(unitScenarioPath, typeMirrorPath);
+      }
+    } catch (error) {
+      console.error('[DefaultFile] typeMirrorCreate error:', error);
+      throw error;
+    }
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -392,7 +457,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
     this.model.modifiedAt = Date.now();
     
     const newFullPath = this.fullPath;
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     // 1. Move actual file on filesystem
     if (isNodeJs) {
@@ -465,7 +530,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
     this.model.modifiedAt = Date.now();
     
     const newFullPath = this.fullPath;
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     // 1. Rename actual file on filesystem
     if (isNodeJs) {
@@ -526,10 +591,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
    * @returns true if file exists
    */
   exists(): boolean {
-    // Environment detection
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
-    
-    if (isNodeJs) {
+    if (Once.isNode) {
       // Node.js: Check filesystem
       // Dynamic import to avoid browser errors
       try {
@@ -574,7 +636,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
   async unitGet(): Promise<Reference<import('./DefaultUnit.js').DefaultUnit>> {
     // Check if Unit already exists by looking for .unit symlink
     const unitSymlinkPath = this.fullPath + '.unit';
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     if (isNodeJs) {
       try {
@@ -665,7 +727,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
     this.model.name = this.model.filename;
     
     // Try to load stats from filesystem
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     if (isNodeJs && this.exists()) {
       try {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -715,7 +777,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
       throw new Error('[DefaultFile] deleteLink() called on original file, not a link. Use delete() for originals.');
     }
     
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     // 1. Update Unit references (remove this link path)
     const unit = await this.unitGet();
@@ -759,7 +821,7 @@ export class DefaultFile extends UcpComponent<FileModel> {
       return;
     }
     
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     // 1. Get Unit to find ALL links
     const unit = await this.unitGet();

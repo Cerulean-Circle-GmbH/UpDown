@@ -34,6 +34,7 @@ import { Tree } from '../layer3/Tree.interface.js';
 import { Container } from '../layer3/Container.interface.js';
 import { FileSystemNode } from '../layer3/FileSystemNode.type.js';
 import { SyncStatus } from '../layer3/SyncStatus.enum.js';
+import { Once } from '../layer1/ONCE.js';
 
 // Re-export for backwards compatibility
 export type { FileSystemNode };
@@ -369,7 +370,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * @returns New Folder component representing the symlink
    */
   async symlinkCreate(symlinkPath: string): Promise<DefaultFolder> {
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     // 1. Create filesystem symlink
     if (isNodeJs) {
@@ -419,7 +420,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * @returns true if this is a filesystem symlink
    */
   isSymlink(): boolean {
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     if (isNodeJs) {
       try {
@@ -443,7 +444,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * @returns Target path or null if not a symlink
    */
   symlinkTarget(): Reference<string> {
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     if (isNodeJs && this.isSymlink()) {
       try {
@@ -456,6 +457,72 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     }
     
     return this.model.linkTarget;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Type Mirror Operations (FFM.3.5) - scenarios/type/ structure
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Create °folder.unit symlink in scenarios/type/ mirror for this folder
+   * 
+   * FFM.3.5: Dual symlinks for folders
+   * - Original folder stays in components/{Component}/{version}/...
+   * - Unit scenario in scenarios/index/{uuid-path}/
+   * - Type mirror: scenarios/type/{Component}/{version}/.../°folder.unit → scenarios/index/...
+   * 
+   * TRON: "Folders have a special °folder.unit symlink inside them"
+   * 
+   * @param projectRoot Project root path (§/)
+   * @param componentName Component name (e.g., 'ONCE')
+   * @param componentVersion Component version (e.g., '0.3.22.1')
+   * @param unitScenarioPath Path to the unit scenario in scenarios/index/
+   */
+  async typeMirrorCreate(
+    projectRoot: string,
+    componentName: string,
+    componentVersion: string,
+    unitScenarioPath: string
+  ): Promise<void> {
+    const isNodeJs = Once.isNode;
+    if (!isNodeJs) return; // Browser: handled by PWA cache
+    
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const fs = require('fs');
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const path = require('path');
+      
+      // Calculate relative path from component root
+      const componentRoot = path.join(projectRoot, 'components', componentName, componentVersion);
+      const relativePath = path.relative(componentRoot, this.fullPath);
+      
+      // Type mirror folder path: scenarios/type/{Component}/{version}/{relativePath}/
+      const typeMirrorFolderPath = path.join(
+        projectRoot,
+        'scenarios',
+        'type',
+        componentName,
+        componentVersion,
+        relativePath
+      );
+      
+      // Ensure the folder exists in type mirror
+      if (!fs.existsSync(typeMirrorFolderPath)) {
+        fs.mkdirSync(typeMirrorFolderPath, { recursive: true });
+      }
+      
+      // °folder.unit symlink inside the type mirror folder
+      const folderUnitPath = path.join(typeMirrorFolderPath, '°folder.unit');
+      
+      // Create symlink: scenarios/type/.../°folder.unit → scenarios/index/.../uuid.scenario.json
+      if (!fs.existsSync(folderUnitPath)) {
+        fs.symlinkSync(unitScenarioPath, folderUnitPath);
+      }
+    } catch (error) {
+      console.error('[DefaultFolder] typeMirrorCreate error:', error);
+      throw error;
+    }
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -492,7 +559,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     this.model.modifiedAt = Date.now();
     
     const newFullPath = this.fullPath;
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     // 1. Move actual folder on filesystem
     if (isNodeJs) {
@@ -546,7 +613,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     this.model.modifiedAt = Date.now();
     
     const newFullPath = this.fullPath;
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     // 1. Rename actual folder on filesystem
     if (isNodeJs) {
@@ -596,7 +663,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    */
   exists(): boolean {
     // Environment detection
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     if (isNodeJs) {
       // Node.js: Check filesystem
@@ -633,7 +700,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * @param recursive Create parent directories if needed (like mkdir -p)
    */
   async create(recursive: boolean = true): Promise<void> {
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     if (isNodeJs) {
       try {
@@ -656,7 +723,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * @returns Array of entry names (files and folders)
    */
   async list(): Promise<string[]> {
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     if (isNodeJs) {
       try {
@@ -694,7 +761,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
       throw new Error('[DefaultFolder] deleteLink() called on original folder, not a link. Use delete() for originals.');
     }
     
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     // 1. Update Unit references (similar to DefaultFile)
     const unit = await this.unitGet();
@@ -737,7 +804,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
       return;
     }
     
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     // 1. Check if folder has children
     if (!force && this.hasChildren) {
@@ -794,7 +861,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    */
   async unitGet(): Promise<Reference<import('./DefaultUnit.js').DefaultUnit>> {
     const unitSymlinkPath = this.fullPath + '/°folder.unit';
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     
     if (isNodeJs) {
       try {
@@ -868,7 +935,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     this.model.name = this.model.folderName;
     
     // Try to load stats from filesystem
-    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    const isNodeJs = Once.isNode;
     if (isNodeJs && this.exists()) {
       try {
         // eslint-disable-next-line @typescript-eslint/no-require-imports

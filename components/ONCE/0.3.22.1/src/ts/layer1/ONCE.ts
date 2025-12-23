@@ -90,6 +90,49 @@ export class Once {
         }
     }
     
+    // ═══════════════════════════════════════════════════════════════
+    // Static Environment Checks (no ONCE.start() required)
+    // FFM.3.5: DRY - centralized environment detection
+    // ═══════════════════════════════════════════════════════════════
+    
+    /**
+     * Check if running in Node.js environment
+     * Can be called before ONCE.start() - no instance required
+     */
+    static get isNode(): boolean {
+        return typeof process !== 'undefined' && 
+               process.versions !== undefined && 
+               process.versions.node !== undefined;
+    }
+    
+    /**
+     * Check if running in Browser environment (any browser context)
+     * Can be called before ONCE.start() - no instance required
+     */
+    static get isBrowser(): boolean {
+        return typeof window !== 'undefined';
+    }
+    
+    /**
+     * Check if running in Service Worker environment
+     * Can be called before ONCE.start() - no instance required
+     */
+    static get isServiceWorker(): boolean {
+        return typeof self !== 'undefined' && 
+               (self as any).constructor?.name === 'ServiceWorkerGlobalScope';
+    }
+    
+    /**
+     * Check if running in Web Worker environment
+     * Can be called before ONCE.start() - no instance required
+     */
+    static get isWorker(): boolean {
+        return typeof self !== 'undefined' && 
+               (self as any).constructor?.name === 'DedicatedWorkerGlobalScope';
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
+    
     /**
      * Detect current execution environment
      * 
