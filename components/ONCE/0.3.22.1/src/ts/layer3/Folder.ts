@@ -3,6 +3,13 @@
  * 
  * ✅ Web4 Principle 35: JsInterface for Runtime Interfaces
  * 
+ * This is the RUNTIME representation of IFolder.interface.ts.
+ * 
+ * Pattern: JsInterface Pattern
+ * - IFolder (IFolder.interface.ts): Compile-time contract, extends IFile
+ * - Folder (this file): Abstract class extending File, implements IFolder
+ * - DefaultFolder: Concrete class, implements Folder (and thus IFolder)
+ * 
  * Folder extends File - a Folder IS-A File that can have children.
  * This extends JsInterface (via File) for runtime polymorphism.
  * 
@@ -22,20 +29,25 @@
  * const parent: LazyReference<Folder> = file.parent;
  * ```
  * 
+ * @see ./web4-jsinterface-pattern.md for full pattern documentation
  * @ior ior:esm:/ONCE/{version}/Folder
  * @pdca 2025-12-22-UTC-1100.file-folder-inheritance.pdca.md
  */
 
 import { File } from './File.js';
+import type { IFolder } from './IFolder.interface.js';
 import type { Collection } from './Collection.interface.js';
 
 /**
  * Folder - Runtime interface for folder components
  * 
- * Extends File with container capabilities.
+ * - Extends File (which implements IFile)
+ * - Implements IFolder for compile-time contract enforcement
+ * 
  * Only DefaultFolder implements this interface.
+ * Note: Uses `File` (runtime type) not `IFile` (erased) in signatures.
  */
-export abstract class Folder extends File {
+export abstract class Folder extends File implements IFolder {
   
   // ═══════════════════════════════════════════════════════════════
   // Container Operations

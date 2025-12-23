@@ -3,6 +3,13 @@
  * 
  * ✅ Web4 Principle 35: JsInterface for Runtime Interfaces
  * 
+ * This is the RUNTIME representation of IFile.interface.ts.
+ * 
+ * Pattern: JsInterface Pattern
+ * - IFile (IFile.interface.ts): Compile-time contract, erased at runtime
+ * - File (this file): Abstract class extending JsInterface, implements IFile
+ * - DefaultFile: Concrete class, implements File (and thus IFile)
+ * 
  * TypeScript interfaces are erased at runtime. File extends JsInterface
  * to exist at runtime for:
  * - RelatedObjects: `image.relatedObjectRegister(File, imageFile)`
@@ -14,9 +21,6 @@
  * - DefaultFolder implements File (can have children)
  * - Both register with `File.implementationRegister(ClassName)`
  * 
- * Note: Tree navigation (parent, children) is handled by Tree<T> interface.
- * File interface only defines core file properties and type discrimination.
- * 
  * Usage:
  * ```typescript
  * // In Image component - store related file
@@ -26,27 +30,26 @@
  * const file = image.relatedObjectLookupFirst(File);
  * ```
  * 
+ * @see ./web4-jsinterface-pattern.md for full pattern documentation
  * @ior ior:esm:/ONCE/{version}/File
  * @pdca 2025-12-22-UTC-1100.file-folder-inheritance.pdca.md
  */
 
 import { JsInterface } from './JsInterface.js';
+import type { IFile } from './IFile.interface.js';
 import type { Model } from './Model.interface.js';
 
 /**
  * File - Runtime interface for file system nodes
  * 
  * Both DefaultFile and DefaultFolder implement this interface.
- * Extends JsInterface for runtime type introspection.
+ * - Extends JsInterface for runtime type introspection
+ * - Implements IFile for compile-time contract enforcement
  * 
- * Note: This interface defines ONLY the properties needed for:
- * - RelatedObjects registration/lookup
- * - Type discrimination (isFile/isFolder)
- * - Basic identification (path, name, uuid)
- * 
- * Tree navigation (parent, children) is handled by Tree<T> interface.
+ * Note: Abstract methods use `File` (runtime type) not `IFile` (erased)
+ * for parameters that need to exist at runtime.
  */
-export abstract class File extends JsInterface {
+export abstract class File extends JsInterface implements IFile {
   
   // ═══════════════════════════════════════════════════════════════
   // Core Properties

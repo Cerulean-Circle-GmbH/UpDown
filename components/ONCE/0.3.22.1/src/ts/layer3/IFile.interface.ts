@@ -1,0 +1,84 @@
+/**
+ * IFile.interface.ts - TypeScript Interface for File Components
+ * 
+ * This is the COMPILE-TIME contract for file-like objects.
+ * It is ERASED at runtime — for runtime existence, see File.ts (JsInterface).
+ * 
+ * Pattern: JsInterface Pattern (P35)
+ * - IFile (this file): Compile-time contract, erased at runtime
+ * - File (File.ts): Abstract class extending JsInterface, implements IFile
+ * - DefaultFile: Concrete class, implements File (and thus IFile)
+ * 
+ * Web4 Principles:
+ * - P19: One File One Type
+ * - P35: JsInterface for Runtime Interfaces
+ * 
+ * @see ./web4-jsinterface-pattern.md for full pattern documentation
+ * @ior ior:esm:/ONCE/{version}/IFile
+ */
+
+import type { Model } from './Model.interface.js';
+
+/**
+ * IFile - TypeScript interface for file-like objects
+ * 
+ * Both files and folders implement this interface.
+ * Folders extend this with container capabilities (see IFolder).
+ */
+export interface IFile {
+  // ═══════════════════════════════════════════════════════════════
+  // Identity
+  // ═══════════════════════════════════════════════════════════════
+  
+  /** Unique identifier */
+  readonly uuid: string;
+  
+  /** Display name */
+  readonly name: string;
+  
+  /** Full path */
+  readonly path: string;
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Type Discrimination
+  // ═══════════════════════════════════════════════════════════════
+  
+  /** True if this is a leaf file (not a folder) */
+  readonly isFile: boolean;
+  
+  /** True if this is a folder (can have children) */
+  readonly isFolder: boolean;
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Model Access
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * The underlying model (FileModel or FolderModel)
+   * 
+   * Returns base Model type for covariance.
+   * Implementations return their specific model type.
+   */
+  readonly model: Model;
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Existence & Operations
+  // ═══════════════════════════════════════════════════════════════
+  
+  /** Check if this file/folder exists on storage */
+  exists(): boolean;
+  
+  /** Delete this file/folder (folders: recursive) */
+  delete(): Promise<void>;
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Tree Operations
+  // ═══════════════════════════════════════════════════════════════
+  
+  /** Set parent reference (called by Folder.childAdd/childRemove) */
+  parentSet(parent: IFile | null): void;
+  
+  /** Update path (called when moving) */
+  pathSet(newPath: string): void;
+}
+
