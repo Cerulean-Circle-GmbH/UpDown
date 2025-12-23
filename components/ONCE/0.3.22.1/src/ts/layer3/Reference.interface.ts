@@ -1,26 +1,34 @@
 /**
- * Reference<T> - Resolved Instance Reference
+ * Reference<T> - Internet Object Reference (IOR = Reference!)
  * 
- * Web4 Pattern: Reference<T> is fundamentally TWO states:
- * 1. **T** — Resolved local instance (DefaultFile, DefaultFolder)
- * 2. **null** — Not yet set
+ * Web4 Pattern: Reference<T> can hold THREE stages + null:
  * 
- * **Unresolved states** are stored differently (not in Reference<T>):
- * - IOR string: `"ior:scenario:{uuid}"` — compact reference
- * - Scenario JSON: `{ ior, uuid, model, owner }` — full data
- * - Both contain everything to CREATE an instance, but are not yet instantiated
- * - Both are THE SAME CONCEPT in different formats
+ * 1. **string (IOR)** — "ior:scenario:{uuid}" — can LOAD scenario
+ * 2. **Scenario<M>** — { ior, uuid, model, owner } — can INSTANTIATE component
+ * 3. **T (instance)** — DEREFERENCED, ready to use
+ * 4. **null** — Not yet set
  * 
- * **ONE LAYER LOOKAHEAD Pattern**:
- * - Folder "resolved" means children ARE instances, not IOR strings
- * - FolderModel.children stores IOR strings (grandchildren, not yet resolved)
- * - When folder resolves, it prefetches children as instances
- * - User selects child folder → resolve THAT folder's children
- * - Process deepens one layer on each selection
+ * **Dereferencing Chain**:
+ * ```
+ * IOR string → Scenario → Instance (dereferenced)
+ *      ↓           ↓           ↓
+ *  "ior:..."   { model }   DefaultFile
+ * ```
  * 
- * TRON: "Getting the root folder means resolving its children before the 
- * root folder counts as resolved. The first level is fully prefetched.
- * Selecting a child causes the next layer of lazy resolving and prefetching."
+ * **Kernel Responsibilities**:
+ * - `kernel.loadScenario(ior)` → Scenario JSON
+ * - `kernel.instantiate(scenario)` → UcpComponent instance
+ * - Instance is DEREFERENCED and ready to use
+ * 
+ * **NOT File-Specific**: This is the DEFAULT dereferencing pattern for ALL UcpComponents.
+ * File/Folder are the REFERENCE IMPLEMENTATION, but works for:
+ * - Reference<DefaultUser>
+ * - Reference<DefaultServer>
+ * - Reference<AnyUcpComponent>
+ * 
+ * **ONE LAYER LOOKAHEAD**:
+ * - Folder "resolved" = children are DEREFERENCED instances
+ * - Selection triggers next layer resolution
  * 
  * @layer3
  * @pdca 2025-12-20-UTC-1315.ior-infrastructure-universal-access.pdca.md
@@ -28,10 +36,11 @@
  */
 
 /**
- * Reference<T> — Resolved instance or null
+ * Reference<T> — Can hold IOR string, Scenario, Instance, or null
  * 
- * FolderModel.children uses Collection<string> (IOR strings, unresolved)
- * These are converted to Reference<FileSystemNode> via folder.resolve()
+ * Type alias allows any stage. Use kernel to dereference.
+ * In practice, FolderModel.children stores IOR strings (unresolved).
+ * Use folder.resolve() to dereference children to instances.
  */
 export type Reference<T> = T | null;
 
