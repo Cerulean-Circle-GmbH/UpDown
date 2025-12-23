@@ -63,9 +63,6 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   /** Parent folder (null for root) */
   private parentFolder: Reference<DefaultFolder> = null;
   
-  /** Child components cache (by UUID) */
-  private childrenCache: Map<string, FileSystemNode> = new Map();
-  
   // ═══════════════════════════════════════════════════════════════
   // Initialization
   // ═══════════════════════════════════════════════════════════════
@@ -112,29 +109,32 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   }
   
   /**
-   * Get children as Collection (Tree interface)
+   * Get resolved children (Tree interface)
+   * 
+   * ISR: model.children contains LazyReference<FileSystemNode>
+   * This accessor filters for resolved instances only.
+   * 
+   * @returns Array of resolved FileSystemNode instances
    */
-  get children(): Collection<FileSystemNode> {
-    return Array.from(this.childrenCache.values());
+  get children(): FileSystemNode[] {
+    // Filter for resolved instances (not IOR strings or IOR objects)
+    const resolved: FileSystemNode[] = [];
+    for (const child of this.model.children) {
+      if (child !== null && typeof child === 'object' && 'model' in child) {
+        resolved.push(child as FileSystemNode);
+      }
+    }
+    return resolved;
   }
   
   /**
    * Add a child (Tree interface)
    * 
-   * P34: Children stored as IOR strings, not duplicated data objects.
-   * The IOR resolves to the File/Folder scenario with all data (DRY!).
+   * ISR: Stores child instance directly in model.children.
+   * When persisted, instance serializes to IOR string.
    */
   childAdd(child: FileSystemNode): void {
     const isFolder = child instanceof DefaultFolder;
-    const childModel = child.model;
-    
-    // P34: Store IOR string reference, NOT duplicated data
-    // Format: ior:scenario:{uuid} - resolves to File/Folder scenario
-    const childIor = `ior:scenario:${childModel.uuid}`;
-    
-    // Add to model children (IOR strings)
-    this.model.children = [...(this.model.children as string[]), childIor];
-    this.model.modifiedAt = Date.now();
     
     // Set parent on child
     child.parentSet(this);
@@ -146,42 +146,37 @@ export class DefaultFolder extends UcpComponent<FolderModel>
       (child as DefaultFile).model.path = this.childPath;
     }
     
-    // Cache the component (runtime only, for quick access)
-    this.childrenCache.set(childModel.uuid, child);
+    // Add instance directly to model.children (ISR-compatible)
+    this.model.children = [...this.model.children, child];
+    this.model.modifiedAt = Date.now();
   }
   
   /**
    * Remove a child (Tree interface)
    * 
-   * P34: Children are IOR strings containing UUID.
+   * ISR: Children can be instances, IORs, or strings.
    * 
    * @param child Child to remove
    * @returns true if removed, false if not found
    */
   childRemove(child: FileSystemNode): boolean {
     const uuid = child.model.uuid;
-    const childIor = `ior:scenario:${uuid}`;
     
-    // P4a: Use function predicates instead of arrows
-    function matchesIor(ior: string): boolean {
-      return ior === childIor || ior.includes(uuid);
-    }
-    function notMatchesIor(ior: string): boolean {
-      return ior !== childIor && !ior.includes(uuid);
-    }
+    // Find by UUID (works for instances, IOR strings, or IOR objects)
+    const index = this.model.children.findIndex(function matchChild(c) {
+      if (typeof c === 'string') return c.includes(uuid);
+      if (c && typeof c === 'object' && 'model' in c) return (c as FileSystemNode).model.uuid === uuid;
+      return false;
+    });
     
-    const index = Array.prototype.findIndex.call(this.model.children, matchesIor);
     if (index === -1) return false;
     
-    // Remove from model (children are IOR strings)
-    this.model.children = Array.prototype.filter.call(this.model.children, notMatchesIor);
+    // Remove from model
+    this.model.children = this.model.children.filter(function notMatch(_, i) { return i !== index; });
     this.model.modifiedAt = Date.now();
     
     // Clear parent on child
     child.parentSet(null);
-    
-    // Remove from cache
-    this.childrenCache.delete(uuid);
     
     return true;
   }
@@ -190,7 +185,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * Remove child by UUID (convenience method)
    */
   childRemoveByUuid(uuid: string): Reference<FileSystemNode> {
-    const child = this.childrenCache.get(uuid);
+    const child = this.childGet(uuid);
     if (!child) return null;
     
     this.childRemove(child);
@@ -198,24 +193,33 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   }
   
   /**
-   * Get child by UUID (from cache)
+   * Get child by UUID
+   * 
+   * ISR: Searches model.children for resolved instances.
    */
   childGet(uuid: string): Reference<FileSystemNode> {
-    return this.childrenCache.get(uuid) || null;
+    for (const child of this.model.children) {
+      if (child && typeof child === 'object' && 'model' in child) {
+        if ((child as FileSystemNode).model.uuid === uuid) {
+          return child as FileSystemNode;
+        }
+      }
+    }
+    return null;
   }
   
   /**
    * Check if folder has any children (Tree interface)
    */
   get hasChildren(): boolean {
-    return this.childrenCache.size > 0 || this.model.children.length > 0;
+    return this.model.children.length > 0;
   }
   
   /**
    * Get number of children (Tree interface)
    */
   get childCount(): number {
-    return this.childrenCache.size || this.model.children.length;
+    return this.model.children.length;
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -259,7 +263,8 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * For OverViews: triggers navigation/animation.
    */
   navigateTo(child: FileSystemNode): boolean {
-    const exists = this.childrenCache.has(child.model.uuid);
+    // Check if child exists in model.children
+    const exists = this.childGet(child.model.uuid) !== null;
     // Navigation logic handled by OverView, we just validate
     return exists;
   }
@@ -279,15 +284,15 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Find child by name (searches resolved cache)
+   * Find child by name (searches resolved children)
    * 
-   * P34: Children are IOR strings, so we search the resolved cache.
+   * ISR: Searches model.children for resolved instances.
    * 
    * @param name Name to search for
    * @returns Child component or null
    */
   childFindByName(name: string): Reference<FileSystemNode> {
-    for (const child of this.childrenCache.values()) {
+    for (const child of this.children) {
       if (child.model.name === name) {
         return child;
       }
@@ -296,12 +301,12 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   }
   
   /**
-   * Get all files (not folders) from resolved cache - P22: Collection<T>
+   * Get all files (not folders)
    */
-  get files(): Collection<FileSystemNode> {
-    const result: FileSystemNode[] = [];
-    for (const child of this.childrenCache.values()) {
-      if (!(child instanceof DefaultFolder)) {
+  get files(): DefaultFile[] {
+    const result: DefaultFile[] = [];
+    for (const child of this.children) {
+      if (child instanceof DefaultFile) {
         result.push(child);
       }
     }
@@ -309,11 +314,11 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   }
   
   /**
-   * Get all subfolders from resolved cache - P22: Collection<T>
+   * Get all subfolders
    */
-  get subfolders(): Collection<DefaultFolder> {
+  get subfolders(): DefaultFolder[] {
     const result: DefaultFolder[] = [];
-    for (const child of this.childrenCache.values()) {
+    for (const child of this.children) {
       if (child instanceof DefaultFolder) {
         result.push(child);
       }
@@ -333,204 +338,22 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     return this.model.children;
   }
   
-  /**
-   * Resolve all child IORs and populate the cache
-   * 
-   * P34: Children are IOR strings. This method resolves them to File/Folder components.
-   * Call this when you need to iterate over resolved children.
-   * 
-   * KD.5: Uses IOR.dereference() for clean dereferencing (DRY!)
-   * 
-   * @returns Collection of resolved FileSystemNode components
-   */
-  async childrenResolve(): Promise<Collection<FileSystemNode>> {
-    const { IOR } = await import('../layer4/IOR.js');
-    const resolved: FileSystemNode[] = [];
-    
-    for (const ior of this.model.children as string[]) {
-      // Skip if already in cache
-      const uuid = ior.replace('ior:scenario:', '');
-      if (this.childrenCache.has(uuid)) {
-        const cached = this.childrenCache.get(uuid);
-        if (cached) resolved.push(cached);
-        continue;
-      }
-      
-      try {
-        // KD.5: Use IOR.dereference() for clean Reference<T> → Instance resolution
-        const child = await IOR.dereference<FileSystemNode>(ior);
-        
-        if (child) {
-          // Set parent
-          child.parentSet(this);
-          
-          // Cache it
-          this.childrenCache.set(child.model.uuid, child);
-          resolved.push(child);
-        }
-      } catch (error) {
-        console.error(`[DefaultFolder] Failed to resolve child IOR: ${ior}`, error);
-      }
-    }
-    
-    return resolved;
-  }
-  
   // ═══════════════════════════════════════════════════════════════
-  // FFM.3.6: ONE LAYER LOOKAHEAD Pattern
-  // Web4 P34: Folder "resolved" = children ARE instances (prefetched)
+  // ISR: Lazy resolution is now handled by UcpModel proxy
+  // No explicit resolve() needed — accessing model.children triggers ISR
   // ═══════════════════════════════════════════════════════════════
   
-  /** Flag indicating if children have been prefetched */
-  private childrenPrefetched: boolean = false;
-  
   /**
-   * Resolve this folder — includes ONE LAYER LOOKAHEAD
+   * Select a child — ISR handles resolution automatically
    * 
-   * ISR Pattern: Uses UcpModel's self-replacing IOR mechanism.
-   * - Accessing model.children[i] triggers IOR creation
-   * - IOR.resolveAndReplace() runs in background
-   * - This method awaits all pending IORs
-   * 
-   * Called when:
-   * - Folder is opened/accessed
-   * - Navigation enters this folder
-   * - Folder assigned to a variable
-   * 
-   * @returns this (fluent API, folder is now resolved)
-   * 
-   * @example
-   * ```typescript
-   * const folder = await new IOR<DefaultFolder>().initRemote(ior).resolveInstance();
-   * await folder.resolve();  // Prefetches children
-   * // Now folder.model.children contains instances, not IOR strings
-   * ```
-   */
-  async resolve(): Promise<this> {
-    // Already prefetched? Skip
-    if (this.childrenPrefetched) {
-      return this;
-    }
-    
-    const { IOR } = await import('../layer4/IOR.js');
-    
-    // ISR Pattern: children is Collection<Reference<FileSystemNode>>
-    // Reference<T> = T | string | null — fully typed, no hacks!
-    const resolvePromises: Promise<unknown>[] = [];
-    
-    for (let i = 0; i < this.model.children.length; i++) {
-      const child = this.model.children[i];
-      
-      // If it's an IOR object (created by proxy), await its resolution
-      if (child && typeof child === 'object' && child instanceof IOR) {
-        resolvePromises.push(child.resolveAndReplace());
-      }
-      // If still a string IOR, create IOR and trigger resolution
-      else if (typeof child === 'string' && child.startsWith('ior:')) {
-        const ior = new IOR().initRemote(child);
-        ior.initWithParent(this.model, 'children', i);
-        this.model.children[i] = ior;
-        resolvePromises.push(ior.resolveAndReplace());
-      }
-      // Already an instance — set parent reference
-      else if (child && typeof child === 'object' && 'parentSet' in child) {
-        const fileSystemNode = child as FileSystemNode;
-        fileSystemNode.parentSet(this);
-        // Cache it
-        if (fileSystemNode.model && fileSystemNode.model.uuid) {
-          this.childrenCache.set(fileSystemNode.model.uuid, fileSystemNode);
-        }
-      }
-    }
-    
-    // Await all resolutions
-    await Promise.all(resolvePromises);
-    
-    // Now all children should be instances — set parent and cache them
-    for (let i = 0; i < this.model.children.length; i++) {
-      const child = this.model.children[i];
-      if (child && typeof child === 'object' && 'parentSet' in child) {
-        const fileSystemNode = child as FileSystemNode;
-        fileSystemNode.parentSet(this);
-        if (fileSystemNode.model && fileSystemNode.model.uuid) {
-          this.childrenCache.set(fileSystemNode.model.uuid, fileSystemNode);
-        }
-      }
-    }
-    
-    // Mark as prefetched
-    this.childrenPrefetched = true;
-    
-    console.log(`[DefaultFolder] Resolved: ${this.model.name} (${this.model.children.length} children prefetched)`);
-    
-    return this;
-  }
-  
-  /**
-   * Check if this folder has been resolved (children prefetched)
-   * 
-   * Web4 P16: Accessor pattern
-   */
-  get isResolved(): boolean {
-    return this.childrenPrefetched;
-  }
-  
-  /**
-   * Select a child — triggers NEXT LAYER resolution
-   * 
-   * FFM.3.6.2: When a child is selected (clicked, assigned to variable),
-   * resolve THAT child's children if it's a folder.
-   * 
-   * This creates the "deepening" effect:
-   * - User sees folder → children prefetched
-   * - User clicks subfolder → grandchildren prefetched
-   * - And so on...
+   * When accessing a child, the UcpModel proxy triggers ISR:
+   * - IOR string → IOR object → resolved instance
    * 
    * @param uuid UUID of the child to select
-   * @returns The selected child (resolved if folder)
-   * 
-   * @example
-   * ```typescript
-   * const subFolder = await folder.childSelect('abc-123');
-   * // If subFolder is a folder, its children are now prefetched
-   * ```
+   * @returns The selected child (resolved by ISR)
    */
-  async childSelect(uuid: string): Promise<Reference<FileSystemNode>> {
-    // Ensure this folder is resolved first
-    if (!this.childrenPrefetched) {
-      await this.resolve();
-    }
-    
-    // Get child from cache
-    const child = this.childrenCache.get(uuid);
-    if (!child) {
-      console.warn(`[DefaultFolder] Child not found: ${uuid}`);
-      return null;
-    }
-    
-    // If child is a folder, resolve ITS children (NEXT LAYER)
-    if (child instanceof DefaultFolder) {
-      await child.resolve();
-    }
-    
-    return child;
-  }
-  
-  /**
-   * Get resolved children (only if folder is resolved)
-   * 
-   * FFM.3.6.3: Convenience accessor for views.
-   * Returns cached children if resolved, empty otherwise.
-   * 
-   * Use this instead of childrenResolve() when you expect
-   * the folder to already be resolved.
-   */
-  get resolvedChildren(): Collection<FileSystemNode> {
-    if (!this.childrenPrefetched) {
-      console.warn('[DefaultFolder] Accessing resolvedChildren before resolve() called');
-      return [];
-    }
-    return Array.from(this.childrenCache.values());
+  childSelect(uuid: string): Reference<FileSystemNode> {
+    return this.childGet(uuid);
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -799,8 +622,8 @@ export class DefaultFolder extends UcpComponent<FolderModel>
       }
     }
     
-    // 2. Update cached children paths recursively (model only, fs already moved)
-    for (const child of this.childrenCache.values()) {
+    // 2. Update resolved children paths recursively (model only, fs already moved)
+    for (const child of this.children) {
       child.model.path = this.childPath;
     }
     
@@ -859,8 +682,8 @@ export class DefaultFolder extends UcpComponent<FolderModel>
       }
     }
     
-    // 3. Update cached children paths
-    for (const child of this.childrenCache.values()) {
+    // 3. Update resolved children paths
+    for (const child of this.children) {
       child.model.path = this.childPath;
     }
   }
@@ -954,9 +777,9 @@ export class DefaultFolder extends UcpComponent<FolderModel>
       }
     }
     
-    // Return cached children names (P4a: Use for...of loop)
+    // Return resolved children names (P4a: Use for...of loop)
     const names: string[] = [];
-    for (const child of this.childrenCache.values()) {
+    for (const child of this.children) {
       names.push(child.model.name);
     }
     return names;
@@ -1030,9 +853,9 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     
     // 2. Recursively delete children first (if force)
     if (force) {
-      for (const child of this.childrenCache.values()) {
+      for (const child of this.children) {
         if ('delete' in child) {
-          await (child as any).delete(true);
+          await (child as DefaultFile | DefaultFolder).delete(true);
         }
       }
     }
@@ -1186,13 +1009,14 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * Release resources (recursive)
    */
   dispose(): void {
-    // Dispose all cached children - P4a: Use for...of instead of arrow
-    for (const child of this.childrenCache.values()) {
+    // Dispose all resolved children - P4a: Use for...of instead of arrow
+    for (const child of this.children) {
       if ('dispose' in child) {
-        (child as any).dispose();
+        (child as DefaultFile | DefaultFolder).dispose();
       }
     }
-    this.childrenCache.clear();
+    // Clear model children
+    this.model.children = [];
   }
 }
 
