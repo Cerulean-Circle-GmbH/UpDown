@@ -32,10 +32,18 @@ export interface Folder extends File {
   // Container Properties
   // ═══════════════════════════════════════════════════════════════
   
-  /** Resolved children (filtered for instances only) */
+  /**
+   * Resolved children only
+   * 
+   * TODO: Migrate to Collection<File> once ISR is fully implemented
+   * Currently returns only resolved instances for backwards compatibility.
+   */
   readonly children: File[];
   
-  /** Raw child references (may include unresolved IORs) */
+  /**
+   * Raw child references (includes unresolved IORs)
+   * @deprecated Will be replaced by children: Collection<File>
+   */
   readonly childReferences: Collection<File>;
   
   // ═══════════════════════════════════════════════════════════════

@@ -245,11 +245,19 @@ import type { File } from './File.interface.js';
 import type { Collection } from './Collection.interface.js';
 
 export interface Folder extends File {
-  readonly children: File[];
-  readonly childReferences: Collection<File>;
+  readonly children: File[];  // Currently: resolved instances only
+  readonly childReferences: Collection<File>;  // Raw (may include IORs)
   childAdd(child: File): void;
   childRemove(child: File): boolean;
   childGet(uuid: string): File | null;
+}
+```
+
+**TODO (Future ISR)**: When ISR is fully implemented, this will simplify to:
+```typescript
+export interface Folder extends File {
+  readonly children: Collection<File>;  // ISR handles lazy resolution
+  // childReferences removed (DRY)
 }
 ```
 

@@ -56,13 +56,15 @@ export abstract class FolderJs extends FileJs implements Folder {
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Get resolved children
-   * @returns Array of resolved FileJs instances
+   * Resolved children only
+   * 
+   * TODO: Migrate to Collection<FileJs> once ISR is fully implemented
    */
   abstract get children(): FileJs[];
   
   /**
-   * Get raw child references (may include unresolved IORs)
+   * Raw child references (includes unresolved IORs)
+   * @deprecated Will be replaced by children: Collection<FileJs>
    */
   abstract get childReferences(): Collection<FileJs>;
   

@@ -143,10 +143,10 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   }
   
   /**
-   * Get resolved children (Tree interface)
+   * Resolved children only (for backwards compatibility)
    * 
-   * ISR: model.children contains LazyReference<File>
-   * This accessor filters for resolved instances only.
+   * TODO: Migrate to pure ISR where children: Collection<FileJs>
+   * Currently filters for resolved instances only.
    * 
    * @returns Array of resolved File instances (DefaultFile or DefaultFolder)
    */
@@ -159,6 +159,14 @@ export class DefaultFolder extends UcpComponent<FolderModel>
       }
     }
     return resolved;
+  }
+  
+  /**
+   * Raw child references (may include unresolved IORs)
+   * @deprecated Use children directly once ISR is fully implemented
+   */
+  get childReferences(): Collection<FileJs> {
+    return this.model.children;
   }
   
   /**
@@ -354,21 +362,10 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     return result;
   }
   
-  /**
-   * Get raw child references (may be strings, IORs, or instances)
-   * 
-   * ISR Pattern: References may be in any state:
-   * - string: IOR "ior:..." (unresolved)
-   * - IOR object: resolving in background
-   * - File: resolved instance (DefaultFile or DefaultFolder)
-   */
-  get childReferences(): Collection<FileJs> {
-    return this.model.children;
-  }
-  
   // ═══════════════════════════════════════════════════════════════
-  // ISR: Lazy resolution is now handled by UcpModel proxy
-  // No explicit resolve() needed — accessing model.children triggers ISR
+  // ISR: Lazy resolution is handled by UcpModel proxy
+  // TODO: Once ISR is fully implemented, children will return Collection<FileJs>
+  // and childReferences will be removed (DRY)
   // ═══════════════════════════════════════════════════════════════
   
   /**
