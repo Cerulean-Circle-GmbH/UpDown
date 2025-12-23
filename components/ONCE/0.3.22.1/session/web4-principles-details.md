@@ -1297,6 +1297,116 @@ User drops file → UcpView.handleDrop()
 
 ---
 
+## Principle 34: IOR as Unified Entry Point
+
+> "Reference<...> can be the local resolved instance or the IOR or the full persistent scenario. File is the Reference Implementation for how to load files, make them UcpComponent instances and lazy dereference the first layer of children until one of the children is selected, and the process deepens one layer."
+
+**Checklist:** [web4-principles-checklist.md](./web4-principles-checklist.md#principle-34-ior-as-unified-entry-point)
+
+### Details
+
+IOR (Internet Object Reference) IS a reference. Reference<T> can hold THREE stages:
+
+```typescript
+Reference<T> can hold:
+├── string         │ IOR string — can LOAD scenario
+├── Scenario<M>    │ Scenario JSON — can INSTANTIATE component  
+├── T              │ Instance — DEREFERENCED (ready to use)
+└── null           │ Not set
+```
+
+**Dereferencing Chain:**
+```
+IOR string        →        Scenario        →        Instance
+"ior:scenario:..."    { ior, uuid, model }      DefaultFile
+       ↓                      ↓                      ↓
+ Can LOCATE             Can INSTANTIATE         DEREFERENCED
+ (fetch scenario)       (create component)      (ready to use)
+```
+
+**Kernel Responsibilities:**
+- `kernel.loadScenario(ior)` → Scenario JSON
+- `kernel.instantiate(scenario)` → UcpComponent instance
+- Instance is DEREFERENCED and ready to use
+
+### ONE LAYER LOOKAHEAD Pattern
+
+Folder "resolved" means children ARE dereferenced instances:
+
+```
+Request RootFolder → folder.resolve() includes children prefetch:
+┌─────────────────────────────────────────────────────────────────┐
+│ RootFolder (RESOLVED)                                           │
+│   children: [DefaultFile✓, DefaultFolder✓, DefaultFile✓]        │ ← PREFETCHED
+│                                                                 │
+│   DefaultFolder.children = ["ior:...", "ior:..."]               │ ← Still IOR strings
+│                             (grandchildren not prefetched)      │
+└─────────────────────────────────────────────────────────────────┘
+
+User SELECTS child folder (via ItemView or variable assignment):
+┌─────────────────────────────────────────────────────────────────┐
+│ ChildFolder.resolve() → prefetch ITS children                   │
+│   children: [DefaultFile✓, DefaultFile✓]                        │ ← NOW PREFETCHED
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Selection Triggers:**
+- User clicks ItemView
+- Assigning child to variable for operation
+- Any access requiring child's children
+
+### Why
+
+- **Universal Pattern:** Works for ALL UcpComponents, not just File/Folder
+- **Lazy Loading:** Prefetch only what user needs to see
+- **Fast UI:** No loading spinners for visible items
+- **Memory Efficient:** Deep trees don't load entire structure
+
+### NOT File-Specific
+
+File/Folder are the REFERENCE IMPLEMENTATION. This pattern applies to:
+
+```
+Reference<DefaultUser>      → IOR → Scenario → DefaultUser instance
+Reference<DefaultServer>    → IOR → Scenario → DefaultServer instance
+Reference<DefaultRoute>     → IOR → Scenario → DefaultRoute instance
+Reference<AnyUcpComponent>  → IOR → Scenario → Component instance
+```
+
+The kernel knows how to dereference ANY UcpComponent.
+
+### Anti-Patterns
+
+❌ **WRONG:** Storing duplicated data instead of references
+```typescript
+children: [{ name: "file.txt", size: 1234 }]  // Duplicates data!
+```
+
+✅ **CORRECT:** Store IOR strings, dereference on demand
+```typescript
+children: ["ior:scenario:uuid1", "ior:scenario:uuid2"]
+// Resolve when needed: await new IOR().initRemote(ior).resolve()
+```
+
+❌ **WRONG:** Resolve entire tree at once
+```typescript
+await folder.resolveDeep()  // Loads EVERYTHING - memory hog!
+```
+
+✅ **CORRECT:** Resolve one layer at a time
+```typescript
+await folder.resolve()  // Prefetches children only
+// User selects child → then resolve that child's children
+```
+
+### Examples
+
+- **Research PDCA:** [2025-12-22-UTC-0400.file-folder-architecture-completion.pdca.md](./2025-12-22-UTC-0400.file-folder-architecture-completion.pdca.md) | [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/session/2025-12-22-UTC-0400.file-folder-architecture-completion.pdca.md)
+- **Implementation PDCA:** [2025-12-22-UTC-0500.ffm-implementation.pdca.md](./2025-12-22-UTC-0500.ffm-implementation.pdca.md) | [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/session/2025-12-22-UTC-0500.ffm-implementation.pdca.md)
+- **Code:** [§/src/ts/layer3/Reference.interface.ts](../src/ts/layer3/Reference.interface.ts) | [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer3/Reference.interface.ts)
+
+---
+
 ## How to Use This Document
 
 1. **Reference from checklist:** Use links in [web4-principles-checklist.md](./web4-principles-checklist.md) to jump to details

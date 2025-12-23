@@ -523,6 +523,39 @@ await component.init();
 
 **Future PDCA:** Test Migration with P27 (Real Types Only) as key principle.
 
+### **L27: Reference<T> Dereferencing — IOR → Scenario → Instance**
+**Date:** 2025-12-22  
+**Source:** User guidance on Reference semantics  
+**Lesson:** Reference<T> can hold THREE states (IOR = Internet Object REFERENCE):
+
+```typescript
+Reference<T> can hold:
+├── string         │ IOR string — can LOAD scenario
+├── Scenario<M>    │ Scenario JSON — can INSTANTIATE component  
+├── T              │ Instance — DEREFERENCED (ready to use)
+└── null           │ Not set
+
+Dereferencing Chain:
+  IOR string → Scenario → Instance (dereferenced)
+       ↓           ↓           ↓
+  "ior:..."    { model }   DefaultFile
+```
+
+**ONE LAYER LOOKAHEAD Pattern:**
+- Folder "resolved" = children ARE dereferenced instances (prefetched)
+- Children's children = still IOR strings (not resolved yet)
+- Selection (via ItemView or variable assignment) triggers next layer resolution
+- Process deepens one layer at a time
+
+**NOT File-Specific — Universal for ALL UcpComponents:**
+- File/Folder are the REFERENCE IMPLEMENTATION
+- Kernel knows: `loadScenario(ior)` → `instantiate(scenario)` → Instance
+- Works for Reference<DefaultUser>, Reference<DefaultServer>, Reference<AnyUcpComponent>
+
+**Reference PDCAs:**
+- [§/session/2025-12-22-UTC-0400.file-folder-architecture-completion.pdca.md](./2025-12-22-UTC-0400.file-folder-architecture-completion.pdca.md) | [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/session/2025-12-22-UTC-0400.file-folder-architecture-completion.pdca.md)
+- [§/session/2025-12-22-UTC-0500.ffm-implementation.pdca.md](./2025-12-22-UTC-0500.ffm-implementation.pdca.md) | [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/session/2025-12-22-UTC-0500.ffm-implementation.pdca.md)
+
 ---
 
 ## **🔴 Common Web4 Violations Found**
