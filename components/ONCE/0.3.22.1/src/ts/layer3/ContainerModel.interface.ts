@@ -11,7 +11,8 @@
  * @pdca 2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md
  */
 
-import { Reference } from './Reference.interface.js';
+import { LazyReference } from './LazyReference.interface.js';
+import type { Container } from './Container.interface.js';
 
 /**
  * ContainerModel - Model interface for Container components
@@ -25,8 +26,8 @@ export interface ContainerModel {
   /** Display name */
   name: string;
   
-  /** Parent container UUID (null for root) */
-  parentUuid: Reference<string>;
+  /** Parent container (lazy reference, null for root) */
+  parent: LazyReference<Container<unknown>>;
 }
 
 

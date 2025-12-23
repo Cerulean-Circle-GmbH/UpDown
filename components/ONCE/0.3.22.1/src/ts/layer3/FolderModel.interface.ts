@@ -2,37 +2,36 @@
  * FolderModel.interface.ts - Folder Component Model
  * 
  * Represents a folder/directory in the Web4 FileSystem.
- * Contains IOR references to child files and folders.
+ * Folder IS-A File that can contain other Files.
  * 
  * Web4 Principles:
- * - P5: Reference<T> for nullable
+ * - P5: Reference<T> for nullable (simple)
  * - P19: One File One Type
- * - P22: Collection<T> for typed collections
+ * - P22: Collection<T> for lazy collections
  * - P34: IOR as Unified Entry Point
  * 
  * TRON: "Reference<File> or Reference<Folder> which is an IOR and stored as a file scenario"
  * 
  * @ior ior:esm:/ONCE/{version}/FolderModel
- * @pdca 2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md
- * @pdca 2025-12-22-UTC-0500.ffm-implementation.pdca.md (P34 compliance)
+ * @pdca 2025-12-22-UTC-0900.ior-self-replacement.pdca.md
  */
 
 import { Model } from './Model.interface.js';
 import { Reference } from './Reference.interface.js';
 import { LazyReference } from './LazyReference.interface.js';
-import { Collection } from './Collection.interface.js';
+import { LazyCollection } from './Collection.interface.js';
 import type { FileSystemNode } from './FileSystemNode.type.js';
+
+// Forward declaration to avoid circular import
+type Folder = import('../layer2/DefaultFolder.js').DefaultFolder;
 
 /**
  * FolderModel - Data model for Folder component
  * 
- * P34: Children are IOR strings that resolve to File/Folder scenarios.
- * NO DUPLICATION - resolve IOR to get name, size, mimetype, etc.
+ * Collection<T> is inherently lazy - elements can be:
+ * - IOR string → IOR object → Instance (ISR pattern)
  * 
- * ISR Pattern: children can hold:
- * - string (IOR) — "ior:scenario:{uuid}" (unresolved)
- * - IOR object — resolving in background
- * - FileSystemNode — resolved instance
+ * UcpModel proxy handles all lazy resolution automatically.
  */
 export interface FolderModel extends Model {
   /** Folder path relative to FileSystem root */
@@ -42,17 +41,15 @@ export interface FolderModel extends Model {
   folderName: string;
   
   /** 
-   * Child references (files and folders) - P22: Collection<T>, P34: IOR
+   * Child files and folders - LazyCollection for IOR-backed children
    * 
-   * ISR Pattern: References start as IOR strings, become IOR objects 
-   * when accessed, then self-replace with resolved instances.
-   * 
-   * Uses LazyReference<T> — can be string, IOR, or instance.
+   * Elements start as IOR strings, resolve to FileSystemNode instances.
+   * UcpModel proxy handles ISR automatically.
    */
-  children: Collection<LazyReference<FileSystemNode>>;
+  children: LazyCollection<FileSystemNode>;
   
-  /** Parent folder UUID (null for root) */
-  parentUuid: Reference<string>;
+  /** Parent folder (lazy reference, null for root) */
+  parent: LazyReference<Folder>;
   
   /** Creation timestamp */
   createdAt: number;

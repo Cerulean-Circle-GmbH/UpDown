@@ -182,12 +182,12 @@ export class FileOrchestrator {
    */
   async folderInit(
     folder: DefaultFolder,
-    options: { path: string; folderName: string; parentUuid?: string }
+    options: { path: string; folderName: string; parentIor?: string }
   ): Promise<DefaultFolder> {
     folder.model.path = options.path;
     folder.model.folderName = options.folderName;
     folder.model.name = options.folderName;
-    folder.model.parentUuid = options.parentUuid || null;
+    folder.model.parent = options.parentIor || null;
     folder.model.createdAt = Date.now();
     folder.model.modifiedAt = Date.now();
     
@@ -217,7 +217,7 @@ export class FileOrchestrator {
     await this.folderInit(folder, {
       path,
       folderName,
-      parentUuid: parent?.model.uuid
+      parentIor: parent ? `ior:scenario:${parent.model.uuid}` : undefined
     });
     
     if (parent) {

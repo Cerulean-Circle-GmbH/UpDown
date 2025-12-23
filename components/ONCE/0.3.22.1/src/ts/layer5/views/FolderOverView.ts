@@ -501,7 +501,7 @@ export class FolderOverView extends UcpView<FolderModel> {
       children: [], // P34: IOR strings (empty for HTTP-loaded folders)
       createdAt: 0,
       modifiedAt: 0,
-      parentUuid: null,
+      parent: null,
       isLink: false,
       linkTarget: null
     };
@@ -551,7 +551,7 @@ export class FolderOverView extends UcpView<FolderModel> {
       children: [], // P34: IOR strings
       createdAt: 0,
       modifiedAt: 0,
-      parentUuid: null,
+      parent: null,
       isLink: false,
       linkTarget: null
     };
