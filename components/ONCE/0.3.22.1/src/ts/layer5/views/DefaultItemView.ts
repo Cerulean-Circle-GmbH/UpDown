@@ -205,7 +205,7 @@ export class DefaultItemView<TModel extends ItemViewModel = ItemViewModel>
    * Discover available actions
    * Override in subclasses to provide specific actions
    */
-  actionsDiscover(): Collection<ActionMetadata> {
+  actionsDiscover(): ActionMetadata[] {
     return [];  // No default actions
   }
   

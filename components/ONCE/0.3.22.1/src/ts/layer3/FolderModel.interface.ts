@@ -19,7 +19,7 @@
 import { Model } from './Model.interface.js';
 import { Reference } from './Reference.interface.js';
 import { LazyReference } from './LazyReference.interface.js';
-import { LazyCollection } from './Collection.interface.js';
+import { Collection } from './Collection.interface.js';
 import type { FileSystemNode } from './FileSystemNode.type.js';
 
 // Forward declaration to avoid circular import
@@ -41,12 +41,12 @@ export interface FolderModel extends Model {
   folderName: string;
   
   /** 
-   * Child files and folders - LazyCollection for IOR-backed children
+   * Child files and folders - Collection<T> with lazy resolution
    * 
    * Elements start as IOR strings, resolve to FileSystemNode instances.
    * UcpModel proxy handles ISR automatically.
    */
-  children: LazyCollection<FileSystemNode>;
+  children: Collection<FileSystemNode>;
   
   /** Parent folder (lazy reference, null for root) */
   parent: LazyReference<Folder>;

@@ -205,7 +205,7 @@ export class OncePeerItemView extends DefaultItemView<OncePeerModel> {
    * Discover peer actions
    * Returns different actions for primary vs client servers
    */
-  actionsDiscover(): Collection<ActionMetadata> {
+  actionsDiscover(): ActionMetadata[] {
     if (this.isPrimary) {
       // Primary server actions
       return [

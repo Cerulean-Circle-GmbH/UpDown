@@ -29,7 +29,7 @@ import { UcpComponent } from './UcpComponent.js';
 import { FolderModel } from '../layer3/FolderModel.interface.js';
 import { DefaultFile } from './DefaultFile.js';
 import { Reference } from '../layer3/Reference.interface.js';
-import { Collection, LazyCollection } from '../layer3/Collection.interface.js';
+import { Collection } from '../layer3/Collection.interface.js';
 import { Tree } from '../layer3/Tree.interface.js';
 import { Container } from '../layer3/Container.interface.js';
 import { FileSystemNode } from '../layer3/FileSystemNode.type.js';
@@ -329,7 +329,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * - IOR object: resolving in background
    * - FileSystemNode: resolved instance
    */
-  get childReferences(): LazyCollection<FileSystemNode> {
+  get childReferences(): Collection<FileSystemNode> {
     return this.model.children;
   }
   

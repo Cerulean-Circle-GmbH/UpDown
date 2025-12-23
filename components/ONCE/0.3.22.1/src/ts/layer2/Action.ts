@@ -101,7 +101,7 @@ export class Action {
    * @param registry RelatedObjects registry
    * @returns Collection of all ActionMetadata (empty if none)
    */
-  static all(registry: RelatedObjects): Collection<ActionMetadata> {
+  static all(registry: RelatedObjects): ActionMetadata[] {
     return registry.relatedObjectLookup(ActionMetadataImpl);
   }
   
