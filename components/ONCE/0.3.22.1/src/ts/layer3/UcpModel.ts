@@ -201,7 +201,7 @@ export class UcpModel<T extends object> {
     const ucpModel = this;
     
     return new Proxy(model, {
-      set: function(target, property, value) {
+      set: function proxySet(target, property, value) {
         const key = property as keyof T;
         (target as Record<keyof T, unknown>)[key] = value;
         
@@ -216,8 +216,85 @@ export class UcpModel<T extends object> {
         
         return true;
       },
-      get: function(target, property) {
-        return (target as Record<string | symbol, unknown>)[property];
+      get: function proxyGet(target, property) {
+        const value = (target as Record<string | symbol, unknown>)[property];
+        
+        // ISR: Detect IOR strings and return self-replacing IOR objects
+        // Note: We don't await — fire-and-forget pattern (P7 compliant)
+        if (typeof value === 'string' && value.startsWith('ior:')) {
+          // Create self-replacing IOR
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          const { IOR } = require('../layer4/IOR.js');
+          const ior = new IOR().initRemote(value);
+          ior.initWithParent(target, String(property));
+          
+          // Replace string with IOR in model (sync)
+          (target as Record<string | symbol, unknown>)[property] = ior;
+          
+          // Fire-and-forget resolution (async, no await)
+          ior.resolveAndReplace();
+          
+          return ior;
+        }
+        
+        // ISR.3: Handle arrays — wrap in proxy for element access
+        if (Array.isArray(value)) {
+          return ucpModel.arrayProxyCreate(value, target, String(property));
+        }
+        
+        return value;
+      }
+    });
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // ISR.3: Array Proxy for Collection<IOR>
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Create array proxy that handles IOR string elements
+   * 
+   * When accessing array[index], if the element is an IOR string,
+   * creates a self-replacing IOR object.
+   * 
+   * @param arr The array to wrap
+   * @param parent The parent model object
+   * @param key The property key in parent
+   * @returns Proxied array
+   */
+  private arrayProxyCreate(arr: unknown[], parent: object, key: string): unknown[] {
+    return new Proxy(arr, {
+      get: function arrayProxyGet(target, index) {
+        // Handle array methods, length, and symbol properties
+        if (typeof index === 'symbol' || isNaN(Number(index))) {
+          const val = (target as unknown as Record<string | symbol, unknown>)[index];
+          if (typeof val === 'function') {
+            return (val as Function).bind(target);
+          }
+          return val;
+        }
+        
+        const numIndex = Number(index);
+        const element = target[numIndex];
+        
+        // Not an IOR string? Return as-is
+        if (typeof element !== 'string' || !element.startsWith('ior:')) {
+          return element;
+        }
+        
+        // Create self-replacing IOR for this array element
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { IOR } = require('../layer4/IOR.js');
+        const ior = new IOR().initRemote(element);
+        ior.initWithParent(parent, key, numIndex);
+        
+        // Replace string with IOR in array
+        target[numIndex] = ior;
+        
+        // Fire-and-forget resolution
+        ior.resolveAndReplace();
+        
+        return ior;
       }
     });
   }
