@@ -18,14 +18,20 @@
  */
 
 import { Model } from './Model.interface.js';
-import { Reference } from './Reference.interface.js';
+import { Reference, IORReference } from './Reference.interface.js';
 import { Collection } from './Collection.interface.js';
+import type { FileSystemNode } from './FileSystemNode.type.js';
 
 /**
  * FolderModel - Data model for Folder component
  * 
  * P34: Children are IOR strings that resolve to File/Folder scenarios.
  * NO DUPLICATION - resolve IOR to get name, size, mimetype, etc.
+ * 
+ * ISR Pattern: children can hold:
+ * - string (IOR) — "ior:scenario:{uuid}" (unresolved)
+ * - IOR object — resolving in background
+ * - FileSystemNode — resolved instance
  */
 export interface FolderModel extends Model {
   /** Folder path relative to FileSystem root */
@@ -35,11 +41,14 @@ export interface FolderModel extends Model {
   folderName: string;
   
   /** 
-   * Child IORs (files and folders) - P22: Collection<T>, P34: IOR
-   * Each string is an IOR like "ior:scenario:{uuid}"
-   * Resolve IOR to get File/Folder scenario with all data (DRY!)
+   * Child references (files and folders) - P22: Collection<T>, P34: IOR
+   * 
+   * ISR Pattern: References start as IOR strings, become IOR objects 
+   * when accessed, then self-replace with resolved instances.
+   * 
+   * Uses IORReference<T> — can be string, IOR, or instance.
    */
-  children: Collection<string>;
+  children: Collection<IORReference<FileSystemNode>>;
   
   /** Parent folder UUID (null for root) */
   parentUuid: Reference<string>;

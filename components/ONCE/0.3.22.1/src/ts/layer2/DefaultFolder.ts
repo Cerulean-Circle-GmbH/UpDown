@@ -28,7 +28,7 @@
 import { UcpComponent } from './UcpComponent.js';
 import { FolderModel } from '../layer3/FolderModel.interface.js';
 import { DefaultFile } from './DefaultFile.js';
-import { Reference } from '../layer3/Reference.interface.js';
+import { Reference, IORReference } from '../layer3/Reference.interface.js';
 import { Collection } from '../layer3/Collection.interface.js';
 import { Tree } from '../layer3/Tree.interface.js';
 import { Container } from '../layer3/Container.interface.js';
@@ -322,9 +322,14 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   }
   
   /**
-   * Get raw child IOR strings (unresolved)
+   * Get raw child references (may be strings, IORs, or instances)
+   * 
+   * ISR Pattern: References may be in any state:
+   * - string: IOR "ior:..." (unresolved)
+   * - IOR object: resolving in background
+   * - FileSystemNode: resolved instance
    */
-  get childIors(): Collection<string> {
+  get childReferences(): Collection<IORReference<FileSystemNode>> {
     return this.model.children;
   }
   
@@ -409,34 +414,28 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     
     const { IOR } = await import('../layer4/IOR.js');
     
-    // ISR: children array may now contain strings, IOR objects, or instances
-    // Type assertion needed because FolderModel.children is typed as Collection<string>
-    const children = this.model.children as unknown[];
-    
-    // Access all children to trigger IOR creation via UcpModel proxy
-    // Then await each IOR's resolution
+    // ISR Pattern: children is Collection<Reference<FileSystemNode>>
+    // Reference<T> = T | string | null — fully typed, no hacks!
     const resolvePromises: Promise<unknown>[] = [];
     
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i];
+    for (let i = 0; i < this.model.children.length; i++) {
+      const child = this.model.children[i];
       
       // If it's an IOR object (created by proxy), await its resolution
       if (child && typeof child === 'object' && child instanceof IOR) {
         resolvePromises.push(child.resolveAndReplace());
       }
-      // If still a string (shouldn't happen after access, but handle it)
+      // If still a string IOR, create IOR and trigger resolution
       else if (typeof child === 'string' && child.startsWith('ior:')) {
         const ior = new IOR().initRemote(child);
         ior.initWithParent(this.model, 'children', i);
-        children[i] = ior;
+        this.model.children[i] = ior;
         resolvePromises.push(ior.resolveAndReplace());
       }
       // Already an instance — set parent reference
-      else if (child && typeof child === 'object') {
+      else if (child && typeof child === 'object' && 'parentSet' in child) {
         const fileSystemNode = child as FileSystemNode;
-        if (typeof fileSystemNode.parentSet === 'function') {
-          fileSystemNode.parentSet(this);
-        }
+        fileSystemNode.parentSet(this);
         // Cache it
         if (fileSystemNode.model && fileSystemNode.model.uuid) {
           this.childrenCache.set(fileSystemNode.model.uuid, fileSystemNode);
@@ -447,10 +446,10 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     // Await all resolutions
     await Promise.all(resolvePromises);
     
-    // Now all children are instances — set parent and cache them
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i] as unknown;
-      if (child && typeof child === 'object' && typeof (child as FileSystemNode).parentSet === 'function') {
+    // Now all children should be instances — set parent and cache them
+    for (let i = 0; i < this.model.children.length; i++) {
+      const child = this.model.children[i];
+      if (child && typeof child === 'object' && 'parentSet' in child) {
         const fileSystemNode = child as FileSystemNode;
         fileSystemNode.parentSet(this);
         if (fileSystemNode.model && fileSystemNode.model.uuid) {

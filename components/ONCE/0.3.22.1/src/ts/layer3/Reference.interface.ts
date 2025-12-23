@@ -36,13 +36,37 @@
  */
 
 /**
- * Reference<T> — Can hold IOR string, Scenario, Instance, or null
+ * Reference<T> — Simple nullable reference (T or null)
  * 
- * Type alias allows any stage. Use kernel to dereference.
- * In practice, FolderModel.children stores IOR strings (unresolved).
- * Use folder.resolve() to dereference children to instances.
+ * For properties that are either set to an instance or null.
+ * Does NOT include IOR resolution stages.
+ * 
+ * @example
+ *   parent: Reference<Folder>  // Folder instance or null
  */
 export type Reference<T> = T | null;
+
+// Forward declaration to avoid circular imports
+// IOR<T> is the runtime implementation in layer4
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type IORType<T> = { resolve(): Promise<T | null>; resolveAndReplace(): Promise<T | null>; initWithParent(parent: object, key: string, index?: number): IORType<T> };
+
+/**
+ * IORReference<T> — Can hold IOR string, IOR object, Instance, or null
+ * 
+ * ISR Pattern (IOR Self-Replacement):
+ * 1. string — IOR string "ior:..." (unresolved)
+ * 2. IOR<T> — IOR object (resolving in background)
+ * 3. T — Instance (dereferenced)
+ * 4. null — Not set
+ * 
+ * UcpModel proxy automatically upgrades strings → IOR → Instance.
+ * 
+ * @example
+ *   children: Collection<IORReference<FileSystemNode>>
+ *   // Contains strings, IORs, or instances as they resolve
+ */
+export type IORReference<T> = T | IORType<T> | string | null;
 
 // Re-export ReferenceState for use with IOR
 export { ReferenceState } from './ReferenceState.enum.js';
