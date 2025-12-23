@@ -1411,7 +1411,8 @@ await folder.resolve()  // Prefetches children only
 
 > "TypeScript interfaces vanish at runtime. JsInterface makes them exist as classes for RelatedObjects, polymorphic lookup, and runtime type checks."
 
-**Checklist:** [web4-principles-checklist.md](./web4-principles-checklist.md#principle-35-jsinterface-for-runtime-interfaces)
+**Checklist:** [web4-principles-checklist.md](./web4-principles-checklist.md#principle-35-jsinterface-for-runtime-interfaces)  
+**Full Pattern:** [web4-jsinterface-pattern.md](./web4-jsinterface-pattern.md) — Complete anatomy with IFile/IFolder example
 
 ### The Problem
 
