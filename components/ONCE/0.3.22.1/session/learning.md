@@ -523,6 +523,42 @@ await component.init();
 
 **Future PDCA:** Test Migration with P27 (Real Types Only) as key principle.
 
+### **L28: Web4 = The Last Architecture = The Last Acronym — NO ABBREVIATIONS**
+**Date:** 2025-12-22  
+**Source:** User correction on abbreviation usage  
+**Lesson:** Web4 is TLA = "The Last Architecture" AND "The Last Acronym". Web4 is SEMANTIC WEB, not character soup!
+
+**FORBIDDEN (character soup):**
+- RT (Resolution Tracking)
+- ISR (IOR Self-Replacement)
+- FFM (File/Folder Migration)
+- KD (Kernel Dereferencing)
+- URP (Universal Reference Prefetch)
+
+**REQUIRED (semantic naming):**
+- Resolution Tracking
+- Lazy Reference Pattern
+- File and Folder Migration
+- Kernel Dereferencing
+- Universal Reference Prefetch
+
+**In PDCAs:** Use full names. Abbreviations may appear ONLY:
+- As file prefix (e.g., `2025-12-22-UTC-0500.ffm-implementation.pdca.md`)
+- After first full introduction in parentheses: "Resolution Tracking (RT)"
+
+**In Code:** Full semantic names always:
+```typescript
+// Wrong:
+function isrResolve() { ... }  // ❌ Character soup
+
+// Correct:
+function lazyReferenceResolve() { ... }  // ✅ Semantic
+```
+
+**Why:** Abbreviations create cognitive load and exclusionary jargon. Semantic names are self-documenting.
+
+---
+
 ### **L27: Reference<T> Dereferencing — IOR → Scenario → Instance**
 **Date:** 2025-12-22  
 **Source:** User guidance on Reference semantics  
