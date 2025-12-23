@@ -29,6 +29,7 @@ import { FileModel } from '../layer3/FileModel.interface.js';
 import { Reference } from '../layer3/Reference.interface.js';
 import { SyncStatus } from '../layer3/SyncStatus.enum.js';
 import { Once } from '../layer1/ONCE.js';
+import { File } from '../layer3/File.js';
 
 // Forward declaration to avoid circular import
 import type { DefaultFolder } from './DefaultFolder.js';
@@ -51,7 +52,18 @@ import type { DefaultFolder } from './DefaultFolder.js';
  * - Loaded on-demand via contentLoad()
  * - objectUrl created for display
  */
-export class DefaultFile extends UcpComponent<FileModel> {
+export class DefaultFile extends UcpComponent<FileModel> implements File {
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Static Registration (P35: JsInterface for Runtime Interfaces)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Register DefaultFile as implementation of File JsInterface
+   */
+  static start(): void {
+    File.implementationRegister(DefaultFile);
+  }
   
   // ═══════════════════════════════════════════════════════════════
   // Tree Structure (File is a LEAF - no children)
@@ -614,6 +626,39 @@ export class DefaultFile extends UcpComponent<FileModel> {
    */
   get isFile(): boolean {
     return true;
+  }
+  
+  /**
+   * Folder type accessor - File is NEVER a folder
+   * Overridden in DefaultFolder to return true
+   */
+  get isFolder(): boolean {
+    return false;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // File Interface Implementation (P35: JsInterface)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Get file path (delegated to model)
+   */
+  get path(): string {
+    return this.model.path;
+  }
+  
+  /**
+   * Get file name (delegated to model)
+   */
+  get name(): string {
+    return this.model.name;
+  }
+  
+  /**
+   * Get file UUID (delegated to model)
+   */
+  get uuid(): string {
+    return this.model.uuid;
   }
   
   /**

@@ -1407,6 +1407,105 @@ await folder.resolve()  // Prefetches children only
 
 ---
 
+## Principle 35: JsInterface for Runtime Interfaces
+
+> "TypeScript interfaces vanish at runtime. JsInterface makes them exist as classes for RelatedObjects, polymorphic lookup, and runtime type checks."
+
+**Checklist:** [web4-principles-checklist.md](./web4-principles-checklist.md#principle-35-jsinterface-for-runtime-interfaces)
+
+### The Problem
+
+TypeScript interfaces are compile-time only:
+
+```typescript
+// TypeScript interface - GONE at runtime!
+interface File {
+  get path(): string;
+}
+
+// This FAILS at runtime:
+image.relatedObjectRegister(File, imageFile);  // ❌ File is undefined!
+```
+
+### The Solution: JsInterface
+
+Interfaces that need runtime existence extend `JsInterface`:
+
+```typescript
+// layer3/File.ts — EXISTS at runtime!
+export abstract class File extends JsInterface {
+  abstract get path(): string;
+  abstract get name(): string;
+  abstract exists(): boolean;
+}
+
+// layer2/DefaultFile.ts
+export class DefaultFile extends UcpComponent<FileModel> implements File {
+  static start(): void {
+    super.start();
+    File.implementationRegister(DefaultFile);  // Runtime registration!
+  }
+}
+
+// layer2/DefaultFolder.ts — Folder IS-A File!
+export class DefaultFolder extends UcpComponent<FolderModel> implements File {
+  static start(): void {
+    super.start();
+    File.implementationRegister(DefaultFolder);  // Also registers!
+  }
+}
+
+// NOW THIS WORKS:
+image.relatedObjectRegister(File, imageFile);  // ✅ File exists!
+const file = image.relatedObjectLookupFirst(File);  // ✅ Returns imageFile
+```
+
+### When to Use JsInterface
+
+| Use Case | JsInterface? | Why |
+|----------|--------------|-----|
+| RelatedObjects key | ✅ YES | Needs runtime class for Map key |
+| Runtime `instanceof` check | ✅ YES | Needs class to check against |
+| Polymorphic lookup | ✅ YES | `PersistenceManager.implementations` |
+| Compile-time only | ❌ NO | Regular `interface` is fine |
+| Generic constraint | ❌ NO | `<T extends Model>` works with interfaces |
+
+### Anti-Patterns
+
+❌ **WRONG:** Union type for polymorphism
+```typescript
+// Can't use in RelatedObjects!
+type FileSystemNode = DefaultFile | DefaultFolder;
+
+// This FAILS:
+controller.relatedObjectLookup(FileSystemNode);  // ❌ Not a class!
+```
+
+✅ **CORRECT:** JsInterface for runtime polymorphism
+```typescript
+// File extends JsInterface
+controller.relatedObjectLookup(File);  // ✅ Works!
+File.implementations;  // [DefaultFile, DefaultFolder]
+```
+
+### JsInterface Capabilities
+
+```typescript
+// All JsInterfaces provide:
+File.implementationRegister(DefaultFile);  // Register implementation
+File.implementations;  // Get all implementations: [DefaultFile, DefaultFolder]
+File.implementationCheck(DefaultFile);  // true
+File.type;  // TypeDescriptor with metadata
+```
+
+### Examples
+
+- **Code:** [§/src/ts/layer3/JsInterface.ts](../src/ts/layer3/JsInterface.ts) | [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer3/JsInterface.ts)
+- **Usage:** [§/src/ts/layer3/PersistenceManager.interface.ts](../src/ts/layer3/PersistenceManager.interface.ts) | [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer3/PersistenceManager.interface.ts)
+- **PDCA:** [§/session/2025-12-22-UTC-1100.file-folder-inheritance.pdca.md](./2025-12-22-UTC-1100.file-folder-inheritance.pdca.md) | [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/session/2025-12-22-UTC-1100.file-folder-inheritance.pdca.md)
+
+---
+
 ## How to Use This Document
 
 1. **Reference from checklist:** Use links in [web4-principles-checklist.md](./web4-principles-checklist.md) to jump to details

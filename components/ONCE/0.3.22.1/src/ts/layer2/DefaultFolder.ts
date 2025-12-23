@@ -32,12 +32,20 @@ import { Reference } from '../layer3/Reference.interface.js';
 import { Collection } from '../layer3/Collection.interface.js';
 import { Tree } from '../layer3/Tree.interface.js';
 import { Container } from '../layer3/Container.interface.js';
-import { FileSystemNode } from '../layer3/FileSystemNode.type.js';
+import { File } from '../layer3/File.js';
 import { SyncStatus } from '../layer3/SyncStatus.enum.js';
 import { Once } from '../layer1/ONCE.js';
 
-// Re-export for backwards compatibility
-export type { FileSystemNode };
+/**
+ * FileSystemNode - Union type for tree operations
+ * 
+ * Note: This is NOT the same as File JsInterface!
+ * - File (JsInterface): For RelatedObjects registration, runtime lookup
+ * - FileSystemNode (type): For type-safe tree operations (model access, etc.)
+ * 
+ * Both DefaultFile and DefaultFolder implement File AND are FileSystemNode.
+ */
+export type FileSystemNode = DefaultFile | DefaultFolder;
 
 /**
  * DefaultFolder - Folder component for Web4 FileSystem
@@ -54,7 +62,19 @@ export type { FileSystemNode };
  * Full child components resolved on-demand via IOR.resolve().
  */
 export class DefaultFolder extends UcpComponent<FolderModel> 
-  implements Tree<FileSystemNode>, Container<FileSystemNode> {
+  implements Tree<FileSystemNode>, Container<FileSystemNode>, File {
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Static Registration (P35: JsInterface for Runtime Interfaces)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Register DefaultFolder as implementation of File JsInterface
+   * Folder IS-A File (can have children)
+   */
+  static start(): void {
+    File.implementationRegister(DefaultFolder);
+  }
   
   // ═══════════════════════════════════════════════════════════════
   // Tree Structure
@@ -721,10 +741,35 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   }
   
   /**
-   * Folder type accessor - Folder is NEVER a file
+   * Folder type accessor - Folder is NEVER a file (it's a folder!)
    */
   get isFile(): boolean {
     return false;
+  }
+  
+  /**
+   * Folder type accessor - Folder IS a folder
+   */
+  get isFolder(): boolean {
+    return true;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // File Interface Implementation (P35: JsInterface)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Get folder path (delegated to model)
+   */
+  get path(): string {
+    return this.model.path;
+  }
+  
+  /**
+   * Get folder name (delegated to model)
+   */
+  get name(): string {
+    return this.model.name;
   }
   
   /**
