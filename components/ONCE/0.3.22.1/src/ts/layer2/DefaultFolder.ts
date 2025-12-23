@@ -372,6 +372,118 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   }
   
   // ═══════════════════════════════════════════════════════════════
+  // FFM.3.6: ONE LAYER LOOKAHEAD Pattern
+  // Web4 P34: Folder "resolved" = children ARE instances (prefetched)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /** Flag indicating if children have been prefetched */
+  private childrenPrefetched: boolean = false;
+  
+  /**
+   * Resolve this folder — includes ONE LAYER LOOKAHEAD
+   * 
+   * FFM.3.6.1: A folder is NOT "resolved" until its children are instances!
+   * This method prefetches all children to the cache.
+   * 
+   * Called when:
+   * - Folder is opened/accessed
+   * - Navigation enters this folder
+   * - Folder assigned to a variable
+   * 
+   * @returns this (fluent API, folder is now resolved)
+   * 
+   * @example
+   * ```typescript
+   * const folder = await new IOR<DefaultFolder>().initRemote(ior).resolveInstance();
+   * await folder.resolve();  // Prefetches children
+   * // Now folder.children returns instances, not IOR strings
+   * ```
+   */
+  async resolve(): Promise<this> {
+    // Already prefetched? Skip
+    if (this.childrenPrefetched) {
+      return this;
+    }
+    
+    // Prefetch all children (ONE LAYER)
+    await this.childrenResolve();
+    
+    // Mark as prefetched
+    this.childrenPrefetched = true;
+    
+    console.log(`[DefaultFolder] Resolved: ${this.model.name} (${this.childrenCache.size} children prefetched)`);
+    
+    return this;
+  }
+  
+  /**
+   * Check if this folder has been resolved (children prefetched)
+   * 
+   * Web4 P16: Accessor pattern
+   */
+  get isResolved(): boolean {
+    return this.childrenPrefetched;
+  }
+  
+  /**
+   * Select a child — triggers NEXT LAYER resolution
+   * 
+   * FFM.3.6.2: When a child is selected (clicked, assigned to variable),
+   * resolve THAT child's children if it's a folder.
+   * 
+   * This creates the "deepening" effect:
+   * - User sees folder → children prefetched
+   * - User clicks subfolder → grandchildren prefetched
+   * - And so on...
+   * 
+   * @param uuid UUID of the child to select
+   * @returns The selected child (resolved if folder)
+   * 
+   * @example
+   * ```typescript
+   * const subFolder = await folder.childSelect('abc-123');
+   * // If subFolder is a folder, its children are now prefetched
+   * ```
+   */
+  async childSelect(uuid: string): Promise<Reference<FileSystemNode>> {
+    // Ensure this folder is resolved first
+    if (!this.childrenPrefetched) {
+      await this.resolve();
+    }
+    
+    // Get child from cache
+    const child = this.childrenCache.get(uuid);
+    if (!child) {
+      console.warn(`[DefaultFolder] Child not found: ${uuid}`);
+      return null;
+    }
+    
+    // If child is a folder, resolve ITS children (NEXT LAYER)
+    if (child instanceof DefaultFolder) {
+      await child.resolve();
+    }
+    
+    return child;
+  }
+  
+  /**
+   * Get resolved children (only if folder is resolved)
+   * 
+   * FFM.3.6.3: Convenience accessor for views.
+   * Returns cached children if resolved, empty otherwise.
+   * 
+   * Use this instead of childrenResolve() when you expect
+   * the folder to already be resolved.
+   */
+  get resolvedChildren(): Collection<FileSystemNode> {
+    if (!this.childrenPrefetched) {
+      console.warn('[DefaultFolder] Accessing resolvedChildren before resolve() called');
+      return [];
+    }
+    return Array.from(this.childrenCache.values());
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
   // Link Operations (Sync - Layer 2)
   // ═══════════════════════════════════════════════════════════════
   
