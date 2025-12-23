@@ -68,6 +68,19 @@ export class IOR<T = any> implements IORInterface {
     private resolutionPromise: Promise<T | null> | null = null;
     
     // ═══════════════════════════════════════════════════════════════
+    // ISR: Parent-Aware Self-Replacement (Option D)
+    // ═══════════════════════════════════════════════════════════════
+    
+    /** Parent model that holds this IOR (for self-replacement) */
+    private parentModel: object | null = null;
+    
+    /** Property key in parent */
+    private parentKey: string | null = null;
+    
+    /** Index in parent array (for Collection<IOR>) */
+    private parentIndex: number | null = null;
+    
+    // ═══════════════════════════════════════════════════════════════
     // Static Loader Registry
     // ═══════════════════════════════════════════════════════════════
     
@@ -236,6 +249,97 @@ export class IOR<T = any> implements IORInterface {
             this.initLocal(valueOrIor as T);
         }
         return this;
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
+    // ISR: Parent-Aware Initialization (Option D)
+    // ═══════════════════════════════════════════════════════════════
+    
+    /**
+     * Initialize with parent reference for self-replacement.
+     * 
+     * Called by UcpModel.get() when returning IOR for an IOR string.
+     * Enables the IOR to replace itself in the parent model when resolved.
+     * 
+     * @param parent The model object containing this reference
+     * @param key The property key in the parent
+     * @param index Optional array index (for Collection<T>)
+     * @returns this for chaining
+     * 
+     * @example
+     * ```typescript
+     * // Single property
+     * const ior = new IOR<User>().initRemote('ior:...').initWithParent(model, 'user');
+     * 
+     * // Array element
+     * const ior = new IOR<File>().initRemote('ior:...').initWithParent(model, 'children', 0);
+     * ```
+     */
+    initWithParent(parent: object, key: string, index?: number): this {
+        this.parentModel = parent;
+        this.parentKey = key;
+        this.parentIndex = index ?? null;
+        return this;
+    }
+    
+    /**
+     * Resolve and replace self in parent model.
+     * 
+     * P34: IOR resolves → replaces itself with the resolved instance.
+     * This triggers UcpModel.set → view re-render.
+     * 
+     * Fire-and-forget pattern:
+     * - Called by UcpModel.get() without await
+     * - Runs resolution in background
+     * - When complete, replaces self in parent
+     * 
+     * @returns Promise resolving to the instance (for those who await)
+     * 
+     * @example
+     * ```typescript
+     * // Fire-and-forget (UcpModel.get pattern)
+     * ior.resolveAndReplace();  // No await — async
+     * 
+     * // Or await if needed
+     * const instance = await ior.resolveAndReplace();
+     * ```
+     */
+    async resolveAndReplace<C = T>(): Promise<C | null> {
+        // Resolve to instance using existing resolveInstance()
+        const instance = await this.resolveInstance<C>();
+        
+        if (instance === null) {
+            console.warn('[IOR.resolveAndReplace] Resolution returned null for:', this.model);
+            return null;
+        }
+        
+        // Replace self in parent (if parent was set)
+        if (this.parentModel && this.parentKey) {
+            const parent = this.parentModel as Record<string, unknown>;
+            
+            if (this.parentIndex !== null) {
+                // Array element: parent.children[index] = instance
+                const arr = parent[this.parentKey] as unknown[];
+                if (arr && Array.isArray(arr)) {
+                    arr[this.parentIndex] = instance;
+                }
+            } else {
+                // Single property: parent.propertyName = instance
+                parent[this.parentKey] = instance;
+            }
+            
+            // Note: If parent is proxied by UcpModel, this triggers view update
+            console.log(`[IOR.resolveAndReplace] Replaced ${this.parentKey}${this.parentIndex !== null ? '[' + this.parentIndex + ']' : ''} with instance`);
+        }
+        
+        return instance;
+    }
+    
+    /**
+     * Check if this IOR has parent information for self-replacement
+     */
+    get hasParent(): boolean {
+        return this.parentModel !== null && this.parentKey !== null;
     }
     
     // ═══════════════════════════════════════════════════════════════
