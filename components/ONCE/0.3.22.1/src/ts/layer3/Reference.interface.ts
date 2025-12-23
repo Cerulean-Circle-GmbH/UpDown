@@ -1,26 +1,26 @@
 /**
- * Reference<T> - Polymorphic Reference Type
+ * Reference<T> - Resolved Instance Reference
  * 
- * Web4 Pattern: Reference<T> can be THREE states:
+ * Web4 Pattern: Reference<T> is fundamentally TWO states:
+ * 1. **T** — Resolved local instance (DefaultFile, DefaultFolder)
+ * 2. **null** — Not yet set
  * 
- * 1. **Local resolved instance**: The actual UcpComponent (e.g., DefaultFile, DefaultFolder)
- * 2. **IOR string (unresolved)**: e.g., "ior:scenario:{uuid}" — needs resolution
- * 3. **null**: Not yet set or intentionally empty
+ * **Unresolved states** are stored differently (not in Reference<T>):
+ * - IOR string: `"ior:scenario:{uuid}"` — compact reference
+ * - Scenario JSON: `{ ior, uuid, model, owner }` — full data
+ * - Both contain everything to CREATE an instance, but are not yet instantiated
+ * - Both are THE SAME CONCEPT in different formats
  * 
- * TRON: "Reference<...> can be the local resolved instance or the IOR or the 
- * full persistent scenario. File is the Reference Implementation for how to
- * load files, make them UcpComponent instances and lazy dereference the first
- * layer of children until one of the children is selected, and the process
- * deepens one layer."
+ * **ONE LAYER LOOKAHEAD Pattern**:
+ * - Folder "resolved" means children ARE instances, not IOR strings
+ * - FolderModel.children stores IOR strings (grandchildren, not yet resolved)
+ * - When folder resolves, it prefetches children as instances
+ * - User selects child folder → resolve THAT folder's children
+ * - Process deepens one layer on each selection
  * 
- * **Lazy Dereferencing Pattern**:
- * - FolderModel.children stores IOR strings (unresolved)
- * - On folder open, resolve first layer → create UcpComponent instances
- * - Child folder's children remain as IOR strings (not resolved yet)
- * - When user selects child folder, resolve THAT folder's children
- * - Process deepens ONE LAYER at a time
- * 
- * For remote resolution, use IOR<T> from layer4/IOR.ts
+ * TRON: "Getting the root folder means resolving its children before the 
+ * root folder counts as resolved. The first level is fully prefetched.
+ * Selecting a child causes the next layer of lazy resolving and prefetching."
  * 
  * @layer3
  * @pdca 2025-12-20-UTC-1315.ior-infrastructure-universal-access.pdca.md
@@ -28,10 +28,10 @@
  */
 
 /**
- * Simple nullable type alias
+ * Reference<T> — Resolved instance or null
  * 
- * In practice, FolderModel.children uses Collection<string> (IOR strings)
- * which are resolved to Reference<FileSystemNode> on demand.
+ * FolderModel.children uses Collection<string> (IOR strings, unresolved)
+ * These are converted to Reference<FileSystemNode> via folder.resolve()
  */
 export type Reference<T> = T | null;
 
