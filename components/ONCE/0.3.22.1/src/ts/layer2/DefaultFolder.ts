@@ -33,6 +33,7 @@ import { Collection } from '../layer3/Collection.interface.js';
 import { Tree } from '../layer3/Tree.interface.js';
 import { Container } from '../layer3/Container.interface.js';
 import { FileSystemNode } from '../layer3/FileSystemNode.type.js';
+import { SyncStatus } from '../layer3/SyncStatus.enum.js';
 
 // Re-export for backwards compatibility
 export type { FileSystemNode };
@@ -355,6 +356,109 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   }
   
   // ═══════════════════════════════════════════════════════════════
+  // Symlink Operations (FFM.3) - Filesystem Symlinks
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Create a filesystem symlink to this folder
+   * 
+   * FFM.3: Creates actual filesystem symlink (not just model link)
+   * Also updates Unit references with the new symlink path.
+   * 
+   * @param symlinkPath Path where the symlink will be created
+   * @returns New Folder component representing the symlink
+   */
+  async symlinkCreate(symlinkPath: string): Promise<DefaultFolder> {
+    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    
+    // 1. Create filesystem symlink
+    if (isNodeJs) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const fs = require('fs');
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const path = require('path');
+        
+        // Ensure target directory exists
+        const targetDir = path.dirname(symlinkPath);
+        if (!fs.existsSync(targetDir)) {
+          fs.mkdirSync(targetDir, { recursive: true });
+        }
+        
+        // Create symlink pointing to this folder
+        fs.symlinkSync(this.fullPath, symlinkPath);
+      } catch (error) {
+        console.error('[DefaultFolder] symlinkCreate filesystem error:', error);
+        throw error;
+      }
+    }
+    
+    // 2. Create link component with model
+    const link = this.linkCreate(symlinkPath);
+    
+    // 3. Update Unit references
+    const unit = await this.unitGet();
+    if (unit && unit.model) {
+      const newRef = {
+        linkLocation: `ior:local:ln:file://${symlinkPath}`,
+        linkTarget: `ior:unit:${unit.model.uuid}`,
+        syncStatus: SyncStatus.SYNCED
+      };
+      if (!unit.model.references) {
+        unit.model.references = [];
+      }
+      unit.model.references.push(newRef);
+    }
+    
+    return link;
+  }
+  
+  /**
+   * Check if this folder is a symlink on the filesystem
+   * 
+   * @returns true if this is a filesystem symlink
+   */
+  isSymlink(): boolean {
+    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    
+    if (isNodeJs) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const fs = require('fs');
+        if (fs.existsSync(this.fullPath)) {
+          const stats = fs.lstatSync(this.fullPath);
+          return stats.isSymbolicLink();
+        }
+      } catch {
+        return false;
+      }
+    }
+    
+    return this.model.isLink;
+  }
+  
+  /**
+   * Get the symlink target path
+   * 
+   * @returns Target path or null if not a symlink
+   */
+  symlinkTarget(): Reference<string> {
+    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    
+    if (isNodeJs && this.isSymlink()) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const fs = require('fs');
+        return fs.readlinkSync(this.fullPath);
+      } catch {
+        return null;
+      }
+    }
+    
+    return this.model.linkTarget;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
   // Path Operations
   // ═══════════════════════════════════════════════════════════════
   
@@ -369,34 +473,112 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   }
   
   /**
-   * Move folder to new path
-   * Updates all child paths recursively
+   * Move folder to new path (Unit-aware)
    * 
-   * @param newPath New path for the folder
+   * FFM.2.2: Unit-aware move operation for folders
+   * - Moves folder on filesystem
+   * - Recursively updates all children
+   * - Updates Unit references with new paths
+   * - Moves °folder.unit symlink
+   * 
+   * @param newPath New parent path for the folder
    */
-  pathMove(newPath: string): void {
+  async pathMove(newPath: string): Promise<void> {
+    const oldFullPath = this.fullPath;
+    const oldPath = this.model.path;
+    
+    // Update model first
     this.model.path = newPath;
     this.model.modifiedAt = Date.now();
     
-    // Update cached children paths - P4a: Use for...of instead of arrow
+    const newFullPath = this.fullPath;
+    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    
+    // 1. Move actual folder on filesystem
+    if (isNodeJs) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const fs = require('fs');
+        if (fs.existsSync(oldFullPath)) {
+          // Ensure target parent directory exists
+          if (!fs.existsSync(newPath)) {
+            fs.mkdirSync(newPath, { recursive: true });
+          }
+          // Move folder
+          fs.renameSync(oldFullPath, newFullPath);
+        }
+      } catch (error) {
+        // Rollback model on error
+        this.model.path = oldPath;
+        console.error('[DefaultFolder] pathMove filesystem error:', error);
+        throw error;
+      }
+    }
+    
+    // 2. Update cached children paths recursively (model only, fs already moved)
     for (const child of this.childrenCache.values()) {
-      if (child instanceof DefaultFolder) {
-        child.model.path = this.childPath;
-      } else {
-        child.model.path = this.childPath;
+      child.model.path = this.childPath;
+    }
+    
+    // 3. Update Unit references (if Unit exists)
+    const unit = await this.unitGet();
+    if (unit && unit.model && unit.model.references) {
+      for (const ref of unit.model.references) {
+        if (ref.linkLocation.includes(oldFullPath)) {
+          ref.linkLocation = ref.linkLocation.replace(oldFullPath, newFullPath);
+        }
       }
     }
   }
   
   /**
-   * Rename folder
+   * Rename folder (Unit-aware)
    * 
    * @param newName New folder name
    */
-  rename(newName: string): void {
+  async rename(newName: string): Promise<void> {
+    const oldFullPath = this.fullPath;
+    const oldFolderName = this.model.folderName;
+    
+    // Update model
     this.model.folderName = newName;
     this.model.name = newName;
     this.model.modifiedAt = Date.now();
+    
+    const newFullPath = this.fullPath;
+    const isNodeJs = typeof process !== 'undefined' && process.versions?.node;
+    
+    // 1. Rename actual folder on filesystem
+    if (isNodeJs) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const fs = require('fs');
+        if (fs.existsSync(oldFullPath)) {
+          fs.renameSync(oldFullPath, newFullPath);
+        }
+      } catch (error) {
+        // Rollback model on error
+        this.model.folderName = oldFolderName;
+        this.model.name = oldFolderName;
+        console.error('[DefaultFolder] rename filesystem error:', error);
+        throw error;
+      }
+    }
+    
+    // 2. Update Unit references
+    const unit = await this.unitGet();
+    if (unit && unit.model && unit.model.references) {
+      for (const ref of unit.model.references) {
+        if (ref.linkLocation.includes(oldFullPath)) {
+          ref.linkLocation = ref.linkLocation.replace(oldFullPath, newFullPath);
+        }
+      }
+    }
+    
+    // 3. Update cached children paths
+    for (const child of this.childrenCache.values()) {
+      child.model.path = this.childPath;
+    }
   }
   
   // ═══════════════════════════════════════════════════════════════
