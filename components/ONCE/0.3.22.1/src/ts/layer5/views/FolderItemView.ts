@@ -21,8 +21,7 @@ import { html, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { UcpView } from './UcpView.js';
 import { FolderModel } from '../../layer3/FolderModel.interface.js';
-// TODO: Migrate to IOR-based children (P34) - FolderChildReference is deprecated
-import { FolderChildReference } from '../../layer3/FolderChildReference.interface.js';
+import { ResolvedChild } from '../../layer3/ResolvedChild.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 
 /**
@@ -46,9 +45,9 @@ export class FolderItemView extends UcpView<FolderModel> {
   /** CSS path for external styles (P33: Separation of Concerns) */
   static cssPath = 'FolderItemView.css';
   
-  /** Lightweight reference (from parent listing) */
+  /** Resolved child data (from parent's IOR resolution) - P34 */
   @property({ type: Object })
-  childRef: Reference<FolderChildReference> = null;
+  childRef: Reference<ResolvedChild> = null;
   
   /** Is this item selected? */
   @property({ type: Boolean, reflect: true })

@@ -22,8 +22,7 @@ import { html, TemplateResult, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UcpView } from './UcpView.js';
 import { FolderModel } from '../../layer3/FolderModel.interface.js';
-// TODO: Migrate to IOR-based children (P34) - FolderChildReference is deprecated
-import { FolderChildReference } from '../../layer3/FolderChildReference.interface.js';
+import { ResolvedChild } from '../../layer3/ResolvedChild.interface.js';
 import { Container } from '../../layer3/Container.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 import { NavigationDirection } from '../../layer3/NavigationDirection.enum.js';
@@ -96,6 +95,10 @@ export class FolderOverView extends UcpView<FolderModel> {
   /** Is animating? */
   @state()
   private isAnimating = false;
+  
+  /** Resolved children from IOR strings (P34) */
+  @state()
+  private resolvedChildren: ResolvedChild[] = [];
   
   /** Touch tracking for swipe gestures */
   private touchStartX = 0;
@@ -304,14 +307,14 @@ export class FolderOverView extends UcpView<FolderModel> {
     }
     
     // P4a: Use function comparator instead of arrow
-    function compareChildren(a: FolderChildReference, b: FolderChildReference): number {
+    function compareChildren(a: ResolvedChild, b: ResolvedChild): number {
       if (a.isFolder && !b.isFolder) return -1;
       if (!a.isFolder && b.isFolder) return 1;
       return a.name.localeCompare(b.name);
     }
     
-    // Sort: folders first, then files
-    const sorted = [...this.model.children].sort(compareChildren);
+    // Sort: folders first, then files (use resolvedChildren from P34 IOR resolution)
+    const sorted = [...this.resolvedChildren].sort(compareChildren);
     
     // P4a: Build template parts using for...of instead of map with arrow
     const parts: TemplateResult[] = [];
@@ -324,8 +327,9 @@ export class FolderOverView extends UcpView<FolderModel> {
   
   /**
    * Render a single child item (file or folder) - P4a: Separate method
+   * P34: Uses ResolvedChild from IOR resolution, not duplicated FolderChildReference
    */
-  private renderChildItem(child: FolderChildReference): TemplateResult {
+  private renderChildItem(child: ResolvedChild): TemplateResult {
     if (child.isFolder) {
       return html`
         <folder-item-view
@@ -338,14 +342,18 @@ export class FolderOverView extends UcpView<FolderModel> {
     return html`
       <file-item-view
         .model=${{ 
-          ...child, 
+          uuid: child.uuid,
+          name: child.name,
           filename: child.name, 
+          mimetype: child.mimetype,
+          size: child.size,
           path: '', 
           createdAt: 0, 
           modifiedAt: 0, 
           isLink: false, 
           linkTarget: null, 
-          contentHash: null 
+          contentHash: null,
+          content: null
         }}
         @item-select=${this.handleItemSelect}
       ></file-item-view>
@@ -463,13 +471,15 @@ export class FolderOverView extends UcpView<FolderModel> {
       ];
     }
     
-    // Build FolderModel with children
-    const children: FolderChildReference[] = [];
+    // P34: Build resolvedChildren for rendering (from HTTP response, not scenarios)
+    // FolderModel.children are IOR strings, but for browser-fetched folders we 
+    // populate resolvedChildren directly since no backend scenarios exist yet.
+    const resolved: ResolvedChild[] = [];
     for (const entry of entries) {
       const name = typeof entry === 'string' ? entry : entry.name;
       const isFolder = entry.isDirectory === true || entry.type === 'directory' || name.endsWith('/');
       
-      children.push({
+      resolved.push({
         uuid: `${folderPath}/${name.replace(/\/$/, '')}`,
         name: name.replace(/\/$/, ''),
         isFolder,
@@ -479,12 +489,16 @@ export class FolderOverView extends UcpView<FolderModel> {
       });
     }
     
+    // Set resolved children for rendering
+    this.resolvedChildren = resolved;
+    
+    // Set model with empty children (IOR strings would go here if from scenarios)
     this.model = {
       uuid: folderPath,
       name: folderName,
       folderName: folderName,
       path: folderPath,
-      children,
+      children: [], // P34: IOR strings (empty for HTTP-loaded folders)
       createdAt: 0,
       modifiedAt: 0,
       parentUuid: null,
@@ -495,16 +509,17 @@ export class FolderOverView extends UcpView<FolderModel> {
   
   /**
    * Create folder model from HTML directory listing (fallback)
+   * P34: Populates resolvedChildren for rendering (no backend scenarios)
    */
-  private folderModelFromHtml(html: string, folderPath: string): void {
+  private folderModelFromHtml(htmlContent: string, folderPath: string): void {
     const folderName = folderPath.split('/').filter(Boolean).pop() || 'Root';
-    const children: FolderChildReference[] = [];
+    const resolved: ResolvedChild[] = [];
     
     // Parse links from HTML
     const linkRegex = /<a[^>]+href=["']([^"']+)["'][^>]*>([^<]+)<\/a>/gi;
     let match;
     
-    while ((match = linkRegex.exec(html)) !== null) {
+    while ((match = linkRegex.exec(htmlContent)) !== null) {
       const href = match[1];
       const name = match[2].trim();
       
@@ -514,7 +529,7 @@ export class FolderOverView extends UcpView<FolderModel> {
       }
       
       const isFolder = href.endsWith('/');
-      children.push({
+      resolved.push({
         uuid: `${folderPath}/${href.replace(/\/$/, '')}`,
         name: name.replace(/\/$/, ''),
         isFolder,
@@ -524,12 +539,16 @@ export class FolderOverView extends UcpView<FolderModel> {
       });
     }
     
+    // Set resolved children for rendering
+    this.resolvedChildren = resolved;
+    
+    // Set model with empty children (IOR strings)
     this.model = {
       uuid: folderPath,
       name: folderName,
       folderName: folderName,
       path: folderPath,
-      children,
+      children: [], // P34: IOR strings
       createdAt: 0,
       modifiedAt: 0,
       parentUuid: null,

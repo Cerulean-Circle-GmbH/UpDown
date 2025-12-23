@@ -26,7 +26,7 @@
  */
 
 import { UcpComponent } from './UcpComponent.js';
-import { FolderModel, FolderChildReference } from '../layer3/FolderModel.interface.js';
+import { FolderModel } from '../layer3/FolderModel.interface.js';
 import { DefaultFile } from './DefaultFile.js';
 import { Reference } from '../layer3/Reference.interface.js';
 import { Collection } from '../layer3/Collection.interface.js';
@@ -50,10 +50,8 @@ export type { FileSystemNode };
  * - pathFromRoot(): for breadcrumb navigation
  * - navigateTo(): for animated panel transitions
  * 
- * Children are stored as lightweight references (FolderChildReference).
- * Full child components loaded on-demand when navigated.
- * 
- * TODO (P34): Migrate to IOR strings instead of FolderChildReference.
+ * P34: Children are stored as IOR strings (ior:scenario:{uuid}).
+ * Full child components resolved on-demand via IOR.resolve().
  */
 export class DefaultFolder extends UcpComponent<FolderModel> 
   implements Tree<FileSystemNode>, Container<FileSystemNode> {
@@ -123,26 +121,19 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   /**
    * Add a child (Tree interface)
    * 
-   * Folders can add files or other folders.
-   * TODO (P34): Migrate to IOR strings instead of FolderChildReference.
+   * P34: Children stored as IOR strings, not duplicated data objects.
+   * The IOR resolves to the File/Folder scenario with all data (DRY!).
    */
   childAdd(child: FileSystemNode): void {
     const isFolder = child instanceof DefaultFolder;
     const childModel = child.model;
     
-    // Create lightweight reference for model
-    // TODO: Should be IOR string like `ior:scenario:${childModel.uuid}`
-    const ref: FolderChildReference = {
-      uuid: childModel.uuid,
-      name: childModel.name,
-      isFolder,
-      mimetype: isFolder ? null : (childModel as any).mimetype,
-      size: isFolder ? null : (childModel as any).size,
-      hasChildren: isFolder ? ((childModel as FolderModel).children?.length || 0) > 0 : false
-    };
+    // P34: Store IOR string reference, NOT duplicated data
+    // Format: ior:scenario:{uuid} - resolves to File/Folder scenario
+    const childIor = `ior:scenario:${childModel.uuid}`;
     
-    // Add to model children (lightweight references)
-    this.model.children = [...(this.model.children as FolderChildReference[]), ref];
+    // Add to model children (IOR strings)
+    this.model.children = [...(this.model.children as string[]), childIor];
     this.model.modifiedAt = Date.now();
     
     // Set parent on child
@@ -155,32 +146,35 @@ export class DefaultFolder extends UcpComponent<FolderModel>
       (child as DefaultFile).model.path = this.childPath;
     }
     
-    // Cache the component
+    // Cache the component (runtime only, for quick access)
     this.childrenCache.set(childModel.uuid, child);
   }
   
   /**
    * Remove a child (Tree interface)
    * 
+   * P34: Children are IOR strings containing UUID.
+   * 
    * @param child Child to remove
    * @returns true if removed, false if not found
    */
   childRemove(child: FileSystemNode): boolean {
     const uuid = child.model.uuid;
+    const childIor = `ior:scenario:${uuid}`;
     
     // P4a: Use function predicates instead of arrows
-    function matchesUuid(c: FolderChildReference): boolean {
-      return c.uuid === uuid;
+    function matchesIor(ior: string): boolean {
+      return ior === childIor || ior.includes(uuid);
     }
-    function notMatchesUuid(c: FolderChildReference): boolean {
-      return c.uuid !== uuid;
+    function notMatchesIor(ior: string): boolean {
+      return ior !== childIor && !ior.includes(uuid);
     }
     
-    const index = Array.prototype.findIndex.call(this.model.children, matchesUuid);
+    const index = Array.prototype.findIndex.call(this.model.children, matchesIor);
     if (index === -1) return false;
     
-    // Remove from model
-    this.model.children = Array.prototype.filter.call(this.model.children, notMatchesUuid);
+    // Remove from model (children are IOR strings)
+    this.model.children = Array.prototype.filter.call(this.model.children, notMatchesIor);
     this.model.modifiedAt = Date.now();
     
     // Clear parent on child
@@ -285,39 +279,107 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Find child by name
+   * Find child by name (searches resolved cache)
+   * 
+   * P34: Children are IOR strings, so we search the resolved cache.
    * 
    * @param name Name to search for
-   * @returns Child reference or null
+   * @returns Child component or null
    */
-  childFindByName(name: string): Reference<FolderChildReference> {
-    // P4a: Use function predicate instead of arrow
-    function matchesName(c: FolderChildReference): boolean {
-      return c.name === name;
+  childFindByName(name: string): Reference<FileSystemNode> {
+    for (const child of this.childrenCache.values()) {
+      if (child.model.name === name) {
+        return child;
+      }
     }
-    return Array.prototype.find.call(this.model.children, matchesName) || null;
+    return null;
   }
   
   /**
-   * Get all files (not folders) - P22: Collection<T>
+   * Get all files (not folders) from resolved cache - P22: Collection<T>
    */
-  get files(): Collection<FolderChildReference> {
-    // P4a: Use function predicate instead of arrow
-    function isFile(child: FolderChildReference): boolean {
-      return !child.isFolder;
+  get files(): Collection<FileSystemNode> {
+    const result: FileSystemNode[] = [];
+    for (const child of this.childrenCache.values()) {
+      if (!(child instanceof DefaultFolder)) {
+        result.push(child);
+      }
     }
-    return Array.prototype.filter.call(this.model.children, isFile);
+    return result;
   }
   
   /**
-   * Get all subfolders - P22: Collection<T>
+   * Get all subfolders from resolved cache - P22: Collection<T>
    */
-  get folders(): Collection<FolderChildReference> {
-    // P4a: Use function predicate instead of arrow
-    function isFolder(child: FolderChildReference): boolean {
-      return child.isFolder;
+  get subfolders(): Collection<DefaultFolder> {
+    const result: DefaultFolder[] = [];
+    for (const child of this.childrenCache.values()) {
+      if (child instanceof DefaultFolder) {
+        result.push(child);
+      }
     }
-    return Array.prototype.filter.call(this.model.children, isFolder);
+    return result;
+  }
+  
+  /**
+   * Get raw child IOR strings (unresolved)
+   */
+  get childIors(): Collection<string> {
+    return this.model.children;
+  }
+  
+  /**
+   * Resolve all child IORs and populate the cache
+   * 
+   * P34: Children are IOR strings. This method resolves them to File/Folder components.
+   * Call this when you need to iterate over resolved children.
+   * 
+   * @returns Collection of resolved FileSystemNode components
+   */
+  async childrenResolve(): Promise<Collection<FileSystemNode>> {
+    const { IOR } = await import('../layer4/IOR.js');
+    const resolved: FileSystemNode[] = [];
+    
+    for (const ior of this.model.children as string[]) {
+      // Skip if already in cache
+      const uuid = ior.replace('ior:scenario:', '');
+      if (this.childrenCache.has(uuid)) {
+        const cached = this.childrenCache.get(uuid);
+        if (cached) resolved.push(cached);
+        continue;
+      }
+      
+      try {
+        // Resolve IOR to get File/Folder scenario
+        const scenario = await new IOR<any>().initRemote(ior).resolve();
+        if (scenario && scenario.model) {
+          // Determine if it's a File or Folder based on model
+          let child: FileSystemNode;
+          if ('folderName' in scenario.model) {
+            // It's a Folder
+            child = new DefaultFolder();
+            await child.init();
+            Object.assign(child.model, scenario.model);
+          } else {
+            // It's a File
+            child = new DefaultFile();
+            await child.init();
+            Object.assign(child.model, scenario.model);
+          }
+          
+          // Set parent
+          child.parentSet(this);
+          
+          // Cache it
+          this.childrenCache.set(child.model.uuid, child);
+          resolved.push(child);
+        }
+      } catch (error) {
+        console.error(`[DefaultFolder] Failed to resolve child IOR: ${ior}`, error);
+      }
+    }
+    
+    return resolved;
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -743,8 +805,8 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     
     // Return cached children names (P4a: Use for...of loop)
     const names: string[] = [];
-    for (const child of this.model.children as FolderChildReference[]) {
-      names.push(child.name);
+    for (const child of this.childrenCache.values()) {
+      names.push(child.model.name);
     }
     return names;
   }
