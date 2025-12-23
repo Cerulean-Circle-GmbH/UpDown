@@ -382,8 +382,10 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   /**
    * Resolve this folder — includes ONE LAYER LOOKAHEAD
    * 
-   * FFM.3.6.1: A folder is NOT "resolved" until its children are instances!
-   * This method prefetches all children to the cache.
+   * ISR Pattern: Uses UcpModel's self-replacing IOR mechanism.
+   * - Accessing model.children[i] triggers IOR creation
+   * - IOR.resolveAndReplace() runs in background
+   * - This method awaits all pending IORs
    * 
    * Called when:
    * - Folder is opened/accessed
@@ -396,7 +398,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * ```typescript
    * const folder = await new IOR<DefaultFolder>().initRemote(ior).resolveInstance();
    * await folder.resolve();  // Prefetches children
-   * // Now folder.children returns instances, not IOR strings
+   * // Now folder.model.children contains instances, not IOR strings
    * ```
    */
   async resolve(): Promise<this> {
@@ -405,13 +407,62 @@ export class DefaultFolder extends UcpComponent<FolderModel>
       return this;
     }
     
-    // Prefetch all children (ONE LAYER)
-    await this.childrenResolve();
+    const { IOR } = await import('../layer4/IOR.js');
+    
+    // ISR: children array may now contain strings, IOR objects, or instances
+    // Type assertion needed because FolderModel.children is typed as Collection<string>
+    const children = this.model.children as unknown[];
+    
+    // Access all children to trigger IOR creation via UcpModel proxy
+    // Then await each IOR's resolution
+    const resolvePromises: Promise<unknown>[] = [];
+    
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i];
+      
+      // If it's an IOR object (created by proxy), await its resolution
+      if (child && typeof child === 'object' && child instanceof IOR) {
+        resolvePromises.push(child.resolveAndReplace());
+      }
+      // If still a string (shouldn't happen after access, but handle it)
+      else if (typeof child === 'string' && child.startsWith('ior:')) {
+        const ior = new IOR().initRemote(child);
+        ior.initWithParent(this.model, 'children', i);
+        children[i] = ior;
+        resolvePromises.push(ior.resolveAndReplace());
+      }
+      // Already an instance — set parent reference
+      else if (child && typeof child === 'object') {
+        const fileSystemNode = child as FileSystemNode;
+        if (typeof fileSystemNode.parentSet === 'function') {
+          fileSystemNode.parentSet(this);
+        }
+        // Cache it
+        if (fileSystemNode.model && fileSystemNode.model.uuid) {
+          this.childrenCache.set(fileSystemNode.model.uuid, fileSystemNode);
+        }
+      }
+    }
+    
+    // Await all resolutions
+    await Promise.all(resolvePromises);
+    
+    // Now all children are instances — set parent and cache them
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i] as unknown;
+      if (child && typeof child === 'object' && typeof (child as FileSystemNode).parentSet === 'function') {
+        const fileSystemNode = child as FileSystemNode;
+        fileSystemNode.parentSet(this);
+        if (fileSystemNode.model && fileSystemNode.model.uuid) {
+          this.childrenCache.set(fileSystemNode.model.uuid, fileSystemNode);
+        }
+      }
+    }
     
     // Mark as prefetched
     this.childrenPrefetched = true;
     
-    console.log(`[DefaultFolder] Resolved: ${this.model.name} (${this.childrenCache.size} children prefetched)`);
+    console.log(`[DefaultFolder] Resolved: ${this.model.name} (${this.model.children.length} children prefetched)`);
     
     return this;
   }
