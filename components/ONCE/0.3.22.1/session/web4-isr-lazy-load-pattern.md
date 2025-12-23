@@ -318,8 +318,27 @@ get children(): Collection<FileJs> {
 }
 ```
 
+## Related Patterns
+
+### Guard Pattern for Sync Methods
+
+Sync methods use `guardReady()` to gracefully skip execution when not resolved:
+
+```typescript
+open(): this {
+  if (!this.guardReady()) return this;  // Skip if not ready
+  this.model.isOpen = true;
+  return this;
+}
+```
+
+**See**: [§/.../web4-lazy-load-save-guard-pattern.md](./web4-lazy-load-save-guard-pattern.md)
+
+---
+
 ## Dual Links
 
+- **Guard Pattern**: [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/session/web4-lazy-load-save-guard-pattern.md) | [§/.../web4-lazy-load-save-guard-pattern.md](./web4-lazy-load-save-guard-pattern.md)
 - **PDCA**: [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/session/2025-12-22-UTC-1500.isr-resolution-tracking.pdca.md) | [§/.../isr-resolution-tracking.pdca.md](./2025-12-22-UTC-1500.isr-resolution-tracking.pdca.md)
 - **UcpModel.ts**: [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer3/UcpModel.ts) | [§/.../layer3/UcpModel.ts](../src/ts/layer3/UcpModel.ts)
 - **JsInterface Pattern**: [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/session/web4-jsinterface-pattern.md) | [§/.../web4-jsinterface-pattern.md](./web4-jsinterface-pattern.md)
