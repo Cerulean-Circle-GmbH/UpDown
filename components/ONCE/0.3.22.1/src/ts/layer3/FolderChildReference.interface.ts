@@ -4,6 +4,10 @@
  * Lightweight reference for folder listing.
  * Full component loaded on navigation.
  * 
+ * TODO (P34): This interface violates DRY - it duplicates data from File/Folder scenarios.
+ * Should be replaced with IOR strings: "ior:scenario:{uuid}" that resolve to File/Folder.
+ * Requires migrating FolderOverView and FolderItemView to resolve IORs.
+ * 
  * Web4 Principles:
  * - P5: Reference<T> for nullable
  * - P19: One File One Type

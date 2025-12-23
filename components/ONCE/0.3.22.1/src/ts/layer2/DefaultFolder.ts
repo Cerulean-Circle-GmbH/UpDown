@@ -52,6 +52,8 @@ export type { FileSystemNode };
  * 
  * Children are stored as lightweight references (FolderChildReference).
  * Full child components loaded on-demand when navigated.
+ * 
+ * TODO (P34): Migrate to IOR strings instead of FolderChildReference.
  */
 export class DefaultFolder extends UcpComponent<FolderModel> 
   implements Tree<FileSystemNode>, Container<FileSystemNode> {
@@ -122,23 +124,25 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * Add a child (Tree interface)
    * 
    * Folders can add files or other folders.
+   * TODO (P34): Migrate to IOR strings instead of FolderChildReference.
    */
   childAdd(child: FileSystemNode): void {
     const isFolder = child instanceof DefaultFolder;
     const childModel = child.model;
     
     // Create lightweight reference for model
+    // TODO: Should be IOR string like `ior:scenario:${childModel.uuid}`
     const ref: FolderChildReference = {
       uuid: childModel.uuid,
       name: childModel.name,
       isFolder,
       mimetype: isFolder ? null : (childModel as any).mimetype,
       size: isFolder ? null : (childModel as any).size,
-      hasChildren: isFolder ? (childModel as FolderModel).children.length > 0 : false
+      hasChildren: isFolder ? ((childModel as FolderModel).children?.length || 0) > 0 : false
     };
     
     // Add to model children (lightweight references)
-    this.model.children = [...this.model.children, ref];
+    this.model.children = [...(this.model.children as FolderChildReference[]), ref];
     this.model.modifiedAt = Date.now();
     
     // Set parent on child

@@ -21,7 +21,9 @@
 import { html, TemplateResult, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UcpView } from './UcpView.js';
-import { FolderModel, FolderChildReference } from '../../layer3/FolderModel.interface.js';
+import { FolderModel } from '../../layer3/FolderModel.interface.js';
+// TODO: Migrate to IOR-based children (P34) - FolderChildReference is deprecated
+import { FolderChildReference } from '../../layer3/FolderChildReference.interface.js';
 import { Container } from '../../layer3/Container.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 import { NavigationDirection } from '../../layer3/NavigationDirection.enum.js';
