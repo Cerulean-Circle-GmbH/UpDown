@@ -33,7 +33,7 @@ import type { LazyReference } from './LazyReference.interface.js';
  * Usage:
  * ```typescript
  * // Model declaration - just specify target type
- * children: Collection<FileSystemNode>;
+ * children: Collection<File>;
  * 
  * // Assignment works with arrays
  * model.children = ["ior:scenario:uuid1", file2];

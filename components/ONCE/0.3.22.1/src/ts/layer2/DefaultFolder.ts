@@ -29,23 +29,18 @@ import { UcpComponent } from './UcpComponent.js';
 import { FolderModel } from '../layer3/FolderModel.interface.js';
 import { DefaultFile } from './DefaultFile.js';
 import { Reference } from '../layer3/Reference.interface.js';
+import type { LazyReference } from '../layer3/LazyReference.interface.js';
 import { Collection } from '../layer3/Collection.interface.js';
 import { Tree } from '../layer3/Tree.interface.js';
 import { Container } from '../layer3/Container.interface.js';
 import { File } from '../layer3/File.js';
+import { Folder } from '../layer3/Folder.js';
 import { SyncStatus } from '../layer3/SyncStatus.enum.js';
 import { Once } from '../layer1/ONCE.js';
 
-/**
- * FileSystemNode - Union type for tree operations
- * 
- * Note: This is NOT the same as File JsInterface!
- * - File (JsInterface): For RelatedObjects registration, runtime lookup
- * - FileSystemNode (type): For type-safe tree operations (model access, etc.)
- * 
- * Both DefaultFile and DefaultFolder implement File AND are FileSystemNode.
- */
-export type FileSystemNode = DefaultFile | DefaultFolder;
+// FileSystemNode union type is now replaced by File JsInterface
+// File now has `abstract get model(): Model;` for tree operations
+// See layer3/FileSystemNode.type.ts for legacy union if needed
 
 /**
  * DefaultFolder - Folder component for Web4 FileSystem
@@ -62,7 +57,7 @@ export type FileSystemNode = DefaultFile | DefaultFolder;
  * Full child components resolved on-demand via IOR.resolve().
  */
 export class DefaultFolder extends UcpComponent<FolderModel> 
-  implements Container<File>, File {
+  implements Container<File>, File, Folder {
   
   // ═══════════════════════════════════════════════════════════════
   // Static Registration (P35: JsInterface for Runtime Interfaces)
@@ -74,6 +69,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    */
   static start(): void {
     File.implementationRegister(DefaultFolder);
+    Folder.implementationRegister(DefaultFolder);
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -119,29 +115,38 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   
   /**
    * Set parent folder (called by parent's childAdd)
-   * @internal
+   * File interface implementation
    */
-  parentSet(folder: Reference<DefaultFolder>): void {
-    this.parentFolder = folder;
+  parentSet(folder: File | null): void {
+    this.parentFolder = folder as Reference<DefaultFolder>;
     if (folder) {
       this.model.parent = `ior:scenario:${folder.model.uuid}`;
     }
   }
   
   /**
+   * Set the path of this folder
+   * File interface implementation
+   */
+  pathSet(newPath: string): void {
+    this.model.path = newPath;
+    this.model.modifiedAt = Date.now();
+  }
+  
+  /**
    * Get resolved children (Tree interface)
    * 
-   * ISR: model.children contains LazyReference<FileSystemNode>
+   * ISR: model.children contains LazyReference<File>
    * This accessor filters for resolved instances only.
    * 
-   * @returns Array of resolved FileSystemNode instances
+   * @returns Array of resolved File instances (DefaultFile or DefaultFolder)
    */
-  get children(): FileSystemNode[] {
+  get children(): File[] {
     // Filter for resolved instances (not IOR strings or IOR objects)
-    const resolved: FileSystemNode[] = [];
+    const resolved: File[] = [];
     for (const child of this.model.children) {
       if (child !== null && typeof child === 'object' && 'model' in child) {
-        resolved.push(child as FileSystemNode);
+        resolved.push(child as File);
       }
     }
     return resolved;
@@ -153,18 +158,12 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * ISR: Stores child instance directly in model.children.
    * When persisted, instance serializes to IOR string.
    */
-  childAdd(child: FileSystemNode): void {
-    const isFolder = child instanceof DefaultFolder;
-    
+  childAdd(child: File): void {
     // Set parent on child
     child.parentSet(this);
     
-    // Update child's path
-    if (isFolder) {
-      (child as DefaultFolder).model.path = this.childPath;
-    } else {
-      (child as DefaultFile).model.path = this.childPath;
-    }
+    // Update child's path via File interface
+    child.pathSet(this.childPath);
     
     // Add instance directly to model.children (ISR-compatible)
     this.model.children = [...this.model.children, child];
@@ -179,13 +178,13 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * @param child Child to remove
    * @returns true if removed, false if not found
    */
-  childRemove(child: FileSystemNode): boolean {
+  childRemove(child: File): boolean {
     const uuid = child.model.uuid;
     
     // Find by UUID (works for instances, IOR strings, or IOR objects)
     const index = this.model.children.findIndex(function matchChild(c) {
       if (typeof c === 'string') return c.includes(uuid);
-      if (c && typeof c === 'object' && 'model' in c) return (c as FileSystemNode).model.uuid === uuid;
+      if (c && typeof c === 'object' && 'model' in c) return (c as File).model.uuid === uuid;
       return false;
     });
     
@@ -204,7 +203,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   /**
    * Remove child by UUID (convenience method)
    */
-  childRemoveByUuid(uuid: string): Reference<FileSystemNode> {
+  childRemoveByUuid(uuid: string): Reference<File> {
     const child = this.childGet(uuid);
     if (!child) return null;
     
@@ -217,11 +216,11 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * 
    * ISR: Searches model.children for resolved instances.
    */
-  childGet(uuid: string): Reference<FileSystemNode> {
+  childGet(uuid: string): Reference<File> {
     for (const child of this.model.children) {
       if (child && typeof child === 'object' && 'model' in child) {
-        if ((child as FileSystemNode).model.uuid === uuid) {
-          return child as FileSystemNode;
+        if ((child as File).model.uuid === uuid) {
+          return child as File;
         }
       }
     }
@@ -282,7 +281,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * 
    * For OverViews: triggers navigation/animation.
    */
-  navigateTo(child: FileSystemNode): boolean {
+  navigateTo(child: File): boolean {
     // Check if child exists in model.children
     const exists = this.childGet(child.model.uuid) !== null;
     // Navigation logic handled by OverView, we just validate
@@ -311,7 +310,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * @param name Name to search for
    * @returns Child component or null
    */
-  childFindByName(name: string): Reference<FileSystemNode> {
+  childFindByName(name: string): Reference<File> {
     for (const child of this.children) {
       if (child.model.name === name) {
         return child;
@@ -352,9 +351,9 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * ISR Pattern: References may be in any state:
    * - string: IOR "ior:..." (unresolved)
    * - IOR object: resolving in background
-   * - FileSystemNode: resolved instance
+   * - File: resolved instance (DefaultFile or DefaultFolder)
    */
-  get childReferences(): Collection<FileSystemNode> {
+  get childReferences(): Collection<File> {
     return this.model.children;
   }
   
@@ -372,7 +371,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * @param uuid UUID of the child to select
    * @returns The selected child (resolved by ISR)
    */
-  childSelect(uuid: string): Reference<FileSystemNode> {
+  childSelect(uuid: string): Reference<File> {
     return this.childGet(uuid);
   }
   
@@ -397,7 +396,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
         name: this.model.name,
         children: [], // Links don't copy children
         isLink: true,
-        linkTarget: this.fullPath
+        linkTarget: `ior:file://${this.fullPath}`
       }
     });
     return link;
@@ -412,7 +411,8 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     if (!this.model.isLink) {
       throw new Error('[DefaultFolder] Cannot move link target: not a link');
     }
-    this.model.linkTarget = newTarget;
+    // Store as IOR string for LazyReference
+    this.model.linkTarget = `ior:file://${newTarget}`;
     this.model.modifiedAt = Date.now();
   }
   
@@ -499,11 +499,21 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   }
   
   /**
-   * Get the symlink target path
+   * Get the symlink target as LazyReference
    * 
-   * @returns Target path or null if not a symlink
+   * Returns the target folder reference (IOR string or resolved Folder instance).
+   * Use symlinkTargetPath() for the raw filesystem path.
    */
-  symlinkTarget(): Reference<string> {
+  get linkTarget(): LazyReference<Folder> {
+    return this.model.linkTarget;
+  }
+  
+  /**
+   * Get the symlink target path from filesystem
+   * 
+   * @returns Target path string or null if not a symlink
+   */
+  symlinkTargetPath(): Reference<string> {
     const isNodeJs = Once.isNode;
     
     if (isNodeJs && this.isSymlink()) {
@@ -516,7 +526,21 @@ export class DefaultFolder extends UcpComponent<FolderModel>
       }
     }
     
-    return this.model.linkTarget;
+    // Extract path from IOR if stored as IOR string
+    const target = this.model.linkTarget;
+    if (typeof target === 'string') {
+      if (target.startsWith('ior:file://')) {
+        return target.replace('ior:file://', '');
+      }
+      return target;
+    }
+    
+    // If resolved to Folder instance, get its path
+    if (target && typeof target === 'object' && 'path' in target) {
+      return (target as Folder).path;
+    }
+    
+    return null;
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -644,7 +668,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     
     // 2. Update resolved children paths recursively (model only, fs already moved)
     for (const child of this.children) {
-      child.model.path = this.childPath;
+      child.pathSet(this.childPath);
     }
     
     // 3. Update Unit references (if Unit exists)
@@ -704,7 +728,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
     
     // 3. Update resolved children paths
     for (const child of this.children) {
-      child.model.path = this.childPath;
+      child.pathSet(this.childPath);
     }
   }
   
@@ -1033,7 +1057,9 @@ export class DefaultFolder extends UcpComponent<FolderModel>
         const lstats = fs.lstatSync(this.fullPath);
         if (lstats.isSymbolicLink()) {
           this.model.isLink = true;
-          this.model.linkTarget = fs.readlinkSync(this.fullPath);
+          // Store target as IOR string for LazyReference
+          const targetPath = fs.readlinkSync(this.fullPath);
+          this.model.linkTarget = `ior:file://${targetPath}`;
         }
       } catch (error) {
         console.error('[DefaultFolder] initFromPath stats error:', error);

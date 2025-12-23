@@ -27,6 +27,7 @@
 import { UcpComponent } from './UcpComponent.js';
 import { FileModel } from '../layer3/FileModel.interface.js';
 import { Reference } from '../layer3/Reference.interface.js';
+import type { LazyReference } from '../layer3/LazyReference.interface.js';
 import { SyncStatus } from '../layer3/SyncStatus.enum.js';
 import { Once } from '../layer1/ONCE.js';
 import { File } from '../layer3/File.js';
@@ -83,10 +84,19 @@ export class DefaultFile extends UcpComponent<FileModel> implements File {
   
   /**
    * Set parent folder (called by Folder.childAdd)
-   * @internal
+   * File interface implementation
    */
-  parentSet(folder: Reference<DefaultFolder>): void {
-    this.parentFolder = folder;
+  parentSet(folder: File | null): void {
+    this.parentFolder = folder as Reference<DefaultFolder>;
+  }
+  
+  /**
+   * Set the path of this file
+   * File interface implementation
+   */
+  pathSet(newPath: string): void {
+    this.model.path = newPath;
+    this.model.modifiedAt = Date.now();
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -244,7 +254,7 @@ export class DefaultFile extends UcpComponent<FileModel> implements File {
         size: this.model.size,
         contentHash: this.model.contentHash,
         isLink: true,
-        linkTarget: this.model.path
+        linkTarget: `ior:file://${this.model.path}`
       }
     });
     return link;
@@ -259,7 +269,8 @@ export class DefaultFile extends UcpComponent<FileModel> implements File {
     if (!this.model.isLink) {
       throw new Error('[DefaultFile] Cannot move link target: not a link');
     }
-    this.model.linkTarget = newTarget;
+    // Store as IOR string for LazyReference
+    this.model.linkTarget = `ior:file://${newTarget}`;
     this.model.modifiedAt = Date.now();
   }
   
@@ -349,11 +360,21 @@ export class DefaultFile extends UcpComponent<FileModel> implements File {
   }
   
   /**
-   * Get the symlink target path
+   * Get the symlink target as LazyReference
    * 
-   * @returns Target path or null if not a symlink
+   * Returns the target file reference (IOR string or resolved File instance).
+   * Use symlinkTargetPath() for the raw filesystem path.
    */
-  symlinkTarget(): Reference<string> {
+  get linkTarget(): LazyReference<File> {
+    return this.model.linkTarget;
+  }
+  
+  /**
+   * Get the symlink target path from filesystem
+   * 
+   * @returns Target path string or null if not a symlink
+   */
+  symlinkTargetPath(): Reference<string> {
     const isNodeJs = Once.isNode;
     
     if (isNodeJs && this.isSymlink()) {
@@ -366,7 +387,21 @@ export class DefaultFile extends UcpComponent<FileModel> implements File {
       }
     }
     
-    return this.model.linkTarget;
+    // Extract path from IOR if stored as IOR string
+    const target = this.model.linkTarget;
+    if (typeof target === 'string') {
+      if (target.startsWith('ior:file://')) {
+        return target.replace('ior:file://', '');
+      }
+      return target;
+    }
+    
+    // If resolved to File instance, get its path
+    if (target && typeof target === 'object' && 'path' in target) {
+      return (target as File).path;
+    }
+    
+    return null;
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -786,7 +821,9 @@ export class DefaultFile extends UcpComponent<FileModel> implements File {
         const lstats = fs.lstatSync(this.fullPath);
         if (lstats.isSymbolicLink()) {
           this.model.isLink = true;
-          this.model.linkTarget = fs.readlinkSync(this.fullPath);
+          // Store target as IOR string for LazyReference
+          const targetPath = fs.readlinkSync(this.fullPath);
+          this.model.linkTarget = `ior:file://${targetPath}`;
         }
       } catch (error) {
         console.error('[DefaultFile] initFromPath stats error:', error);

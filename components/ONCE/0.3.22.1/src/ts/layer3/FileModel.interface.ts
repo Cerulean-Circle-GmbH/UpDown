@@ -21,6 +21,8 @@
 
 import { Model } from './Model.interface.js';
 import { Reference } from './Reference.interface.js';
+import { LazyReference } from './LazyReference.interface.js';
+import type { File } from './File.js';
 
 /**
  * FileModel - Data model for File component
@@ -56,8 +58,8 @@ export interface FileModel extends Model {
   /** Is this a symbolic link? */
   isLink: boolean;
   
-  /** If isLink, the target path (stable reference) */
-  linkTarget: Reference<string>;
+  /** If isLink, the target file (lazy reference via IOR) */
+  linkTarget: LazyReference<File>;
   
   /**
    * File content as native Blob

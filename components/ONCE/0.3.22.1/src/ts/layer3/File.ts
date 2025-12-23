@@ -31,6 +31,7 @@
  */
 
 import { JsInterface } from './JsInterface.js';
+import type { Model } from './Model.interface.js';
 
 /**
  * File - Runtime interface for file system nodes
@@ -50,6 +51,14 @@ export abstract class File extends JsInterface {
   // ═══════════════════════════════════════════════════════════════
   // Core Properties
   // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Model containing uuid, name, and type-specific properties
+   * 
+   * Returns Model (base type) — implementations return FileModel or FolderModel.
+   * Model provides uuid and name which is sufficient for tree operations.
+   */
+  abstract get model(): Model;
   
   /**
    * Full path of the file/folder
@@ -94,5 +103,21 @@ export abstract class File extends JsInterface {
    * For folders: recursive delete of children
    */
   abstract delete(): Promise<void>;
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Tree Operations (for Folder.childAdd/childRemove)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Set parent folder reference
+   * Called by Folder.childAdd() and Folder.childRemove()
+   */
+  abstract parentSet(folder: File | null): void;
+  
+  /**
+   * Set the path of this file/folder
+   * Called when moving files or updating child paths
+   */
+  abstract pathSet(newPath: string): void;
 }
 

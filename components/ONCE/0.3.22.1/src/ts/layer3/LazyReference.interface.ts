@@ -19,7 +19,7 @@
  * @example
  * ```typescript
  * // In FolderModel
- * children: Collection<LazyReference<FileSystemNode>>
+ * children: Collection<LazyReference<File>>
  * 
  * // Access triggers ISR:
  * const child = folder.model.children[0];

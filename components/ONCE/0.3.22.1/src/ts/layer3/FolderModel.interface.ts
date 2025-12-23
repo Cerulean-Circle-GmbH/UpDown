@@ -17,13 +17,10 @@
  */
 
 import { Model } from './Model.interface.js';
-import { Reference } from './Reference.interface.js';
 import { LazyReference } from './LazyReference.interface.js';
 import { Collection } from './Collection.interface.js';
-import type { FileSystemNode } from './FileSystemNode.type.js';
-
-// Forward declaration to avoid circular import
-type Folder = import('../layer2/DefaultFolder.js').DefaultFolder;
+import type { File } from './File.js';
+import type { Folder } from './Folder.js';
 
 /**
  * FolderModel - Data model for Folder component
@@ -43,10 +40,11 @@ export interface FolderModel extends Model {
   /** 
    * Child files and folders - Collection<T> with lazy resolution
    * 
-   * Elements start as IOR strings, resolve to FileSystemNode instances.
+   * Elements start as IOR strings, resolve to File instances
+   * (DefaultFile or DefaultFolder, both implement File JsInterface).
    * UcpModel proxy handles ISR automatically.
    */
-  children: Collection<FileSystemNode>;
+  children: Collection<File>;
   
   /** Parent folder (lazy reference, null for root) */
   parent: LazyReference<Folder>;
@@ -60,8 +58,8 @@ export interface FolderModel extends Model {
   /** Is this a symbolic link? */
   isLink: boolean;
   
-  /** If isLink, the target path (stable reference) */
-  linkTarget: Reference<string>;
+  /** If isLink, the target folder (lazy reference via IOR) */
+  linkTarget: LazyReference<Folder>;
 }
 
 
