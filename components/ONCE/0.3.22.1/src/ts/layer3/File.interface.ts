@@ -1,31 +1,32 @@
 /**
- * IFile.interface.ts - TypeScript Interface for File Components
+ * File.interface.ts - TypeScript Interface for File Components
  * 
  * This is the COMPILE-TIME contract for file-like objects.
- * It is ERASED at runtime — for runtime existence, see File.ts (JsInterface).
+ * It is ERASED at runtime — for runtime existence, see FileJsInterface.ts.
  * 
  * Pattern: JsInterface Pattern (P35)
- * - IFile (this file): Compile-time contract, erased at runtime
- * - File (File.ts): Abstract class extending JsInterface, implements IFile
- * - DefaultFile: Concrete class, implements File (and thus IFile)
+ * - File (this file): Compile-time contract, erased at runtime
+ * - FileJsInterface (FileJsInterface.ts): Abstract class extending JsInterface, implements File
+ * - DefaultFile: Concrete class, implements FileJsInterface (and thus File)
  * 
  * Web4 Principles:
  * - P19: One File One Type
  * - P35: JsInterface for Runtime Interfaces
  * 
- * @see ./web4-jsinterface-pattern.md for full pattern documentation
- * @ior ior:esm:/ONCE/{version}/IFile
+ * @see session/web4-jsinterface-pattern.md for full pattern documentation
+ * @see session/web4-component-anatomy-details.md for component anatomy
+ * @ior ior:esm:/ONCE/{version}/File
  */
 
 import type { Model } from './Model.interface.js';
 
 /**
- * IFile - TypeScript interface for file-like objects
+ * File - TypeScript interface for file-like objects
  * 
  * Both files and folders implement this interface.
- * Folders extend this with container capabilities (see IFolder).
+ * Folders extend this with container capabilities (see Folder.interface.ts).
  */
-export interface IFile {
+export interface File {
   // ═══════════════════════════════════════════════════════════════
   // Identity
   // ═══════════════════════════════════════════════════════════════
@@ -76,7 +77,7 @@ export interface IFile {
   // ═══════════════════════════════════════════════════════════════
   
   /** Set parent reference (called by Folder.childAdd/childRemove) */
-  parentSet(parent: IFile | null): void;
+  parentSet(parent: File | null): void;
   
   /** Update path (called when moving) */
   pathSet(newPath: string): void;

@@ -22,7 +22,7 @@
 import { Model } from './Model.interface.js';
 import { Reference } from './Reference.interface.js';
 import { LazyReference } from './LazyReference.interface.js';
-import type { File } from './File.js';
+import type { File } from './File.interface.js';
 
 /**
  * FileModel - Data model for File component

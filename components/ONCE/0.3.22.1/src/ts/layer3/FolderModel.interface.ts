@@ -19,8 +19,8 @@
 import { Model } from './Model.interface.js';
 import { LazyReference } from './LazyReference.interface.js';
 import { Collection } from './Collection.interface.js';
-import type { File } from './File.js';
-import type { Folder } from './Folder.js';
+import type { File } from './File.interface.js';
+import type { Folder } from './Folder.interface.js';
 
 /**
  * FolderModel - Data model for Folder component

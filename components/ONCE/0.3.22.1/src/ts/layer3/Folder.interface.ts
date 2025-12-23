@@ -1,56 +1,57 @@
 /**
- * IFolder.interface.ts - TypeScript Interface for Folder Components
+ * Folder.interface.ts - TypeScript Interface for Folder Components
  * 
- * Extends IFile with container capabilities.
- * This is the COMPILE-TIME contract — see Folder.ts for runtime existence.
+ * Extends File with container capabilities.
+ * This is the COMPILE-TIME contract — see FolderJsInterface.ts for runtime existence.
  * 
  * Pattern: JsInterface Pattern (P35)
- * - IFolder (this file): Compile-time contract, erased at runtime
- * - Folder (Folder.ts): Abstract class extending File, implements IFolder
- * - DefaultFolder: Concrete class, implements Folder (and thus IFolder)
+ * - Folder (this file): Compile-time contract, erased at runtime
+ * - FolderJsInterface (FolderJsInterface.ts): Abstract class extending FileJsInterface, implements Folder
+ * - DefaultFolder: Concrete class, implements FolderJsInterface (and thus Folder)
  * 
  * Web4 Principles:
  * - P19: One File One Type
  * - P35: JsInterface for Runtime Interfaces
  * 
- * @see ./web4-jsinterface-pattern.md for full pattern documentation
- * @ior ior:esm:/ONCE/{version}/IFolder
+ * @see session/web4-jsinterface-pattern.md for full pattern documentation
+ * @see session/web4-component-anatomy-details.md for component anatomy
+ * @ior ior:esm:/ONCE/{version}/Folder
  */
 
-import type { IFile } from './IFile.interface.js';
+import type { File } from './File.interface.js';
 import type { Collection } from './Collection.interface.js';
 
 /**
- * IFolder - TypeScript interface for folder components
+ * Folder - TypeScript interface for folder components
  * 
  * A folder IS-A file that can contain other files.
- * Extends IFile with container operations.
+ * Extends File with container operations.
  */
-export interface IFolder extends IFile {
+export interface Folder extends File {
   // ═══════════════════════════════════════════════════════════════
   // Container Properties
   // ═══════════════════════════════════════════════════════════════
   
   /** Resolved children (filtered for instances only) */
-  readonly children: IFile[];
+  readonly children: File[];
   
   /** Raw child references (may include unresolved IORs) */
-  readonly childReferences: Collection<IFile>;
+  readonly childReferences: Collection<File>;
   
   // ═══════════════════════════════════════════════════════════════
   // Container Operations
   // ═══════════════════════════════════════════════════════════════
   
   /** Add a child file or folder */
-  childAdd(child: IFile): void;
+  childAdd(child: File): void;
   
   /** Remove a child file or folder */
-  childRemove(child: IFile): boolean;
+  childRemove(child: File): boolean;
   
   /** Get child by UUID */
-  childGet(uuid: string): IFile | null;
+  childGet(uuid: string): File | null;
   
   /** Find child by name */
-  childFindByName(name: string): IFile | null;
+  childFindByName(name: string): File | null;
 }
 

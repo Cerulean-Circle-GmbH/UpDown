@@ -303,10 +303,30 @@ await web4ts.componentStart(componentName, version);
 
 ---
 
+## Related Patterns
+
+### JsInterface Pattern (P35)
+
+For runtime interfaces that need to exist in JavaScript (for RelatedObjects, implementation lookup):
+
+- **Pattern Document**: [§/session/web4-jsinterface-pattern.md](./web4-jsinterface-pattern.md)
+- **Naming Convention**:
+  - `Xxx.interface.ts` → `interface Xxx` (compile-time)
+  - `XxxJsInterface.ts` → `abstract class XxxJsInterface extends JsInterface implements Xxx` (runtime)
+  - `DefaultXxx.ts` → `class DefaultXxx extends UcpComponent<XxxModel> implements XxxJsInterface`
+
+**Example**: File/Folder hierarchy
+- `File.interface.ts` → `interface File`
+- `FileJsInterface.ts` → `abstract class FileJsInterface extends JsInterface implements File`
+- `DefaultFile.ts` → `class DefaultFile extends UcpComponent<FileModel> implements FileJsInterface`
+
+---
+
 ## References
 
 - **Unit README**: [§/components/Unit/0.3.0.5/README.md](../../../Unit/0.3.0.5/README.md)
 - **Web4TSComponent README**: [§/components/Web4TSComponent/0.3.20.6/README.md](../../../Web4TSComponent/0.3.20.6/README.md)
+- **JsInterface Pattern**: [§/session/web4-jsinterface-pattern.md](./web4-jsinterface-pattern.md)
 - **Generator**: `src/ts/layer2/DefaultWeb4TSComponent.ts` (units live here)
 - **Legacy**: `src/ts/layer2/UnitDiscoveryService.ts` (to be deprecated/removed)
 - **Test14**: `test/tootsie/Test14_CSSUnitCreation.ts`

@@ -20,3 +20,4 @@
 - [ ] Lifecycle L3: Start - `npm start` or `./once` starts component - [Details](./web4-component-anatomy-details.md#lifecycle) | [Example](../src/sh/start.sh)
 - [ ] Lifecycle L4: Test - `./once tootsie` runs all Tootsie tests - [Details](./web4-component-anatomy-details.md#lifecycle) | [Example](../test/tootsie/)
 - [ ] Lifecycle L5: Clean - `src/sh/clean.sh` removes build artifacts - [Details](./web4-component-anatomy-details.md#lifecycle) | [Example](../src/sh/clean.sh)
+- [ ] JsInterface J1: Runtime Interface Naming - `Xxx.interface.ts` (interface) + `XxxJsInterface.ts` (class) - [Details](./web4-jsinterface-pattern.md#naming-convention) | [Example](../src/ts/layer3/FileJsInterface.ts)

@@ -1,55 +1,56 @@
 /**
- * File.ts - Runtime Interface for File Components
+ * FileJsInterface.ts - Runtime Interface for File Components
  * 
  * ✅ Web4 Principle 35: JsInterface for Runtime Interfaces
  * 
- * This is the RUNTIME representation of IFile.interface.ts.
+ * This is the RUNTIME representation of File.interface.ts.
  * 
  * Pattern: JsInterface Pattern
- * - IFile (IFile.interface.ts): Compile-time contract, erased at runtime
- * - File (this file): Abstract class extending JsInterface, implements IFile
- * - DefaultFile: Concrete class, implements File (and thus IFile)
+ * - File (File.interface.ts): Compile-time contract, erased at runtime
+ * - FileJsInterface (this file): Abstract class extending JsInterface, implements File
+ * - DefaultFile: Concrete class, implements FileJsInterface (and thus File)
  * 
- * TypeScript interfaces are erased at runtime. File extends JsInterface
+ * TypeScript interfaces are erased at runtime. FileJsInterface extends JsInterface
  * to exist at runtime for:
- * - RelatedObjects: `image.relatedObjectRegister(File, imageFile)`
- * - Implementation lookup: `File.implementations` → [DefaultFile, DefaultFolder]
- * - Runtime polymorphism: Both DefaultFile and DefaultFolder implement File
+ * - RelatedObjects: `image.relatedObjectRegister(FileJsInterface, imageFile)`
+ * - Implementation lookup: `FileJsInterface.implementations` → [DefaultFile, DefaultFolder]
+ * - Runtime polymorphism: Both DefaultFile and DefaultFolder implement FileJsInterface
  * 
  * IMPORTANT: Folder IS-A File!
- * - DefaultFile implements File (leaf node)
- * - DefaultFolder implements File (can have children)
- * - Both register with `File.implementationRegister(ClassName)`
+ * - DefaultFile implements FileJsInterface (leaf node)
+ * - DefaultFolder implements FileJsInterface (can have children)
+ * - Both register with `FileJsInterface.implementationRegister(ClassName)`
  * 
  * Usage:
  * ```typescript
  * // In Image component - store related file
- * image.relatedObjectRegister(File, imageFile);
+ * image.relatedObjectRegister(FileJsInterface, imageFile);
  * 
  * // Lookup later
- * const file = image.relatedObjectLookupFirst(File);
+ * const file = image.relatedObjectLookupFirst(FileJsInterface);
  * ```
  * 
- * @see ./web4-jsinterface-pattern.md for full pattern documentation
- * @ior ior:esm:/ONCE/{version}/File
+ * @see session/web4-jsinterface-pattern.md for full pattern documentation
+ * @see session/web4-component-anatomy-details.md for component anatomy
+ * @ior ior:esm:/ONCE/{version}/FileJsInterface
  * @pdca 2025-12-22-UTC-1100.file-folder-inheritance.pdca.md
  */
 
 import { JsInterface } from './JsInterface.js';
-import type { IFile } from './IFile.interface.js';
+import type { File } from './File.interface.js';
 import type { Model } from './Model.interface.js';
 
 /**
- * File - Runtime interface for file system nodes
+ * FileJsInterface - Runtime interface for file system nodes
  * 
  * Both DefaultFile and DefaultFolder implement this interface.
  * - Extends JsInterface for runtime type introspection
- * - Implements IFile for compile-time contract enforcement
+ * - Implements File for compile-time contract enforcement
  * 
- * Note: Abstract methods use `File` (runtime type) not `IFile` (erased)
+ * Note: Abstract methods use `FileJsInterface` (runtime type) not `File` (erased)
  * for parameters that need to exist at runtime.
  */
-export abstract class File extends JsInterface implements IFile {
+export abstract class FileJsInterface extends JsInterface implements File {
   
   // ═══════════════════════════════════════════════════════════════
   // Core Properties
@@ -113,9 +114,9 @@ export abstract class File extends JsInterface implements IFile {
   
   /**
    * Set parent folder reference
-   * Called by Folder.childAdd() and Folder.childRemove()
+   * Called by FolderJsInterface.childAdd() and FolderJsInterface.childRemove()
    */
-  abstract parentSet(folder: File | null): void;
+  abstract parentSet(folder: FileJsInterface | null): void;
   
   /**
    * Set the path of this file/folder

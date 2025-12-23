@@ -30,7 +30,8 @@ import { Reference } from '../layer3/Reference.interface.js';
 import type { LazyReference } from '../layer3/LazyReference.interface.js';
 import { SyncStatus } from '../layer3/SyncStatus.enum.js';
 import { Once } from '../layer1/ONCE.js';
-import { File } from '../layer3/File.js';
+import { FileJsInterface } from '../layer3/FileJsInterface.js';
+import type { File } from '../layer3/File.interface.js';
 
 // Forward declaration to avoid circular import
 import type { DefaultFolder } from './DefaultFolder.js';
@@ -53,7 +54,7 @@ import type { DefaultFolder } from './DefaultFolder.js';
  * - Loaded on-demand via contentLoad()
  * - objectUrl created for display
  */
-export class DefaultFile extends UcpComponent<FileModel> implements File {
+export class DefaultFile extends UcpComponent<FileModel> implements FileJsInterface {
   
   // ═══════════════════════════════════════════════════════════════
   // Static Registration (P35: JsInterface for Runtime Interfaces)
@@ -63,7 +64,7 @@ export class DefaultFile extends UcpComponent<FileModel> implements File {
    * Register DefaultFile as implementation of File JsInterface
    */
   static start(): void {
-    File.implementationRegister(DefaultFile);
+    FileJsInterface.implementationRegister(DefaultFile);
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -86,7 +87,7 @@ export class DefaultFile extends UcpComponent<FileModel> implements File {
    * Set parent folder (called by Folder.childAdd)
    * File interface implementation
    */
-  parentSet(folder: File | null): void {
+  parentSet(folder: FileJsInterface | null): void {
     this.parentFolder = folder as Reference<DefaultFolder>;
   }
   

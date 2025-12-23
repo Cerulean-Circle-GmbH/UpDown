@@ -33,8 +33,10 @@ import type { LazyReference } from '../layer3/LazyReference.interface.js';
 import { Collection } from '../layer3/Collection.interface.js';
 import { Tree } from '../layer3/Tree.interface.js';
 import { Container } from '../layer3/Container.interface.js';
-import { File } from '../layer3/File.js';
-import { Folder } from '../layer3/Folder.js';
+import { FileJsInterface } from '../layer3/FileJsInterface.js';
+import { FolderJsInterface } from '../layer3/FolderJsInterface.js';
+import type { File } from '../layer3/File.interface.js';
+import type { Folder } from '../layer3/Folder.interface.js';
 import { SyncStatus } from '../layer3/SyncStatus.enum.js';
 import { Once } from '../layer1/ONCE.js';
 
@@ -57,7 +59,7 @@ import { Once } from '../layer1/ONCE.js';
  * Full child components resolved on-demand via IOR.resolve().
  */
 export class DefaultFolder extends UcpComponent<FolderModel> 
-  implements Container<File>, File, Folder {
+  implements Container<FileJsInterface>, FileJsInterface, FolderJsInterface {
   
   // ═══════════════════════════════════════════════════════════════
   // Static Registration (P35: JsInterface for Runtime Interfaces)
@@ -68,8 +70,8 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * Folder IS-A File (can have children)
    */
   static start(): void {
-    File.implementationRegister(DefaultFolder);
-    Folder.implementationRegister(DefaultFolder);
+    FileJsInterface.implementationRegister(DefaultFolder);
+    FolderJsInterface.implementationRegister(DefaultFolder);
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -109,7 +111,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   /**
    * Get parent folder (from Container→Tree interface)
    */
-  get parent(): Reference<Tree<File>> {
+  get parent(): Reference<Tree<FileJsInterface>> {
     return this.parentFolder;
   }
   
@@ -117,7 +119,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * Set parent folder (called by parent's childAdd)
    * File interface implementation
    */
-  parentSet(folder: File | null): void {
+  parentSet(folder: FileJsInterface | null): void {
     this.parentFolder = folder as Reference<DefaultFolder>;
     if (folder) {
       this.model.parent = `ior:scenario:${folder.model.uuid}`;
@@ -141,12 +143,12 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * 
    * @returns Array of resolved File instances (DefaultFile or DefaultFolder)
    */
-  get children(): File[] {
+  get children(): FileJsInterface[] {
     // Filter for resolved instances (not IOR strings or IOR objects)
-    const resolved: File[] = [];
+    const resolved: FileJsInterface[] = [];
     for (const child of this.model.children) {
       if (child !== null && typeof child === 'object' && 'model' in child) {
-        resolved.push(child as File);
+        resolved.push(child as FileJsInterface);
       }
     }
     return resolved;
@@ -158,7 +160,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * ISR: Stores child instance directly in model.children.
    * When persisted, instance serializes to IOR string.
    */
-  childAdd(child: File): void {
+  childAdd(child: FileJsInterface): void {
     // Set parent on child
     child.parentSet(this);
     
@@ -178,7 +180,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * @param child Child to remove
    * @returns true if removed, false if not found
    */
-  childRemove(child: File): boolean {
+  childRemove(child: FileJsInterface): boolean {
     const uuid = child.model.uuid;
     
     // Find by UUID (works for instances, IOR strings, or IOR objects)
@@ -203,7 +205,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   /**
    * Remove child by UUID (convenience method)
    */
-  childRemoveByUuid(uuid: string): Reference<File> {
+  childRemoveByUuid(uuid: string): Reference<FileJsInterface> {
     const child = this.childGet(uuid);
     if (!child) return null;
     
@@ -216,10 +218,10 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * 
    * ISR: Searches model.children for resolved instances.
    */
-  childGet(uuid: string): Reference<File> {
+  childGet(uuid: string): Reference<FileJsInterface> {
     for (const child of this.model.children) {
       if (child && typeof child === 'object' && 'model' in child) {
-        if ((child as File).model.uuid === uuid) {
+        if ((child as FileJsInterface).model.uuid === uuid) {
           return child as File;
         }
       }
@@ -264,8 +266,8 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * 
    * Used for breadcrumb navigation.
    */
-  pathFromRoot(): Container<File>[] {
-    const path: Container<File>[] = [];
+  pathFromRoot(): Container<FileJsInterface>[] {
+    const path: Container<FileJsInterface>[] = [];
     let current: Reference<DefaultFolder> = this;
     
     while (current) {
@@ -281,7 +283,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * 
    * For OverViews: triggers navigation/animation.
    */
-  navigateTo(child: File): boolean {
+  navigateTo(child: FileJsInterface): boolean {
     // Check if child exists in model.children
     const exists = this.childGet(child.model.uuid) !== null;
     // Navigation logic handled by OverView, we just validate
@@ -310,7 +312,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * @param name Name to search for
    * @returns Child component or null
    */
-  childFindByName(name: string): Reference<File> {
+  childFindByName(name: string): Reference<FileJsInterface> {
     for (const child of this.children) {
       if (child.model.name === name) {
         return child;
@@ -353,7 +355,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * - IOR object: resolving in background
    * - File: resolved instance (DefaultFile or DefaultFolder)
    */
-  get childReferences(): Collection<File> {
+  get childReferences(): Collection<FileJsInterface> {
     return this.model.children;
   }
   
@@ -371,7 +373,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * @param uuid UUID of the child to select
    * @returns The selected child (resolved by ISR)
    */
-  childSelect(uuid: string): Reference<File> {
+  childSelect(uuid: string): Reference<FileJsInterface> {
     return this.childGet(uuid);
   }
   
