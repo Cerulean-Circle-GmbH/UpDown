@@ -37,6 +37,7 @@ import type { IORProfile } from '../layer3/IORProfile.interface.js';
 import type { IOROptions } from '../layer3/IOROptions.interface.js';
 import { HttpMethod } from '../layer3/HttpMethod.enum.js';
 import type { Scenario } from '../layer3/Scenario.interface.js';
+import type { Model } from '../layer3/Model.interface.js';
 import { HTTPSLoader } from './HTTPSLoader.js';
 import { ScenarioLoader } from './ScenarioLoader.js';
 import { WebSocketLoader } from './WebSocketLoader.js';
@@ -372,6 +373,163 @@ export class IOR<T = any> implements IORInterface {
         await this.cacheStore(result);
         
         return result as T;
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
+    // KD.2-KD.4: Instance Resolution (Reference<T> → UcpComponent)
+    // Web4 P34: IOR as Unified Entry Point for dereferencing
+    // ═══════════════════════════════════════════════════════════════
+    
+    /**
+     * Resolve IOR to a UcpComponent INSTANCE (not just Scenario)
+     * 
+     * Full dereferencing chain: IOR → Scenario → Instance
+     * 
+     * KD.2: Instance method for when you have an IOR and want the component
+     * 
+     * @returns Fully initialized UcpComponent instance, or null if resolution fails
+     * 
+     * @example
+     * ```typescript
+     * const file = await new IOR<DefaultFile>()
+     *   .initRemote('ior:scenario:abc-123')
+     *   .resolveInstance();
+     * ```
+     */
+    async resolveInstance<C = T>(): Promise<C | null> {
+        // 1. Resolve to scenario (existing method)
+        const scenario = await this.resolve() as Scenario<any> | null;
+        if (!scenario) {
+            console.warn('[IOR.resolveInstance] Failed to resolve scenario');
+            return null;
+        }
+        
+        // 2. Check if scenario has ior info for instantiation
+        if (!scenario.ior || !scenario.ior.component) {
+            console.warn('[IOR.resolveInstance] Scenario missing ior.component info');
+            return null;
+        }
+        
+        // 3. Instantiate using static method
+        return await IOR.instantiate<C, any>(scenario);
+    }
+    
+    /**
+     * Instantiate a UcpComponent from Scenario
+     * 
+     * KD.3: Static utility for Stage 2: Scenario → Instance
+     * Used by resolveInstance() and directly when you have a scenario
+     * 
+     * @param scenario The scenario to instantiate
+     * @returns Fully initialized UcpComponent instance
+     * 
+     * @example
+     * ```typescript
+     * const file = await IOR.instantiate<DefaultFile>(fileScenario);
+     * ```
+     */
+    static async instantiate<C, M extends Model = Model>(scenario: Scenario<M>): Promise<C> {
+        // 1. Extract component info from scenario.ior
+        const componentName = scenario.ior?.component;
+        const version = scenario.ior?.version;
+        
+        if (!componentName) {
+            throw new Error('[IOR.instantiate] Scenario missing ior.component');
+        }
+        
+        // 2. Lazy import to avoid circular dependencies
+        const { TypeRegistry } = await import('../layer2/TypeRegistry.js');
+        const { Once } = await import('../layer1/ONCE.js');
+        
+        // 3. Check TypeRegistry first (sync lookup)
+        let ComponentClass = TypeRegistry.instance.classFromName(componentName);
+        
+        if (!ComponentClass) {
+            // 4. Get kernel and delegate to componentLoad() (async)
+            const kernel = Once.getInstance();
+            if (!kernel) {
+                throw new Error('[IOR.instantiate] ONCE kernel not started');
+            }
+            
+            // componentLoad exists on NodeJsOnce, check if available
+            if (typeof (kernel as any).componentLoad === 'function') {
+                ComponentClass = await (kernel as any).componentLoad(componentName, version || 'latest');
+            } else {
+                throw new Error(`[IOR.instantiate] Component class not found: ${componentName}`);
+            }
+        }
+        
+        if (!ComponentClass) {
+            throw new Error(`[IOR.instantiate] Failed to load component class: ${componentName}`);
+        }
+        
+        // 5. Create instance and initialize
+        const instance = new ComponentClass() as C;
+        await (instance as any).init(scenario);
+        
+        return instance;
+    }
+    
+    /**
+     * Dereference a Reference<T> to its instance
+     * 
+     * KD.4: Static method that handles all three Reference states:
+     * - IOR string → load scenario → instantiate
+     * - Scenario JSON → instantiate directly
+     * - Instance → return as-is
+     * - null → return null
+     * 
+     * Web4 P34: Reference<T> = IOR | Scenario | Instance | null
+     * 
+     * @param reference Any Reference<T> in any of its three states
+     * @returns Dereferenced UcpComponent instance, or null
+     * 
+     * @example
+     * ```typescript
+     * // Works with any Reference state
+     * const file = await IOR.dereference<DefaultFile>(reference);
+     * 
+     * // IOR string
+     * const file1 = await IOR.dereference<DefaultFile>('ior:scenario:abc');
+     * 
+     * // Scenario JSON
+     * const file2 = await IOR.dereference<DefaultFile>(fileScenario);
+     * 
+     * // Already an instance (just returns it)
+     * const file3 = await IOR.dereference<DefaultFile>(existingFile);
+     * ```
+     */
+    static async dereference<C, M extends Model = Model>(reference: C | Scenario<M> | string | null): Promise<C | null> {
+        if (reference === null || reference === undefined) {
+            return null;
+        }
+        
+        // Already an instance? (check for common UcpComponent markers)
+        // We check for 'model' property AND 'init' method (duck typing)
+        if (typeof reference === 'object' && 
+            'model' in reference && 
+            'init' in reference &&
+            typeof (reference as any).init === 'function') {
+            // Already a UcpComponent instance
+            return reference as C;
+        }
+        
+        // IOR string? (async: load + instantiate)
+        if (typeof reference === 'string') {
+            return await new IOR<C>().initRemote(reference).resolveInstance<C>();
+        }
+        
+        // Scenario JSON? (has ior and model but no init method)
+        if (typeof reference === 'object' && 
+            'ior' in reference && 
+            'model' in reference &&
+            !('init' in reference && typeof (reference as any).init === 'function')) {
+            return await IOR.instantiate<C, M>(reference as Scenario<M>);
+        }
+        
+        // Unknown format
+        console.warn('[IOR.dereference] Unknown reference format:', typeof reference);
+        return null;
     }
     
     // ═══════════════════════════════════════════════════════════════

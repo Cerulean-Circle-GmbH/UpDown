@@ -334,6 +334,8 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    * P34: Children are IOR strings. This method resolves them to File/Folder components.
    * Call this when you need to iterate over resolved children.
    * 
+   * KD.5: Uses IOR.dereference() for clean dereferencing (DRY!)
+   * 
    * @returns Collection of resolved FileSystemNode components
    */
   async childrenResolve(): Promise<Collection<FileSystemNode>> {
@@ -350,23 +352,10 @@ export class DefaultFolder extends UcpComponent<FolderModel>
       }
       
       try {
-        // Resolve IOR to get File/Folder scenario
-        const scenario = await new IOR<any>().initRemote(ior).resolve();
-        if (scenario && scenario.model) {
-          // Determine if it's a File or Folder based on model
-          let child: FileSystemNode;
-          if ('folderName' in scenario.model) {
-            // It's a Folder
-            child = new DefaultFolder();
-            await child.init();
-            Object.assign(child.model, scenario.model);
-          } else {
-            // It's a File
-            child = new DefaultFile();
-            await child.init();
-            Object.assign(child.model, scenario.model);
-          }
-          
+        // KD.5: Use IOR.dereference() for clean Reference<T> → Instance resolution
+        const child = await IOR.dereference<FileSystemNode>(ior);
+        
+        if (child) {
           // Set parent
           child.parentSet(this);
           
