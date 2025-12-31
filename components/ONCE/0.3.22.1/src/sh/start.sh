@@ -7,8 +7,9 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 COMPONENT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
 
 # 🛡️ SELF-HEALING: Auto-detect and update old-style start.sh
-# Check if this is an old-style start.sh (hardcoded paths, no shared library)
-if [ ! -f "$SCRIPT_DIR/lib-component-start.sh" ] || grep -q '\.\./\.\./\.\.' "$0" 2>/dev/null; then
+# Check if this is an old-style start.sh (missing shared library)
+# NOTE: Removed grep self-check that caused infinite loop (grep matched its own pattern)
+if [ ! -f "$SCRIPT_DIR/lib-component-start.sh" ]; then
     echo "🔧 Detected old-style start.sh - auto-updating build system..."
     
     # Extract component name and version from component directory
