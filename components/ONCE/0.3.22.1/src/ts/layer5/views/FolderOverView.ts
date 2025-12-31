@@ -26,9 +26,13 @@ import { ResolvedChild } from '../../layer3/ResolvedChild.interface.js';
 import { Container } from '../../layer3/Container.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 import { NavigationDirection } from '../../layer3/NavigationDirection.enum.js';
+import { LazyReference } from '../../layer3/LazyReference.interface.js';
+import type { File } from '../../layer3/File.interface.js';
 import { FileOrchestrator } from '../../layer4/FileOrchestrator.js';
 import './FileItemView.js';
 import './FolderItemView.js';
+import './IORLoadingView.js';
+import './ViewRegistry.js';  // Registers component → view mappings for ISR
 
 /**
  * FolderOverView - Animated folder browser with breadcrumb
@@ -295,17 +299,38 @@ export class FolderOverView extends UcpView<FolderModel> {
   
   /**
    * Render folder children (files and folders) - P4a: No arrow functions
+   * 
+   * Supports two rendering modes:
+   * 1. HTTP-fetched: Uses resolvedChildren (from server JSON)
+   * 2. Scenario-loaded: Uses model.children with ISR (polymorphic dispatch)
+   * 
+   * @pdca 2025-12-30-UTC-1200.lazy-reference-kernel-isr.pdca.md
    */
   private renderChildren(): TemplateResult {
-    if (!this.model?.children || this.model.children.length === 0) {
-      return html`
-        <div class="empty-state">
-          <span class="empty-icon">📂</span>
-          <span class="empty-text">This folder is empty</span>
-        </div>
-      `;
+    // Check if we have HTTP-fetched children (resolvedChildren populated)
+    if (this.resolvedChildren.length > 0) {
+      return this.renderResolvedChildren();
     }
     
+    // Check if we have scenario-loaded children (model.children with ISR)
+    if (this.model?.children && this.model.children.length > 0) {
+      return this.renderLazyChildren();
+    }
+    
+    // No children from either source
+    return html`
+      <div class="empty-state">
+        <span class="empty-icon">📂</span>
+        <span class="empty-text">This folder is empty</span>
+      </div>
+    `;
+  }
+  
+  /**
+   * Render HTTP-fetched children (already resolved)
+   * Uses resolvedChildren state populated from server JSON
+   */
+  private renderResolvedChildren(): TemplateResult {
     // P4a: Use function comparator instead of arrow
     function compareChildren(a: ResolvedChild, b: ResolvedChild): number {
       if (a.isFolder && !b.isFolder) return -1;
@@ -313,7 +338,7 @@ export class FolderOverView extends UcpView<FolderModel> {
       return a.name.localeCompare(b.name);
     }
     
-    // Sort: folders first, then files (use resolvedChildren from P34 IOR resolution)
+    // Sort: folders first, then files
     const sorted = [...this.resolvedChildren].sort(compareChildren);
     
     // P4a: Build template parts using for...of instead of map with arrow
@@ -323,6 +348,123 @@ export class FolderOverView extends UcpView<FolderModel> {
     }
     
     return html`${parts}`;
+  }
+  
+  /**
+   * Render scenario-loaded children with polymorphic ISR dispatch
+   * 
+   * Option C: Uses UcpView.tagFor() for polymorphic view dispatch.
+   * Children can be:
+   * - IOR string → renders ior-loading-view
+   * - IOR object (resolving) → renders ior-loading-view
+   * - Resolved File/Folder → renders file-item-view/folder-item-view
+   * 
+   * @pdca 2025-12-30-UTC-1200.lazy-reference-kernel-isr.pdca.md
+   */
+  private renderLazyChildren(): TemplateResult {
+    const parts: TemplateResult[] = [];
+    
+    for (const child of this.model.children) {
+      parts.push(this.renderLazyChild(child));
+    }
+    
+    return html`${parts}`;
+  }
+  
+  /**
+   * Render a single lazy child with polymorphic dispatch
+   * 
+   * Determines the correct view based on the child's resolution state:
+   * - null → skip
+   * - string (IOR) → ior-loading-view (UcpModel proxy will convert)
+   * - IOR object → ior-loading-view (resolving in background)
+   * - Resolved instance → file-item-view or folder-item-view
+   * 
+   * @pdca 2025-12-30-UTC-1200.lazy-reference-kernel-isr.pdca.md
+   */
+  private renderLazyChild(child: LazyReference<File>): TemplateResult {
+    // Null → skip
+    if (child === null) {
+      return html``;
+    }
+    
+    // String (IOR not yet accessed via proxy) → loading view
+    if (typeof child === 'string') {
+      return html`
+        <ior-loading-view 
+          .model=${{ ior: child, uuid: child }}
+          displayName="Loading..."
+        ></ior-loading-view>
+      `;
+    }
+    
+    // IOR object (has resolve method) → check if resolved
+    if (typeof child === 'object' && 'resolve' in child) {
+      const ior = child as { isResolving?: boolean; value?: unknown; model?: { ior?: string; uuid?: string } };
+      
+      // Still resolving → loading view
+      if (ior.isResolving || !ior.value) {
+        return html`
+          <ior-loading-view 
+            .model=${ior.model || { ior: '', uuid: '' }}
+            displayName="Loading..."
+          ></ior-loading-view>
+        `;
+      }
+      
+      // Resolved → render the resolved value
+      return this.renderResolvedInstance(ior.value);
+    }
+    
+    // Already resolved instance → render directly
+    return this.renderResolvedInstance(child);
+  }
+  
+  /**
+   * Render a resolved File or Folder instance
+   * 
+   * Determines if the instance is a folder (has children) or file,
+   * and renders the appropriate view.
+   */
+  private renderResolvedInstance(instance: unknown): TemplateResult {
+    // Type guard: check if instance has the expected shape
+    if (!instance || typeof instance !== 'object') {
+      return html`<default-item-view .model=${{ name: 'Unknown' }}></default-item-view>`;
+    }
+    
+    const obj = instance as { model?: { uuid?: string; name?: string; children?: unknown[] } };
+    const model = obj.model || instance as { uuid?: string; name?: string; children?: unknown[] };
+    
+    // Check if it's a folder (has children property)
+    const isFolder = 'children' in model && Array.isArray(model.children);
+    
+    if (isFolder) {
+      // Build ResolvedChild for FolderItemView
+      const childRef: ResolvedChild = {
+        uuid: model.uuid || '',
+        name: model.name || 'Folder',
+        isFolder: true,
+        hasChildren: (model.children?.length || 0) > 0,
+        mimetype: 'inode/directory',
+        size: 0
+      };
+      
+      return html`
+        <folder-item-view
+          .childRef=${childRef}
+          @item-select=${this.handleItemSelect}
+          @item-navigate=${this.handleItemNavigate}
+        ></folder-item-view>
+      `;
+    }
+    
+    // It's a file
+    return html`
+      <file-item-view
+        .model=${model}
+        @item-select=${this.handleItemSelect}
+      ></file-item-view>
+    `;
   }
   
   /**

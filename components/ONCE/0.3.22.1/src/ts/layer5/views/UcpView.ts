@@ -3,7 +3,8 @@
  * 
  * Base class extending LitElement for all Web4 views.
  * Provides model binding, child view management, CSS preloading,
- * and UNIVERSAL DROP SUPPORT (Web4 Principle 31).
+ * UNIVERSAL DROP SUPPORT (Web4 Principle 31), and POLYMORPHIC
+ * VIEW DISPATCH via tagFor() (Option C - ISR Pattern).
  * 
  * Web4 Principles:
  * - P4: Radical OOP (no arrow functions)
@@ -14,6 +15,7 @@
  * - P19: External CSS via adoptedStyleSheets
  * - P22: Collection<T> for child views
  * - P31: Universal Drop Support - ALL views accept drops by default
+ * - P34: IOR as Unified Entry Point (tagFor polymorphic dispatch)
  * 
  * CSS Loading Pattern:
  *   1. CSSLoader.preloadAll() called before component import
@@ -26,10 +28,18 @@
  *   3. Drop fires 'file-drop' event with file details
  *   4. Parent can call view.add(component) to add dropped content
  * 
+ * Polymorphic View Dispatch (Option C - ISR):
+ *   1. Use UcpView.tagFor(child) to get custom element tag
+ *   2. Returns 'ior-loading-view' for unresolved IOR objects
+ *   3. Returns 'file-item-view' for File instances
+ *   4. Returns 'folder-item-view' for Folder instances
+ *   5. Views register via UcpView.viewRegister(TypeClass, 'tag-name')
+ * 
  * @ior ior:esm:/ONCE/{version}/UcpView
  * @pdca 2025-12-03-UTC-1200.mvc-lit3-views.pdca.md
  * @pdca 2025-12-03-UTC-1400.lit-css-preload.pdca.md
  * @pdca 2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md
+ * @pdca 2025-12-30-UTC-1200.lazy-reference-kernel-isr.pdca.md
  */
 
 import { LitElement, css, CSSResultGroup } from 'lit';
@@ -50,6 +60,128 @@ export type { FileDropDetail };
  * Layer 5 - All methods are SYNCHRONOUS!
  */
 export abstract class UcpView<TModel = any> extends LitElement implements View<TModel> {
+  
+  // ═══════════════════════════════════════════════════════════════
+  // STATIC: View Registry for Polymorphic Dispatch (Option C - ISR)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Registry: Constructor → custom element tag name
+   * Used by tagFor() for polymorphic view dispatch.
+   */
+  private static viewRegistry: Map<Function, string> = new Map();
+  
+  /**
+   * Default tag for unresolved IOR objects
+   */
+  private static readonly IOR_LOADING_TAG = 'ior-loading-view';
+  
+  /**
+   * Default tag when no view is registered for a type
+   */
+  private static readonly DEFAULT_TAG = 'default-item-view';
+  
+  /**
+   * Register a view for a type (polymorphic dispatch)
+   * 
+   * Called during view module initialization to register which
+   * custom element tag to use for rendering instances of a type.
+   * 
+   * @param typeClass The constructor function (e.g., DefaultFile, DefaultFolder)
+   * @param tagName The custom element tag (e.g., 'file-item-view')
+   * 
+   * @example
+   * ```typescript
+   * // In FileItemView.ts
+   * UcpView.viewRegister(DefaultFile, 'file-item-view');
+   * ```
+   */
+  static viewRegister(typeClass: Function, tagName: string): void {
+    UcpView.viewRegistry.set(typeClass, tagName);
+    console.log(`[UcpView] Registered ${typeClass.name} → <${tagName}>`);
+  }
+  
+  /**
+   * Get the custom element tag for an instance (polymorphic dispatch)
+   * 
+   * Used in views to render Collection<T> children polymorphically.
+   * Checks if the value is an IOR (loading) or resolved instance.
+   * 
+   * @param value The value from Collection (IOR or instance)
+   * @returns Custom element tag name
+   * 
+   * @example
+   * ```typescript
+   * // In FolderOverView.renderChildren()
+   * for (const child of this.model.children) {
+   *   const tag = UcpView.tagFor(child);  // 'ior-loading-view' or 'file-item-view'
+   *   parts.push(html`<${tag} .model=${child.model || child}></${tag}>`);
+   * }
+   * ```
+   */
+  static tagFor(value: unknown): string {
+    // Null/undefined → default
+    if (value === null || value === undefined) {
+      return UcpView.DEFAULT_TAG;
+    }
+    
+    // String (IOR string not yet converted) → loading
+    if (typeof value === 'string') {
+      return UcpView.IOR_LOADING_TAG;
+    }
+    
+    // IOR object (resolving or resolved) → check isResolving
+    if (typeof value === 'object' && 'isResolving' in value) {
+      const ior = value as { isResolving: boolean; value?: unknown };
+      
+      // If resolved, use the resolved value's tag
+      if (!ior.isResolving && ior.value !== undefined && ior.value !== null) {
+        return UcpView.tagFor(ior.value);
+      }
+      
+      // Still resolving → loading view
+      return UcpView.IOR_LOADING_TAG;
+    }
+    
+    // Check registry for constructor match
+    const constructor = (value as object).constructor;
+    const registeredTag = UcpView.viewRegistry.get(constructor);
+    if (registeredTag) {
+      return registeredTag;
+    }
+    
+    // Check prototype chain for registered parent classes
+    let proto = Object.getPrototypeOf(value);
+    while (proto && proto.constructor !== Object) {
+      const parentTag = UcpView.viewRegistry.get(proto.constructor);
+      if (parentTag) {
+        return parentTag;
+      }
+      proto = Object.getPrototypeOf(proto);
+    }
+    
+    // No registration found → default
+    return UcpView.DEFAULT_TAG;
+  }
+  
+  /**
+   * Check if a value is an unresolved IOR (still loading)
+   * 
+   * @param value Value to check
+   * @returns true if IOR and still resolving
+   */
+  static isLoading(value: unknown): boolean {
+    if (value === null || value === undefined) return false;
+    if (typeof value === 'string' && value.startsWith('ior:')) return true;
+    if (typeof value === 'object' && 'isResolving' in value) {
+      return (value as { isResolving: boolean }).isResolving === true;
+    }
+    return false;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // STATIC: CSS Configuration
+  // ═══════════════════════════════════════════════════════════════
   
   /**
    * CSS path for this view - override in subclass
