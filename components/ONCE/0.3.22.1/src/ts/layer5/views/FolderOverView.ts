@@ -600,17 +600,19 @@ export class FolderOverView extends UcpView<FolderModel> {
     } else if (data.entries) {
       entries = data.entries;
     } else if (data.files || data.folders) {
-      // Combined format
-      entries = [
-        ...(data.folders || []).map((f: string | { name: string }) => ({ 
-          name: typeof f === 'string' ? f : f.name, 
-          isDirectory: true 
-        })),
-        ...(data.files || []).map((f: string | { name: string }) => ({ 
-          name: typeof f === 'string' ? f : f.name, 
-          isFile: true 
-        }))
-      ];
+      // Combined format - P4a: Use for...of instead of map with arrow
+      const folders = data.folders || [];
+      const files = data.files || [];
+      
+      for (const f of folders) {
+        const name = typeof f === 'string' ? f : f.name;
+        entries.push({ name, isDirectory: true });
+      }
+      
+      for (const f of files) {
+        const name = typeof f === 'string' ? f : f.name;
+        entries.push({ name, isFile: true });
+      }
     }
     
     // P34: Build resolvedChildren for rendering (from HTTP response, not scenarios)
