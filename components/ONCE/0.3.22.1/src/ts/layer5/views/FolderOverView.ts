@@ -193,7 +193,13 @@ export class FolderOverView extends UcpView<FolderModel> {
         ${this.renderBreadcrumb()}
       </nav>
       
-      <div class="panel-container">
+      <div 
+        class="panel-container"
+        @contextmenu=${this.onContextMenu}
+        @dragover=${this.onDragOver}
+        @dragleave=${this.onDragLeave}
+        @drop=${this.onDrop}
+      >
         <div class="panel ${this.getPanelClass()}">
           ${this.isLoading ? this.renderLoading() : 
             this.errorMessage ? this.renderError() : 
@@ -924,6 +930,204 @@ export class FolderOverView extends UcpView<FolderModel> {
     
     // P4a: Use bound method instead of arrow
     setTimeout(this.animationReset.bind(this), 300);
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // FS.4: Context Menu and Drop Handlers
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * FileOrchestrator for async CRUD operations
+   */
+  private orchestrator = new FileOrchestrator();
+  
+  /**
+   * Handle context menu (right-click) on items
+   * 
+   * Shows context menu with options: Rename, Delete, Move, Copy
+   * P7: SYNC handler - delegates to orchestrator for async operations
+   */
+  onContextMenu(event: MouseEvent): void {
+    event.preventDefault();
+    
+    const target = event.target as HTMLElement;
+    const itemElement = target.closest('[data-uuid]') as HTMLElement;
+    
+    if (!itemElement) return;
+    
+    const uuid = itemElement.dataset.uuid;
+    const itemType = itemElement.dataset.type || 'file';
+    
+    // Dispatch context menu event for external handling
+    this.dispatchEvent(new CustomEvent('item-context-menu', {
+      detail: { 
+        uuid, 
+        itemType,
+        x: event.clientX, 
+        y: event.clientY,
+        actions: ['rename', 'delete', 'move', 'copy']
+      },
+      bubbles: true,
+      composed: true
+    }));
+  }
+  
+  /**
+   * Handle drag over (for drop target highlighting)
+   * 
+   * P7: SYNC handler
+   */
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'copy';
+    }
+    
+    // Add visual feedback
+    this.classList.add('drop-target-active');
+  }
+  
+  /**
+   * Handle drag leave (remove highlighting)
+   * 
+   * P7: SYNC handler
+   */
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    this.classList.remove('drop-target-active');
+  }
+  
+  /**
+   * Handle drop (file upload or move)
+   * 
+   * P7: SYNC handler - delegates to orchestrator for async operations
+   * Supports both native file drops and internal item moves
+   */
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    this.classList.remove('drop-target-active');
+    
+    if (!event.dataTransfer) return;
+    
+    // Check for internal move (dragging items within the file browser)
+    const internalData = event.dataTransfer.getData('application/x-file-item');
+    if (internalData) {
+      this.handleInternalMove(JSON.parse(internalData));
+      return;
+    }
+    
+    // Handle native file drops
+    const files = event.dataTransfer.files;
+    if (files.length > 0) {
+      this.handleFileDrop(files);
+    }
+  }
+  
+  /**
+   * Handle internal item move (drag within file browser)
+   * 
+   * P7: SYNC handler - dispatches event for orchestrator
+   */
+  private handleInternalMove(itemData: { uuid: string; type: string; sourcePath: string }): void {
+    // Dispatch move event for external handling by orchestrator
+    this.dispatchEvent(new CustomEvent('item-move', {
+      detail: {
+        uuid: itemData.uuid,
+        type: itemData.type,
+        sourcePath: itemData.sourcePath,
+        targetPath: this.currentPath
+      },
+      bubbles: true,
+      composed: true
+    }));
+  }
+  
+  /**
+   * Handle native file drop (upload files)
+   * 
+   * P7: SYNC handler - dispatches event for orchestrator
+   */
+  private handleFileDrop(files: FileList): void {
+    const fileList: { name: string; type: string; size: number }[] = [];
+    
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      fileList.push({
+        name: file.name,
+        type: file.type,
+        size: file.size
+      });
+    }
+    
+    // Dispatch upload event for external handling by orchestrator
+    this.dispatchEvent(new CustomEvent('files-upload', {
+      detail: {
+        files: files,
+        fileList: fileList,
+        targetPath: this.currentPath
+      },
+      bubbles: true,
+      composed: true
+    }));
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // FS.4: CRUD Action Methods (triggered by context menu)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Rename an item
+   * 
+   * P7: SYNC trigger - orchestrator handles async
+   */
+  itemRename(uuid: string, newName: string): void {
+    // Dispatch rename event for orchestrator
+    this.dispatchEvent(new CustomEvent('item-rename', {
+      detail: { uuid, newName, path: this.currentPath },
+      bubbles: true,
+      composed: true
+    }));
+  }
+  
+  /**
+   * Delete an item
+   * 
+   * P7: SYNC trigger - orchestrator handles async
+   */
+  itemDelete(uuid: string): void {
+    // Dispatch delete event for orchestrator
+    this.dispatchEvent(new CustomEvent('item-delete', {
+      detail: { uuid, path: this.currentPath },
+      bubbles: true,
+      composed: true
+    }));
+  }
+  
+  /**
+   * Create a new folder
+   * 
+   * P7: SYNC trigger - orchestrator handles async
+   */
+  folderCreate(name: string): void {
+    // Dispatch create event for orchestrator
+    this.dispatchEvent(new CustomEvent('folder-create', {
+      detail: { name, parentPath: this.currentPath },
+      bubbles: true,
+      composed: true
+    }));
+  }
+  
+  /**
+   * Set folder after async load (ISR Pattern - P7 compliant)
+   * Called by FileOrchestrator.folderLoadForView()
+   * 
+   * @pdca 2025-12-30-UTC-1200.lazy-reference-kernel-isr.pdca.md
+   */
+  folderSet(folder: { model: FolderModel }): void {
+    this.model = folder.model;
+    this.isLoading = false;
+    this.errorMessage = '';
   }
 }
 
