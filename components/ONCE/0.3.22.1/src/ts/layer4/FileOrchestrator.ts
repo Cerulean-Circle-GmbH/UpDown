@@ -272,6 +272,164 @@ export class FileOrchestrator {
   }
   
   // ═══════════════════════════════════════════════════════════════
+  // File CRUD Operations (FS.3)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Delete a file
+   * 
+   * @param file The file to delete
+   * @param parentFolder Optional parent folder to remove from
+   */
+  async fileDelete(file: DefaultFile, parentFolder?: DefaultFolder): Promise<void> {
+    // Remove from parent first
+    if (parentFolder) {
+      parentFolder.childRemove(file);
+    }
+    
+    // Delete file (handles filesystem, Unit, and symlinks)
+    await file.delete();
+  }
+  
+  /**
+   * Move a file to a new path
+   * 
+   * @param file The file to move
+   * @param newPath New directory path
+   * @param oldParent Optional current parent folder
+   * @param newParent Optional new parent folder
+   */
+  async fileMove(
+    file: DefaultFile,
+    newPath: string,
+    oldParent?: DefaultFolder,
+    newParent?: DefaultFolder
+  ): Promise<void> {
+    // Remove from old parent
+    if (oldParent) {
+      oldParent.childRemove(file);
+    }
+    
+    // Move file on filesystem and update Unit references
+    await file.pathMove(newPath);
+    
+    // Add to new parent
+    if (newParent) {
+      newParent.childAdd(file);
+    }
+  }
+  
+  /**
+   * Rename a file
+   * 
+   * @param file The file to rename
+   * @param newName New filename
+   */
+  async fileRename(file: DefaultFile, newName: string): Promise<void> {
+    // Rename handles filesystem and Unit references
+    await file.rename(newName);
+  }
+  
+  /**
+   * Copy a file to a new location
+   * 
+   * @param file The file to copy
+   * @param newPath Path for the copy
+   * @param newParent Parent folder for the copy
+   * @returns The copied file
+   */
+  async fileCopy(
+    file: DefaultFile,
+    newPath: string,
+    newParent?: DefaultFolder
+  ): Promise<DefaultFile> {
+    // Create new file with same content
+    const copy = new DefaultFile();
+    await copy.init();
+    
+    // Copy model properties
+    copy.model.filename = file.model.filename;
+    copy.model.name = file.model.name;
+    copy.model.mimetype = file.model.mimetype;
+    copy.model.size = file.model.size;
+    copy.model.contentHash = file.model.contentHash;
+    copy.model.content = file.model.content;
+    copy.model.path = newPath;
+    copy.model.modifiedAt = Date.now();
+    
+    // Add to parent
+    if (newParent) {
+      newParent.childAdd(copy);
+    }
+    
+    return copy;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Folder CRUD Operations (FS.3)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Delete a folder
+   * 
+   * @param folder The folder to delete
+   * @param force Delete even if folder has children
+   * @param parentFolder Optional parent folder to remove from
+   */
+  async folderDelete(
+    folder: DefaultFolder,
+    force: boolean = false,
+    parentFolder?: DefaultFolder
+  ): Promise<void> {
+    // Remove from parent first
+    if (parentFolder) {
+      parentFolder.childRemove(folder);
+    }
+    
+    // Delete folder (handles recursive children, Units, and symlinks)
+    await folder.delete(force);
+  }
+  
+  /**
+   * Move a folder to a new path
+   * 
+   * @param folder The folder to move
+   * @param newPath New parent path
+   * @param oldParent Optional current parent folder
+   * @param newParent Optional new parent folder
+   */
+  async folderMove(
+    folder: DefaultFolder,
+    newPath: string,
+    oldParent?: DefaultFolder,
+    newParent?: DefaultFolder
+  ): Promise<void> {
+    // Remove from old parent
+    if (oldParent) {
+      oldParent.childRemove(folder);
+    }
+    
+    // Move folder on filesystem and update children paths
+    await folder.pathMove(newPath);
+    
+    // Add to new parent
+    if (newParent) {
+      newParent.childAdd(folder);
+    }
+  }
+  
+  /**
+   * Rename a folder
+   * 
+   * @param folder The folder to rename
+   * @param newName New folder name
+   */
+  async folderRename(folder: DefaultFolder, newName: string): Promise<void> {
+    // Rename handles filesystem, children paths, and Unit references
+    await folder.rename(newName);
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
   // Folder Loading (F.3: Views delegate fetch to layer4)
   // ═══════════════════════════════════════════════════════════════
   
@@ -316,6 +474,83 @@ export class FileOrchestrator {
     
     const ior = await new IOR().init(filePath);
     return await ior.load<string>();
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // IOR-based Loading (Option C: ISR Pattern)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Load folder via IOR (ISR Pattern)
+   * 
+   * Resolves a folder path to a DefaultFolder instance.
+   * Children are automatically prefetched by UcpModel proxy.
+   * 
+   * @param path Folder path (e.g., "/EAMD.ucp/components/ONCE/0.3.22.1")
+   * @param view Optional view to notify when folder is resolved
+   * @returns Resolved folder instance
+   * @pdca 2025-12-30-UTC-1200.lazy-reference-kernel-isr.pdca.md
+   */
+  async folderLoad(path: string): Promise<DefaultFolder> {
+    const { IOR } = await import('./IOR.js');
+    
+    const ior = new IOR<DefaultFolder>();
+    await ior.init(`ior:file://${path}`);
+    
+    const folder = await ior.resolve();
+    return folder;
+  }
+  
+  /**
+   * Load folder and set on view (ISR Pattern - P7 compliant)
+   * 
+   * This method handles async resolution in Layer 4,
+   * then makes a SYNC call to the view's folderSet method.
+   * 
+   * @param path Folder path
+   * @param view View with folderSet(folder: DefaultFolder) method
+   * @pdca 2025-12-30-UTC-1200.lazy-reference-kernel-isr.pdca.md
+   */
+  folderLoadForView(path: string, view: { folderSet(folder: DefaultFolder): void }): void {
+    this.folderLoad(path).then(function onFolderResolved(folder): void {
+      view.folderSet(folder);  // ✅ SYNC call to Layer 5
+    }).catch(function onError(error): void {
+      console.error('[FileOrchestrator] folderLoadForView error:', error);
+    });
+  }
+  
+  /**
+   * Load file via IOR (ISR Pattern)
+   * 
+   * Resolves a file path to a DefaultFile instance.
+   * 
+   * @param path File path
+   * @returns Resolved file instance
+   * @pdca 2025-12-30-UTC-1200.lazy-reference-kernel-isr.pdca.md
+   */
+  async fileLoad(path: string): Promise<DefaultFile> {
+    const { IOR } = await import('./IOR.js');
+    
+    const ior = new IOR<DefaultFile>();
+    await ior.init(`ior:file://${path}`);
+    
+    const file = await ior.resolve();
+    return file;
+  }
+  
+  /**
+   * Load file and set on view (ISR Pattern - P7 compliant)
+   * 
+   * @param path File path
+   * @param view View with fileSet(file: DefaultFile) method
+   * @pdca 2025-12-30-UTC-1200.lazy-reference-kernel-isr.pdca.md
+   */
+  fileLoadForView(path: string, view: { fileSet(file: DefaultFile): void }): void {
+    this.fileLoad(path).then(function onFileResolved(file): void {
+      view.fileSet(file);  // ✅ SYNC call to Layer 5
+    }).catch(function onError(error): void {
+      console.error('[FileOrchestrator] fileLoadForView error:', error);
+    });
   }
 }
 
