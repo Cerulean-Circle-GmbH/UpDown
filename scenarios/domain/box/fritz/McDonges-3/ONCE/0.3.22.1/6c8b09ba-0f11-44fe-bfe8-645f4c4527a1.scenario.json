@@ -1,0 +1,42 @@
+{
+  "ior": {
+    "uuid": "6c8b09ba-0f11-44fe-bfe8-645f4c4527a1",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "eyJpb3IiOnsidXVpZCI6IjZjOGIwOWJhLTBmMTEtNDRmZS1iZmU4LTY0NWY0YzQ1MjdhMSIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiIiLCJtb2RlbCI6eyJ1c2VyIjoic3lzdGVtIiwiaG9zdG5hbWUiOiJNY0Rvbmdlcy0zLmZyaXR6LmJveCIsInV1aWQiOiI2YzhiMDliYS0wZjExLTQ0ZmUtYmZlOC02NDVmNGM0NTI3YTEifX0=",
+  "model": {
+    "uuid": "6c8b09ba-0f11-44fe-bfe8-645f4c4527a1",
+    "name": "NodeJsONCEKernel",
+    "version": "0.3.22.1",
+    "environment": {
+      "platform": "node",
+      "version": "v23.6.1",
+      "capabilities": [
+        "server",
+        "websocket",
+        "p2p"
+      ],
+      "isOnline": true
+    },
+    "state": "starting",
+    "startTime": "2025-12-31T17:58:10.335Z",
+    "connectionTime": null,
+    "host": "McDonges-3.fritz.box",
+    "port": 42777,
+    "isPrimary": true,
+    "primaryPeerUuid": null,
+    "peers": [],
+    "pid": 98145,
+    "capabilities": [
+      {
+        "capability": "httpsPort",
+        "port": 42777
+      },
+      {
+        "capability": "httpRedirect",
+        "port": 42000
+      }
+    ]
+  }
+}

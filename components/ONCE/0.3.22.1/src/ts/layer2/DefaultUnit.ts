@@ -442,7 +442,7 @@ export class DefaultUnit extends UcpComponent<UnitModel> {
     const scenarioPath = path.join(projectRoot, 'scenarios', 'index', indexPath, `${uuid}.scenario.json`);
     
     // FsM.4: Load via IOR (P2P pattern)
-    const loadIor = new IOR<string>().initRemote(`ior:fs:file://${scenarioPath}`);
+    const loadIor = new IOR<string>().initRemote(`ior:file://${scenarioPath}`);
     const content = await loadIor.resolve();
     if (!content) {
       throw new Error(`[DefaultUnit] Scenario not found: ${uuid}`);
@@ -465,7 +465,7 @@ export class DefaultUnit extends UcpComponent<UnitModel> {
     scenario.model.indexPath = scenarioPath;
     
     // FsM.4: Save via IOR (P2P pattern)
-    const saveIor = new IOR<string>().initRemote(`ior:fs:file://${scenarioPath}`);
+    const saveIor = new IOR<string>().initRemote(`ior:file://${scenarioPath}`);
     await saveIor.save(scenario);
   }
 }

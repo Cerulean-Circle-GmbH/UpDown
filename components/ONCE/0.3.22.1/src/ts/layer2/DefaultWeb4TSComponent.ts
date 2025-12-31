@@ -995,7 +995,7 @@ ${'='.repeat(80)}
     
     // FsM.6: Save scenario via IOR (P2P pattern)
     const scenarioPath = path.join(scenarioDir, `${scenarioUuid}.scenario.json`);
-    const saveIor = new IOR<string>().initRemote(`ior:fs:file://${scenarioPath}`);
+    const saveIor = new IOR<string>().initRemote(`ior:file://${scenarioPath}`);
     await saveIor.save(targetScenario);
     
     // Create or update symlink
@@ -1110,7 +1110,7 @@ ${'='.repeat(80)}
     
     // FsM.6: Load descriptor via IOR (P2P pattern)
     try {
-      const loadIor = new IOR<string>().initRemote(`ior:fs:file://${descriptorPath}`);
+      const loadIor = new IOR<string>().initRemote(`ior:file://${descriptorPath}`);
       const descriptorContent = await loadIor.resolve();
       if (!descriptorContent) {
         console.log(`⚠️  Could not read component.json for ${componentName}/${version}`);

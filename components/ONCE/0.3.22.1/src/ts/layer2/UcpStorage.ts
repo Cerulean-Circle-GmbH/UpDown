@@ -135,7 +135,7 @@ export class UcpStorage extends Storage {
     };
 
     // FsM.3: Save scenario via IOR (P2P pattern)
-    const saveIor = new IOR<string>().initRemote(`ior:fs:file://${scenarioPath}`);
+    const saveIor = new IOR<string>().initRemote(`ior:file://${scenarioPath}`);
     await saveIor.save(scenarioWithStorage);
     console.log(`[UcpStorage] Saved scenario via IOR: ${scenarioPath}`);
 
@@ -158,7 +158,7 @@ export class UcpStorage extends Storage {
   async scenarioLoad<T extends Model>(uuid: string): Promise<Scenario<T>> {
     const scenarioPath = this.scenarioIndexPathGet(uuid);
     // FsM.3: Load scenario via IOR (P2P pattern)
-    const loadIor = new IOR<string>().initRemote(`ior:fs:file://${scenarioPath}`);
+    const loadIor = new IOR<string>().initRemote(`ior:file://${scenarioPath}`);
     const content = await loadIor.resolve();
     if (!content) {
       throw new Error(`[UcpStorage] Scenario not found: ${uuid}`);
@@ -204,7 +204,7 @@ export class UcpStorage extends Storage {
       for (const file of files) {
         try {
           // FsM.3: Load via IOR (P2P pattern)
-          const fileIor = new IOR<string>().initRemote(`ior:fs:file://${file}`);
+          const fileIor = new IOR<string>().initRemote(`ior:file://${file}`);
           const content = await fileIor.resolve();
           if (content) {
             results.push(JSON.parse(content));
@@ -421,7 +421,7 @@ export class UcpStorage extends Storage {
       const currentDir = path.dirname(fileURLToPath(import.meta.url));
       const packageJsonPath = path.resolve(currentDir, '../../../package.json');
       // FsM.3: Load via IOR (P2P pattern)
-      const pkgIor = new IOR<string>().initRemote(`ior:fs:file://${packageJsonPath}`);
+      const pkgIor = new IOR<string>().initRemote(`ior:file://${packageJsonPath}`);
       const content = await pkgIor.resolve();
       if (!content) return '0.3.21.9';
       const packageJson = JSON.parse(content);
@@ -439,7 +439,7 @@ export class UcpStorage extends Storage {
       const currentDir = path.dirname(fileURLToPath(import.meta.url));
       const packageJsonPath = path.resolve(currentDir, '../../../package.json');
       // FsM.3: Load via IOR (P2P pattern)
-      const pkgIor = new IOR<string>().initRemote(`ior:fs:file://${packageJsonPath}`);
+      const pkgIor = new IOR<string>().initRemote(`ior:file://${packageJsonPath}`);
       const content = await pkgIor.resolve();
       if (!content) return 'ONCE';
       const packageJson = JSON.parse(content);

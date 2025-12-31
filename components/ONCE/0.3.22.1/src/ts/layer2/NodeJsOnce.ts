@@ -2924,7 +2924,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
       fs.mkdirSync(reportDir, { recursive: true });
     }
     // FsM.7: Save report via IOR (P2P pattern)
-    const saveIor = new IOR<string>().initRemote(`ior:fs:file://${reportPath}`);
+    const saveIor = new IOR<string>().initRemote(`ior:file://${reportPath}`);
     await saveIor.save(report);
     console.log(`💾 JSON report saved via IOR: ${reportPath}`);
     console.log('');

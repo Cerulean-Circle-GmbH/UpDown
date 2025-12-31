@@ -101,7 +101,7 @@ export class TsAstExtractor {
     
     try {
       // FsM.7: Load via IOR (P2P pattern)
-      const loadIor = new IOR<string>().initRemote(`ior:fs:file://${filePath}`);
+      const loadIor = new IOR<string>().initRemote(`ior:file://${filePath}`);
       const content = await loadIor.resolve();
       if (!content) {
         result.errors.push(`Could not read file: ${filePath}`);
@@ -638,7 +638,7 @@ export class TsAstExtractor {
         
         // FsM.7: Save to index via IOR (P2P pattern)
         const indexPath = path.join(this.scenariosDir, typeModel.indexPath.replace('scenarios/', ''));
-        const saveIor = new IOR<string>().initRemote(`ior:fs:file://${indexPath}`);
+        const saveIor = new IOR<string>().initRemote(`ior:file://${indexPath}`);
         await saveIor.save(scenario);
         
         // Create symlink in type directory

@@ -262,7 +262,7 @@ export class DefaultUser implements User {
     }
     
     // FsM.7: Save scenario via IOR (P2P pattern)
-    const saveIor = new IOR<string>().initRemote(`ior:fs:file://${scenarioPath}`);
+    const saveIor = new IOR<string>().initRemote(`ior:file://${scenarioPath}`);
     await saveIor.save(scenario);
     console.log(`📝 [WRITE] DefaultUser.saveScenarioLegacy() via IOR → ${scenarioPath}`);
     console.log(`💾 User scenario saved (legacy via IOR): ${path.basename(scenarioPath)}`);

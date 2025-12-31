@@ -2187,7 +2187,7 @@ export class ServerHierarchyManager {
                     }
                     
                     // FsM.5: Load via IOR (P2P pattern)
-                    const loadIor = new IOR<string>().initRemote(`ior:fs:file://${scenarioPath}`);
+                    const loadIor = new IOR<string>().initRemote(`ior:file://${scenarioPath}`);
                     const content = await loadIor.resolve();
                     if (!content) continue;
                     
@@ -2457,7 +2457,7 @@ export class ServerHierarchyManager {
             
             if (fs.existsSync(mainScenarioPath)) {
                 // FsM.5: Load via IOR (P2P pattern)
-                const loadIor = new IOR<string>().initRemote(`ior:fs:file://${mainScenarioPath}`);
+                const loadIor = new IOR<string>().initRemote(`ior:file://${mainScenarioPath}`);
                 const content = await loadIor.resolve();
                 if (!content) return;
                 
@@ -2467,7 +2467,7 @@ export class ServerHierarchyManager {
                 scenarioData.model.state = state;
                 
                 // FsM.5: Save via IOR (P2P pattern)
-                const saveIor = new IOR<string>().initRemote(`ior:fs:file://${mainScenarioPath}`);
+                const saveIor = new IOR<string>().initRemote(`ior:file://${mainScenarioPath}`);
                 await saveIor.save(scenarioData);
                 console.log(`💾 Updated scenario state to: ${state}`);
             }

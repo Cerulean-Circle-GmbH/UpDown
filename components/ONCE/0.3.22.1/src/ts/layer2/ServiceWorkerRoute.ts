@@ -92,7 +92,7 @@ export class ServiceWorkerRoute extends Route {
     
     try {
       // FsM.7: Load via IOR (P2P pattern)
-      const loadIor = new IOR<string>().initRemote(`ior:fs:file://${this.swFilePath}`);
+      const loadIor = new IOR<string>().initRemote(`ior:file://${this.swFilePath}`);
       const content = await loadIor.resolve();
       
       if (!content) {
