@@ -14,13 +14,14 @@
  * - P4: Radical OOP - View IS a UcpView component
  * - P7: Layer 5 is SYNCHRONOUS (no async/await here)
  * - P27: Web Components ARE Radical OOP
+ * - P33: Separation of Concerns — styles in external CSS ONLY
  * - P34: IOR as Unified Entry Point
  * 
  * @ior ior:esm:/ONCE/{version}/IORLoadingView
  * @pdca 2025-12-30-UTC-1200.lazy-reference-kernel-isr.pdca.md
  */
 
-import { html, TemplateResult, css } from 'lit';
+import { html, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { UcpView } from './UcpView.js';
 
@@ -51,54 +52,11 @@ interface IORDisplayModel {
 @customElement('ior-loading-view')
 export class IORLoadingView extends UcpView<IORDisplayModel> {
   
-  /** CSS path for external styles */
+  /** 
+   * CSS path for external styles (P33: Separation of Concerns)
+   * Styles are in IORLoadingView.css — NO inline styles here!
+   */
   static cssPath = 'IORLoadingView.css';
-  
-  /** Inline styles (fallback if external CSS not loaded) */
-  static styles = css`
-    :host {
-      display: block;
-    }
-    
-    .loading-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
-      background: var(--color-surface-variant, rgba(255, 255, 255, 0.02));
-      opacity: 0.7;
-    }
-    
-    .spinner {
-      width: 1.25rem;
-      height: 1.25rem;
-      border: 2px solid var(--color-border, rgba(255, 255, 255, 0.2));
-      border-top-color: var(--color-primary, #64B5F6);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    
-    .loading-text {
-      flex: 1;
-      font-size: 0.9rem;
-      color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
-      font-style: italic;
-    }
-    
-    .loading-uuid {
-      font-family: monospace;
-      font-size: 0.75rem;
-      color: var(--color-text-tertiary, rgba(255, 255, 255, 0.4));
-      max-width: 120px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  `;
   
   /**
    * Optional display name for better UX
