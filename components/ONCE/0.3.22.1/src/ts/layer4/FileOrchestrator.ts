@@ -498,6 +498,9 @@ export class FileOrchestrator {
     await ior.init(`ior:file://${path}`);
     
     const folder = await ior.resolve();
+    if (!folder) {
+      throw new Error(`[FileOrchestrator] Failed to resolve folder: ${path}`);
+    }
     return folder;
   }
   
@@ -535,6 +538,9 @@ export class FileOrchestrator {
     await ior.init(`ior:file://${path}`);
     
     const file = await ior.resolve();
+    if (!file) {
+      throw new Error(`[FileOrchestrator] Failed to resolve file: ${path}`);
+    }
     return file;
   }
   
