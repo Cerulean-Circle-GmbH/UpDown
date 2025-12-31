@@ -936,6 +936,7 @@ export class IOR<T = any> implements IORInterface {
      * Handles:
      * - Full URLs: https://host:port/path
      * - IOR strings: ior:https://host:port/path
+     * - File URLs: file:///path or ior:file:///path (no host:port)
      * - Relative URLs: /path (uses current host in browser, localhost in Node)
      */
     parseIorString(iorString: string): this {
@@ -953,6 +954,24 @@ export class IOR<T = any> implements IORInterface {
         
         // Remove protocol://
         const withoutProtocol = withoutPrefix.replace(/^[^:]+:\/\//, '');
+        
+        // Special handling for file:// protocol (no host:port, path starts with /)
+        // file:///Users/path → withoutProtocol = '/Users/path'
+        if (protocol === 'file' || protocol === 'fs') {
+            // For file protocol, entire withoutProtocol is the path
+            const path = withoutProtocol.startsWith('/') ? withoutProtocol : '/' + withoutProtocol;
+            
+            this.model.protocol = protocol;
+            this.model.host = 'localhost';  // Placeholder for file protocol
+            this.model.port = 0;            // No port for file protocol
+            this.model.path = path;
+            this.model.component = '';
+            this.model.version = '';
+            this.model.uuid = '';
+            this.model.iorString = iorString;
+            
+            return this;
+        }
         
         // Split by first / to separate hosts from path
         const firstSlash = withoutProtocol.indexOf('/');
@@ -1054,12 +1073,19 @@ export class IOR<T = any> implements IORInterface {
     
     /**
      * Convert IOR to URL
+     * Handles file:// protocol specially (no host:port)
      */
     toUrl(): string {
         const protocol = this.model.protocol || 'https';
+        const path = this.model.path || `/${this.model.component}/${this.model.version}/${this.model.uuid}`;
+        
+        // Special handling for file:// protocol (no host:port)
+        if (protocol === 'file' || protocol === 'fs') {
+            return path;  // Just return the filesystem path
+        }
+        
         const host = this.model.host || 'localhost';
         const port = this.model.port || (protocol.includes('https') ? 443 : 80);
-        const path = this.model.path || `/${this.model.component}/${this.model.version}/${this.model.uuid}`;
         
         let url = `${protocol}://${host}:${port}${path}`;
         
