@@ -229,19 +229,11 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   }
   
   /**
+   * @deprecated Use childLookupByUuid(uuid) instead (P16)
    * Get child by UUID
-   * 
-   * ISR: Searches model.children for resolved instances.
    */
   childGet(uuid: string): Reference<FileJs> {
-    for (const child of this.model.children) {
-      if (child && typeof child === 'object' && 'model' in child) {
-        if ((child as FileJs).model.uuid === uuid) {
-          return child as File;
-        }
-      }
-    }
-    return null;
+    return this.childLookupByUuid(uuid);
   }
   
   /**
@@ -253,9 +245,18 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   
   /**
    * Get number of children (Tree interface)
+   * P16: TypeScript accessor
    */
   get childCount(): number {
     return this.model.children.length;
+  }
+  
+  /**
+   * Check if folder is empty
+   * P16: TypeScript accessor
+   */
+  get isEmpty(): boolean {
+    return this.model.children.length === 0;
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -320,20 +321,49 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Find child by name (searches resolved children)
+   * Lookup child by name
+   * P16: Parameterized lookup uses xyzLookup(param)
    * 
    * ISR: Searches model.children for resolved instances.
    * 
    * @param name Name to search for
    * @returns Child component or null
    */
-  childFindByName(name: string): Reference<FileJs> {
+  childLookup(name: string): Reference<FileJs> {
     for (const child of this.children) {
       if (child.model.name === name) {
         return child;
       }
     }
     return null;
+  }
+  
+  /**
+   * Lookup child by UUID
+   * P16: Parameterized lookup uses xyzLookup(param)
+   * 
+   * ISR: Searches model.children for resolved instances.
+   * 
+   * @param uuid UUID to search for
+   * @returns Child component or null
+   */
+  childLookupByUuid(uuid: string): Reference<FileJs> {
+    for (const child of this.model.children) {
+      if (child && typeof child === 'object' && 'model' in child) {
+        if ((child as FileJs).model.uuid === uuid) {
+          return child as FileJs;
+        }
+      }
+    }
+    return null;
+  }
+  
+  /**
+   * @deprecated Use childLookup(name) instead (P16)
+   * Find child by name (searches resolved children)
+   */
+  childFindByName(name: string): Reference<FileJs> {
+    return this.childLookup(name);
   }
   
   /**
@@ -797,9 +827,22 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   
   /**
    * Get folder name (delegated to model)
+   * P16: TypeScript accessor
    */
   get name(): string {
     return this.model.name;
+  }
+  
+  /**
+   * Set folder name (sync - model only, no filesystem)
+   * P16: TypeScript accessor
+   * 
+   * For filesystem rename, use rename() async method.
+   */
+  set name(value: string) {
+    this.model.name = value;
+    this.model.folderName = value;
+    this.model.modifiedAt = Date.now();
   }
   
   /**

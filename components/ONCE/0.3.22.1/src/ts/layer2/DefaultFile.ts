@@ -693,9 +693,22 @@ export class DefaultFile extends UcpComponent<FileModel> implements FileJs {
   
   /**
    * Get file name (delegated to model)
+   * P16: TypeScript accessor
    */
   get name(): string {
     return this.model.name;
+  }
+  
+  /**
+   * Set file name (sync - model only, no filesystem)
+   * P16: TypeScript accessor
+   * 
+   * For filesystem rename, use rename() async method.
+   */
+  set name(value: string) {
+    this.model.name = value;
+    this.model.filename = value;
+    this.model.modifiedAt = Date.now();
   }
   
   /**
@@ -703,6 +716,31 @@ export class DefaultFile extends UcpComponent<FileModel> implements FileJs {
    */
   get uuid(): string {
     return this.model.uuid;
+  }
+  
+  /**
+   * Get file size in bytes
+   * P16: TypeScript accessor
+   */
+  get size(): number {
+    return this.model.size;
+  }
+  
+  /**
+   * Get file MIME type
+   * P16: TypeScript accessor
+   */
+  get mimetype(): string {
+    return this.model.mimetype;
+  }
+  
+  /**
+   * Set file MIME type
+   * P16: TypeScript accessor
+   */
+  set mimetype(value: string) {
+    this.model.mimetype = value;
+    this.model.modifiedAt = Date.now();
   }
   
   /**
