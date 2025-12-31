@@ -1037,6 +1037,12 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
       if (name === "constructor") continue;
       if (name.startsWith("_") && !internalCLIMethods.includes(name)) continue;
 
+      // ✅ Skip getters/setters - accessing them on prototype triggers with this=prototype (not instance)
+      // causing "Cannot read properties of undefined (reading 'projectRoot')" errors
+      // @pdca 2025-12-23-fix-analyzecomponentmethods-getter-crash
+      const descriptor = Object.getOwnPropertyDescriptor(prototype, name);
+      if (descriptor?.get || descriptor?.set) continue;
+
       // ✅ ZERO CONFIG: Check @cliHide annotation with enhanced processing
       const cliAnnotations = TSCompletion.extractCliAnnotations(
         this.getComponentClass().name,

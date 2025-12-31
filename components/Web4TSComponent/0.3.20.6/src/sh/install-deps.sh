@@ -96,17 +96,19 @@ COMPONENT_DIR=$(pwd)
 
 # Merge component dependencies into project root (install to shared location)
 cd "$PROJECT_ROOT"
+# Convert PROJECT_ROOT to absolute path now that we're in it
+PROJECT_ROOT_ABS=$(pwd)
 
 node -e "
 const fs = require('fs');
 const componentPkg = JSON.parse(fs.readFileSync('$COMPONENT_DIR/package.json', 'utf8'));
-const rootPkg = JSON.parse(fs.readFileSync('$PROJECT_ROOT/package.json', 'utf8'));
+const rootPkg = JSON.parse(fs.readFileSync('$PROJECT_ROOT_ABS/package.json', 'utf8'));
 
 // Merge dependencies
 rootPkg.dependencies = {...(rootPkg.dependencies || {}), ...(componentPkg.dependencies || {})};
 rootPkg.devDependencies = {...(rootPkg.devDependencies || {}), ...(componentPkg.devDependencies || {})};
 
-fs.writeFileSync('$PROJECT_ROOT/package.json', JSON.stringify(rootPkg, null, 2));
+fs.writeFileSync('$PROJECT_ROOT_ABS/package.json', JSON.stringify(rootPkg, null, 2));
 "
 
 # Install all deps to shared node_modules
