@@ -1,0 +1,35 @@
+{
+  "ior": {
+    "uuid": "d0bf16d4-cfcd-463c-ae9f-0d6cef06b372",
+    "component": "Unit",
+    "version": {
+      "model": {
+        "uuid": "bb1a43e6-f040-4888-a98f-3e391b57d357",
+        "name": "version",
+        "major": 0,
+        "minor": 3,
+        "patch": 22,
+        "revision": 1,
+        "versionString": "0.3.22.1"
+      }
+    }
+  },
+  "owner": "{\"user\":\"donges\",\"hostname\":\"cursor\",\"uuid\":\"d0bf16d4-cfcd-463c-ae9f-0d6cef06b372\",\"timestamp\":\"2026-01-01T18:55:12.268Z\",\"component\":\"Unit\",\"version\":{\"model\":{\"uuid\":\"bb1a43e6-f040-4888-a98f-3e391b57d357\",\"name\":\"version\",\"major\":0,\"minor\":3,\"patch\":22,\"revision\":1,\"versionString\":\"0.3.22.1\"}}}",
+  "model": {
+    "uuid": "d0bf16d4-cfcd-463c-ae9f-0d6cef06b372",
+    "name": "Folder",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/Web4TSComponent/0.3.22.1/src/assets/",
+    "definition": "M1 folder instance: src/assets/",
+    "typeM3": "CLASS",
+    "createdAt": "2026-01-01T18:55:12.268Z",
+    "updatedAt": "2026-01-01T18:55:12.268Z",
+    "originName": "assets",
+    "folderPath": "src/assets/",
+    "fileCount": 3,
+    "subfolderCount": 0,
+    "totalSize": 0,
+    "folderHash": "",
+    "lastScanned": "2026-01-01T18:55:12.268Z",
+    "symlinkPaths": []
+  }
+}

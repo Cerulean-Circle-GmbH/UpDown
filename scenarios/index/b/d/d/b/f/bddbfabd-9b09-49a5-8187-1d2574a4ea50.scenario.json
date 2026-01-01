@@ -1,0 +1,35 @@
+{
+  "ior": {
+    "uuid": "bddbfabd-9b09-49a5-8187-1d2574a4ea50",
+    "component": "Unit",
+    "version": {
+      "model": {
+        "uuid": "bb1a43e6-f040-4888-a98f-3e391b57d357",
+        "name": "version",
+        "major": 0,
+        "minor": 3,
+        "patch": 22,
+        "revision": 1,
+        "versionString": "0.3.22.1"
+      }
+    }
+  },
+  "owner": "{\"user\":\"donges\",\"hostname\":\"cursor\",\"uuid\":\"bddbfabd-9b09-49a5-8187-1d2574a4ea50\",\"timestamp\":\"2026-01-01T18:55:12.310Z\",\"component\":\"Unit\",\"version\":{\"model\":{\"uuid\":\"bb1a43e6-f040-4888-a98f-3e391b57d357\",\"name\":\"version\",\"major\":0,\"minor\":3,\"patch\":22,\"revision\":1,\"versionString\":\"0.3.22.1\"}}}",
+  "model": {
+    "uuid": "bddbfabd-9b09-49a5-8187-1d2574a4ea50",
+    "name": "Folder",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/Web4TSComponent/0.3.22.1/src/ts/layer5/views/webBeans/",
+    "definition": "M1 folder instance: src/ts/layer5/views/webBeans/",
+    "typeM3": "CLASS",
+    "createdAt": "2026-01-01T18:55:12.310Z",
+    "updatedAt": "2026-01-01T18:55:12.310Z",
+    "originName": "webBeans",
+    "folderPath": "src/ts/layer5/views/webBeans/",
+    "fileCount": 0,
+    "subfolderCount": 0,
+    "totalSize": 0,
+    "folderHash": "",
+    "lastScanned": "2026-01-01T18:55:12.310Z",
+    "symlinkPaths": []
+  }
+}

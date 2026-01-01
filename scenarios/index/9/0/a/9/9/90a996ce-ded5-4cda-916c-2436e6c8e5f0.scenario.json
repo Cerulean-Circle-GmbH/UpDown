@@ -1,0 +1,35 @@
+{
+  "ior": {
+    "uuid": "90a996ce-ded5-4cda-916c-2436e6c8e5f0",
+    "component": "Unit",
+    "version": {
+      "model": {
+        "uuid": "bb1a43e6-f040-4888-a98f-3e391b57d357",
+        "name": "version",
+        "major": 0,
+        "minor": 3,
+        "patch": 22,
+        "revision": 1,
+        "versionString": "0.3.22.1"
+      }
+    }
+  },
+  "owner": "{\"user\":\"donges\",\"hostname\":\"cursor\",\"uuid\":\"90a996ce-ded5-4cda-916c-2436e6c8e5f0\",\"timestamp\":\"2026-01-01T18:55:12.318Z\",\"component\":\"Unit\",\"version\":{\"model\":{\"uuid\":\"bb1a43e6-f040-4888-a98f-3e391b57d357\",\"name\":\"version\",\"major\":0,\"minor\":3,\"patch\":22,\"revision\":1,\"versionString\":\"0.3.22.1\"}}}",
+  "model": {
+    "uuid": "90a996ce-ded5-4cda-916c-2436e6c8e5f0",
+    "name": "Folder",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/Web4TSComponent/0.3.22.1/dist/ts/layer2/",
+    "definition": "M1 folder instance: dist/ts/layer2/",
+    "typeM3": "CLASS",
+    "createdAt": "2026-01-01T18:55:12.318Z",
+    "updatedAt": "2026-01-01T18:55:12.318Z",
+    "originName": "layer2",
+    "folderPath": "dist/ts/layer2/",
+    "fileCount": 228,
+    "subfolderCount": 0,
+    "totalSize": 0,
+    "folderHash": "",
+    "lastScanned": "2026-01-01T18:55:12.318Z",
+    "symlinkPaths": []
+  }
+}

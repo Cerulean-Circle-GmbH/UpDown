@@ -1,0 +1,35 @@
+{
+  "ior": {
+    "uuid": "b1fb0314-c1a8-442b-b376-1069999eef96",
+    "component": "Unit",
+    "version": {
+      "model": {
+        "uuid": "bb1a43e6-f040-4888-a98f-3e391b57d357",
+        "name": "version",
+        "major": 0,
+        "minor": 3,
+        "patch": 22,
+        "revision": 1,
+        "versionString": "0.3.22.1"
+      }
+    }
+  },
+  "owner": "{\"user\":\"donges\",\"hostname\":\"cursor\",\"uuid\":\"b1fb0314-c1a8-442b-b376-1069999eef96\",\"timestamp\":\"2026-01-01T18:55:12.302Z\",\"component\":\"Unit\",\"version\":{\"model\":{\"uuid\":\"bb1a43e6-f040-4888-a98f-3e391b57d357\",\"name\":\"version\",\"major\":0,\"minor\":3,\"patch\":22,\"revision\":1,\"versionString\":\"0.3.22.1\"}}}",
+  "model": {
+    "uuid": "b1fb0314-c1a8-442b-b376-1069999eef96",
+    "name": "Folder",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/Web4TSComponent/0.3.22.1/src/ts/layer5/views/",
+    "definition": "M1 folder instance: src/ts/layer5/views/",
+    "typeM3": "CLASS",
+    "createdAt": "2026-01-01T18:55:12.302Z",
+    "updatedAt": "2026-01-01T18:55:12.302Z",
+    "originName": "views",
+    "folderPath": "src/ts/layer5/views/",
+    "fileCount": 25,
+    "subfolderCount": 3,
+    "totalSize": 0,
+    "folderHash": "",
+    "lastScanned": "2026-01-01T18:55:12.302Z",
+    "symlinkPaths": []
+  }
+}
