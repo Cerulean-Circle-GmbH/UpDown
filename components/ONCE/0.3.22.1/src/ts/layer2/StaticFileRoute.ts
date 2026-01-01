@@ -342,15 +342,18 @@ export class StaticFileRoute extends Route {
             
             // FsM.2: Read file via IOR (P2P pattern)
             // Uses FileLoader on Node.js, HTTPSLoader fallback on browser
-            const fileIor = new IOR<Buffer>().initRemote(`ior:file://${filePath}`);
-            const content = await fileIor.resolve();
+            const fileIor = new IOR<string>().initRemote(`ior:file://${filePath}`);
+            const contentString = await fileIor.resolve();
             
-            if (!content) {
+            if (!contentString) {
                 console.log(`[StaticFileRoute] IOR returned null for: ${filePath}`);
                 res.writeHead(404, { 'Content-Type': 'text/plain' });
                 res.end('Not Found');
                 return;
             }
+            
+            // Convert string to Buffer for correct byte length in Content-Length header
+            const content = Buffer.from(contentString, 'utf-8');
             
             console.log(`[StaticFileRoute] ✅ ${urlPath} → ${mimeType} (via IOR)`);
             
