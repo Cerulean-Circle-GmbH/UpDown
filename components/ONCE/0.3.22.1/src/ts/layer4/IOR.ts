@@ -1177,7 +1177,7 @@ export class IOR<T = any> implements IORInterface {
         
         const stringData = typeof processedData === 'string' 
             ? processedData 
-            : JSON.stringify(processedData);
+            : JSON.stringify(processedData, null, 2);
         
         const url = this.toUrl();
         await loader.save(stringData, url, {
@@ -1325,7 +1325,7 @@ export class IOR<T = any> implements IORInterface {
         if (direction === 'load') {
             return typeof data === 'string' ? JSON.parse(data) : data;
         } else {
-            return typeof data === 'string' ? data : JSON.stringify(data);
+            return typeof data === 'string' ? data : JSON.stringify(data, null, 2);
         }
     }
     
