@@ -1010,6 +1010,11 @@ export class ServerHierarchyManager {
      * Templates can use ${this.version}, ${this.httpPort}, etc.
      * The template is evaluated with 'this' bound to ServerHierarchyManager.
      * 
+     * @deprecated LEGACY — use UcpView-based Lit Web Components instead.
+     * The src/view/html/ templates are being replaced by UcpView components.
+     * @see OnceOverView.ts, OnceServerStatusView.ts, etc.
+     * @pdca 2025-12-31-UTC-1900.unit-descriptor-sw-verification.pdca.md
+     * 
      * @param templatePath - Path relative to component root, OR just filename for src/view/html
      */
     private renderTemplate(templatePath: string): string {
