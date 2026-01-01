@@ -519,6 +519,11 @@ export class DefaultWeb4TSComponent
       console.log(`🔍 Extracting type descriptors...`);
       await this.typesExtract();
       
+      // Generate component descriptor (self-caring: updates on every build)
+      // @pdca 2025-12-31-UTC-1700.component-descriptor-css-units.pdca.md
+      console.log(`📄 Generating component descriptor...`);
+      await this.componentDescriptorUpdate();
+      
     } catch (error) {
       console.error(`❌ Build failed`);
       throw error;

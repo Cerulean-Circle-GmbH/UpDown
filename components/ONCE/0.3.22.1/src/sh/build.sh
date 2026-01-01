@@ -93,6 +93,19 @@ elif [ ! -f "dist/ts/layer5/ONCECLI.js" ] || find src -name "*.ts" -newer "dist/
             ./src/sh/build-sw.sh 2>&1 | grep -E "^(✅|❌)" >&2
         fi
     fi
+    
+    # Generate component descriptor (calls TypeScript method)
+    # Shell minimal: just triggers. Logic in Web4 TypeScript.
+    # @pdca 2025-12-31-UTC-1700.component-descriptor-css-units.pdca.md
+    if [ -f "dist/ts/layer5/ONCECLI.js" ]; then
+        if [ "$VERBOSE" = "true" ]; then
+            echo "📄 Generating component descriptor..."
+        fi
+        node dist/ts/layer5/ONCECLI.js componentDescriptorUpdate 2>/dev/null || true
+        if [ "$VERBOSE" = "true" ]; then
+            echo "✅ Component descriptor generated"
+        fi
+    fi
 else
     if [ "$VERBOSE" = "true" ]; then
         echo "✅ ONCE is up to date, no build needed"
