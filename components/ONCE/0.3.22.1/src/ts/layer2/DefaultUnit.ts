@@ -390,6 +390,9 @@ export class DefaultUnit extends UcpComponent<UnitModel> {
   
   /**
    * Create unit from folder (creates °folder.unit)
+   * 
+   * Folder units are placed in scenarios/type/ mirror, NOT in component directory.
+   * @pdca 2026-01-01-UTC-1931.isr-error-handling-folder-units.pdca.md
    */
   private async folderUnitCreate(folderPath: string): Promise<void> {
     const projectRoot = this.projectRootFind();
@@ -406,10 +409,34 @@ export class DefaultUnit extends UcpComponent<UnitModel> {
     const scenario = await this.toScenario();
     await this.scenarioSave(this.model.uuid, scenario);
     
-    // Create °folder.unit symlink
-    const folderUnitPath = path.join(fullPath, '°folder.unit');
+    // Extract component info from path to build scenarios/type/ path
+    // Path format: .../components/{ComponentName}/{Version}/...
+    const componentsMatch = fullPath.match(/components\/([^/]+)\/([^/]+)\/(.+)$/);
+    
+    let folderUnitPath: string;
+    if (componentsMatch) {
+      const [, componentName, componentVersion, relativePath] = componentsMatch;
+      // Place in scenarios/type/ mirror, NOT in component directory
+      folderUnitPath = path.join(
+        projectRoot,
+        'scenarios',
+        'type',
+        componentName,
+        componentVersion,
+        relativePath,
+        '°folder.unit'
+      );
+    } else {
+      // Fallback for non-component paths (place relative to project)
+      const relativePath = path.relative(projectRoot, fullPath);
+      folderUnitPath = path.join(projectRoot, 'scenarios', 'type', relativePath, '°folder.unit');
+    }
+    
+    // Ensure parent directory exists
+    await fs.mkdir(path.dirname(folderUnitPath), { recursive: true });
+    
     const scenarioPath = await this.scenarioPathGet();
-    const relativePath = path.relative(path.dirname(folderUnitPath), scenarioPath);
+    const relativeToScenario = path.relative(path.dirname(folderUnitPath), scenarioPath);
     
     try {
       await fs.unlink(folderUnitPath);
@@ -417,7 +444,7 @@ export class DefaultUnit extends UcpComponent<UnitModel> {
       // Ignore if doesn't exist
     }
     
-    await fs.symlink(relativePath, folderUnitPath);
+    await fs.symlink(relativeToScenario, folderUnitPath);
     
     console.log(`✅ Folder unit created: ${this.model.name}`);
     console.log(`   UUID: ${this.model.uuid}`);
