@@ -733,7 +733,8 @@ export class DefaultWeb4TSComponent
     }
     
     // Define patterns for unit discovery
-    const patterns: UnitFilePattern[] = [
+    // @pdca 2025-12-31-UTC-1900.unit-descriptor-sw-verification.pdca.md
+    const srcPatterns: UnitFilePattern[] = [
       {
         glob: '**/*.css',
         typeM3: TypeM3.ATTRIBUTE,
@@ -747,11 +748,18 @@ export class DefaultWeb4TSComponent
         mimetype: 'text/html',
         recursive: true,
         excludeDirs: ['node_modules', 'dist', '.git', 'coverage']
+      },
+      {
+        glob: '**/*.ts',
+        typeM3: TypeM3.CLASS,
+        mimetype: 'text/typescript',
+        recursive: true,
+        excludeDirs: ['node_modules', 'dist', '.git', 'coverage', 'test']
       }
     ];
     
-    // Discover units for each pattern
-    for (const pattern of patterns) {
+    // Discover units in src/ directory
+    for (const pattern of srcPatterns) {
       const srcDir = path.join(componentRoot, 'src');
       if (fs.existsSync(srcDir)) {
         const definitions = await this.unitDiscoveryService.unitsDiscover(srcDir, pattern);
@@ -762,6 +770,33 @@ export class DefaultWeb4TSComponent
             await this.unitDiscoveryService.unitSave(result);
             console.log(`  📄 Created unit: ${definition.filename}`);
           }
+        }
+      }
+    }
+    
+    // Discover JS units in dist/ directory (with TS origin reference)
+    const distDir = path.join(componentRoot, 'dist');
+    if (fs.existsSync(distDir)) {
+      const jsPattern: UnitFilePattern = {
+        glob: '**/*.js',
+        typeM3: TypeM3.CLASS,
+        mimetype: 'application/javascript',
+        recursive: true,
+        excludeDirs: ['node_modules', '.git']
+      };
+      
+      const jsDefinitions = await this.unitDiscoveryService.unitsDiscover(distDir, jsPattern);
+      
+      for (const definition of jsDefinitions) {
+        if (!definition.existingUuid) {
+          // Calculate origin: dist/ts/... → src/ts/... (.js → .ts)
+          const originPath = definition.relativePath
+            .replace(/^dist\//, 'src/')
+            .replace(/\.js$/, '.ts');
+          
+          const result = await this.unitDiscoveryService.unitCreate(definition, originPath);
+          await this.unitDiscoveryService.unitSave(result);
+          console.log(`  📄 Created unit: ${definition.filename} (origin: ${originPath})`);
         }
       }
     }

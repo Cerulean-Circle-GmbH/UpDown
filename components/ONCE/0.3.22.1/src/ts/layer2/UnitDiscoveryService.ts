@@ -200,8 +200,10 @@ export class UnitDiscoveryService {
   
   /**
    * Create a unit scenario for a file definition
+   * @param definition The unit definition
+   * @param originPath Optional: source file path for compiled files (e.g., .ts for .js)
    */
-  async unitCreate(definition: UnitDefinition): Promise<DiscoveryResult> {
+  async unitCreate(definition: UnitDefinition, originPath?: string): Promise<DiscoveryResult> {
     if (!this.scenarioService) {
       throw new Error('UnitDiscoveryService not initialized');
     }
@@ -210,11 +212,16 @@ export class UnitDiscoveryService {
     const uuid = definition.existingUuid || crypto.randomUUID();
     const now = new Date().toISOString();
     
+    // Calculate origin IOR — use originPath if provided (for JS→TS traceability)
+    // @pdca 2025-12-31-UTC-1900.unit-descriptor-sw-verification.pdca.md
+    const originFile = originPath || definition.relativePath;
+    const originIor = `ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/${this.componentName}/${this.componentVersion}/${originFile}`;
+    
     const model: DiscoveredUnitModel = {
       uuid,
       name: definition.filename,
       typeM3: definition.typeM3,
-      origin: `ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/${this.componentName}/${this.componentVersion}/${definition.relativePath}`,
+      origin: originIor,
       definition: definition.description,
       filePath: definition.relativePath,
       mimetype: definition.mimetype,

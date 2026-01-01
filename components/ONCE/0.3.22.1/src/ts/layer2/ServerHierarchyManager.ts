@@ -1011,11 +1011,11 @@ export class ServerHierarchyManager {
      * The template is evaluated with 'this' bound to ServerHierarchyManager.
      * 
      * @deprecated LEGACY — use UcpView-based Lit Web Components instead.
-     * The src/view/html/ templates are being replaced by UcpView components.
+     * HTML templates are in src/ts/layer5/views/html/ (moved from src/view/html/)
      * @see OnceOverView.ts, OnceServerStatusView.ts, etc.
      * @pdca 2025-12-31-UTC-1900.unit-descriptor-sw-verification.pdca.md
      * 
-     * @param templatePath - Path relative to component root, OR just filename for src/view/html
+     * @param templatePath - Path relative to component root, OR just filename for src/ts/layer5/views/html
      */
     private renderTemplate(templatePath: string): string {
         const componentRoot = this.component?.model.componentRoot;
@@ -1024,10 +1024,10 @@ export class ServerHierarchyManager {
         }
         
         // If path contains '/', treat as relative to component root
-        // Otherwise, assume it's in src/view/html
+        // Otherwise, assume it's in src/ts/layer5/views/html
         const fullPath = templatePath.includes('/') 
             ? path.join(componentRoot, templatePath)
-            : path.join(componentRoot, 'src/view/html', templatePath);
+            : path.join(componentRoot, 'src/ts/layer5/views/html', templatePath);
             
         const template = fs.readFileSync(fullPath, 'utf-8');
         // Escape backticks in template to prevent breaking the Function constructor
