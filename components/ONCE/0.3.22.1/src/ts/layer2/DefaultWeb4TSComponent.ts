@@ -830,9 +830,11 @@ export class DefaultWeb4TSComponent
       }
     }
     
-    // Discover folder units (directories as RELATIONSHIP units)
-    await this.foldersDiscover(componentRoot, 'src');
-    await this.foldersDiscover(componentRoot, 'dist');
+    // NOTE: Folder units (°folder.unit) should be created via:
+    //   ./once unit from <folder>
+    // This is a manual operation, not automated during unitsDiscover()
+    // See: Web4Articles/components/Unit/0.3.0.5/README.md
+    // @pdca 2025-12-31-UTC-1900.unit-descriptor-sw-verification.pdca.md
     
     return this;
   }
@@ -841,123 +843,6 @@ export class DefaultWeb4TSComponent
   // component.json IS the manifest (better version)
   // @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
   
-  /**
-   * Discover and create folder units (°folder.unit in each directory)
-   * 
-   * Pattern: Web4Articles/MDAv4/°folder.unit
-   * - Folder units are created inside each folder as °folder.unit
-   * - They are symlinks to scenario.json in scenarios/index/
-   * - Model includes: originName, folderPath, fileCount, subfolderCount, totalSize
-   * 
-   * @pdca 2025-12-31-UTC-1900.unit-descriptor-sw-verification.pdca.md
-   */
-  private async foldersDiscover(componentRoot: string, baseDir: string): Promise<void> {
-    if (!this.unitDiscoveryService) {
-      throw new Error('UnitDiscoveryService not initialized');
-    }
-    
-    const fullBase = path.join(componentRoot, baseDir);
-    if (!fs.existsSync(fullBase)) return;
-    
-    const excludeDirs = ['node_modules', '.git', 'coverage', 'test-results'];
-    const discoveryService = this.unitDiscoveryService;
-    
-    const discoverDir = async (dir: string, relativePath: string) => {
-      // Check if °folder.unit already exists
-      const folderUnitPath = path.join(dir, '°folder.unit');
-      if (!fs.existsSync(folderUnitPath)) {
-        await this.folderUnitCreate(dir, relativePath);
-      }
-      
-      const entries = await fs.promises.readdir(dir, { withFileTypes: true });
-      
-      for (const entry of entries) {
-        if (!entry.isDirectory()) continue;
-        if (excludeDirs.includes(entry.name)) continue;
-        
-        const fullPath = path.join(dir, entry.name);
-        const relPath = path.join(relativePath, entry.name);
-        
-        // Recurse into subdirectories
-        await discoverDir(fullPath, relPath);
-      }
-    };
-    
-    await discoverDir(fullBase, baseDir);
-  }
-  
-  /**
-   * Create a °folder.unit file inside a directory
-   * Pattern from Web4Articles/MDAv4/°folder.unit
-   */
-  private async folderUnitCreate(folderPath: string, relativePath: string): Promise<void> {
-    const uuid = randomUUID();
-    const folderName = path.basename(folderPath);
-    const now = new Date().toISOString();
-    
-    // Count files and subfolders
-    let fileCount = 0;
-    let subfolderCount = 0;
-    try {
-      const entries = await fs.promises.readdir(folderPath, { withFileTypes: true });
-      for (const entry of entries) {
-        if (entry.isDirectory()) subfolderCount++;
-        else if (entry.isFile()) fileCount++;
-      }
-    } catch { /* ignore */ }
-    
-    const scenario = {
-      ior: {
-        uuid,
-        component: 'Unit',
-        version: this.model.version || '0.3.22.1',
-      },
-      owner: JSON.stringify({
-        user: process.env.USER || 'system',
-        hostname: 'cursor',
-        uuid,
-        timestamp: now,
-        component: 'Unit',
-        version: this.model.version || '0.3.22.1',
-      }),
-      model: {
-        uuid,
-        name: 'Folder',
-        origin: `ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/${this.model!.component}/${this.model!.version}/${relativePath}/`,
-        definition: `M1 folder instance: ${relativePath}/`,
-        typeM3: 'CLASS',
-        createdAt: now,
-        updatedAt: now,
-        originName: folderName,
-        folderPath: `${relativePath}/`,
-        fileCount,
-        subfolderCount,
-        totalSize: 0,
-        folderHash: '',
-        lastScanned: now,
-        symlinkPaths: [],
-      },
-    };
-    
-    // Save scenario to index
-    const projectRoot = this.model!.projectRoot;
-    const indexPath = `${uuid[0]}/${uuid[1]}/${uuid[2]}/${uuid[3]}/${uuid[4]}/${uuid}.scenario.json`;
-    const scenarioFullPath = path.join(projectRoot, 'scenarios', 'index', indexPath);
-    
-    await fs.promises.mkdir(path.dirname(scenarioFullPath), { recursive: true });
-    await fs.promises.writeFile(scenarioFullPath, JSON.stringify(scenario, null, 2));
-    
-    // Create °folder.unit symlink in the folder itself
-    const folderUnitPath = path.join(folderPath, '°folder.unit');
-    const relativeToScenario = path.relative(folderPath, scenarioFullPath);
-    
-    try {
-      await fs.promises.symlink(relativeToScenario, folderUnitPath);
-      console.log(`  📁 Created °folder.unit: ${relativePath}/`);
-    } catch (err: any) {
-      if (err.code !== 'EEXIST') throw err;
-    }
-  }
   
   // ═══════════════════════════════════════════════════════════════
   // WEB4TSCOMPONENT SPECIFIC METHODS
