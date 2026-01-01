@@ -25,7 +25,7 @@ import type { Web4TSComponentModel } from '../layer3/Web4TSComponentModel.interf
 import type { Scenario } from '../layer3/Scenario.interface.js';
 import type { StorageScenario } from '../layer3/StorageScenario.interface.js';
 import type { MethodSignature } from '../layer3/MethodSignature.interface.js';
-import type { UnitFilePattern } from '../layer3/UnitDefinition.interface.js';
+import type { UnitFilePattern, UnitDefinition } from '../layer3/UnitDefinition.interface.js';
 import { TypeM3 } from '../layer3/TypeM3.enum.js';
 import { IOR } from '../layer4/IOR.js';  // FsM.6: IOR-based content ops
 import * as fs from 'fs';
@@ -801,12 +801,106 @@ export class DefaultWeb4TSComponent
       }
     }
     
+    // Discover root component files (package.json, tsconfig.json, README.md, etc.)
+    const rootFilePatterns: { pattern: string; typeM3: TypeM3; mimetype: string }[] = [
+      { pattern: 'package.json', typeM3: TypeM3.ATTRIBUTE, mimetype: 'application/json' },
+      { pattern: 'package-lock.json', typeM3: TypeM3.ATTRIBUTE, mimetype: 'application/json' },
+      { pattern: 'tsconfig.json', typeM3: TypeM3.ATTRIBUTE, mimetype: 'application/json' },
+      { pattern: 'README.md', typeM3: TypeM3.ATTRIBUTE, mimetype: 'text/markdown' },
+      { pattern: 'vitest.config.ts', typeM3: TypeM3.ATTRIBUTE, mimetype: 'text/typescript' },
+      { pattern: 'once', typeM3: TypeM3.CLASS, mimetype: 'application/x-shellscript' },
+      { pattern: 'source.env', typeM3: TypeM3.ATTRIBUTE, mimetype: 'text/x-shellscript' },
+    ];
+    
+    for (const rootFile of rootFilePatterns) {
+      const filePath = path.join(componentRoot, rootFile.pattern);
+      if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+        const definition: UnitDefinition = {
+          filename: rootFile.pattern,
+          relativePath: rootFile.pattern,
+          fullPath: filePath,
+          typeM3: rootFile.typeM3,
+          mimetype: rootFile.mimetype,
+          description: `Root component file: ${rootFile.pattern}`,
+        };
+        
+        const result = await this.unitDiscoveryService.unitCreate(definition);
+        await this.unitDiscoveryService.unitSave(result);
+        console.log(`  📄 Created unit: ${definition.filename} (root)`);
+      }
+    }
+    
+    // Discover folder units (directories as RELATIONSHIP units)
+    await this.foldersDiscover(componentRoot, 'src');
+    await this.foldersDiscover(componentRoot, 'dist');
+    
     return this;
   }
   
   // manifestUpdate() REMOVED — replaced by componentDescriptorUpdate()
   // component.json IS the manifest (better version)
   // @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
+  
+  /**
+   * Discover and create folder units (directories as RELATIONSHIP units)
+   * Folder units represent containment relationships in the component structure
+   */
+  private async foldersDiscover(componentRoot: string, baseDir: string): Promise<void> {
+    if (!this.unitDiscoveryService) {
+      throw new Error('UnitDiscoveryService not initialized');
+    }
+    
+    const fullBase = path.join(componentRoot, baseDir);
+    if (!fs.existsSync(fullBase)) return;
+    
+    const excludeDirs = ['node_modules', '.git', 'coverage', 'test-results'];
+    const discoveryService = this.unitDiscoveryService; // Capture for closure
+    
+    const discoverDir = async (dir: string, relativePath: string) => {
+      const entries = await fs.promises.readdir(dir, { withFileTypes: true });
+      
+      for (const entry of entries) {
+        if (!entry.isDirectory()) continue;
+        if (excludeDirs.includes(entry.name)) continue;
+        
+        const fullPath = path.join(dir, entry.name);
+        const relPath = path.join(relativePath, entry.name);
+        
+        // Create folder unit
+        const definition: UnitDefinition = {
+          filename: entry.name,
+          relativePath: relPath,
+          fullPath: fullPath,
+          typeM3: TypeM3.RELATIONSHIP,
+          mimetype: 'inode/directory',
+          description: `Folder: ${relPath}`,
+        };
+        
+        const result = await discoveryService.unitCreate(definition);
+        await discoveryService.unitSave(result);
+        console.log(`  📁 Created folder unit: ${relPath}`);
+        
+        // Recurse into subdirectories
+        await discoverDir(fullPath, relPath);
+      }
+    };
+    
+    // Start from base directory (src or dist)
+    const baseDef: UnitDefinition = {
+      filename: baseDir,
+      relativePath: baseDir,
+      fullPath: fullBase,
+      typeM3: TypeM3.RELATIONSHIP,
+      mimetype: 'inode/directory',
+      description: `Base folder: ${baseDir}`,
+    };
+    
+    const baseResult = await discoveryService.unitCreate(baseDef);
+    await discoveryService.unitSave(baseResult);
+    console.log(`  📁 Created folder unit: ${baseDir}`);
+    
+    await discoverDir(fullBase, baseDir);
+  }
   
   // ═══════════════════════════════════════════════════════════════
   // WEB4TSCOMPONENT SPECIFIC METHODS

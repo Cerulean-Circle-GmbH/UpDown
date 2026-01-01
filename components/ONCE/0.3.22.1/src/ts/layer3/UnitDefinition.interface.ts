@@ -19,6 +19,9 @@ export interface UnitDefinition {
   /** Relative path from component root */
   relativePath: string;
   
+  /** Full absolute path to the file */
+  fullPath: string;
+  
   /** Human-readable description */
   description: string;
   
@@ -28,8 +31,8 @@ export interface UnitDefinition {
   /** MIME type */
   mimetype: string;
   
-  /** File extension */
-  extension: string;
+  /** File extension (optional, derived from filename) */
+  extension?: string;
   
   /** Optional: Existing UUID if unit already exists */
   existingUuid?: string;

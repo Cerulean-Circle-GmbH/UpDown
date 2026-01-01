@@ -149,6 +149,7 @@ export class UnitDiscoveryService {
           results.push({
             filename: entry.name,
             relativePath,
+            fullPath,
             description: this.generateDescription(entry.name, pattern.typeM3),
             typeM3: pattern.typeM3,
             mimetype: pattern.mimetype,
