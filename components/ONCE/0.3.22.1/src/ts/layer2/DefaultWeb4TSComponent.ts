@@ -20,6 +20,7 @@ import { ScenarioService } from './ScenarioService.js';
 import { UcpStorage } from './UcpStorage.js';
 import { SemanticVersion } from './SemanticVersion.js';
 import { TsAstExtractor } from './TsAstExtractor.js';
+import { DefaultUnit } from './DefaultUnit.js';  // P8: DRY — use existing Unit class
 import type { Web4TSComponent } from '../layer3/Web4TSComponent.interface.js';
 import type { Web4TSComponentModel } from '../layer3/Web4TSComponentModel.interface.js';
 import type { Scenario } from '../layer3/Scenario.interface.js';
@@ -830,13 +831,52 @@ export class DefaultWeb4TSComponent
       }
     }
     
-    // NOTE: Folder units (°folder.unit) should be created via:
-    //   ./once unit from <folder>
-    // This is a manual operation, not automated during unitsDiscover()
-    // See: Web4Articles/components/Unit/0.3.0.5/README.md
-    // @pdca 2025-12-31-UTC-1900.unit-descriptor-sw-verification.pdca.md
+    // Create folder units using DefaultUnit.from() — P8: DRY
+    // @pdca 2026-01-01-UTC-2000.folder-unit-integration-fix.pdca.md
+    await this.foldersDiscover(componentRoot, 'src');
+    await this.foldersDiscover(componentRoot, 'dist');
     
     return this;
+  }
+  
+  /**
+   * Discover folders and create °folder.unit using DefaultUnit.from()
+   * Uses existing DefaultUnit class — P8: DRY principle
+   * @pdca 2026-01-01-UTC-2000.folder-unit-integration-fix.pdca.md
+   */
+  private async foldersDiscover(componentRoot: string, baseDir: string): Promise<void> {
+    const fullBase = path.join(componentRoot, baseDir);
+    if (!fs.existsSync(fullBase)) return;
+    
+    const excludeDirs = ['node_modules', '.git', 'coverage', 'test-results', '.tootsie'];
+    
+    const discoverDir = async (dir: string): Promise<void> => {
+      const folderUnitPath = path.join(dir, '°folder.unit');
+      
+      // Only create if doesn't exist
+      if (!fs.existsSync(folderUnitPath)) {
+        try {
+          // P8: DRY — use DefaultUnit.from() instead of reimplementing
+          // P6: Empty Constructor — new DefaultUnit().initSync({}).from(path)
+          const unit = new DefaultUnit();
+          unit.initSync({});
+          await unit.from(dir);
+          console.log(`  📁 Created folder unit: ${path.relative(componentRoot, dir)}/°folder.unit`);
+        } catch (error: any) {
+          console.warn(`  ⚠️ Failed to create folder unit for ${dir}: ${error.message}`);
+        }
+      }
+      
+      // Recursively process subdirectories
+      const entries = await fs.promises.readdir(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        if (!entry.isDirectory()) continue;
+        if (excludeDirs.includes(entry.name)) continue;
+        await discoverDir(path.join(dir, entry.name));
+      }
+    };
+    
+    await discoverDir(fullBase);
   }
   
   // manifestUpdate() REMOVED — replaced by componentDescriptorUpdate()

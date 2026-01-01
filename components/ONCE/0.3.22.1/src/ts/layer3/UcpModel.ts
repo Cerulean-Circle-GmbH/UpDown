@@ -24,6 +24,7 @@
  */
 
 import type { Reference } from './Reference.interface.js';
+import { IOR } from '../layer4/IOR.js';  // P20: Static import for ESM compatibility
 
 /**
  * UcpModel<T> - Reactive model wrapper
@@ -222,9 +223,7 @@ export class UcpModel<T extends object> {
         // ISR: Detect IOR strings and return self-replacing IOR objects
         // Note: We don't await — fire-and-forget pattern (P7 compliant)
         if (typeof value === 'string' && value.startsWith('ior:')) {
-          // Create self-replacing IOR
-          // eslint-disable-next-line @typescript-eslint/no-require-imports
-          const { IOR } = require('../layer4/IOR.js');
+          // Create self-replacing IOR (P20: uses static import)
           const ior = new IOR().initRemote(value);
           ior.initWithParent(target, String(property));
           
@@ -282,9 +281,7 @@ export class UcpModel<T extends object> {
           return element;
         }
         
-        // Create self-replacing IOR for this array element
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const { IOR } = require('../layer4/IOR.js');
+        // Create self-replacing IOR for this array element (P20: uses static import)
         const ior = new IOR().initRemote(element);
         ior.initWithParent(parent, key, numIndex);
         
