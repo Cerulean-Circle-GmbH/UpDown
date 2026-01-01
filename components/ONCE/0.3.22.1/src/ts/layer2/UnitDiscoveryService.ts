@@ -232,8 +232,16 @@ export class UnitDiscoveryService {
       ],
     });
     
-    // Calculate unit symlink path
-    const unitSymlinkPath = path.join(this.componentRoot, `${definition.relativePath}.unit`);
+    // Calculate unit symlink path — in scenarios/type mirror, NOT component directory
+    // @pdca 2025-12-31-UTC-1800.unit-symlink-location-fix.pdca.md
+    const unitSymlinkPath = path.join(
+      this.projectRoot,
+      'scenarios',
+      'type',
+      this.componentName,
+      this.componentVersion,
+      `${definition.relativePath}.unit`
+    );
     
     return {
       definition,
@@ -251,16 +259,14 @@ export class UnitDiscoveryService {
       throw new Error('UnitDiscoveryService not initialized');
     }
     
-    // Build symlink paths
-    const componentUnitPath = `components/${this.componentName}/${this.componentVersion}/${result.definition.relativePath}.unit`;
-    
-    // Save scenario
+    // Save scenario to index with type path symlink
+    // The .unit symlink is created separately below (direct fs.symlink)
+    // @pdca 2025-12-31-UTC-1800.unit-symlink-location-fix.pdca.md
     await this.scenarioService.scenarioSave(result.scenario, [
       this.scenarioService.typePathBuild('Unit', this.componentVersion),
-      componentUnitPath,
     ]);
     
-    // Create symlink in component directory
+    // Create symlink in scenarios/type directory (points to scenario in index)
     const scenarioIndexPath = path.join(
       this.projectRoot,
       'scenarios',
