@@ -305,34 +305,43 @@ export class IOR<T = any> implements IORInterface {
      * ```
      */
     async resolveAndReplace<C = T>(): Promise<C | null> {
-        // Resolve to instance using existing resolveInstance()
-        const instance = await this.resolveInstance<C>();
-        
-        if (instance === null) {
-            console.warn('[IOR.resolveAndReplace] Resolution returned null for:', this.model);
-            return null;
-        }
-        
-        // Replace self in parent (if parent was set)
-        if (this.parentModel && this.parentKey) {
-            const parent = this.parentModel as Record<string, unknown>;
+        // Fire-and-forget error handling (Decision 1B: log but don't throw)
+        // @pdca 2026-01-01-UTC-1931.isr-error-handling-folder-units.pdca.md
+        try {
+            // Resolve to instance using existing resolveInstance()
+            const instance = await this.resolveInstance<C>();
             
-            if (this.parentIndex !== null) {
-                // Array element: parent.children[index] = instance
-                const arr = parent[this.parentKey] as unknown[];
-                if (arr && Array.isArray(arr)) {
-                    arr[this.parentIndex] = instance;
-                }
-            } else {
-                // Single property: parent.propertyName = instance
-                parent[this.parentKey] = instance;
+            if (instance === null) {
+                console.warn('[IOR.resolveAndReplace] Resolution returned null for:', this.model);
+                return null;
             }
             
-            // Note: If parent is proxied by UcpModel, this triggers view update
-            console.log(`[IOR.resolveAndReplace] Replaced ${this.parentKey}${this.parentIndex !== null ? '[' + this.parentIndex + ']' : ''} with instance`);
+            // Replace self in parent (if parent was set)
+            if (this.parentModel && this.parentKey) {
+                const parent = this.parentModel as Record<string, unknown>;
+                
+                if (this.parentIndex !== null) {
+                    // Array element: parent.children[index] = instance
+                    const arr = parent[this.parentKey] as unknown[];
+                    if (arr && Array.isArray(arr)) {
+                        arr[this.parentIndex] = instance;
+                    }
+                } else {
+                    // Single property: parent.propertyName = instance
+                    parent[this.parentKey] = instance;
+                }
+                
+                // Note: If parent is proxied by UcpModel, this triggers view update
+                console.log(`[IOR.resolveAndReplace] Replaced ${this.parentKey}${this.parentIndex !== null ? '[' + this.parentIndex + ']' : ''} with instance`);
+            }
+            
+            return instance;
+        } catch (error) {
+            // Fire-and-forget: log error but don't crash
+            // This is expected when resolving git:// URLs without network
+            console.warn(`[IOR.resolveAndReplace] Fire-and-forget resolution failed:`, (error as Error).message);
+            return null;
         }
-        
-        return instance;
     }
     
     /**
