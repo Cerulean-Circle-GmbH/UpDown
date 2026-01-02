@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "03964607-87f1-40df-b197-8bc89929fc77",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "03964607-87f1-40df-b197-8bc89929fc77",
+    "name": "TLSCertificateLoader.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer2/TLSCertificateLoader.ts",
+    "definition": "TypeScript TLSCertificateLoader class/interface",
+    "filePath": "src/ts/layer2/TLSCertificateLoader.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-02T16:46:23.656Z",
+    "updatedAt": "2026-01-02T16:46:23.657Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/0/3/9/6/4/03964607-87f1-40df-b197-8bc89929fc77.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "0/3/9/6/4/03964607-87f1-40df-b197-8bc89929fc77.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T16:46:23.656Z",
+    "updatedAt": "2026-01-02T16:46:23.657Z"
+  }
+}

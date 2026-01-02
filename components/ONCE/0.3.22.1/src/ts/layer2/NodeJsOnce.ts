@@ -1103,6 +1103,20 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
     }
     
     // No scenario provided - stop current server (self)
+    // ✅ SH.1: Mark scenario as SHUTDOWN before exit (don't delete)
+    // @pdca 2026-01-02-UTC-1700.scenario-housekeeping-migration.pdca.md
+    this.model.state = LifecycleState.SHUTDOWN;
+    (this.model as any).shutdownTime = new Date().toISOString();
+    
+    // ✅ Save shutdown state to scenario file (persists for housekeeping)
+    try {
+      const shutdownScenario = await this.toScenario();
+      await this.scenarioManager.saveScenario(shutdownScenario);
+      console.log(`📝 Scenario marked as SHUTDOWN: ${this.model.uuid}`);
+    } catch (error) {
+      console.warn(`⚠️  Failed to save shutdown scenario: ${error}`);
+    }
+    
     // ✅ Transition to STOPPING state
     this.transitionTo(LifecycleState.STOPPING, LifecycleEventType.BEFORE_STOP);
     

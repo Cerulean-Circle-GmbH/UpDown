@@ -2112,9 +2112,12 @@ export class ServerHierarchyManager {
     /**
      * Perform housekeeping at primary server startup (infrastructure method)
      * - Load existing scenarios from filesystem
-     * - Delete scenarios with state=shutdown
+     * - Delete SHUTDOWN scenarios older than 24h (cleanup)
+     * - Keep recent SHUTDOWN scenarios (state history)
+     * - Mark unreachable RUNNING scenarios as SHUTDOWN (don't delete)
      * - Discover and re-register running client servers
      * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md
+     * @pdca 2026-01-02-UTC-1700.scenario-housekeeping-migration.pdca.md
      */
     async performHousekeeping(): Promise<{ deleted: number; discovered: number }> {
         console.log('🧹 Performing primary server housekeeping...');
@@ -2216,19 +2219,44 @@ export class ServerHierarchyManager {
                     const port = model.capabilities?.find((c: any) => c.capability === 'httpPort')?.port || model.port;
                     
                     if (state === LifecycleState.SHUTDOWN || state === LifecycleState.STOPPED) {
-                        // Delete shutdown/stopped server scenarios (both main file and symlink)
-                        fs.unlinkSync(scenarioPath);
+                        // SH.2.2: Only delete if shutdownTime > 24h ago (cleanup old scenarios)
+                        // @pdca 2026-01-02-UTC-1700.scenario-housekeeping-migration.pdca.md
+                        const shutdownTime = (model as any).shutdownTime;
+                        const CLEANUP_AGE_MS = 24 * 60 * 60 * 1000; // 24 hours
                         
-                        // Delete corresponding symlink if it exists
-                        if (port) {
-                            const symlinkPath = path.join(scenarioBaseDir, `capability/httpPort/${port}/${uuid}.scenario.json`);
-                            if (fs.existsSync(symlinkPath)) {
-                                fs.unlinkSync(symlinkPath);
+                        if (shutdownTime) {
+                            const shutdownDate = new Date(shutdownTime);
+                            const ageMs = Date.now() - shutdownDate.getTime();
+                            
+                            if (ageMs > CLEANUP_AGE_MS) {
+                                // Old shutdown scenario - delete it
+                                fs.unlinkSync(scenarioPath);
+                                
+                                // Delete corresponding symlink if it exists
+                                if (port) {
+                                    const symlinkPath = path.join(scenarioBaseDir, `capability/httpPort/${port}/${uuid}.scenario.json`);
+                                    if (fs.existsSync(symlinkPath)) {
+                                        fs.unlinkSync(symlinkPath);
+                                    }
+                                }
+                                
+                                deletedCount++;
+                                console.log(`🗑️  Deleted old shutdown scenario (${Math.round(ageMs / 3600000)}h old): ${uuid}`);
+                            } else {
+                                console.log(`📝 Keeping recent shutdown scenario (${Math.round(ageMs / 60000)}m old): ${uuid}`);
                             }
+                        } else {
+                            // Legacy scenario without shutdownTime - delete it (old format)
+                            fs.unlinkSync(scenarioPath);
+                            if (port) {
+                                const symlinkPath = path.join(scenarioBaseDir, `capability/httpPort/${port}/${uuid}.scenario.json`);
+                                if (fs.existsSync(symlinkPath)) {
+                                    fs.unlinkSync(symlinkPath);
+                                }
+                            }
+                            deletedCount++;
+                            console.log(`🗑️  Deleted legacy shutdown scenario (no shutdownTime): ${uuid}`);
                         }
-                        
-                        deletedCount++;
-                        console.log(`🗑️  Deleted shutdown server scenario: ${uuid} (port ${port})`);
                     } else if (state === LifecycleState.RUNNING || state === LifecycleState.CLIENT_SERVER) {
                         // Check if this is a different server (not ourself)
                         if (uuid === this.serverModel.uuid) {
@@ -2267,10 +2295,15 @@ export class ServerHierarchyManager {
                                 // Server is reachable
                                 if (port === 42777) {
                                     // Found another primary server - this is a conflict!
-                                    // Delete this scenario and let the current primary take over
-                                    fs.unlinkSync(scenarioPath);
-                                    deletedCount++;
-                                    console.log(`⚠️  Deleted conflicting primary scenario: ${uuid} (port ${port})`);
+                                    // SH.2.1: Mark as SHUTDOWN instead of deleting
+                                    // @pdca 2026-01-02-UTC-1700.scenario-housekeeping-migration.pdca.md
+                                    scenarioData.model.state = LifecycleState.SHUTDOWN;
+                                    (scenarioData.model as any).shutdownTime = new Date().toISOString();
+                                    
+                                    const saveIor = new IOR<void>().initRemote(`ior:file://${scenarioPath}`);
+                                    await saveIor.save(JSON.stringify(scenarioData, null, 2));
+                                    
+                                    console.log(`⚠️  Marked conflicting primary scenario as SHUTDOWN: ${uuid}`);
                                 } else {
                                     // Client server is running - register it
                                     discoveredCount++;
@@ -2285,17 +2318,16 @@ export class ServerHierarchyManager {
                                     });
                                 }
                             } catch (error) {
-                                // Server not reachable, delete stale scenario (both main file and symlink)
-                                fs.unlinkSync(scenarioPath);
+                                // SH.2.1: Server not reachable - mark as SHUTDOWN (don't delete)
+                                // @pdca 2026-01-02-UTC-1700.scenario-housekeeping-migration.pdca.md
+                                scenarioData.model.state = LifecycleState.SHUTDOWN;
+                                (scenarioData.model as any).shutdownTime = new Date().toISOString();
                                 
-                                // Delete corresponding symlink if it exists
-                                const symlinkPath = path.join(scenarioBaseDir, `capability/httpPort/${port}/${uuid}.scenario.json`);
-                                if (fs.existsSync(symlinkPath)) {
-                                    fs.unlinkSync(symlinkPath);
-                                }
+                                // Save updated scenario
+                                const saveIor = new IOR<void>().initRemote(`ior:file://${scenarioPath}`);
+                                await saveIor.save(JSON.stringify(scenarioData, null, 2));
                                 
-                                deletedCount++;
-                                console.log(`🗑️  Deleted stale server scenario: ${uuid} (port ${port} not reachable)`);
+                                console.log(`📝 Marked unreachable scenario as SHUTDOWN: ${uuid} (port ${port})`);
                             }
                         }
                     }

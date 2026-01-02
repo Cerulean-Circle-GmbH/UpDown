@@ -1,0 +1,110 @@
+{
+  "ior": {
+    "uuid": "159baf0c-9a3b-49bc-8b43-fa5f3e603663",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "159baf0c-9a3b-49bc-8b43-fa5f3e603663",
+    "name": "LitItemView",
+    "extends": "ior:esm:/ONCE/0.3.22.1/LitElement",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/LitItemView.ts",
+    "indexPath": "scenarios/index/159baf0c-9a3b-49bc-8b43-fa5f3e603663.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/LitItemView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "scenario",
+        "type": "Scenario<TModel> | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "kernel",
+        "type": "unknown",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "styles",
+        "type": "CSSResult",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "model",
+        "type": "TModel",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "icon",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "badge",
+        "type": "string | number | null",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onClick",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onContextMenu",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T16:46:26.886Z",
+    "updatedAt": "2026-01-02T16:46:26.886Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

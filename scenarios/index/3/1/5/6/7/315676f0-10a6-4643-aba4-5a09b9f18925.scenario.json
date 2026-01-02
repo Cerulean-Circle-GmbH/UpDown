@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "315676f0-10a6-4643-aba4-5a09b9f18925",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "315676f0-10a6-4643-aba4-5a09b9f18925",
+    "name": "OnceServerStatusView.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer5/views/OnceServerStatusView.ts",
+    "definition": "TypeScript OnceServerStatusView class/interface",
+    "filePath": "src/ts/layer5/views/OnceServerStatusView.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-02T16:46:24.520Z",
+    "updatedAt": "2026-01-02T16:46:24.520Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/3/1/5/6/7/315676f0-10a6-4643-aba4-5a09b9f18925.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "3/1/5/6/7/315676f0-10a6-4643-aba4-5a09b9f18925.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T16:46:24.520Z",
+    "updatedAt": "2026-01-02T16:46:24.520Z"
+  }
+}

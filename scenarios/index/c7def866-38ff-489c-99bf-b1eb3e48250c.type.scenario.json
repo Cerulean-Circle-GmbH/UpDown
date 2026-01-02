@@ -1,0 +1,54 @@
+{
+  "ior": {
+    "uuid": "c7def866-38ff-489c-99bf-b1eb3e48250c",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "c7def866-38ff-489c-99bf-b1eb3e48250c",
+    "name": "IDProvider",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/IDProvider.interface.ts",
+    "indexPath": "scenarios/index/c7def866-38ff-489c-99bf-b1eb3e48250c.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/IDProvider.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "create",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "validate",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T16:46:26.667Z",
+    "updatedAt": "2026-01-02T16:46:26.667Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

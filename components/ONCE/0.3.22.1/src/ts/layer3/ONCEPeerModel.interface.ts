@@ -52,6 +52,13 @@ export interface ONCEPeerModel extends Model {
     /** When connected to primary (browser) or started listening (server) */
     connectionTime: Reference<Date>;
     
+    /** 
+     * When the peer was shutdown (ISO 8601 format)
+     * Used for housekeeping: scenarios with shutdownTime > 24h can be cleaned up
+     * @pdca 2026-01-02-UTC-1700.scenario-housekeeping-migration.pdca.md
+     */
+    shutdownTime?: string;
+    
     // === NETWORK ===
     /** Fully qualified hostname (e.g., "McDonges-3.fritz.box") */
     host: string;
