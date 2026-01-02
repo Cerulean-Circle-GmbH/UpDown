@@ -1,0 +1,48 @@
+{
+  "ior": {
+    "uuid": "aa60a1de-b5c7-401e-9756-7cf22bbfefbf",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "aa60a1de-b5c7-401e-9756-7cf22bbfefbf",
+    "name": "OncePeerModel",
+    "extends": "ior:esm:/ONCE/0.3.22.1/ItemViewModel",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/OncePeerItemView.ts",
+    "indexPath": "scenarios/index/aa60a1de-b5c7-401e-9756-7cf22bbfefbf.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/OncePeerModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "lifecycleState",
+        "type": "LifecycleState",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isPrimaryServer",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "capabilities",
+        "elementType": "PeerCapability"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:04:04.180Z",
+    "updatedAt": "2026-01-02T12:04:04.180Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "ior": {
+    "uuid": "14c93c9a-0fa6-4022-b25e-dda5490c3ac6",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "14c93c9a-0fa6-4022-b25e-dda5490c3ac6",
+    "name": "FileJs",
+    "extends": "ior:esm:/ONCE/0.3.22.1/JsInterface",
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.1/File"
+    ],
+    "sourcePath": "src/ts/layer3/FileJs.ts",
+    "indexPath": "scenarios/index/14c93c9a-0fa6-4022-b25e-dda5490c3ac6.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/FileJs.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [
+      {
+        "name": "model",
+        "type": "Model",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "path",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "uuid",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "isFile",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "isFolder",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "exists",
+        "parameters": [],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "delete",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "parentSet",
+        "parameters": [
+          {
+            "name": "folder",
+            "type": "FileJs | null",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "pathSet",
+        "parameters": [
+          {
+            "name": "newPath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:04:03.876Z",
+    "updatedAt": "2026-01-02T12:04:03.876Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "1b26a8b7-1908-431b-9432-c286bbbfca51",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "1b26a8b7-1908-431b-9432-c286bbbfca51",
+    "name": "RESTLoader.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer2/RESTLoader.ts",
+    "definition": "TypeScript RESTLoader class/interface",
+    "filePath": "src/ts/layer2/RESTLoader.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-02T12:03:59.298Z",
+    "updatedAt": "2026-01-02T12:03:59.298Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/1/b/2/6/a/1b26a8b7-1908-431b-9432-c286bbbfca51.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "1/b/2/6/a/1b26a8b7-1908-431b-9432-c286bbbfca51.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:03:59.298Z",
+    "updatedAt": "2026-01-02T12:03:59.298Z"
+  }
+}

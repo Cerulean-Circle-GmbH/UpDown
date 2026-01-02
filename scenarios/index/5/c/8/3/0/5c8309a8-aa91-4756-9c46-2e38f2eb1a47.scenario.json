@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "5c8309a8-aa91-4756-9c46-2e38f2eb1a47",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "5c8309a8-aa91-4756-9c46-2e38f2eb1a47",
+    "name": "TsAstExtractor.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer2/TsAstExtractor.ts",
+    "definition": "TypeScript TsAstExtractor class/interface",
+    "filePath": "dist/ts/layer2/TsAstExtractor.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-02T12:04:00.514Z",
+    "updatedAt": "2026-01-02T12:04:00.514Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/5/c/8/3/0/5c8309a8-aa91-4756-9c46-2e38f2eb1a47.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "5/c/8/3/0/5c8309a8-aa91-4756-9c46-2e38f2eb1a47.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:04:00.514Z",
+    "updatedAt": "2026-01-02T12:04:00.514Z"
+  }
+}

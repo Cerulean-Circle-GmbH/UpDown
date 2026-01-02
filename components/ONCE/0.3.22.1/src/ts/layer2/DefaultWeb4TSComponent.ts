@@ -1154,6 +1154,7 @@ ${'='.repeat(80)}
       { dir: 'src/ts/layer5/views/html', extensions: ['.html'] },
       { dir: 'src/ts/layer5/views/templates', extensions: ['.html', '.hbs'] },
       { dir: 'src/sh', extensions: ['.sh'] },  // Lifecycle scripts
+      { dir: 'src/assets', extensions: ['.svg', '.png', '.jpg', '.jpeg', '.ico', '.webp'] },  // Assets
       { dir: 'dist/ts', extensions: ['.js'] },
       { dir: 'src/ts', extensions: ['.ts'] },
     ];
@@ -1163,6 +1164,7 @@ ${'='.repeat(80)}
       'package.json',
       'tsconfig.json',
       'vitest.config.ts',
+      'source.env',
       'README.md',
       '.gitignore',
       '.npmrc',

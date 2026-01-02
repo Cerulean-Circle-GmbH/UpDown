@@ -1,0 +1,241 @@
+{
+  "ior": {
+    "uuid": "e8408f21-1532-4b32-8ed2-f9c0735ffd39",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "e8408f21-1532-4b32-8ed2-f9c0735ffd39",
+    "name": "DefaultFileSystem",
+    "extends": "ior:esm:/ONCE/0.3.22.1/UcpComponent",
+    "implements": [],
+    "sourcePath": "src/ts/layer2/DefaultFileSystem.ts",
+    "indexPath": "scenarios/index/e8408f21-1532-4b32-8ed2-f9c0735ffd39.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/DefaultFileSystem.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [
+      {
+        "name": "mimetypeRegistry",
+        "type": "DefaultMimetypeHandlerRegistry",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "rootFolder",
+        "type": "Reference<DefaultFolder>",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [
+      {
+        "name": "rootFolderInstance",
+        "targetType": "DefaultFolder"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "modelDefault",
+        "parameters": [],
+        "returnType": "FileSystemModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "{ model?: FileSystemModel }",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fileCreate",
+        "parameters": [
+          {
+            "name": "blob",
+            "type": "Blob",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "filename",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "mimetype",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "parentFolder",
+            "type": "DefaultFolder",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<DefaultFile>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "folderCreate",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "parentFolder",
+            "type": "DefaultFolder",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "DefaultFolder",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "linkCreate",
+        "parameters": [
+          {
+            "name": "target",
+            "type": "DefaultFile | DefaultFolder",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "linkPath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "DefaultFile | DefaultFolder",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "linkMove",
+        "parameters": [
+          {
+            "name": "link",
+            "type": "DefaultFile | DefaultFolder",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "newTarget",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "mimetypeHandlerRegister",
+        "parameters": [
+          {
+            "name": "pattern",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "componentClass",
+            "type": "ComponentConstructor",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "priority",
+            "type": "number",
+            "optional": false,
+            "defaultValue": "0"
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "mimetypeHandlerLookup",
+        "parameters": [
+          {
+            "name": "mimetype",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "MimetypeHandler | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "componentFromFile",
+        "parameters": [
+          {
+            "name": "nativeFile",
+            "type": "File",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<UcpComponent<any>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "dispose",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:04:03.204Z",
+    "updatedAt": "2026-01-02T12:04:03.204Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

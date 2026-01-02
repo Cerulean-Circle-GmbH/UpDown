@@ -1,0 +1,55 @@
+{
+  "ior": {
+    "uuid": "96f3c92e-fe0a-4744-b217-ddacda49f52d",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "96f3c92e-fe0a-4744-b217-ddacda49f52d",
+    "name": "Scenario",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/Scenario.interface.ts",
+    "indexPath": "scenarios/index/96f3c92e-fe0a-4744-b217-ddacda49f52d.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Scenario.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "ior",
+        "type": "{\n    // ✅ Core identity (REQUIRED)\n    uuid: string;              // Object instance UUID\n    component: string;         // Component name (ONCE, User, HTTPSServer)\n    version: string;           // Component version (0.3.21.2)\n    \n    // ✅ Network location (OPTIONAL - for distributed objects)\n    protocol?: string;         // 'ior:https', 'ior:https:ssl:udp', etc.\n    host?: string;             // 'mcdonges-3.fritz.box', 'localhost'\n    port?: number;             // 42777, 8080, etc.\n    path?: string;             // '/ONCE/0.3.21.2/uuid-here/method'\n    \n    // ✅ IOR Profiles (OPTIONAL - CORBA 2.3+ pattern for failover)\n    profiles?: Array<{\n      host: string;            // Failover host\n      port: number;            // Failover port\n      protocol?: string;       // Optional protocol override\n      priority?: number;       // Optional priority (lower = higher priority)\n    }>;\n    \n    // ✅ Precomputed IOR string (CACHED - computed on first access)\n    iorString?: string;        // 'ior:https://host:port,failover:port/component/version/uuid'\n  }",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "owner",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "model",
+        "type": "T",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "unit",
+        "type": "ScenarioUnit",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:04:03.918Z",
+    "updatedAt": "2026-01-02T12:04:03.918Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "648e34eb-b02b-4636-99c0-f8dff8e6601e",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "648e34eb-b02b-4636-99c0-f8dff8e6601e",
+    "name": "UUIDProvider.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer2/UUIDProvider.ts",
+    "definition": "TypeScript UUIDProvider class/interface",
+    "filePath": "dist/ts/layer2/UUIDProvider.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-02T12:04:00.530Z",
+    "updatedAt": "2026-01-02T12:04:00.533Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/6/4/8/e/3/648e34eb-b02b-4636-99c0-f8dff8e6601e.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "6/4/8/e/3/648e34eb-b02b-4636-99c0-f8dff8e6601e.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:04:00.530Z",
+    "updatedAt": "2026-01-02T12:04:00.530Z"
+  }
+}

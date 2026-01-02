@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "08a60479-36fb-4244-8cfa-f7a09443c33b",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "08a60479-36fb-4244-8cfa-f7a09443c33b",
+    "name": "CollectionDescriptor.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer3/CollectionDescriptor.interface.ts",
+    "definition": "TypeScript CollectionDescriptor.interface class/interface",
+    "filePath": "src/ts/layer3/CollectionDescriptor.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-02T12:03:59.499Z",
+    "updatedAt": "2026-01-02T12:03:59.500Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/0/8/a/6/0/08a60479-36fb-4244-8cfa-f7a09443c33b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "0/8/a/6/0/08a60479-36fb-4244-8cfa-f7a09443c33b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:03:59.499Z",
+    "updatedAt": "2026-01-02T12:03:59.499Z"
+  }
+}

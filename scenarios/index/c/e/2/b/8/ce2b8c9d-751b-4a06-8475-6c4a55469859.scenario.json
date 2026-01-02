@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "ce2b8c9d-751b-4a06-8475-6c4a55469859",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "ce2b8c9d-751b-4a06-8475-6c4a55469859",
+    "name": "LifecycleState.enum.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer3/LifecycleState.enum.ts",
+    "definition": "TypeScript LifecycleState.enum class/interface",
+    "filePath": "dist/ts/layer3/LifecycleState.enum.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-02T12:04:01.265Z",
+    "updatedAt": "2026-01-02T12:04:01.265Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/e/2/b/8/ce2b8c9d-751b-4a06-8475-6c4a55469859.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/e/2/b/8/ce2b8c9d-751b-4a06-8475-6c4a55469859.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:04:01.265Z",
+    "updatedAt": "2026-01-02T12:04:01.265Z"
+  }
+}
