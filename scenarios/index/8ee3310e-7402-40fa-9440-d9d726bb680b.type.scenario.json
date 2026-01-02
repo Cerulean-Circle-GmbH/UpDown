@@ -1,0 +1,60 @@
+{
+  "ior": {
+    "uuid": "8ee3310e-7402-40fa-9440-d9d726bb680b",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "8ee3310e-7402-40fa-9440-d9d726bb680b",
+    "name": "IORLoadingView",
+    "extends": "ior:esm:/ONCE/0.3.22.1/UcpView",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/IORLoadingView.ts",
+    "indexPath": "scenarios/index/8ee3310e-7402-40fa-9440-d9d726bb680b.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/IORLoadingView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "cssPath",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "IORLoadingView.css"
+      },
+      {
+        "name": "displayName",
+        "type": "string",
+        "optional": false,
+        "defaultValue": ""
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "extractUuid",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:25:07.141Z",
+    "updatedAt": "2026-01-02T12:25:07.141Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

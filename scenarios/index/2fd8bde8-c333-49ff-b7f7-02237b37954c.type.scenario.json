@@ -1,0 +1,121 @@
+{
+  "ior": {
+    "uuid": "2fd8bde8-c333-49ff-b7f7-02237b37954c",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "2fd8bde8-c333-49ff-b7f7-02237b37954c",
+    "name": "WebSocketDefaultView",
+    "extends": "ior:esm:/ONCE/0.3.22.1/UcpView",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/WebSocketDefaultView.ts",
+    "indexPath": "scenarios/index/2fd8bde8-c333-49ff-b7f7-02237b37954c.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/WebSocketDefaultView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "styles",
+        "type": "CSSResultGroup",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "statusClass",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "statusText",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "renderReconnectInfo",
+        "parameters": [
+          {
+            "name": "model",
+            "type": "WebSocketModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "TemplateResult | string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "renderError",
+        "parameters": [
+          {
+            "name": "model",
+            "type": "WebSocketModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "TemplateResult | string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "renderConnectionTime",
+        "parameters": [
+          {
+            "name": "model",
+            "type": "WebSocketModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "TemplateResult | string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "renderLastMessage",
+        "parameters": [
+          {
+            "name": "model",
+            "type": "WebSocketModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "TemplateResult | string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:25:07.180Z",
+    "updatedAt": "2026-01-02T12:25:07.180Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

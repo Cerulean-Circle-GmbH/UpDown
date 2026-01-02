@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "3c4d8ab1-25b2-429c-838c-8a724cd2f192",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "3c4d8ab1-25b2-429c-838c-8a724cd2f192",
+    "name": "runLetsEncryptTests.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/tests/runLetsEncryptTests.ts",
+    "definition": "TypeScript runLetsEncryptTests class/interface",
+    "filePath": "dist/ts/tests/runLetsEncryptTests.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-02T12:25:05.943Z",
+    "updatedAt": "2026-01-02T12:25:05.943Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/3/c/4/d/8/3c4d8ab1-25b2-429c-838c-8a724cd2f192.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "3/c/4/d/8/3c4d8ab1-25b2-429c-838c-8a724cd2f192.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:25:05.943Z",
+    "updatedAt": "2026-01-02T12:25:05.943Z"
+  }
+}

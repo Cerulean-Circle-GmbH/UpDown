@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "f138b598-1b62-4951-b05a-f3a48b0eb52e",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "f138b598-1b62-4951-b05a-f3a48b0eb52e",
+    "name": "UcpRouter.css",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer5/views/css/UcpRouter.css",
+    "definition": "CSS stylesheet for UcpRouter",
+    "filePath": "src/ts/layer5/views/css/UcpRouter.css",
+    "mimetype": "text/css",
+    "createdAt": "2026-01-02T12:25:04.046Z",
+    "updatedAt": "2026-01-02T12:25:04.047Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/f/1/3/8/b/f138b598-1b62-4951-b05a-f3a48b0eb52e.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "f/1/3/8/b/f138b598-1b62-4951-b05a-f3a48b0eb52e.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:25:04.047Z",
+    "updatedAt": "2026-01-02T12:25:04.047Z"
+  }
+}

@@ -91,6 +91,14 @@ export class ServerHierarchyManager {
     component?: any; // Backward link to DefaultONCE for path authority
     version: string; // ✅ Self-discovered version (ALWAYS set, never undefined)
     private tlsConfig?: TLSOptions; // ✅ Auto-discovered TLS configuration
+    
+    /**
+     * Build timestamp for cache busting
+     * Format: Unix timestamp (milliseconds since epoch)
+     * Set once at server start, used in HTML templates as ?v=${buildTimestamp}
+     * @pdca 2026-01-02-UTC-1400.cache-busting-systematic-fix.pdca.md CB.1
+     */
+    readonly buildTimestamp: string = Date.now().toString();
 
     constructor(idProvider: IDProvider = new UUIDProvider()) {
         this.idProvider = idProvider; // ✅ Inject ID provider (testable, replaceable)
@@ -365,10 +373,12 @@ export class ServerHierarchyManager {
         
         // ✅ Route 7b: File Browser ("/EAMD.ucp") - Folder browser SPA
         // @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.1
+        // CB.6: Use serveOnceApp() (once.html SPA) which uses UcpRouter
+        // @pdca 2026-01-02-UTC-1400.cache-busting-systematic-fix.pdca.md
         const eamdRoute = new HTMLRoute().init();
         eamdRoute.model.uuid = this.idProvider.create();
         eamdRoute.setPattern('/EAMD.ucp', HttpMethod.GET);
-        eamdRoute.setProvider(() => this.component!.serveDemoLit()); // Use same SPA as /demo
+        eamdRoute.setProvider(() => this.component!.serveOnceApp()); // Use once.html SPA with UcpRouter
         eamdRoute.model.priority = 50;
         this.httpRouter.registerRoute(eamdRoute);
         
@@ -376,7 +386,7 @@ export class ServerHierarchyManager {
         const eamdRoute2 = new HTMLRoute().init();
         eamdRoute2.model.uuid = this.idProvider.create();
         eamdRoute2.setPattern('/EAMD.ucp/', HttpMethod.GET);
-        eamdRoute2.setProvider(() => this.component!.serveDemoLit());
+        eamdRoute2.setProvider(() => this.component!.serveOnceApp());
         eamdRoute2.model.priority = 50;
         this.httpRouter.registerRoute(eamdRoute2);
         
@@ -406,7 +416,7 @@ export class ServerHierarchyManager {
             // Otherwise it's a directory path - serve SPA
             return true;
         };
-        eamdCatchAll.setProvider(() => this.component!.serveDemoLit());
+        eamdCatchAll.setProvider(() => this.component!.serveOnceApp());
         eamdCatchAll.model.priority = 4; // Lower number = higher priority than StaticFileRoute (5)
         this.httpRouter.registerRoute(eamdCatchAll);
         

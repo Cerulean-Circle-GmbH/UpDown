@@ -1,0 +1,79 @@
+{
+  "ior": {
+    "uuid": "f98590ab-3f6b-475f-b16b-f72b228c6c88",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "f98590ab-3f6b-475f-b16b-f72b228c6c88",
+    "name": "DomainCertificateStoreModel",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/DomainCertificateStoreModel.interface.ts",
+    "indexPath": "scenarios/index/f98590ab-3f6b-475f-b16b-f72b228c6c88.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/DomainCertificateStoreModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "uuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "iorComponent",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "iorVersion",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "scenariosRootPath",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "providerName",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "providerVersion",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "statistics",
+        "type": "StatisticsModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:25:06.936Z",
+    "updatedAt": "2026-01-02T12:25:06.936Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

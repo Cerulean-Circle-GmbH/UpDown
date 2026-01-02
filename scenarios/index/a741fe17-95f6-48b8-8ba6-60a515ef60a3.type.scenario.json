@@ -1,0 +1,88 @@
+{
+  "ior": {
+    "uuid": "a741fe17-95f6-48b8-8ba6-60a515ef60a3",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "a741fe17-95f6-48b8-8ba6-60a515ef60a3",
+    "name": "ScenarioUnit",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ScenarioUnit.interface.ts",
+    "indexPath": "scenarios/index/a741fe17-95f6-48b8-8ba6-60a515ef60a3.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ScenarioUnit.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "indexPath",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "typeM3",
+        "type": "TypeM3",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "origin",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "definition",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "schemaVersion",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "createdBy",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "createdAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "updatedAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "symlinkPaths",
+        "elementType": "string"
+      },
+      {
+        "name": "references",
+        "elementType": "UnitReference"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:25:07.014Z",
+    "updatedAt": "2026-01-02T12:25:07.014Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "ior": {
+    "uuid": "f86079a4-a75d-403a-8893-3a99ac757545",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "f86079a4-a75d-403a-8893-3a99ac757545",
+    "name": "IORMethodCall",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/IORMethodCall.interface.ts",
+    "indexPath": "scenarios/index/f86079a4-a75d-403a-8893-3a99ac757545.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/IORMethodCall.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "componentName",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "componentVersion",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "instanceUuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "methodName",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "params",
+        "type": "Record<string, string>",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:25:06.957Z",
+    "updatedAt": "2026-01-02T12:25:06.957Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

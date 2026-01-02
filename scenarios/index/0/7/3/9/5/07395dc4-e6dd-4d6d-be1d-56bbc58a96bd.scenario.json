@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "07395dc4-e6dd-4d6d-be1d-56bbc58a96bd",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "07395dc4-e6dd-4d6d-be1d-56bbc58a96bd",
+    "name": "NodeJsOnce.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer2/NodeJsOnce.ts",
+    "definition": "TypeScript NodeJsOnce class/interface",
+    "filePath": "src/ts/layer2/NodeJsOnce.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-02T12:25:04.181Z",
+    "updatedAt": "2026-01-02T12:25:04.182Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/0/7/3/9/5/07395dc4-e6dd-4d6d-be1d-56bbc58a96bd.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "0/7/3/9/5/07395dc4-e6dd-4d6d-be1d-56bbc58a96bd.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:25:04.181Z",
+    "updatedAt": "2026-01-02T12:25:04.182Z"
+  }
+}

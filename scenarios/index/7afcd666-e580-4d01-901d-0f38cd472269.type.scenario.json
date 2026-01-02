@@ -1,0 +1,84 @@
+{
+  "ior": {
+    "uuid": "7afcd666-e580-4d01-901d-0f38cd472269",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "7afcd666-e580-4d01-901d-0f38cd472269",
+    "name": "ScenarioMetadata",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ScenarioMetadata.interface.ts",
+    "indexPath": "scenarios/index/7afcd666-e580-4d01-901d-0f38cd472269.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ScenarioMetadata.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "created",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "modified",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "creator",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "domain",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "host",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "port",
+        "type": "number",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "isPrimaryServer",
+        "type": "boolean",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "tags",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:25:07.012Z",
+    "updatedAt": "2026-01-02T12:25:07.012Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

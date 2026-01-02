@@ -72,6 +72,39 @@ const isServiceWorkerContext: boolean =
   typeof self.skipWaiting === 'function';
 
 /**
+ * Extract ONCE version from the Service Worker's own URL path
+ * The SW is loaded from: /EAMD.ucp/components/ONCE/{version}/dist/ts/layer2/OnceServiceWorker.js
+ * Returns version string like '0.3.22.1' or undefined if not found
+ * @pdca 2026-01-02-UTC-1400.cache-busting-systematic-fix.pdca.md CB.1
+ */
+function extractVersionFromUrl(): string | undefined {
+  if (typeof self === 'undefined' || !self.location) {
+    return undefined;
+  }
+  
+  const swUrl = self.location.href;
+  // Match /EAMD.ucp/components/ONCE/{version}/ or just /ONCE/{version}/
+  const versionMatch = swUrl.match(/\/(?:EAMD\.ucp\/)?components\/ONCE\/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\//);
+  
+  if (versionMatch && versionMatch[1]) {
+    return versionMatch[1];
+  }
+  
+  return undefined;
+}
+
+/**
+ * Generate build timestamp suffix for cache busting
+ * Format: {version}-{utcTimestamp}
+ * Example: 0.3.22.1-1704214800000
+ * @pdca 2026-01-02-UTC-1400.cache-busting-systematic-fix.pdca.md CB.1
+ */
+function buildVersionWithTimestamp(baseVersion: string): string {
+  const timestamp = Date.now();
+  return `${baseVersion}-${timestamp}`;
+}
+
+/**
  * OnceServiceWorker
  * 
  * A ONCE kernel running in Service Worker context.
@@ -262,7 +295,28 @@ export class OnceServiceWorker {
   
   private activateExecute(): Promise<void> {
     return this.oldCachesClean()
-      .then(this.clientsClaimExecute.bind(this));
+      .then(this.clientsClaimExecute.bind(this))
+      .then(this.versionUpdateNotify.bind(this));
+  }
+  
+  /**
+   * Notify all clients that a new SW version has been activated
+   * Clients should reload to get fresh code
+   * @pdca 2026-01-02-UTC-1400.cache-busting-systematic-fix.pdca.md CB.4
+   */
+  private versionUpdateNotify(): Promise<void> {
+    console.log(`[SW] Notifying clients of version: ${this.model.version}`);
+    
+    return self.clients.matchAll({ type: 'window' }).then((clients: SWClient[]) => {
+      clients.forEach((client: SWClient) => {
+        client.postMessage({
+          type: 'SW_VERSION_ACTIVATED',
+          version: this.model.version,
+          iorVersion: this.model.iorVersion
+        });
+      });
+      console.log(`[SW] Notified ${clients.length} clients of new version`);
+    });
   }
   
   private oldCachesClean(): Promise<void> {
@@ -565,11 +619,29 @@ export class OnceServiceWorker {
    * Static method to register the Service Worker
    * Called at module load time only in SW context
    */
+  /**
+   * Register Service Worker with auto-detected version
+   * Extracts ONCE version from SW URL and adds build timestamp for cache busting
+   * @pdca 2026-01-02-UTC-1400.cache-busting-systematic-fix.pdca.md CB.1
+   */
   public static register(): void {
     console.log('🚀 OnceServiceWorker.register() called');
     
+    // Extract ONCE version from SW URL path
+    const onceVersion = extractVersionFromUrl() || '0.0.0';
+    
+    // Add build timestamp for development cache busting
+    // Format: 0.3.22.1-1704214800000
+    const versionWithTimestamp = buildVersionWithTimestamp(onceVersion);
+    
+    console.log(`[SW] ONCE version: ${onceVersion}, cache version: ${versionWithTimestamp}`);
+    
     const instance = new OnceServiceWorker();
-    instance.init();
+    instance.init({
+      version: versionWithTimestamp,
+      iorVersion: onceVersion,  // Store base version separately
+      name: `OnceServiceWorker-${onceVersion}`
+    });
     
     // Register SW lifecycle events using bound methods (Web4 P4)
     self.addEventListener('install', instance.installHandle.bind(instance));

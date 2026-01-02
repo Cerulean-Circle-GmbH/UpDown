@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "dcf1bde9-b356-4561-80ab-8f9292edea48",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "dcf1bde9-b356-4561-80ab-8f9292edea48",
+    "name": "PerformanceMetrics.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer3/PerformanceMetrics.interface.ts",
+    "definition": "TypeScript PerformanceMetrics.interface class/interface",
+    "filePath": "dist/ts/layer3/PerformanceMetrics.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-02T12:25:05.605Z",
+    "updatedAt": "2026-01-02T12:25:05.605Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/d/c/f/1/b/dcf1bde9-b356-4561-80ab-8f9292edea48.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "d/c/f/1/b/dcf1bde9-b356-4561-80ab-8f9292edea48.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:25:05.605Z",
+    "updatedAt": "2026-01-02T12:25:05.605Z"
+  }
+}

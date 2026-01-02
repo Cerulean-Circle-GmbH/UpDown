@@ -381,11 +381,18 @@ export class StaticFileRoute extends Route {
             
             console.log(`[StaticFileRoute] ✅ ${urlPath} → ${mimeType} (via IOR)`);
             
+            // FB.5: Use no-cache for JS files during development to ensure fresh code
+            // CSS/images can be cached since they change less frequently
+            // @pdca 2026-01-02-UTC-1200.filebrowser-fix.pdca.md
+            const cacheControl = mimeType.includes('javascript') 
+                ? 'no-cache, no-store, must-revalidate'  // Always fetch fresh JS
+                : 'public, max-age=3600';                 // Cache other assets 1 hour
+            
             res.writeHead(200, {
                 'Content-Type': mimeType,
                 'Content-Length': content.length,
                 'Access-Control-Allow-Origin': '*',
-                'Cache-Control': 'public, max-age=3600' // 1 hour cache
+                'Cache-Control': cacheControl
             });
             res.end(content);
             

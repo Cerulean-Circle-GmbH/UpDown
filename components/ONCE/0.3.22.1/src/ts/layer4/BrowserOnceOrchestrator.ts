@@ -697,6 +697,11 @@ export class BrowserOnceOrchestrator {
       // Listen for updates
       registration.addEventListener('updatefound', this.swUpdateHandle.bind(this, registration));
       
+      // CB.5: Listen for SW version update messages
+      // When SW clears cache and activates new version, auto-reload for fresh code
+      // @pdca 2026-01-02-UTC-1400.cache-busting-systematic-fix.pdca.md
+      navigator.serviceWorker.addEventListener('message', this.swMessageHandle.bind(this));
+      
       return registration;
     } catch (error) {
       // SW registration failure - needs proper bundling
@@ -733,6 +738,31 @@ export class BrowserOnceOrchestrator {
         bubbles: true,
         detail: { registration }
       }));
+    }
+  }
+  
+  /**
+   * Handle messages from Service Worker
+   * CB.5: Auto-reload when SW signals version update
+   * @pdca 2026-01-02-UTC-1400.cache-busting-systematic-fix.pdca.md
+   */
+  private swMessageHandle(event: MessageEvent): void {
+    const { type, version, iorVersion } = event.data || {};
+    
+    if (type === 'SW_VERSION_ACTIVATED') {
+      console.log(`[Orchestrator] 🔄 SW version activated: ${iorVersion} (cache: ${version})`);
+      console.log('[Orchestrator] Reloading to ensure fresh code...');
+      
+      // Dispatch event for UI notification before reload
+      this.container?.dispatchEvent(new CustomEvent('sw-version-updated', {
+        bubbles: true,
+        detail: { version, iorVersion }
+      }));
+      
+      // Small delay to allow UI notification, then reload
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     }
   }
   

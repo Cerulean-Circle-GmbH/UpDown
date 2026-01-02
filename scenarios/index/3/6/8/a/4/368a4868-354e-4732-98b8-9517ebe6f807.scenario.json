@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "368a4868-354e-4732-98b8-9517ebe6f807",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "368a4868-354e-4732-98b8-9517ebe6f807",
+    "name": "TypeM3.enum.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer3/TypeM3.enum.ts",
+    "definition": "TypeScript TypeM3.enum class/interface",
+    "filePath": "src/ts/layer3/TypeM3.enum.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-02T12:25:04.655Z",
+    "updatedAt": "2026-01-02T12:25:04.655Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/3/6/8/a/4/368a4868-354e-4732-98b8-9517ebe6f807.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "3/6/8/a/4/368a4868-354e-4732-98b8-9517ebe6f807.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:25:04.655Z",
+    "updatedAt": "2026-01-02T12:25:04.655Z"
+  }
+}

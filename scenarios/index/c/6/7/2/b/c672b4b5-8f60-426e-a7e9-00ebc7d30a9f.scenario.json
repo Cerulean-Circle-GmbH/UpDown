@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "c672b4b5-8f60-426e-a7e9-00ebc7d30a9f",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "c672b4b5-8f60-426e-a7e9-00ebc7d30a9f",
+    "name": "ErrorRoute.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer2/ErrorRoute.ts",
+    "definition": "TypeScript ErrorRoute class/interface",
+    "filePath": "dist/ts/layer2/ErrorRoute.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-02T12:25:05.101Z",
+    "updatedAt": "2026-01-02T12:25:05.101Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/6/7/2/b/c672b4b5-8f60-426e-a7e9-00ebc7d30a9f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/6/7/2/b/c672b4b5-8f60-426e-a7e9-00ebc7d30a9f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:25:05.101Z",
+    "updatedAt": "2026-01-02T12:25:05.101Z"
+  }
+}

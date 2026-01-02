@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "f7ddfe39-727a-45ca-98a4-c95a4fb57b8f",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "f7ddfe39-727a-45ca-98a4-c95a4fb57b8f",
+    "name": "ServerHierarchyManager.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer2/ServerHierarchyManager.ts",
+    "definition": "TypeScript ServerHierarchyManager class/interface",
+    "filePath": "src/ts/layer2/ServerHierarchyManager.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-02T12:25:04.201Z",
+    "updatedAt": "2026-01-02T12:25:04.201Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/f/7/d/d/f/f7ddfe39-727a-45ca-98a4-c95a4fb57b8f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "f/7/d/d/f/f7ddfe39-727a-45ca-98a4-c95a4fb57b8f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:25:04.201Z",
+    "updatedAt": "2026-01-02T12:25:04.201Z"
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "ior": {
+    "uuid": "417e2d3e-bcb1-4847-a41b-1b231e73e0ee",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "417e2d3e-bcb1-4847-a41b-1b231e73e0ee",
+    "name": "CertificateOrchestratorModel",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/CertificateOrchestratorModel.interface.ts",
+    "indexPath": "scenarios/index/417e2d3e-bcb1-4847-a41b-1b231e73e0ee.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/CertificateOrchestratorModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "uuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "iorComponent",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "iorVersion",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "scenariosRootPath",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "renewalCheckIntervalMs",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "renewBeforeExpiryDays",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "statistics",
+        "type": "StatisticsModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "domainConfigurations",
+        "elementType": "DomainConfigurationModel"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:25:06.918Z",
+    "updatedAt": "2026-01-02T12:25:06.918Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

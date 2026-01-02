@@ -1,0 +1,90 @@
+{
+  "ior": {
+    "uuid": "9ad3bfdd-8538-4456-b652-e2d7b67d4da4",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "9ad3bfdd-8538-4456-b652-e2d7b67d4da4",
+    "name": "HealthModel",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/HealthModel.interface.ts",
+    "indexPath": "scenarios/index/9ad3bfdd-8538-4456-b652-e2d7b67d4da4.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/HealthModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "status",
+        "type": "'running' | 'stopping' | 'stopped'",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "uuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isPrimaryServer",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "state",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "domain",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "hostname",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "version",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "primaryServer",
+        "type": "PrimaryServerInfo | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "message",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "capabilities",
+        "elementType": "ServerCapability"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:25:06.954Z",
+    "updatedAt": "2026-01-02T12:25:06.954Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

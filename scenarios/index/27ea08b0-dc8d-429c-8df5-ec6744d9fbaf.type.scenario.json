@@ -1,0 +1,210 @@
+{
+  "ior": {
+    "uuid": "27ea08b0-dc8d-429c-8df5-ec6744d9fbaf",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "27ea08b0-dc8d-429c-8df5-ec6744d9fbaf",
+    "name": "ONCEModel",
+    "extends": "ior:esm:/ONCE/0.3.22.1/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ONCEModel.interface.ts",
+    "indexPath": "scenarios/index/27ea08b0-dc8d-429c-8df5-ec6744d9fbaf.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ONCEModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "uuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "origin",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "definition",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "createdAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "updatedAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "component",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "version",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "componentRoot",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "projectRoot",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "targetDirectory",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "targetComponentRoot",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "context",
+        "type": "any",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "isTestIsolation",
+        "type": "boolean",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "testDataDirectory",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "displayName",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "displayVersion",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "isDelegation",
+        "type": "boolean",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "delegationInfo",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "testIsolationContext",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "componentsDirectory",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "state",
+        "type": "LifecycleState",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "initialized",
+        "type": "boolean",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "initializationTime",
+        "type": "number",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "scenario",
+        "type": "Scenario<ONCEPeerModel>",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "serverModel",
+        "type": "ONCEPeerModel",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "eventHandlers",
+        "type": "Map<LifecycleEventType, LifecycleEventHandler[]>",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "primaryServerIor",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "messageTracker",
+        "type": "ONCEMessageTracker",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "observers",
+        "elementType": "LifecycleObserver"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:25:06.993Z",
+    "updatedAt": "2026-01-02T12:25:06.993Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

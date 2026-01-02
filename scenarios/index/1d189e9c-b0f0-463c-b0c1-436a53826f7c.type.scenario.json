@@ -1,0 +1,100 @@
+{
+  "ior": {
+    "uuid": "1d189e9c-b0f0-463c-b0c1-436a53826f7c",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "1d189e9c-b0f0-463c-b0c1-436a53826f7c",
+    "name": "Folder",
+    "extends": "ior:esm:/ONCE/0.3.22.1/File",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/Folder.interface.ts",
+    "indexPath": "scenarios/index/1d189e9c-b0f0-463c-b0c1-436a53826f7c.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Folder.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "children",
+        "elementType": "File"
+      },
+      {
+        "name": "childReferences",
+        "elementType": "File"
+      }
+    ],
+    "methods": [
+      {
+        "name": "childAdd",
+        "parameters": [
+          {
+            "name": "child",
+            "type": "File",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "childRemove",
+        "parameters": [
+          {
+            "name": "child",
+            "type": "File",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "childGet",
+        "parameters": [
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "File | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "childFindByName",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "File | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:25:06.949Z",
+    "updatedAt": "2026-01-02T12:25:06.949Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

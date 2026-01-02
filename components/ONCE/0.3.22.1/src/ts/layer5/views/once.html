@@ -7,7 +7,8 @@
     
     <!-- Web4 Principle 23: EAMD.ucp Virtual Root for base CSS -->
     <!-- Web4 Principle: ${this.version} from model-based template renderer -->
-    <link rel="stylesheet" href="/EAMD.ucp/components/ONCE/${this.version}/src/ts/layer5/views/css/themeBase.css">
+    <!-- CB.2: Cache-busting via ?v=buildTimestamp @pdca 2026-01-02-UTC-1400.cache-busting-systematic-fix.pdca.md -->
+    <link rel="stylesheet" href="/EAMD.ucp/components/ONCE/${this.version}/src/ts/layer5/views/css/themeBase.css?v=${this.buildTimestamp}">
     
     <!-- Lit Import Map (Browser Module Resolution) -->
     <script type="importmap">
@@ -47,7 +48,9 @@
         
         // Import ONCE kernel via EAMD.ucp virtual root
         // Web4 Principle: ${this.version} from model-based template renderer
-        import { ONCE } from '/EAMD.ucp/components/ONCE/${this.version}/dist/ts/layer1/ONCE.js';
+        // CB.2: Cache-busting via ?v=${this.buildTimestamp} ensures fresh JS on server restart
+        // @pdca 2026-01-02-UTC-1400.cache-busting-systematic-fix.pdca.md
+        import { ONCE } from '/EAMD.ucp/components/ONCE/${this.version}/dist/ts/layer1/ONCE.js?v=${this.buildTimestamp}';
         
         // Get peer host from URL (optional query param)
         const urlParams = new URLSearchParams(window.location.search);
