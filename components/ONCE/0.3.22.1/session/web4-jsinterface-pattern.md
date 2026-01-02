@@ -1,9 +1,19 @@
 # Web4 JsInterface Pattern — Runtime Interface Enforcement
 
-**Date**: 2025-12-22  
-**Status**: ✅ **PATTERN DOCUMENTED**  
+**Date**: 2025-12-22 (Updated 2026-01-01)  
+**Status**: ✅ **PATTERN IMPLEMENTED & VERIFIED**  
 **Web4 Principle**: P35 (JsInterface for Runtime Interfaces)  
 **Details**: [web4-component-anatomy-details.md](./web4-component-anatomy-details.md)
+
+## Implementation Status ✅
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| `FileJs.ts` | ✅ | Runtime interface for files |
+| `FolderJs.ts` | ✅ | Extends FileJs for folders |
+| `DefaultFile.ts` | ✅ | `static implements() { return [FileJs]; }` |
+| `DefaultFolder.ts` | ✅ | `static implements() { return [FileJs, FolderJs]; }` |
+| `DefaultUnit.from()` | ✅ | Works with P20 ESM fix |
 
 ---
 

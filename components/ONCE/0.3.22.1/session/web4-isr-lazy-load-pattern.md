@@ -1,8 +1,15 @@
 # Web4 ISR: Lazy Load Pattern
 
-**Internet Object Reference Self-Replacement (ISR)**
+**Internet Object Reference Self-Replacement (ISR)**  
+**Updated:** 2026-01-01
 
 > "References resolve themselves. Layer 4 awaits. Layers 2/3 assume resolved."
+
+## Recent Updates (2026-01-01)
+
+- ✅ `IOR.resolveAndReplace()` now has try/catch for fire-and-forget mode
+- ✅ Fire-and-forget errors are logged, not thrown (build continues)
+- ✅ Static ESM imports in `UcpModel.ts` (P20 compliance)
 
 ## Core Concept
 

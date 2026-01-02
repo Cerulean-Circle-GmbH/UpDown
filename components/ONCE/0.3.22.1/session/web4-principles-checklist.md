@@ -1,6 +1,7 @@
 # 🔴 Web4 Principles Checklist
 
-**Purpose:** CHECK BEFORE EVERY COMMIT during fractal PDCA execution.
+**Purpose:** CHECK BEFORE EVERY COMMIT during fractal PDCA execution.  
+**Updated:** 2026-01-01
 
 - [ ] Principle 1: Everything is a Scenario - NO difference between configuration and scenario, scenarios contain full state with IOR - [Details](./web4-principles-details.md#principle-1-everything-is-a-scenario) | [Example](./2025-11-19-UTC-1745.component-refactor-final.pdca.md)
 - [ ] Principle 2: Convention over Configuration - Direct mapping (enum → method name), no switch/case statements - [Details](./web4-principles-details.md#principle-2-convention-over-configuration) | [Example](../../../../Web4TSComponent/0.3.20.6/src/ts/layer2/DefaultWeb4TSComponent.ts)
@@ -29,7 +30,7 @@
 - [ ] Principle 17: Component Instance Pattern - Components are versioned folders, instances created via scenarios - [Details](./web4-principles-details.md#principle-17-component-instance-pattern)
 - [ ] Principle 18: Black-Box Testing Only - Tests use IOR calls (protocol-agnostic), no white-box tests - [Details](./web4-principles-details.md#principle-18-black-box-testing-only) | [Example](../test/tootsie/Test01_PathAuthorityAndProjectRootDetection.ts)
 - [ ] Principle 19: One File One Type - Each file contains exactly one type (class/interface/enum) - [Details](./web4-principles-details.md#principle-19-one-file-one-type) | [Example](../../../../Tootsie/0.3.20.6/src/ts/layer3/TestRunnerScenario.interface.ts)
-- [ ] Principle 20: ESM Only - Pure ECMAScript Modules, no CommonJS patterns - [Details](./web4-principles-details.md#principle-20-esm-only)
+- [ ] Principle 20: ESM Only - Pure ECMAScript Modules, no CommonJS patterns - [Details](./web4-principles-details.md#principle-20-esm-only) | [Fix Example](./2026-01-01-UTC-2000.folder-unit-integration-fix.pdca.md)
 - [ ] Principle 21: Wrap Functional Node Built-ins - Use `import * as fs from 'fs'` (object namespace) not destructured imports - [Details](./web4-principles-details.md#principle-21-wrap-functional-node-built-ins)
 - [ ] Principle 22: Collection<T> for Arrays - Use Collection<T> interface instead of raw arrays `T[]` - [Details](./web4-principles-details.md#principle-22-collectiont-for-arrays) | [Example](./2025-12-03-UTC-1200.mvc-lit3-views.pdca.md)
 - [ ] Principle 23: EAMD.ucp Virtual Root - All static assets served via virtual `/EAMD.ucp/` root path for absolute imports - [Details](./web4-principles-details.md#principle-23-eamducp-virtual-root-static-asset-serving) | [Example](./2025-12-04-UTC-1400.self-orientation-asset-serving.pdca.md)

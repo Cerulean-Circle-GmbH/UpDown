@@ -1,8 +1,15 @@
 # Web4: Lazy Load/Save Guard Pattern
 
+**Updated:** 2026-01-01  
 **"Methods always work. When not ready, they do nothing gracefully."**
 
 > Radical OOP: Methods return `this`, work on model, and guard against unresolved state.
+
+## Integration with ISR (2026-01-01)
+
+- ✅ `IOR.resolveAndReplace()` is fire-and-forget safe (try/catch)
+- ✅ Failed resolutions log warnings, don't crash
+- ⏳ `model.awaitResolved()` — awaiting ISR Resolution Tracking PDCA
 
 ## Core Concept
 

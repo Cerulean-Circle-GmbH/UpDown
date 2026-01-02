@@ -1,5 +1,7 @@
 # Web4 Principles Details
 
+**Updated:** 2026-01-01
+
 This document contains the detailed explanations for all Web4 principles. Each principle section links back to the [checklist](./web4-principles-checklist.md) and includes code examples, rationale, and anti-patterns.
 
 ---
@@ -672,28 +674,41 @@ Tests use public interfaces only:
 ### Details
 
 - No `__filename`, `__dirname`
-- No `require()`
+- No `require()` — even inside functions or conditionals
 - Use `import.meta.url` and `fileURLToPath`
+- Use static `import` at module level, not dynamic `require()`
 
 ### Why
 
 - **Modern JavaScript:** ESM is the standard
 - **Tree-shaking:** Better optimization
 - **Consistency:** Single module system
+- **Browser compatibility:** ESM works everywhere
 
 ### Anti-Patterns
 
-❌ **WRONG:** CommonJS
+❌ **WRONG:** CommonJS require() inside sync functions
 ```typescript
-const path = require('path');
-const filename = __filename;
+// UcpModel.ts (BEFORE fix)
+get(target, prop) {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { IOR } = require('../layer4/IOR.js');  // ❌ Breaks in ESM!
+}
 ```
 
-✅ **CORRECT:** ESM
+✅ **CORRECT:** Static ESM import at module level
 ```typescript
-import { fileURLToPath } from 'url';
-const filename = fileURLToPath(import.meta.url);
+// UcpModel.ts (AFTER fix)
+import { IOR } from '../layer4/IOR.js';  // ✅ Static import
+
+get(target, prop) {
+  const ior = new IOR().initRemote(value);  // ✅ Uses static import
+}
 ```
+
+### Examples
+
+- **Fix PDCA:** [§/.../folder-unit-integration-fix.pdca.md](./2026-01-01-UTC-2000.folder-unit-integration-fix.pdca.md) — Fixed `require()` in `UcpModel.ts`
 
 ---
 
