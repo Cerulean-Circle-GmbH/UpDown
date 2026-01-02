@@ -1,0 +1,126 @@
+{
+  "ior": {
+    "uuid": "8edcfa89-56a1-4cbb-9662-35abe4e0709c",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "8edcfa89-56a1-4cbb-9662-35abe4e0709c",
+    "name": "CLIModel",
+    "extends": "ior:esm:/ONCE/0.3.22.1/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/CLIModel.interface.ts",
+    "indexPath": "scenarios/index/8edcfa89-56a1-4cbb-9662-35abe4e0709c.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/CLIModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "projectRoot",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "componentsDir",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "scriptsDir",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "scriptsVersionDir",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "testDataDir",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "completionCliName",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "completionCompCword",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "completionCurrentWord",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "completionPreviousWord",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "completionCommand",
+        "type": "string | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "completionParameterIndex",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "completionIsCompletingMethod",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "completionIsCompletingParameter",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "completionCompWords",
+        "elementType": "string"
+      },
+      {
+        "name": "completionParameters",
+        "elementType": "string"
+      },
+      {
+        "name": "completionChainedCommands",
+        "elementType": "string"
+      },
+      {
+        "name": "completionOutputLines",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T11:56:32.174Z",
+    "updatedAt": "2026-01-02T11:56:32.174Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "ior": {
+    "uuid": "e94f23e3-bc23-464d-8afc-0f75d6a04a98",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "e94f23e3-bc23-464d-8afc-0f75d6a04a98",
+    "name": "ItemView",
+    "extends": "ior:esm:/ONCE/0.3.22.1/View",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ItemView.interface.ts",
+    "indexPath": "scenarios/index/e94f23e3-bc23-464d-8afc-0f75d6a04a98.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ItemView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "touchEnabled",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T11:56:32.216Z",
+    "updatedAt": "2026-01-02T11:56:32.216Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

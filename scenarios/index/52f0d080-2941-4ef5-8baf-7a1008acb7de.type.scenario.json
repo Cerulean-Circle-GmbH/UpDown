@@ -1,0 +1,49 @@
+{
+  "ior": {
+    "uuid": "52f0d080-2941-4ef5-8baf-7a1008acb7de",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "52f0d080-2941-4ef5-8baf-7a1008acb7de",
+    "name": "ManifestEntryPoints",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ComponentManifest.interface.ts",
+    "indexPath": "scenarios/index/52f0d080-2941-4ef5-8baf-7a1008acb7de.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ManifestEntryPoints.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "cli",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "node",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "browser",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T11:56:32.186Z",
+    "updatedAt": "2026-01-02T11:56:32.186Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

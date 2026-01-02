@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "1e1cf952-9f38-40d8-afcf-716bd6908d81",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "1e1cf952-9f38-40d8-afcf-716bd6908d81",
+    "name": "ViewRegistry.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer5/views/ViewRegistry.ts",
+    "definition": "TypeScript ViewRegistry class/interface",
+    "filePath": "src/ts/layer5/views/ViewRegistry.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-02T11:56:30.199Z",
+    "updatedAt": "2026-01-02T11:56:30.200Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/1/e/1/c/f/1e1cf952-9f38-40d8-afcf-716bd6908d81.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "1/e/1/c/f/1e1cf952-9f38-40d8-afcf-716bd6908d81.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T11:56:30.199Z",
+    "updatedAt": "2026-01-02T11:56:30.199Z"
+  }
+}

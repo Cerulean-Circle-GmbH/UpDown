@@ -1,0 +1,352 @@
+{
+  "ior": {
+    "uuid": "cb9084ca-1782-4308-808d-e52bfec778fe",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "cb9084ca-1782-4308-808d-e52bfec778fe",
+    "name": "UcpView",
+    "extends": "ior:esm:/ONCE/0.3.22.1/LitElement",
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.1/View"
+    ],
+    "sourcePath": "src/ts/layer5/views/UcpView.ts",
+    "indexPath": "scenarios/index/cb9084ca-1782-4308-808d-e52bfec778fe.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/UcpView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "viewRegistry",
+        "type": "Map<Function, string>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "IOR_LOADING_TAG",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "ior-loading-view"
+      },
+      {
+        "name": "DEFAULT_TAG",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "default-item-view"
+      },
+      {
+        "name": "cssPath",
+        "type": "string",
+        "optional": false,
+        "defaultValue": ""
+      },
+      {
+        "name": "dropStyles",
+        "type": "CSSResultGroup",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "dropDisabled",
+        "type": "string",
+        "optional": false,
+        "defaultValue": "false"
+      },
+      {
+        "name": "isDragOver",
+        "type": "any",
+        "optional": false,
+        "defaultValue": false
+      },
+      {
+        "name": "boundHandleDragEnter",
+        "type": "(event: DragEvent) => void",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "boundHandleDragOver",
+        "type": "(event: DragEvent) => void",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "boundHandleDragLeave",
+        "type": "(event: DragEvent) => void",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "boundHandleDrop",
+        "type": "(event: DragEvent) => void",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "isDropDisabled",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "model",
+        "type": "unknown",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "hasModel",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [
+      {
+        "name": "modelRef",
+        "targetType": "TModel"
+      }
+    ],
+    "collections": [
+      {
+        "name": "childViews",
+        "elementType": "UcpView<any>"
+      }
+    ],
+    "methods": [
+      {
+        "name": "viewRegister",
+        "parameters": [
+          {
+            "name": "typeClass",
+            "type": "Function",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "tagName",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "tagFor",
+        "parameters": [
+          {
+            "name": "value",
+            "type": "unknown",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "isLoading",
+        "parameters": [
+          {
+            "name": "value",
+            "type": "unknown",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "connectedCallback",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "disconnectedCallback",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "dropHandlersSetup",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "dropHandlersRemove",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "boundHandlersInit",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleDragEnter",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "DragEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleDragOver",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "DragEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleDragLeave",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "DragEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleDrop",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "DragEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fileDropProcess",
+        "parameters": [
+          {
+            "name": "file",
+            "type": "File",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "applyCachedStyles",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "refresh",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "add",
+        "parameters": [
+          {
+            "name": "childView",
+            "type": "View<any>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "childRemove",
+        "parameters": [
+          {
+            "name": "childView",
+            "type": "View<any>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "any",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T11:56:32.443Z",
+    "updatedAt": "2026-01-02T11:56:32.443Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

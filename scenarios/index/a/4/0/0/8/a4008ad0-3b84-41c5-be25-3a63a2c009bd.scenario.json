@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "a4008ad0-3b84-41c5-be25-3a63a2c009bd",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "a4008ad0-3b84-41c5-be25-3a63a2c009bd",
+    "name": "ServiceWorkerRoute.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer2/ServiceWorkerRoute.ts",
+    "definition": "TypeScript ServiceWorkerRoute class/interface",
+    "filePath": "src/ts/layer2/ServiceWorkerRoute.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-02T11:56:29.471Z",
+    "updatedAt": "2026-01-02T11:56:29.471Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/a/4/0/0/8/a4008ad0-3b84-41c5-be25-3a63a2c009bd.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "a/4/0/0/8/a4008ad0-3b84-41c5-be25-3a63a2c009bd.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T11:56:29.471Z",
+    "updatedAt": "2026-01-02T11:56:29.471Z"
+  }
+}

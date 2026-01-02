@@ -1,0 +1,326 @@
+{
+  "ior": {
+    "uuid": "ad3aff8b-9c5e-434f-a97e-a186bc910e8f",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "ad3aff8b-9c5e-434f-a97e-a186bc910e8f",
+    "name": "TsAstExtractor",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/TsAstExtractor.ts",
+    "indexPath": "scenarios/index/ad3aff8b-9c5e-434f-a97e-a186bc910e8f.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/TsAstExtractor.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "componentRoot",
+        "type": "string",
+        "optional": false,
+        "defaultValue": ""
+      },
+      {
+        "name": "componentName",
+        "type": "string",
+        "optional": false,
+        "defaultValue": ""
+      },
+      {
+        "name": "componentVersion",
+        "type": "string",
+        "optional": false,
+        "defaultValue": ""
+      },
+      {
+        "name": "scenariosDir",
+        "type": "string",
+        "optional": false,
+        "defaultValue": ""
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "config",
+            "type": "{\n    componentRoot: string;\n    componentName: string;\n    componentVersion: string;\n    scenariosDir: string;\n  }",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "extractDirectory",
+        "parameters": [
+          {
+            "name": "sourceDir",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<ExtractionResult[]>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "extractFile",
+        "parameters": [
+          {
+            "name": "filePath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<ExtractionResult>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "isExported",
+        "parameters": [
+          {
+            "name": "node",
+            "type": "ts.Node",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "isAbstract",
+        "parameters": [
+          {
+            "name": "node",
+            "type": "ts.ClassDeclaration",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "extractClassDescriptor",
+        "parameters": [
+          {
+            "name": "node",
+            "type": "ts.ClassDeclaration",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "sourceFile",
+            "type": "ts.SourceFile",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "relativePath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "TypeDescriptorModel | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "extractInterfaceDescriptor",
+        "parameters": [
+          {
+            "name": "node",
+            "type": "ts.InterfaceDeclaration",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "sourceFile",
+            "type": "ts.SourceFile",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "relativePath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "TypeDescriptorModel | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "extractPropertyOrAttribute",
+        "parameters": [
+          {
+            "name": "node",
+            "type": "ts.PropertyDeclaration",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "sourceFile",
+            "type": "ts.SourceFile",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "{ kind: 'attribute' | 'reference' | 'collection'; value: AttributeDescriptor | ReferenceDescriptor | CollectionDescriptor } | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "extractPropertySignature",
+        "parameters": [
+          {
+            "name": "node",
+            "type": "ts.PropertySignature",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "sourceFile",
+            "type": "ts.SourceFile",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "{ kind: 'attribute' | 'reference' | 'collection'; value: AttributeDescriptor | ReferenceDescriptor | CollectionDescriptor } | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "extractAccessor",
+        "parameters": [
+          {
+            "name": "node",
+            "type": "ts.GetAccessorDeclaration | ts.SetAccessorDeclaration",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "sourceFile",
+            "type": "ts.SourceFile",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "allMembers",
+            "type": "ts.NodeArray<ts.ClassElement>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "PropertyDescriptor | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "extractMethod",
+        "parameters": [
+          {
+            "name": "node",
+            "type": "ts.MethodDeclaration",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "sourceFile",
+            "type": "ts.SourceFile",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "MethodDescriptor | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "extractMethodSignature",
+        "parameters": [
+          {
+            "name": "node",
+            "type": "ts.MethodSignature",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "sourceFile",
+            "type": "ts.SourceFile",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "MethodDescriptor | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "findTsFiles",
+        "parameters": [
+          {
+            "name": "dir",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "saveScenarios",
+        "parameters": [
+          {
+            "name": "results",
+            "type": "ExtractionResult[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T11:56:32.133Z",
+    "updatedAt": "2026-01-02T11:56:32.133Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

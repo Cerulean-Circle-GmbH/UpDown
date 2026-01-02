@@ -1,0 +1,46 @@
+{
+  "ior": {
+    "uuid": "833a2d84-2b4e-4bc5-a39b-1c337848543d",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "833a2d84-2b4e-4bc5-a39b-1c337848543d",
+    "name": "Completion",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/Completion.ts",
+    "indexPath": "scenarios/index/833a2d84-2b4e-4bc5-a39b-1c337848543d.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Completion.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "complete",
+        "parameters": [
+          {
+            "name": "args",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T11:56:32.181Z",
+    "updatedAt": "2026-01-02T11:56:32.181Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

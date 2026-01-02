@@ -1157,6 +1157,23 @@ ${'='.repeat(80)}
       { dir: 'src/ts', extensions: ['.ts'] },
     ];
     
+    // Root-level component files (non-recursive)
+    const rootFiles = [
+      'package.json',
+      'tsconfig.json',
+      'README.md',
+      '.gitignore',
+      '.npmrc',
+    ];
+    
+    for (const filename of rootFiles) {
+      const filePath = path.join(componentRoot, filename);
+      if (fs.existsSync(filePath)) {
+        const iorPath = `/EAMD.ucp/components/${componentName}/${componentVersion}/${filename}`;
+        units.push(iorPath);
+      }
+    }
+    
     for (const pattern of patterns) {
       const dirPath = path.join(componentRoot, pattern.dir);
       if (!fs.existsSync(dirPath)) continue;

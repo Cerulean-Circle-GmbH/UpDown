@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "c0c65989-55d1-4dee-8a5e-5014aa38a23d",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "c0c65989-55d1-4dee-8a5e-5014aa38a23d",
+    "name": "once-minimal.html",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer5/views/html/once-minimal.html",
+    "definition": "HTML template once-minimal",
+    "filePath": "src/ts/layer5/views/html/once-minimal.html",
+    "mimetype": "text/html",
+    "createdAt": "2026-01-02T11:56:29.326Z",
+    "updatedAt": "2026-01-02T11:56:29.327Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/0/c/6/5/c0c65989-55d1-4dee-8a5e-5014aa38a23d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/0/c/6/5/c0c65989-55d1-4dee-8a5e-5014aa38a23d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T11:56:29.326Z",
+    "updatedAt": "2026-01-02T11:56:29.326Z"
+  }
+}

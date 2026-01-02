@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "daffee0f-64b6-4a32-9402-347ed9211b0f",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "daffee0f-64b6-4a32-9402-347ed9211b0f",
+    "name": "ImageDefaultView.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer5/views/ImageDefaultView.ts",
+    "definition": "TypeScript ImageDefaultView class/interface",
+    "filePath": "dist/ts/layer5/views/ImageDefaultView.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-02T11:56:31.281Z",
+    "updatedAt": "2026-01-02T11:56:31.282Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/d/a/f/f/e/daffee0f-64b6-4a32-9402-347ed9211b0f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "d/a/f/f/e/daffee0f-64b6-4a32-9402-347ed9211b0f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T11:56:31.281Z",
+    "updatedAt": "2026-01-02T11:56:31.281Z"
+  }
+}

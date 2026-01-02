@@ -1,0 +1,55 @@
+{
+  "ior": {
+    "uuid": "cf479f6b-2bb6-4d8d-8bf5-cc6d06691026",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "cf479f6b-2bb6-4d8d-8bf5-cc6d06691026",
+    "name": "IORRoute",
+    "extends": "ior:esm:/ONCE/0.3.22.1/RouteModel",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/IORRoute.interface.ts",
+    "indexPath": "scenarios/index/cf479f6b-2bb6-4d8d-8bf5-cc6d06691026.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/IORRoute.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "componentName",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "version",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "instanceUuid",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "methodName",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T11:56:32.213Z",
+    "updatedAt": "2026-01-02T11:56:32.213Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

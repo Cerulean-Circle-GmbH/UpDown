@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "510b15d4-6aad-41fb-ba51-d6ee22bed4f5",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "510b15d4-6aad-41fb-ba51-d6ee22bed4f5",
+    "name": "TestFileParser.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer4/TestFileParser.ts",
+    "definition": "TypeScript TestFileParser class/interface",
+    "filePath": "src/ts/layer4/TestFileParser.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-02T11:56:30.114Z",
+    "updatedAt": "2026-01-02T11:56:30.115Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/5/1/0/b/1/510b15d4-6aad-41fb-ba51-d6ee22bed4f5.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "5/1/0/b/1/510b15d4-6aad-41fb-ba51-d6ee22bed4f5.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T11:56:30.114Z",
+    "updatedAt": "2026-01-02T11:56:30.114Z"
+  }
+}

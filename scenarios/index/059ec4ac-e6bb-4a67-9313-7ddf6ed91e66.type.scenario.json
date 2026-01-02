@@ -1,0 +1,149 @@
+{
+  "ior": {
+    "uuid": "059ec4ac-e6bb-4a67-9313-7ddf6ed91e66",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "059ec4ac-e6bb-4a67-9313-7ddf6ed91e66",
+    "name": "ONCEPeerModel",
+    "extends": "ior:esm:/ONCE/0.3.22.1/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ONCEPeerModel.interface.ts",
+    "indexPath": "scenarios/index/059ec4ac-e6bb-4a67-9313-7ddf6ed91e66.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ONCEPeerModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "version",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "environment",
+        "type": "EnvironmentInfo",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "state",
+        "type": "LifecycleState",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "host",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "port",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "domain",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "hostname",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "ip",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "isPrimary",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "components",
+        "type": "Map<string, Component>",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "isConnected",
+        "type": "boolean",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "peerHost",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "peerVersion",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "pid",
+        "type": "number",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "startTime",
+        "targetType": "Date"
+      },
+      {
+        "name": "connectionTime",
+        "targetType": "Date"
+      },
+      {
+        "name": "primaryPeerUuid",
+        "targetType": "string"
+      },
+      {
+        "name": "ws",
+        "targetType": "WebSocket"
+      },
+      {
+        "name": "peerUUID",
+        "targetType": "string"
+      },
+      {
+        "name": "primaryPeer",
+        "targetType": "Reference<{\n        host: string;\n        port: number;\n        uuid: string;\n    }>"
+      }
+    ],
+    "collections": [
+      {
+        "name": "peers",
+        "elementType": "any"
+      },
+      {
+        "name": "capabilities",
+        "elementType": "ServerCapability"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T11:56:32.245Z",
+    "updatedAt": "2026-01-02T11:56:32.245Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

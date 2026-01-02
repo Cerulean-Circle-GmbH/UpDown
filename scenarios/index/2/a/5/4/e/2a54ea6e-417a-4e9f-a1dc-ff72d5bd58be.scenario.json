@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "2a54ea6e-417a-4e9f-a1dc-ff72d5bd58be",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "2a54ea6e-417a-4e9f-a1dc-ff72d5bd58be",
+    "name": "RelatedObjects.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer3/RelatedObjects.interface.ts",
+    "definition": "TypeScript RelatedObjects.interface class/interface",
+    "filePath": "src/ts/layer3/RelatedObjects.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-02T11:56:29.880Z",
+    "updatedAt": "2026-01-02T11:56:29.881Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/2/a/5/4/e/2a54ea6e-417a-4e9f-a1dc-ff72d5bd58be.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "2/a/5/4/e/2a54ea6e-417a-4e9f-a1dc-ff72d5bd58be.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T11:56:29.880Z",
+    "updatedAt": "2026-01-02T11:56:29.880Z"
+  }
+}
