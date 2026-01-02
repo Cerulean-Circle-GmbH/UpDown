@@ -848,27 +848,39 @@ export class FolderOverView extends UcpView<FolderModel> {
   /**
    * Handle item navigate (open folder)
    * @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.3
+   * @pdca 2026-01-02-UTC-1500.filebrowser-navigation-fix.pdca.md FN.3
    */
   private handleItemNavigate(event: CustomEvent): void {
-    const targetPath = event.detail?.uuid || event.detail?.path;
+    // The event contains folder name (uuid) not full path
+    // We need to construct full path from current path + folder name
+    const folderName = event.detail?.childRef?.name || event.detail?.model?.name || event.detail?.uuid;
     
-    if (!targetPath) {
-      console.warn('[FolderOverView] No target path in navigate event');
+    if (!folderName) {
+      console.warn('[FolderOverView] No folder name in navigate event');
       return;
     }
+    
+    // FN.3: Construct full path by appending folder name to current path
+    // This ensures URL updates correctly during navigation
+    const basePath = this.currentPath || this.cwd || this.rootPath || '/EAMD.ucp';
+    const fullPath = basePath.endsWith('/') 
+      ? `${basePath}${folderName}` 
+      : `${basePath}/${folderName}`;
+    
+    console.log(`[FolderOverView] Navigate: ${basePath} → ${fullPath}`);
     
     this.animationDirection = NavigationDirection.Forward;
     this.isAnimating = true;
     
     // Dispatch event for external handlers
     this.dispatchEvent(new CustomEvent('folder-navigate', {
-      detail: { ...event.detail, direction: NavigationDirection.Forward },
+      detail: { ...event.detail, path: fullPath, direction: NavigationDirection.Forward },
       bubbles: true,
       composed: true
     }));
     
-    // Load the folder contents
-    this.folderLoad(targetPath);
+    // Load the folder contents with FULL path
+    this.folderLoad(fullPath);
     
     // Reset animation after transition - P4a: Use bound method
     setTimeout(this.animationReset.bind(this), 300);

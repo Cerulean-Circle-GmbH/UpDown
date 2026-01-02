@@ -231,10 +231,13 @@ export class StaticFileRoute extends Route {
         }
         
         // Pattern 1: /EAMD.ucp/components/** or /EAMD.ucp/scenarios/**
+        // FN.2: Also match exact /EAMD.ucp/components and /EAMD.ucp/scenarios (no trailing /)
+        // @pdca 2026-01-02-UTC-1500.filebrowser-navigation-fix.pdca.md
         if (urlPath.startsWith('/EAMD.ucp/')) {
             const subPath = urlPath.substring('/EAMD.ucp/'.length).split('?')[0];  // Remove query string
-            // Must start with components/ or scenarios/
-            return subPath.startsWith('components/') || subPath.startsWith('scenarios/');
+            // Must be exactly or start with components/ or scenarios/
+            return subPath === 'components' || subPath === 'scenarios' ||
+                   subPath.startsWith('components/') || subPath.startsWith('scenarios/');
         }
         
         // Pattern 2: /{Component}/{version}/**

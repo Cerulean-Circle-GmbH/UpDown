@@ -1031,17 +1031,40 @@ export class IOR<T = any> implements IORInterface {
             port = locationPort ? parseInt(locationPort) : (protocol === 'https' ? 443 : 80);
         }
         
-        // Parse path parts (component/version/uuid/method) if applicable
+        // Parse path parts
         const pathParts = path.split('/').filter(function filterEmpty(p: string): boolean { return p.length > 0; });
         
-        // Update model
+        // Update model - BUT do NOT set uuid from arbitrary paths!
+        // Only set component/version/uuid for true IOR paths like /Component/1.0.0/uuid-here
+        // File paths like /EAMD.ucp/components/ONCE/.../file.css are NOT IOR paths
+        // 
+        // BUG FIX: Setting uuid = "ONCE" from path "/EAMD.ucp/components/ONCE/..."
+        // caused CSS files to incorrectly match cached ONCE.component.json
+        // @pdca 2026-01-02-UTC-1400.cache-busting-systematic-fix.pdca.md
         this.model.protocol = protocol;
         this.model.host = host;
         this.model.port = port;
         this.model.path = path;
-        this.model.component = pathParts[0] || '';
-        this.model.version = pathParts[1] || '';
-        this.model.uuid = pathParts[2] || '';
+        
+        // Only parse as component IOR if path looks like /Component/version/uuid pattern
+        // (not /EAMD.ucp/... or files with extensions)
+        const looksLikeComponentIOR = pathParts.length >= 3 && 
+            !pathParts[0].includes('.') &&        // component shouldn't have extension
+            /^\d+\.\d+\.\d+/.test(pathParts[1]) && // version looks like semver
+            pathParts[2].length > 0 &&
+            !pathParts[2].includes('.');           // uuid shouldn't have extension
+        
+        if (looksLikeComponentIOR) {
+            this.model.component = pathParts[0] || '';
+            this.model.version = pathParts[1] || '';
+            this.model.uuid = pathParts[2] || '';
+        } else {
+            // For file paths, don't set component/version/uuid - they could cause cache collisions
+            this.model.component = '';
+            this.model.version = '';
+            this.model.uuid = '';
+        }
+        
         this.model.iorString = `${protocol}://${host}:${port}${path}`;
         
         return this;

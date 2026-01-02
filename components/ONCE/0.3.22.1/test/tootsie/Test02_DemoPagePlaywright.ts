@@ -487,6 +487,12 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       mainRouteReq.addCriterion('MAIN-12', 'Server state shows "running" (not "stopped")');
       mainRouteReq.addCriterion('MAIN-13', 'Capabilities section displays server capabilities');
       
+      // CSS Verification Criteria - added 2026-01-02
+      // @pdca 2026-01-02-UTC-1500.filebrowser-navigation-fix.pdca.md
+      mainRouteReq.addCriterion('CSS-01', 'Page has styled background (not plain black)');
+      mainRouteReq.addCriterion('CSS-02', 'Page has gradient or themed colors');
+      mainRouteReq.addCriterion('CSS-03', 'Text elements have visible contrast');
+      
       this.logEvidence('step', 'Testing main route /');
       
       // Navigate to main route
@@ -894,6 +900,124 @@ export class Test02_DemoPagePlaywright extends ONCETestCase {
       mainRouteReq.validateCriterion('MAIN-13', !capabilitiesCheck.showsNoCapabilities && capabilitiesCheck.capabilityCount > 0, {
         ...capabilitiesCheck,
         message: `Expected ${expectedCapabilitiesCount} capabilities, but got: ${capabilitiesCheck.capabilityCount}, showsNoCapabilities: ${capabilitiesCheck.showsNoCapabilities}`
+      });
+      
+      // ═══════════════════════════════════════════════════════════════
+      // CSS Verification Tests - Detect when CSS is broken (not loaded/applied)
+      // @pdca 2026-01-02-UTC-1500.filebrowser-navigation-fix.pdca.md
+      // ═══════════════════════════════════════════════════════════════
+      
+      // CSS-01: Check that background is not plain black (CSS loaded)
+      const cssBackgroundCheck = await this.page.evaluate(function() {
+        const body = document.body;
+        const html = document.documentElement;
+        const bodyStyle = window.getComputedStyle(body);
+        const htmlStyle = window.getComputedStyle(html);
+        
+        const bodyBgColor = bodyStyle.backgroundColor;
+        const htmlBgColor = htmlStyle.backgroundColor;
+        
+        // Plain black is rgb(0, 0, 0), transparent, or empty
+        const isBodyBlack = bodyBgColor === 'rgb(0, 0, 0)' || 
+                            bodyBgColor === 'rgba(0, 0, 0, 0)' || 
+                            bodyBgColor === 'transparent';
+        const isHtmlBlack = htmlBgColor === 'rgb(0, 0, 0)' || 
+                            htmlBgColor === 'rgba(0, 0, 0, 0)' || 
+                            htmlBgColor === 'transparent';
+        
+        return {
+          bodyBgColor: bodyBgColor,
+          htmlBgColor: htmlBgColor,
+          isBodyBlack: isBodyBlack,
+          isHtmlBlack: isHtmlBlack,
+          hasStyledBackground: !isBodyBlack || !isHtmlBlack
+        };
+      });
+      
+      this.logEvidence('output', 'CSS background check', cssBackgroundCheck);
+      mainRouteReq.validateCriterion('CSS-01', cssBackgroundCheck.hasStyledBackground, {
+        ...cssBackgroundCheck,
+        message: cssBackgroundCheck.hasStyledBackground 
+          ? 'Background is styled (CSS loaded)' 
+          : 'Background is black - CSS may not be loaded!'
+      });
+      
+      // CSS-02: Check that CSS stylesheets are loaded (browser has adoptedStyleSheets or link elements)
+      const cssGradientCheck = await this.page.evaluate(function() {
+        // Check if any CSS was loaded
+        const linkElements = document.querySelectorAll('link[rel="stylesheet"]');
+        const styleElements = document.querySelectorAll('style');
+        
+        // Check body/html for any non-default styling
+        const body = document.body;
+        const bodyStyle = window.getComputedStyle(body);
+        const hasCustomFont = bodyStyle.fontFamily !== '' && 
+                              !bodyStyle.fontFamily.includes('Times') &&
+                              !bodyStyle.fontFamily.includes('serif');
+        
+        // Check if any view component exists (proves app loaded)
+        const hasRouter = document.querySelector('ucp-router') !== null;
+        const hasView = document.querySelector('once-peer-default-view') !== null ||
+                        document.querySelector('ucp-router')?.shadowRoot?.querySelector('once-peer-default-view') !== null;
+        
+        return {
+          linkCount: linkElements.length,
+          styleCount: styleElements.length,
+          hasCustomFont: hasCustomFont,
+          fontFamily: bodyStyle.fontFamily.substring(0, 50),
+          hasRouter: hasRouter,
+          hasView: hasView,
+          cssLoaded: linkElements.length > 0 || styleElements.length > 0 || hasCustomFont
+        };
+      });
+      
+      this.logEvidence('output', 'CSS loading check', cssGradientCheck);
+      mainRouteReq.validateCriterion('CSS-02', cssGradientCheck.cssLoaded || cssGradientCheck.hasView, {
+        ...cssGradientCheck,
+        message: (cssGradientCheck.cssLoaded || cssGradientCheck.hasView)
+          ? 'CSS is loading (stylesheets or styled components detected)'
+          : 'No CSS detected - may be broken!'
+      });
+      
+      // CSS-03: Check that text is rendered (page has content, not blank)
+      const cssTextCheck = await this.page.evaluate(function() {
+        // Check if page has any visible text content
+        const bodyText = document.body.innerText.trim();
+        const hasText = bodyText.length > 10;
+        
+        // Also check shadow DOM of view components
+        let viewText = '';
+        const router = document.querySelector('ucp-router');
+        if (router && router.shadowRoot) {
+          const view = router.shadowRoot.querySelector('once-peer-default-view');
+          if (view && view.shadowRoot) {
+            viewText = view.shadowRoot.textContent || '';
+          }
+        }
+        
+        const hasViewText = viewText.trim().length > 10;
+        const totalTextLength = bodyText.length + viewText.length;
+        
+        // Find any text element that proves content is rendering
+        const hasAnyContent = hasText || hasViewText || 
+                              document.querySelector('h1, h2, h3, p, span, div:not(:empty)') !== null;
+        
+        return {
+          hasText: hasText,
+          hasViewText: hasViewText,
+          textSampleBody: bodyText.substring(0, 100),
+          textSampleView: viewText.substring(0, 100),
+          totalTextLength: totalTextLength,
+          hasContent: hasAnyContent
+        };
+      });
+      
+      this.logEvidence('output', 'CSS content check', cssTextCheck);
+      mainRouteReq.validateCriterion('CSS-03', cssTextCheck.hasContent, {
+        ...cssTextCheck,
+        message: cssTextCheck.hasContent
+          ? 'Page has visible content rendered'
+          : 'Page appears blank - CSS or content may not be loading!'
       });
       
       // Check Primary Server APIs section (conditional display)

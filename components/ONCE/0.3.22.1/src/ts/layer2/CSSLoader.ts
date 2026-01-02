@@ -107,6 +107,17 @@ export class CSSLoader {
       try {
         const ior = await new IOR().init(cssPath);
         const cssText = await ior.load<string>();
+        
+        // Debug: Check what IOR.load() actually returned
+        const cssType = typeof cssText;
+        const cssLength = typeof cssText === 'string' ? cssText.length : 'N/A';
+        console.log(`[CSSLoader] 📦 IOR returned type: ${cssType}, length: ${cssLength}`);
+        if (typeof cssText === 'string' && cssText.length > 0) {
+          console.log(`[CSSLoader] 📄 First 100 chars: ${cssText.substring(0, 100)}`);
+        } else {
+          console.warn(`[CSSLoader] ⚠️ Empty or non-string CSS content for: ${cssPath}`);
+        }
+        
         const sheet = new CSSStyleSheet();
         sheet.replaceSync(cssText);
         

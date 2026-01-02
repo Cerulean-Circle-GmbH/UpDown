@@ -2280,12 +2280,14 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
     const templates: string[] = [];
     
     // Scan CSS directory
+    // Web4 Principle 23: EAMD.ucp Virtual Root for consistent routing
+    // @pdca 2026-01-02-UTC-1400.cache-busting-systematic-fix.pdca.md
     try {
       const cssFiles = fs.readdirSync(cssDir);
       cssFiles.forEach(function(file: string) {
         if (file.endsWith('.css')) {
-          // URL: /ONCE/0.3.21.9/src/ts/layer5/views/css/ItemView.css
-          css.push(`/ONCE/${version}/src/ts/layer5/views/css/${file}`);
+          // URL: /EAMD.ucp/components/ONCE/0.3.22.1/src/ts/layer5/views/css/ItemView.css
+          css.push(`/EAMD.ucp/components/ONCE/${version}/src/ts/layer5/views/css/${file}`);
         }
       });
     } catch (e) {
@@ -2298,8 +2300,8 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
       const templateFiles = fs.readdirSync(templatesDir);
       templateFiles.forEach(function(file: string) {
         if (file.endsWith('.html')) {
-          // URL: /ONCE/0.3.21.9/src/ts/layer5/views/webBeans/ItemView.html
-          templates.push(`/ONCE/${version}/src/ts/layer5/views/webBeans/${file}`);
+          // URL: /EAMD.ucp/components/ONCE/0.3.22.1/src/ts/layer5/views/webBeans/ItemView.html
+          templates.push(`/EAMD.ucp/components/ONCE/${version}/src/ts/layer5/views/webBeans/${file}`);
         }
       });
     } catch (e) {

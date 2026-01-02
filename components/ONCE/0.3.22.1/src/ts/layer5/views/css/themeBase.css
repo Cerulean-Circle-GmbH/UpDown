@@ -80,6 +80,16 @@
   --highlight-bg: rgba(0, 255, 0, 0.15);
 }
 
+/* Global Styles - Required for height: 100% to work in nested components */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
 
 
 

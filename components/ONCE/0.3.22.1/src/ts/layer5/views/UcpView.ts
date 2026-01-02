@@ -403,17 +403,30 @@ export abstract class UcpView<TModel = any> extends LitElement implements View<T
     const cssPath = (this.constructor as typeof UcpView).cssPath;
     
     if (!cssPath) {
+      console.log(`[UcpView] ${this.constructor.name} has no cssPath defined`);
       return;  // No external CSS path defined for this view
     }
     
     const sheet = CSSLoader.get(cssPath);
+    
+    if (!sheet) {
+      console.warn(`[UcpView] ❌ CSS not found in cache for: ${cssPath}. Available keys:`, CSSLoader.cachedPaths);
+      return;
+    }
     
     if (sheet && this.shadowRoot) {
       // APPEND to existing styles (don't replace Lit's static styles!)
       const existingStyles = [...this.shadowRoot.adoptedStyleSheets];
       if (!existingStyles.includes(sheet)) {
         this.shadowRoot.adoptedStyleSheets = [...existingStyles, sheet];
+        console.log(`[UcpView] ✅ Applied CSS: ${cssPath} to ${this.constructor.name}`);
+        console.log(`[UcpView] 📋 Shadow root has ${this.shadowRoot.adoptedStyleSheets.length} stylesheets after apply`);
+        // Debug: Log first 200 chars of the CSS
+        const cssText = sheet.cssRules?.length > 0 ? sheet.cssRules[0].cssText.substring(0, 200) : 'no rules';
+        console.log(`[UcpView] 📄 CSS content preview: ${cssText}`);
       }
+    } else {
+      console.warn(`[UcpView] ⚠️ Cannot apply CSS - sheet:`, !!sheet, `shadowRoot:`, !!this.shadowRoot);
     }
   }
   
