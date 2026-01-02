@@ -1,0 +1,79 @@
+{
+  "ior": {
+    "uuid": "e0fe20e7-90db-43d4-b93e-cba4d4f5e591",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "e0fe20e7-90db-43d4-b93e-cba4d4f5e591",
+    "name": "EnvironmentModel",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/EnvironmentModel.interface.ts",
+    "indexPath": "scenarios/index/e0fe20e7-90db-43d4-b93e-cba4d4f5e591.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/EnvironmentModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "hostname",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "fqdn",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "primaryIP",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "domain",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "EnvironmentScenario",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "EnvironmentScenario",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:00:12.453Z",
+    "updatedAt": "2026-01-02T12:00:12.453Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

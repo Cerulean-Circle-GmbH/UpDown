@@ -1,0 +1,172 @@
+{
+  "ior": {
+    "uuid": "a4e1f2d9-118c-4ef2-b4f7-eb3246f0c6c1",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "a4e1f2d9-118c-4ef2-b4f7-eb3246f0c6c1",
+    "name": "HierarchicalCompletionFilter",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer4/HierarchicalCompletionFilter.ts",
+    "indexPath": "scenarios/index/a4e1f2d9-118c-4ef2-b4f7-eb3246f0c6c1.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/HierarchicalCompletionFilter.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "applyPrefixFilter",
+        "parameters": [
+          {
+            "name": "result",
+            "type": "HierarchicalResult",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "filterPrefix",
+            "type": "string | undefined",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "tokenPattern",
+            "type": "RegExp",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "buildContextualDisplay",
+        "parameters": [
+          {
+            "name": "displayLines",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "filteredTokens",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "tokenPattern",
+            "type": "RegExp",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "findFileContext",
+        "parameters": [
+          {
+            "name": "displayLines",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "currentIndex",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "addHierarchicalContext",
+        "parameters": [
+          {
+            "name": "displayLines",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "token",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "filteredDisplay",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "addedContexts",
+            "type": "Set<string>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "addContextLine",
+        "parameters": [
+          {
+            "name": "displayLines",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "pattern",
+            "type": "RegExp",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "filteredDisplay",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "addedContexts",
+            "type": "Set<string>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:00:12.687Z",
+    "updatedAt": "2026-01-02T12:00:12.687Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

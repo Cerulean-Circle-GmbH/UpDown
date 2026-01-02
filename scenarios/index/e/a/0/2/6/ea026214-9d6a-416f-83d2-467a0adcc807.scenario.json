@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "ea026214-9d6a-416f-83d2-467a0adcc807",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "ea026214-9d6a-416f-83d2-467a0adcc807",
+    "name": "FolderModel.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer3/FolderModel.interface.ts",
+    "definition": "TypeScript FolderModel.interface class/interface",
+    "filePath": "src/ts/layer3/FolderModel.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-02T12:00:08.634Z",
+    "updatedAt": "2026-01-02T12:00:08.635Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/e/a/0/2/6/ea026214-9d6a-416f-83d2-467a0adcc807.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "e/a/0/2/6/ea026214-9d6a-416f-83d2-467a0adcc807.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:00:08.634Z",
+    "updatedAt": "2026-01-02T12:00:08.634Z"
+  }
+}

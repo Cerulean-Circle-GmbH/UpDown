@@ -1,0 +1,97 @@
+{
+  "ior": {
+    "uuid": "8a3181a1-9226-4a25-a75c-895779f78582",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "8a3181a1-9226-4a25-a75c-895779f78582",
+    "name": "FileItemView",
+    "extends": "ior:esm:/ONCE/0.3.22.1/UcpView",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/FileItemView.ts",
+    "indexPath": "scenarios/index/8a3181a1-9226-4a25-a75c-895779f78582.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/FileItemView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "cssPath",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "FileItemView.css"
+      },
+      {
+        "name": "selected",
+        "type": "any",
+        "optional": false,
+        "defaultValue": false
+      }
+    ],
+    "properties": [
+      {
+        "name": "mimetypeIcon",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "formattedSize",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "formattedDate",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleSelect",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleDragStart",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "DragEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:00:12.736Z",
+    "updatedAt": "2026-01-02T12:00:12.736Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

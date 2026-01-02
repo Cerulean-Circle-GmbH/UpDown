@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "4c4b1092-2d8f-43b6-9255-3819ec380f48",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "4c4b1092-2d8f-43b6-9255-3819ec380f48",
+    "name": "OnceOverView.css",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer5/views/css/OnceOverView.css",
+    "definition": "CSS stylesheet for OnceOverView",
+    "filePath": "src/ts/layer5/views/css/OnceOverView.css",
+    "mimetype": "text/css",
+    "createdAt": "2026-01-02T12:00:07.849Z",
+    "updatedAt": "2026-01-02T12:00:07.850Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/4/c/4/b/1/4c4b1092-2d8f-43b6-9255-3819ec380f48.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "4/c/4/b/1/4c4b1092-2d8f-43b6-9255-3819ec380f48.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:00:07.849Z",
+    "updatedAt": "2026-01-02T12:00:07.849Z"
+  }
+}

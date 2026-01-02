@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "f9541f29-639d-49d3-8dfd-cff41bb21cba",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "f9541f29-639d-49d3-8dfd-cff41bb21cba",
+    "name": "RouteScenario.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer3/RouteScenario.interface.ts",
+    "definition": "TypeScript RouteScenario.interface class/interface",
+    "filePath": "src/ts/layer3/RouteScenario.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-02T12:00:08.936Z",
+    "updatedAt": "2026-01-02T12:00:08.936Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/f/9/5/4/1/f9541f29-639d-49d3-8dfd-cff41bb21cba.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "f/9/5/4/1/f9541f29-639d-49d3-8dfd-cff41bb21cba.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:00:08.936Z",
+    "updatedAt": "2026-01-02T12:00:08.936Z"
+  }
+}

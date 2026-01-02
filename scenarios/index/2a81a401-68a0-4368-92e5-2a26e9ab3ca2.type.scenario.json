@@ -1,0 +1,97 @@
+{
+  "ior": {
+    "uuid": "2a81a401-68a0-4368-92e5-2a26e9ab3ca2",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "2a81a401-68a0-4368-92e5-2a26e9ab3ca2",
+    "name": "DomainConfigurationModel",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/DomainConfigurationModel.interface.ts",
+    "indexPath": "scenarios/index/2a81a401-68a0-4368-92e5-2a26e9ab3ca2.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/DomainConfigurationModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "domain",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isWildcard",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "certificateSource",
+        "type": "CertificateSource",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "automaticCertificateManagementEnvironmentChallengeType",
+        "type": "AutomaticCertificateManagementEnvironmentChallengeType",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "automaticCertificateManagementEnvironmentEmail",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "automaticCertificateManagementEnvironmentUseStaging",
+        "type": "boolean",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "manualCertificatePaths",
+        "type": "{\n        certificatePath: string;\n        privateKeyPath: string;\n        certificateAuthorityPath?: string;\n    }",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "dnsProviderName",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "dnsCredentialsInternetObjectReference",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "autoRenewEnabled",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "renewBeforeExpiryDays",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:00:12.452Z",
+    "updatedAt": "2026-01-02T12:00:12.452Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

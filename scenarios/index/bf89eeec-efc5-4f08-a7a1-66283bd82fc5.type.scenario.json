@@ -1,0 +1,135 @@
+{
+  "ior": {
+    "uuid": "bf89eeec-efc5-4f08-a7a1-66283bd82fc5",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "bf89eeec-efc5-4f08-a7a1-66283bd82fc5",
+    "name": "Once",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer1/ONCE.ts",
+    "indexPath": "scenarios/index/bf89eeec-efc5-4f08-a7a1-66283bd82fc5.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Once.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "instance",
+        "type": "ONCEKernel | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "environment",
+        "type": "EnvironmentInfo | null",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "isNode",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "isBrowser",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "isServiceWorker",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "isWorker",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "start",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<ONCEPeerModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<ONCEKernel>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getInstance",
+        "parameters": [],
+        "returnType": "ONCEKernel | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getEnvironment",
+        "parameters": [],
+        "returnType": "EnvironmentInfo | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "stop",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "detectEnvironment",
+        "parameters": [],
+        "returnType": "EnvironmentInfo",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "loadKernel",
+        "parameters": [
+          {
+            "name": "envType",
+            "type": "EnvironmentType",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<ONCEKernel>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:00:11.510Z",
+    "updatedAt": "2026-01-02T12:00:11.510Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

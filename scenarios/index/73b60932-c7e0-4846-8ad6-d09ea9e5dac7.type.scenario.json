@@ -1,0 +1,96 @@
+{
+  "ior": {
+    "uuid": "73b60932-c7e0-4846-8ad6-d09ea9e5dac7",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "73b60932-c7e0-4846-8ad6-d09ea9e5dac7",
+    "name": "ProxyRouteModel",
+    "extends": "ior:esm:/ONCE/0.3.22.1/RouteModel",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ProxyRouteModel.interface.ts",
+    "indexPath": "scenarios/index/73b60932-c7e0-4846-8ad6-d09ea9e5dac7.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ProxyRouteModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "upstream",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "loadBalancing",
+        "type": "LoadBalancingStrategy",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "timeout",
+        "type": "number",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "preserveHost",
+        "type": "boolean",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "followRedirects",
+        "type": "boolean",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "stripPrefix",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "addPrefix",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "websocket",
+        "type": "boolean",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "upstreams",
+        "elementType": "string"
+      },
+      {
+        "name": "requestHeaderRules",
+        "elementType": "RewriteRule"
+      },
+      {
+        "name": "responseHeaderRules",
+        "elementType": "RewriteRule"
+      },
+      {
+        "name": "hrefRules",
+        "elementType": "RewriteRule"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:00:12.518Z",
+    "updatedAt": "2026-01-02T12:00:12.518Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

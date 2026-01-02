@@ -1,0 +1,744 @@
+{
+  "ior": {
+    "uuid": "872be974-4592-4214-8840-ce595341646e",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "872be974-4592-4214-8840-ce595341646e",
+    "name": "LetsEncryptCertificateProvider",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/LetsEncryptCertificateProvider.ts",
+    "indexPath": "scenarios/index/872be974-4592-4214-8840-ce595341646e.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/LetsEncryptCertificateProvider.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "LetsEncryptCertificateProviderModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "accountPrivateKey",
+        "type": "crypto.KeyObject | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "automaticCertificateManagementEnvironmentDirectory",
+        "type": "AutomaticCertificateManagementEnvironmentDirectory | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "currentNonce",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "httpsLoader",
+        "type": "HTTPSLoader",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "pendingChallenges",
+        "type": "Map<string, string>",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<LetsEncryptCertificateProviderModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "iconGet",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "labelGet",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "configurationCanHandle",
+        "parameters": [
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "certificateRequest",
+        "parameters": [
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<DomainCertificateModel>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "challengeGet",
+        "parameters": [
+          {
+            "name": "token",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string | undefined",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "challengeHas",
+        "parameters": [
+          {
+            "name": "token",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "directoryFetch",
+        "parameters": [],
+        "returnType": "Promise<AutomaticCertificateManagementEnvironmentDirectory>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "directoryParse",
+        "parameters": [
+          {
+            "name": "text",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "AutomaticCertificateManagementEnvironmentDirectory",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "nonceFetch",
+        "parameters": [
+          {
+            "name": "directory",
+            "type": "AutomaticCertificateManagementEnvironmentDirectory",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<AutomaticCertificateManagementEnvironmentDirectory>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "nonceExtract",
+        "parameters": [
+          {
+            "name": "directory",
+            "type": "AutomaticCertificateManagementEnvironmentDirectory",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "_response",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "AutomaticCertificateManagementEnvironmentDirectory",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "nonceExtractFromError",
+        "parameters": [
+          {
+            "name": "directory",
+            "type": "AutomaticCertificateManagementEnvironmentDirectory",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "_error",
+            "type": "Error",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "AutomaticCertificateManagementEnvironmentDirectory",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "nonceGenerate",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "accountEnsure",
+        "parameters": [
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "directory",
+            "type": "AutomaticCertificateManagementEnvironmentDirectory",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<AutomaticCertificateManagementEnvironmentDirectory>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "accountKeyGenerate",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "accountKeyGenerateExecutor",
+        "parameters": [
+          {
+            "name": "resolve",
+            "type": "() => void",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "reject",
+            "type": "(error: Error) => void",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "keyPairGenerationHandle",
+        "parameters": [
+          {
+            "name": "resolve",
+            "type": "() => void",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "reject",
+            "type": "(error: Error) => void",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "error",
+            "type": "Error | null",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "_publicKey",
+            "type": "crypto.KeyObject",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "privateKey",
+            "type": "crypto.KeyObject",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "accountRegister",
+        "parameters": [
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "directory",
+            "type": "AutomaticCertificateManagementEnvironmentDirectory",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<AutomaticCertificateManagementEnvironmentDirectory>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "accountRegistrationHandle",
+        "parameters": [
+          {
+            "name": "directory",
+            "type": "AutomaticCertificateManagementEnvironmentDirectory",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "response",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "AutomaticCertificateManagementEnvironmentDirectory",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "orderCreate",
+        "parameters": [
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "directory",
+            "type": "AutomaticCertificateManagementEnvironmentDirectory",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<any>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "identifiersBuild",
+        "parameters": [
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Array<{ type: string; value: string }>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "authorizationsProcess",
+        "parameters": [
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "order",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<any>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "jsonParse",
+        "parameters": [
+          {
+            "name": "text",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "any",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "challengeSelect",
+        "parameters": [
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "order",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "authorization",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<any>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "http01ChallengeFind",
+        "parameters": [
+          {
+            "name": "challenges",
+            "type": "any[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "any | undefined",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "http01ChallengeRespond",
+        "parameters": [
+          {
+            "name": "challenge",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "order",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<any>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "keyAuthorizationBuild",
+        "parameters": [
+          {
+            "name": "token",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "jwkThumbprintCalculate",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "challengeWait",
+        "parameters": [
+          {
+            "name": "order",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "_challengeResponse",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<any>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "orderFinalize",
+        "parameters": [
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "order",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<any>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "csrGenerate",
+        "parameters": [
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "finalizeResponseHandle",
+        "parameters": [
+          {
+            "name": "order",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "response",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "any",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "certificateFetch",
+        "parameters": [
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "order",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "certificateBuild",
+        "parameters": [
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "certificatePem",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "DomainCertificateModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "certificateRequestSuccess",
+        "parameters": [
+          {
+            "name": "certificate",
+            "type": "DomainCertificateModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "DomainCertificateModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "certificateRequestError",
+        "parameters": [
+          {
+            "name": "error",
+            "type": "Error",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "never",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "automaticCertificateManagementEnvironmentPost",
+        "parameters": [
+          {
+            "name": "url",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "payload",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<any>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "jwsSign",
+        "parameters": [
+          {
+            "name": "payload",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "url",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "object",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "accountPrivateKeyRestore",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Promise<Scenario<LetsEncryptCertificateProviderModel>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:00:12.022Z",
+    "updatedAt": "2026-01-02T12:00:12.022Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

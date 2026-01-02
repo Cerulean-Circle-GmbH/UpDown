@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "ed12f3fb-316b-41b7-bd3e-2b9dbed83987",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "ed12f3fb-316b-41b7-bd3e-2b9dbed83987",
+    "name": "FeatureDescriptor.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer3/FeatureDescriptor.interface.ts",
+    "definition": "TypeScript FeatureDescriptor.interface class/interface",
+    "filePath": "src/ts/layer3/FeatureDescriptor.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-02T12:00:08.589Z",
+    "updatedAt": "2026-01-02T12:00:08.593Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/e/d/1/2/f/ed12f3fb-316b-41b7-bd3e-2b9dbed83987.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "e/d/1/2/f/ed12f3fb-316b-41b7-bd3e-2b9dbed83987.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:00:08.589Z",
+    "updatedAt": "2026-01-02T12:00:08.589Z"
+  }
+}

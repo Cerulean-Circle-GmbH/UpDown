@@ -1,0 +1,200 @@
+{
+  "ior": {
+    "uuid": "dbe5858e-3dfe-4059-87a8-b35f02fe5adf",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "dbe5858e-3dfe-4059-87a8-b35f02fe5adf",
+    "name": "Component",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/Component.interface.ts",
+    "indexPath": "scenarios/index/dbe5858e-3dfe-4059-87a8-b35f02fe5adf.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Component.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "ior",
+        "type": "IORModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "model",
+        "type": "TModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<TModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Scenario<TModel>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "hasMethod",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getMethodSignature",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "MethodSignature | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "listMethods",
+        "parameters": [],
+        "returnType": "string[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "info",
+        "parameters": [
+          {
+            "name": "topic",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "test",
+        "parameters": [
+          {
+            "name": "scope",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          },
+          {
+            "name": "references",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "build",
+        "parameters": [],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "clean",
+        "parameters": [],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "tree",
+        "parameters": [
+          {
+            "name": "depth",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          },
+          {
+            "name": "showHidden",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "links",
+        "parameters": [
+          {
+            "name": "action",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:00:12.439Z",
+    "updatedAt": "2026-01-02T12:00:12.439Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

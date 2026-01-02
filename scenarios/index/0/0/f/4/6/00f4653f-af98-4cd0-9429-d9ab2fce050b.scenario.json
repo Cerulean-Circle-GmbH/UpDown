@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "00f4653f-af98-4cd0-9429-d9ab2fce050b",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "00f4653f-af98-4cd0-9429-d9ab2fce050b",
+    "name": "ViewTab.enum.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer3/ViewTab.enum.ts",
+    "definition": "TypeScript ViewTab.enum class/interface",
+    "filePath": "src/ts/layer3/ViewTab.enum.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-02T12:00:09.018Z",
+    "updatedAt": "2026-01-02T12:00:09.019Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/0/0/f/4/6/00f4653f-af98-4cd0-9429-d9ab2fce050b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "0/0/f/4/6/00f4653f-af98-4cd0-9429-d9ab2fce050b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:00:09.018Z",
+    "updatedAt": "2026-01-02T12:00:09.018Z"
+  }
+}

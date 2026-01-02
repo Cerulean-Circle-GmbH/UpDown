@@ -1,0 +1,341 @@
+{
+  "ior": {
+    "uuid": "549a521d-0762-432a-a10a-77c515e8aca9",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "549a521d-0762-432a-a10a-77c515e8aca9",
+    "name": "BrowserScenarioStorage",
+    "extends": null,
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.1/PersistenceManager"
+    ],
+    "sourcePath": "src/ts/layer2/BrowserScenarioStorage.ts",
+    "indexPath": "scenarios/index/549a521d-0762-432a-a10a-77c515e8aca9.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/BrowserScenarioStorage.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "StorageModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "db",
+        "type": "IDBDatabase | null",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "StorageScenario",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "dbOpen",
+        "parameters": [],
+        "returnType": "Promise<IDBDatabase>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioSave",
+        "parameters": [
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "scenario",
+            "type": "Scenario<T>",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "symlinkPaths",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioLoad",
+        "parameters": [
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Scenario<T>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioFind",
+        "parameters": [
+          {
+            "name": "query",
+            "type": "ScenarioQuery",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Scenario<T>[]>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioDelete",
+        "parameters": [
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "removeSymlinks",
+            "type": "boolean",
+            "optional": false,
+            "defaultValue": "true"
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioExists",
+        "parameters": [
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<boolean>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "artefactSave",
+        "parameters": [
+          {
+            "name": "contentHash",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "blob",
+            "type": "Blob",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "metadata",
+            "type": "{ size: number; mimetype: string; unitUuid: string }",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "artefactLoad",
+        "parameters": [
+          {
+            "name": "contentHash",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<{ content: Blob; size: number; mimetype: string; unitUuid: string } | null>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "artefactExists",
+        "parameters": [
+          {
+            "name": "contentHash",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<boolean>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Promise<StorageScenario>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "linkPathTypeGet",
+        "parameters": [
+          {
+            "name": "linkPath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "'type' | 'domain' | 'capability' | 'unknown'",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "typePathBuild",
+        "parameters": [
+          {
+            "name": "component",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "version",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "domainPathBuild",
+        "parameters": [
+          {
+            "name": "domainParts",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "hostname",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "component",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "version",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "capabilityPathBuild",
+        "parameters": [
+          {
+            "name": "domainParts",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "hostname",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "component",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "version",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "capabilityType",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "capabilityValue",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:00:11.718Z",
+    "updatedAt": "2026-01-02T12:00:11.718Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "e2d460d8-edf4-4c8c-a88f-a4a0c3674bd3",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "e2d460d8-edf4-4c8c-a88f-a4a0c3674bd3",
+    "name": "HTMLRoute.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer2/HTMLRoute.ts",
+    "definition": "TypeScript HTMLRoute class/interface",
+    "filePath": "src/ts/layer2/HTMLRoute.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-02T12:00:08.083Z",
+    "updatedAt": "2026-01-02T12:00:08.084Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/e/2/d/4/6/e2d460d8-edf4-4c8c-a88f-a4a0c3674bd3.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "e/2/d/4/6/e2d460d8-edf4-4c8c-a88f-a4a0c3674bd3.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:00:08.083Z",
+    "updatedAt": "2026-01-02T12:00:08.083Z"
+  }
+}

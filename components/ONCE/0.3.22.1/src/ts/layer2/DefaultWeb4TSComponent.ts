@@ -1153,6 +1153,7 @@ ${'='.repeat(80)}
       { dir: 'src/ts/layer5/views/css', extensions: ['.css'] },
       { dir: 'src/ts/layer5/views/html', extensions: ['.html'] },
       { dir: 'src/ts/layer5/views/templates', extensions: ['.html', '.hbs'] },
+      { dir: 'src/sh', extensions: ['.sh'] },  // Lifecycle scripts
       { dir: 'dist/ts', extensions: ['.js'] },
       { dir: 'src/ts', extensions: ['.ts'] },
     ];
@@ -1161,6 +1162,7 @@ ${'='.repeat(80)}
     const rootFiles = [
       'package.json',
       'tsconfig.json',
+      'vitest.config.ts',
       'README.md',
       '.gitignore',
       '.npmrc',

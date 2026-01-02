@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "96892a3e-ca53-4df5-b0f4-cdfa85253d4a",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "96892a3e-ca53-4df5-b0f4-cdfa85253d4a",
+    "name": "source.env",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/source.env",
+    "definition": "Root component file: source.env",
+    "filePath": "source.env",
+    "mimetype": "text/x-shellscript",
+    "createdAt": "2026-01-02T12:00:10.691Z",
+    "updatedAt": "2026-01-02T12:00:10.692Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/9/6/8/9/2/96892a3e-ca53-4df5-b0f4-cdfa85253d4a.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "9/6/8/9/2/96892a3e-ca53-4df5-b0f4-cdfa85253d4a.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:00:10.691Z",
+    "updatedAt": "2026-01-02T12:00:10.691Z"
+  }
+}

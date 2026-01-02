@@ -1,0 +1,94 @@
+{
+  "ior": {
+    "uuid": "192ad494-d95a-4c52-a9ca-59a89d3bad48",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "192ad494-d95a-4c52-a9ca-59a89d3bad48",
+    "name": "Test25_ServerNameIndicationManager",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/tests/Test25_ServerNameIndicationManager.ts",
+    "indexPath": "scenarios/index/192ad494-d95a-4c52-a9ca-59a89d3bad48.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Test25_ServerNameIndicationManager.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "run",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testCertificateSet",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testDefaultCertificate",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testWildcardMatch",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testSniCallback",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "statisticsCreate",
+        "parameters": [],
+        "returnType": "StatisticsModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "mockCertificateCreate",
+        "parameters": [
+          {
+            "name": "domain",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "DomainCertificateModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:00:12.910Z",
+    "updatedAt": "2026-01-02T12:00:12.910Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

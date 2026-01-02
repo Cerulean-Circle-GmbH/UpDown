@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "82e48457-fdc2-496a-977e-a7bb285fac4f",
+    "component": "Unit",
+    "version": "0.3.22.1"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "82e48457-fdc2-496a-977e-a7bb285fac4f",
+    "name": "FolderItemView.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/src/ts/layer5/views/FolderItemView.ts",
+    "definition": "TypeScript FolderItemView class/interface",
+    "filePath": "dist/ts/layer5/views/FolderItemView.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-02T12:00:10.498Z",
+    "updatedAt": "2026-01-02T12:00:10.498Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/8/2/e/4/8/82e48457-fdc2-496a-977e-a7bb285fac4f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ]
+  },
+  "unit": {
+    "indexPath": "8/2/e/4/8/82e48457-fdc2-496a-977e-a7bb285fac4f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.1"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.1",
+    "createdAt": "2026-01-02T12:00:10.498Z",
+    "updatedAt": "2026-01-02T12:00:10.498Z"
+  }
+}

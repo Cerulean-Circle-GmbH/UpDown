@@ -1,0 +1,132 @@
+{
+  "ior": {
+    "uuid": "951bd4ea-4ebf-4bac-8294-855be6919d9a",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "951bd4ea-4ebf-4bac-8294-855be6919d9a",
+    "name": "LifecycleManager",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/LifecycleManager.interface.ts",
+    "indexPath": "scenarios/index/951bd4ea-4ebf-4bac-8294-855be6919d9a.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/LifecycleManager.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "attachObserver",
+        "parameters": [
+          {
+            "name": "observer",
+            "type": "LifecycleObserver",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "detachObserver",
+        "parameters": [
+          {
+            "name": "observer",
+            "type": "LifecycleObserver",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "notifyObservers",
+        "parameters": [
+          {
+            "name": "eventType",
+            "type": "LifecycleEventType",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "data",
+            "type": "any",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getLifecycleState",
+        "parameters": [],
+        "returnType": "LifecycleState",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "canTransitionTo",
+        "parameters": [
+          {
+            "name": "targetState",
+            "type": "LifecycleState",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "transitionTo",
+        "parameters": [
+          {
+            "name": "targetState",
+            "type": "LifecycleState",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "eventType",
+            "type": "LifecycleEventType",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "data",
+            "type": "any",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:00:12.494Z",
+    "updatedAt": "2026-01-02T12:00:12.494Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,235 @@
+{
+  "ior": {
+    "uuid": "36163711-72a9-46b5-bcb9-41113f74b638",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "36163711-72a9-46b5-bcb9-41113f74b638",
+    "name": "UcpModel",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/UcpModel.ts",
+    "indexPath": "scenarios/index/36163711-72a9-46b5-bcb9-41113f74b638.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/UcpModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "rawModel",
+        "type": "T",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "proxyModel",
+        "type": "T",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "valueProxy",
+        "type": "T",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "updateObjectInternal",
+        "type": "Partial<T>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "viewUpdateCallback",
+        "type": "() => void",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "model",
+        "type": "T",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "value",
+        "type": "T",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "updateObject",
+        "type": "Partial<T>",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "isDirty",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [
+      {
+        "name": "persistenceCallback",
+        "targetType": "() => void"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "model",
+            "type": "T",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "onViewUpdate",
+            "type": "() => void",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "persistenceCallbackSet",
+        "parameters": [
+          {
+            "name": "callback",
+            "type": "() => void",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "commit",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "rollback",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "merge",
+        "parameters": [
+          {
+            "name": "partial",
+            "type": "Partial<T>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "mergeSilent",
+        "parameters": [
+          {
+            "name": "partial",
+            "type": "Partial<T>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "modelProxyCreate",
+        "parameters": [
+          {
+            "name": "model",
+            "type": "T",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "T",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "arrayProxyCreate",
+        "parameters": [
+          {
+            "name": "arr",
+            "type": "unknown[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "parent",
+            "type": "object",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "key",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "unknown[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "valueProxyCreate",
+        "parameters": [
+          {
+            "name": "model",
+            "type": "T",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "T",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.1",
+    "createdAt": "2026-01-02T12:00:12.657Z",
+    "updatedAt": "2026-01-02T12:00:12.657Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}
