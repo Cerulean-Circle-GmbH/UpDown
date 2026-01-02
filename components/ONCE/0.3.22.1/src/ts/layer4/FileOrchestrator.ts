@@ -439,11 +439,15 @@ export class FileOrchestrator {
    * Layer 5 views should call this instead of fetching directly.
    * Returns { contentType, data } for flexible parsing by caller.
    * 
+   * Data may be string (fresh fetch) or object (cached by IOR).
+   * Caller should handle both cases.
+   * 
    * @param folderPath URL path to folder
-   * @returns Object with contentType and data (string)
+   * @returns Object with contentType and data (string or object)
    * @pdca 2025-12-17-UTC-1740.fetch-centralization-dry.pdca.md
+   * @pdca 2026-01-02-UTC-1200.filebrowser-fix.pdca.md FB.1
    */
-  async folderLoadFromServer(folderPath: string): Promise<{ contentType: string; data: string }> {
+  async folderLoadFromServer(folderPath: string): Promise<{ contentType: string; data: string | object }> {
     // Import IOR dynamically to avoid circular dependency
     const { IOR } = await import('./IOR.js');
     
@@ -451,13 +455,21 @@ export class FileOrchestrator {
     const fetchUrl = folderPath + (folderPath.includes('?') ? '&' : '?') + 'format=json';
     
     const ior = await new IOR().init(fetchUrl);
-    const data = await ior.load<string>();
+    const rawData = await ior.load<string | object>();
     
-    // Determine content type from response (simple heuristic)
-    const isJson = data.trim().startsWith('{') || data.trim().startsWith('[');
+    // FB.1: Handle both string (fresh fetch) and object (cached by IOR)
+    // IOR cache may return already-parsed JSON objects
+    if (typeof rawData === 'object' && rawData !== null) {
+      // Already parsed - return directly as JSON
+      return { contentType: 'application/json', data: rawData };
+    }
+    
+    // String - determine type by content
+    const stringData = rawData as string;
+    const isJson = stringData.trim().startsWith('{') || stringData.trim().startsWith('[');
     const contentType = isJson ? 'application/json' : 'text/html';
     
-    return { contentType, data };
+    return { contentType, data: stringData };
   }
   
   /**

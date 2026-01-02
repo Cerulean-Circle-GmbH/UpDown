@@ -196,15 +196,25 @@ export class StaticFileRoute extends Route {
      * 1. /{Component}/{version}/** - Component files (backwards compatible)
      * 2. /EAMD.ucp/components/** - Virtual root for components (Web4 P23)
      * 3. /EAMD.ucp/scenarios/** - Virtual root for scenarios (Web4 P23)
+     * 4. /EAMD.ucp or /EAMD.ucp/ - Virtual root directory listing (FB.3)
      * 
      * @param urlPath - URL path (e.g., /ONCE/0.3.21.9/src/ts/... or /EAMD.ucp/...)
      * @param method - HTTP method (only GET supported)
      * @returns true if path is a static file request
+     * @pdca 2026-01-02-UTC-1200.filebrowser-fix.pdca.md FB.3
      */
     public matches(urlPath: string, method: HttpMethod): boolean {
         // Only GET requests for static files
         if (method !== HttpMethod.GET) {
             return false;
+        }
+        
+        // FB.3: Handle /EAMD.ucp and /EAMD.ucp/ root directory listing
+        // Strip query string for matching
+        const pathOnly = urlPath.split('?')[0];
+        if (pathOnly === '/EAMD.ucp' || pathOnly === '/EAMD.ucp/') {
+            // Only match if ?format=json is present (directory listing request)
+            return urlPath.includes('format=json');
         }
         
         // Check if it's a file (has extension) or directory (no extension)
@@ -222,7 +232,7 @@ export class StaticFileRoute extends Route {
         
         // Pattern 1: /EAMD.ucp/components/** or /EAMD.ucp/scenarios/**
         if (urlPath.startsWith('/EAMD.ucp/')) {
-            const subPath = urlPath.substring('/EAMD.ucp/'.length);
+            const subPath = urlPath.substring('/EAMD.ucp/'.length).split('?')[0];  // Remove query string
             // Must start with components/ or scenarios/
             return subPath.startsWith('components/') || subPath.startsWith('scenarios/');
         }
@@ -294,6 +304,20 @@ export class StaticFileRoute extends Route {
         const urlPath = req.url?.split('?')[0] || '/';
         
         try {
+            // FB.3: Handle /EAMD.ucp virtual root directory listing
+            // Returns components/ and scenarios/ as the root folders
+            // @pdca 2026-01-02-UTC-1200.filebrowser-fix.pdca.md
+            if (urlPath === '/EAMD.ucp' || urlPath === '/EAMD.ucp/') {
+                const virtualRootEntries = [
+                    { name: 'components', isDirectory: true, isFile: false, isSymbolicLink: false },
+                    { name: 'scenarios', isDirectory: true, isFile: false, isSymbolicLink: false }
+                ];
+                
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ entries: virtualRootEntries }));
+                return;
+            }
+            
             // Resolve file path
             const filePath = this.pathResolve(urlPath);
             

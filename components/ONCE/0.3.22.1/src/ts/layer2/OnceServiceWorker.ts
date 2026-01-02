@@ -97,6 +97,11 @@ export class OnceServiceWorker {
   private cacheManager: UnitCacheManager;
   private isInitialized: boolean = false;
   
+  // Bandwidth tracking for adaptive strategy
+  private recentFetchTimesMs: number[] = [];
+  private readonly BANDWIDTH_SAMPLE_SIZE: number = 10;
+  private readonly SLOW_THRESHOLD_MS: number = 2000;  // 2 seconds = "slow" network
+  
   /**
    * Empty constructor - Web4 P6
    */
@@ -119,7 +124,7 @@ export class OnceServiceWorker {
       iorVersion: config.iorVersion || '0.3.21.9',
       version: config.version || '1.0.0',
       cacheNamePrefix: config.cacheNamePrefix || 'once-pwa',
-      defaultCacheStrategy: config.defaultCacheStrategy || CacheStrategy.CACHE_FIRST,
+      defaultCacheStrategy: config.defaultCacheStrategy || CacheStrategy.NETWORK_FIRST,
       precachePatterns: config.precachePatterns || ['*.js', '*.css', '*.html'],
       // IOR calls (/ONCE/{version}/{uuid}/{method}) should never be cached - they're dynamic actions
       noCachePatterns: config.noCachePatterns || ['/api/*', '/ws/*', '/health', '/ONCE/*/*/*/*'],
@@ -300,6 +305,11 @@ export class OnceServiceWorker {
   /**
    * Handle fetch event
    * Intercepts all network requests
+   * 
+   * Strategy: Network-first by default, cache-first when bandwidth is limited
+   * This ensures fresh content during development while still supporting offline
+   * 
+   * @pdca 2026-01-02-UTC-1200.filebrowser-fix.pdca.md
    */
   public fetchHandle(event: SWFetchEvent): void {
     const request = event.request;
@@ -315,8 +325,94 @@ export class OnceServiceWorker {
       return;
     }
     
-    // Use cache-first strategy
-    event.respondWith(this.cacheFirstFetch(request));
+    // Adaptive strategy: network-first normally, cache-first on slow networks
+    if (this.isBandwidthLimited()) {
+      event.respondWith(this.cacheFirstFetch(request));
+    } else {
+      event.respondWith(this.networkFirstFetch(request));
+    }
+  }
+  
+  /**
+   * Check if we should use cache-first due to bandwidth limitations
+   * Looks at recent fetch times to determine if network is slow
+   */
+  private isBandwidthLimited(): boolean {
+    if (this.recentFetchTimesMs.length < 3) {
+      // Not enough data yet, assume network is fine
+      return false;
+    }
+    
+    // Calculate average of recent fetch times
+    const sum = this.recentFetchTimesMs.reduce(this.sumReducer.bind(this), 0);
+    const avg = sum / this.recentFetchTimesMs.length;
+    
+    return avg > this.SLOW_THRESHOLD_MS;
+  }
+  
+  private sumReducer(acc: number, val: number): number {
+    return acc + val;
+  }
+  
+  /**
+   * Record a fetch time for bandwidth tracking
+   */
+  private fetchTimeRecord(durationMs: number): void {
+    this.recentFetchTimesMs.push(durationMs);
+    
+    // Keep only last N samples
+    if (this.recentFetchTimesMs.length > this.BANDWIDTH_SAMPLE_SIZE) {
+      this.recentFetchTimesMs.shift();
+    }
+  }
+  
+  /**
+   * Network-first fetch strategy
+   * Try network first, fallback to cache if offline/slow
+   */
+  private networkFirstFetch(request: Request): Promise<Response> {
+    const ior = new URL(request.url).pathname;
+    const startTime = Date.now();
+    
+    return fetch(request)
+      .then(this.networkFirstSuccess.bind(this, ior, startTime))
+      .catch(this.networkFirstFallback.bind(this, request, ior));
+  }
+  
+  private networkFirstSuccess(ior: string, startTime: number, response: Response): Response {
+    const duration = Date.now() - startTime;
+    this.fetchTimeRecord(duration);
+    
+    console.log(`🌐 Network fetch: ${ior} (${duration}ms)`);
+    
+    // Cache successful responses
+    if (response && response.status === 200) {
+      const unitType = this.unitTypeFromPath(ior);
+      this.cacheManager.unitPut(ior, response.clone(), unitType);
+    }
+    
+    return response;
+  }
+  
+  private networkFirstFallback(request: Request, ior: string, error: Error): Promise<Response> {
+    console.log(`⚠️ Network failed for ${ior}, trying cache:`, error.message);
+    
+    return this.cacheManager.unitGet(ior)
+      .then(this.cacheFallbackHandle.bind(this, ior));
+  }
+  
+  private cacheFallbackHandle(ior: string, cachedResponse: Response | undefined): Response {
+    if (cachedResponse) {
+      console.log(`📦 Cache fallback hit: ${ior}`);
+      return cachedResponse;
+    }
+    
+    // No cache, return error response
+    console.log(`❌ No cache for: ${ior}`);
+    return new Response('Network error and no cache available', { 
+      status: 503, 
+      statusText: 'Service Unavailable' 
+    });
   }
   
   private shouldSkipCache(pathname: string): boolean {

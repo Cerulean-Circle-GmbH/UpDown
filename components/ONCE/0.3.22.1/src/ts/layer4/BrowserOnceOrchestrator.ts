@@ -165,11 +165,15 @@ export class BrowserOnceOrchestrator {
     // Uses wildcard pattern to match all sub-paths: /EAMD.ucp/*
     // @pdca 2025-12-11-UTC-1400.file-browser-eamd-route.pdca.md R.1
     // viewProps are passed to the view element as properties
+    // FB.4: File Browser routes - use URL path for navigation, rootPath limits boundary
+    // When accessing /EAMD.ucp, show the root (components/ and scenarios/ folders)
+    // When accessing /EAMD.ucp/components/..., show that specific folder
+    // @pdca 2026-01-02-UTC-1200.filebrowser-fix.pdca.md
     await (this.router as any).routeRegister('/EAMD.ucp/*', 'folder-over-view', { 
       title: 'File Browser',
       viewProps: {
-        rootPath: '/EAMD.ucp',  // Navigation boundary - cannot navigate above
-        cwd: `/EAMD.ucp/components/ONCE/${this.component.browserModel.version || '0.3.22.1'}/src/assets`  // Initial folder
+        rootPath: '/EAMD.ucp'  // Navigation boundary - cannot navigate above
+        // cwd removed: URL path determines which folder to load
       }
     });
     
@@ -177,8 +181,8 @@ export class BrowserOnceOrchestrator {
     await (this.router as any).routeRegister('/EAMD.ucp', 'folder-over-view', { 
       title: 'File Browser',
       viewProps: {
-        rootPath: '/EAMD.ucp',
-        cwd: `/EAMD.ucp/components/ONCE/${this.component.browserModel.version || '0.3.22.1'}/src/assets`
+        rootPath: '/EAMD.ucp'
+        // cwd removed: starts at root, showing components/ and scenarios/
       }
     });
     

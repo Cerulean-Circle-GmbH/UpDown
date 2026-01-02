@@ -131,17 +131,22 @@ export class FolderOverView extends UcpView<FolderModel> {
     
     // Priority for path to load:
     // 1. Current URL pathname (if under rootPath) - for direct navigation
-    // 2. cwd property (for initial route)
-    // 3. rootPath (fallback)
+    // 2. cwd property (for initial route, if set)
+    // 3. rootPath (fallback to show virtual root)
+    // @pdca 2026-01-02-UTC-1200.filebrowser-fix.pdca.md FB.4
     const currentUrl = window.location.pathname;
     let pathToLoad: string;
     
-    if (currentUrl.startsWith(this.rootPath) && currentUrl !== '/EAMD.ucp') {
-      // Direct navigation to a subfolder - use URL path
+    if (currentUrl.startsWith(this.rootPath)) {
+      // Direct navigation under rootPath - use URL path
+      // This includes /EAMD.ucp itself (shows root) and any subfolders
       pathToLoad = currentUrl;
+    } else if (this.cwd) {
+      // Explicit cwd set - use it
+      pathToLoad = this.cwd;
     } else {
-      // Initial load via route - use cwd or rootPath
-      pathToLoad = this.cwd || this.rootPath;
+      // Fallback to rootPath
+      pathToLoad = this.rootPath;
     }
     
     console.log('[FolderOverView] rootPath:', this.rootPath, 'cwd:', this.cwd, 'url:', currentUrl, 'pathToLoad:', pathToLoad);
@@ -567,12 +572,14 @@ export class FolderOverView extends UcpView<FolderModel> {
       const { contentType, data } = await orchestrator.folderLoadFromServer(folderPath);
       
       if (contentType.includes('application/json')) {
-        // Server returned JSON directory listing
-        const jsonData = JSON.parse(data);
+        // FB.2: Handle both string (needs parsing) and object (already parsed by IOR cache)
+        // @pdca 2026-01-02-UTC-1200.filebrowser-fix.pdca.md
+        const jsonData = typeof data === 'string' ? JSON.parse(data) : data;
         this.folderModelFromListing(jsonData, folderPath);
       } else {
         // Server returned HTML - parse for links (fallback)
-        this.folderModelFromHtml(data, folderPath);
+        // HTML data is always a string
+        this.folderModelFromHtml(data as string, folderPath);
       }
       
       // Update breadcrumb from path
