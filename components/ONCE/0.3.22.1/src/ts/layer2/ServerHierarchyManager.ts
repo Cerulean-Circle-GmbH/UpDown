@@ -297,12 +297,13 @@ export class ServerHierarchyManager {
         homeRoute.model.priority = 50;
         this.httpRouter.registerRoute(homeRoute);
         
-        // ✅ Route 3: Demo Hub ("/demo") - NOW serves Lit MVC view
-        // @pdca 2025-12-05-UTC-1600.phase-a1-oncepeeritemview-relatedobjects.pdca.md - A.3
+        // ✅ Route 3: Demo Hub ("/demo") - SPA via once.html + UcpRouter
+        // DR.1: Use once.html SPA - UcpRouter renders <once-over-view>
+        // @pdca 2026-01-02-UTC-1750.demo-route-spa-unification.pdca.md
         const demoRoute = new HTMLRoute().init();
         demoRoute.model.uuid = this.idProvider.create();
         demoRoute.setPattern('/demo', HttpMethod.GET);
-        demoRoute.setProvider(() => this.component!.serveDemoLit()); // ✅ Now serves Lit view
+        demoRoute.setProvider(() => this.component!.serveOnceApp()); // ✅ SPA via UcpRouter
         demoRoute.model.priority = 50;
         this.httpRouter.registerRoute(demoRoute);
         
@@ -310,15 +311,16 @@ export class ServerHierarchyManager {
         const demoRoute2 = new HTMLRoute().init();
         demoRoute2.model.uuid = this.idProvider.create();
         demoRoute2.setPattern('/demo/', HttpMethod.GET);
-        demoRoute2.setProvider(() => this.component!.serveDemoLit()); // ✅ Now serves Lit view
+        demoRoute2.setProvider(() => this.component!.serveOnceApp()); // ✅ SPA via UcpRouter
         demoRoute2.model.priority = 50;
         this.httpRouter.registerRoute(demoRoute2);
         
-        // ✅ Route 3c: Demo Lit MVC ("/demo-lit") - Alias for /demo
+        // ✅ Route 3c: Demo Lit MVC ("/demo-lit") - Legacy alias (deprecated)
+        // @deprecated Use /demo instead - this serves legacy demo-lit.html
         const demoLitRoute = new HTMLRoute().init();
         demoLitRoute.model.uuid = this.idProvider.create();
         demoLitRoute.setPattern('/demo-lit', HttpMethod.GET);
-        demoLitRoute.setProvider(() => this.component!.serveDemoLit());
+        demoLitRoute.setProvider(() => this.component!.serveDemoLit()); // Legacy HTML
         demoLitRoute.model.priority = 50;
         this.httpRouter.registerRoute(demoLitRoute);
         

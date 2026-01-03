@@ -281,28 +281,37 @@ export class BrowserOnceOrchestrator {
   
   /**
    * Import view components dynamically
+   * Guards against double registration by checking customElements.get()
+   * @pdca 2026-01-02-UTC-1700.scenario-housekeeping-migration.pdca.md (fix: SB.1)
    */
   private async viewsImport(): Promise<void> {
     console.log('[Orchestrator] Importing view components...');
     
     const basePath = `/EAMD.ucp/components/ONCE/${this.component.browserModel.version}/dist/ts/layer5/views`;
     
-    await import(`${basePath}/OnceOverView.js`);
-    await import(`${basePath}/DefaultItemView.js`);
-    await import(`${basePath}/OncePeerItemView.js`);
-    await import(`${basePath}/OncePeerDefaultView.js`);
+    // Helper to import only if not already registered
+    const importIfNeeded = async (tagName: string, modulePath: string): Promise<void> => {
+      if (!customElements.get(tagName)) {
+        await import(modulePath);
+      }
+    };
+    
+    await importIfNeeded('once-over-view', `${basePath}/OnceOverView.js`);
+    await importIfNeeded('default-item-view', `${basePath}/DefaultItemView.js`);
+    await importIfNeeded('once-peer-item-view', `${basePath}/OncePeerItemView.js`);
+    await importIfNeeded('once-peer-default-view', `${basePath}/OncePeerDefaultView.js`);
     // Route view components - @pdca 2025-12-11-UTC-1530.route-overview-migration.pdca.md Phase RO.6
-    await import(`${basePath}/RouteItemView.js`);
-    await import(`${basePath}/RouteOverView.js`);
+    await importIfNeeded('route-item-view', `${basePath}/RouteItemView.js`);
+    await importIfNeeded('route-over-view', `${basePath}/RouteOverView.js`);
     // SPA extension views - @pdca 2025-12-12-UTC-1055.spa-route-registration-extension.pdca.md
-    await import(`${basePath}/OnceLoggerView.js`);
-    await import(`${basePath}/OnceServerStatusView.js`);
-    await import(`${basePath}/OncePeerDetailsView.js`);
+    await importIfNeeded('once-logger-view', `${basePath}/OnceLoggerView.js`);
+    await importIfNeeded('once-server-status-view', `${basePath}/OnceServerStatusView.js`);
+    await importIfNeeded('once-peer-details-view', `${basePath}/OncePeerDetailsView.js`);
     // File browser views - @pdca 2025-12-16-UTC-1130.e2e-folder-image-drop-test.pdca.md F.1
-    await import(`${basePath}/FolderOverView.js`);
-    await import(`${basePath}/FolderItemView.js`);
-    await import(`${basePath}/FileItemView.js`);
-    await import(`${basePath}/ImageDefaultView.js`);
+    await importIfNeeded('folder-over-view', `${basePath}/FolderOverView.js`);
+    await importIfNeeded('folder-item-view', `${basePath}/FolderItemView.js`);
+    await importIfNeeded('file-item-view', `${basePath}/FileItemView.js`);
+    await importIfNeeded('image-default-view', `${basePath}/ImageDefaultView.js`);
     
     console.log('[Orchestrator] ✅ View components imported');
   }
