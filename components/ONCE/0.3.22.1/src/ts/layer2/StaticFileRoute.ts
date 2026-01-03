@@ -91,10 +91,10 @@ import { IOR } from '../layer4/IOR.js';  // FsM.2: IOR-based file loading
  * - Principle 23: EAMD.ucp Virtual Root
  */
 export class StaticFileRoute extends Route {
-    private projectRoot: string = '';
+    private projectRoot: string = ''; // BUG: hardcoded project root. project root authority is the DefaultCLI.projectRoot.
     private unitsRoute: Reference<UnitsRoute> = null;
     private registeredUnits: Set<string> = new Set();
-    private componentVersion: string = '0.3.22.1';
+    private componentVersion: string = '0.3.22.1'; // BUG: hardcoded version. version authority is the containing component's version folder through SemanticVersion.
     
     /**
      * Empty constructor - Web4 Principle 6
