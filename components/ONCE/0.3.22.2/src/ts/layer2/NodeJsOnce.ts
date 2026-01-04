@@ -162,6 +162,35 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
     this.cliField = value;
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  // Path Accessors — Prefer CLI (single source of truth), fallback to model
+  // @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.6
+  // ═══════════════════════════════════════════════════════════════
+
+  /**
+   * Get project root — prefers CLI (Path Authority), falls back to model
+   * @returns Project root path
+   */
+  get projectRoot(): string {
+    return this.cli?.model?.projectRoot || this.model.projectRoot || '';
+  }
+
+  /**
+   * Get components directory — prefers CLI, falls back to model
+   * @returns Components directory path
+   */
+  get componentsDirectory(): string {
+    return this.cli?.model?.componentsDirectory || this.model.componentsDirectory || '';
+  }
+
+  /**
+   * Get test data directory — prefers CLI, falls back to model
+   * @returns Test data directory path
+   */
+  get testDataDirectory(): string {
+    return this.cli?.model?.testDataDirectory || (this.model as any).testDataDirectory || '';
+  }
+
   /**
    * ✅ Static factory method - Web4 Component Pattern
    * Creates ONCE instance and registers as global singleton
