@@ -134,5 +134,69 @@ export interface ONCEPeerModel extends Model {
     
     /** Server capabilities with assigned ports (Node.js only) */
     capabilities?: ServerCapability[];
+    
+    // ═══════════════════════════════════════════════════════════════
+    // BACKWARD COMPATIBILITY (deprecated, will be removed)
+    // @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.1
+    // These properties are for gradual migration from ONCEModel
+    // Path properties should come from CLI accessor (MC.2.6)
+    // ═══════════════════════════════════════════════════════════════
+    
+    // --- PATH PROPERTIES (migrate to CLI accessor) ---
+    /** @deprecated Use CLI accessor: this.projectRoot instead of this.model.projectRoot */
+    projectRoot?: string;
+    /** @deprecated Use CLI accessor: this.componentRoot */
+    componentRoot?: string;
+    /** @deprecated Use CLI accessor */
+    targetDirectory?: string;
+    /** @deprecated Use CLI accessor */
+    targetComponentRoot?: string;
+    /** @deprecated Use CLI accessor: this.componentsDirectory */
+    componentsDirectory?: string;
+    /** @deprecated Use CLI accessor: this.testDataDirectory */
+    testDataDirectory?: string;
+    /** @deprecated Derive from projectRoot containing '/test/data/' */
+    isTestIsolation?: boolean;
+    
+    // --- DISPLAY PROPERTIES (CLI context) ---
+    /** @deprecated Use name property */
+    component?: string;
+    /** @deprecated Compute from context */
+    displayName?: string;
+    /** @deprecated Compute from context */
+    displayVersion?: string;
+    /** @deprecated Check context !== null */
+    isDelegation?: boolean;
+    /** @deprecated Compute from context */
+    delegationInfo?: string;
+    /** @deprecated */
+    testIsolationContext?: string;
+    /** @deprecated Will be removed */
+    context?: any;
+    
+    // --- LIFECYCLE PROPERTIES ---
+    /** @deprecated Use state === LifecycleState.RUNNING */
+    initialized?: boolean;
+    /** @deprecated Compute from startTime */
+    initializationTime?: number;
+    /** @deprecated Use toScenario() instead */
+    scenario?: any;
+    /** @deprecated ONCEPeerModel IS the server model */
+    serverModel?: ONCEPeerModel;
+    
+    // --- EVENT HANDLING (migrate to LifecycleObserver pattern) ---
+    /** @deprecated Use RelatedObjects to get LifecycleObserver instances */
+    observers?: import('./LifecycleObserver.interface.js').LifecycleObserver[];
+    /** @deprecated Use observers instead */
+    eventHandlers?: Map<any, any>;
+    
+    // --- MESSAGE TRACKING (deprecated protocol-based messaging) ---
+    /** @deprecated Protocol-based messaging violates Web4 protocol-less communication */
+    messageTracker?: {
+        sent: any[];
+        received: any[];
+        acknowledged: string[];
+        patterns: { broadcast: number; relay: number; p2p: number; };
+    };
 }
 

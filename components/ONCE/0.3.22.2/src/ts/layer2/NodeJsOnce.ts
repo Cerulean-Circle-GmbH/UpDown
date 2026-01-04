@@ -25,7 +25,9 @@ type LifecycleHooks = Record<string, LifecycleEventHandler>;
 import type { ServerCapability } from '../layer3/ServerCapability.interface.js';
 import { ServerHierarchyManager } from './ServerHierarchyManager.js';
 import { ScenarioManager } from './ScenarioManager.js';
-import { ONCEModel } from '../layer3/ONCEModel.interface.js';
+// @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.1
+// ONCEModel DEPRECATED - migrated to ONCEPeerModel
+// Path properties now via CLI accessor (MC.2)
 import { SemanticVersion } from './SemanticVersion.js';
 import type { ONCEPeerModel } from '../layer3/ONCEPeerModel.interface.js';
 import { User } from '../layer3/User.interface.js';
@@ -52,36 +54,44 @@ import { realpathSync } from 'fs';  // For symlink resolution
  * ✅ Peer hierarchy and scenario management
  * ✅ IOR-based method invocation
  */
-export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInterface {
-  // Model type is ONCEModel via generic inheritance
+export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCEInterface {
+  // Model type is ONCEPeerModel via generic inheritance (MC.1)
+  // Path properties via CLI accessor (MC.2.6)
   // Access via this.model getter from UcpComponent
   
   /**
    * Default model for NodeJsOnce
    * Required by UcpComponent (abstract in DefaultOnceKernel)
+   * 
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.1
+   * Using ONCEPeerModel instead of deprecated ONCEModel
+   * Path properties via CLI accessor (MC.2.6)
    */
-  protected modelDefault(): ONCEModel {
+  protected modelDefault(): ONCEPeerModel {
     return {
+      // === IDENTITY (Model) ===
       uuid: crypto.randomUUID(),
-      name: '',
-      origin: '',
-      definition: '',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      component: 'ONCE',
+      name: 'ONCE',
+      
+      // === VERSION ===
       version: '0.0.0.0',     // Will be discovered in discoverPathsFromFilesystem()
+      
+      // === ENVIRONMENT ===
+      environment: new DefaultEnvironmentInfo(),
+      
+      // === LIFECYCLE ===
       state: LifecycleState.CREATED,
-      initialized: false,
-      initializationTime: 0,
-      eventHandlers: new Map(),
-      // Paths discovered in discoverPathsFromFilesystem()
-      componentRoot: '',
-      projectRoot: '',
-      targetDirectory: '',
-      targetComponentRoot: '',
-      isTestIsolation: false,
-      // Primary Server IOR with Failover
-      primaryServerIor: 'ior:https://localhost:42777/ONCE/0.0.0.0/primary-server-uuid'
+      startTime: new Date(),
+      connectionTime: null,
+      
+      // === NETWORK ===
+      host: 'localhost',
+      port: 42777,
+      isPrimary: false,
+      primaryPeerUuid: null,
+      
+      // === P2P ===
+      peers: [],
     };
   }
   private web4ts?: any; // Lazy-initialized Web4TSComponent for delegation (dynamic import, no static dependency)
