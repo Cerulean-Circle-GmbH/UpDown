@@ -5,7 +5,11 @@
  * Web4 pattern: Dependency-free CLI with component creation and chaining
  * 
  * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
- * Upgraded to use DelegationProxy for automatic method delegation (modern Web4 pattern)
+ * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4.2 - Init consolidation
+ * 
+ * Flow: new ONCECLI().init(scenario) → componentInit() → execute(args)
+ * - init(): Sync CLI initialization (P6 compliant)
+ * - componentInit(): Async component + delegation setup (called by static start())
  */
 
 import { DefaultCLI } from '../layer2/DefaultCLI.js';
@@ -14,56 +18,62 @@ import { DelegationProxy } from '../layer2/DelegationProxy.js';
 import { MethodSignature } from '../layer3/MethodSignature.interface.js';
 
 export class ONCECLI extends DefaultCLI {
-  // Component is initialized asynchronously in initComponent()
-  // Type is handled by base DefaultCLI
-  // @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
+  /** Method signatures for CLI help and completion */
   protected methodSignatures: Map<string, MethodSignature> = new Map();
 
   /**
-   * Empty constructor (Web4 radical OOP pattern)
-   * @pdca 2025-10-30-UTC-1011.pdca.md - Path Authority architecture
-   * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md - Wrap in DelegationProxy
+   * Empty constructor (Web4 Radical OOP P6)
+   * ✅ NO init() call in constructor!
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4.2
    */
   constructor() {
-    super(); // Call empty parent constructor
-    
-    // Initialize CLI (Path Authority - calculates projectRoot, sets paths)
-    this.init();
-    
-    // Component will be initialized asynchronously in initComponent()
-    // (because init() now needs to await Web4TSComponent method discovery)
+    super();
+    // ✅ P6: Empty constructor - all init in init() method
   }
   
   /**
-   * Initialize component asynchronously (Radical OOP)
-   * Called by start() before executing commands
-   * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
-   * ✅ RADICAL OOP: Separate discovery of own methods vs delegated methods
+   * Initialize CLI (sync) - Web4 Radical OOP P6
+   * 
+   * Usage: new ONCECLI().init(scenario)
+   * 
+   * @param scenario Optional scenario with model overrides
+   * @returns this for chaining
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4.2
    */
-  async initComponent(): Promise<void> {
-    // ✅ STEP 1: Create component (knows its OWN methods)
+  init(scenario?: any): this {
+    // Call parent init (CLI path discovery, model setup)
+    super.init(scenario);
+    return this;
+  }
+
+  /**
+   * Initialize component asynchronously
+   * 
+   * ✅ This is the ONLY async init - called by static start() before execute()
+   * Creates NodeJsOnce wrapped in DelegationProxy for method delegation.
+   * 
+   * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4.2
+   */
+  async componentInit(): Promise<void> {
+    // STEP 1: Create component
     const component = new NodeJsOnce();
     
-    // ✅ STEP 2: Set Path Authority (CLI provides these paths)
+    // STEP 2: Set Path Authority (CLI provides these paths)
     (component as any).model.projectRoot = this.model.projectRoot;
     (component as any).model.targetDirectory = this.model.projectRoot;
     (component as any).model.isTestIsolation = this.model.projectRoot?.includes('/test/data') || false;
     
-    // ✅ STEP 3: Pre-load Web4TSComponent (for delegation to work at call-time)
+    // STEP 3: Pre-load Web4TSComponent (for delegation to work at call-time)
     await (component as any).getWeb4TSComponent();
     
-    // ✅ STEP 4: Wrap with DelegationProxy (transparent delegation)
-    // @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
-    // Proxy intercepts missing methods and delegates them to Web4TSComponent
-    // CRITICAL: await start() to ensure Web4TSComponent is loaded before getDelegationTarget()
+    // STEP 4: Wrap with DelegationProxy (transparent delegation)
     this.component = await DelegationProxy.start(component as any) as any;
     
-    // ✅ STEP 5: Discover CLI's own methods
+    // STEP 5: Discover CLI's own methods
     this.discoverMethods();
     
-    // ✅ STEP 6: Discover component's OWN methods
-    // @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
-    // RADICAL OOP: Component knows ONLY its own methods
+    // STEP 6: Discover component's OWN methods
     if (this.component) {
       const ownMethods = this.component.listMethods();
       for (const methodName of ownMethods) {
@@ -74,9 +84,7 @@ export class ONCECLI extends DefaultCLI {
       }
     }
     
-    // ✅ STEP 7: Discover DELEGATED methods (if delegation exists)
-    // @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
-    // RADICAL OOP: Query delegation target separately via metadata
+    // STEP 7: Discover DELEGATED methods (if delegation exists)
     if (this.component && (this.component as any).hasDelegation && (this.component as any).hasDelegation()) {
       const delegationTarget = (this.component as any).getDelegationTarget();
       if (delegationTarget) {
@@ -84,7 +92,6 @@ export class ONCECLI extends DefaultCLI {
         for (const methodName of delegatedMethods) {
           const signature = delegationTarget.getMethodSignature(methodName);
           if (signature) {
-            // Mark as delegated for help display
             signature.isDelegated = true;
             this.methodSignatures.set(methodName, signature);
           }
@@ -94,33 +101,15 @@ export class ONCECLI extends DefaultCLI {
   }
 
   /**
-   * Override init() to support test scenarios
-   * @pdca 2025-11-21-UTC-1630.test-isolation-path-violation.pdca.md
-   * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
-   */
-  init(scenario?: any): this {
-    // Call parent init
-    super.init(scenario);
-    
-    // ✅ Path Authority: Update component with CLI-specific paths (if already initialized)
-    if (this.component) {
-      (this.component as any).model.projectRoot = this.model.projectRoot;
-      (this.component as any).model.targetDirectory = this.model.projectRoot;
-      (this.component as any).model.isTestIsolation = scenario?.model?.isTestIsolation || 
-                                             this.model.projectRoot?.includes('/test/data') || 
-                                             false;
-    }
-    
-    return this;
-  }
-
-  /**
    * Static start method - Web4 radical OOP entry point
-   * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
+   * 
+   * Flow: new ONCECLI().init() → componentInit() → execute(args)
+   * 
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4.2
    */
   static async start(args: string[]): Promise<void> {
-    const cli = new ONCECLI();
-    await cli.initComponent(); // Initialize component asynchronously
+    const cli = new ONCECLI().init();  // ✅ Sync init
+    await cli.componentInit();          // ✅ Async component setup
     await cli.execute(args);
   }
 
@@ -138,7 +127,7 @@ export class ONCECLI extends DefaultCLI {
   async shCompletion(cword: string, ...words: string[]): Promise<void> {
     // CRITICAL: Initialize component before completion (dynamic method discovery)
     if (!this.component) {
-      await this.initComponent();
+      await this.componentInit();
     }
     
     // Call parent implementation

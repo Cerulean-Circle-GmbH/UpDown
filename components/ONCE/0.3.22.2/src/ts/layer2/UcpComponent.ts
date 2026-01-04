@@ -148,27 +148,38 @@ export abstract class UcpComponent<TModel extends Model> {
   }
   
   /**
-   * Initialize component with scenario (async version)
+   * Initialize component with scenario (Web4 Radical OOP P6)
+   * 
+   * ✅ BASE: Sync init for UcpModel setup
+   * ⚠️ Subclasses may override as async during transition period
+   * 🎯 TARGET: Move all async work to Layer 4 orchestrators (P7)
    * 
    * Flow:
    * 1. Get raw model from modelDefault() or scenario
    * 2. Wrap in UcpModel for reactive updates
    * 3. UcpModel.model (proxy) triggers viewsUpdateAll() on set
    * 
+   * Usage: `new Component().init(scenario)` or `await new Component().init(scenario)`
+   * 
    * @param scenario Optional initial scenario
-   * @returns this for chaining
+   * @returns this for chaining (sync or async depending on subclass)
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4.1
    */
-  async init(scenario?: { model?: TModel }): Promise<this> {
-    return this.initSync(scenario);
+  init(scenario?: { model?: TModel }): this | Promise<this> {
+    return this.initBase(scenario);
   }
   
   /**
-   * Synchronous initialization - for constructor-based legacy patterns
+   * Base initialization logic - ALWAYS SYNC
+   * 
+   * Subclasses should call super.init() or this.initBase() for model setup.
+   * This method is guaranteed sync and non-polymorphic for constructor use.
    * 
    * @param scenario Optional initial scenario
-   * @returns this for chaining
+   * @returns this for chaining (always sync)
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4.1
    */
-  initSync(scenario?: { model?: TModel }): this {
+  protected initBase(scenario?: { model?: TModel }): this {
     // Skip if already initialized
     if (this.ucpModel !== null) {
       // Merge scenario model if provided
@@ -190,6 +201,21 @@ export abstract class UcpComponent<TModel extends Model> {
     this.controller.initWithUcpModel(this.ucpModel);
     
     return this;
+  }
+  
+  /**
+   * Synchronous initialization - for constructor use
+   * 
+   * ✅ Calls initBase() directly (non-polymorphic, guaranteed sync)
+   * Use this in constructors that need model immediately.
+   * 
+   * @deprecated Prefer init() with await for new code
+   * @param scenario Optional initial scenario
+   * @returns this for chaining (always sync)
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4.1
+   */
+  initSync(scenario?: { model?: TModel }): this {
+    return this.initBase(scenario);
   }
   
   /**
