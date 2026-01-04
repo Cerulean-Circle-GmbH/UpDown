@@ -1,0 +1,274 @@
+@startuml ONCE Unified Kernel Architecture
+
+!define PRIMARY_COLOR #4A90E2
+!define SECONDARY_COLOR #50C878
+!define LAYER1_COLOR #FFB84D
+!define LAYER2_COLOR #A78BFA
+!define LAYER3_COLOR #60A5FA
+
+title ONCE Unified Kernel Architecture\nEnvironment-Agnostic P2P Kernel
+
+package "Layer 1: Infrastructure & Environment Detection" as Layer1 <<Rectangle>> {
+  
+  class Once <<singleton>> #LAYER1_COLOR {
+    {static} - instance: Reference<OnceKernel>
+    {static} - environment: Reference<EnvironmentInfo>
+    --
+    {static} + start(scenario?: any): Promise<OnceKernel>
+    {static} - detectEnvironment(): EnvironmentInfo
+    {static} - loadKernel(envType: EnvironmentType): Promise<any>
+    {static} + getInstance(): Reference<OnceKernel>
+    {static} + getEnvironment(): Reference<EnvironmentInfo>
+    {static} + stop(): Promise<void>
+  }
+  
+  note left of Once
+    **Export:** const ONCE = Once;
+    
+    ONCE (constant) = Global singleton accessor
+    Once (class) = Environment detector
+  end note
+  
+  interface EnvironmentInfo {
+    + type: EnvironmentType
+    + isNode: boolean
+    + isBrowser: boolean
+    + isWorker: boolean
+    + isServiceWorker: boolean
+    + isPWA: boolean
+    + isIframe: boolean
+    + version: string
+    + capabilities: string[]
+    + isOnline: boolean
+    + hostname?: string
+    + ip?: string
+  }
+  
+  note right of Once
+    **Entry Point for ALL Environments**
+    
+    Detects:
+    - Node.js server
+    - Browser (window)
+    - PWA (standalone)
+    - iFrame (nested)
+    - Web Worker
+    - Service Worker
+    
+    Then loads appropriate kernel
+    implementation from Layer 2
+  end note
+}
+
+package "Layer 2: Kernel Implementations" as Layer2 <<Rectangle>> {
+  
+  class DefaultOnceKernel <<base>> #LAYER2_COLOR {
+    # model: Reference<Model>
+    --
+    + constructor()
+    + {abstract} init(scenario?: any): Promise<any>
+    + {abstract} getHealth(): Promise<any>
+    # generateUUID(): string
+    # formatTimestamp(date?: Date): string
+    # formatDuration(ms: number): string
+    # deepClone(obj: any): any
+    # sleep(ms: number): Promise<void>
+    # safeStringify(obj: any, pretty?: boolean): string
+    # safeParse(json: string): any
+    # getModel(): any
+    # isInitialized(): boolean
+  }
+  
+  class NodeJsOnce #LAYER2_COLOR {
+    - model: NodeJsOnceModel
+    - hierarchyManager: ServerHierarchyManager
+    - httpServer: any
+    - wsServer: any
+    --
+    + init(scenario?: any): Promise<this>
+    + getHealth(): Promise<any>
+    + invokeMethod(method, params): Promise<any>
+    + start(): Promise<void>
+    + stop(): Promise<void>
+    + getPeers(): Promise<any>
+    + registerComponent(component): void
+  }
+  
+  class BrowserOnce #LAYER2_COLOR {
+    - model: BrowserOnceModel
+    - ws: Reference<WebSocket>
+    --
+    + init(scenario?: any): Promise<this>
+    + getHealth(): Promise<any>
+    + invokeMethod(method, params): Promise<any>
+    + start(): Promise<void>
+    + stop(): Promise<void>
+    + connectWebSocket(): Promise<void>
+    + listenForScenarioUpdates(): void
+    + broadcastToAll(): Promise<void>
+    + relayViaPrimary(): Promise<void>
+    + sendP2PDirect(): Promise<void>
+  }
+  
+  class WorkerOnce #LAYER2_COLOR {
+    - model: WorkerOnceModel
+    --
+    + init(scenario?: any): Promise<this>
+    + getHealth(): Promise<any>
+    + invokeMethod(method, params): Promise<any>
+    + start(): Promise<void>
+    + stop(): Promise<void>
+    + postMessage(message: any): void
+  }
+  
+  class ServiceWorkerOnce #LAYER2_COLOR {
+    - model: ServiceWorkerOnceModel
+    - cache: Cache
+    --
+    + init(scenario?: any): Promise<this>
+    + getHealth(): Promise<any>
+    + invokeMethod(method, params): Promise<any>
+    + start(): Promise<void>
+    + stop(): Promise<void>
+    + handleFetch(request: Request): Promise<Response>
+  }
+  
+  note right of DefaultOnceKernel
+    **Base class for all environment kernels**
+    
+    Provides shared helpers:
+    - UUID generation
+    - Timestamp formatting
+    - Deep cloning
+    - Sleep utility
+    - JSON safe parsing/stringify
+    
+    Radical OOP:
+    - Empty constructor
+    - State in this.model
+    - Methods operate on model
+  end note
+}
+
+package "Layer 3: Interfaces & Types" as Layer3 <<Rectangle>> {
+  
+  interface OnceKernel <<interface>> #LAYER3_COLOR {
+    + model: Reference<Model>
+    + init(scenario?: any): Promise<any>
+    + getHealth(): Promise<any>
+    + invokeMethod(method: string, params: any): Promise<any>
+    + start(): Promise<void>
+    + stop(): Promise<void>
+    + getEnvironment(): EnvironmentInfo
+  }
+  
+  interface OnceKernelModel <<interface>> #LAYER3_COLOR {
+    + uuid: string
+    + name: string
+    + version: string
+    + environment: EnvironmentInfo
+    + peers: any[]
+    + connectionTime: Reference<Date>
+    + startTime: Reference<Date>
+    + stats: any
+  }
+  
+  interface NodeJsOnceModel #LAYER3_COLOR {
+    + httpPort: number
+    + wsPort: number
+    + isPrimaryServer: boolean
+    + hierarchyManager: any
+  }
+  
+  interface BrowserOnceModel #LAYER3_COLOR {
+    + peerHost: string
+    + peerUUID: Reference<string>
+    + isConnected: boolean
+    + ws: Reference<WebSocket>
+    + primaryPeer: any
+    + elements: any
+    + messages: any[]
+  }
+  
+  interface WorkerOnceModel #LAYER3_COLOR {
+    + parentPort: any
+    + workerData: any
+  }
+  
+  interface ServiceWorkerOnceModel #LAYER3_COLOR {
+    + cacheName: string
+    + offlineMode: boolean
+  }
+}
+
+' Relationships
+Once ..> EnvironmentInfo : detects
+Once ..> OnceKernel : loads & returns
+Once --> DefaultOnceKernel : instantiates one of
+
+DefaultOnceKernel ..|> OnceKernel : implements
+NodeJsOnce --|> DefaultOnceKernel
+BrowserOnce --|> DefaultOnceKernel
+WorkerOnce --|> DefaultOnceKernel
+ServiceWorkerOnce --|> DefaultOnceKernel
+
+OnceKernel --> OnceKernelModel : has
+NodeJsOnce --> NodeJsOnceModel : uses
+BrowserOnce --> BrowserOnceModel : uses
+WorkerOnce --> WorkerOnceModel : uses
+ServiceWorkerOnce --> ServiceWorkerOnceModel : uses
+
+' Usage Flow
+note as UsageNote
+  **Usage (Identical Everywhere)**
+  
+  ```typescript
+  // Import ONCE singleton accessor
+  import { ONCE } from '@web4x/once';
+  
+  // In Node.js
+  const kernel = await ONCE.start(scenario);
+  
+  // In Browser
+  const kernel = await ONCE.start(scenario);
+  
+  // In Worker
+  const kernel = await ONCE.start(scenario);
+  
+  // Always returns OnceKernel interface
+  const health = await kernel.getHealth();
+  const result = await kernel.invokeMethod('getPeers', {});
+  
+  // Access global singleton
+  const instance = ONCE.getInstance();
+  ```
+end note
+
+' Environment Detection Flow
+note as DetectionFlow
+  **Environment Detection Logic**
+  
+  1. Check typeof process !== 'undefined'
+     → if process.versions.node: Node.js → NodeJsOnce
+  
+  2. Check typeof self !== 'undefined'
+     → if ServiceWorkerGlobalScope: Service Worker → ServiceWorkerOnce
+     → if DedicatedWorkerGlobalScope: Web Worker → WorkerOnce
+  
+  3. Check typeof window !== 'undefined'
+     → Check window.matchMedia('(display-mode: standalone)')
+       → if true: PWA → BrowserOnce (PWA mode)
+     → Check window !== window.parent
+       → if true: iFrame → BrowserOnce (iframe mode)
+     → else: Browser → BrowserOnce
+  
+  4. Fallback: Browser → BrowserOnce
+  
+  Return appropriate kernel instance
+end note
+
+UsageNote .. Once
+DetectionFlow .. Once
+
+@enduml
+
