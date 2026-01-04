@@ -252,7 +252,7 @@ export class DefaultFile extends UcpComponent<FileModel> implements FileJs {
    */
   linkCreate(linkPath: string): DefaultFile {
     const link = new DefaultFile();
-    link.initSync({
+    link.init({
       model: {
         ...this.modelDefault(),
         uuid: this.uuidCreate(),

@@ -110,26 +110,24 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
   constructor() {
     super(); // AbstractONCEKernel (unified architecture)
     
-    // ✅ Web4 Pattern: Minimal constructor
-    
     // ✅ Web4 Principle 20: Initialize ID provider (testable, replaceable)
     this.idProvider = new UUIDProvider();
     
-    // ✅ Initialize UcpModel synchronously for constructor-based initialization
-    // Note: This is a legacy pattern; prefer async init() for new code
-    this.initSync();
+    // ✅ Initialize UcpModel SYNCHRONOUSLY via base class
+    // MUST call DefaultOnceKernel.init() not this.init() to avoid async polymorphism
+    // @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4
+    DefaultOnceKernel.prototype.init.call(this);
     
     // ✅ Synchronous path discovery (needed for CLI to work)
     this.discoverPathsFromFilesystem();
     
     // Initialize managers (domain logic from 0.2.0.0)
-    // ✅ Web4 Principle 20: Inject IDProvider into managers
     this.serverHierarchyManager = new ServerHierarchyManager(this.idProvider);
-    this.serverHierarchyManager.component = this; // Backward link for path authority
+    this.serverHierarchyManager.component = this;
     this.scenarioManager = new ScenarioManager();
-    this.scenarioManager.component = this; // Backward link for path authority
+    this.scenarioManager.component = this;
     
-    // Discover methods for CLI (must be called in constructor for CLI to work)
+    // Discover methods for CLI
     this.discoverMethods();
   }
 

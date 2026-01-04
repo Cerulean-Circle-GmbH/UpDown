@@ -83,15 +83,16 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
   }
   
   /**
-   * Initialize filesystem with root folder
+   * Initialize filesystem with root folder (SYNC)
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4
    */
-  async init(scenario?: { model?: FileSystemModel }): Promise<this> {
-    await super.init(scenario);
+  init(scenario?: { model?: FileSystemModel }): this {
+    super.init(scenario);
     
     // Create root folder if not exists
     if (!this.rootFolderInstance) {
-      this.rootFolderInstance = new DefaultFolder();
-      await this.rootFolderInstance.init({
+      const folder = new DefaultFolder();
+      folder.init({
         model: {
           uuid: this.uuidCreate(),
           name: 'Root',
@@ -105,7 +106,8 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
           linkTarget: null
         }
       });
-      this.model.rootFolderUuid = this.rootFolderInstance.model.uuid;
+      this.rootFolderInstance = folder;
+      this.model.rootFolderUuid = folder.model.uuid;
     }
     
     return this;
@@ -155,7 +157,7 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
    */
   folderCreate(name: string, parentFolder?: DefaultFolder): DefaultFolder {
     const folder = new DefaultFolder();
-    folder.initSync({
+    folder.init({
       model: {
         uuid: this.uuidCreate(),
         name,

@@ -423,7 +423,7 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    */
   linkCreate(linkPath: string): DefaultFolder {
     const link = new DefaultFolder();
-    link.initSync({
+    link.init({
       model: {
         ...this.modelDefault(),
         uuid: this.uuidCreate(),

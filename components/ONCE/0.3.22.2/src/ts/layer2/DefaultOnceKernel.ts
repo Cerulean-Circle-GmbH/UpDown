@@ -78,16 +78,13 @@ export abstract class DefaultOnceKernel<TModel extends OnceKernelModel = OnceKer
     
     /**
      * Initialize kernel with scenario
-     * Override UcpComponent.init() - subclasses should call super.init()
-     * Accepts any scenario format for backwards compatibility
-     * 
      * @param scenario - Initialization scenario (any format)
-     * @returns Promise<this> - Fluent API
+     * @returns this | Promise<this> - Fluent API
+     * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4
      */
-    async init(scenario?: any): Promise<this> {
-        // Extract model from scenario if present (various formats)
+    init(scenario?: any): this | Promise<this> {
         const modelScenario = scenario?.model ? { model: scenario.model } : undefined;
-        await super.init(modelScenario);  // ✅ UcpComponent initialization
+        super.init(modelScenario);
         return this;
     }
     

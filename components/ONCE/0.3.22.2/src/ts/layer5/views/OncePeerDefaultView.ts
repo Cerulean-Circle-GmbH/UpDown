@@ -149,7 +149,7 @@ export class OncePeerDefaultView extends UcpView<ServerDefaultModel> {
     
     // Create WebSocket component
     this.webSocketComponent = new DefaultWebSocket();
-    this.webSocketComponent.initSync();
+    this.webSocketComponent.init();
     
     // Set URL based on peerHost
     const wsUrl = `wss://${this.peerHost}/`;

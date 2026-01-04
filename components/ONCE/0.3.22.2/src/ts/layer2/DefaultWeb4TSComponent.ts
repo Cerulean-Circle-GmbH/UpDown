@@ -80,12 +80,13 @@ export class DefaultWeb4TSComponent
   }
   
   /**
-   * Initialize component with scenario
+   * Initialize component with scenario (SYNC)
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4
    */
-  async init(scenario?: Scenario<Web4TSComponentModel>): Promise<this> {
-    await super.init(scenario);
+  init(scenario?: Scenario<Web4TSComponentModel>): this {
+    super.init(scenario);
     
-    // Ensure model has required fields (model is guaranteed non-null after super.init)
+    // Ensure model has required fields
     if (!this.model!.version) {
       this.model!.version = new SemanticVersion().init();
     }
@@ -857,9 +858,9 @@ export class DefaultWeb4TSComponent
       if (!fs.existsSync(folderUnitPath)) {
         try {
           // P8: DRY — use DefaultUnit.from() instead of reimplementing
-          // P6: Empty Constructor — new DefaultUnit().initSync({}).from(path)
+          // P6: Empty Constructor — new DefaultUnit().init().from(path)
           const unit = new DefaultUnit();
-          unit.initSync({});
+          unit.init({});
           await unit.from(dir);
           console.log(`  📁 Created folder unit: ${path.relative(componentRoot, dir)}/°folder.unit`);
         } catch (error: any) {
