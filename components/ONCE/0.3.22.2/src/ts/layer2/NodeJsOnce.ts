@@ -86,6 +86,14 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
   }
   private web4ts?: any; // Lazy-initialized Web4TSComponent for delegation (dynamic import, no static dependency)
   private user?: User; // Optional User service (lazy initialization)
+  
+  /**
+   * CLI reference — Path Authority (P5: Reference<T>, P16: accessors)
+   * Set by ONCECLI.cliStart() to provide path access
+   * 
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.3-2.5
+   */
+  private cliField: import('../layer3/Reference.interface.js').Reference<import('./DefaultCLI.js').DefaultCLI> = null;
   private methods: Map<string, MethodSignature> = new Map();
   private idProvider: IDProvider; // ✅ Web4 Principle 20: Radical OOP ID generation
   
@@ -129,6 +137,29 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEModel> implements ONCEInte
     
     // Discover methods for CLI
     this.discoverMethods();
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // CLI Reference — Path Authority (P5, P16)
+  // ═══════════════════════════════════════════════════════════════
+
+  /**
+   * Get CLI reference (P16: TypeScript getter)
+   * @returns CLI instance or null if not set
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.4
+   */
+  get cli(): import('../layer3/Reference.interface.js').Reference<import('./DefaultCLI.js').DefaultCLI> {
+    return this.cliField;
+  }
+
+  /**
+   * Set CLI reference (P16: TypeScript setter)
+   * Called by ONCECLI.cliStart() to provide path access
+   * @param value CLI instance
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.4
+   */
+  set cli(value: import('./DefaultCLI.js').DefaultCLI) {
+    this.cliField = value;
   }
 
   /**

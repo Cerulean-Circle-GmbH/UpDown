@@ -13,6 +13,7 @@ import { Component } from "../layer3/Component.interface.js";
 import { Reference } from "../layer3/Reference.interface.js";
 import { Colors } from "../layer3/Colors.interface.js";
 import { User } from "../layer3/User.interface.js";
+import { UcpComponent } from "./UcpComponent.js";
 // @pdca 2025-11-03-1105-component-template-bugs.pdca.md - Removed DefaultWeb4TSComponent import for true generic base class
 import { TSCompletion } from "../layer4/TSCompletion.js";
 import { DefaultColors } from "../layer4/DefaultColors.js";
@@ -31,9 +32,9 @@ import { join, basename } from "path";
 import * as ts from "typescript";
 import { webcrypto as crypto } from "crypto";
 
-export abstract class DefaultCLI implements CLI, Component<CLIModel> {
-  // @pdca 2025-11-03-1105-component-template-bugs.pdca.md - Changed to public for Component interface compliance
-  model!: CLIModel; // Definite assignment - initialized in init()
+export abstract class DefaultCLI extends UcpComponent<CLIModel> implements CLI {
+  // @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.1
+  // model inherited from UcpComponent via getter
   
   /**
    * Interoperable Object Reference (IOR)
@@ -69,10 +70,13 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
 
 
   /**
-   * Static start method - Web4 radical OOP pattern
-   * Entry point for all CLI operations
+   * Static CLI entry point - Web4 radical OOP pattern
+   * Entry point for all CLI operations from terminal
+   * 
+   * Note: Named 'cliStart' to avoid conflict with UcpComponent.start()
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.1
    */
-  static async start(args: string[]): Promise<void> {
+  static async cliStart(args: string[]): Promise<void> {
     const cli = new (this as any)();
     await cli.execute(args);
   }
@@ -81,63 +85,64 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
    * Empty constructor (Web4 radical OOP pattern)
    * All initialization happens in init()
    * @pdca 2025-10-28-UTC-0934.pdca.md:597 - Phase 1: Init Pattern
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.1
    */
   constructor() {
-    // Empty - initialization moved to init()
+    super();  // Initialize UcpComponent (controller, ID providers)
+  }
+
+  /**
+   * Default model for CLI (Web4 Radical OOP P6)
+   * Called by UcpComponent.init() when no scenario provided
+   * 
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.1
+   */
+  protected modelDefault(): CLIModel {
+    // ✅ Path Authority: Calculate ALL paths ONCE and store in model
+    // INHERITANCE: This runs for ALL CLIs (Web4TSComponent, TestIsolatedComponent, PDCA, Unit, etc.)
+    // @pdca 2025-10-30-UTC-1011.pdca.md - Implementing Path Authority
+    const projectRoot = this.calculateProjectRootInternal();
+    
+    return {
+      uuid: this.uuidCreate(),  // P29: Use IDProvider pattern
+      name: "cli",
+      
+      // ✅ Path Authority fields (calculated ONCE, inherited by ALL CLIs)
+      projectRoot: projectRoot,
+      componentsDirectory: join(projectRoot, 'components'),
+      scriptsDirectory: join(projectRoot, 'scripts'),
+      scriptsVersionDirectory: join(projectRoot, 'scripts', 'versions'),
+      testDataDirectory: join(projectRoot, 'test', 'data'),
+      
+      // Completion context - initialized empty
+      completionCliName: "",
+      completionCompWords: [],
+      completionCompCword: 0,
+      // Derived fields
+      completionCurrentWord: "",
+      completionPreviousWord: "",
+      completionCommand: null,
+      completionParameters: [],
+      completionParameterIndex: 0,
+      // Chaining
+      completionChainedCommands: [],
+      // State flags
+      completionIsCompletingMethod: false,
+      completionIsCompletingParameter: false,
+      // Output buffer (Radical OOP - output is STATE!)
+      // @pdca 2025-11-04-UTC-2159.pdca.md - Centralized output in model
+      completionOutputLines: [],
+    };
   }
 
   /**
    * Initialize CLI with Scenario (Web4 radical OOP pattern)
    * @pdca 2025-10-28-UTC-1822.phase1-2-completion.pdca.md - Phase 1: Inline createEmptyModel
-   * @test test/ts/layer2/PhaseCompletion.test.ts:createEmptyModelDeleted
-   * @test test/ts/layer2/DefaultCLI.test.ts:initWithEmptyScenario
-   * @test test/ts/layer2/DefaultCLI.test.ts:initWithProvidedScenario
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.1
    */
   init(scenario?: Scenario<CLIModel>): this {
-    if (!this.model) {
-      // ✅ Path Authority: Calculate ALL paths ONCE and store in model
-      // INHERITANCE: This runs for ALL CLIs (Web4TSComponent, TestIsolatedComponent, PDCA, Unit, etc.)
-      // @pdca 2025-10-30-UTC-1011.pdca.md - Implementing Path Authority
-      const projectRoot = this.calculateProjectRootInternal();
-      
-      this.model = {
-        uuid: crypto.randomUUID(),
-        name: "cli",
-        // origin: "system",  // ❌ REMOVED: Not in CLIModel interface
-        // definition: "CLI model",  // ❌ REMOVED: Not in CLIModel interface
-        
-        // ✅ Path Authority fields (calculated ONCE, inherited by ALL CLIs)
-        projectRoot: projectRoot,
-        componentsDir: join(projectRoot, 'components'),
-        scriptsDir: join(projectRoot, 'scripts'),
-        scriptsVersionDir: join(projectRoot, 'scripts', 'versions'),
-        testDataDir: join(projectRoot, 'test', 'data'),
-        
-        // Completion context - initialized empty
-        completionCliName: "",
-        completionCompWords: [],
-        completionCompCword: 0,
-        // Derived fields
-        completionCurrentWord: "",
-        completionPreviousWord: "",
-        completionCommand: null,
-        completionParameters: [],
-        completionParameterIndex: 0,
-        // Chaining
-        completionChainedCommands: [],
-        // State flags
-        completionIsCompletingMethod: false,
-        completionIsCompletingParameter: false,
-        // Output buffer (Radical OOP - output is STATE!)
-        // @pdca 2025-11-04-UTC-2159.pdca.md - Centralized output in model
-        completionOutputLines: [],
-      };
-    }
-    
-    if (scenario?.model) {
-      this.model = { ...this.model, ...scenario.model };
-    }
-    
+    // Delegate to UcpComponent.init() which calls modelDefault()
+    super.init(scenario as { model?: CLIModel });
     return this;
   }
 
@@ -254,7 +259,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
     // Resolve 'latest' symlink to actual version
     let actualVersion = version;
     if (version === 'latest' || version === 'dev' || version === 'prod' || version === 'test') {
-      const symlinkPath = join(this.model.componentsDir, component, version);
+      const symlinkPath = join(this.model.componentsDirectory, component, version);
       if (existsSync(symlinkPath)) {
         const stats = lstatSync(symlinkPath);
         if (stats.isSymbolicLink()) {
@@ -264,7 +269,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
     }
     
     // ✅ CLI calculates ALL paths (Path Authority)
-    const componentPath = join(this.model.componentsDir, component, actualVersion);
+    const componentPath = join(this.model.componentsDirectory, component, actualVersion);
     
     if (!existsSync(componentPath)) {
       throw new Error(`Component not found: ${component} ${version} at ${componentPath}`);
@@ -298,7 +303,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
     (this.context.model as any).targetDirectory = this.model.projectRoot;
     (this.context.model as any).componentsDirectory = (this.component!.model as any).componentsDirectory;
     (this.context.model as any).isTestIsolation = false;
-    // testDataDirectory only set when isTestIsolation = true (in test setup)
+    // testDataDirectory only set when isTestIsolation = true (via CLIModel)
     
     // ✅ REMOVED: Context already discovered itself in init()!
     // @pdca 2025-11-05-UTC-1223.pdca.md - Self-discovery pattern, no batch rediscovery
@@ -366,10 +371,10 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
         // ✅ Path Authority: CLI provides ALL calculated paths to loaded component
         // This ensures the loaded component can execute commands (like test) using correct paths
         projectRoot: this.model.projectRoot,
-        componentsDir: this.model.componentsDir,
-        scriptsDir: this.model.scriptsDir,
-        scriptsVersionDir: this.model.scriptsVersionDir,
-        testDataDir: join(componentPath, 'test', 'data'), // Component-specific test isolation
+        componentsDirectory: this.model.componentsDirectory,
+        scriptsDirectory: this.model.scriptsDirectory,
+        scriptsVersionDirectory: this.model.scriptsVersionDirectory,
+        testDataDirectory: join(componentPath, 'test', 'data'), // Component-specific test isolation
         
         // ✅ CRITICAL: For old versions (0.3.13.2 and earlier) that use getComponentContext()
         // These versions look for contextComponent, contextVersion, contextPath in model
@@ -2160,7 +2165,7 @@ export abstract class DefaultCLI implements CLI, Component<CLIModel> {
     if (!this.model.projectRoot) {
       const { join } = await import("path");
       this.model.projectRoot = this.findProjectRoot();
-      this.model.componentsDir = join(this.model.projectRoot, 'components');
+      this.model.componentsDirectory = join(this.model.projectRoot, 'components');
     }
     
     // RADICAL OOP: Set state DIRECTLY, not via "compute" function!

@@ -36,16 +36,23 @@ export class ONCECLI extends DefaultCLI {
   }
 
   /**
-   * Static start — ONLY entry point for CLI
+   * Static CLI entry — ONLY entry point for CLI
    * All async work happens here (Layer 5 allows async)
    * 
-   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4
+   * Note: Named 'cliStart' to avoid conflict with UcpComponent.start()
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4, MC.2.1
    */
-  static async start(args: string[]): Promise<void> {
+  static async cliStart(args: string[]): Promise<void> {
     const cli = new ONCECLI().init();
     
     // Create and wrap component (async work)
     const component = new NodeJsOnce();
+    
+    // MC.2.5: Set CLI reference for path access (P16: setter)
+    // @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.5
+    component.cli = cli;
+    
+    // Legacy: Also set model properties for backward compatibility during migration
     (component as any).model.projectRoot = cli.model.projectRoot;
     (component as any).model.targetDirectory = cli.model.projectRoot;
     (component as any).model.isTestIsolation = cli.model.projectRoot?.includes('/test/data') || false;
@@ -164,5 +171,5 @@ export class ONCECLI extends DefaultCLI {
 
 // Static entry point for shell execution
 if (import.meta.url === `file://${process.argv[1]}`) {
-  ONCECLI.start(process.argv.slice(2));
+  ONCECLI.cliStart(process.argv.slice(2));
 }

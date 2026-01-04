@@ -12,12 +12,12 @@ import type { Model } from './Model.interface.js';
 export interface CLIModel extends Model {
   // uuid, name inherited from Model
   
-  // Path Authority - Project-level absolute paths
+  // Path Authority - Project-level absolute paths (P16: explicit naming)
   projectRoot: string;
-  componentsDir: string;
-  scriptsDir: string;
-  scriptsVersionDir: string;
-  testDataDir: string;
+  componentsDirectory: string;
+  scriptsDirectory: string;
+  scriptsVersionDirectory: string;
+  testDataDirectory: string;
   
   // Completion context - FLAT in model
   completionCliName: string;
