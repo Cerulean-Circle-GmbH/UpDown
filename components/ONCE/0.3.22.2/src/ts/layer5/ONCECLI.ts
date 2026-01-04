@@ -1,15 +1,12 @@
 #!/usr/bin/env node
 
 /**
- * ONCECLI - ONCE CLI implementation with chaining support
- * Web4 pattern: Dependency-free CLI with component creation and chaining
+ * ONCECLI - ONCE CLI implementation
  * 
- * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
- * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4.2 - Init consolidation
+ * Entry point: ONCECLI.start(args)
+ * Pattern: Static async start() handles all async work (Layer 5 is allowed async)
  * 
- * Flow: new ONCECLI().init(scenario) → componentInit() → execute(args)
- * - init(): Sync CLI initialization (P6 compliant)
- * - componentInit(): Async component + delegation setup (called by static start())
+ * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4
  */
 
 import { DefaultCLI } from '../layer2/DefaultCLI.js';
@@ -22,58 +19,51 @@ export class ONCECLI extends DefaultCLI {
   protected methodSignatures: Map<string, MethodSignature> = new Map();
 
   /**
-   * Empty constructor (Web4 Radical OOP P6)
-   * ✅ NO init() call in constructor!
-   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4.2
+   * Empty constructor (Web4 P6)
    */
   constructor() {
     super();
-    // ✅ P6: Empty constructor - all init in init() method
   }
   
   /**
-   * Initialize CLI (sync) - Web4 Radical OOP P6
-   * 
-   * Usage: new ONCECLI().init(scenario)
-   * 
+   * Initialize CLI (sync)
    * @param scenario Optional scenario with model overrides
    * @returns this for chaining
-   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4.2
    */
   init(scenario?: any): this {
-    // Call parent init (CLI path discovery, model setup)
     super.init(scenario);
     return this;
   }
 
   /**
-   * Initialize component asynchronously
+   * Static start — ONLY entry point for CLI
+   * All async work happens here (Layer 5 allows async)
    * 
-   * ✅ This is the ONLY async init - called by static start() before execute()
-   * Creates NodeJsOnce wrapped in DelegationProxy for method delegation.
-   * 
-   * @pdca 2025-12-02-UTC-1115.iteration-10.4-tootsie-cli-delegation-pattern.pdca.md
-   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4.2
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4
    */
-  async componentInit(): Promise<void> {
-    // STEP 1: Create component
+  static async start(args: string[]): Promise<void> {
+    const cli = new ONCECLI().init();
+    
+    // Create and wrap component (async work)
     const component = new NodeJsOnce();
+    (component as any).model.projectRoot = cli.model.projectRoot;
+    (component as any).model.targetDirectory = cli.model.projectRoot;
+    (component as any).model.isTestIsolation = cli.model.projectRoot?.includes('/test/data') || false;
     
-    // STEP 2: Set Path Authority (CLI provides these paths)
-    (component as any).model.projectRoot = this.model.projectRoot;
-    (component as any).model.targetDirectory = this.model.projectRoot;
-    (component as any).model.isTestIsolation = this.model.projectRoot?.includes('/test/data') || false;
-    
-    // STEP 3: Pre-load Web4TSComponent (for delegation to work at call-time)
     await (component as any).getWeb4TSComponent();
+    cli.component = await DelegationProxy.start(component as any) as any;
     
-    // STEP 4: Wrap with DelegationProxy (transparent delegation)
-    this.component = await DelegationProxy.start(component as any) as any;
+    // Discover methods
+    cli.discoverMethods();
+    cli.discoverComponentMethods();
     
-    // STEP 5: Discover CLI's own methods
-    this.discoverMethods();
-    
-    // STEP 6: Discover component's OWN methods
+    await cli.execute(args);
+  }
+
+  /**
+   * Discover component and delegated methods for CLI completion
+   */
+  private discoverComponentMethods(): void {
     if (this.component) {
       const ownMethods = this.component.listMethods();
       for (const methodName of ownMethods) {
@@ -84,8 +74,7 @@ export class ONCECLI extends DefaultCLI {
       }
     }
     
-    // STEP 7: Discover DELEGATED methods (if delegation exists)
-    if (this.component && (this.component as any).hasDelegation && (this.component as any).hasDelegation()) {
+    if (this.component && (this.component as any).hasDelegation?.()) {
       const delegationTarget = (this.component as any).getDelegationTarget();
       if (delegationTarget) {
         const delegatedMethods = delegationTarget.listMethods();
@@ -100,77 +89,38 @@ export class ONCECLI extends DefaultCLI {
     }
   }
 
-  /**
-   * Static start method - Web4 radical OOP entry point
-   * 
-   * Flow: new ONCECLI().init() → componentInit() → execute(args)
-   * 
-   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4.2
-   */
-  static async start(args: string[]): Promise<void> {
-    const cli = new ONCECLI().init();  // ✅ Sync init
-    await cli.componentInit();          // ✅ Async component setup
-    await cli.execute(args);
-  }
-
-  /**
-   * ONCE-specific usage display using DefaultCLI dynamic generation
-   */
   showUsage(): void {
     console.log(this.generateStructuredUsage());
   }
 
-  /**
-   * Override shCompletion to ensure component is initialized for method discovery
-   * @pdca 2025-12-02-UTC-1830.pdca.md - Fix: Component needs initialization before listing methods
-   */
   async shCompletion(cword: string, ...words: string[]): Promise<void> {
-    // CRITICAL: Initialize component before completion (dynamic method discovery)
+    // Ensure component is ready for completion
     if (!this.component) {
-      await this.componentInit();
+      // Re-run start logic for completion context
+      const component = new NodeJsOnce();
+      (component as any).model.projectRoot = this.model.projectRoot;
+      await (component as any).getWeb4TSComponent();
+      this.component = await DelegationProxy.start(component as any) as any;
+      this.discoverComponentMethods();
     }
-    
-    // Call parent implementation
     await super.shCompletion(cword, ...words);
   }
 
-  /**
-   * Override listMethods to include delegated methods for completion
-   * @pdca 2025-12-02-UTC-1830.pdca.md - ROOT CAUSE FIX
-   * Parent's getValidCompletionValues() calls this.component.listMethods() which only returns
-   * NodeJsOnce methods, NOT delegated Web4TSComponent methods like 'tootsie', 'test', etc.
-   * Solution: Override listMethods() at CLI level to aggregate ALL methods
-   */
   listMethods(): string[] {
     const methods = new Set<string>();
-    
-    // Add component's own methods (if component exists)
-    if (this.component && typeof this.component.listMethods === 'function') {
+    if (this.component?.listMethods) {
       this.component.listMethods().forEach((m: string) => methods.add(m));
     }
-    
-    // Add ALL discovered methods from our methodSignatures Map
-    // This includes both own methods AND delegated methods
     for (const methodName of this.methodSignatures.keys()) {
       methods.add(methodName);
     }
-    
     return Array.from(methods).sort();
   }
 
-  /**
-   * Override to include delegated methods in completion
-   * @pdca 2025-12-02-UTC-1830.pdca.md - FIX: Delegated methods weren't showing in completion
-   */
   protected async getValidCompletionValues(): Promise<string[]> {
-    // Get base completion values (includes CLI, context, and component methods)
     const values = await super.getValidCompletionValues();
-    
-    // If completing methods, add delegated method names from our discovered signatures
     if (this.model.completionIsCompletingMethod) {
       const filterPrefix = this.model.completionCurrentWord || "";
-      
-      // Add delegated methods that aren't already in the list
       for (const [methodName, signature] of this.methodSignatures) {
         if ((signature as any).isDelegated && 
             !values.includes(methodName) &&
@@ -179,17 +129,11 @@ export class ONCECLI extends DefaultCLI {
           values.push(methodName);
         }
       }
-      
-      // Re-sort after adding delegated methods
       values.sort();
     }
-    
     return values;
   }
 
-  /**
-   * Execute CLI commands with auto-discovery
-   */
   async execute(args: string[]): Promise<void> {
     if (args.length === 0) {
       this.showUsage();
@@ -200,17 +144,14 @@ export class ONCECLI extends DefaultCLI {
     const commandArgs = args.slice(1);
 
     try {
-      // Try dynamic command execution
       if (await this.executeDynamicCommand(command, commandArgs)) {
         return;
       }
 
-      // Special cases
       switch (command) {
         case 'help':
           this.showUsage();
           break;
-          
         default:
           throw new Error(`Unknown command: ${command}`);
       }

@@ -123,15 +123,14 @@ export class StaticFileRoute extends Route {
     }
     
     /**
-     * Initialize route with default values
-     * Called after construction, before use
-     * 
-     * @returns this (method chaining)
+     * Initialize route with default values (Web4 P6)
+     * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4
      */
-    public routeInit(): this {
+    init(scenario?: any): this {
+        super.init(scenario);
         this.model.name = 'StaticFileRoute';
-        this.model.pattern = '/{Component}/{version}/** | /EAMD.ucp/**'; // Documentation
-        this.model.priority = 5; // Higher priority than IORRoute (10)
+        this.model.pattern = '/{Component}/{version}/** | /EAMD.ucp/**';
+        this.model.priority = 5;
         return this;
     }
     
