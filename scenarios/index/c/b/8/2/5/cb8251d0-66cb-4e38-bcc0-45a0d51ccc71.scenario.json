@@ -1,0 +1,62 @@
+{
+  "ior": {
+    "uuid": "cb8251d0-66cb-4e38-bcc0-45a0d51ccc71",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkyTFRBeExUQTBWREUxT2pVNU9qTTRMakU0TmxvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwibmFtZSI6ImRvbmdlcyIsInVzZXJuYW1lIjoic3lzdGVtIiwiaG9zdG5hbWUiOiJNY0Rvbmdlcy5mcml0ei5ib3gifX0=",
+  "model": {
+    "uuid": "cb8251d0-66cb-4e38-bcc0-45a0d51ccc71",
+    "name": "ONCE",
+    "version": "0.3.22.2",
+    "environment": {
+      "platform": "node",
+      "version": "v23.6.1",
+      "capabilities": [
+        "server",
+        "websocket",
+        "p2p"
+      ],
+      "isOnline": true
+    },
+    "state": "starting",
+    "startTime": "2026-01-04T15:59:38.181Z",
+    "connectionTime": null,
+    "host": "McDonges.fritz.box",
+    "port": 42777,
+    "isPrimary": true,
+    "primaryPeerUuid": null,
+    "peers": [],
+    "pid": 93658,
+    "capabilities": [
+      {
+        "capability": "httpsPort",
+        "port": 42777
+      },
+      {
+        "capability": "httpRedirect",
+        "port": 42000
+      }
+    ],
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/b/8/2/5/cb8251d0-66cb-4e38-bcc0-45a0d51ccc71.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.22.2",
+      "domain/box/fritz/McDonges/ONCE/0.3.22.2",
+      "domain/box/fritz/McDonges/ONCE/0.3.22.2/capability/httpPort/42777"
+    ],
+    "updatedAt": "2026-01-04T15:59:38.187Z"
+  },
+  "unit": {
+    "indexPath": "c/b/8/2/5/cb8251d0-66cb-4e38-bcc0-45a0d51ccc71.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.22.2",
+      "domain/box/fritz/McDonges/ONCE/0.3.22.2",
+      "domain/box/fritz/McDonges/ONCE/0.3.22.2/capability/httpPort/42777"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "ONCE/0.3.22.2",
+    "createdAt": "2026-01-04T15:59:38.187Z",
+    "updatedAt": "2026-01-04T15:59:38.187Z"
+  }
+}
