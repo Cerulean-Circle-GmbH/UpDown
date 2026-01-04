@@ -19,25 +19,23 @@ import type { ScenarioUnit } from './ScenarioUnit.interface.js';
 
 export interface Scenario<T extends Model = Model> {
   /**
-   * IOR — OPTIONAL for internal init() calls
-   * Required when persisting/loading scenarios
-   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.4
+   * IOR — REQUIRED
+   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.5
    */
-  ior?: {
+  ior: {
     uuid: string;              // Object instance UUID
     component: string;         // Component name (ONCE, User, HTTPSServer)
     version: string;           // Component version (0.3.21.2)
-    iorString?: string;        // Fully qualified IOR string
+    iorString?: string;        // Fully qualified IOR string (optional within ior)
   };
   
   /**
-   * Owner — OPTIONAL for internal init() calls
-   * Required when persisting/loading scenarios
+   * Owner — REQUIRED
    */
-  owner?: string;
+  owner: string;
   
   /**
-   * Model — the actual component state (REQUIRED)
+   * Model — REQUIRED
    */
   model: T;
   
@@ -48,11 +46,3 @@ export interface Scenario<T extends Model = Model> {
    */
   unit?: ScenarioUnit;
 }
-
-/**
- * InitScenario — Partial Scenario for init() calls
- * Only model is required; ior and owner are optional
- * Used for internal component initialization
- * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.4
- */
-export type InitScenario<T extends Model = Model> = Partial<Scenario<T>> & { model?: T };

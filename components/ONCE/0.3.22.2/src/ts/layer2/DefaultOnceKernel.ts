@@ -30,7 +30,7 @@
 
 import type { Reference } from '../layer3/Reference.interface.js';
 import type { Model } from '../layer3/Model.interface.js';
-import type { Scenario, InitScenario } from '../layer3/Scenario.interface.js';
+import type { Scenario } from '../layer3/Scenario.interface.js';
 import type { LifecycleObserver } from '../layer3/LifecycleObserver.interface.js';
 import type { LifecycleManager } from '../layer3/LifecycleManager.interface.js';
 import { LifecycleEventType } from '../layer3/LifecycleEventType.enum.js';
@@ -79,11 +79,11 @@ export abstract class DefaultOnceKernel<TModel extends OnceKernelModel = OnceKer
     
     /**
      * Initialize kernel with scenario
-     * @param scenario - Initialization scenario (InitScenario<TModel>)
+     * @param scenario - Initialization scenario (Scenario<TModel>)
      * @returns this - Fluent API (SYNC ONLY)
      * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.4
      */
-    init(scenario?: InitScenario<TModel>): this {
+    init(scenario?: Scenario<TModel>): this {
         super.init(scenario);
         return this;
     }
