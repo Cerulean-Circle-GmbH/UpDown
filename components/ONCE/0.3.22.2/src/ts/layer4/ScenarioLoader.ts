@@ -161,7 +161,8 @@ export class ScenarioLoader implements Loader {
                 uuid: this.model.uuid,
                 component: this.model.iorComponent,
                 version: this.model.iorVersion,
-                protocol: this.model.protocol
+                // CPA.5: Use iorString instead of protocol/host/port
+                iorString: `ior:${this.model.protocol}://localhost/${this.model.iorComponent}/${this.model.iorVersion}/${this.model.uuid}`
             },
             model: this.model,
             owner: ''

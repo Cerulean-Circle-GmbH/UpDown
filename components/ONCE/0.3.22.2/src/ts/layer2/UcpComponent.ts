@@ -24,15 +24,20 @@ import { UcpModel } from '../layer3/UcpModel.js';
 import { View } from '../layer3/View.interface.js';
 import { Reference } from '../layer3/Reference.interface.js';
 import type { Model } from '../layer3/Model.interface.js';
+import type { Scenario } from '../layer3/Scenario.interface.js';
 import type { UnitModel } from '../layer3/UnitModel.interface.js';
 import type { UnitReference } from '../layer3/UnitReference.interface.js';
 import type { Storage } from '../layer3/Storage.interface.js';
 import type { IDProvider } from '../layer3/IDProvider.interface.js';
 import type { ContentIDProvider } from '../layer3/ContentIDProvider.interface.js';
 import type { AbstractConstructor } from '../layer3/InterfaceConstructor.type.js';
+import type { CLIModel } from '../layer3/CLIModel.interface.js';
 import { UUIDProvider } from './UUIDProvider.js';
 import { SHA256Provider } from './SHA256Provider.js';
 import { JsInterface } from '../layer3/JsInterface.js';
+
+// Type-only import to avoid circular dependency (DefaultCLI extends UcpComponent)
+import type { DefaultCLI } from './DefaultCLI.js';
 
 /**
  * UcpComponent - Abstract base class for all Web4 components
@@ -111,6 +116,18 @@ export abstract class UcpComponent<TModel extends Model> {
   protected storage: Reference<Storage> = null;
   
   // ═══════════════════════════════════════════════════════════════
+  // CLI Path Authority (P3: Field suffix, P5: Reference<T>)
+  // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.1
+  // ═══════════════════════════════════════════════════════════════
+  
+  /** 
+   * CLI instance - path authority for this component
+   * Lazy initialized on first access to avoid circular dependency
+   * (DefaultCLI extends UcpComponent)
+   */
+  private cliField: Reference<DefaultCLI> = null;
+  
+  // ═══════════════════════════════════════════════════════════════
   // Static ID Providers (Shared across all components)
   // ═══════════════════════════════════════════════════════════════
   
@@ -147,19 +164,87 @@ export abstract class UcpComponent<TModel extends Model> {
     );
   }
   
+  // ═══════════════════════════════════════════════════════════════
+  // CLI Accessors (P16: TypeScript accessors)
+  // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.1
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Get CLI instance (lazy initialized to avoid circular dependency)
+   * 
+   * @returns CLI instance or null if not yet set
+   */
+  get cli(): Reference<DefaultCLI> {
+    return this.cliField;
+  }
+  
+  /**
+   * Set CLI instance (allows override before init())
+   * 
+   * @example
+   * ```typescript
+   * const component = new NodeJsOnce();
+   * component.cli = onceCli;  // Override CLI before init
+   * component.init(scenario);
+   * ```
+   */
+  set cli(value: DefaultCLI) {
+    this.cliField = value;
+  }
+  
+  /**
+   * Check if CLI is available
+   * CLI must be set externally (by ONCECLI.start() or similar)
+   * 
+   * @returns true if CLI is set
+   */
+  get cliAvailable(): boolean {
+    return this.cliField !== null;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Path Accessors — Delegate to CLI (P16)
+  // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.1
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Project root directory
+   * Delegates to CLI.model.projectRoot (single source of truth)
+   */
+  get projectRoot(): string {
+    return this.cliField?.model?.projectRoot ?? '';
+  }
+  
+  /**
+   * Components directory
+   * Delegates to CLI.model.componentsDirectory
+   */
+  get componentsDirectory(): string {
+    return this.cliField?.model?.componentsDirectory ?? '';
+  }
+  
+  /**
+   * Test data directory
+   * Delegates to CLI.model.testDataDirectory
+   */
+  get testDataDirectory(): string {
+    return this.cliField?.model?.testDataDirectory ?? '';
+  }
+  
   /**
    * Initialize component with scenario (Web4 Radical OOP P6)
    * 
    * ✅ ONE method — no initSync, no initBase, no wrappers
-   * ✅ Sync by default; async allowed in transitional subclasses (to be refactored)
+   * ✅ Accepts: full Scenario<TModel> OR just { model?: TModel }
+   * ✅ Returns: this (sync) or Promise<this> (async subclasses during migration)
    * 
    * Usage: `new Component().init(scenario)` or `await kernel.init(scenario)`
    * 
-   * @param scenario Optional initial scenario
-   * @returns this for chaining (sync or async)
-   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4.1
+   * @param scenario Optional scenario or model wrapper
+   * @returns this for chaining (or Promise<this> for async subclasses)
+   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.4
    */
-  init(scenario?: { model?: TModel }): this | Promise<this> {
+  init(scenario?: Scenario<TModel> | { model?: TModel }): this | Promise<this> {
     // Skip if already initialized
     if (this.ucpModel !== null) {
       // Merge scenario model if provided
@@ -577,7 +662,7 @@ export abstract class UcpComponent<TModel extends Model> {
     }
     
     const scenario = await this.storage.scenarioLoad<TModel>(uuid);
-    return this.init(scenario as { model?: TModel });
+    return this.init(scenario as Scenario<TModel>);
   }
   
   /**

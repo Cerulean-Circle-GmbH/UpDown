@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "2fcdf5e1-2f64-4927-8d76-d28aca8cfb40",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "2fcdf5e1-2f64-4927-8d76-d28aca8cfb40",
+    "name": "TSCompletion.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer4/TSCompletion.ts",
+    "definition": "TypeScript TSCompletion class/interface",
+    "filePath": "src/ts/layer4/TSCompletion.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-04T17:09:00.040Z",
+    "updatedAt": "2026-01-04T17:09:00.040Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/2/f/c/d/f/2fcdf5e1-2f64-4927-8d76-d28aca8cfb40.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "2/f/c/d/f/2fcdf5e1-2f64-4927-8d76-d28aca8cfb40.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-04T17:09:00.040Z",
+    "updatedAt": "2026-01-04T17:09:00.040Z"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "595e4df7-a382-4052-9bf1-4bf9b245989b",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "595e4df7-a382-4052-9bf1-4bf9b245989b",
+    "name": "BrowserScenarioStorage.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/BrowserScenarioStorage.ts",
+    "definition": "TypeScript BrowserScenarioStorage class/interface",
+    "filePath": "dist/ts/layer2/BrowserScenarioStorage.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-04T17:09:00.610Z",
+    "updatedAt": "2026-01-04T17:09:00.637Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/5/9/5/e/4/595e4df7-a382-4052-9bf1-4bf9b245989b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "5/9/5/e/4/595e4df7-a382-4052-9bf1-4bf9b245989b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-04T17:09:00.610Z",
+    "updatedAt": "2026-01-04T17:09:00.610Z"
+  }
+}

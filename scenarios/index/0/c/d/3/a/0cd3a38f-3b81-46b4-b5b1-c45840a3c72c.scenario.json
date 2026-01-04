@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "0cd3a38f-3b81-46b4-b5b1-c45840a3c72c",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "0cd3a38f-3b81-46b4-b5b1-c45840a3c72c",
+    "name": "InterfaceConstructor.type.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/InterfaceConstructor.type.ts",
+    "definition": "TypeScript InterfaceConstructor.type class/interface",
+    "filePath": "src/ts/layer3/InterfaceConstructor.type.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-04T17:08:58.906Z",
+    "updatedAt": "2026-01-04T17:08:59.116Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/0/c/d/3/a/0cd3a38f-3b81-46b4-b5b1-c45840a3c72c.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "0/c/d/3/a/0cd3a38f-3b81-46b4-b5b1-c45840a3c72c.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-04T17:08:58.906Z",
+    "updatedAt": "2026-01-04T17:08:58.907Z"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "ior": {
+    "uuid": "c8e4d558-e755-4d31-b8df-3152f9f4486b",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "c8e4d558-e755-4d31-b8df-3152f9f4486b",
+    "name": "StorageModel",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/StorageModel.interface.ts",
+    "indexPath": "scenarios/index/c8e4d558-e755-4d31-b8df-3152f9f4486b.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/StorageModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "uuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "projectRoot",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "indexBaseDir",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "createdAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "updatedAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-04T17:09:06.629Z",
+    "updatedAt": "2026-01-04T17:09:06.629Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

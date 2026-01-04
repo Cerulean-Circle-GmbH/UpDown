@@ -1,0 +1,54 @@
+{
+  "ior": {
+    "uuid": "680a592c-0d5b-4893-a121-9f92b40e9cf6",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "680a592c-0d5b-4893-a121-9f92b40e9cf6",
+    "name": "ParameterDescriptor",
+    "extends": "ior:esm:/ONCE/0.3.22.2/FeatureDescriptor",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ParameterDescriptor.interface.ts",
+    "indexPath": "scenarios/index/680a592c-0d5b-4893-a121-9f92b40e9cf6.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ParameterDescriptor.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "optional",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "defaultValue",
+        "targetType": "unknown"
+      }
+    ],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-04T17:09:06.547Z",
+    "updatedAt": "2026-01-04T17:09:06.547Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

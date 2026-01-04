@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "7b8edff5-2463-42d7-8a92-88509f2e18e1",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "7b8edff5-2463-42d7-8a92-88509f2e18e1",
+    "name": "OnceLoggerView.css",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/css/OnceLoggerView.css",
+    "definition": "CSS stylesheet for OnceLoggerView",
+    "filePath": "src/ts/layer5/views/css/OnceLoggerView.css",
+    "mimetype": "text/css",
+    "createdAt": "2026-01-04T17:08:57.372Z",
+    "updatedAt": "2026-01-04T17:08:57.372Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/7/b/8/e/d/7b8edff5-2463-42d7-8a92-88509f2e18e1.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "7/b/8/e/d/7b8edff5-2463-42d7-8a92-88509f2e18e1.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-04T17:08:57.372Z",
+    "updatedAt": "2026-01-04T17:08:57.372Z"
+  }
+}

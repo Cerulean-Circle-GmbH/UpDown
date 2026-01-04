@@ -1,0 +1,33 @@
+{
+  "ior": {
+    "uuid": "unknown",
+    "component": "DefaultUnit",
+    "version": "0.0.0.0"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "4d452a8d-74a5-4f75-9815-b4a954921373",
+    "name": "Folder",
+    "origin": {
+      "state": "RESOLVING",
+      "value": null,
+      "ior": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/dist/ts/layer5",
+      "model": {
+        "component": "Cerulean-Circle-GmbH",
+        "version": "UpDown",
+        "uuid": "blob",
+        "protocol": "https",
+        "host": "git",
+        "port": 443,
+        "path": "/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/dist/ts/layer5",
+        "iorString": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/dist/ts/layer5"
+      }
+    },
+    "definition": "M1 folder instance: /Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.22.2/dist/ts/layer5",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/4/d/4/5/2/4d452a8d-74a5-4f75-9815-b4a954921373.scenario.json",
+    "references": [],
+    "createdAt": "2026-01-04T17:09:03.407Z",
+    "updatedAt": "2026-01-04T17:09:03.407Z"
+  }
+}

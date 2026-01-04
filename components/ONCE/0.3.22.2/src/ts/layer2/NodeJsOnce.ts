@@ -100,13 +100,9 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
   private web4ts?: any; // Lazy-initialized Web4TSComponent for delegation (dynamic import, no static dependency)
   private user?: User; // Optional User service (lazy initialization)
   
-  /**
-   * CLI reference — Path Authority (P5: Reference<T>, P16: accessors)
-   * Set by ONCECLI.cliStart() to provide path access
-   * 
-   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.3-2.5
-   */
-  private cliField: import('../layer3/Reference.interface.js').Reference<import('./DefaultCLI.js').DefaultCLI> = null;
+  // CLI inherited from UcpComponent (CPA.1)
+  // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md
+  
   private methods: Map<string, MethodSignature> = new Map();
   private idProvider: IDProvider; // ✅ Web4 Principle 20: Radical OOP ID generation
   
@@ -153,56 +149,35 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // CLI Reference — Path Authority (P5, P16)
+  // CLI & Path Accessors — INHERITED from UcpComponent (CPA.1)
+  // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md
   // ═══════════════════════════════════════════════════════════════
-
+  
+  // cli getter/setter — inherited from UcpComponent
+  // projectRoot — inherited from UcpComponent
+  // componentsDirectory — inherited from UcpComponent
+  // testDataDirectory — inherited from UcpComponent
+  
   /**
-   * Get CLI reference (P16: TypeScript getter)
-   * @returns CLI instance or null if not set
-   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.4
+   * Override projectRoot to add fallback to model (backward compatibility)
    */
-  get cli(): import('../layer3/Reference.interface.js').Reference<import('./DefaultCLI.js').DefaultCLI> {
-    return this.cliField;
+  override get projectRoot(): string {
+    // Prefer CLI (Path Authority), fallback to model for backward compatibility
+    return super.projectRoot || this.model?.projectRoot || '';
   }
 
   /**
-   * Set CLI reference (P16: TypeScript setter)
-   * Called by ONCECLI.cliStart() to provide path access
-   * @param value CLI instance
-   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.4
+   * Override componentsDirectory to add fallback to model (backward compatibility)
    */
-  set cli(value: import('./DefaultCLI.js').DefaultCLI) {
-    this.cliField = value;
-  }
-
-  // ═══════════════════════════════════════════════════════════════
-  // Path Accessors — Prefer CLI (single source of truth), fallback to model
-  // @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.6
-  // ═══════════════════════════════════════════════════════════════
-
-  /**
-   * Get project root — prefers CLI (Path Authority), falls back to model
-   * @returns Project root path (empty string if not yet initialized)
-   */
-  get projectRoot(): string {
-    // Guard: model may not be initialized yet during constructor
-    return this.cli?.model?.projectRoot || this.model?.projectRoot || '';
+  override get componentsDirectory(): string {
+    return super.componentsDirectory || this.model?.componentsDirectory || '';
   }
 
   /**
-   * Get components directory — prefers CLI, falls back to model
-   * @returns Components directory path (empty string if not yet initialized)
+   * Override testDataDirectory to add fallback to model (backward compatibility)
    */
-  get componentsDirectory(): string {
-    return this.cli?.model?.componentsDirectory || this.model?.componentsDirectory || '';
-  }
-
-  /**
-   * Get test data directory — prefers CLI, falls back to model
-   * @returns Test data directory path (empty string if not yet initialized)
-   */
-  get testDataDirectory(): string {
-    return this.cli?.model?.testDataDirectory || this.model?.testDataDirectory || '';
+  override get testDataDirectory(): string {
+    return super.testDataDirectory || this.model?.testDataDirectory || '';
   }
 
   /**

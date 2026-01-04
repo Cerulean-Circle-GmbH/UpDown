@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "120de6f1-b502-4746-93cf-c1c0714cfe47",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "120de6f1-b502-4746-93cf-c1c0714cfe47",
+    "name": "ReverseProxyRoute.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer4/ReverseProxyRoute.ts",
+    "definition": "TypeScript ReverseProxyRoute class/interface",
+    "filePath": "dist/ts/layer4/ReverseProxyRoute.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-04T17:09:02.390Z",
+    "updatedAt": "2026-01-04T17:09:02.390Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/1/2/0/d/e/120de6f1-b502-4746-93cf-c1c0714cfe47.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "1/2/0/d/e/120de6f1-b502-4746-93cf-c1c0714cfe47.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-04T17:09:02.390Z",
+    "updatedAt": "2026-01-04T17:09:02.390Z"
+  }
+}

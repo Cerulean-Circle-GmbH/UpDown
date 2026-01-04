@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "f8676db0-7e04-4066-a3e7-2cad6010294e",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "f8676db0-7e04-4066-a3e7-2cad6010294e",
+    "name": "DefaultWeb4TSComponent.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/DefaultWeb4TSComponent.ts",
+    "definition": "TypeScript DefaultWeb4TSComponent class/interface",
+    "filePath": "dist/ts/layer2/DefaultWeb4TSComponent.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-04T17:09:00.694Z",
+    "updatedAt": "2026-01-04T17:09:00.695Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/f/8/6/7/6/f8676db0-7e04-4066-a3e7-2cad6010294e.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "f/8/6/7/6/f8676db0-7e04-4066-a3e7-2cad6010294e.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-04T17:09:00.694Z",
+    "updatedAt": "2026-01-04T17:09:00.694Z"
+  }
+}

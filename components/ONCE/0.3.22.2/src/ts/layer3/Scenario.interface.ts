@@ -24,22 +24,12 @@ export interface Scenario<T extends Model = Model> {
     component: string;         // Component name (ONCE, User, HTTPSServer)
     version: string;           // Component version (0.3.21.2)
     
-    // ✅ Network location (OPTIONAL - for distributed objects)
-    protocol?: string;         // 'ior:https', 'ior:https:ssl:udp', etc.
-    host?: string;             // 'mcdonges-3.fritz.box', 'localhost'
-    port?: number;             // 42777, 8080, etc.
-    path?: string;             // '/ONCE/0.3.21.2/uuid-here/method'
-    
-    // ✅ IOR Profiles (OPTIONAL - CORBA 2.3+ pattern for failover)
-    profiles?: Array<{
-      host: string;            // Failover host
-      port: number;            // Failover port
-      protocol?: string;       // Optional protocol override
-      priority?: number;       // Optional priority (lower = higher priority)
-    }>;
-    
-    // ✅ Precomputed IOR string (CACHED - computed on first access)
-    iorString?: string;        // 'ior:https://host:port,failover:port/component/version/uuid'
+    // ✅ Fully qualified IOR string (OPTIONAL - replaces host/port/protocol/profiles)
+    // Contains all network location info in one string
+    // Example: "ior:https://mcdonges.fritz.box:42777/ONCE/0.3.22.2/abc-uuid"
+    // Can redundantly contain uuid/component/version for self-contained parsing
+    // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.5
+    iorString?: string;
   };
   owner: string;
   model: T;

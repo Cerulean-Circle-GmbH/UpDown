@@ -1,0 +1,131 @@
+{
+  "ior": {
+    "uuid": "cdcec384-6121-42d0-80f5-bcb350613775",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "cdcec384-6121-42d0-80f5-bcb350613775",
+    "name": "Test30_PWAComponents",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/tests/Test30_PWAComponents.ts",
+    "indexPath": "scenarios/index/cdcec384-6121-42d0-80f5-bcb350613775.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Test30_PWAComponents.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "testResults",
+        "elementType": "{ name: string; passed: boolean; error?: string }"
+      }
+    ],
+    "methods": [
+      {
+        "name": "runAllTests",
+        "parameters": [],
+        "returnType": "Promise<boolean>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "printResult",
+        "parameters": [
+          {
+            "name": "result",
+            "type": "{ name: string; passed: boolean; error?: string }",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testUnitCacheManagerInit",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testOnceServiceWorkerInit",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testUnitsRouteInit",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testManifestRouteInit",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testServiceWorkerRouteInit",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testUnitTypes",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testCacheStrategies",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testUnitsRouteUnitRegistration",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testManifestRouteConfiguration",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-04T17:09:07.442Z",
+    "updatedAt": "2026-01-04T17:09:07.442Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}
