@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "38ade705-642b-4522-92b5-91964b9c8a3c",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "38ade705-642b-4522-92b5-91964b9c8a3c",
+    "name": "CertificateSource.enum.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/CertificateSource.enum.ts",
+    "definition": "TypeScript CertificateSource.enum class/interface",
+    "filePath": "dist/ts/layer3/CertificateSource.enum.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-04T17:41:54.665Z",
+    "updatedAt": "2026-01-04T17:41:54.666Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/3/8/a/d/e/38ade705-642b-4522-92b5-91964b9c8a3c.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "3/8/a/d/e/38ade705-642b-4522-92b5-91964b9c8a3c.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-04T17:41:54.665Z",
+    "updatedAt": "2026-01-04T17:41:54.665Z"
+  }
+}

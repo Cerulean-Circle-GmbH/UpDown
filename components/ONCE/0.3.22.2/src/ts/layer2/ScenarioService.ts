@@ -192,8 +192,9 @@ export class ScenarioService {
     ];
     
     // Save via persistence manager
+    const uuid = scenario.ior?.uuid ?? scenario.model?.uuid ?? '';
     await this.persistenceManager.scenarioSave(
-      scenario.ior.uuid,
+      uuid,
       scenarioWithUnit,
       symlinkPaths
     );
@@ -249,8 +250,8 @@ export class ScenarioService {
    * Called automatically on load
    */
   scenarioMigrate<T extends Model>(scenario: Scenario<T>): Scenario<T> {
-    // Get source version from scenario
-    const sourceVersion = scenario.ior.version;
+    // Get source version from scenario (use component version if ior not present)
+    const sourceVersion = scenario.ior?.version ?? this.componentVersion;
     
     // Already at current version?
     if (sourceVersion === this.componentVersion) {
@@ -269,8 +270,10 @@ export class ScenarioService {
     // Try convention-based migration
     const migrated = this.migrateViaConvention(scenario, sourceVersion);
     
-    // Update version in IOR
-    migrated.ior.version = this.componentVersion;
+    // Update version in IOR (if ior exists)
+    if (migrated.ior) {
+      migrated.ior.version = this.componentVersion;
+    }
     migrated.unit!.updatedAt = new Date().toISOString();
     
     return migrated;
@@ -310,11 +313,12 @@ export class ScenarioService {
    */
   private unitAdd<T extends Model>(scenario: Scenario<T>): Scenario<T> {
     const now = new Date().toISOString();
+    const uuid = scenario.ior?.uuid ?? (scenario.model as any)?.uuid ?? '';
     
     return {
       ...scenario,
       unit: {
-        indexPath: this.indexPathBuild(scenario.ior.uuid),
+        indexPath: this.indexPathBuild(uuid),
         symlinkPaths: [],
         references: [],
         schemaVersion: SCENARIO_SCHEMA_VERSION,
@@ -342,10 +346,11 @@ export class ScenarioService {
     
     const now = new Date().toISOString();
     
+    const uuid = scenario.ior?.uuid ?? (scenario.model as any)?.uuid ?? '';
     return {
       ...scenario,
       unit: {
-        indexPath: this.indexPathBuild(scenario.ior.uuid),
+        indexPath: this.indexPathBuild(uuid),
         symlinkPaths: symlinkPaths,
         references: [],
         schemaVersion: SCENARIO_SCHEMA_VERSION,

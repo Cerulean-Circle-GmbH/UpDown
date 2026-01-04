@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "d290857c-ba2c-49de-bcbf-8085ccc16c3d",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "d290857c-ba2c-49de-bcbf-8085ccc16c3d",
+    "name": "MIMETypes.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/MIMETypes.ts",
+    "definition": "TypeScript MIMETypes class/interface",
+    "filePath": "src/ts/layer3/MIMETypes.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-04T17:41:53.819Z",
+    "updatedAt": "2026-01-04T17:41:53.819Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/d/2/9/0/8/d290857c-ba2c-49de-bcbf-8085ccc16c3d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "d/2/9/0/8/d290857c-ba2c-49de-bcbf-8085ccc16c3d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-04T17:41:53.819Z",
+    "updatedAt": "2026-01-04T17:41:53.819Z"
+  }
+}

@@ -492,14 +492,25 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
   }
 
   /**
-   * ✅ TRUE Radical OOP: init() - Scenario-based initialization + updateModelPaths()
+   * Sync init — Web4 standard (calls super.init)
+   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.4
+   */
+  override init(scenario?: Scenario<ONCEPeerModel>): this {
+    super.init(scenario);
+    return this;
+  }
+
+  /**
+   * ✅ Async initialization — called by static start() or ONCECLI
+   * Contains async logic moved out of init() per Web4 P7 (async in Layer 4)
    * @pdca 2025-11-10-UTC-1830.migrate-once-to-0.3.20.0.pdca.md - CLI infrastructure from 0.3.20.0
    * @pdca 2025-11-10-UTC-1830.migrate-once-to-0.3.20.0.pdca.md - Domain logic from 0.2.0.0
    * @pdca 2025-11-21-UTC-1630.test-isolation-path-violation.pdca.md - Paths already discovered in constructor
    * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md - B.6 UcpComponent base
+   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.4 — renamed from init()
    * @cliHide
    */
-  async init(scenario?: Scenario<ONCEPeerModel>): Promise<this> {
+  async initAsync(scenario?: Scenario<ONCEPeerModel>): Promise<this> {
     // Paths already discovered in constructor via _discoverPaths()
     
     // ✅ Always transition to INITIALIZING (even without scenario)
@@ -698,8 +709,8 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
    * @cliHide
    */
   private async loadFromScenario(scenario: Scenario<ONCEPeerModel>): Promise<void> {
-    if (scenario.ior.component !== 'ONCE') {
-      throw new Error(`Invalid scenario type: ${scenario.ior.component}`);
+    if (!scenario.ior || scenario.ior.component !== 'ONCE') {
+      throw new Error(`Invalid scenario type: ${scenario.ior?.component ?? 'unknown'}`);
     }
 
     // Load server model from scenario

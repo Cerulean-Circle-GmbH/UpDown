@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "e63ddf4f-dc24-4a4f-951f-0cb4cf66478e",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "e63ddf4f-dc24-4a4f-951f-0cb4cf66478e",
+    "name": "OnceOverView.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/OnceOverView.ts",
+    "definition": "TypeScript OnceOverView class/interface",
+    "filePath": "dist/ts/layer5/views/OnceOverView.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-04T17:41:55.253Z",
+    "updatedAt": "2026-01-04T17:41:55.253Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/e/6/3/d/d/e63ddf4f-dc24-4a4f-951f-0cb4cf66478e.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "e/6/3/d/d/e63ddf4f-dc24-4a4f-951f-0cb4cf66478e.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-04T17:41:55.253Z",
+    "updatedAt": "2026-01-04T17:41:55.253Z"
+  }
+}

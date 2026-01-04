@@ -1,0 +1,410 @@
+{
+  "ior": {
+    "uuid": "fc3a366a-1fb9-4608-b41f-a8eb32c07e76",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "fc3a366a-1fb9-4608-b41f-a8eb32c07e76",
+    "name": "ScenarioService",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/ScenarioService.ts",
+    "indexPath": "scenarios/index/fc3a366a-1fb9-4608-b41f-a8eb32c07e76.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ScenarioService.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "componentName",
+        "type": "string",
+        "optional": false,
+        "defaultValue": "ONCE"
+      },
+      {
+        "name": "componentVersion",
+        "type": "string",
+        "optional": false,
+        "defaultValue": "0.3.21.9"
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "persistenceManager",
+        "targetType": "PersistenceManager"
+      },
+      {
+        "name": "component",
+        "targetType": "UcpComponent<Model>"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "config",
+            "type": "{\n    persistenceManager: PersistenceManager;\n    component?: UcpComponent<Model>;\n    componentName?: string;\n    componentVersion?: string;\n  }",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioCreate",
+        "parameters": [
+          {
+            "name": "config",
+            "type": "{\n    uuid: string;\n    model: T;\n    owner: string;\n    symlinkPaths?: string[];\n  }",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Scenario<T>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "indexPathBuild",
+        "parameters": [
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "typePathBuild",
+        "parameters": [
+          {
+            "name": "component",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "version",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "domainPathBuild",
+        "parameters": [
+          {
+            "name": "domainParts",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "hostname",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "component",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "version",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "capabilityPathBuild",
+        "parameters": [
+          {
+            "name": "domainParts",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "hostname",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "component",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "version",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "capabilityType",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "capabilityValue",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioSave",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<T>",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "symlinkPaths",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": "[]"
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioLoad",
+        "parameters": [
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Scenario<T>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioDelete",
+        "parameters": [
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "removeSymlinks",
+            "type": "boolean",
+            "optional": false,
+            "defaultValue": "true"
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioExists",
+        "parameters": [
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<boolean>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioMigrate",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<T>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Scenario<T>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "migrateViaConvention",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<T>",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "sourceVersion",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Scenario<T>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitAdd",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<T>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Scenario<T>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitEnsure",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<T>",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "symlinkPaths",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": "[]"
+          }
+        ],
+        "returnType": "Scenario<T>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "referenceTrack",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<T>",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "linkLocation",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "linkTarget",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Scenario<T>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "referenceCreate",
+        "parameters": [
+          {
+            "name": "linkLocation",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "UnitReference",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "referenceBroken",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<T>",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "linkLocation",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Scenario<T>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-04T17:41:56.149Z",
+    "updatedAt": "2026-01-04T17:41:56.149Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

@@ -25,10 +25,18 @@ import { PerformanceMetrics } from './PerformanceMetrics.interface.js';
  */
 export interface ONCE {
     /**
-     * Initialize ONCE kernel with scenario
+     * Initialize ONCE kernel with scenario (SYNC — Web4 P6)
      * Web4 pattern: Objects initialize from scenarios, not constructors
+     * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.4
      */
-    init(scenario?: Scenario<ONCEPeerModel>): Promise<ONCE>;
+    init(scenario?: Scenario<ONCEPeerModel>): this;
+    
+    /**
+     * Async initialization — contains async logic moved out of init()
+     * Per Web4 P7: async logic belongs in Layer 4 or separate async method
+     * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.4
+     */
+    initAsync(scenario?: Scenario<ONCEPeerModel>): Promise<ONCE>;
 
     /**
      * Start a component by loading and initializing it

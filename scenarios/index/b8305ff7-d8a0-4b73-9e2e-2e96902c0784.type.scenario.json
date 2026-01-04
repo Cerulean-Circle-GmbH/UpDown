@@ -1,0 +1,71 @@
+{
+  "ior": {
+    "uuid": "b8305ff7-d8a0-4b73-9e2e-2e96902c0784",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "b8305ff7-d8a0-4b73-9e2e-2e96902c0784",
+    "name": "Test27_HTTPRouterDomainMatching",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/tests/Test27_HTTPRouterDomainMatching.ts",
+    "indexPath": "scenarios/index/b8305ff7-d8a0-4b73-9e2e-2e96902c0784.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Test27_HTTPRouterDomainMatching.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "run",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testNoDomainRestriction",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testExactDomainMatch",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testWildcardDomainMatch",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testDomainMismatch",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-04T17:41:56.529Z",
+    "updatedAt": "2026-01-04T17:41:56.529Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

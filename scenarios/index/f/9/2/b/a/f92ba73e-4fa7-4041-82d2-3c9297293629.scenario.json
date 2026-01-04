@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "f92ba73e-4fa7-4041-82d2-3c9297293629",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "f92ba73e-4fa7-4041-82d2-3c9297293629",
+    "name": "server-status.html",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/html/server-status.html",
+    "definition": "HTML template server-status",
+    "filePath": "src/ts/layer5/views/html/server-status.html",
+    "mimetype": "text/html",
+    "createdAt": "2026-01-04T17:41:53.374Z",
+    "updatedAt": "2026-01-04T17:41:53.377Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/f/9/2/b/a/f92ba73e-4fa7-4041-82d2-3c9297293629.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "f/9/2/b/a/f92ba73e-4fa7-4041-82d2-3c9297293629.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-04T17:41:53.374Z",
+    "updatedAt": "2026-01-04T17:41:53.374Z"
+  }
+}

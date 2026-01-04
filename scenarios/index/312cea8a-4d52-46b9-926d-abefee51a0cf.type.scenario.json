@@ -1,0 +1,78 @@
+{
+  "ior": {
+    "uuid": "312cea8a-4d52-46b9-926d-abefee51a0cf",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "312cea8a-4d52-46b9-926d-abefee51a0cf",
+    "name": "CertificateRenewalSchedulerModel",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/CertificateRenewalSchedulerModel.interface.ts",
+    "indexPath": "scenarios/index/312cea8a-4d52-46b9-926d-abefee51a0cf.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/CertificateRenewalSchedulerModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "uuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "iorComponent",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "iorVersion",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "checkIntervalMs",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isRunning",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "statistics",
+        "type": "StatisticsModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "pendingTasks",
+        "elementType": "RenewalTask"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-04T17:41:56.263Z",
+    "updatedAt": "2026-01-04T17:41:56.263Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

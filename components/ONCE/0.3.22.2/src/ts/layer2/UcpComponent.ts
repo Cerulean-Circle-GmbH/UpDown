@@ -24,7 +24,7 @@ import { UcpModel } from '../layer3/UcpModel.js';
 import { View } from '../layer3/View.interface.js';
 import { Reference } from '../layer3/Reference.interface.js';
 import type { Model } from '../layer3/Model.interface.js';
-import type { Scenario } from '../layer3/Scenario.interface.js';
+import type { Scenario, InitScenario } from '../layer3/Scenario.interface.js';
 import type { UnitModel } from '../layer3/UnitModel.interface.js';
 import type { UnitReference } from '../layer3/UnitReference.interface.js';
 import type { Storage } from '../layer3/Storage.interface.js';
@@ -235,16 +235,16 @@ export abstract class UcpComponent<TModel extends Model> {
    * Initialize component with scenario (Web4 Radical OOP P6)
    * 
    * ✅ ONE method — no initSync, no initBase, no wrappers
-   * ✅ Accepts: full Scenario<TModel> OR just { model?: TModel }
-   * ✅ Returns: this (sync) or Promise<this> (async subclasses during migration)
+   * ✅ Signature: init(scenario?: InitScenario<TModel>): this
+   * ✅ SYNC ONLY — async logic belongs in Layer 4 orchestrators
    * 
-   * Usage: `new Component().init(scenario)` or `await kernel.init(scenario)`
+   * Usage: `new Component().init()` or `new Component().init({ model })`
    * 
-   * @param scenario Optional scenario or model wrapper
-   * @returns this for chaining (or Promise<this> for async subclasses)
+   * @param scenario Optional scenario (full Scenario<TModel> or partial InitScenario)
+   * @returns this for chaining
    * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.4
    */
-  init(scenario?: Scenario<TModel> | { model?: TModel }): this | Promise<this> {
+  init(scenario?: InitScenario<TModel>): this {
     // Skip if already initialized
     if (this.ucpModel !== null) {
       // Merge scenario model if provided

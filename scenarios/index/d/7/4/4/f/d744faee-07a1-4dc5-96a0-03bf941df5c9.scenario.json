@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "d744faee-07a1-4dc5-96a0-03bf941df5c9",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "d744faee-07a1-4dc5-96a0-03bf941df5c9",
+    "name": "IORRoute.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/IORRoute.ts",
+    "definition": "TypeScript IORRoute class/interface",
+    "filePath": "dist/ts/layer2/IORRoute.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-04T17:41:54.346Z",
+    "updatedAt": "2026-01-04T17:41:54.346Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/d/7/4/4/f/d744faee-07a1-4dc5-96a0-03bf941df5c9.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "d/7/4/4/f/d744faee-07a1-4dc5-96a0-03bf941df5c9.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-04T17:41:54.346Z",
+    "updatedAt": "2026-01-04T17:41:54.346Z"
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "ior": {
+    "uuid": "5e938a95-ea88-4f50-8ad6-86efef8eedf3",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "5e938a95-ea88-4f50-8ad6-86efef8eedf3",
+    "name": "Loader",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/Loader.interface.ts",
+    "indexPath": "scenarios/index/5e938a95-ea88-4f50-8ad6-86efef8eedf3.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Loader.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "LoaderModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "protocol",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<LoaderModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "load",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "options",
+            "type": "any",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<any>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "save",
+        "parameters": [
+          {
+            "name": "data",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "options",
+            "type": "any",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Promise<Scenario<LoaderModel>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-04T17:41:56.306Z",
+    "updatedAt": "2026-01-04T17:41:56.306Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

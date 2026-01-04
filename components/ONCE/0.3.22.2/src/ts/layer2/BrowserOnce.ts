@@ -309,12 +309,25 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
     // REPLACEMENT: this.model.xxx = value triggers views automatically
     // ═══════════════════════════════════════════════════════════════
     
-    async init(scenario?: Scenario<ONCEPeerModel>): Promise<this> {
+    /**
+     * Sync init — Web4 standard (calls super.init)
+     * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.4
+     */
+    override init(scenario?: Scenario<ONCEPeerModel>): this {
+        super.init(scenario);
+        return this;
+    }
+
+    /**
+     * Async initialization — called by orchestrator
+     * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.4 — renamed from init()
+     */
+    async initAsync(scenario?: Scenario<ONCEPeerModel>): Promise<this> {
         // ✅ Transition to INITIALIZING state
         this.transitionTo(LifecycleState.INITIALIZING, LifecycleEventType.BEFORE_INIT);
         
-        // ✅ Initialize via UcpComponent (creates UcpModel wrapper)
-        await super.init(scenario);
+        // ✅ Initialize via sync init
+        this.init(scenario);
         
         // ✅ Update model state and apply scenario overrides
         this.model.state = LifecycleState.INITIALIZING;

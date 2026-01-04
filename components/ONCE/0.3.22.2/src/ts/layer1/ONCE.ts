@@ -51,8 +51,8 @@ export class Once {
         // Load appropriate kernel implementation
         const kernel = await this.loadKernel(this.environment.type);
         
-        // Initialize kernel with scenario
-        await kernel.init(scenario);
+        // Initialize kernel with scenario (async — calls initAsync per CPA.4)
+        await kernel.initAsync(scenario);
         
         // Store instance
         this.instance = kernel;

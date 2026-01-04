@@ -268,8 +268,8 @@ export class ScenarioManager {
      * @pdca 2025-12-17-UTC-1830.model-consolidation.pdca.md - MC.1
      */
     createServerModelFromScenario(scenario: Scenario<ONCEPeerModel>): ONCEPeerModel {
-        if (scenario.ior.component !== 'ONCE') {
-            throw new Error(`Invalid scenario type for server model: ${scenario.ior.component}`);
+        if (!scenario.ior || scenario.ior.component !== 'ONCE') {
+            throw new Error(`Invalid scenario type for server model: ${scenario.ior?.component ?? 'unknown'}`);
         }
 
         // Return the model directly - ONCEPeerModel is now the unified model
