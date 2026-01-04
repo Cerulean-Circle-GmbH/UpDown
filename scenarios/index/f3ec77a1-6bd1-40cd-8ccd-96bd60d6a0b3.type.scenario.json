@@ -1,0 +1,56 @@
+{
+  "ior": {
+    "uuid": "f3ec77a1-6bd1-40cd-8ccd-96bd60d6a0b3",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "f3ec77a1-6bd1-40cd-8ccd-96bd60d6a0b3",
+    "name": "UUIDProvider",
+    "extends": null,
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.2/IDProvider"
+    ],
+    "sourcePath": "src/ts/layer2/UUIDProvider.ts",
+    "indexPath": "scenarios/index/f3ec77a1-6bd1-40cd-8ccd-96bd60d6a0b3.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/UUIDProvider.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "create",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "validate",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-04T15:55:02.793Z",
+    "updatedAt": "2026-01-04T15:55:02.793Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

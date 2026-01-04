@@ -1,0 +1,43 @@
+{
+  "ior": {
+    "uuid": "bd44056c-6881-4ce0-b1b3-efc06cb71fce",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "bd44056c-6881-4ce0-b1b3-efc06cb71fce",
+    "name": "DiscoveryResult",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/DiscoveryResult.interface.ts",
+    "indexPath": "scenarios/index/bd44056c-6881-4ce0-b1b3-efc06cb71fce.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/DiscoveryResult.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "deleted",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "discovered",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-04T15:55:02.844Z",
+    "updatedAt": "2026-01-04T15:55:02.844Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

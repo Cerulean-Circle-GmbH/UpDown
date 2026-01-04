@@ -76,6 +76,9 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
       // === VERSION ===
       version: '0.0.0.0',     // Will be discovered in discoverPathsFromFilesystem()
       
+      // === BACKWARD COMPAT (deprecated) ===
+      component: 'ONCE',      // @deprecated - use name instead
+      
       // === ENVIRONMENT ===
       environment: new DefaultEnvironmentInfo(),
       
@@ -179,26 +182,27 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
 
   /**
    * Get project root — prefers CLI (Path Authority), falls back to model
-   * @returns Project root path
+   * @returns Project root path (empty string if not yet initialized)
    */
   get projectRoot(): string {
-    return this.cli?.model?.projectRoot || this.model.projectRoot || '';
+    // Guard: model may not be initialized yet during constructor
+    return this.cli?.model?.projectRoot || this.model?.projectRoot || '';
   }
 
   /**
    * Get components directory — prefers CLI, falls back to model
-   * @returns Components directory path
+   * @returns Components directory path (empty string if not yet initialized)
    */
   get componentsDirectory(): string {
-    return this.cli?.model?.componentsDirectory || this.model.componentsDirectory || '';
+    return this.cli?.model?.componentsDirectory || this.model?.componentsDirectory || '';
   }
 
   /**
    * Get test data directory — prefers CLI, falls back to model
-   * @returns Test data directory path
+   * @returns Test data directory path (empty string if not yet initialized)
    */
   get testDataDirectory(): string {
-    return this.cli?.model?.testDataDirectory || (this.model as any).testDataDirectory || '';
+    return this.cli?.model?.testDataDirectory || this.model?.testDataDirectory || '';
   }
 
   /**
@@ -325,13 +329,20 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
 
   /**
    * ✅ TRUE Radical OOP: Discover public methods for CLI completion
+   * Uses property descriptors to avoid triggering getters
+   * 
    * @pdca 2025-11-10-UTC-1830.migrate-once-to-0.3.20.0.pdca.md
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.5 - Fix getter trigger
    * @cliHide
    */
   private discoverMethods(): void {
     const prototype = Object.getPrototypeOf(this);
     const methodNames = Object.getOwnPropertyNames(prototype)
-      .filter((name) => typeof prototype[name] === "function")
+      .filter((name) => {
+        // Use descriptor to check if method WITHOUT triggering getters
+        const descriptor = Object.getOwnPropertyDescriptor(prototype, name);
+        return descriptor && typeof descriptor.value === "function";
+      })
       .filter((name) => !name.startsWith("_") && name !== "constructor")
       .filter((name) => !["init", "toScenario", "hasMethod", "getMethodSignature", "listMethods", "discoverMethods"].includes(name));
 

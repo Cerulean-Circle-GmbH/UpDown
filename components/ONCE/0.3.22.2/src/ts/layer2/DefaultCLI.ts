@@ -789,13 +789,20 @@ export abstract class DefaultCLI extends UcpComponent<CLIModel> implements CLI {
   /**
    * TSRanger 2.2 method discovery pattern
    * Discovers methods from entire CLI inheritance chain (DefaultCLI and subclasses)
+   * Uses property descriptors to avoid triggering getters
+   * 
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.5 - Fix getter trigger
    */
   protected discoverMethods(): void {
     // Walk up the prototype chain to discover ALL CLI methods
     let currentPrototype = Object.getPrototypeOf(this);
     while (currentPrototype && currentPrototype !== Object.prototype) {
       const methodNames = Object.getOwnPropertyNames(currentPrototype)
-        .filter((name) => typeof currentPrototype[name] === "function")
+        .filter((name) => {
+          // Use descriptor to check if method WITHOUT triggering getters
+          const descriptor = Object.getOwnPropertyDescriptor(currentPrototype, name);
+          return descriptor && typeof descriptor.value === "function";
+        })
         .filter((name) => !name.startsWith("_") && name !== "constructor")
         .filter(
           (name) =>

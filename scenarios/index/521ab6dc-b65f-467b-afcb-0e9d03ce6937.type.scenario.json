@@ -1,0 +1,529 @@
+{
+  "ior": {
+    "uuid": "521ab6dc-b65f-467b-afcb-0e9d03ce6937",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "521ab6dc-b65f-467b-afcb-0e9d03ce6937",
+    "name": "FileOrchestrator",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer4/FileOrchestrator.ts",
+    "indexPath": "scenarios/index/521ab6dc-b65f-467b-afcb-0e9d03ce6937.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/FileOrchestrator.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "fileInitFromBlob",
+        "parameters": [
+          {
+            "name": "file",
+            "type": "DefaultFile",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "blob",
+            "type": "Blob",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "filename",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "mimetype",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<DefaultFile>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "contentHashCompute",
+        "parameters": [
+          {
+            "name": "file",
+            "type": "DefaultFile",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fileSystemInit",
+        "parameters": [
+          {
+            "name": "fileSystem",
+            "type": "DefaultFileSystem",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "scenario",
+            "type": "{ model?: FileSystemModel }",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<DefaultFileSystem>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fileCreate",
+        "parameters": [
+          {
+            "name": "fileSystem",
+            "type": "DefaultFileSystem",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "blob",
+            "type": "Blob",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "filename",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "mimetype",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "parentFolder",
+            "type": "DefaultFolder",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<DefaultFile>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "componentFromFile",
+        "parameters": [
+          {
+            "name": "fileSystem",
+            "type": "DefaultFileSystem",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "nativeFile",
+            "type": "File",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<UcpComponent<any>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "folderInit",
+        "parameters": [
+          {
+            "name": "folder",
+            "type": "DefaultFolder",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "options",
+            "type": "{ path: string; folderName: string; parentIor?: string }",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<DefaultFolder>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "folderCreate",
+        "parameters": [
+          {
+            "name": "fileSystem",
+            "type": "DefaultFileSystem",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "folderName",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "parentFolder",
+            "type": "DefaultFolder",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<DefaultFolder>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "imageInitFromFile",
+        "parameters": [
+          {
+            "name": "image",
+            "type": "DefaultImage",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "file",
+            "type": "File",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<DefaultImage>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "imageDimensionsCompute",
+        "parameters": [
+          {
+            "name": "file",
+            "type": "File",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<{ width: number; height: number }>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fileDelete",
+        "parameters": [
+          {
+            "name": "file",
+            "type": "DefaultFile",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "parentFolder",
+            "type": "DefaultFolder",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fileMove",
+        "parameters": [
+          {
+            "name": "file",
+            "type": "DefaultFile",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "newPath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "oldParent",
+            "type": "DefaultFolder",
+            "optional": true,
+            "defaultValue": null
+          },
+          {
+            "name": "newParent",
+            "type": "DefaultFolder",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fileRename",
+        "parameters": [
+          {
+            "name": "file",
+            "type": "DefaultFile",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "newName",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fileCopy",
+        "parameters": [
+          {
+            "name": "file",
+            "type": "DefaultFile",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "newPath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "newParent",
+            "type": "DefaultFolder",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<DefaultFile>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "folderDelete",
+        "parameters": [
+          {
+            "name": "folder",
+            "type": "DefaultFolder",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "force",
+            "type": "boolean",
+            "optional": false,
+            "defaultValue": "false"
+          },
+          {
+            "name": "parentFolder",
+            "type": "DefaultFolder",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "folderMove",
+        "parameters": [
+          {
+            "name": "folder",
+            "type": "DefaultFolder",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "newPath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "oldParent",
+            "type": "DefaultFolder",
+            "optional": true,
+            "defaultValue": null
+          },
+          {
+            "name": "newParent",
+            "type": "DefaultFolder",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "folderRename",
+        "parameters": [
+          {
+            "name": "folder",
+            "type": "DefaultFolder",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "newName",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "folderLoadFromServer",
+        "parameters": [
+          {
+            "name": "folderPath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<{ contentType: string; data: string | object }>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fileLoadFromServer",
+        "parameters": [
+          {
+            "name": "filePath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "folderLoad",
+        "parameters": [
+          {
+            "name": "path",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<DefaultFolder>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "folderLoadForView",
+        "parameters": [
+          {
+            "name": "path",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "view",
+            "type": "{ folderSet(folder: DefaultFolder): void }",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fileLoad",
+        "parameters": [
+          {
+            "name": "path",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<DefaultFile>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fileLoadForView",
+        "parameters": [
+          {
+            "name": "path",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "view",
+            "type": "{ fileSet(file: DefaultFile): void }",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-04T15:55:02.939Z",
+    "updatedAt": "2026-01-04T15:55:02.939Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

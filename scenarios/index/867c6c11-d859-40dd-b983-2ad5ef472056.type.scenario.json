@@ -1,0 +1,65 @@
+{
+  "ior": {
+    "uuid": "867c6c11-d859-40dd-b983-2ad5ef472056",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "867c6c11-d859-40dd-b983-2ad5ef472056",
+    "name": "MethodDescriptor",
+    "extends": "ior:esm:/ONCE/0.3.22.2/FeatureDescriptor",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/MethodDescriptor.interface.ts",
+    "indexPath": "scenarios/index/867c6c11-d859-40dd-b983-2ad5ef472056.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/MethodDescriptor.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "returnType",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isAsync",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isAction",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "actionMetadata",
+        "targetType": "ActionMetadata"
+      }
+    ],
+    "collections": [
+      {
+        "name": "parameters",
+        "elementType": "ParameterDescriptor"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-04T15:55:02.880Z",
+    "updatedAt": "2026-01-04T15:55:02.880Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}
