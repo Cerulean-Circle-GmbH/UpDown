@@ -24,19 +24,31 @@ export interface Web4TSComponentModel extends Model {
   /** Component's own root directory */
   componentRoot: string;
   
-  /** Project root path */
+  /** 
+   * Project root path
+   * @deprecated DRY violation — Use CLI accessor: this.cli.model.projectRoot
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2
+   */
   projectRoot: string;
   
   /** Target directory for component operations */
   targetDirectory: string;
   
-  /** Pre-calculated components directory */
+  /** 
+   * Pre-calculated components directory
+   * @deprecated DRY violation — Use CLI accessor: this.cli.model.componentsDirectory
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2
+   */
   componentsDirectory: string;
   
   /** Semantic flag indicating test isolation mode */
   isTestIsolation: boolean;
   
-  /** Test data directory path (only when isTestIsolation = true) */
+  /** 
+   * Test data directory path (only when isTestIsolation = true)
+   * @deprecated DRY violation — Use CLI accessor: this.cli.model.testDataDirectory
+   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2
+   */
   testDataDirectory?: string;
   
   /** Display identity - Component name to show */
