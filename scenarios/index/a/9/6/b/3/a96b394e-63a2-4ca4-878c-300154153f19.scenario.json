@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "a96b394e-63a2-4ca4-878c-300154153f19",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "a96b394e-63a2-4ca4-878c-300154153f19",
+    "name": "OncePeerDefaultView.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/OncePeerDefaultView.ts",
+    "definition": "TypeScript OncePeerDefaultView class/interface",
+    "filePath": "dist/ts/layer5/views/OncePeerDefaultView.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T11:32:17.363Z",
+    "updatedAt": "2026-01-06T11:32:17.364Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/a/9/6/b/3/a96b394e-63a2-4ca4-878c-300154153f19.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "a/9/6/b/3/a96b394e-63a2-4ca4-878c-300154153f19.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:32:17.363Z",
+    "updatedAt": "2026-01-06T11:32:17.363Z"
+  }
+}

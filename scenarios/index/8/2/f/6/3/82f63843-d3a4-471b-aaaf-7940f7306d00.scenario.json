@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "82f63843-d3a4-471b-aaaf-7940f7306d00",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "82f63843-d3a4-471b-aaaf-7940f7306d00",
+    "name": "RouteItemView.css",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/css/RouteItemView.css",
+    "definition": "CSS stylesheet for RouteItemView",
+    "filePath": "src/ts/layer5/views/css/RouteItemView.css",
+    "mimetype": "text/css",
+    "createdAt": "2026-01-06T11:32:14.826Z",
+    "updatedAt": "2026-01-06T11:32:14.827Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/8/2/f/6/3/82f63843-d3a4-471b-aaaf-7940f7306d00.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "8/2/f/6/3/82f63843-d3a4-471b-aaaf-7940f7306d00.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:32:14.826Z",
+    "updatedAt": "2026-01-06T11:32:14.826Z"
+  }
+}

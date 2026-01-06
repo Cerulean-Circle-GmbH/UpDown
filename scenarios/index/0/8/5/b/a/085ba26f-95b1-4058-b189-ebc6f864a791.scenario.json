@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "085ba26f-95b1-4058-b189-ebc6f864a791",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "085ba26f-95b1-4058-b189-ebc6f864a791",
+    "name": "Test27_HTTPRouterDomainMatching.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/tests/Test27_HTTPRouterDomainMatching.ts",
+    "definition": "TypeScript Test27_HTTPRouterDomainMatching class/interface",
+    "filePath": "dist/ts/tests/Test27_HTTPRouterDomainMatching.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T11:32:17.402Z",
+    "updatedAt": "2026-01-06T11:32:17.402Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/0/8/5/b/a/085ba26f-95b1-4058-b189-ebc6f864a791.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "0/8/5/b/a/085ba26f-95b1-4058-b189-ebc6f864a791.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:32:17.402Z",
+    "updatedAt": "2026-01-06T11:32:17.402Z"
+  }
+}

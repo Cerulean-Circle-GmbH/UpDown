@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "9ab983a0-58b2-4b26-a996-382513dbd72a",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "9ab983a0-58b2-4b26-a996-382513dbd72a",
+    "name": "OnceServiceWorker.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/OnceServiceWorker.ts",
+    "definition": "TypeScript OnceServiceWorker class/interface",
+    "filePath": "dist/ts/layer2/OnceServiceWorker.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T11:32:16.540Z",
+    "updatedAt": "2026-01-06T11:32:16.541Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/9/a/b/9/8/9ab983a0-58b2-4b26-a996-382513dbd72a.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "9/a/b/9/8/9ab983a0-58b2-4b26-a996-382513dbd72a.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:32:16.540Z",
+    "updatedAt": "2026-01-06T11:32:16.540Z"
+  }
+}

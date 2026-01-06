@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "73ba0c3c-82ff-4e97-a325-ae3d67d498d6",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "73ba0c3c-82ff-4e97-a325-ae3d67d498d6",
+    "name": "UcpView.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/UcpView.ts",
+    "definition": "TypeScript UcpView class/interface",
+    "filePath": "dist/ts/layer5/views/UcpView.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T11:32:17.383Z",
+    "updatedAt": "2026-01-06T11:32:17.384Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/7/3/b/a/0/73ba0c3c-82ff-4e97-a325-ae3d67d498d6.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "7/3/b/a/0/73ba0c3c-82ff-4e97-a325-ae3d67d498d6.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:32:17.383Z",
+    "updatedAt": "2026-01-06T11:32:17.383Z"
+  }
+}

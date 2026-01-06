@@ -1,0 +1,165 @@
+{
+  "ior": {
+    "uuid": "af825092-ef5b-4edd-8048-2904e3091c14",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "af825092-ef5b-4edd-8048-2904e3091c14",
+    "name": "DefaultItemView",
+    "extends": "ior:esm:/ONCE/0.3.22.2/AbstractWebBean",
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.2/ItemViewInterface"
+    ],
+    "sourcePath": "src/ts/layer5/views/DefaultItemView.ts",
+    "indexPath": "scenarios/index/af825092-ef5b-4edd-8048-2904e3091c14.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/DefaultItemView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "cssPath",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "DefaultItemView.css"
+      },
+      {
+        "name": "touchEnabled",
+        "type": "any",
+        "optional": false,
+        "defaultValue": true
+      }
+    ],
+    "properties": [
+      {
+        "name": "name",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "badge",
+        "type": "Reference<string | number>",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "icon",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "viewName",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "badgeRender",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "actionsRender",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "actionButtonCreate",
+        "parameters": [
+          {
+            "name": "buttons",
+            "type": "TemplateResult[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "action",
+            "type": "ActionMetadata",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "actionStyleToClass",
+        "parameters": [
+          {
+            "name": "style",
+            "type": "ActionStyle",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "actionsDiscover",
+        "parameters": [],
+        "returnType": "ActionMetadata[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "actionInvokeHandler",
+        "parameters": [
+          {
+            "name": "action",
+            "type": "ActionMetadata",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:32:18.867Z",
+    "updatedAt": "2026-01-06T11:32:18.867Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

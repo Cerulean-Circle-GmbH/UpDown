@@ -1,0 +1,123 @@
+{
+  "ior": {
+    "uuid": "e8332ac9-29ca-4276-8848-ea71b06b186a",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "e8332ac9-29ca-4276-8848-ea71b06b186a",
+    "name": "AbstractWebBean",
+    "extends": "ior:esm:/ONCE/0.3.22.2/UcpView",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/AbstractWebBean.ts",
+    "indexPath": "scenarios/index/e8332ac9-29ca-4276-8848-ea71b06b186a.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/AbstractWebBean.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [
+      {
+        "name": "viewName",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "cssPathInstance",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "templatePath",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [
+      {
+        "name": "cssCache",
+        "targetType": "CSSResult"
+      },
+      {
+        "name": "templateCache",
+        "targetType": "string"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "connectedCallback",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cssLoad",
+        "parameters": [
+          {
+            "name": "cssPath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<CSSResult>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "templateLoad",
+        "parameters": [
+          {
+            "name": "templatePath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fileLoad",
+        "parameters": [
+          {
+            "name": "filePath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "viewInit",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:32:18.865Z",
+    "updatedAt": "2026-01-06T11:32:18.865Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

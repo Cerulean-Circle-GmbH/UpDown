@@ -1,0 +1,100 @@
+{
+  "ior": {
+    "uuid": "eda47ad6-dbb6-40b4-934d-170da46806a3",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "eda47ad6-dbb6-40b4-934d-170da46806a3",
+    "name": "ActionMetadataImpl",
+    "extends": null,
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.2/ActionMetadata"
+    ],
+    "sourcePath": "src/ts/layer2/Action.ts",
+    "indexPath": "scenarios/index/eda47ad6-dbb6-40b4-934d-170da46806a3.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ActionMetadataImpl.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "component",
+        "type": "string",
+        "optional": false,
+        "defaultValue": ""
+      },
+      {
+        "name": "action",
+        "type": "string",
+        "optional": false,
+        "defaultValue": ""
+      },
+      {
+        "name": "method",
+        "type": "string",
+        "optional": false,
+        "defaultValue": ""
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "optional": false,
+        "defaultValue": ""
+      },
+      {
+        "name": "icon",
+        "type": "string",
+        "optional": false,
+        "defaultValue": "fa-cog"
+      },
+      {
+        "name": "style",
+        "type": "ActionStyle",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "confirmRequired",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": false
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "shortcut",
+        "targetType": "string"
+      },
+      {
+        "name": "confirmMessage",
+        "targetType": "string"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "data",
+            "type": "Partial<ActionMetadata>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:32:17.990Z",
+    "updatedAt": "2026-01-06T11:32:17.990Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

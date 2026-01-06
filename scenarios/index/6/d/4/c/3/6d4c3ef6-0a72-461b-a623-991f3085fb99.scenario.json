@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "6d4c3ef6-0a72-461b-a623-991f3085fb99",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "6d4c3ef6-0a72-461b-a623-991f3085fb99",
+    "name": "DiscoveryResult.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/DiscoveryResult.interface.ts",
+    "definition": "TypeScript DiscoveryResult.interface class/interface",
+    "filePath": "src/ts/layer3/DiscoveryResult.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T11:32:15.363Z",
+    "updatedAt": "2026-01-06T11:32:15.364Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/6/d/4/c/3/6d4c3ef6-0a72-461b-a623-991f3085fb99.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "6/d/4/c/3/6d4c3ef6-0a72-461b-a623-991f3085fb99.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:32:15.363Z",
+    "updatedAt": "2026-01-06T11:32:15.363Z"
+  }
+}

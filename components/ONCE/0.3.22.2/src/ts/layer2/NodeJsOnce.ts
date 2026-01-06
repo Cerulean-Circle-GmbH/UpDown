@@ -572,52 +572,14 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
     return this;
   }
 
+  // toScenario() inherited from UcpComponent (DRY)
+  // @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md
+
   /**
-   * ✅ TRUE Radical OOP: toScenarioWithUser() - Return Web4 Standard format with owner from User
-   * ✅ Uses insourced DefaultUser for owner generation (async)
-   * ✅ Note: Sync toScenario() is inherited from UcpComponent
-   * @pdca 2025-12-17-UTC-1750.browseronce-oncekernel-interface.pdca.md
-   * @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md SOI
-   * @cliHide
+   * Override componentVersion for proper scenario serialization
    */
-  async toScenarioWithUser(): Promise<Scenario<ONCEPeerModel>> {
-    // 1️⃣ Get unified peer model
-    const peerModel = this.getPeerModel();
-    
-    // 2️⃣ Generate owner using insourced DefaultUser (Web4 pattern)
-    let ownerData: string;
-    try {
-      const infrastructure = new NodeOSInfrastructure();
-      await infrastructure.init();
-      const username = 'system';
-      
-      const projectRoot = this.serverHierarchyManager.getProjectRoot();
-      const scenarioService = this.scenarioServiceGet();
-      const user = await DefaultUser.create(username, infrastructure, projectRoot, scenarioService || undefined);
-      
-      const userScenario = await user.toScenario();
-      const ownerJson = JSON.stringify(userScenario);
-      ownerData = Buffer.from(ownerJson).toString('base64');
-    } catch (error) {
-      // ✅ Fallback: Generate minimal User-like scenario
-      const fallbackJson = JSON.stringify({
-        ior: { uuid: peerModel.uuid, component: 'User', version: '0.3.21.1' },
-        owner: '',
-        model: { user: 'system', hostname: peerModel.host, uuid: peerModel.uuid }
-      });
-      ownerData = Buffer.from(fallbackJson).toString('base64');
-    }
-    
-    // 3️⃣ Return Web4 Standard format with ONCEPeerModel
-    return {
-      ior: {
-        uuid: peerModel.uuid,
-        component: 'ONCE',
-        version: peerModel.version
-      },
-      owner: ownerData,
-      model: peerModel
-    };
+  protected override get componentVersion(): string {
+    return this.model?.version || '0.0.0.0';
   }
 
   // ═══════════════════════════════════════════════════════════════════════════

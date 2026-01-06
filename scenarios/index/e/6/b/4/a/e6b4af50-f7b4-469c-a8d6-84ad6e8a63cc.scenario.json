@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "e6b4af50-f7b4-469c-a8d6-84ad6e8a63cc",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "e6b4af50-f7b4-469c-a8d6-84ad6e8a63cc",
+    "name": "DomainCertificateStore.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/DomainCertificateStore.ts",
+    "definition": "TypeScript DomainCertificateStore class/interface",
+    "filePath": "dist/ts/layer2/DomainCertificateStore.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T11:32:16.438Z",
+    "updatedAt": "2026-01-06T11:32:16.439Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/e/6/b/4/a/e6b4af50-f7b4-469c-a8d6-84ad6e8a63cc.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "e/6/b/4/a/e6b4af50-f7b4-469c-a8d6-84ad6e8a63cc.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:32:16.438Z",
+    "updatedAt": "2026-01-06T11:32:16.438Z"
+  }
+}

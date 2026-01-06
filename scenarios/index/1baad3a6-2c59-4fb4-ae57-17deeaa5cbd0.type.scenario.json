@@ -1,0 +1,79 @@
+{
+  "ior": {
+    "uuid": "1baad3a6-2c59-4fb4-ae57-17deeaa5cbd0",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "1baad3a6-2c59-4fb4-ae57-17deeaa5cbd0",
+    "name": "RouteStatisticsModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/RouteStatisticsModel.interface.ts",
+    "indexPath": "scenarios/index/1baad3a6-2c59-4fb4-ae57-17deeaa5cbd0.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/RouteStatisticsModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "totalRequests",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "totalHits",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "totalMisses",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "iorMethodCalls",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "staticFileServes",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "errorCount",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "createdAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "updatedAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:32:18.691Z",
+    "updatedAt": "2026-01-06T11:32:18.691Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}
