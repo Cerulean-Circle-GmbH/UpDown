@@ -7,7 +7,7 @@
  */
 
 import { DefaultOnceKernel } from './DefaultOnceKernel.js';
-import type { ONCEKernel } from '../layer3/ONCE.interface.js';
+//import type { ONCEKernel } from '../layer3/ONCE.interface.js';
 import type { ONCE as ONCEInterface } from '../layer3/ONCE.interface.js';
 import type { EnvironmentInfo } from '../layer3/EnvironmentInfo.interface.js';
 import { DefaultEnvironmentInfo } from './DefaultEnvironmentInfo.js';
