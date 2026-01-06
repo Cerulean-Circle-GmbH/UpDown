@@ -545,15 +545,14 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
         }
     }
     
+    // toScenario() is now inherited from UcpComponent (sync)
+    // @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md SOI
+    
     /**
-     * Hibernate ONCE kernel state
+     * Override componentVersion for proper scenario serialization
      */
-    async toScenario(): Promise<Scenario<ONCEPeerModel>> {
-        return {
-            ior: { uuid: this.model.uuid, component: 'ONCE', version: this.model.version },
-            owner: this.model.uuid,
-            model: this.model
-        };
+    protected override get componentVersion(): string {
+        return this.model?.version || '0.0.0.0';
     }
     
     /**

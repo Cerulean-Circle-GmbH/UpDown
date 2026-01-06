@@ -28,6 +28,7 @@ import { Reference } from '../layer3/Reference.interface.js';
 import { FileModel } from '../layer3/FileModel.interface.js';
 import { FolderModel } from '../layer3/FolderModel.interface.js';
 import { FileSystemModel } from '../layer3/FileSystemModel.interface.js';
+import type { Scenario } from '../layer3/Scenario.interface.js';
 import { UcpComponent } from '../layer2/UcpComponent.js';
 
 /**
@@ -86,10 +87,11 @@ export class FileOrchestrator {
    */
   async fileSystemInit(
     fileSystem: DefaultFileSystem,
-    scenario?: { model?: FileSystemModel }
+    scenario?: Scenario<FileSystemModel>
   ): Promise<DefaultFileSystem> {
-    // Delegate to DefaultFileSystem.init
-    await fileSystem.init(scenario);
+    // Delegate to DefaultFileSystem.init (sync now)
+    // @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md SOI
+    fileSystem.init(scenario);
     return fileSystem;
   }
   

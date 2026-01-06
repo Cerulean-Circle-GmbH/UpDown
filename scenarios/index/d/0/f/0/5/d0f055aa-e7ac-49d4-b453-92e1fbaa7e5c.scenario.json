@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "d0f055aa-e7ac-49d4-b453-92e1fbaa7e5c",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "d0f055aa-e7ac-49d4-b453-92e1fbaa7e5c",
+    "name": "HTTPSServerModel.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/HTTPSServerModel.interface.ts",
+    "definition": "TypeScript HTTPSServerModel.interface class/interface",
+    "filePath": "src/ts/layer3/HTTPSServerModel.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T11:21:39.654Z",
+    "updatedAt": "2026-01-06T11:21:39.655Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/d/0/f/0/5/d0f055aa-e7ac-49d4-b453-92e1fbaa7e5c.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "d/0/f/0/5/d0f055aa-e7ac-49d4-b453-92e1fbaa7e5c.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:21:39.654Z",
+    "updatedAt": "2026-01-06T11:21:39.654Z"
+  }
+}

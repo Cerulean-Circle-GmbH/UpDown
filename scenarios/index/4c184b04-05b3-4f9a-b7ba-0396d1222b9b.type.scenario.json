@@ -1,0 +1,43 @@
+{
+  "ior": {
+    "uuid": "4c184b04-05b3-4f9a-b7ba-0396d1222b9b",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "4c184b04-05b3-4f9a-b7ba-0396d1222b9b",
+    "name": "ServerCapability",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ServerCapability.interface.ts",
+    "indexPath": "scenarios/index/4c184b04-05b3-4f9a-b7ba-0396d1222b9b.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ServerCapability.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "capability",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "port",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:21:42.696Z",
+    "updatedAt": "2026-01-06T11:21:42.696Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

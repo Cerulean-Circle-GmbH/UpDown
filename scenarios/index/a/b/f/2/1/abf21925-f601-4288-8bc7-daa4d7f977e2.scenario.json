@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "abf21925-f601-4288-8bc7-daa4d7f977e2",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "abf21925-f601-4288-8bc7-daa4d7f977e2",
+    "name": "IDProvider.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/IDProvider.interface.ts",
+    "definition": "TypeScript IDProvider.interface class/interface",
+    "filePath": "dist/ts/layer3/IDProvider.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T11:21:41.110Z",
+    "updatedAt": "2026-01-06T11:21:41.111Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/a/b/f/2/1/abf21925-f601-4288-8bc7-daa4d7f977e2.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "a/b/f/2/1/abf21925-f601-4288-8bc7-daa4d7f977e2.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:21:41.110Z",
+    "updatedAt": "2026-01-06T11:21:41.110Z"
+  }
+}

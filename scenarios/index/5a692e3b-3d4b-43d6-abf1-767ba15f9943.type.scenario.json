@@ -1,0 +1,86 @@
+{
+  "ior": {
+    "uuid": "5a692e3b-3d4b-43d6-abf1-767ba15f9943",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "5a692e3b-3d4b-43d6-abf1-767ba15f9943",
+    "name": "Test29_CertificateOrchestratorIntegration",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/tests/Test29_CertificateOrchestratorIntegration.ts",
+    "indexPath": "scenarios/index/5a692e3b-3d4b-43d6-abf1-767ba15f9943.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Test29_CertificateOrchestratorIntegration.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "testDir",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "/tmp/once-test-orchestrator"
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "run",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "statisticsCreate",
+        "parameters": [],
+        "returnType": "StatisticsModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testOrchestratorInit",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testDomainAdd",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testDomainsGet",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testSNICallbackGet",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:21:42.846Z",
+    "updatedAt": "2026-01-06T11:21:42.846Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

@@ -25,6 +25,7 @@ import {
   mimetypeRegistry 
 } from './DefaultMimetypeHandlerRegistry.js';
 import { MimetypeHandler, ComponentConstructor } from '../layer3/MimetypeHandler.interface.js';
+import type { Scenario } from '../layer3/Scenario.interface.js';
 
 
 /**
@@ -85,27 +86,28 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
   /**
    * Initialize filesystem with root folder (SYNC)
    * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4
+   * @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md SOI.4
    */
-  init(scenario?: { model?: FileSystemModel }): this {
+  init(scenario?: Scenario<FileSystemModel>): this {
     super.init(scenario);
     
     // Create root folder if not exists
     if (!this.rootFolderInstance) {
       const folder = new DefaultFolder();
-      folder.init({
-        model: {
-          uuid: this.uuidCreate(),
-          name: 'Root',
-          path: '',
-          folderName: '',
-          children: [],
-          parent: null,
-          createdAt: Date.now(),
-          modifiedAt: Date.now(),
-          isLink: false,
-          linkTarget: null
-        }
-      });
+      const folderScenario = folder.scenarioDefault();
+      folderScenario.model = {
+        ...folderScenario.model,
+        name: 'Root',
+        path: '',
+        folderName: '',
+        children: [],
+        parent: null,
+        createdAt: Date.now(),
+        modifiedAt: Date.now(),
+        isLink: false,
+        linkTarget: null
+      };
+      folder.init(folderScenario);
       this.rootFolderInstance = folder;
       this.model.rootFolderUuid = folder.model.uuid;
     }
@@ -157,23 +159,23 @@ export class DefaultFileSystem extends UcpComponent<FileSystemModel> {
    */
   folderCreate(name: string, parentFolder?: DefaultFolder): DefaultFolder {
     const folder = new DefaultFolder();
-    folder.init({
-      model: {
-        uuid: this.uuidCreate(),
-        name,
-        path: (parentFolder || this.rootFolderInstance)?.fullPath || '/',
-        folderName: name,
-        children: [],
-        parent: (parentFolder || this.rootFolderInstance) ? `ior:scenario:${(parentFolder || this.rootFolderInstance)?.model.uuid}` : null,
-        createdAt: Date.now(),
-        modifiedAt: Date.now(),
-        isLink: false,
-        linkTarget: null
-      }
-    });
+    const folderScenario = folder.scenarioDefault();
+    const parent = parentFolder || this.rootFolderInstance;
+    folderScenario.model = {
+      ...folderScenario.model,
+      name,
+      path: parent?.fullPath || '/',
+      folderName: name,
+      children: [],
+      parent: parent ? `ior:scenario:${parent.model.uuid}` : null,
+      createdAt: Date.now(),
+      modifiedAt: Date.now(),
+      isLink: false,
+      linkTarget: null
+    };
+    folder.init(folderScenario);
     
     // Add to parent folder
-    const parent = parentFolder || this.rootFolderInstance;
     if (parent) {
       parent.childAdd(folder);
     }

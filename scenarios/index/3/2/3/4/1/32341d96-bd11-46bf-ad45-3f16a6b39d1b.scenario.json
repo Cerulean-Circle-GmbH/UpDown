@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "32341d96-bd11-46bf-ad45-3f16a6b39d1b",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "32341d96-bd11-46bf-ad45-3f16a6b39d1b",
+    "name": "StaticFileRoute.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/StaticFileRoute.ts",
+    "definition": "TypeScript StaticFileRoute class/interface",
+    "filePath": "dist/ts/layer2/StaticFileRoute.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T11:21:40.567Z",
+    "updatedAt": "2026-01-06T11:21:40.567Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/3/2/3/4/1/32341d96-bd11-46bf-ad45-3f16a6b39d1b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "3/2/3/4/1/32341d96-bd11-46bf-ad45-3f16a6b39d1b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:21:40.567Z",
+    "updatedAt": "2026-01-06T11:21:40.567Z"
+  }
+}

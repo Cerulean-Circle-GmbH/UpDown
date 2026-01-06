@@ -98,10 +98,10 @@ export interface ONCE {
      * Hibernate ONCE kernel state
      * @returns Complete kernel state as Web4 Standard scenario
      * 
-     * ✅ **RESOLVED**: Async implementations moved to Layer 4 (Orchestrators)
-     * @see session/2025-12-17-UTC-1613.web4-principles-review.pdca.md - Decision 1c
+     * ✅ **RESOLVED**: Now sync per Web4 Principle (UcpComponent.toScenario())
+     * @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md SOI.1
      */
-    toScenario(): Promise<Scenario<ONCEPeerModel>>;
+    toScenario(): Scenario<ONCEPeerModel>;
 
     /**
      * Check if ONCE is initialized

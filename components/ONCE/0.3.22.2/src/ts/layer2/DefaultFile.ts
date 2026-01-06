@@ -252,20 +252,20 @@ export class DefaultFile extends UcpComponent<FileModel> implements FileJs {
    */
   linkCreate(linkPath: string): DefaultFile {
     const link = new DefaultFile();
-    link.init({
-      model: {
-        ...this.modelDefault(),
-        uuid: this.uuidCreate(),
-        path: linkPath,
-        filename: this.model.filename,
-        name: this.model.name,
-        mimetype: this.model.mimetype,
-        size: this.model.size,
-        contentHash: this.model.contentHash,
-        isLink: true,
-        linkTarget: `ior:file://${this.model.path}`
-      }
-    });
+    // Get default scenario, then customize the model
+    const scenario = link.scenarioDefault();
+    scenario.model = {
+      ...scenario.model,
+      path: linkPath,
+      filename: this.model.filename,
+      name: this.model.name,
+      mimetype: this.model.mimetype,
+      size: this.model.size,
+      contentHash: this.model.contentHash,
+      isLink: true,
+      linkTarget: `ior:file://${this.model.path}`
+    };
+    link.init(scenario);
     return link;
   }
   

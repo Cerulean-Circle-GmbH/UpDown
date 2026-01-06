@@ -859,8 +859,9 @@ export class DefaultWeb4TSComponent
         try {
           // P8: DRY — use DefaultUnit.from() instead of reimplementing
           // P6: Empty Constructor — new DefaultUnit().init().from(path)
+          // @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md SOI.6
           const unit = new DefaultUnit();
-          unit.init({});
+          unit.init();  // Uses scenarioDefault() internally
           await unit.from(dir);
           console.log(`  📁 Created folder unit: ${path.relative(componentRoot, dir)}/°folder.unit`);
         } catch (error: any) {

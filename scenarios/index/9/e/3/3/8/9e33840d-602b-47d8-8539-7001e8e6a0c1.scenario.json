@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "9e33840d-602b-47d8-8539-7001e8e6a0c1",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "9e33840d-602b-47d8-8539-7001e8e6a0c1",
+    "name": "AbstractView.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/AbstractView.ts",
+    "definition": "TypeScript AbstractView class/interface",
+    "filePath": "src/ts/layer3/AbstractView.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T11:21:39.523Z",
+    "updatedAt": "2026-01-06T11:21:39.523Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/9/e/3/3/8/9e33840d-602b-47d8-8539-7001e8e6a0c1.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "9/e/3/3/8/9e33840d-602b-47d8-8539-7001e8e6a0c1.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:21:39.523Z",
+    "updatedAt": "2026-01-06T11:21:39.523Z"
+  }
+}

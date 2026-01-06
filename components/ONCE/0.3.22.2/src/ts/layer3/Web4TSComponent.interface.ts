@@ -23,10 +23,13 @@ export interface Web4TSComponent {
   // ═══════════════════════════════════════════════════════════════
   
   /** Initialize with scenario */
-  init(scenario?: Scenario<Web4TSComponentModel>): this | Promise<this>;
+  init(scenario?: Scenario<Web4TSComponentModel>): this;
   
-  /** Convert to scenario for persistence */
-  toScenario(name?: string): Promise<Scenario<Web4TSComponentModel>>;
+  /** 
+   * Convert to scenario for persistence 
+   * @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md SOI.1
+   */
+  toScenario(): Scenario<Web4TSComponentModel>;
   
   // ═══════════════════════════════════════════════════════════════
   // DEVELOPMENT METHODS (TypeScript Component Specific)

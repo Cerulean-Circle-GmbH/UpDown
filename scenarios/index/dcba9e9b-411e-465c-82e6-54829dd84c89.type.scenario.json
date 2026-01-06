@@ -1,0 +1,198 @@
+{
+  "ior": {
+    "uuid": "dcba9e9b-411e-465c-82e6-54829dd84c89",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "dcba9e9b-411e-465c-82e6-54829dd84c89",
+    "name": "ReverseProxyRoute",
+    "extends": "ior:esm:/ONCE/0.3.22.2/ProxyRoute",
+    "implements": [],
+    "sourcePath": "src/ts/layer4/ReverseProxyRoute.ts",
+    "indexPath": "scenarios/index/dcba9e9b-411e-465c-82e6-54829dd84c89.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ReverseProxyRoute.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "hrefRewriter",
+        "type": "HrefRewriter",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<ProxyRouteModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "iconGet",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "labelGet",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "upstreamResponseHandle",
+        "parameters": [
+          {
+            "name": "res",
+            "type": "ServerResponse",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "context",
+            "type": "RewriteContext",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "upstreamRes",
+            "type": "IncomingMessage",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "bufferedResponseHandle",
+        "parameters": [
+          {
+            "name": "res",
+            "type": "ServerResponse",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "context",
+            "type": "RewriteContext",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "upstreamRes",
+            "type": "IncomingMessage",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "chunkCollect",
+        "parameters": [
+          {
+            "name": "chunks",
+            "type": "Buffer[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "chunk",
+            "type": "Buffer",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "bufferedResponseSend",
+        "parameters": [
+          {
+            "name": "res",
+            "type": "ServerResponse",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "context",
+            "type": "RewriteContext",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "upstreamRes",
+            "type": "IncomingMessage",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "chunks",
+            "type": "Buffer[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "bufferErrorHandle",
+        "parameters": [
+          {
+            "name": "res",
+            "type": "ServerResponse",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "error",
+            "type": "Error",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:21:42.768Z",
+    "updatedAt": "2026-01-06T11:21:42.768Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

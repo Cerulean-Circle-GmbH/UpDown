@@ -573,13 +573,14 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
   }
 
   /**
-   * ✅ TRUE Radical OOP: toScenario() - Return Web4 Standard format with ONCEPeerModel
-   * ✅ Uses insourced DefaultUser for owner generation
-   * ✅ Async to support User.toScenario()
+   * ✅ TRUE Radical OOP: toScenarioWithUser() - Return Web4 Standard format with owner from User
+   * ✅ Uses insourced DefaultUser for owner generation (async)
+   * ✅ Note: Sync toScenario() is inherited from UcpComponent
    * @pdca 2025-12-17-UTC-1750.browseronce-oncekernel-interface.pdca.md
+   * @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md SOI
    * @cliHide
    */
-  async toScenario(): Promise<Scenario<ONCEPeerModel>> {
+  async toScenarioWithUser(): Promise<Scenario<ONCEPeerModel>> {
     // 1️⃣ Get unified peer model
     const peerModel = this.getPeerModel();
     

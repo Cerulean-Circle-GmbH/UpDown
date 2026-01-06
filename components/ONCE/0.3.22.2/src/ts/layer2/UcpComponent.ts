@@ -116,6 +116,20 @@ export abstract class UcpComponent<TModel extends Model> {
   protected storage: Reference<Storage> = null;
   
   // ═══════════════════════════════════════════════════════════════
+  // Scenario Infrastructure (P3: fieldNameField, P5: Reference<T>)
+  // @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md SOI.1
+  // ═══════════════════════════════════════════════════════════════
+  
+  /** IOR identity for this component instance */
+  private iorField: Reference<{ uuid: string; component: string; version: string; iorString?: string }> = null;
+  
+  /** Owner UUID (from User service) */
+  private ownerField: string = 'system';
+  
+  /** Scenario unit tracking info */
+  private scenarioUnitField: Reference<import('../layer3/ScenarioUnit.interface.js').ScenarioUnit> = null;
+  
+  // ═══════════════════════════════════════════════════════════════
   // CLI Path Authority (P3: Field suffix, P5: Reference<T>)
   // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.1
   // ═══════════════════════════════════════════════════════════════
@@ -231,6 +245,98 @@ export abstract class UcpComponent<TModel extends Model> {
     return this.cliField?.model?.testDataDirectory ?? '';
   }
   
+  // ═══════════════════════════════════════════════════════════════
+  // Scenario Accessors (P16: TypeScript accessors)
+  // @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md SOI.1
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Get IOR identity for this component
+   * Creates default IOR if not set (lazy initialization)
+   */
+  get ior(): { uuid: string; component: string; version: string; iorString?: string } {
+    if (!this.iorField) {
+      this.iorField = {
+        uuid: this.model?.uuid ?? this.uuidCreate(),
+        component: this.constructor.name,
+        version: this.componentVersion ?? '0.0.0.0'
+      };
+    }
+    return this.iorField;
+  }
+  
+  /**
+   * Get owner UUID
+   * Returns owner from User service via RelatedObjects lookup
+   * Falls back to 'system' if no User service available
+   */
+  get owner(): string {
+    // TODO: Lookup User service via RelatedObjects when available
+    // const userService = this.controller?.relatedObjectLookup(DefaultUser);
+    // return userService?.model?.uuid ?? 'system';
+    return this.ownerField;
+  }
+  
+  /**
+   * Get scenario unit tracking info
+   * Returns undefined if not set
+   */
+  get scenarioUnit(): import('../layer3/ScenarioUnit.interface.js').ScenarioUnit | undefined {
+    return this.scenarioUnitField ?? undefined;
+  }
+  
+  /**
+   * Get component version
+   * Override in subclass to provide version
+   */
+  protected get componentVersion(): string {
+    return '0.0.0.0';
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Scenario Methods
+  // @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md SOI.1
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Serialize component identity to IOR object
+   */
+  toIOR(): { uuid: string; component: string; version: string; iorString?: string } {
+    return this.ior;
+  }
+  
+  /**
+   * Serialize current state to full Scenario
+   * SIMPLE — just assembles from accessors (Single Source of Truth)
+   */
+  toScenario(): Scenario<TModel> {
+    return {
+      ior: this.ior,
+      owner: this.owner,
+      model: this.model,
+      unit: this.scenarioUnit
+    };
+  }
+  
+  /**
+   * Create default Scenario for this component type
+   * Called by init() when no scenario provided
+   * 
+   * Public so callers can get default scenario before customizing
+   * Override in subclass for component-specific defaults
+   */
+  scenarioDefault(): Scenario<TModel> {
+    return {
+      ior: {
+        uuid: this.uuidCreate(),
+        component: this.constructor.name,
+        version: this.componentVersion
+      },
+      owner: this.owner,
+      model: this.modelDefault()
+    };
+  }
+  
   /**
    * Initialize component with scenario (Web4 Radical OOP P6)
    * 
@@ -238,11 +344,17 @@ export abstract class UcpComponent<TModel extends Model> {
    * ✅ Signature: init(scenario?: Scenario<TModel>): this
    * ✅ SYNC ONLY — async logic belongs in Layer 4 orchestrators
    * 
-   * Usage: `new Component().init(scenario)`
+   * VALID:
+   *   new Component().init()           // Uses scenarioDefault()
+   *   new Component().init(scenario)   // Uses provided Scenario<TModel>
    * 
-   * @param scenario Optional scenario (Scenario<TModel>)
+   * INVALID:
+   *   new Component().init({})         // ❌ Empty object is nonsense
+   *   new Component().init({ model })  // ❌ Partial violates Scenario<TModel>
+   * 
+   * @param scenario Optional full Scenario<TModel> — uses scenarioDefault() if not provided
    * @returns this for chaining
-   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.4
+   * @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md SOI.1
    */
   init(scenario?: Scenario<TModel>): this {
     // Skip if already initialized
@@ -254,11 +366,17 @@ export abstract class UcpComponent<TModel extends Model> {
       return this;
     }
     
-    const rawModel = scenario?.model ?? this.modelDefault();
+    // Use provided scenario or create default
+    const s = scenario ?? this.scenarioDefault();
+    
+    // Store scenario parts
+    this.iorField = s.ior;
+    this.ownerField = s.owner;
+    this.scenarioUnitField = s.unit ?? null;
     
     // Create UcpModel wrapper with view update callback
     this.ucpModel = new UcpModel<TModel>().init(
-      rawModel,
+      s.model,
       this.controller.viewsUpdateAll.bind(this.controller)
     );
     
@@ -532,7 +650,7 @@ export abstract class UcpComponent<TModel extends Model> {
     const unit = new DefaultUnit();
     unit.initForComponent(
       this.constructor.name,
-      this.iorGet()?.toString() || '',
+      this.ior?.iorString || '',
       (this.model as any).uuid || this.uuidCreate()
     );
     
@@ -617,19 +735,6 @@ export abstract class UcpComponent<TModel extends Model> {
   // ═══════════════════════════════════════════════════════════════
   
   /**
-   * Hibernate component to scenario
-   * Subclasses can override with more specific types
-   * @returns Scenario representing current state
-   */
-  async toScenario(): Promise<any> {
-    return {
-      ior: this.iorGet(),
-      owner: 'system',
-      model: this.model
-    };
-  }
-  
-  /**
    * Hibernate component to storage
    * Saves scenario to index with symlinks
    * @param symlinkPaths Paths for symlinks (type/domain/capability)
@@ -640,7 +745,7 @@ export abstract class UcpComponent<TModel extends Model> {
       return;
     }
     
-    const scenario = await this.toScenario();
+    const scenario = this.toScenario();
     const uuid = scenario.ior?.uuid;
     
     if (!uuid) {
@@ -663,18 +768,6 @@ export abstract class UcpComponent<TModel extends Model> {
     
     const scenario = await this.storage.scenarioLoad<TModel>(uuid);
     return this.init(scenario as Scenario<TModel>);
-  }
-  
-  /**
-   * Get IOR for this component
-   * Override in subclass to provide actual IOR
-   */
-  protected iorGet(): any {
-    return {
-      uuid: 'unknown',
-      component: this.constructor.name,
-      version: '0.0.0.0'
-    };
   }
 }
 

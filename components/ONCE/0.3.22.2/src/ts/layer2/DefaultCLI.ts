@@ -36,20 +36,8 @@ export abstract class DefaultCLI extends UcpComponent<CLIModel> implements CLI {
   // @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.1
   // model inherited from UcpComponent via getter
   
-  /**
-   * Interoperable Object Reference (IOR)
-   * ⚠️ TODO: Properly implement IOR generation in init() method
-   * @pdca session/2025-11-19-UTC-1805.iteration-01-layer3-split.pdca.md - Stub added for compilation
-   */
-  ior: import("../layer3/IORModel.interface.js").IORModel = {
-    component: 'CLI',
-    version: '0.0.0',
-    uuid: '',
-    protocol: 'web4',
-    host: 'localhost',
-    port: 0,
-    path: '/'
-  };
+  // IOR is now provided by UcpComponent.ior accessor
+  // @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md SOI.2
   
   /**
    * CLI's own method signatures (class metadata, not model state)
@@ -141,8 +129,8 @@ export abstract class DefaultCLI extends UcpComponent<CLIModel> implements CLI {
    * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.1
    */
   init(scenario?: Scenario<CLIModel>): this {
-    // Delegate to UcpComponent.init() which calls modelDefault()
-    super.init(scenario as { model?: CLIModel });
+    // Delegate to UcpComponent.init() — uses scenarioDefault() if no scenario
+    super.init(scenario);
     return this;
   }
 
@@ -388,60 +376,8 @@ export abstract class DefaultCLI extends UcpComponent<CLIModel> implements CLI {
     return instance;
   }
 
-  /**
-   * Convert CLI state to scenario for persistence
-   * Implements Component interface requirement
-   * @pdca 2025-10-28-UTC-2015.user-scenario-antipattern.pdca.md - Use User.toScenario()
-   * @test test/ts/layer2/UserScenarioPattern.test.ts - Scenario pattern verification
-   * @returns Scenario representation of current CLI state
-   */
-  async toScenario(name?: string): Promise<Scenario<CLIModel>> {
-    const componentName = (this.component?.model as any)?.component || 'CLI';
-    const componentVersion = (this.component?.model as any)?.version?.toString() || '0.0.0.0';
-    
-    // ✅ RADICAL OOP: Use User.toScenario() for owner data (Web4 component interface)
-    let ownerJson: string;
-    
-    if (this.user) {
-      // ✅ Use User component's toScenario() - universal Web4 interface
-      const userScenario = await this.user.toScenario();
-      
-      // ✅ Owner data IS the entire User scenario serialized
-      ownerJson = JSON.stringify(userScenario);
-    } else {
-      // @pdca 2025-11-03-UTC-1430.pdca.md - Single Source of Truth: User component required
-      // Fallback with minimal data (NO environment variable access)
-      ownerJson = JSON.stringify({
-        ior: {
-          uuid: this.model.uuid,
-          component: 'User',
-          version: '0.1.0.0',
-          timestamp: new Date().toISOString()
-        },
-        owner: '',  // No nested owner in fallback
-        model: {
-          user: process.env.USER || 'system',
-          hostname: process.env.HOSTNAME || 'localhost',
-          uuid: this.model.uuid,
-          component: componentName,
-          version: componentVersion
-        }
-      });
-    }
-    
-    // ✅ Base64 encode once (DRY - mock-up for encryption)
-    const ownerData = Buffer.from(ownerJson).toString('base64');
-
-    return {
-      ior: {
-        uuid: this.model.uuid,
-        component: componentName,
-        version: componentVersion
-      },
-      owner: ownerData,
-      model: this.model
-    };
-  }
+  // toScenario() is now inherited from UcpComponent (sync)
+  // @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md SOI.2
 
 
 

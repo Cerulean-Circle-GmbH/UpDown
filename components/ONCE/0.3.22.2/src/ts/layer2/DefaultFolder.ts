@@ -423,18 +423,18 @@ export class DefaultFolder extends UcpComponent<FolderModel>
    */
   linkCreate(linkPath: string): DefaultFolder {
     const link = new DefaultFolder();
-    link.init({
-      model: {
-        ...this.modelDefault(),
-        uuid: this.uuidCreate(),
-        path: linkPath,
-        folderName: this.model.folderName,
-        name: this.model.name,
-        children: [], // Links don't copy children
-        isLink: true,
-        linkTarget: `ior:file://${this.fullPath}`
-      }
-    });
+    // Get default scenario, then customize the model
+    const scenario = link.scenarioDefault();
+    scenario.model = {
+      ...scenario.model,
+      path: linkPath,
+      folderName: this.model.folderName,
+      name: this.model.name,
+      children: [], // Links don't copy children
+      isLink: true,
+      linkTarget: `ior:file://${this.fullPath}`
+    };
+    link.init(scenario);
     return link;
   }
   

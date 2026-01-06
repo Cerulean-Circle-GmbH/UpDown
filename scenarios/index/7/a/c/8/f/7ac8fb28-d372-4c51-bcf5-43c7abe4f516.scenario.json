@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "7ac8fb28-d372-4c51-bcf5-43c7abe4f516",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "7ac8fb28-d372-4c51-bcf5-43c7abe4f516",
+    "name": "ONCE.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/ONCE.ts",
+    "definition": "TypeScript ONCE class/interface",
+    "filePath": "dist/ts/layer3/ONCE.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T11:21:41.206Z",
+    "updatedAt": "2026-01-06T11:21:41.207Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/7/a/c/8/f/7ac8fb28-d372-4c51-bcf5-43c7abe4f516.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "7/a/c/8/f/7ac8fb28-d372-4c51-bcf5-43c7abe4f516.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:21:41.206Z",
+    "updatedAt": "2026-01-06T11:21:41.206Z"
+  }
+}

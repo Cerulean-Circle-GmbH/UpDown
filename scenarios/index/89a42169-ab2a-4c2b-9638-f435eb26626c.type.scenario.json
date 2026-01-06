@@ -1,0 +1,329 @@
+{
+  "ior": {
+    "uuid": "89a42169-ab2a-4c2b-9638-f435eb26626c",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "89a42169-ab2a-4c2b-9638-f435eb26626c",
+    "name": "HTTPSServer",
+    "extends": "ior:esm:/ONCE/0.3.22.2/HTTPServer",
+    "implements": [],
+    "sourcePath": "src/ts/layer2/HTTPSServer.ts",
+    "indexPath": "scenarios/index/89a42169-ab2a-4c2b-9638-f435eb26626c.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/HTTPSServer.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "HTTPSServerModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "certificateLoader",
+        "type": "TLSCertificateLoader",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "sniCallback",
+        "type": "SNICallback | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "activeSockets",
+        "type": "Set<any>",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "httpsServer",
+        "targetType": "https.Server"
+      },
+      {
+        "name": "httpRedirectServer",
+        "targetType": "http.Server"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "serverNameIndicationCallbackSet",
+        "parameters": [
+          {
+            "name": "callback",
+            "type": "SNICallback",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<HTTPSServerModel> | undefined",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "router",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "start",
+        "parameters": [
+          {
+            "name": "port",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "bindInterface",
+            "type": "string",
+            "optional": false,
+            "defaultValue": "'0.0.0.0'"
+          }
+        ],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "startExecutor",
+        "parameters": [
+          {
+            "name": "port",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "bindInterface",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "tlsOptions",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "resolve",
+            "type": "(value: this) => void",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "reject",
+            "type": "(error: Error) => void",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "listenCallback",
+        "parameters": [
+          {
+            "name": "port",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "resolve",
+            "type": "(value: this) => void",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "errorCallback",
+        "parameters": [
+          {
+            "name": "reject",
+            "type": "(error: Error) => void",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "error",
+            "type": "Error",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "requestHandle",
+        "parameters": [
+          {
+            "name": "req",
+            "type": "IncomingMessage",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "res",
+            "type": "ServerResponse",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "httpRedirectServerStart",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "redirectHandle",
+        "parameters": [
+          {
+            "name": "req",
+            "type": "IncomingMessage",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "res",
+            "type": "ServerResponse",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "stop",
+        "parameters": [],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "socketTrackAdd",
+        "parameters": [
+          {
+            "name": "socket",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "socketTrackRemove",
+        "parameters": [
+          {
+            "name": "socket",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "httpsServerCloseExecutor",
+        "parameters": [
+          {
+            "name": "resolve",
+            "type": "() => void",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "httpRedirectCloseExecutor",
+        "parameters": [
+          {
+            "name": "resolve",
+            "type": "() => void",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Promise<Scenario<HTTPSServerModel>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:21:42.472Z",
+    "updatedAt": "2026-01-06T11:21:42.472Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}
