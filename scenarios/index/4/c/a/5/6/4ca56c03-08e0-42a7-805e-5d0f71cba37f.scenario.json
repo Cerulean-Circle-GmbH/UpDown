@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "4ca56c03-08e0-42a7-805e-5d0f71cba37f",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "4ca56c03-08e0-42a7-805e-5d0f71cba37f",
+    "name": "LitOverView.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/LitOverView.ts",
+    "definition": "TypeScript LitOverView class/interface",
+    "filePath": "src/ts/layer5/views/LitOverView.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T11:44:04.112Z",
+    "updatedAt": "2026-01-06T11:44:04.113Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/4/c/a/5/6/4ca56c03-08e0-42a7-805e-5d0f71cba37f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "4/c/a/5/6/4ca56c03-08e0-42a7-805e-5d0f71cba37f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:44:04.112Z",
+    "updatedAt": "2026-01-06T11:44:04.112Z"
+  }
+}

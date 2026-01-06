@@ -1,0 +1,61 @@
+{
+  "ior": {
+    "uuid": "d44b6c68-e2a1-4244-88c9-d0bb6569e2b5",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "d44b6c68-e2a1-4244-88c9-d0bb6569e2b5",
+    "name": "WebSocketItemView",
+    "extends": "ior:esm:/ONCE/0.3.22.2/UcpView",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/WebSocketItemView.ts",
+    "indexPath": "scenarios/index/d44b6c68-e2a1-4244-88c9-d0bb6569e2b5.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/WebSocketItemView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "styles",
+        "type": "CSSResultGroup",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "statusClass",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "statusLabel",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:44:08.025Z",
+    "updatedAt": "2026-01-06T11:44:08.025Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

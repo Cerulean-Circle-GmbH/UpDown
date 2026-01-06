@@ -1,0 +1,30 @@
+{
+  "ior": {
+    "uuid": "9eb9a59d-e572-4c0a-af6d-bb7e52ef1712",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "9eb9a59d-e572-4c0a-af6d-bb7e52ef1712",
+    "name": "RouteScenario",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Scenario",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/RouteScenario.interface.ts",
+    "indexPath": "scenarios/index/9eb9a59d-e572-4c0a-af6d-bb7e52ef1712.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/RouteScenario.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:44:07.597Z",
+    "updatedAt": "2026-01-06T11:44:07.597Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

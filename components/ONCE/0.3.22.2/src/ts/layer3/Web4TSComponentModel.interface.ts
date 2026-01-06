@@ -26,28 +26,28 @@ export interface Web4TSComponentModel extends Model {
   
   /** 
    * Project root path
-   * @deprecated DRY violation — Use CLI accessor: this.cli.model.projectRoot
-   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2
+   * @deprecated DRY violation — Use CLI accessor: this.projectRoot
+   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3
    */
-  projectRoot: string;
+  projectRoot?: string;
   
   /** Target directory for component operations */
   targetDirectory: string;
   
   /** 
    * Pre-calculated components directory
-   * @deprecated DRY violation — Use CLI accessor: this.cli.model.componentsDirectory
-   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2
+   * @deprecated DRY violation — Use CLI accessor: this.componentsDirectory
+   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3
    */
-  componentsDirectory: string;
+  componentsDirectory?: string;
   
   /** Semantic flag indicating test isolation mode */
   isTestIsolation: boolean;
   
   /** 
    * Test data directory path (only when isTestIsolation = true)
-   * @deprecated DRY violation — Use CLI accessor: this.cli.model.testDataDirectory
-   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2
+   * @deprecated DRY violation — Use CLI accessor: this.testDataDirectory
+   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3
    */
   testDataDirectory?: string;
   

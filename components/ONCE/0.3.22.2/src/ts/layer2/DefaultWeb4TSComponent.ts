@@ -63,15 +63,16 @@ export class DefaultWeb4TSComponent
    */
   protected modelDefault(): Web4TSComponentModel {
     const version = new SemanticVersion().init();
+    // Note: projectRoot, componentsDirectory, testDataDirectory are REMOVED
+    // Use CLI accessors instead: this.projectRoot, this.componentsDirectory
+    // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3
     return {
       uuid: randomUUID(),
       name: 'Web4TSComponent',
       component: 'Web4TSComponent',
       version: version,
       componentRoot: '',
-      projectRoot: '',
       targetDirectory: '',
-      componentsDirectory: '',
       isTestIsolation: false,
       displayName: 'Web4TSComponent',
       displayVersion: version.toString(),
@@ -691,7 +692,9 @@ export class DefaultWeb4TSComponent
    */
   async unitsDiscover(): Promise<this> {
     const componentRoot = this.model!.targetComponentRoot || this.model!.componentRoot;
-    const projectRoot = this.model!.projectRoot;
+    // Use CLI accessor for projectRoot (Path Authority)
+    // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3
+    const projectRoot = this.projectRoot;
     
     // Initialize UnitDiscoveryService if not already
     if (!this.unitDiscoveryService) {
@@ -710,7 +713,7 @@ export class DefaultWeb4TSComponent
         owner: 'system',
         model: {
           uuid: randomUUID(),
-          projectRoot: projectRoot,
+          projectRoot: projectRoot,  // StorageModel still needs projectRoot
           indexBaseDir: indexBaseDir,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),

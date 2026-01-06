@@ -223,26 +223,32 @@ export abstract class UcpComponent<TModel extends Model> {
   
   /**
    * Project root directory
-   * Delegates to CLI.model.projectRoot (single source of truth)
+   * Prefers CLI (Path Authority), falls back to model for backward compatibility
    */
   get projectRoot(): string {
-    return this.cliField?.model?.projectRoot ?? '';
+    return this.cliField?.model?.projectRoot 
+      ?? (this.model as any)?.projectRoot 
+      ?? '';
   }
   
   /**
    * Components directory
-   * Delegates to CLI.model.componentsDirectory
+   * Prefers CLI (Path Authority), falls back to model for backward compatibility
    */
   get componentsDirectory(): string {
-    return this.cliField?.model?.componentsDirectory ?? '';
+    return this.cliField?.model?.componentsDirectory 
+      ?? (this.model as any)?.componentsDirectory 
+      ?? '';
   }
   
   /**
    * Test data directory
-   * Delegates to CLI.model.testDataDirectory
+   * Prefers CLI (Path Authority), falls back to model for backward compatibility
    */
   get testDataDirectory(): string {
-    return this.cliField?.model?.testDataDirectory ?? '';
+    return this.cliField?.model?.testDataDirectory 
+      ?? (this.model as any)?.testDataDirectory 
+      ?? '';
   }
   
   // ═══════════════════════════════════════════════════════════════

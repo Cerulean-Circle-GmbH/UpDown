@@ -1,0 +1,49 @@
+{
+  "ior": {
+    "uuid": "c667197a-5355-46ee-8bba-9717b2206bf6",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "c667197a-5355-46ee-8bba-9717b2206bf6",
+    "name": "ServerRegistryEntry",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/ServerHierarchyManager.ts",
+    "indexPath": "scenarios/index/c667197a-5355-46ee-8bba-9717b2206bf6.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ServerRegistryEntry.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "scenario",
+        "type": "Scenario<ONCEPeerModel>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "lastSeen",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "websocket",
+        "type": "WebSocket",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:44:07.306Z",
+    "updatedAt": "2026-01-06T11:44:07.306Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

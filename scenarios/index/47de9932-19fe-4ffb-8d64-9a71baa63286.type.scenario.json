@@ -1,0 +1,55 @@
+{
+  "ior": {
+    "uuid": "47de9932-19fe-4ffb-8d64-9a71baa63286",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "47de9932-19fe-4ffb-8d64-9a71baa63286",
+    "name": "PrimaryServerInfo",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/HealthModel.interface.ts",
+    "indexPath": "scenarios/index/47de9932-19fe-4ffb-8d64-9a71baa63286.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/PrimaryServerInfo.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "host",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "port",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "connected",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "domain",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:44:07.533Z",
+    "updatedAt": "2026-01-06T11:44:07.533Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

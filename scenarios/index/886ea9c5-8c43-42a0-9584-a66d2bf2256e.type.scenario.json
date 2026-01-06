@@ -1,0 +1,152 @@
+{
+  "ior": {
+    "uuid": "886ea9c5-8c43-42a0-9584-a66d2bf2256e",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "886ea9c5-8c43-42a0-9584-a66d2bf2256e",
+    "name": "NodeOSInfrastructure",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer1/NodeOSInfrastructure.ts",
+    "indexPath": "scenarios/index/886ea9c5-8c43-42a0-9584-a66d2bf2256e.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/NodeOSInfrastructure.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "EnvironmentModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "getModel",
+        "parameters": [],
+        "returnType": "EnvironmentModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "setModel",
+        "parameters": [
+          {
+            "name": "model",
+            "type": "EnvironmentModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "detectEnvironment",
+        "parameters": [],
+        "returnType": "Promise<EnvironmentModel>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "EnvironmentScenario",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "EnvironmentScenario",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "extractHostname",
+        "parameters": [
+          {
+            "name": "fqdn",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "extractDomain",
+        "parameters": [
+          {
+            "name": "fqdn",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "detectPrimaryIP",
+        "parameters": [
+          {
+            "name": "os",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getScenarioPathComponents",
+        "parameters": [
+          {
+            "name": "fqdn",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "{ domainPath: string[], hostname: string }",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:44:06.347Z",
+    "updatedAt": "2026-01-06T11:44:06.347Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "ior": {
+    "uuid": "811c4648-16ee-4aeb-9ce6-06ce3a101ac5",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "811c4648-16ee-4aeb-9ce6-06ce3a101ac5",
+    "name": "ArtefactModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ArtefactModel.interface.ts",
+    "indexPath": "scenarios/index/811c4648-16ee-4aeb-9ce6-06ce3a101ac5.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ArtefactModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "contentHash",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "algorithm",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "size",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "unitUuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "createdAt",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "mimetype",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:44:07.367Z",
+    "updatedAt": "2026-01-06T11:44:07.367Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

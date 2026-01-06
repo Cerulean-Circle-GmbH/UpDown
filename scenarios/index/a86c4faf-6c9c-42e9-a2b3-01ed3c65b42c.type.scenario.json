@@ -1,0 +1,128 @@
+{
+  "ior": {
+    "uuid": "a86c4faf-6c9c-42e9-a2b3-01ed3c65b42c",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "a86c4faf-6c9c-42e9-a2b3-01ed3c65b42c",
+    "name": "HTTPServer",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/HTTPServer.ts",
+    "indexPath": "scenarios/index/a86c4faf-6c9c-42e9-a2b3-01ed3c65b42c.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/HTTPServer.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "HTTPServerModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "router",
+        "type": "any",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "server",
+        "targetType": "Server"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<HTTPServerModel> | undefined",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "router",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "start",
+        "parameters": [
+          {
+            "name": "port",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "bindInterface",
+            "type": "string",
+            "optional": false,
+            "defaultValue": "'0.0.0.0'"
+          }
+        ],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "stop",
+        "parameters": [],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleRequest",
+        "parameters": [
+          {
+            "name": "req",
+            "type": "IncomingMessage",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "res",
+            "type": "ServerResponse",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Promise<Scenario<HTTPServerModel>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:44:06.970Z",
+    "updatedAt": "2026-01-06T11:44:06.970Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "ior": {
+    "uuid": "ef146656-7d4a-46de-847a-b71c9231a83f",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "ef146656-7d4a-46de-847a-b71c9231a83f",
+    "name": "MethodInfo",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/MethodInfo.interface.ts",
+    "indexPath": "scenarios/index/ef146656-7d4a-46de-847a-b71c9231a83f.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/MethodInfo.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "returnType",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isPublic",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "category",
+        "type": "'create' | 'modify' | 'query' | 'delete' | 'utility' | 'context'",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "parameters",
+        "elementType": "any"
+      },
+      {
+        "name": "examples",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:44:07.571Z",
+    "updatedAt": "2026-01-06T11:44:07.571Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "3234ac36-c4c2-4711-9b71-08822b2bf5a2",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "3234ac36-c4c2-4711-9b71-08822b2bf5a2",
+    "name": "HTTPRouter.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/HTTPRouter.ts",
+    "definition": "TypeScript HTTPRouter class/interface",
+    "filePath": "dist/ts/layer2/HTTPRouter.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T11:44:04.652Z",
+    "updatedAt": "2026-01-06T11:44:04.653Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/3/2/3/4/a/3234ac36-c4c2-4711-9b71-08822b2bf5a2.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "3/2/3/4/a/3234ac36-c4c2-4711-9b71-08822b2bf5a2.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:44:04.652Z",
+    "updatedAt": "2026-01-06T11:44:04.652Z"
+  }
+}

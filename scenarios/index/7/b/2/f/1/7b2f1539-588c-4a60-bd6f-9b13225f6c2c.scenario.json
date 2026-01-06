@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "7b2f1539-588c-4a60-bd6f-9b13225f6c2c",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "7b2f1539-588c-4a60-bd6f-9b13225f6c2c",
+    "name": "TypeDescriptorModel.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/TypeDescriptorModel.interface.ts",
+    "definition": "TypeScript TypeDescriptorModel.interface class/interface",
+    "filePath": "dist/ts/layer3/TypeDescriptorModel.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T11:44:05.542Z",
+    "updatedAt": "2026-01-06T11:44:05.542Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/7/b/2/f/1/7b2f1539-588c-4a60-bd6f-9b13225f6c2c.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "7/b/2/f/1/7b2f1539-588c-4a60-bd6f-9b13225f6c2c.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:44:05.542Z",
+    "updatedAt": "2026-01-06T11:44:05.542Z"
+  }
+}

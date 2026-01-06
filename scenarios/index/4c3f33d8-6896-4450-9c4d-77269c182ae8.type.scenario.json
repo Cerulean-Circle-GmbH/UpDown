@@ -1,0 +1,72 @@
+{
+  "ior": {
+    "uuid": "4c3f33d8-6896-4450-9c4d-77269c182ae8",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "4c3f33d8-6896-4450-9c4d-77269c182ae8",
+    "name": "UnitCacheManagerModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/UnitCacheManagerModel.interface.ts",
+    "indexPath": "scenarios/index/4c3f33d8-6896-4450-9c4d-77269c182ae8.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/UnitCacheManagerModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "cacheName",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "cacheVersion",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "unitCount",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "totalSizeBytes",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "maxSizeBytes",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "statistics",
+        "type": "StatisticsModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "cachedIors",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T11:44:07.751Z",
+    "updatedAt": "2026-01-06T11:44:07.751Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

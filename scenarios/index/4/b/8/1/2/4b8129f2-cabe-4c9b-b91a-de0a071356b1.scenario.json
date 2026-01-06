@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "4b8129f2-cabe-4c9b-b91a-de0a071356b1",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "4b8129f2-cabe-4c9b-b91a-de0a071356b1",
+    "name": "DefaultEnvironmentModel.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer1/DefaultEnvironmentModel.ts",
+    "definition": "TypeScript DefaultEnvironmentModel class/interface",
+    "filePath": "dist/ts/layer1/DefaultEnvironmentModel.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T11:44:04.339Z",
+    "updatedAt": "2026-01-06T11:44:04.339Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/4/b/8/1/2/4b8129f2-cabe-4c9b-b91a-de0a071356b1.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "4/b/8/1/2/4b8129f2-cabe-4c9b-b91a-de0a071356b1.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:44:04.339Z",
+    "updatedAt": "2026-01-06T11:44:04.339Z"
+  }
+}

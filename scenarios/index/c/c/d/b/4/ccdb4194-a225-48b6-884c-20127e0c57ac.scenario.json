@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "ccdb4194-a225-48b6-884c-20127e0c57ac",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "ccdb4194-a225-48b6-884c-20127e0c57ac",
+    "name": "WebSocketItemView.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/WebSocketItemView.ts",
+    "definition": "TypeScript WebSocketItemView class/interface",
+    "filePath": "src/ts/layer5/views/WebSocketItemView.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T11:44:04.304Z",
+    "updatedAt": "2026-01-06T11:44:04.305Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/c/d/b/4/ccdb4194-a225-48b6-884c-20127e0c57ac.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/c/d/b/4/ccdb4194-a225-48b6-884c-20127e0c57ac.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:44:04.304Z",
+    "updatedAt": "2026-01-06T11:44:04.305Z"
+  }
+}

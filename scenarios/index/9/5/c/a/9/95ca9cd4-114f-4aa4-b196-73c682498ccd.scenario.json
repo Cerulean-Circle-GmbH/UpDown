@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "95ca9cd4-114f-4aa4-b196-73c682498ccd",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "95ca9cd4-114f-4aa4-b196-73c682498ccd",
+    "name": "TLSOptions.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/TLSOptions.interface.ts",
+    "definition": "TypeScript TLSOptions.interface class/interface",
+    "filePath": "dist/ts/layer3/TLSOptions.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T11:44:05.501Z",
+    "updatedAt": "2026-01-06T11:44:05.510Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/9/5/c/a/9/95ca9cd4-114f-4aa4-b196-73c682498ccd.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "9/5/c/a/9/95ca9cd4-114f-4aa4-b196-73c682498ccd.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T11:44:05.501Z",
+    "updatedAt": "2026-01-06T11:44:05.501Z"
+  }
+}
