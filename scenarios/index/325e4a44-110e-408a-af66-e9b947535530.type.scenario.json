@@ -1,0 +1,48 @@
+{
+  "ior": {
+    "uuid": "325e4a44-110e-408a-af66-e9b947535530",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "325e4a44-110e-408a-af66-e9b947535530",
+    "name": "ServerListModel",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ServerListModel.interface.ts",
+    "indexPath": "scenarios/index/325e4a44-110e-408a-af66-e9b947535530.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ServerListModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "primary",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "primaryServer",
+        "type": "ONCEPeerModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "servers",
+        "elementType": "Scenario<ONCEPeerModel>"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T15:13:39.248Z",
+    "updatedAt": "2026-01-06T15:13:39.248Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

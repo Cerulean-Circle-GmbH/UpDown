@@ -13,6 +13,7 @@ import { DefaultCLI } from '../layer2/DefaultCLI.js';
 import { NodeJsOnce } from '../layer2/NodeJsOnce.js';
 import { DelegationProxy } from '../layer2/DelegationProxy.js';
 import { MethodSignature } from '../layer3/MethodSignature.interface.js';
+import { UcpComponent } from '../layer2/UcpComponent.js';
 
 export class ONCECLI extends DefaultCLI {
   /** Method signatures for CLI help and completion */
@@ -48,14 +49,10 @@ export class ONCECLI extends DefaultCLI {
     // Create and wrap component (async work)
     const component = new NodeJsOnce();
     
-    // MC.2.5: Set CLI reference for path access (P16: setter)
-    // @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.5
+    // CPA.7.1: CLI is path authority — no model duplication
+    // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.7.1
+    // Note: NodeJsOnce constructor already calls init() + discoverPathsFromFilesystem()
     component.cli = cli;
-    
-    // Legacy: Also set model properties for backward compatibility during migration
-    (component as any).model.projectRoot = cli.model.projectRoot;
-    (component as any).model.targetDirectory = cli.model.projectRoot;
-    (component as any).model.isTestIsolation = cli.model.projectRoot?.includes('/test/data') || false;
     
     await (component as any).getWeb4TSComponent();
     cli.component = await DelegationProxy.start(component as any) as any;
@@ -104,8 +101,10 @@ export class ONCECLI extends DefaultCLI {
     // Ensure component is ready for completion
     if (!this.component) {
       // Re-run start logic for completion context
+      // Note: NodeJsOnce constructor already calls init() + discoverPathsFromFilesystem()
       const component = new NodeJsOnce();
-      (component as any).model.projectRoot = this.model.projectRoot;
+      // CPA.7.1.4: CLI is path authority — no model duplication
+      component.cli = this;
       await (component as any).getWeb4TSComponent();
       this.component = await DelegationProxy.start(component as any) as any;
       this.discoverComponentMethods();

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "7ebb01dd-b92b-492c-b0e2-8babbce65bf2",
+    "component": "Unit",
+    "version": "0.0.0.0"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "7ebb01dd-b92b-492c-b0e2-8babbce65bf2",
+    "name": "UnitDiscoveryService.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.0.0.0/src/ts/layer2/UnitDiscoveryService.ts",
+    "definition": "TypeScript UnitDiscoveryService class/interface",
+    "filePath": "src/ts/layer2/UnitDiscoveryService.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T15:10:48.946Z",
+    "updatedAt": "2026-01-06T15:10:48.947Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/7/e/b/b/0/7ebb01dd-b92b-492c-b0e2-8babbce65bf2.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.0.0.0"
+    ]
+  },
+  "unit": {
+    "indexPath": "7/e/b/b/0/7ebb01dd-b92b-492c-b0e2-8babbce65bf2.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.0.0.0"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.0.0.0",
+    "createdAt": "2026-01-06T15:10:48.946Z",
+    "updatedAt": "2026-01-06T15:10:48.946Z"
+  }
+}

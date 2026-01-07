@@ -1,0 +1,49 @@
+{
+  "ior": {
+    "uuid": "02d06a50-6d21-4702-b564-2602d4b4683c",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "02d06a50-6d21-4702-b564-2602d4b4683c",
+    "name": "ComponentManifest",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ComponentManifest.interface.ts",
+    "indexPath": "scenarios/index/02d06a50-6d21-4702-b564-2602d4b4683c.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ComponentManifest.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "ior",
+        "type": "{\n    uuid: string;\n    component: string;\n    version: string;\n  }",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "owner",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "model",
+        "type": "ComponentManifestModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-07T16:47:01.172Z",
+    "updatedAt": "2026-01-07T16:47:01.172Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

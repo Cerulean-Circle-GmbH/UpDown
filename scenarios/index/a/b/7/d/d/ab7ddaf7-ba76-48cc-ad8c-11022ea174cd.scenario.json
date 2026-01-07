@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "ab7ddaf7-ba76-48cc-ad8c-11022ea174cd",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "ab7ddaf7-ba76-48cc-ad8c-11022ea174cd",
+    "name": "AutomaticCertificateManagementEnvironmentChallengeRoute.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/AutomaticCertificateManagementEnvironmentChallengeRoute.ts",
+    "definition": "TypeScript AutomaticCertificateManagementEnvironmentChallengeRoute class/interface",
+    "filePath": "src/ts/layer2/AutomaticCertificateManagementEnvironmentChallengeRoute.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-07T16:46:57.518Z",
+    "updatedAt": "2026-01-07T16:46:57.519Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/a/b/7/d/d/ab7ddaf7-ba76-48cc-ad8c-11022ea174cd.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "a/b/7/d/d/ab7ddaf7-ba76-48cc-ad8c-11022ea174cd.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-07T16:46:57.518Z",
+    "updatedAt": "2026-01-07T16:46:57.518Z"
+  }
+}

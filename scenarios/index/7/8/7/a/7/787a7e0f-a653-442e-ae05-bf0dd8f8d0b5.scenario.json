@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "787a7e0f-a653-442e-ae05-bf0dd8f8d0b5",
+    "component": "Unit",
+    "version": "0.0.0.0"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "787a7e0f-a653-442e-ae05-bf0dd8f8d0b5",
+    "name": "Storage.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.0.0.0/src/ts/layer3/Storage.interface.ts",
+    "definition": "TypeScript Storage.interface class/interface",
+    "filePath": "dist/ts/layer3/Storage.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T15:10:50.589Z",
+    "updatedAt": "2026-01-06T15:10:50.589Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/7/8/7/a/7/787a7e0f-a653-442e-ae05-bf0dd8f8d0b5.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.0.0.0"
+    ]
+  },
+  "unit": {
+    "indexPath": "7/8/7/a/7/787a7e0f-a653-442e-ae05-bf0dd8f8d0b5.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.0.0.0"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.0.0.0",
+    "createdAt": "2026-01-06T15:10:50.589Z",
+    "updatedAt": "2026-01-06T15:10:50.589Z"
+  }
+}

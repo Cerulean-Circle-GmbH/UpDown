@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "c746fab5-9502-4898-b044-f087eeb3f2ef",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "c746fab5-9502-4898-b044-f087eeb3f2ef",
+    "name": "ParameterDescriptor.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/ParameterDescriptor.interface.ts",
+    "definition": "TypeScript ParameterDescriptor.interface class/interface",
+    "filePath": "dist/ts/layer3/ParameterDescriptor.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T12:56:07.709Z",
+    "updatedAt": "2026-01-06T12:56:07.710Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/7/4/6/f/c746fab5-9502-4898-b044-f087eeb3f2ef.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/7/4/6/f/c746fab5-9502-4898-b044-f087eeb3f2ef.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T12:56:07.709Z",
+    "updatedAt": "2026-01-06T12:56:07.709Z"
+  }
+}

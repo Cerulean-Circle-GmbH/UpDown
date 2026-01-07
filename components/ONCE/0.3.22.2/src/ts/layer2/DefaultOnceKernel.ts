@@ -70,20 +70,20 @@ export abstract class DefaultOnceKernel<TModel extends OnceKernelModel = OnceKer
         // State initialized to CREATED
     }
     
-    /**
-     * Default model for ONCE kernels
-     * Abstract - subclasses MUST override with specific model type
-     * @pdca B.6 - Required by UcpComponent
-     */
-    protected abstract modelDefault(): TModel;
+    // modelDefault() REMOVED — @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.2
+    // Subclasses assign scenario.model inline in their init() method
     
     /**
      * Initialize kernel with scenario
+     * 
+     * Subclasses MUST override and assign scenario.model before calling super.init()
+     * 
      * @param scenario - Initialization scenario (Scenario<TModel>)
      * @returns this - Fluent API (SYNC ONLY)
-     * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.4
+     * @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.2
      */
     init(scenario?: Scenario<TModel>): this {
+        // Subclass must have already assigned scenario.model before calling here
         super.init(scenario);
         return this;
     }
@@ -173,10 +173,21 @@ export abstract class DefaultOnceKernel<TModel extends OnceKernelModel = OnceKer
         
         // Define valid transitions
         const validTransitions: Record<LifecycleState, LifecycleState[]> = {
-            [LifecycleState.CREATED]: [LifecycleState.INITIALIZING],
+            // Class-level states (static lifecycle)
+            [LifecycleState.UNLOADED]: [LifecycleState.LOADING],
+            [LifecycleState.LOADING]: [LifecycleState.LOADED, LifecycleState.ERROR],
+            [LifecycleState.LOADED]: [LifecycleState.STARTING],
+            [LifecycleState.STARTED]: [LifecycleState.CLASS_STOPPING],
+            [LifecycleState.CLASS_STOPPING]: [LifecycleState.CLASS_STOPPED, LifecycleState.ERROR],
+            [LifecycleState.CLASS_STOPPED]: [], // Terminal for class
+            
+            // Instance-level states
+            // CREATED can go to INITIALIZING (component) or STARTING (server - legacy)
+            [LifecycleState.CREATED]: [LifecycleState.INITIALIZING, LifecycleState.STARTING],
             [LifecycleState.INITIALIZING]: [LifecycleState.INITIALIZED, LifecycleState.ERROR],
-            [LifecycleState.INITIALIZED]: [LifecycleState.STARTING],
-            [LifecycleState.STARTING]: [LifecycleState.RUNNING, LifecycleState.ERROR],
+            [LifecycleState.INITIALIZED]: [LifecycleState.READY, LifecycleState.STARTING],
+            [LifecycleState.READY]: [LifecycleState.RUNNING, LifecycleState.STOPPING],
+            [LifecycleState.STARTING]: [LifecycleState.RUNNING, LifecycleState.STARTED, LifecycleState.ERROR],
             [LifecycleState.RUNNING]: [LifecycleState.PAUSING, LifecycleState.STOPPING],
             [LifecycleState.PAUSING]: [LifecycleState.PAUSED, LifecycleState.ERROR],
             [LifecycleState.PAUSED]: [LifecycleState.RESUMING],
@@ -375,13 +386,7 @@ export abstract class DefaultOnceKernel<TModel extends OnceKernelModel = OnceKer
         return this.model;
     }
     
-    /**
-     * Check if kernel is initialized
-     * 
-     * @returns boolean
-     */
-    protected isInitialized(): boolean {
-        return this.model !== null;
-    }
+    // isInitialized() REMOVED — now a getter in UcpComponent
+    // @pdca 2026-01-06-UTC-1400.initialization-guard.pdca.md IG.1
 }
 

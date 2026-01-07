@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "199ed66d-563f-40fc-a45c-ef9ee41385ae",
+    "component": "Unit",
+    "version": "0.0.0.0"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "199ed66d-563f-40fc-a45c-ef9ee41385ae",
+    "name": "Test30_PWAComponents.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.0.0.0/src/ts/tests/Test30_PWAComponents.ts",
+    "definition": "TypeScript Test30_PWAComponents class/interface",
+    "filePath": "dist/ts/tests/Test30_PWAComponents.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T15:10:50.866Z",
+    "updatedAt": "2026-01-06T15:10:50.867Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/1/9/9/e/d/199ed66d-563f-40fc-a45c-ef9ee41385ae.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.0.0.0"
+    ]
+  },
+  "unit": {
+    "indexPath": "1/9/9/e/d/199ed66d-563f-40fc-a45c-ef9ee41385ae.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.0.0.0"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.0.0.0",
+    "createdAt": "2026-01-06T15:10:50.866Z",
+    "updatedAt": "2026-01-06T15:10:50.866Z"
+  }
+}

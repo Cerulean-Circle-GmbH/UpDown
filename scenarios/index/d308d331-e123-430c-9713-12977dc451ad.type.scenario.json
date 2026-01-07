@@ -1,0 +1,119 @@
+{
+  "ior": {
+    "uuid": "d308d331-e123-430c-9713-12977dc451ad",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "d308d331-e123-430c-9713-12977dc451ad",
+    "name": "HTMLRoute",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Route",
+    "implements": [],
+    "sourcePath": "src/ts/layer2/HTMLRoute.ts",
+    "indexPath": "scenarios/index/d308d331-e123-430c-9713-12977dc451ad.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/HTMLRoute.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "htmlProvider",
+        "type": "HTMLProvider",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "iconGet",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "labelGet",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "setProvider",
+        "parameters": [
+          {
+            "name": "provider",
+            "type": "HTMLProvider",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "setPattern",
+        "parameters": [
+          {
+            "name": "pattern",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "method",
+            "type": "HttpMethod",
+            "optional": false,
+            "defaultValue": "HttpMethod.GET"
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleRequest",
+        "parameters": [
+          {
+            "name": "req",
+            "type": "IncomingMessage",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "res",
+            "type": "ServerResponse",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:41:30.983Z",
+    "updatedAt": "2026-01-06T12:41:30.983Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "d4fd4707-79d5-4ee1-8ee1-810c40e14893",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "d4fd4707-79d5-4ee1-8ee1-810c40e14893",
+    "name": "Reference.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/Reference.interface.ts",
+    "definition": "TypeScript Reference.interface class/interface",
+    "filePath": "dist/ts/layer3/Reference.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T15:13:38.079Z",
+    "updatedAt": "2026-01-06T15:13:38.079Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/d/4/f/d/4/d4fd4707-79d5-4ee1-8ee1-810c40e14893.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "d/4/f/d/4/d4fd4707-79d5-4ee1-8ee1-810c40e14893.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T15:13:38.079Z",
+    "updatedAt": "2026-01-06T15:13:38.079Z"
+  }
+}

@@ -80,56 +80,49 @@ export abstract class DefaultCLI extends UcpComponent<CLIModel> implements CLI {
   }
 
   /**
-   * Default model for CLI (Web4 Radical OOP P6)
-   * Called by UcpComponent.init() when no scenario provided
-   * 
-   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.1
-   */
-  protected modelDefault(): CLIModel {
-    // ✅ Path Authority: Calculate ALL paths ONCE and store in model
-    // INHERITANCE: This runs for ALL CLIs (Web4TSComponent, TestIsolatedComponent, PDCA, Unit, etc.)
-    // @pdca 2025-10-30-UTC-1011.pdca.md - Implementing Path Authority
-    const projectRoot = this.calculateProjectRootInternal();
-    
-    return {
-      uuid: this.uuidCreate(),  // P29: Use IDProvider pattern
-      name: "cli",
-      
-      // ✅ Path Authority fields (calculated ONCE, inherited by ALL CLIs)
-      projectRoot: projectRoot,
-      componentsDirectory: join(projectRoot, 'components'),
-      scriptsDirectory: join(projectRoot, 'scripts'),
-      scriptsVersionDirectory: join(projectRoot, 'scripts', 'versions'),
-      testDataDirectory: join(projectRoot, 'test', 'data'),
-      
-      // Completion context - initialized empty
-      completionCliName: "",
-      completionCompWords: [],
-      completionCompCword: 0,
-      // Derived fields
-      completionCurrentWord: "",
-      completionPreviousWord: "",
-      completionCommand: null,
-      completionParameters: [],
-      completionParameterIndex: 0,
-      // Chaining
-      completionChainedCommands: [],
-      // State flags
-      completionIsCompletingMethod: false,
-      completionIsCompletingParameter: false,
-      // Output buffer (Radical OOP - output is STATE!)
-      // @pdca 2025-11-04-UTC-2159.pdca.md - Centralized output in model
-      completionOutputLines: [],
-    };
-  }
-
-  /**
    * Initialize CLI with Scenario (Web4 radical OOP pattern)
-   * @pdca 2025-10-28-UTC-1822.phase1-2-completion.pdca.md - Phase 1: Inline createEmptyModel
-   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.1
+   * 
+   * If no scenario provided:
+   * 1. Get base scenario from parent (correct ior/owner)
+   * 2. Assign model as plain JSON inline
+   * 
+   * @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.2
    */
   init(scenario?: Scenario<CLIModel>): this {
-    // Delegate to UcpComponent.init() — uses scenarioDefault() if no scenario
+    // Create default scenario if not provided
+    if (!scenario) {
+      scenario = super.scenarioDefault();  // Gets correct ior/owner from parent
+      
+      // ✅ Path Authority: Calculate ALL paths ONCE and store in model
+      const projectRoot = this.calculateProjectRootInternal();
+      
+      scenario.model = {                    // Plain JSON inline — KISS
+        uuid: this.uuidCreate(),
+        name: "cli",
+        
+        // ✅ Path Authority fields (calculated ONCE, inherited by ALL CLIs)
+        projectRoot: projectRoot,
+        componentsDirectory: join(projectRoot, 'components'),
+        scriptsDirectory: join(projectRoot, 'scripts'),
+        scriptsVersionDirectory: join(projectRoot, 'scripts', 'versions'),
+        testDataDirectory: join(projectRoot, 'test', 'data'),
+        
+        // Completion context - initialized empty
+        completionCliName: "",
+        completionCompWords: [],
+        completionCompCword: 0,
+        completionCurrentWord: "",
+        completionPreviousWord: "",
+        completionCommand: null,
+        completionParameters: [],
+        completionParameterIndex: 0,
+        completionChainedCommands: [],
+        completionIsCompletingMethod: false,
+        completionIsCompletingParameter: false,
+        completionOutputLines: [],
+      };
+    }
+    
     super.init(scenario);
     return this;
   }

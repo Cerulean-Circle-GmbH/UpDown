@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "a72efb00-93a3-4142-93d5-73db888b65ce",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "a72efb00-93a3-4142-93d5-73db888b65ce",
+    "name": "HTMLTemplateLoader.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/HTMLTemplateLoader.ts",
+    "definition": "TypeScript HTMLTemplateLoader class/interface",
+    "filePath": "dist/ts/layer2/HTMLTemplateLoader.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T13:32:30.424Z",
+    "updatedAt": "2026-01-06T13:32:30.425Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/a/7/2/e/f/a72efb00-93a3-4142-93d5-73db888b65ce.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "a/7/2/e/f/a72efb00-93a3-4142-93d5-73db888b65ce.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T13:32:30.424Z",
+    "updatedAt": "2026-01-06T13:32:30.424Z"
+  }
+}

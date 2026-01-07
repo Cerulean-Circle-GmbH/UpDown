@@ -1,0 +1,55 @@
+{
+  "ior": {
+    "uuid": "8fecc375-5074-49df-9caf-3cf7dc08ae28",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "8fecc375-5074-49df-9caf-3cf7dc08ae28",
+    "name": "EnvironmentScenario",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/EnvironmentScenario.interface.ts",
+    "indexPath": "scenarios/index/8fecc375-5074-49df-9caf-3cf7dc08ae28.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/EnvironmentScenario.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "hostname",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "fqdn",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "primaryIP",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "domain",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:41:31.669Z",
+    "updatedAt": "2026-01-06T12:41:31.669Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

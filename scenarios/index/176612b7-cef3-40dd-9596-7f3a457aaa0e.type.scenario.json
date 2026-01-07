@@ -1,0 +1,136 @@
+{
+  "ior": {
+    "uuid": "176612b7-cef3-40dd-9596-7f3a457aaa0e",
+    "component": "ONCE",
+    "version": "0.0.0.0"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "176612b7-cef3-40dd-9596-7f3a457aaa0e",
+    "name": "ONCECLI",
+    "extends": "ior:esm:/ONCE/0.0.0.0/DefaultCLI",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/ONCECLI.ts",
+    "indexPath": "scenarios/index/176612b7-cef3-40dd-9596-7f3a457aaa0e.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ONCECLI.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "methodSignatures",
+        "type": "Map<string, MethodSignature>",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "any",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cliStart",
+        "parameters": [
+          {
+            "name": "args",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "discoverComponentMethods",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "showUsage",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "shCompletion",
+        "parameters": [
+          {
+            "name": "cword",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "words",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "listMethods",
+        "parameters": [],
+        "returnType": "string[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getValidCompletionValues",
+        "parameters": [],
+        "returnType": "Promise<string[]>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "execute",
+        "parameters": [
+          {
+            "name": "args",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.0.0.0",
+    "createdAt": "2026-01-06T15:10:52.811Z",
+    "updatedAt": "2026-01-06T15:10:52.811Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

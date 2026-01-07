@@ -1,0 +1,76 @@
+{
+  "ior": {
+    "uuid": "0e44f836-75de-4a76-b1f8-fe4b3364b51f",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "0e44f836-75de-4a76-b1f8-fe4b3364b51f",
+    "name": "AbstractItemView",
+    "extends": "ior:esm:/ONCE/0.3.22.2/AbstractView",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/AbstractItemView.ts",
+    "indexPath": "scenarios/index/0e44f836-75de-4a76-b1f8-fe4b3364b51f.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/AbstractItemView.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [
+      {
+        "name": "name",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "icon",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "badge",
+        "type": "Reference<string | number>",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "onClick",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onContextMenu",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T15:13:39.144Z",
+    "updatedAt": "2026-01-06T15:13:39.144Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "ior": {
+    "uuid": "f0ac2562-9dc5-401a-8d33-90853dd3d09e",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "f0ac2562-9dc5-401a-8d33-90853dd3d09e",
+    "name": "RouterModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/RouterModel.interface.ts",
+    "indexPath": "scenarios/index/f0ac2562-9dc5-401a-8d33-90853dd3d09e.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/RouterModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "defaultRoute",
+        "type": "RouteModel",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "statistics",
+        "type": "StatisticsModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "routes",
+        "elementType": "RouteModel"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:41:31.751Z",
+    "updatedAt": "2026-01-06T12:41:31.751Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

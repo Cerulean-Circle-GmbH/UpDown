@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "3cef3b8f-1ce8-49eb-83a1-15bf7d80395d",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "3cef3b8f-1ce8-49eb-83a1-15bf7d80395d",
+    "name": "ResolvedChild.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/ResolvedChild.interface.ts",
+    "definition": "TypeScript ResolvedChild.interface class/interface",
+    "filePath": "src/ts/layer3/ResolvedChild.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T13:32:29.874Z",
+    "updatedAt": "2026-01-06T13:32:29.876Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/3/c/e/f/3/3cef3b8f-1ce8-49eb-83a1-15bf7d80395d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "3/c/e/f/3/3cef3b8f-1ce8-49eb-83a1-15bf7d80395d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T13:32:29.874Z",
+    "updatedAt": "2026-01-06T13:32:29.874Z"
+  }
+}

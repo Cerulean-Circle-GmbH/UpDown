@@ -1,0 +1,149 @@
+{
+  "ior": {
+    "uuid": "36af4e81-3110-42c7-ac9d-c5adaef2fc8d",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "36af4e81-3110-42c7-ac9d-c5adaef2fc8d",
+    "name": "OncePeerItemView",
+    "extends": "ior:esm:/ONCE/0.3.22.2/DefaultItemView",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/OncePeerItemView.ts",
+    "indexPath": "scenarios/index/36af4e81-3110-42c7-ac9d-c5adaef2fc8d.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/OncePeerItemView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "cssPath",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "OncePeerItemView.css"
+      }
+    ],
+    "properties": [
+      {
+        "name": "viewName",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "badge",
+        "type": "Reference<string | number>",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "icon",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "peerUuid",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "peerState",
+        "type": "LifecycleState",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "peerPort",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "isPrimary",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "badgeRender",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "actionsRender",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "actionsDiscover",
+        "parameters": [],
+        "returnType": "ActionMetadata[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "actionInvokeHandler",
+        "parameters": [
+          {
+            "name": "action",
+            "type": "ActionMetadata",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:56:08.969Z",
+    "updatedAt": "2026-01-06T12:56:08.969Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

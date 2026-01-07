@@ -59,44 +59,9 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
   // Path properties via CLI accessor (MC.2.6)
   // Access via this.model getter from UcpComponent
   
-  /**
-   * Default model for NodeJsOnce
-   * Required by UcpComponent (abstract in DefaultOnceKernel)
-   * 
-   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.1
-   * Using ONCEPeerModel instead of deprecated ONCEModel
-   * Path properties via CLI accessor (MC.2.6)
-   */
-  protected modelDefault(): ONCEPeerModel {
-    return {
-      // === IDENTITY (Model) ===
-      uuid: crypto.randomUUID(),
-      name: 'ONCE',
-      
-      // === VERSION ===
-      version: '0.0.0.0',     // Will be discovered in discoverPathsFromFilesystem()
-      
-      // === BACKWARD COMPAT (deprecated) ===
-      component: 'ONCE',      // @deprecated - use name instead
-      
-      // === ENVIRONMENT ===
-      environment: new DefaultEnvironmentInfo(),
-      
-      // === LIFECYCLE ===
-      state: LifecycleState.CREATED,
-      startTime: new Date(),
-      connectionTime: null,
-      
-      // === NETWORK ===
-      host: 'localhost',
-      port: 42777,
-      isPrimary: false,
-      primaryPeerUuid: null,
-      
-      // === P2P ===
-      peers: [],
-    };
-  }
+  // modelDefault() REMOVED — @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.2
+  // Model assigned inline in init()
+  
   private web4ts?: any; // Lazy-initialized Web4TSComponent for delegation (dynamic import, no static dependency)
   private user?: User; // Optional User service (lazy initialization)
   
@@ -118,11 +83,9 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
 
   /**
    * ✅ Extends AbstractONCEKernel (unified architecture v0.3.21.6)
-   * Constructor has minimal initialization for backward compatibility
-   * Full refactoring to empty constructor + init() pattern in future iteration
    * 
    * @pdca session/2025-11-22-UTC-2200.iteration-01.8-unified-kernel-architecture.pdca.md
-   * @pdca 2025-12-12-UTC-2300.i9-1-ucpmodel-class.pdca.md - Uses UcpModel
+   * @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.2
    */
   constructor() {
     super(); // AbstractONCEKernel (unified architecture)
@@ -130,10 +93,9 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
     // ✅ Web4 Principle 20: Initialize ID provider (testable, replaceable)
     this.idProvider = new UUIDProvider();
     
-    // ✅ Initialize UcpModel SYNCHRONOUSLY via base class
-    // MUST call DefaultOnceKernel.init() not this.init() to avoid async polymorphism
-    // @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4
-    DefaultOnceKernel.prototype.init.call(this);
+    // ✅ Initialize with default scenario (model inline)
+    // @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.2
+    this.init();
     
     // ✅ Synchronous path discovery (needed for CLI to work)
     this.discoverPathsFromFilesystem();
@@ -146,6 +108,51 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
     
     // Discover methods for CLI
     this.discoverMethods();
+  }
+  
+  /**
+   * Initialize NodeJsOnce with scenario
+   * 
+   * If no scenario provided:
+   * 1. Get base scenario from parent (correct ior/owner)
+   * 2. Assign model as plain JSON inline
+   * 
+   * @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.2
+   */
+  override init(scenario?: Scenario<ONCEPeerModel>): this {
+    if (!scenario) {
+      scenario = super.scenarioDefault();  // Gets correct ior/owner from parent
+      scenario.model = {                    // Plain JSON inline — KISS
+        // === IDENTITY (Model) ===
+        uuid: crypto.randomUUID(),
+        name: 'ONCE',
+        
+        // === VERSION ===
+        version: '0.0.0.0',     // Will be discovered in discoverPathsFromFilesystem()
+        
+        // === BACKWARD COMPAT (deprecated) ===
+        component: 'ONCE',      // @deprecated - use name instead
+        
+        // === ENVIRONMENT ===
+        environment: new DefaultEnvironmentInfo(),
+        
+        // === LIFECYCLE ===
+        state: LifecycleState.CREATED,
+        startTime: new Date(),
+        connectionTime: null,
+        
+        // === NETWORK ===
+        host: 'localhost',
+        port: 42777,
+        isPrimary: false,
+        primaryPeerUuid: null,
+        
+        // === P2P ===
+        peers: [],
+      };
+    }
+    
+    return super.init(scenario);
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -183,18 +190,22 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
   /**
    * ✅ Static factory method - Web4 Component Pattern
    * Creates ONCE instance and registers as global singleton
-   * @param scenario Optional scenario for initialization
+   * 
+   * Note: Constructor already calls init() with defaults.
+   * If scenario provided, it's merged into existing model.
+   * 
+   * @param scenario Optional scenario to merge after default init
    * @returns ONCE instance registered globally
    * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md - Phase 2
+   * @pdca 2026-01-06-UTC-1400.initialization-guard.pdca.md IG.2
    */
   static start(scenario?: any): NodeJsOnce {
-    // Create instance
+    // Create instance (constructor calls init() with defaults)
     const once = new NodeJsOnce();
     
-    // Initialize with scenario if provided
-    if (scenario) {
-      once.init(scenario);
-    }
+    // ALWAYS call init — merges scenario if already initialized
+    // @pdca 2026-01-06-UTC-1400.initialization-guard.pdca.md IG.2
+    once.init(scenario);
     
     // Register as global singleton
     once.registerGlobalSingleton();
@@ -491,14 +502,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
     }
   }
 
-  /**
-   * Sync init — Web4 standard (calls super.init)
-   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.4
-   */
-  override init(scenario?: Scenario<ONCEPeerModel>): this {
-    super.init(scenario);
-    return this;
-  }
+  // init() moved near constructor — @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.2
 
   /**
    * ✅ Async initialization — called by static start() or ONCECLI
@@ -927,7 +931,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
     console.log(`🔄 Scenario exchange with ${peerIOR.model.uuid}`);
   }
 
-  isInitialized(): boolean {
+  isLifecycleInitialized(): boolean {
     return this.model.initialized || false;
   }
 

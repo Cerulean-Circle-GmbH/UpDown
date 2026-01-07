@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "d6b9144c-77ee-483e-b01b-8e08426ad881",
+    "component": "Unit",
+    "version": "0.0.0.0"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "d6b9144c-77ee-483e-b01b-8e08426ad881",
+    "name": "LitItemView.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.0.0.0/src/ts/layer5/views/LitItemView.ts",
+    "definition": "TypeScript LitItemView class/interface",
+    "filePath": "dist/ts/layer5/views/LitItemView.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T15:10:50.757Z",
+    "updatedAt": "2026-01-06T15:10:50.758Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/d/6/b/9/1/d6b9144c-77ee-483e-b01b-8e08426ad881.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.0.0.0"
+    ]
+  },
+  "unit": {
+    "indexPath": "d/6/b/9/1/d6b9144c-77ee-483e-b01b-8e08426ad881.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.0.0.0"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.0.0.0",
+    "createdAt": "2026-01-06T15:10:50.757Z",
+    "updatedAt": "2026-01-06T15:10:50.757Z"
+  }
+}

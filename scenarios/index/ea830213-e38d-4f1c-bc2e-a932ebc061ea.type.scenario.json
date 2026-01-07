@@ -1,0 +1,97 @@
+{
+  "ior": {
+    "uuid": "ea830213-e38d-4f1c-bc2e-a932ebc061ea",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "ea830213-e38d-4f1c-bc2e-a932ebc061ea",
+    "name": "RelatedObjects",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/RelatedObjects.interface.ts",
+    "indexPath": "scenarios/index/ea830213-e38d-4f1c-bc2e-a932ebc061ea.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/RelatedObjects.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "relatedObjectRegister",
+        "parameters": [
+          {
+            "name": "interfaceKey",
+            "type": "InterfaceKey<T>",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "instance",
+            "type": "T",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "relatedObjectLookup",
+        "parameters": [
+          {
+            "name": "interfaceKey",
+            "type": "InterfaceKey<T>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "T[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "relatedObjectLookupFirst",
+        "parameters": [
+          {
+            "name": "interfaceKey",
+            "type": "InterfaceKey<T>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<T>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "relatedObjectUnregister",
+        "parameters": [
+          {
+            "name": "instance",
+            "type": "T",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T15:13:39.234Z",
+    "updatedAt": "2026-01-06T15:13:39.234Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

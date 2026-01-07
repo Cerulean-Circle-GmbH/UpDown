@@ -1,0 +1,42 @@
+{
+  "ior": {
+    "uuid": "36cefff4-6605-4edf-be8f-c98a7cea31ef",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "36cefff4-6605-4edf-be8f-c98a7cea31ef",
+    "name": "OverViewModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/AbstractOverView.ts",
+    "indexPath": "scenarios/index/36cefff4-6605-4edf-be8f-c98a7cea31ef.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/OverViewModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "title",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "items",
+        "elementType": "ItemViewModel"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T15:13:39.145Z",
+    "updatedAt": "2026-01-06T15:13:39.145Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

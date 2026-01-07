@@ -1,0 +1,48 @@
+{
+  "ior": {
+    "uuid": "b987fbb0-3e02-40ca-ad4c-f4723861f23f",
+    "component": "ONCE",
+    "version": "0.0.0.0"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "b987fbb0-3e02-40ca-ad4c-f4723861f23f",
+    "name": "ItemViewModel",
+    "extends": "ior:esm:/ONCE/0.0.0.0/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ItemViewModel.interface.ts",
+    "indexPath": "scenarios/index/b987fbb0-3e02-40ca-ad4c-f4723861f23f.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ItemViewModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "description",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "icon",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "badge",
+        "targetType": "string | number"
+      }
+    ],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.0.0.0",
+    "createdAt": "2026-01-06T15:10:52.129Z",
+    "updatedAt": "2026-01-06T15:10:52.129Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

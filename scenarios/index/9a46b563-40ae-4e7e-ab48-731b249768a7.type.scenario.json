@@ -1,0 +1,73 @@
+{
+  "ior": {
+    "uuid": "9a46b563-40ae-4e7e-ab48-731b249768a7",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "9a46b563-40ae-4e7e-ab48-731b249768a7",
+    "name": "ComponentManifestModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ComponentManifest.interface.ts",
+    "indexPath": "scenarios/index/9a46b563-40ae-4e7e-ab48-731b249768a7.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ComponentManifestModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "version",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "layer2Implementation",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "entryPoints",
+        "type": "ManifestEntryPoints",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "units",
+        "type": "ManifestUnits",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "dependencies",
+        "type": "Record<string, string>",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:56:08.768Z",
+    "updatedAt": "2026-01-06T12:56:08.768Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

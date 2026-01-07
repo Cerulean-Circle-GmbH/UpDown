@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "1978136b-2e09-47e0-b17c-b20568a29c70",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "1978136b-2e09-47e0-b17c-b20568a29c70",
+    "name": "Completion.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/Completion.ts",
+    "definition": "TypeScript Completion class/interface",
+    "filePath": "dist/ts/layer3/Completion.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-07T16:46:59.654Z",
+    "updatedAt": "2026-01-07T16:46:59.655Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/1/9/7/8/1/1978136b-2e09-47e0-b17c-b20568a29c70.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "1/9/7/8/1/1978136b-2e09-47e0-b17c-b20568a29c70.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-07T16:46:59.654Z",
+    "updatedAt": "2026-01-07T16:46:59.654Z"
+  }
+}

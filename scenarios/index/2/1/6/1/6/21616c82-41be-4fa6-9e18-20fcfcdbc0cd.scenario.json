@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "21616c82-41be-4fa6-9e18-20fcfcdbc0cd",
+    "component": "Unit",
+    "version": "0.0.0.0"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "21616c82-41be-4fa6-9e18-20fcfcdbc0cd",
+    "name": "ActionTarget.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.0.0.0/src/ts/layer3/ActionTarget.interface.ts",
+    "definition": "TypeScript ActionTarget.interface class/interface",
+    "filePath": "src/ts/layer3/ActionTarget.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T15:10:48.974Z",
+    "updatedAt": "2026-01-06T15:10:48.975Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/2/1/6/1/6/21616c82-41be-4fa6-9e18-20fcfcdbc0cd.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.0.0.0"
+    ]
+  },
+  "unit": {
+    "indexPath": "2/1/6/1/6/21616c82-41be-4fa6-9e18-20fcfcdbc0cd.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.0.0.0"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.0.0.0",
+    "createdAt": "2026-01-06T15:10:48.974Z",
+    "updatedAt": "2026-01-06T15:10:48.974Z"
+  }
+}

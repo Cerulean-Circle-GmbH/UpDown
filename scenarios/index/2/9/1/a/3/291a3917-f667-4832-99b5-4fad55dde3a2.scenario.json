@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "291a3917-f667-4832-99b5-4fad55dde3a2",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "291a3917-f667-4832-99b5-4fad55dde3a2",
+    "name": "AbstractItemView.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/AbstractItemView.ts",
+    "definition": "TypeScript AbstractItemView class/interface",
+    "filePath": "src/ts/layer3/AbstractItemView.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T15:13:36.921Z",
+    "updatedAt": "2026-01-06T15:13:36.921Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/2/9/1/a/3/291a3917-f667-4832-99b5-4fad55dde3a2.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "2/9/1/a/3/291a3917-f667-4832-99b5-4fad55dde3a2.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T15:13:36.921Z",
+    "updatedAt": "2026-01-06T15:13:36.921Z"
+  }
+}

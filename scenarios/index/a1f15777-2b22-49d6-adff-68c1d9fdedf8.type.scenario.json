@@ -1,0 +1,709 @@
+{
+  "ior": {
+    "uuid": "a1f15777-2b22-49d6-adff-68c1d9fdedf8",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "a1f15777-2b22-49d6-adff-68c1d9fdedf8",
+    "name": "OnceServiceWorker",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/OnceServiceWorker.ts",
+    "indexPath": "scenarios/index/a1f15777-2b22-49d6-adff-68c1d9fdedf8.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/OnceServiceWorker.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "ServiceWorkerModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "cacheManager",
+        "type": "UnitCacheManager",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isInitialized",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": false
+      },
+      {
+        "name": "BANDWIDTH_SAMPLE_SIZE",
+        "type": "number",
+        "optional": false,
+        "defaultValue": 10
+      },
+      {
+        "name": "SLOW_THRESHOLD_MS",
+        "type": "number",
+        "optional": false,
+        "defaultValue": 2000
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "recentFetchTimesMs",
+        "elementType": "number"
+      }
+    ],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "model",
+            "type": "Partial<ServiceWorkerModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cacheNameGet",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "installHandle",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "SWExtendableEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "installExecute",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "precacheExecute",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitsResponseParse",
+        "parameters": [
+          {
+            "name": "response",
+            "type": "Response",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<UnitDescriptor[]>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitsExtract",
+        "parameters": [
+          {
+            "name": "data",
+            "type": "UnitsApiResponse",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "UnitDescriptor[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitsPrecache",
+        "parameters": [
+          {
+            "name": "units",
+            "type": "UnitDescriptor[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitIsEssential",
+        "parameters": [
+          {
+            "name": "unit",
+            "type": "UnitDescriptor",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitIorGet",
+        "parameters": [
+          {
+            "name": "unit",
+            "type": "UnitDescriptor",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "precacheComplete",
+        "parameters": [
+          {
+            "name": "count",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "precacheError",
+        "parameters": [
+          {
+            "name": "error",
+            "type": "Error",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "skipWaitingExecute",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "skipWaitingComplete",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "activateHandle",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "SWExtendableEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "activateExecute",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "versionUpdateNotify",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "oldCachesClean",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "oldCachesFilter",
+        "parameters": [
+          {
+            "name": "currentCache",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "cacheNames",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "oldCacheCheck",
+        "parameters": [
+          {
+            "name": "currentCache",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "deletePromises",
+            "type": "Promise<boolean>[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "cacheName",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "oldCachesCleanComplete",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "clientsClaimExecute",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "clientsClaimComplete",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fetchHandle",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "SWFetchEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "isBandwidthLimited",
+        "parameters": [],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "sumReducer",
+        "parameters": [
+          {
+            "name": "acc",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "val",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "number",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fetchTimeRecord",
+        "parameters": [
+          {
+            "name": "durationMs",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "networkFirstFetch",
+        "parameters": [
+          {
+            "name": "request",
+            "type": "Request",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Response>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "networkFirstSuccess",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "startTime",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "response",
+            "type": "Response",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Response",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "networkFirstFallback",
+        "parameters": [
+          {
+            "name": "request",
+            "type": "Request",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "error",
+            "type": "Error",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Response>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cacheFallbackHandle",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "cachedResponse",
+            "type": "Response | undefined",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Response",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "shouldSkipCache",
+        "parameters": [
+          {
+            "name": "pathname",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "patternMatches",
+        "parameters": [
+          {
+            "name": "pattern",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "pathname",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cacheFirstFetch",
+        "parameters": [
+          {
+            "name": "request",
+            "type": "Request",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Response>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cacheFirstHandle",
+        "parameters": [
+          {
+            "name": "request",
+            "type": "Request",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "cachedResponse",
+            "type": "Response | undefined",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Response> | Response",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fetchAndCache",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "response",
+            "type": "Response",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Response",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitTypeFromPath",
+        "parameters": [
+          {
+            "name": "path",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "UnitType",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "messageHandle",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "SWMessageEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "statusReply",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "SWMessageEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "globalSingletonRegister",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "register",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "modelGet",
+        "parameters": [],
+        "returnType": "ServiceWorkerModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cacheManagerGet",
+        "parameters": [],
+        "returnType": "UnitCacheManager",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "isInitializedGet",
+        "parameters": [],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "statisticsCreate",
+        "parameters": [
+          {
+            "name": "now",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "StatisticsModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "uuidGenerate",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T15:13:39.015Z",
+    "updatedAt": "2026-01-06T15:13:39.015Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

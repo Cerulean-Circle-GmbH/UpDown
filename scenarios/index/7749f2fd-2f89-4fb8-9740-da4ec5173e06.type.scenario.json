@@ -1,0 +1,64 @@
+{
+  "ior": {
+    "uuid": "7749f2fd-2f89-4fb8-9740-da4ec5173e06",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "7749f2fd-2f89-4fb8-9740-da4ec5173e06",
+    "name": "ResolvedChild",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ResolvedChild.interface.ts",
+    "indexPath": "scenarios/index/7749f2fd-2f89-4fb8-9740-da4ec5173e06.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ResolvedChild.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "uuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isFolder",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "hasChildren",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "mimetype",
+        "targetType": "string"
+      },
+      {
+        "name": "size",
+        "targetType": "number"
+      }
+    ],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T13:32:32.862Z",
+    "updatedAt": "2026-01-06T13:32:32.862Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

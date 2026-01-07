@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "b78c56ea-d3ca-45a1-a22a-a4dff0402520",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "b78c56ea-d3ca-45a1-a22a-a4dff0402520",
+    "name": "DefaultWebSocket.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/DefaultWebSocket.ts",
+    "definition": "TypeScript DefaultWebSocket class/interface",
+    "filePath": "dist/ts/layer2/DefaultWebSocket.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T15:13:37.642Z",
+    "updatedAt": "2026-01-06T15:13:37.642Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/b/7/8/c/5/b78c56ea-d3ca-45a1-a22a-a4dff0402520.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "b/7/8/c/5/b78c56ea-d3ca-45a1-a22a-a4dff0402520.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T15:13:37.642Z",
+    "updatedAt": "2026-01-06T15:13:37.642Z"
+  }
+}

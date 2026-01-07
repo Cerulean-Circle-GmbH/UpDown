@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "aaebc6d5-df9e-4843-a538-4577dbeed235",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "aaebc6d5-df9e-4843-a538-4577dbeed235",
+    "name": "DefaultArtefact.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/DefaultArtefact.ts",
+    "definition": "TypeScript DefaultArtefact class/interface",
+    "filePath": "src/ts/layer2/DefaultArtefact.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T15:13:36.691Z",
+    "updatedAt": "2026-01-06T15:13:36.692Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/a/a/e/b/c/aaebc6d5-df9e-4843-a538-4577dbeed235.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "a/a/e/b/c/aaebc6d5-df9e-4843-a538-4577dbeed235.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T15:13:36.691Z",
+    "updatedAt": "2026-01-06T15:13:36.691Z"
+  }
+}

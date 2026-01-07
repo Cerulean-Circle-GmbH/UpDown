@@ -21,8 +21,11 @@
 import { UcpController } from './UcpController.js';
 import { TypeDescriptor } from '../layer3/TypeDescriptor.js';
 import { UcpModel } from '../layer3/UcpModel.js';
+import { Component } from '../layer3/Component.js';
+import { LifecycleState } from '../layer3/LifecycleState.enum.js';
 import { View } from '../layer3/View.interface.js';
 import { Reference } from '../layer3/Reference.interface.js';
+import { Once } from '../layer1/ONCE.js';
 import type { Model } from '../layer3/Model.interface.js';
 import type { Scenario } from '../layer3/Scenario.interface.js';
 import type { UnitModel } from '../layer3/UnitModel.interface.js';
@@ -32,6 +35,7 @@ import type { IDProvider } from '../layer3/IDProvider.interface.js';
 import type { ContentIDProvider } from '../layer3/ContentIDProvider.interface.js';
 import type { AbstractConstructor } from '../layer3/InterfaceConstructor.type.js';
 import type { CLIModel } from '../layer3/CLIModel.interface.js';
+import { PersistenceManager } from '../layer3/PersistenceManager.interface.js';
 import { UUIDProvider } from './UUIDProvider.js';
 import { SHA256Provider } from './SHA256Provider.js';
 import { JsInterface } from '../layer3/JsInterface.js';
@@ -42,7 +46,7 @@ import type { DefaultCLI } from './DefaultCLI.js';
 /**
  * UcpComponent - Abstract base class for all Web4 components
  * 
- * Hierarchy: Component interface → UcpComponent → DefaultXxx implementations
+ * Hierarchy: JsInterface → Component → UcpComponent → DefaultXxx implementations
  * 
  * Features:
  * - Lifecycle management (init, start, stop, hibernate)
@@ -51,8 +55,9 @@ import type { DefaultCLI } from './DefaultCLI.js';
  * - Unit-based scenario storage integration
  * 
  * @pdca 2025-12-07-UTC-1800.unit-integration-scenario-storage.pdca.md
+ * @pdca session/2026-01-06-UTC-1600.web4-component-lifecycle.pdca.md
  */
-export abstract class UcpComponent<TModel extends Model> {
+export abstract class UcpComponent<TModel extends Model> extends Component<TModel> {
   
   // ═══════════════════════════════════════════════════════════════
   // Static Type Descriptor - MDA MOF Runtime Metadata
@@ -85,8 +90,14 @@ export abstract class UcpComponent<TModel extends Model> {
   /**
    * Static start method - called when class is loaded
    * Initializes type descriptor and auto-registers with declared JsInterfaces
+   * 
+   * @pdca session/2026-01-06-UTC-1600.web4-component-lifecycle.pdca.md
    */
-  static start(): void {
+  static override start(): void {
+    // Call Component.start() for lifecycle state management
+    super.start();
+    
+    // Build TypeDescriptor if not already set
     if (!this.type) {
       this.type = new TypeDescriptor().init({ name: this.name });
     }
@@ -100,6 +111,8 @@ export abstract class UcpComponent<TModel extends Model> {
         );
       }
     }
+    
+    // TODO: Load views and CSS here (Phase 4 of lifecycle PDCA)
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -129,6 +142,9 @@ export abstract class UcpComponent<TModel extends Model> {
   /** Scenario unit tracking info */
   private scenarioUnitField: Reference<import('../layer3/ScenarioUnit.interface.js').ScenarioUnit> = null;
   
+  // Initialization state now managed by Component base class via instanceState
+  // @pdca session/2026-01-06-UTC-1600.web4-component-lifecycle.pdca.md
+  
   // ═══════════════════════════════════════════════════════════════
   // CLI Path Authority (P3: Field suffix, P5: Reference<T>)
   // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.1
@@ -155,6 +171,7 @@ export abstract class UcpComponent<TModel extends Model> {
    * Empty constructor - Web4 Principle 6
    */
   constructor() {
+    super();
     this.controller = new UcpController<TModel>();
     
     // Register default ID providers in RelatedObjects
@@ -214,6 +231,33 @@ export abstract class UcpComponent<TModel extends Model> {
    */
   get cliAvailable(): boolean {
     return this.cliField !== null;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // Initialization State (P16: TypeScript accessors)
+  // @pdca 2026-01-06-UTC-1400.initialization-guard.pdca.md IG.1
+  // ═══════════════════════════════════════════════════════════════
+  
+  // isInitialized getter now in Component base class
+  // @pdca session/2026-01-06-UTC-1600.web4-component-lifecycle.pdca.md
+  
+  /**
+   * Guard — throws if not initialized
+   * Call at start of methods that require initialization
+   * 
+   * @throws Error if component not initialized
+   * @example
+   * ```typescript
+   * someMethod(): void {
+   *   this.requireInitialized();
+   *   // ... method logic
+   * }
+   * ```
+   */
+  protected requireInitialized(): void {
+    if (!this.isInitialized) {
+      throw new Error(`${this.constructor.name} not initialized. Call init() first.`);
+    }
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -326,10 +370,10 @@ export abstract class UcpComponent<TModel extends Model> {
   
   /**
    * Create default Scenario for this component type
-   * Called by init() when no scenario provided
+   * Returns base scenario with ior/owner — model is null
    * 
-   * Public so callers can get default scenario before customizing
-   * Override in subclass for component-specific defaults
+   * Child classes call this in init(), then assign scenario.model inline
+   * @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.1
    */
   scenarioDefault(): Scenario<TModel> {
     return {
@@ -339,7 +383,7 @@ export abstract class UcpComponent<TModel extends Model> {
         version: this.componentVersion
       },
       owner: this.owner,
-      model: this.modelDefault()
+      model: null as unknown as TModel  // Child assigns inline in init()
     };
   }
   
@@ -386,18 +430,49 @@ export abstract class UcpComponent<TModel extends Model> {
       this.controller.viewsUpdateAll.bind(this.controller)
     );
     
+    // Wire persistence callback - auto-save to IndexedDB + SW Cache on model changes
+    // @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.3
+    this.ucpModel.persistenceCallbackSet(this.scenarioPersist.bind(this));
+    
     // Initialize controller with UcpModel
     this.controller.initWithUcpModel(this.ucpModel);
+    
+    // Mark as initialized — component now fully operational
+    // @pdca session/2026-01-06-UTC-1600.web4-component-lifecycle.pdca.md
+    this.instanceState = LifecycleState.INITIALIZED;
     
     return this;
   }
   
   /**
-   * Override to provide default model
-   * Called when no scenario provided to init()
-   * Returns RAW model - will be wrapped in UcpModel by init()
+   * Persist current scenario to IndexedDB + SW Cache
+   * Called automatically when model changes (via UcpModel proxy)
+   * @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.3
    */
-  protected abstract modelDefault(): TModel;
+  protected scenarioPersist(): void {
+    const scenario = this.toScenario();
+    const uuid = scenario.ior?.uuid;
+    if (!uuid) return;
+    
+    // Get PersistenceManager from RelatedObjects (if available)
+    const pm = this.controller.relatedObjectLookupFirst(PersistenceManager);
+    if (pm) {
+      // Fire-and-forget async save
+      pm.scenarioSave(uuid, scenario, []);
+    }
+    
+    // SW Cache: Post to ServiceWorker for caching (browser only)
+    if (Once.isBrowser && navigator.serviceWorker?.controller) {
+      navigator.serviceWorker.controller.postMessage({
+        type: 'CACHE_SCENARIO',
+        uuid,
+        scenario
+      });
+    }
+  }
+  
+  // modelDefault() REMOVED — @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.1
+  // Child classes assign scenario.model inline in their init() method
   
   // ═══════════════════════════════════════════════════════════════
   // MODEL ACCESSORS (via UcpModel)

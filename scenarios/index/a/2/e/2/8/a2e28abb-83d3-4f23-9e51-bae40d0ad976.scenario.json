@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "a2e28abb-83d3-4f23-9e51-bae40d0ad976",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "a2e28abb-83d3-4f23-9e51-bae40d0ad976",
+    "name": "SyncStatus.enum.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/SyncStatus.enum.ts",
+    "definition": "TypeScript SyncStatus.enum class/interface",
+    "filePath": "src/ts/layer3/SyncStatus.enum.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T15:13:37.320Z",
+    "updatedAt": "2026-01-06T15:13:37.320Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/a/2/e/2/8/a2e28abb-83d3-4f23-9e51-bae40d0ad976.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "a/2/e/2/8/a2e28abb-83d3-4f23-9e51-bae40d0ad976.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T15:13:37.320Z",
+    "updatedAt": "2026-01-06T15:13:37.320Z"
+  }
+}

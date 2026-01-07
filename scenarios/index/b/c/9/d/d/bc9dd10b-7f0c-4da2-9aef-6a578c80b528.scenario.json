@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "bc9dd10b-7f0c-4da2-9aef-6a578c80b528",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "bc9dd10b-7f0c-4da2-9aef-6a578c80b528",
+    "name": "ActionMetadata.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/ActionMetadata.interface.ts",
+    "definition": "TypeScript ActionMetadata.interface class/interface",
+    "filePath": "dist/ts/layer3/ActionMetadata.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T12:41:28.369Z",
+    "updatedAt": "2026-01-06T12:41:28.370Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/b/c/9/d/d/bc9dd10b-7f0c-4da2-9aef-6a578c80b528.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "b/c/9/d/d/bc9dd10b-7f0c-4da2-9aef-6a578c80b528.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T12:41:28.369Z",
+    "updatedAt": "2026-01-06T12:41:28.369Z"
+  }
+}

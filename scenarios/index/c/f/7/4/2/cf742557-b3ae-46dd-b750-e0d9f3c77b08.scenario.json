@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "cf742557-b3ae-46dd-b750-e0d9f3c77b08",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "cf742557-b3ae-46dd-b750-e0d9f3c77b08",
+    "name": "ActionView.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/ActionView.interface.ts",
+    "definition": "TypeScript ActionView.interface class/interface",
+    "filePath": "src/ts/layer3/ActionView.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T13:32:29.315Z",
+    "updatedAt": "2026-01-06T13:32:29.315Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/f/7/4/2/cf742557-b3ae-46dd-b750-e0d9f3c77b08.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/f/7/4/2/cf742557-b3ae-46dd-b750-e0d9f3c77b08.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T13:32:29.315Z",
+    "updatedAt": "2026-01-06T13:32:29.315Z"
+  }
+}

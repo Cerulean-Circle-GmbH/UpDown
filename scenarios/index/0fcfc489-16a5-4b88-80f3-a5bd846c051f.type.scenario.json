@@ -1,0 +1,157 @@
+{
+  "ior": {
+    "uuid": "0fcfc489-16a5-4b88-80f3-a5bd846c051f",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "0fcfc489-16a5-4b88-80f3-a5bd846c051f",
+    "name": "IORMethodRouter",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer4/IORMethodRouter.ts",
+    "indexPath": "scenarios/index/0fcfc489-16a5-4b88-80f3-a5bd846c051f.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/IORMethodRouter.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "{\n        uuid: string;\n        name: string;\n        iorComponent?: string;  // DRY: for toScenario()\n        iorVersion?: string;    // DRY: from init(), never hardcode\n        routeCount: number;\n        successCount: number;\n        errorCount: number;\n        createdAt: string;\n        updatedAt: string;\n    }",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "onceKernel",
+        "type": "any",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<any> | undefined",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "kernel",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "idProvider",
+            "type": "IDProvider",
+            "optional": false,
+            "defaultValue": "new UUIDProvider()"
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "parseIorUrl",
+        "parameters": [
+          {
+            "name": "url",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "IORMethodCall | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "route",
+        "parameters": [
+          {
+            "name": "url",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "body",
+            "type": "any",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Scenario<any>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "lookupComponent",
+        "parameters": [
+          {
+            "name": "methodCall",
+            "type": "IORMethodCall",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<any>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "invokeMethod",
+        "parameters": [
+          {
+            "name": "component",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "methodCall",
+            "type": "IORMethodCall",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "body",
+            "type": "any",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Scenario<any>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Promise<Scenario<any>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:41:31.824Z",
+    "updatedAt": "2026-01-06T12:41:31.824Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

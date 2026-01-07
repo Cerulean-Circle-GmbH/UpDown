@@ -1,0 +1,77 @@
+{
+  "ior": {
+    "uuid": "a5ac76cd-2d6b-450d-9632-837ca72cd7ae",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "a5ac76cd-2d6b-450d-9632-837ca72cd7ae",
+    "name": "View",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/View.interface.ts",
+    "indexPath": "scenarios/index/a5ac76cd-2d6b-450d-9632-837ca72cd7ae.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/View.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "refresh",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "add",
+        "parameters": [
+          {
+            "name": "childView",
+            "type": "View<any>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "childRemove",
+        "parameters": [
+          {
+            "name": "childView",
+            "type": "View<any>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "any",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:41:31.776Z",
+    "updatedAt": "2026-01-06T12:41:31.776Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

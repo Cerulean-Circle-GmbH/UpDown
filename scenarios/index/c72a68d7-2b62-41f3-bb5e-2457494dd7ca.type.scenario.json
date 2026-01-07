@@ -1,0 +1,140 @@
+{
+  "ior": {
+    "uuid": "c72a68d7-2b62-41f3-bb5e-2457494dd7ca",
+    "component": "ONCE",
+    "version": "0.0.0.0"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "c72a68d7-2b62-41f3-bb5e-2457494dd7ca",
+    "name": "DefaultImage",
+    "extends": "ior:esm:/ONCE/0.0.0.0/UcpComponent",
+    "implements": [],
+    "sourcePath": "src/ts/layer2/DefaultImage.ts",
+    "indexPath": "scenarios/index/c72a68d7-2b62-41f3-bb5e-2457494dd7ca.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/DefaultImage.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [
+      {
+        "name": "objectUrl",
+        "type": "Reference<string>",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "file",
+        "type": "Reference<DefaultFile>",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "width",
+        "type": "number",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "height",
+        "type": "number",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "aspectRatio",
+        "type": "number",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "alt",
+        "type": "unknown",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "caption",
+        "type": "unknown",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      }
+    ],
+    "references": [
+      {
+        "name": "fileInstance",
+        "targetType": "DefaultFile"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "registerMimetypeHandler",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "modelDefault",
+        "parameters": [],
+        "returnType": "ImageModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "initFromFile",
+        "parameters": [
+          {
+            "name": "file",
+            "type": "File",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "imageDimensionsCompute",
+        "parameters": [
+          {
+            "name": "file",
+            "type": "File",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<{ width: number; height: number }>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "dispose",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.0.0.0",
+    "createdAt": "2026-01-06T15:10:51.505Z",
+    "updatedAt": "2026-01-06T15:10:51.505Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

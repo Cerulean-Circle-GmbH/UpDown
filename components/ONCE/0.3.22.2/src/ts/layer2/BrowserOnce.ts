@@ -46,52 +46,66 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
     // Model type is ONCEPeerModel via generic inheritance
     // Access via this.model getter from UcpComponent
     
+    // modelDefault() REMOVED — @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.2
+    // Model assigned inline in init()
+    
     /**
-     * Default model for BrowserOnce
-     * Required by UcpComponent (abstract in DefaultOnceKernel)
-     * @pdca session/2025-12-17-UTC-1750.browseronce-oncekernel-interface.pdca.md - ONCEPeerModel
+     * Initialize BrowserOnce with scenario
+     * 
+     * If no scenario provided:
+     * 1. Get base scenario from parent (correct ior/owner)
+     * 2. Assign model as plain JSON inline
+     * 
+     * @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.2
+     * @pdca 2026-01-06-UTC-1400.initialization-guard.pdca.md IG.3
      */
-    protected modelDefault(): ONCEPeerModel {
-        // Extract version from script URL (Web4 Path Authority pattern)
-        const scriptUrl = import.meta.url;
-        const versionMatch = scriptUrl.match(/\/(\d+\.\d+\.\d+\.\d+)\//);
-        const detectedVersion = versionMatch ? versionMatch[1] : '0.0.0.0';
+    override init(scenario?: Scenario<ONCEPeerModel>): this {
+        if (!scenario) {
+            scenario = super.scenarioDefault();  // Gets correct ior/owner from parent
+            
+            // Extract version from script URL (Web4 Path Authority pattern)
+            const scriptUrl = import.meta.url;
+            const versionMatch = scriptUrl.match(/\/(\d+\.\d+\.\d+\.\d+)\//);
+            const detectedVersion = versionMatch ? versionMatch[1] : '0.0.0.0';
+            
+            scenario.model = {                    // Plain JSON inline — KISS
+                // Base model properties (from Model interface)
+                uuid: this.generateUUID(),
+                name: 'BrowserONCEKernel',
+                
+                // Version
+                version: detectedVersion,
+                
+                // Environment
+                environment: DefaultEnvironmentInfo.createBrowserEnvironment(
+                    navigator.userAgent
+                ).getModel(),
+                
+                // Lifecycle
+                state: LifecycleState.CREATED,
+                startTime: new Date(),
+                connectionTime: null,
+                
+                // Network
+                host: window.location.hostname,
+                port: parseInt(window.location.port) || (window.location.protocol === 'https:' ? 443 : 80),
+                isPrimary: false,
+                primaryPeerUuid: null,
+                
+                // P2P
+                peers: [],
+                
+                // Browser-specific (optional in interface)
+                ws: null,
+                isConnected: false,
+                peerHost: window.location.host,  // @deprecated - use host
+                peerUUID: null,                   // @deprecated - use uuid
+                peerVersion: 'unknown',           // @deprecated - use version
+                primaryPeer: null                 // @deprecated - use primaryPeerUuid
+            };
+        }
         
-        return {
-            // Base model properties (from Model interface)
-            uuid: this.generateUUID(),
-            name: 'BrowserONCEKernel',
-            
-            // Version
-            version: detectedVersion,
-            
-            // Environment
-            environment: DefaultEnvironmentInfo.createBrowserEnvironment(
-                navigator.userAgent
-            ).getModel(),
-            
-            // Lifecycle
-            state: LifecycleState.CREATED,
-            startTime: new Date(),
-            connectionTime: null,
-            
-            // Network
-            host: window.location.hostname,
-            port: parseInt(window.location.port) || (window.location.protocol === 'https:' ? 443 : 80),
-            isPrimary: false,
-            primaryPeerUuid: null,
-            
-            // P2P
-            peers: [],
-            
-            // Browser-specific (optional in interface)
-            ws: null,
-            isConnected: false,
-            peerHost: window.location.host,  // @deprecated - use host
-            peerUUID: null,                   // @deprecated - use uuid
-            peerVersion: 'unknown',           // @deprecated - use version
-            primaryPeer: null                 // @deprecated - use primaryPeerUuid
-        };
+        return super.init(scenario);
     }
     
     // ========================================
@@ -309,14 +323,7 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
     // REPLACEMENT: this.model.xxx = value triggers views automatically
     // ═══════════════════════════════════════════════════════════════
     
-    /**
-     * Sync init — Web4 standard (calls super.init)
-     * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.4
-     */
-    override init(scenario?: Scenario<ONCEPeerModel>): this {
-        super.init(scenario);
-        return this;
-    }
+    // init() moved near top — @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.2
 
     /**
      * Async initialization — called by orchestrator
@@ -556,9 +563,9 @@ export class BrowserOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONC
     }
     
     /**
-     * Check if ONCE is initialized
+     * Check if ONCE lifecycle is initialized (INITIALIZED or RUNNING state)
      */
-    isInitialized(): boolean {
+    isLifecycleInitialized(): boolean {
         return this.model.state === LifecycleState.INITIALIZED || 
                this.model.state === LifecycleState.RUNNING;
     }

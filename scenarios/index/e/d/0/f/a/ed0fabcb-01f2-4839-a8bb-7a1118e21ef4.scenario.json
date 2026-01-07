@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "ed0fabcb-01f2-4839-a8bb-7a1118e21ef4",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "ed0fabcb-01f2-4839-a8bb-7a1118e21ef4",
+    "name": "MethodSignature.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/MethodSignature.interface.ts",
+    "definition": "TypeScript MethodSignature.interface class/interface",
+    "filePath": "src/ts/layer3/MethodSignature.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T13:32:29.703Z",
+    "updatedAt": "2026-01-06T13:32:29.706Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/e/d/0/f/a/ed0fabcb-01f2-4839-a8bb-7a1118e21ef4.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "e/d/0/f/a/ed0fabcb-01f2-4839-a8bb-7a1118e21ef4.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T13:32:29.703Z",
+    "updatedAt": "2026-01-06T13:32:29.703Z"
+  }
+}

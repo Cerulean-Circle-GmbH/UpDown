@@ -1,0 +1,60 @@
+{
+  "ior": {
+    "uuid": "d4eed5ba-c9de-4138-99d9-6a4517690f3d",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "d4eed5ba-c9de-4138-99d9-6a4517690f3d",
+    "name": "IOROptions",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/IOROptions.interface.ts",
+    "indexPath": "scenarios/index/d4eed5ba-c9de-4138-99d9-6a4517690f3d.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/IOROptions.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "method",
+        "type": "HttpMethod",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "headers",
+        "type": "Record<string, string>",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "timeout",
+        "type": "number",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "signal",
+        "type": "AbortSignal",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "skipProtocols",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-07T16:47:01.192Z",
+    "updatedAt": "2026-01-07T16:47:01.192Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

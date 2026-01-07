@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "5df7dfd4-1ae8-493c-95b3-22444c7cfa5f",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "5df7dfd4-1ae8-493c-95b3-22444c7cfa5f",
+    "name": "AbstractWebBean.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/AbstractWebBean.ts",
+    "definition": "TypeScript AbstractWebBean class/interface",
+    "filePath": "dist/ts/layer5/views/AbstractWebBean.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-07T16:47:00.465Z",
+    "updatedAt": "2026-01-07T16:47:00.466Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/5/d/f/7/d/5df7dfd4-1ae8-493c-95b3-22444c7cfa5f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "5/d/f/7/d/5df7dfd4-1ae8-493c-95b3-22444c7cfa5f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-07T16:47:00.465Z",
+    "updatedAt": "2026-01-07T16:47:00.465Z"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "ior": {
+    "uuid": "f3e3889c-4ca0-4a5f-826b-a45e50973639",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "f3e3889c-4ca0-4a5f-826b-a45e50973639",
+    "name": "CachedUnitModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/CachedUnitModel.interface.ts",
+    "indexPath": "scenarios/index/f3e3889c-4ca0-4a5f-826b-a45e50973639.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/CachedUnitModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "ior",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "unitType",
+        "type": "UnitType",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "cacheStrategy",
+        "type": "CacheStrategy",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "version",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "hash",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "size",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "mimeType",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "cachedAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "lastAccessedAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "accessCount",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "dependencies",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T13:32:32.771Z",
+    "updatedAt": "2026-01-06T13:32:32.771Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

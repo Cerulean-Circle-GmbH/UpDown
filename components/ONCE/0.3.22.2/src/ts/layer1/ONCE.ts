@@ -200,11 +200,18 @@ export class Once {
      * @returns Promise<ONCEKernel>
      * @pdca 2025-12-17-UTC-1613.web4-principles-review.pdca.md Fix 8-9
      */
+    /**
+     * Load kernel for environment type
+     * ALWAYS calls init() after construction
+     * @pdca 2026-01-06-UTC-1400.initialization-guard.pdca.md IG.3
+     */
     private static async loadKernel(envType: EnvironmentType): Promise<ONCEKernel> {
         switch (envType) {
             case EnvironmentType.NODE: {
                 const { NodeJsOnce } = await import('../layer2/NodeJsOnce.js');
-                return new NodeJsOnce();
+                const kernel = new NodeJsOnce();
+                kernel.init();  // ALWAYS init
+                return kernel;
             }
             
             case EnvironmentType.BROWSER:
@@ -212,6 +219,7 @@ export class Once {
             case EnvironmentType.IFRAME: {
                 const { BrowserOnce } = await import('../layer2/BrowserOnce.js');
                 const kernel = new BrowserOnce();
+                kernel.init();  // ALWAYS init
                 // Register global singleton for browser (both window.ONCE and window.global.ONCE)
                 if (typeof window !== 'undefined') {
                     (window as any).global = (window as any).global || {};
@@ -225,14 +233,18 @@ export class Once {
                 // Future: WorkerOnce
                 console.warn('[Once] Worker kernel not yet implemented, using Browser kernel');
                 const { BrowserOnce } = await import('../layer2/BrowserOnce.js');
-                return new BrowserOnce();
+                const kernel = new BrowserOnce();
+                kernel.init();  // ALWAYS init
+                return kernel;
             }
             
             case EnvironmentType.SERVICE_WORKER: {
                 // Future: ServiceWorkerOnce
                 console.warn('[Once] Service Worker kernel not yet implemented, using Browser kernel');
                 const { BrowserOnce } = await import('../layer2/BrowserOnce.js');
-                return new BrowserOnce();
+                const kernel = new BrowserOnce();
+                kernel.init();  // ALWAYS init
+                return kernel;
             }
             
             default:

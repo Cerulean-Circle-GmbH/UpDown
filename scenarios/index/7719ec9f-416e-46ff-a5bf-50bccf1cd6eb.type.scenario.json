@@ -1,0 +1,55 @@
+{
+  "ior": {
+    "uuid": "7719ec9f-416e-46ff-a5bf-50bccf1cd6eb",
+    "component": "ONCE",
+    "version": "0.0.0.0"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "7719ec9f-416e-46ff-a5bf-50bccf1cd6eb",
+    "name": "RewriteContext",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/HeaderRewriter.ts",
+    "indexPath": "scenarios/index/7719ec9f-416e-46ff-a5bf-50bccf1cd6eb.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/RewriteContext.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "clientIp",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "originalHost",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "originalUrl",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "protocol",
+        "type": "'http' | 'https'",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.0.0.0",
+    "createdAt": "2026-01-06T15:10:51.634Z",
+    "updatedAt": "2026-01-06T15:10:51.634Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

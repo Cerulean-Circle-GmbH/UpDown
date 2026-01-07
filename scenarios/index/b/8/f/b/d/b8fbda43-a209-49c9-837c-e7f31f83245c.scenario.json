@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "b8fbda43-a209-49c9-837c-e7f31f83245c",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "b8fbda43-a209-49c9-837c-e7f31f83245c",
+    "name": "HealthModel.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/HealthModel.interface.ts",
+    "definition": "TypeScript HealthModel.interface class/interface",
+    "filePath": "src/ts/layer3/HealthModel.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T15:13:37.135Z",
+    "updatedAt": "2026-01-06T15:13:37.136Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/b/8/f/b/d/b8fbda43-a209-49c9-837c-e7f31f83245c.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "b/8/f/b/d/b8fbda43-a209-49c9-837c-e7f31f83245c.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T15:13:37.135Z",
+    "updatedAt": "2026-01-06T15:13:37.135Z"
+  }
+}

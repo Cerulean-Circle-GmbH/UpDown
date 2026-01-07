@@ -1,0 +1,55 @@
+{
+  "ior": {
+    "uuid": "fa08668b-1d86-41fa-9c04-8738af4eec12",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "fa08668b-1d86-41fa-9c04-8738af4eec12",
+    "name": "RenewalTask",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/CertificateRenewalSchedulerModel.interface.ts",
+    "indexPath": "scenarios/index/fa08668b-1d86-41fa-9c04-8738af4eec12.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/RenewalTask.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "domain",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "expiresAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "renewAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "renewBeforeExpiryDays",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:41:31.649Z",
+    "updatedAt": "2026-01-06T12:41:31.649Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

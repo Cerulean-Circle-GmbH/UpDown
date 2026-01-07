@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "34d7f313-1408-4b50-9c12-6accbf46de0b",
+    "component": "Unit",
+    "version": "0.0.0.0"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "34d7f313-1408-4b50-9c12-6accbf46de0b",
+    "name": "WebSocketLoader.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.0.0.0/src/ts/layer4/WebSocketLoader.ts",
+    "definition": "TypeScript WebSocketLoader class/interface",
+    "filePath": "src/ts/layer4/WebSocketLoader.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T15:10:49.541Z",
+    "updatedAt": "2026-01-06T15:10:49.541Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/3/4/d/7/f/34d7f313-1408-4b50-9c12-6accbf46de0b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.0.0.0"
+    ]
+  },
+  "unit": {
+    "indexPath": "3/4/d/7/f/34d7f313-1408-4b50-9c12-6accbf46de0b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.0.0.0"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.0.0.0",
+    "createdAt": "2026-01-06T15:10:49.541Z",
+    "updatedAt": "2026-01-06T15:10:49.541Z"
+  }
+}

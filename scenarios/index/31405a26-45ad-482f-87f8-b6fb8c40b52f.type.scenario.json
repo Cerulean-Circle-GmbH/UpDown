@@ -1,0 +1,43 @@
+{
+  "ior": {
+    "uuid": "31405a26-45ad-482f-87f8-b6fb8c40b52f",
+    "component": "ONCE",
+    "version": "0.0.0.0"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "31405a26-45ad-482f-87f8-b6fb8c40b52f",
+    "name": "UserModel",
+    "extends": "ior:esm:/ONCE/0.0.0.0/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/UserModel.interface.ts",
+    "indexPath": "scenarios/index/31405a26-45ad-482f-87f8-b6fb8c40b52f.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/UserModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "username",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "hostname",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.0.0.0",
+    "createdAt": "2026-01-06T15:10:52.482Z",
+    "updatedAt": "2026-01-06T15:10:52.482Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

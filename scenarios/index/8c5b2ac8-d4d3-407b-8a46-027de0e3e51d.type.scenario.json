@@ -1,0 +1,91 @@
+{
+  "ior": {
+    "uuid": "8c5b2ac8-d4d3-407b-8a46-027de0e3e51d",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "8c5b2ac8-d4d3-407b-8a46-027de0e3e51d",
+    "name": "AbstractOverView",
+    "extends": "ior:esm:/ONCE/0.3.22.2/AbstractView",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/AbstractOverView.ts",
+    "indexPath": "scenarios/index/8c5b2ac8-d4d3-407b-8a46-027de0e3e51d.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/AbstractOverView.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [
+      {
+        "name": "itemViews",
+        "type": "AbstractItemView<ItemViewModel>[]",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "items",
+        "type": "ItemViewModel[]",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "itemViewAdd",
+        "parameters": [
+          {
+            "name": "itemView",
+            "type": "AbstractItemView<ItemViewModel>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "itemViewRemove",
+        "parameters": [
+          {
+            "name": "itemView",
+            "type": "AbstractItemView<ItemViewModel>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "itemViewsClear",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:41:31.629Z",
+    "updatedAt": "2026-01-06T12:41:31.629Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

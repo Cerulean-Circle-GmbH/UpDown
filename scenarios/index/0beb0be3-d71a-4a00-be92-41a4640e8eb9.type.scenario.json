@@ -1,0 +1,66 @@
+{
+  "ior": {
+    "uuid": "0beb0be3-d71a-4a00-be92-41a4640e8eb9",
+    "component": "ONCE",
+    "version": "0.0.0.0"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "0beb0be3-d71a-4a00-be92-41a4640e8eb9",
+    "name": "FileSystemModel",
+    "extends": "ior:esm:/ONCE/0.0.0.0/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/FileSystemModel.interface.ts",
+    "indexPath": "scenarios/index/0beb0be3-d71a-4a00-be92-41a4640e8eb9.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/FileSystemModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "rootFolderUuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "basePath",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "fileCount",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "folderCount",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "totalSize",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "lastSyncAt",
+        "targetType": "number"
+      }
+    ],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.0.0.0",
+    "createdAt": "2026-01-06T15:10:52.114Z",
+    "updatedAt": "2026-01-06T15:10:52.114Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "ior": {
+    "uuid": "d4f21d4e-0ed3-4244-b038-43d37222909b",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "d4f21d4e-0ed3-4244-b038-43d37222909b",
+    "name": "FileDropDetail",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/FileDropDetail.interface.ts",
+    "indexPath": "scenarios/index/d4f21d4e-0ed3-4244-b038-43d37222909b.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/FileDropDetail.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "file",
+        "type": "File",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "mimetype",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "filename",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "size",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "targetView",
+        "type": "any",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-07T16:47:01.182Z",
+    "updatedAt": "2026-01-07T16:47:01.182Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

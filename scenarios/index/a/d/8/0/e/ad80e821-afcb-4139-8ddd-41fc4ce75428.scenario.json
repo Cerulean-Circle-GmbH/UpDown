@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "ad80e821-afcb-4139-8ddd-41fc4ce75428",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "ad80e821-afcb-4139-8ddd-41fc4ce75428",
+    "name": "MimetypeHandlerRegistry.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/MimetypeHandlerRegistry.interface.ts",
+    "definition": "TypeScript MimetypeHandlerRegistry.interface class/interface",
+    "filePath": "src/ts/layer3/MimetypeHandlerRegistry.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T15:13:37.210Z",
+    "updatedAt": "2026-01-06T15:13:37.211Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/a/d/8/0/e/ad80e821-afcb-4139-8ddd-41fc4ce75428.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "a/d/8/0/e/ad80e821-afcb-4139-8ddd-41fc4ce75428.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T15:13:37.210Z",
+    "updatedAt": "2026-01-06T15:13:37.210Z"
+  }
+}

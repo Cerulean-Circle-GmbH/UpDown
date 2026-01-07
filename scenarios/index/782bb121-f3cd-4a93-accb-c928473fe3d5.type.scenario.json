@@ -1,0 +1,116 @@
+{
+  "ior": {
+    "uuid": "782bb121-f3cd-4a93-accb-c928473fe3d5",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "782bb121-f3cd-4a93-accb-c928473fe3d5",
+    "name": "AbstractView",
+    "extends": "ior:esm:/ONCE/0.3.22.2/JsInterface",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/AbstractView.ts",
+    "indexPath": "scenarios/index/782bb121-f3cd-4a93-accb-c928473fe3d5.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/AbstractView.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [
+      {
+        "name": "scenario",
+        "type": "Reference<Scenario<TModel>>",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "model",
+        "type": "TModel",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "children",
+        "type": "AbstractView<Model>[]",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [
+      {
+        "name": "scenarioField",
+        "targetType": "Scenario<TModel>"
+      }
+    ],
+    "collections": [
+      {
+        "name": "childViews",
+        "elementType": "AbstractView<Model>"
+      }
+    ],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<TModel>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "refresh",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "childAdd",
+        "parameters": [
+          {
+            "name": "child",
+            "type": "AbstractView<Model>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "childRemove",
+        "parameters": [
+          {
+            "name": "child",
+            "type": "AbstractView<Model>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:56:08.751Z",
+    "updatedAt": "2026-01-06T12:56:08.751Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

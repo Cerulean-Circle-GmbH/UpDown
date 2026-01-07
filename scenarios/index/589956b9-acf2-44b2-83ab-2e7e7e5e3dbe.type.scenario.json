@@ -1,0 +1,270 @@
+{
+  "ior": {
+    "uuid": "589956b9-acf2-44b2-83ab-2e7e7e5e3dbe",
+    "component": "ONCE",
+    "version": "0.0.0.0"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "589956b9-acf2-44b2-83ab-2e7e7e5e3dbe",
+    "name": "HTTPRouter",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/HTTPRouter.ts",
+    "indexPath": "scenarios/index/589956b9-acf2-44b2-83ab-2e7e7e5e3dbe.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/HTTPRouter.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "RouterModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "routes",
+        "type": "Map<string, Route>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "errorRoute",
+        "type": "ErrorRoute",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<RouterModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "registerRoute",
+        "parameters": [
+          {
+            "name": "route",
+            "type": "Route",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "route",
+        "parameters": [
+          {
+            "name": "req",
+            "type": "IncomingMessage",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "res",
+            "type": "ServerResponse",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "errorHandle",
+        "parameters": [
+          {
+            "name": "req",
+            "type": "IncomingMessage",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "res",
+            "type": "ServerResponse",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "error",
+            "type": "Error",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "findMatchingRoute",
+        "parameters": [
+          {
+            "name": "path",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "method",
+            "type": "HttpMethod",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "hostname",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Route | undefined",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "routePriorityCompare",
+        "parameters": [
+          {
+            "name": "routeA",
+            "type": "Route",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "routeB",
+            "type": "Route",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "number",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "domainMatches",
+        "parameters": [
+          {
+            "name": "hostname",
+            "type": "string | undefined",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "domains",
+            "type": "string[]",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "singleDomainMatches",
+        "parameters": [
+          {
+            "name": "hostname",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "domain",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "hostnameExtract",
+        "parameters": [
+          {
+            "name": "request",
+            "type": "IncomingMessage",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "routesGet",
+        "parameters": [],
+        "returnType": "Array<any>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "routeModelExtract",
+        "parameters": [
+          {
+            "name": "routes",
+            "type": "Array<any>",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "route",
+            "type": "Route",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Promise<Scenario<RouterModel>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.0.0.0",
+    "createdAt": "2026-01-06T15:10:51.625Z",
+    "updatedAt": "2026-01-06T15:10:51.625Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

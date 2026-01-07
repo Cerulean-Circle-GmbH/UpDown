@@ -1,0 +1,83 @@
+{
+  "ior": {
+    "uuid": "0464ae5e-57d6-4052-afb3-8b48b908062c",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "0464ae5e-57d6-4052-afb3-8b48b908062c",
+    "name": "JsInterface",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/JsInterface.ts",
+    "indexPath": "scenarios/index/0464ae5e-57d6-4052-afb3-8b48b908062c.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/JsInterface.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "typeField",
+        "type": "TypeDescriptor",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "type",
+        "type": "TypeDescriptor",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "implementations",
+        "type": "InterfaceConstructor[]",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "implementationRegister",
+        "parameters": [
+          {
+            "name": "implementingClass",
+            "type": "InterfaceConstructor",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "implementationCheck",
+        "parameters": [
+          {
+            "name": "implementingClass",
+            "type": "InterfaceConstructor",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:56:08.796Z",
+    "updatedAt": "2026-01-06T12:56:08.796Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

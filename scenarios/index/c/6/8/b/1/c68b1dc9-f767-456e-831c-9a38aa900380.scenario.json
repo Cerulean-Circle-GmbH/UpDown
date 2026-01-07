@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "c68b1dc9-f767-456e-831c-9a38aa900380",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "c68b1dc9-f767-456e-831c-9a38aa900380",
+    "name": "LitDefaultView.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/LitDefaultView.ts",
+    "definition": "TypeScript LitDefaultView class/interface",
+    "filePath": "dist/ts/layer5/views/LitDefaultView.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T15:13:38.442Z",
+    "updatedAt": "2026-01-06T15:13:38.442Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/6/8/b/1/c68b1dc9-f767-456e-831c-9a38aa900380.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/6/8/b/1/c68b1dc9-f767-456e-831c-9a38aa900380.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T15:13:38.442Z",
+    "updatedAt": "2026-01-06T15:13:38.442Z"
+  }
+}

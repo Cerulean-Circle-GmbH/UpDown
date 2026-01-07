@@ -1,0 +1,55 @@
+{
+  "ior": {
+    "uuid": "90c7771d-e20f-46d4-ad9c-94cd5ad3b600",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "90c7771d-e20f-46d4-ad9c-94cd5ad3b600",
+    "name": "TLSCertificateLoaderModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer2/TLSCertificateLoader.ts",
+    "indexPath": "scenarios/index/90c7771d-e20f-46d4-ad9c-94cd5ad3b600.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/TLSCertificateLoaderModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "options",
+        "type": "TLSOptions",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "loaded",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "certificateExpiry",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "isSelfSigned",
+        "type": "boolean",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-07T16:47:01.118Z",
+    "updatedAt": "2026-01-07T16:47:01.118Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

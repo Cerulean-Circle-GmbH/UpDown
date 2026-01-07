@@ -1,0 +1,296 @@
+{
+  "ior": {
+    "uuid": "22831fed-76b8-4a28-a1ba-b06ad2c6fb17",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "22831fed-76b8-4a28-a1ba-b06ad2c6fb17",
+    "name": "DefaultOnceKernel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/UcpComponent",
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.2/LifecycleManager"
+    ],
+    "sourcePath": "src/ts/layer2/DefaultOnceKernel.ts",
+    "indexPath": "scenarios/index/22831fed-76b8-4a28-a1ba-b06ad2c6fb17.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/DefaultOnceKernel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "lifecycleState",
+        "type": "LifecycleState",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "observers",
+        "elementType": "LifecycleObserver"
+      }
+    ],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<TModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getHealth",
+        "parameters": [],
+        "returnType": "Promise<any>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "attachObserver",
+        "parameters": [
+          {
+            "name": "observer",
+            "type": "LifecycleObserver",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "detachObserver",
+        "parameters": [
+          {
+            "name": "observer",
+            "type": "LifecycleObserver",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "notifyObservers",
+        "parameters": [
+          {
+            "name": "eventType",
+            "type": "LifecycleEventType",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "data",
+            "type": "any",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getLifecycleState",
+        "parameters": [],
+        "returnType": "LifecycleState",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "canTransitionTo",
+        "parameters": [
+          {
+            "name": "targetState",
+            "type": "LifecycleState",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "transitionTo",
+        "parameters": [
+          {
+            "name": "targetState",
+            "type": "LifecycleState",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "eventType",
+            "type": "LifecycleEventType",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "data",
+            "type": "any",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "eventTypeToMethodName",
+        "parameters": [
+          {
+            "name": "eventType",
+            "type": "LifecycleEventType",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "generateUUID",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "formatTimestamp",
+        "parameters": [
+          {
+            "name": "date",
+            "type": "Date",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "formatDuration",
+        "parameters": [
+          {
+            "name": "ms",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "deepClone",
+        "parameters": [
+          {
+            "name": "obj",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "any",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "sleep",
+        "parameters": [
+          {
+            "name": "ms",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "safeStringify",
+        "parameters": [
+          {
+            "name": "obj",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "pretty",
+            "type": "boolean",
+            "optional": false,
+            "defaultValue": "false"
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "safeParse",
+        "parameters": [
+          {
+            "name": "json",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "any",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getModel",
+        "parameters": [],
+        "returnType": "any",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:56:08.494Z",
+    "updatedAt": "2026-01-06T12:56:08.494Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

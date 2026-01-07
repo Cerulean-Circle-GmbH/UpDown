@@ -1,0 +1,129 @@
+{
+  "ior": {
+    "uuid": "5a7d3b66-78b6-4e91-956a-47067645abb4",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "5a7d3b66-78b6-4e91-956a-47067645abb4",
+    "name": "RouteItemView",
+    "extends": "ior:esm:/ONCE/0.3.22.2/UcpView",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/RouteItemView.ts",
+    "indexPath": "scenarios/index/5a7d3b66-78b6-4e91-956a-47067645abb4.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/RouteItemView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "cssPath",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "RouteItemView.css"
+      },
+      {
+        "name": "route",
+        "type": "any",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "path",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "routeClassName",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "isSpaRoute",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "routeIcon",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "routeMethod",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "showMethodBadge",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "routeTitle",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "isActive",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [
+      {
+        "name": "router",
+        "targetType": "HTMLElement"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "linkClickHandle",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "Event",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T13:32:33.082Z",
+    "updatedAt": "2026-01-06T13:32:33.082Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

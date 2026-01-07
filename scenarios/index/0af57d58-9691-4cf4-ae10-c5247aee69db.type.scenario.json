@@ -1,0 +1,79 @@
+{
+  "ior": {
+    "uuid": "0af57d58-9691-4cf4-ae10-c5247aee69db",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "0af57d58-9691-4cf4-ae10-c5247aee69db",
+    "name": "UnitDefinition",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/UnitDefinition.interface.ts",
+    "indexPath": "scenarios/index/0af57d58-9691-4cf4-ae10-c5247aee69db.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/UnitDefinition.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "filename",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "relativePath",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "fullPath",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "typeM3",
+        "type": "TypeM3",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "mimetype",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "extension",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "existingUuid",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:41:31.772Z",
+    "updatedAt": "2026-01-06T12:41:31.772Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

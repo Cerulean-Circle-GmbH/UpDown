@@ -1,0 +1,61 @@
+{
+  "ior": {
+    "uuid": "0443cdd4-0eb0-4fc8-b244-0f28c847b98d",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "0443cdd4-0eb0-4fc8-b244-0f28c847b98d",
+    "name": "CertificateProviderModel",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/CertificateProviderModel.interface.ts",
+    "indexPath": "scenarios/index/0443cdd4-0eb0-4fc8-b244-0f28c847b98d.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/CertificateProviderModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "uuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "providerType",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "scenariosRootPath",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "statistics",
+        "type": "StatisticsModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:41:31.648Z",
+    "updatedAt": "2026-01-06T12:41:31.648Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

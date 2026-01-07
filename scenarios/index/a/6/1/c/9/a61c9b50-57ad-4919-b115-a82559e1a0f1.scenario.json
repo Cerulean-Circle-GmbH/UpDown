@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "a61c9b50-57ad-4919-b115-a82559e1a0f1",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "a61c9b50-57ad-4919-b115-a82559e1a0f1",
+    "name": "Tree.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/Tree.interface.ts",
+    "definition": "TypeScript Tree.interface class/interface",
+    "filePath": "dist/ts/layer3/Tree.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-07T16:47:00.272Z",
+    "updatedAt": "2026-01-07T16:47:00.273Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/a/6/1/c/9/a61c9b50-57ad-4919-b115-a82559e1a0f1.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "a/6/1/c/9/a61c9b50-57ad-4919-b115-a82559e1a0f1.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-07T16:47:00.272Z",
+    "updatedAt": "2026-01-07T16:47:00.272Z"
+  }
+}

@@ -104,9 +104,9 @@ export interface ONCE {
     toScenario(): Scenario<ONCEPeerModel>;
 
     /**
-     * Check if ONCE is initialized
+     * Check if ONCE lifecycle is initialized (INITIALIZED or RUNNING state)
      */
-    isInitialized(): boolean;
+    isLifecycleInitialized(): boolean;
 
     /**
      * Get ONCE kernel version

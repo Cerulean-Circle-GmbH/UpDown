@@ -59,41 +59,36 @@ export class DefaultWeb4TSComponent
   }
   
   /**
-   * Provide default model - required by UcpComponent
-   */
-  protected modelDefault(): Web4TSComponentModel {
-    const version = new SemanticVersion().init();
-    // Note: projectRoot, componentsDirectory, testDataDirectory are REMOVED
-    // Use CLI accessors instead: this.projectRoot, this.componentsDirectory
-    // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3
-    return {
-      uuid: randomUUID(),
-      name: 'Web4TSComponent',
-      component: 'Web4TSComponent',
-      version: version,
-      componentRoot: '',
-      targetDirectory: '',
-      isTestIsolation: false,
-      displayName: 'Web4TSComponent',
-      displayVersion: version.toString(),
-      isDelegation: false,
-    };
-  }
-  
-  /**
    * Initialize component with scenario (SYNC)
-   * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4
+   * 
+   * If no scenario provided:
+   * 1. Get base scenario from parent (correct ior/owner)
+   * 2. Assign model as plain JSON inline
+   * 
+   * @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.2
    */
   init(scenario?: Scenario<Web4TSComponentModel>): this {
+    // Create default scenario if not provided
+    if (!scenario) {
+      scenario = super.scenarioDefault();  // Gets correct ior/owner from parent
+      const version = new SemanticVersion().init();
+      scenario.model = {                    // Plain JSON inline — KISS
+        uuid: randomUUID(),
+        name: 'Web4TSComponent',
+        component: 'Web4TSComponent',
+        version: version,
+        componentRoot: '',
+        targetDirectory: '',
+        isTestIsolation: false,
+        displayName: 'Web4TSComponent',
+        displayVersion: version.toString(),
+        isDelegation: false,
+      };
+    }
+    
     super.init(scenario);
     
     // Ensure model has required fields
-    if (!this.model!.version) {
-      this.model!.version = new SemanticVersion().init();
-    }
-    if (!this.model!.component) {
-      this.model!.component = 'Web4TSComponent';
-    }
     if (!this.model!.implementationClassName) {
       this.model!.implementationClassName = this.constructor.name;
     }

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "ae408b1e-17ec-4811-9db3-06f6aea83184",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "ae408b1e-17ec-4811-9db3-06f6aea83184",
+    "name": "FolderItemView.css",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/css/FolderItemView.css",
+    "definition": "CSS stylesheet for FolderItemView",
+    "filePath": "src/ts/layer5/views/css/FolderItemView.css",
+    "mimetype": "text/css",
+    "createdAt": "2026-01-06T12:56:06.083Z",
+    "updatedAt": "2026-01-06T12:56:06.083Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/a/e/4/0/8/ae408b1e-17ec-4811-9db3-06f6aea83184.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "a/e/4/0/8/ae408b1e-17ec-4811-9db3-06f6aea83184.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T12:56:06.083Z",
+    "updatedAt": "2026-01-06T12:56:06.083Z"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "ca2dd058-b575-494a-ab53-455b40284936",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "ca2dd058-b575-494a-ab53-455b40284936",
+    "name": "NodeOSInfrastructure.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer1/NodeOSInfrastructure.ts",
+    "definition": "TypeScript NodeOSInfrastructure class/interface",
+    "filePath": "src/ts/layer1/NodeOSInfrastructure.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T13:32:28.883Z",
+    "updatedAt": "2026-01-06T13:32:28.884Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/a/2/d/d/ca2dd058-b575-494a-ab53-455b40284936.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/a/2/d/d/ca2dd058-b575-494a-ab53-455b40284936.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T13:32:28.883Z",
+    "updatedAt": "2026-01-06T13:32:28.883Z"
+  }
+}

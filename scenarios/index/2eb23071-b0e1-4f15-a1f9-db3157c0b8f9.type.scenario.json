@@ -1,0 +1,67 @@
+{
+  "ior": {
+    "uuid": "2eb23071-b0e1-4f15-a1f9-db3157c0b8f9",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "2eb23071-b0e1-4f15-a1f9-db3157c0b8f9",
+    "name": "LetsEncryptCertificateProviderModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/CertificateProviderModel",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/LetsEncryptCertificateProviderModel.interface.ts",
+    "indexPath": "scenarios/index/2eb23071-b0e1-4f15-a1f9-db3157c0b8f9.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/LetsEncryptCertificateProviderModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "automaticCertificateManagementEnvironmentAccountUrl",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "accountEmail",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "useStaging",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "accountPrivateKeyJwk",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "iorComponent",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "iorVersion",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T13:32:32.835Z",
+    "updatedAt": "2026-01-06T13:32:32.835Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

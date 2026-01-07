@@ -1,0 +1,85 @@
+{
+  "ior": {
+    "uuid": "452f9064-6882-40a4-9c75-3585052fdd1a",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "452f9064-6882-40a4-9c75-3585052fdd1a",
+    "name": "RouteModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/RouteScenario.interface.ts",
+    "indexPath": "scenarios/index/452f9064-6882-40a4-9c75-3585052fdd1a.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/RouteModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "pattern",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "viewTag",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "serverRoute",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "currentPath",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "params",
+        "type": "Record<string, string>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "query",
+        "type": "Record<string, string>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isActive",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "viewProps",
+        "type": "Record<string, unknown>",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-07T16:47:01.308Z",
+    "updatedAt": "2026-01-07T16:47:01.308Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

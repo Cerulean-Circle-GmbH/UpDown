@@ -1,0 +1,61 @@
+{
+  "ior": {
+    "uuid": "1a88ce9f-ab75-4751-af1b-c5a07f88b57d",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "1a88ce9f-ab75-4751-af1b-c5a07f88b57d",
+    "name": "MimetypeHandler",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/MimetypeHandler.interface.ts",
+    "indexPath": "scenarios/index/1a88ce9f-ab75-4751-af1b-c5a07f88b57d.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/MimetypeHandler.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "pattern",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "componentClass",
+        "type": "ComponentConstructor",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "priority",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T15:13:39.217Z",
+    "updatedAt": "2026-01-06T15:13:39.217Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

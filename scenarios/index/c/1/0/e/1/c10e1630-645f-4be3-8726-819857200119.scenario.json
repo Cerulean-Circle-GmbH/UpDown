@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "c10e1630-645f-4be3-8726-819857200119",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "c10e1630-645f-4be3-8726-819857200119",
+    "name": "AttributeDescriptor.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/AttributeDescriptor.interface.ts",
+    "definition": "TypeScript AttributeDescriptor.interface class/interface",
+    "filePath": "dist/ts/layer3/AttributeDescriptor.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T12:41:28.388Z",
+    "updatedAt": "2026-01-06T12:41:28.389Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/1/0/e/1/c10e1630-645f-4be3-8726-819857200119.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/1/0/e/1/c10e1630-645f-4be3-8726-819857200119.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T12:41:28.388Z",
+    "updatedAt": "2026-01-06T12:41:28.388Z"
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "ior": {
+    "uuid": "7c3f4d95-1e9b-4d91-878b-0da47d14869c",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "7c3f4d95-1e9b-4d91-878b-0da47d14869c",
+    "name": "FolderJs",
+    "extends": "ior:esm:/ONCE/0.3.22.2/FileJs",
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.2/Folder"
+    ],
+    "sourcePath": "src/ts/layer3/FolderJs.ts",
+    "indexPath": "scenarios/index/7c3f4d95-1e9b-4d91-878b-0da47d14869c.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/FolderJs.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [
+      {
+        "name": "children",
+        "type": "FileJs[]",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "childReferences",
+        "type": "Collection<FileJs>",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "childAdd",
+        "parameters": [
+          {
+            "name": "child",
+            "type": "FileJs",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "childRemove",
+        "parameters": [
+          {
+            "name": "child",
+            "type": "FileJs",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "childGet",
+        "parameters": [
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "FileJs | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "childFindByName",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "FileJs | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:41:31.677Z",
+    "updatedAt": "2026-01-06T12:41:31.677Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

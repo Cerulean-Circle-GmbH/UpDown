@@ -1,0 +1,82 @@
+{
+  "ior": {
+    "uuid": "2f513105-a61a-4d39-8d16-0a22c2cc036b",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "2f513105-a61a-4d39-8d16-0a22c2cc036b",
+    "name": "ActionMetadata",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ActionMetadata.interface.ts",
+    "indexPath": "scenarios/index/2f513105-a61a-4d39-8d16-0a22c2cc036b.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ActionMetadata.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "component",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "action",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "method",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "icon",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "style",
+        "type": "ActionStyle",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "confirmRequired",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "shortcut",
+        "targetType": "string"
+      },
+      {
+        "name": "confirmMessage",
+        "targetType": "string"
+      }
+    ],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-07T16:47:01.155Z",
+    "updatedAt": "2026-01-07T16:47:01.155Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

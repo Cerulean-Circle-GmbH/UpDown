@@ -1,0 +1,63 @@
+{
+  "ior": {
+    "uuid": "c96d850b-a985-4091-a98a-06236aa92cd5",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "c96d850b-a985-4091-a98a-06236aa92cd5",
+    "name": "Test28_ACMEChallengeRoute",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/tests/Test28_ACMEChallengeRoute.ts",
+    "indexPath": "scenarios/index/c96d850b-a985-4091-a98a-06236aa92cd5.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Test28_ACMEChallengeRoute.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "run",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testRoutePattern",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testRoutePriority",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testRouteMatching",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:41:32.153Z",
+    "updatedAt": "2026-01-06T12:41:32.153Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

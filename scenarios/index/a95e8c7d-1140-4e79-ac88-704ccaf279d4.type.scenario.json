@@ -1,0 +1,181 @@
+{
+  "ior": {
+    "uuid": "a95e8c7d-1140-4e79-ac88-704ccaf279d4",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "a95e8c7d-1140-4e79-ac88-704ccaf279d4",
+    "name": "OncePeerDetailsView",
+    "extends": "ior:esm:/ONCE/0.3.22.2/UcpView",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/OncePeerDetailsView.ts",
+    "indexPath": "scenarios/index/a95e8c7d-1140-4e79-ac88-704ccaf279d4.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/OncePeerDetailsView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "cssPath",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "OncePeerDetailsView.css"
+      },
+      {
+        "name": "peerUuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": ""
+      },
+      {
+        "name": "loading",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": false
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "optional": false,
+        "defaultValue": ""
+      }
+    ],
+    "properties": [
+      {
+        "name": "peerName",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "peerState",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "peerPort",
+        "type": "number",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "shortUuid",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "serverType",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [
+      {
+        "name": "router",
+        "targetType": "HTMLElement"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "connectedCallback",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "peerFetch",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "iorLoadPeer",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "IOR",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "peerDataHandle",
+        "parameters": [
+          {
+            "name": "data",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "peerErrorHandle",
+        "parameters": [
+          {
+            "name": "error",
+            "type": "Error",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "capabilityRender",
+        "parameters": [
+          {
+            "name": "cap",
+            "type": "{ capability: string; port?: number }",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T15:13:39.420Z",
+    "updatedAt": "2026-01-06T15:13:39.420Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

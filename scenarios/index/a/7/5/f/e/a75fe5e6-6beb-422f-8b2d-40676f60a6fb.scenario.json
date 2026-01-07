@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "a75fe5e6-6beb-422f-8b2d-40676f60a6fb",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "a75fe5e6-6beb-422f-8b2d-40676f60a6fb",
+    "name": "FolderOverView.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/FolderOverView.ts",
+    "definition": "TypeScript FolderOverView class/interface",
+    "filePath": "src/ts/layer5/views/FolderOverView.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T12:56:06.951Z",
+    "updatedAt": "2026-01-06T12:56:06.951Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/a/7/5/f/e/a75fe5e6-6beb-422f-8b2d-40676f60a6fb.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "a/7/5/f/e/a75fe5e6-6beb-422f-8b2d-40676f60a6fb.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T12:56:06.951Z",
+    "updatedAt": "2026-01-06T12:56:06.951Z"
+  }
+}

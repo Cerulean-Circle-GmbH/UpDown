@@ -1,0 +1,49 @@
+{
+  "ior": {
+    "uuid": "6f094d7b-c921-493c-9953-d16811e7e601",
+    "component": "ONCE",
+    "version": "0.0.0.0"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "6f094d7b-c921-493c-9953-d16811e7e601",
+    "name": "UnitReference",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/UnitReference.interface.ts",
+    "indexPath": "scenarios/index/6f094d7b-c921-493c-9953-d16811e7e601.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/UnitReference.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "linkLocation",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "linkTarget",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "syncStatus",
+        "type": "SyncStatus",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.0.0.0",
+    "createdAt": "2026-01-06T15:10:52.481Z",
+    "updatedAt": "2026-01-06T15:10:52.481Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

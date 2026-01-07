@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "b06407e3-34ba-4f48-ae6c-7b0dcbb3b294",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "b06407e3-34ba-4f48-ae6c-7b0dcbb3b294",
+    "name": "HeaderRewriter.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/HeaderRewriter.ts",
+    "definition": "TypeScript HeaderRewriter class/interface",
+    "filePath": "src/ts/layer2/HeaderRewriter.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T13:32:29.168Z",
+    "updatedAt": "2026-01-06T13:32:29.170Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/b/0/6/4/0/b06407e3-34ba-4f48-ae6c-7b0dcbb3b294.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "b/0/6/4/0/b06407e3-34ba-4f48-ae6c-7b0dcbb3b294.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T13:32:29.168Z",
+    "updatedAt": "2026-01-06T13:32:29.168Z"
+  }
+}

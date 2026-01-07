@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "819d640c-4f31-4c51-b8ca-2f9fb742af00",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "819d640c-4f31-4c51-b8ca-2f9fb742af00",
+    "name": "ONCECLI.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/ONCECLI.ts",
+    "definition": "TypeScript ONCECLI class/interface",
+    "filePath": "src/ts/layer5/ONCECLI.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T15:13:37.443Z",
+    "updatedAt": "2026-01-06T15:13:37.443Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/8/1/9/d/6/819d640c-4f31-4c51-b8ca-2f9fb742af00.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "8/1/9/d/6/819d640c-4f31-4c51-b8ca-2f9fb742af00.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-06T15:13:37.443Z",
+    "updatedAt": "2026-01-06T15:13:37.443Z"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "d8fd48ab-d0bb-4410-ba81-2e3f7dc54f91",
+    "component": "Unit",
+    "version": "0.0.0.0"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "d8fd48ab-d0bb-4410-ba81-2e3f7dc54f91",
+    "name": "PropertyDescriptor.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.0.0.0/src/ts/layer3/PropertyDescriptor.interface.ts",
+    "definition": "TypeScript PropertyDescriptor.interface class/interface",
+    "filePath": "src/ts/layer3/PropertyDescriptor.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-06T15:10:49.349Z",
+    "updatedAt": "2026-01-06T15:10:49.349Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/d/8/f/d/4/d8fd48ab-d0bb-4410-ba81-2e3f7dc54f91.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.0.0.0"
+    ]
+  },
+  "unit": {
+    "indexPath": "d/8/f/d/4/d8fd48ab-d0bb-4410-ba81-2e3f7dc54f91.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.0.0.0"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.0.0.0",
+    "createdAt": "2026-01-06T15:10:49.349Z",
+    "updatedAt": "2026-01-06T15:10:49.349Z"
+  }
+}

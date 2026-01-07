@@ -1,0 +1,82 @@
+{
+  "ior": {
+    "uuid": "0abc68c1-84ea-446d-9394-d7fc0fabd403",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "0abc68c1-84ea-446d-9394-d7fc0fabd403",
+    "name": "ImageModel",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ImageModel.interface.ts",
+    "indexPath": "scenarios/index/0abc68c1-84ea-446d-9394-d7fc0fabd403.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ImageModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "uuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "mimetype",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "width",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "height",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "alt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "caption",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "fileUuid",
+        "targetType": "string"
+      },
+      {
+        "name": "objectUrl",
+        "targetType": "string"
+      }
+    ],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:56:08.792Z",
+    "updatedAt": "2026-01-06T12:56:08.792Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

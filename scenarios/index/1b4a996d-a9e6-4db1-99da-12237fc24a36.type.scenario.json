@@ -1,0 +1,690 @@
+{
+  "ior": {
+    "uuid": "1b4a996d-a9e6-4db1-99da-12237fc24a36",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "1b4a996d-a9e6-4db1-99da-12237fc24a36",
+    "name": "IOR",
+    "extends": null,
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.2/IORInterface"
+    ],
+    "sourcePath": "src/ts/layer4/IOR.ts",
+    "indexPath": "scenarios/index/1b4a996d-a9e6-4db1-99da-12237fc24a36.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/IOR.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "IORModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "resolvedValue",
+        "type": "T | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "referenceState",
+        "type": "ReferenceState",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "resolutionPromise",
+        "type": "Promise<T | null> | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "parentModel",
+        "type": "object | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "parentKey",
+        "type": "string | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "parentIndex",
+        "type": "number | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "loaders",
+        "type": "Map<string, Loader>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "loadersInitialized",
+        "type": "any",
+        "optional": false,
+        "defaultValue": false
+      },
+      {
+        "name": "browserStorage",
+        "type": "any",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "browserStorageInitialized",
+        "type": "any",
+        "optional": false,
+        "defaultValue": false
+      }
+    ],
+    "properties": [
+      {
+        "name": "isLocal",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "isRemote",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "isNull",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "isResolving",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "isResolved",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "state",
+        "type": "ReferenceState",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "value",
+        "type": "T | null",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "iorString",
+        "type": "string | null",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "hasParent",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "ensureLoadersInitialized",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "initLocal",
+        "parameters": [
+          {
+            "name": "value",
+            "type": "T",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "initRemote",
+        "parameters": [
+          {
+            "name": "iorString",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "valueOrIor",
+            "type": "T | IORModel | string | null",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "initWithParent",
+        "parameters": [
+          {
+            "name": "parent",
+            "type": "object",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "key",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "index",
+            "type": "number",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "resolveAndReplace",
+        "parameters": [],
+        "returnType": "Promise<C | null>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "resolve",
+        "parameters": [
+          {
+            "name": "options",
+            "type": "IOROptions",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<T | null>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "performResolution",
+        "parameters": [
+          {
+            "name": "options",
+            "type": "IOROptions",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<T | null>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "resolveInstance",
+        "parameters": [],
+        "returnType": "Promise<C | null>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "instantiate",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<M>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<C>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "dereference",
+        "parameters": [
+          {
+            "name": "reference",
+            "type": "C | Scenario<M> | string | null",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<C | null>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cacheCheck",
+        "parameters": [],
+        "returnType": "Promise<T | undefined>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitFindByReference",
+        "parameters": [
+          {
+            "name": "storage",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "linkLocation",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<any | null>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cacheStore",
+        "parameters": [
+          {
+            "name": "result",
+            "type": "T",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "blobUrlCreate",
+        "parameters": [
+          {
+            "name": "blob",
+            "type": "Blob",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "blobUrlRevoke",
+        "parameters": [
+          {
+            "name": "blobUrl",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "browserStorageGet",
+        "parameters": [],
+        "returnType": "Promise<any>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "registerLoader",
+        "parameters": [
+          {
+            "name": "protocol",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "loader",
+            "type": "Loader",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getLoader",
+        "parameters": [
+          {
+            "name": "protocol",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Loader | undefined",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "computeIorString",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "parseIorString",
+        "parameters": [
+          {
+            "name": "iorString",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "parseRelativeUrl",
+        "parameters": [
+          {
+            "name": "path",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "enrichWithLocation",
+        "parameters": [
+          {
+            "name": "location",
+            "type": "{ host: string; port: number; protocol?: string }",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getProfiles",
+        "parameters": [],
+        "returnType": "IORProfile[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toUrl",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fromUrl",
+        "parameters": [
+          {
+            "name": "url",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "load",
+        "parameters": [
+          {
+            "name": "options",
+            "type": "IOROptions",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<R>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "save",
+        "parameters": [
+          {
+            "name": "data",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "options",
+            "type": "IOROptions",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cacheStoreSave",
+        "parameters": [
+          {
+            "name": "data",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "webSocketNotifySave",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "isIorStringFormat",
+        "parameters": [
+          {
+            "name": "str",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "isIORModel",
+        "parameters": [
+          {
+            "name": "value",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "value is IORModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "parseProtocolChain",
+        "parameters": [],
+        "returnType": "string[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "applyBuiltInTransform",
+        "parameters": [
+          {
+            "name": "protocol",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "data",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "direction",
+            "type": "'load' | 'save'",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "any",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "transformJson",
+        "parameters": [
+          {
+            "name": "data",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "direction",
+            "type": "'load' | 'save'",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "any",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toJSON",
+        "parameters": [],
+        "returnType": "{ state: ReferenceState; value: T | null; ior: string | null; model: IORModel }",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fromJSON",
+        "parameters": [
+          {
+            "name": "json",
+            "type": "{ state?: ReferenceState; value?: T | null; ior?: string | null; model?: Partial<IORModel> }",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:41:31.818Z",
+    "updatedAt": "2026-01-06T12:41:31.818Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

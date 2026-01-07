@@ -1,0 +1,67 @@
+{
+  "ior": {
+    "uuid": "41f7d913-e931-4adc-bd9a-42e4cc9cabec",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "41f7d913-e931-4adc-bd9a-42e4cc9cabec",
+    "name": "ActionTarget",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ActionTarget.interface.ts",
+    "indexPath": "scenarios/index/41f7d913-e931-4adc-bd9a-42e4cc9cabec.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ActionTarget.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "hasMethod",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "methodInvoke",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "args",
+            "type": "unknown[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<unknown>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:41:31.634Z",
+    "updatedAt": "2026-01-06T12:41:31.634Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

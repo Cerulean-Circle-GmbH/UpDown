@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "0d106fe1-88cf-4a82-907b-8cedaa0c82cc",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "0d106fe1-88cf-4a82-907b-8cedaa0c82cc",
+    "name": "FileDropDetail.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/FileDropDetail.interface.ts",
+    "definition": "TypeScript FileDropDetail.interface class/interface",
+    "filePath": "src/ts/layer3/FileDropDetail.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-07T16:46:58.438Z",
+    "updatedAt": "2026-01-07T16:46:58.439Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/0/d/1/0/6/0d106fe1-88cf-4a82-907b-8cedaa0c82cc.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "0/d/1/0/6/0d106fe1-88cf-4a82-907b-8cedaa0c82cc.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-07T16:46:58.438Z",
+    "updatedAt": "2026-01-07T16:46:58.438Z"
+  }
+}

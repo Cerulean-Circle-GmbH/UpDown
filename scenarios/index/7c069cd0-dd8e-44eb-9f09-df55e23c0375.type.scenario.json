@@ -1,0 +1,92 @@
+{
+  "ior": {
+    "uuid": "7c069cd0-dd8e-44eb-9f09-df55e23c0375",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "7c069cd0-dd8e-44eb-9f09-df55e23c0375",
+    "name": "Controller",
+    "extends": "ior:esm:/ONCE/0.3.22.2/JsInterface",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/Controller.interface.ts",
+    "indexPath": "scenarios/index/7c069cd0-dd8e-44eb-9f09-df55e23c0375.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Controller.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [
+      {
+        "name": "model",
+        "type": "TModel",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "viewRegister",
+        "parameters": [
+          {
+            "name": "view",
+            "type": "View<TModel>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "viewUnregister",
+        "parameters": [
+          {
+            "name": "view",
+            "type": "View<TModel>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "viewsUpdateAll",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioReceive",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T13:32:32.806Z",
+    "updatedAt": "2026-01-06T13:32:32.806Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

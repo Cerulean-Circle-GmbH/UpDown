@@ -1,0 +1,55 @@
+{
+  "ior": {
+    "uuid": "4563b3e4-fce2-45df-8841-dedd2fb362a1",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "4563b3e4-fce2-45df-8841-dedd2fb362a1",
+    "name": "Scenario",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/Scenario.interface.ts",
+    "indexPath": "scenarios/index/4563b3e4-fce2-45df-8841-dedd2fb362a1.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Scenario.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "ior",
+        "type": "{\n    uuid: string;              // Object instance UUID\n    component: string;         // Component name (ONCE, User, HTTPSServer)\n    version: string;           // Component version (0.3.21.2)\n    iorString?: string;        // Fully qualified IOR string (optional within ior)\n  }",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "owner",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "model",
+        "type": "T",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "unit",
+        "type": "ScenarioUnit",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T15:13:39.244Z",
+    "updatedAt": "2026-01-06T15:13:39.244Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

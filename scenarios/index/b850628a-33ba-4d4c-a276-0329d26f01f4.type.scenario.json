@@ -1,0 +1,67 @@
+{
+  "ior": {
+    "uuid": "b850628a-33ba-4d4c-a276-0329d26f01f4",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "b850628a-33ba-4d4c-a276-0329d26f01f4",
+    "name": "PerformanceMetrics",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/PerformanceMetrics.interface.ts",
+    "indexPath": "scenarios/index/b850628a-33ba-4d4c-a276-0329d26f01f4.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/PerformanceMetrics.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "initializationTime",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "memoryUsage",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "componentsLoaded",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "peersConnected",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "scenariosExchanged",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "serversRegistered",
+        "type": "number",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:56:08.818Z",
+    "updatedAt": "2026-01-06T12:56:08.818Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "ior": {
+    "uuid": "c9ff5926-5423-4215-8c19-9afb5caab262",
+    "component": "ONCE",
+    "version": "0.0.0.0"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "c9ff5926-5423-4215-8c19-9afb5caab262",
+    "name": "HeaderRewriter",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/HeaderRewriter.ts",
+    "indexPath": "scenarios/index/c9ff5926-5423-4215-8c19-9afb5caab262.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/HeaderRewriter.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "rewrite",
+        "parameters": [
+          {
+            "name": "headers",
+            "type": "IncomingHttpHeaders | OutgoingHttpHeaders",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "rules",
+            "type": "RewriteRule[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "context",
+            "type": "RewriteContext",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "OutgoingHttpHeaders",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "ruleApply",
+        "parameters": [
+          {
+            "name": "headers",
+            "type": "OutgoingHttpHeaders",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "rule",
+            "type": "RewriteRule",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "context",
+            "type": "RewriteContext",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "variableSubstitute",
+        "parameters": [
+          {
+            "name": "value",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "context",
+            "type": "RewriteContext",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.0.0.0",
+    "createdAt": "2026-01-06T15:10:51.634Z",
+    "updatedAt": "2026-01-06T15:10:51.634Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

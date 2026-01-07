@@ -1,0 +1,54 @@
+{
+  "ior": {
+    "uuid": "e6084bc2-af4f-46fe-87b8-8592b8e87ad2",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "e6084bc2-af4f-46fe-87b8-8592b8e87ad2",
+    "name": "User",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/User.interface.ts",
+    "indexPath": "scenarios/index/e6084bc2-af4f-46fe-87b8-8592b8e87ad2.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/User.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Promise<Scenario>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-06T12:41:31.774Z",
+    "updatedAt": "2026-01-06T12:41:31.774Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

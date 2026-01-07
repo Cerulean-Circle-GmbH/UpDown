@@ -1,0 +1,67 @@
+{
+  "ior": {
+    "uuid": "8e7b9d2b-fc5a-4e9b-b2dd-9f5baa4d029a",
+    "component": "ONCE",
+    "version": "0.0.0.0"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "8e7b9d2b-fc5a-4e9b-b2dd-9f5baa4d029a",
+    "name": "LifecycleEvent",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/LifecycleEvent.interface.ts",
+    "indexPath": "scenarios/index/8e7b9d2b-fc5a-4e9b-b2dd-9f5baa4d029a.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/LifecycleEvent.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "type",
+        "type": "LifecycleEventType",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "timestamp",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "component",
+        "type": "Component",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "scenario",
+        "type": "Scenario<ONCEPeerModel>",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "data",
+        "type": "any",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "error",
+        "type": "Error",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.0.0.0",
+    "createdAt": "2026-01-06T15:10:52.132Z",
+    "updatedAt": "2026-01-06T15:10:52.132Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

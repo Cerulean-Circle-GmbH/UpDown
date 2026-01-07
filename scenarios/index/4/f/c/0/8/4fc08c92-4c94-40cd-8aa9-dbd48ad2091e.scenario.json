@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "4fc08c92-4c94-40cd-8aa9-dbd48ad2091e",
+    "component": "Unit",
+    "version": "0.0.0.0"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "4fc08c92-4c94-40cd-8aa9-dbd48ad2091e",
+    "name": "CLIModel.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.0.0.0/src/ts/layer3/CLIModel.interface.ts",
+    "definition": "TypeScript CLIModel.interface class/interface",
+    "filePath": "dist/ts/layer3/CLIModel.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-06T15:10:49.947Z",
+    "updatedAt": "2026-01-06T15:10:49.947Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/4/f/c/0/8/4fc08c92-4c94-40cd-8aa9-dbd48ad2091e.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.0.0.0"
+    ]
+  },
+  "unit": {
+    "indexPath": "4/f/c/0/8/4fc08c92-4c94-40cd-8aa9-dbd48ad2091e.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.0.0.0"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.0.0.0",
+    "createdAt": "2026-01-06T15:10:49.947Z",
+    "updatedAt": "2026-01-06T15:10:49.947Z"
+  }
+}
