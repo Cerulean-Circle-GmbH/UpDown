@@ -20,7 +20,7 @@
 
 import { html, TemplateResult, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { UcpView } from './UcpView.js';
+import { UcpView } from './LitUcpView.js';
 import { FolderModel } from '../../layer3/FolderModel.interface.js';
 import { ResolvedChild } from '../../layer3/ResolvedChild.interface.js';
 import { Container } from '../../layer3/Container.interface.js';

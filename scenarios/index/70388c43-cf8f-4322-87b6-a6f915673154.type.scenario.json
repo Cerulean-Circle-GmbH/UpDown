@@ -1,0 +1,61 @@
+{
+  "ior": {
+    "uuid": "70388c43-cf8f-4322-87b6-a6f915673154",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "70388c43-cf8f-4322-87b6-a6f915673154",
+    "name": "VersionModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/VersionModel.interface.ts",
+    "indexPath": "scenarios/index/70388c43-cf8f-4322-87b6-a6f915673154.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/VersionModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "major",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "minor",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "patch",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "revision",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "versionString",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:00:49.485Z",
+    "updatedAt": "2026-01-08T11:00:49.485Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -16,11 +16,15 @@
 
 import { html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { UcpView } from './UcpView.js';
+import { UcpView } from './LitUcpView.js';
 import type { Reference } from '../../layer3/Reference.interface.js';
 import { IOR } from '../../layer4/IOR.js';
 
 interface ServerMetrics {
+    /** UUID (required by Model) */
+    uuid: string;
+    /** Name (required by Model) */
+    name: string;
     uptime: number;
     memoryUsage: number;
     activeConnections: number;
@@ -68,11 +72,13 @@ export class OnceServerStatusView extends UcpView<ServerMetrics> {
             .catch(this.healthErrorHandle.bind(this));
     }
     
-    private healthDataHandle(data: any): void {
-        const model = data.model || data;
+    private healthDataHandle(data: unknown): void {
+        const model = (data as { model?: ServerMetrics }).model || data as ServerMetrics;
         this.model = {
+            uuid: model.uuid || 'server-status',
+            name: model.name || 'Server Status',
             uptime: model.uptime || 0,
-            memoryUsage: model.memoryUsage || process?.memoryUsage?.()?.heapUsed || 0,
+            memoryUsage: model.memoryUsage || 0,
             activeConnections: model.activeConnections || 0,
             registeredRoutes: model.registeredRoutes || 0,
             scenarioCount: model.scenarioCount || 0,

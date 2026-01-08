@@ -17,7 +17,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { UcpView } from './UcpView.js';
+import { UcpView } from './LitUcpView.js';
 
 interface LogEntry {
     timestamp: Date;

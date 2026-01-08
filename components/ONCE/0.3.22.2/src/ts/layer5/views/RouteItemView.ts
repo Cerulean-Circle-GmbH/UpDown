@@ -24,7 +24,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { UcpView } from './UcpView.js';
+import { UcpView } from './LitUcpView.js';
 import type { RouteModel } from '../../layer3/RouteScenario.interface.js';
 import type { Reference } from '../../layer3/Reference.interface.js';
 

@@ -19,7 +19,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { UcpView } from './UcpView.js';
+import { UcpView } from './LitUcpView.js';
 import { FileModel } from '../../layer3/FileModel.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 

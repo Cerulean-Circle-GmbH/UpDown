@@ -1,0 +1,49 @@
+{
+  "ior": {
+    "uuid": "379a447d-6455-4e28-aec3-f18cb569ba24",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "379a447d-6455-4e28-aec3-f18cb569ba24",
+    "name": "PortAvailabilityResult",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/PortManager.ts",
+    "indexPath": "scenarios/index/379a447d-6455-4e28-aec3-f18cb569ba24.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/PortAvailabilityResult.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "port",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "available",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isPrimary",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:00:49.321Z",
+    "updatedAt": "2026-01-08T11:00:49.321Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

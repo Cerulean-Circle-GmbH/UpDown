@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "370aadc3-c89b-441d-a314-b6b52b1344af",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "370aadc3-c89b-441d-a314-b6b52b1344af",
+    "name": "PortManager.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/PortManager.ts",
+    "definition": "TypeScript PortManager class/interface",
+    "filePath": "dist/ts/layer2/PortManager.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T11:00:48.307Z",
+    "updatedAt": "2026-01-08T11:00:48.309Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/3/7/0/a/a/370aadc3-c89b-441d-a314-b6b52b1344af.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "3/7/0/a/a/370aadc3-c89b-441d-a314-b6b52b1344af.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:00:48.307Z",
+    "updatedAt": "2026-01-08T11:00:48.307Z"
+  }
+}

@@ -16,7 +16,7 @@
  * @pdca 2025-12-30-UTC-1200.lazy-reference-kernel-isr.pdca.md
  */
 
-import { UcpView } from './UcpView.js';
+import { UcpView } from './LitUcpView.js';
 
 // Import component classes for registration
 // Using dynamic imports to avoid circular dependencies

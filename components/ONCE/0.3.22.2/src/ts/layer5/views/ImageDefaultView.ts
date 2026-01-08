@@ -14,7 +14,7 @@
 
 import { html, css, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { UcpView } from './UcpView.js';
+import { UcpView } from './LitUcpView.js';
 import { ImageModel } from '../../layer3/ImageModel.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 

@@ -1,0 +1,206 @@
+{
+  "ior": {
+    "uuid": "9b67fdc9-56b6-4ce6-88dd-a0658d002937",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "9b67fdc9-56b6-4ce6-88dd-a0658d002937",
+    "name": "ServerNameIndicationManager",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/ServerNameIndicationManager.ts",
+    "indexPath": "scenarios/index/9b67fdc9-56b6-4ce6-88dd-a0658d002937.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ServerNameIndicationManager.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "ServerNameIndicationManagerModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "secureContexts",
+        "type": "Map<string, tls.SecureContext>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "defaultSecureContext",
+        "type": "tls.SecureContext | null",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<ServerNameIndicationManagerModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "certificateSet",
+        "parameters": [
+          {
+            "name": "domain",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "certificate",
+            "type": "DomainCertificateModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "defaultCertificateSet",
+        "parameters": [
+          {
+            "name": "certificate",
+            "type": "DomainCertificateModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "serverNameIndicationCallback",
+        "parameters": [
+          {
+            "name": "serverName",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "callback",
+            "type": "(error: Error | null, context?: tls.SecureContext) => void",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "serverNameIndicationCallbackGet",
+        "parameters": [],
+        "returnType": "(\n        serverName: string,\n        callback: (error: Error | null, context?: tls.SecureContext) => void\n    ) => void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "wildcardSecureContextFind",
+        "parameters": [
+          {
+            "name": "domain",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "tls.SecureContext | undefined",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "certificateRemove",
+        "parameters": [
+          {
+            "name": "domain",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "domainsGet",
+        "parameters": [],
+        "returnType": "string[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "certificateHas",
+        "parameters": [
+          {
+            "name": "domain",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "secureContextGet",
+        "parameters": [
+          {
+            "name": "domain",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "tls.SecureContext | undefined",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Promise<Scenario<ServerNameIndicationManagerModel>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:00:49.360Z",
+    "updatedAt": "2026-01-08T11:00:49.360Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

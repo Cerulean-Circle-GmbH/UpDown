@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "4e8d175b-e926-4139-a008-98fe6ec2244e",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "4e8d175b-e926-4139-a008-98fe6ec2244e",
+    "name": "CertificateOrchestrator.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer4/CertificateOrchestrator.ts",
+    "definition": "TypeScript CertificateOrchestrator class/interface",
+    "filePath": "dist/ts/layer4/CertificateOrchestrator.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T11:00:48.821Z",
+    "updatedAt": "2026-01-08T11:00:48.821Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/4/e/8/d/1/4e8d175b-e926-4139-a008-98fe6ec2244e.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "4/e/8/d/1/4e8d175b-e926-4139-a008-98fe6ec2244e.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:00:48.821Z",
+    "updatedAt": "2026-01-08T11:00:48.821Z"
+  }
+}

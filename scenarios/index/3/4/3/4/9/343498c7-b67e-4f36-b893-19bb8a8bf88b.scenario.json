@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "343498c7-b67e-4f36-b893-19bb8a8bf88b",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "343498c7-b67e-4f36-b893-19bb8a8bf88b",
+    "name": "ServerNameIndicationManagerModel.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/ServerNameIndicationManagerModel.interface.ts",
+    "definition": "TypeScript ServerNameIndicationManagerModel.interface class/interface",
+    "filePath": "src/ts/layer3/ServerNameIndicationManagerModel.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T11:00:47.849Z",
+    "updatedAt": "2026-01-08T11:00:47.850Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/3/4/3/4/9/343498c7-b67e-4f36-b893-19bb8a8bf88b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "3/4/3/4/9/343498c7-b67e-4f36-b893-19bb8a8bf88b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:00:47.849Z",
+    "updatedAt": "2026-01-08T11:00:47.849Z"
+  }
+}

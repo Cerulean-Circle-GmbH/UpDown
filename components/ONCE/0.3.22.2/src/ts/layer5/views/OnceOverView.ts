@@ -36,6 +36,7 @@ import { IOR } from '../../layer4/IOR.js';
  */
 interface ONCEModel {
   uuid: string;
+  name: string;
   version: string;
   peers: OncePeerModel[];
   peerUUID: Reference<string>;

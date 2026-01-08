@@ -20,7 +20,8 @@
  */
 
 import { CSSResult, unsafeCSS } from 'lit';
-import { UcpView } from './UcpView.js';
+import { UcpView } from './LitUcpView.js';
+import type { Model } from '../../layer3/Model.interface.js';
 import { Reference } from '../../layer3/Reference.interface.js';
 import { FileOrchestrator } from '../../layer4/FileOrchestrator.js';
 
@@ -30,7 +31,7 @@ import { FileOrchestrator } from '../../layer4/FileOrchestrator.js';
  * Handles loading of external CSS and HTML template files.
  * Subclasses provide viewName to locate their files.
  */
-export abstract class AbstractWebBean<TModel = any> extends UcpView<TModel> {
+export abstract class AbstractWebBean<TModel extends Model = Model> extends UcpView<TModel> {
   
   /** Cached CSS content */
   protected cssCache: Reference<CSSResult> = null;

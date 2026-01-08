@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { UcpView } from './UcpView.js';
+import { UcpView } from './LitUcpView.js';
 import type { Reference } from '../../layer3/Reference.interface.js';
 import { IOR } from '../../layer4/IOR.js';
 

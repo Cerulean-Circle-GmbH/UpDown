@@ -1,0 +1,69 @@
+{
+  "ior": {
+    "uuid": "25aa023b-1574-4912-b6f2-8e89e2c7211b",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "25aa023b-1574-4912-b6f2-8e89e2c7211b",
+    "name": "CLI",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/CLI.interface.ts",
+    "indexPath": "scenarios/index/25aa023b-1574-4912-b6f2-8e89e2c7211b.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/CLI.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<CLIModel>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "execute",
+        "parameters": [
+          {
+            "name": "args",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "showUsage",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:00:49.406Z",
+    "updatedAt": "2026-01-08T11:00:49.406Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

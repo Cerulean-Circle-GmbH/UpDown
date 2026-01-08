@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "e705d1fe-afa0-463d-89a3-a8a6915871af",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "e705d1fe-afa0-463d-89a3-a8a6915871af",
+    "name": "PersistenceManager.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/PersistenceManager.interface.ts",
+    "definition": "TypeScript PersistenceManager.interface class/interface",
+    "filePath": "src/ts/layer3/PersistenceManager.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T11:00:47.789Z",
+    "updatedAt": "2026-01-08T11:00:47.790Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/e/7/0/5/d/e705d1fe-afa0-463d-89a3-a8a6915871af.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "e/7/0/5/d/e705d1fe-afa0-463d-89a3-a8a6915871af.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:00:47.789Z",
+    "updatedAt": "2026-01-08T11:00:47.789Z"
+  }
+}

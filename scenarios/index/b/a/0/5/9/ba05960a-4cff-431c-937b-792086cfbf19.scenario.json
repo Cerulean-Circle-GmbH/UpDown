@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "ba05960a-4cff-431c-937b-792086cfbf19",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "ba05960a-4cff-431c-937b-792086cfbf19",
+    "name": "UnitCacheManager.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/UnitCacheManager.ts",
+    "definition": "TypeScript UnitCacheManager class/interface",
+    "filePath": "src/ts/layer2/UnitCacheManager.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T11:00:47.558Z",
+    "updatedAt": "2026-01-08T11:00:47.559Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/b/a/0/5/9/ba05960a-4cff-431c-937b-792086cfbf19.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "b/a/0/5/9/ba05960a-4cff-431c-937b-792086cfbf19.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:00:47.558Z",
+    "updatedAt": "2026-01-08T11:00:47.558Z"
+  }
+}

@@ -17,7 +17,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { UcpView } from './UcpView.js';
+import { UcpView } from './LitUcpView.js';
 import { LifecycleState } from '../../layer3/LifecycleState.enum.js';
 import { WebSocketModel, WebSocketState } from '../../layer3/WebSocketModel.interface.js';
 import { DefaultWebSocket } from '../../layer2/DefaultWebSocket.js';

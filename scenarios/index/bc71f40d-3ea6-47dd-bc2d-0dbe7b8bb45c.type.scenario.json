@@ -1,0 +1,123 @@
+{
+  "ior": {
+    "uuid": "bc71f40d-3ea6-47dd-bc2d-0dbe7b8bb45c",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "bc71f40d-3ea6-47dd-bc2d-0dbe7b8bb45c",
+    "name": "Version",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/Version.interface.ts",
+    "indexPath": "scenarios/index/bc71f40d-3ea6-47dd-bc2d-0dbe7b8bb45c.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Version.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "VersionModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "parse",
+        "parameters": [
+          {
+            "name": "version",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toString",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "compareTo",
+        "parameters": [
+          {
+            "name": "other",
+            "type": "Version",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "number",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "promoteMajor",
+        "parameters": [],
+        "returnType": "Promise<Version>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "promoteMinor",
+        "parameters": [],
+        "returnType": "Promise<Version>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "promotePatch",
+        "parameters": [],
+        "returnType": "Promise<Version>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "promoteRevision",
+        "parameters": [],
+        "returnType": "Promise<Version>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "isValid",
+        "parameters": [
+          {
+            "name": "version",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:00:49.485Z",
+    "updatedAt": "2026-01-08T11:00:49.485Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

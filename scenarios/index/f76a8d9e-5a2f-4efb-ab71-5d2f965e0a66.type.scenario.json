@@ -1,0 +1,74 @@
+{
+  "ior": {
+    "uuid": "f76a8d9e-5a2f-4efb-ab71-5d2f965e0a66",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "f76a8d9e-5a2f-4efb-ab71-5d2f965e0a66",
+    "name": "WebSocketModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/WebSocketModel.interface.ts",
+    "indexPath": "scenarios/index/f76a8d9e-5a2f-4efb-ab71-5d2f965e0a66.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/WebSocketModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "uuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "url",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "state",
+        "type": "WebSocketState",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "reconnectAttempts",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "maxReconnectAttempts",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "lastError",
+        "targetType": "string"
+      },
+      {
+        "name": "lastMessageTime",
+        "targetType": "Date"
+      },
+      {
+        "name": "connectedAt",
+        "targetType": "Date"
+      }
+    ],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:00:49.489Z",
+    "updatedAt": "2026-01-08T11:00:49.489Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

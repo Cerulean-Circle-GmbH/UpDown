@@ -23,17 +23,19 @@
 
 import { html, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { UcpView } from './UcpView.js';
+import { UcpView } from './LitUcpView.js';
 
 /**
  * IOR Model for display purposes
  * Minimal interface to avoid importing IOR from layer4
  */
 interface IORDisplayModel {
+  /** UUID (required by Model) */
+  uuid: string;
+  /** Name (required by Model) */
+  name: string;
   /** The original IOR string */
   ior?: string;
-  /** UUID extracted from IOR */
-  uuid?: string;
   /** Is the IOR currently resolving? */
   isResolving?: boolean;
 }

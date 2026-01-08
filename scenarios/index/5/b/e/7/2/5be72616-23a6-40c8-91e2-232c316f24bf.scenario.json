@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "5be72616-23a6-40c8-91e2-232c316f24bf",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "5be72616-23a6-40c8-91e2-232c316f24bf",
+    "name": "Action.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/Action.ts",
+    "definition": "TypeScript Action class/interface",
+    "filePath": "src/ts/layer2/Action.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T11:00:47.414Z",
+    "updatedAt": "2026-01-08T11:00:47.415Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/5/b/e/7/2/5be72616-23a6-40c8-91e2-232c316f24bf.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "5/b/e/7/2/5be72616-23a6-40c8-91e2-232c316f24bf.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:00:47.414Z",
+    "updatedAt": "2026-01-08T11:00:47.414Z"
+  }
+}

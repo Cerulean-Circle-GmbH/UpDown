@@ -1,0 +1,88 @@
+{
+  "ior": {
+    "uuid": "4f80ea78-a9d8-4fdb-862c-a4df7af6c131",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "4f80ea78-a9d8-4fdb-862c-a4df7af6c131",
+    "name": "ScenarioUnit",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ScenarioUnit.interface.ts",
+    "indexPath": "scenarios/index/4f80ea78-a9d8-4fdb-862c-a4df7af6c131.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ScenarioUnit.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "indexPath",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "typeM3",
+        "type": "TypeM3",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "origin",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "definition",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "schemaVersion",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "createdBy",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "createdAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "updatedAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "symlinkPaths",
+        "elementType": "string"
+      },
+      {
+        "name": "references",
+        "elementType": "UnitReference"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:00:49.469Z",
+    "updatedAt": "2026-01-08T11:00:49.469Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

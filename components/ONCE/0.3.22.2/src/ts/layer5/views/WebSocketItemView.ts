@@ -14,7 +14,7 @@
 
 import { html, css, TemplateResult, CSSResultGroup } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { UcpView } from './UcpView.js';
+import { UcpView } from './LitUcpView.js';
 import { WebSocketModel, WebSocketState } from '../../layer3/WebSocketModel.interface.js';
 
 /**
