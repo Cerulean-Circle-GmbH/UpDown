@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "ec1179d7-bbdb-4fe4-ba70-603a780c4790",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "ec1179d7-bbdb-4fe4-ba70-603a780c4790",
+    "name": "DomainConfigurationModel.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/DomainConfigurationModel.interface.ts",
+    "definition": "TypeScript DomainConfigurationModel.interface class/interface",
+    "filePath": "src/ts/layer3/DomainConfigurationModel.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T16:45:39.761Z",
+    "updatedAt": "2026-01-08T16:45:39.762Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/e/c/1/1/7/ec1179d7-bbdb-4fe4-ba70-603a780c4790.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "e/c/1/1/7/ec1179d7-bbdb-4fe4-ba70-603a780c4790.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T16:45:39.761Z",
+    "updatedAt": "2026-01-08T16:45:39.761Z"
+  }
+}

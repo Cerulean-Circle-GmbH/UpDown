@@ -1,0 +1,60 @@
+{
+  "ior": {
+    "uuid": "b5bdf2a4-4301-4ea6-af5a-e8b45e22e3f4",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "b5bdf2a4-4301-4ea6-af5a-e8b45e22e3f4",
+    "name": "RouteModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/RouteModel.interface.ts",
+    "indexPath": "scenarios/index/b5bdf2a4-4301-4ea6-af5a-e8b45e22e3f4.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/RouteModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "pattern",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "method",
+        "type": "HttpMethod",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "priority",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "statistics",
+        "type": "StatisticsModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "domains",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T16:45:44.307Z",
+    "updatedAt": "2026-01-08T16:45:44.307Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

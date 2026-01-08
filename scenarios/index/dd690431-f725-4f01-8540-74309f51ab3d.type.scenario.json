@@ -1,0 +1,55 @@
+{
+  "ior": {
+    "uuid": "dd690431-f725-4f01-8540-74309f51ab3d",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "dd690431-f725-4f01-8540-74309f51ab3d",
+    "name": "RewriteRule",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/RewriteRule.interface.ts",
+    "indexPath": "scenarios/index/dd690431-f725-4f01-8540-74309f51ab3d.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/RewriteRule.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "operation",
+        "type": "RewriteOperation",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "target",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "pattern",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T16:45:44.292Z",
+    "updatedAt": "2026-01-08T16:45:44.292Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

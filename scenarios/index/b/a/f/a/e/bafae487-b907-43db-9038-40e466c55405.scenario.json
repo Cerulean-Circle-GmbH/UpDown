@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "bafae487-b907-43db-9038-40e466c55405",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "bafae487-b907-43db-9038-40e466c55405",
+    "name": "RewriteRule.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/RewriteRule.interface.ts",
+    "definition": "TypeScript RewriteRule.interface class/interface",
+    "filePath": "src/ts/layer3/RewriteRule.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T16:45:39.970Z",
+    "updatedAt": "2026-01-08T16:45:39.972Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/b/a/f/a/e/bafae487-b907-43db-9038-40e466c55405.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "b/a/f/a/e/bafae487-b907-43db-9038-40e466c55405.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T16:45:39.970Z",
+    "updatedAt": "2026-01-08T16:45:39.970Z"
+  }
+}

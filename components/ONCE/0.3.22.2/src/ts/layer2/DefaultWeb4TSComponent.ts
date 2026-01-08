@@ -59,6 +59,13 @@ export class DefaultWeb4TSComponent
   }
   
   /**
+   * Private field for test isolation projectRoot override
+   * Used by tootsie() to temporarily redirect all operations to test/data
+   * @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.6
+   */
+  private testIsolationProjectRoot: string | null = null;
+  
+  /**
    * Initialize component with scenario (SYNC)
    * 
    * If no scenario provided:
@@ -72,14 +79,14 @@ export class DefaultWeb4TSComponent
     if (!scenario) {
       scenario = super.scenarioDefault();  // Gets correct ior/owner from parent
       const version = new SemanticVersion().init();
+      // PC.6: Path properties removed — use accessors instead
+      // REMOVED: targetDirectory, isTestIsolation, projectRoot, componentsDirectory, testDataDirectory
       scenario.model = {                    // Plain JSON inline — KISS
         uuid: randomUUID(),
         name: 'Web4TSComponent',
         component: 'Web4TSComponent',
         version: version,
         componentRoot: '',
-        targetDirectory: '',
-        isTestIsolation: false,
         displayName: 'Web4TSComponent',
         displayVersion: version.toString(),
         isDelegation: false,
@@ -106,9 +113,13 @@ export class DefaultWeb4TSComponent
   
   /**
    * Project root directory
-   * Priority: CLI → context → model → derived from componentRoot
+   * Priority: testIsolation override → CLI → context → derived from componentRoot
+   * @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.6
    */
   override get projectRoot(): string {
+    // 0. Test isolation override takes precedence (for tootsie)
+    if (this.testIsolationProjectRoot) return this.testIsolationProjectRoot;
+    
     // 1. CLI is path authority
     if (super.projectRoot) return super.projectRoot;
     
@@ -179,6 +190,44 @@ export class DefaultWeb4TSComponent
     
     const scriptsDir = this.scriptsDirectory;
     return scriptsDir ? path.join(scriptsDir, 'versions') : '';
+  }
+  
+  /**
+   * Target component root (the component being operated on)
+   * Priority: model.targetComponentRoot → context → derived → componentRoot
+   * @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.6
+   */
+  override get targetComponentRoot(): string {
+    // 1. Explicitly set targetComponentRoot (from 'on' command)
+    if (this.model?.targetComponentRoot) return this.model.targetComponentRoot;
+    
+    // 2. Context (delegating component)
+    const context = (this.model as any)?.context;
+    if (context?.componentRoot) return context.componentRoot;
+    
+    // 3. Derive from componentsDirectory + component + version
+    const componentsDir = this.componentsDirectory;
+    const component = this.model?.component;
+    const version = this.model?.version?.toString();
+    if (componentsDir && component && version) {
+      return path.join(componentsDir, component, version);
+    }
+    
+    // 4. Fallback to own componentRoot
+    return this.componentRoot;
+  }
+  
+  /**
+   * Test isolation mode (derived from projectRoot path)
+   * @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.6
+   */
+  override get isTestIsolation(): boolean {
+    // Check context first for delegation
+    const context = (this.model as any)?.context;
+    if (context?.isTestIsolation !== undefined) return context.isTestIsolation;
+    
+    // Derive from projectRoot path
+    return this.projectRoot.includes('/test/data');
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -264,7 +313,7 @@ export class DefaultWeb4TSComponent
    * @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
    */
   async tootsie(scope: string = 'all', ...references: string[]): Promise<this> {
-    const componentRoot = this.model!.componentRoot || this.model!.targetComponentRoot;
+    const componentRoot = this.componentRoot || this.targetComponentRoot;
     
     if (!componentRoot) {
       throw new Error('Component root not set - cannot determine test isolation path');
@@ -272,7 +321,7 @@ export class DefaultWeb4TSComponent
     
     const testDataRoot = path.join(componentRoot, 'test', 'data');
     const currentProjectRoot = this.projectRoot;  // PC.3: Use accessor
-    const alreadyInTestIsolation = currentProjectRoot?.includes('/test/data') || false;
+    const alreadyInTestIsolation = this.isTestIsolation;  // PC.6: Use accessor
     
     if (alreadyInTestIsolation) {
       console.log(`🔒 [TOOTSIE TEST ISOLATION] Already in test/data environment`);
@@ -284,13 +333,10 @@ export class DefaultWeb4TSComponent
       console.log(`   ⚠️  Tests will ONLY run in isolated environment`);
       console.log(`   ⚠️  Production files CANNOT be affected\n`);
       
-      // Temporarily override model paths for test isolation
-      const originalProjectRoot = this.model!.projectRoot;
-      const originalIsTestIsolation = this.model!.isTestIsolation;
-      
+      // PC.6: Use private field override instead of model mutation
+      // isTestIsolation is now derived from projectRoot.includes('/test/data')
       try {
-        this.model!.projectRoot = testDataRoot;
-        this.model!.isTestIsolation = true;
+        this.testIsolationProjectRoot = testDataRoot;
         (this.model as any).testIsolationContext = `${this.model!.component} v${this.model!.version?.toString()}`;
         
         console.log(`   Switched to Test Isolation Mode ✅`);
@@ -298,8 +344,7 @@ export class DefaultWeb4TSComponent
         
         await this.executeTootsieInIsolation(scope, references);
       } finally {
-        this.model!.projectRoot = originalProjectRoot;
-        this.model!.isTestIsolation = originalIsTestIsolation;
+        this.testIsolationProjectRoot = null;  // Clear override
       }
       
       return this;
@@ -319,7 +364,7 @@ export class DefaultWeb4TSComponent
     if (references.length > 0) {
       console.log(`   References: ${references.join(', ')}`);
     }
-    console.log(`   Test Isolation: ${this.model!.isTestIsolation ? '✅ ENABLED' : '❌ DISABLED'}`);
+    console.log(`   Test Isolation: ${this.isTestIsolation ? '✅ ENABLED' : '❌ DISABLED'}`);  // PC.6: Use accessor
     console.log(`   Project Root: ${this.projectRoot}\n`);  // PC.3: Use accessor
     
     const discoveryResult = await this.discoverTestFile(scope, references);
@@ -361,7 +406,7 @@ export class DefaultWeb4TSComponent
   private async executeTestFile(testFilePath: string): Promise<void> {
     console.log(`   Loading test class from: ${testFilePath}`);
     
-    const componentRoot = this.model!.componentRoot || this.model!.targetComponentRoot;
+    const componentRoot = this.componentRoot || this.targetComponentRoot;  // PC.6: Use accessors
     if (componentRoot) {
       console.log(`🔨 Ensuring component is built before tests...`);
       try {
@@ -423,7 +468,7 @@ export class DefaultWeb4TSComponent
     }
     
     try {
-      const componentRoot = this.model!.componentRoot || this.model!.targetComponentRoot;
+      const componentRoot = this.componentRoot || this.targetComponentRoot;  // PC.6: Use accessors
       if (!componentRoot) {
         throw new Error('Component root not set');
       }
@@ -455,7 +500,7 @@ export class DefaultWeb4TSComponent
    * @cliHide
    */
   private async discoverTestFile(scope: string, references: string[]): Promise<string | null> {
-    const componentRoot = this.model!.componentRoot || this.model!.targetComponentRoot;
+    const componentRoot = this.componentRoot || this.targetComponentRoot;  // PC.6: Use accessors
     
     if (!componentRoot) {
       console.log(`❌ Component root not set`);
@@ -539,7 +584,7 @@ export class DefaultWeb4TSComponent
    * Run component tests (simple version — use tootsie() for full quality framework)
    */
   async test(scope?: string, ...references: string[]): Promise<this> {
-    const componentRoot = this.model!.targetComponentRoot || this.model!.componentRoot;
+    const componentRoot = this.targetComponentRoot || this.componentRoot;  // PC.6: Use accessors
     
     console.log(`🧪 Running tests for ${this.model!.displayName} v${this.model!.displayVersion}...`);
     
@@ -580,7 +625,7 @@ export class DefaultWeb4TSComponent
    * Also extracts TypeDescriptor scenarios from AST
    */
   async build(...flags: string[]): Promise<this> {
-    const componentRoot = this.model!.targetComponentRoot || this.model!.componentRoot;
+    const componentRoot = this.targetComponentRoot || this.componentRoot;  // PC.6: Use accessors
     
     console.log(`🔨 Building ${this.model!.displayName} v${this.model!.displayVersion}...`);
     
@@ -619,7 +664,7 @@ export class DefaultWeb4TSComponent
    * Creates type.scenario.json files for each exported class/interface
    */
   private async typesExtract(): Promise<void> {
-    const componentRoot = this.model!.targetComponentRoot || this.model!.componentRoot;
+    const componentRoot = this.targetComponentRoot || this.componentRoot;  // PC.6: Use accessors
     const projectRoot = this.projectRoot;  // PC.3: Use accessor
     const scenariosDir = path.join(projectRoot, 'scenarios');
     
@@ -660,7 +705,7 @@ export class DefaultWeb4TSComponent
    * Clean build artifacts
    */
   async clean(): Promise<this> {
-    const componentRoot = this.model!.targetComponentRoot || this.model!.componentRoot;
+    const componentRoot = this.targetComponentRoot || this.componentRoot;  // PC.6: Use accessors
     const distDir = path.join(componentRoot, 'dist');
     
     console.log(`🧹 Cleaning ${this.model!.displayName} v${this.model!.displayVersion}...`);
@@ -679,7 +724,7 @@ export class DefaultWeb4TSComponent
    * Show component directory tree
    */
   async tree(depth?: string, showHidden?: string): Promise<this> {
-    const componentRoot = this.model!.targetComponentRoot || this.model!.componentRoot;
+    const componentRoot = this.targetComponentRoot || this.componentRoot;  // PC.6: Use accessors
     const maxDepth = depth ? parseInt(depth, 10) : 4;
     const includeHidden = showHidden === 'true';
     
@@ -770,7 +815,7 @@ export class DefaultWeb4TSComponent
    * Discover and create units for component files
    */
   async unitsDiscover(): Promise<this> {
-    const componentRoot = this.model!.targetComponentRoot || this.model!.componentRoot;
+    const componentRoot = this.targetComponentRoot || this.componentRoot;  // PC.6: Use accessors
     // Use CLI accessor for projectRoot (Path Authority)
     // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3
     const projectRoot = this.projectRoot;
@@ -989,14 +1034,13 @@ await component.init();
   
   /**
    * Set target directory for component operations
-   * Web4 P16: targetDirectorySet (not setTargetDirectory)
+   * @deprecated Use CLI path authority instead. targetDirectory === projectRoot via accessor.
+   * @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.6
    */
-  /**
-   * @deprecated Use CLI path authority instead
-   */
-  targetDirectorySet(directory: string): void {
-    this.model!.targetDirectory = directory;
-    // Note: componentsDirectory should come from CLI, not be set here
+  targetDirectorySet(_directory: string): void {
+    // targetDirectory is now an accessor returning projectRoot
+    // This setter has no effect - logging deprecation warning
+    console.warn('[DEPRECATED] targetDirectorySet() has no effect. Use CLI path authority.');
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -1094,9 +1138,10 @@ ${'='.repeat(80)}
         console.log();
         
         console.log(`📂 Paths:`);
-        console.log(`   Project Root:     ${targetModel.projectRoot || 'N/A'}`);
+        // PC.6: Use accessors instead of model properties (path properties removed)
+        console.log(`   Project Root:     ${target.projectRoot || 'N/A'}`);
         console.log(`   Component Root:   ${targetModel.componentRoot || 'N/A'}`);
-        console.log(`   Target Directory: ${targetModel.targetDirectory || 'N/A'}`);
+        console.log(`   Target Directory: ${target.targetDirectory || 'N/A'}`);
         console.log();
         
         console.log(`⚙️  Configuration:`);
@@ -1144,7 +1189,7 @@ ${'='.repeat(80)}
     const targetComponent = (this.model as any).context;
     const componentName = targetComponent.model.component;
     const componentVersion = targetComponent.model.version.toString();
-    const componentRoot = this.model!.targetComponentRoot || this.model!.componentRoot;
+    const componentRoot = this.targetComponentRoot || this.componentRoot;  // PC.6: Use accessors
     
     console.log(`📄 Generating component descriptor for ${componentName} ${componentVersion}...`);
     
@@ -1446,7 +1491,7 @@ ${'='.repeat(80)}
       throw new Error('No component context loaded. Use "on <component> <version>" first.');
     }
 
-    const componentPath = this.model!.targetComponentRoot!;
+    const componentPath = this.targetComponentRoot;  // PC.6: Use accessor
     
     console.log(`🚀 Starting ${this.model!.component} ${this.model!.version?.toString()}...`);
     
@@ -1524,15 +1569,13 @@ ${'='.repeat(80)}
       this.model!.version = (this.model as any).context.model.version;
     }
     
-    // PC.3: targetComponentRoot uses accessors, not model paths
+    // PC.6: targetComponentRoot MUST be set for 'on' command (this is the only setter)
     this.model!.targetComponentRoot = path.join(
       this.componentsDirectory,  // Accessor handles CLI → context → derived
       this.model!.component || '',
       this.model!.version?.toString() || ''
     );
-    
-    // targetDirectory is just projectRoot (for backward compatibility)
-    this.model!.targetDirectory = this.projectRoot;
+    // NOTE: targetDirectory accessor returns projectRoot automatically - no assignment needed
   }
 
   /**
@@ -1609,7 +1652,7 @@ ${'='.repeat(80)}
       filtered.forEach(m => console.log(m));
     } else {
       // Use context component's CLI
-      const componentPath = this.model!.targetComponentRoot!;
+      const componentPath = this.targetComponentRoot;  // PC.6: Use accessor
       console.log(`   Context: ${componentPath}`);
       // Simple method listing for now
       const methods = this.methodsList();
@@ -2044,7 +2087,7 @@ ${'='.repeat(80)}
    * @cliHide
    */
   private async updateMainScriptSymlink(): Promise<void> {
-    const scriptsDir = path.join(this.model!.targetDirectory || '', 'scripts');
+    const scriptsDir = path.join(this.targetDirectory || '', 'scripts');  // PC.6: Use accessor
     const componentLower = (this.model!.component || '').toLowerCase();
     const mainScriptPath = path.join(scriptsDir, componentLower);
     

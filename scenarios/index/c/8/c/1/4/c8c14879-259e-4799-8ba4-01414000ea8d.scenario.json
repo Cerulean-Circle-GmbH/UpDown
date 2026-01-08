@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "c8c14879-259e-4799-8ba4-01414000ea8d",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "c8c14879-259e-4799-8ba4-01414000ea8d",
+    "name": "ManifestRoute.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/ManifestRoute.ts",
+    "definition": "TypeScript ManifestRoute class/interface",
+    "filePath": "dist/ts/layer2/ManifestRoute.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T16:45:40.822Z",
+    "updatedAt": "2026-01-08T16:45:40.827Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/8/c/1/4/c8c14879-259e-4799-8ba4-01414000ea8d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/8/c/1/4/c8c14879-259e-4799-8ba4-01414000ea8d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T16:45:40.822Z",
+    "updatedAt": "2026-01-08T16:45:40.822Z"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "a6ccabed-c65b-48e7-a10b-05d84ab46278",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "a6ccabed-c65b-48e7-a10b-05d84ab46278",
+    "name": "UcpController.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/UcpController.ts",
+    "definition": "TypeScript UcpController class/interface",
+    "filePath": "dist/ts/layer2/UcpController.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T16:45:40.984Z",
+    "updatedAt": "2026-01-08T16:45:40.985Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/a/6/c/c/a/a6ccabed-c65b-48e7-a10b-05d84ab46278.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "a/6/c/c/a/a6ccabed-c65b-48e7-a10b-05d84ab46278.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T16:45:40.984Z",
+    "updatedAt": "2026-01-08T16:45:40.984Z"
+  }
+}

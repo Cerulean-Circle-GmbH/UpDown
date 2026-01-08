@@ -1,0 +1,160 @@
+{
+  "ior": {
+    "uuid": "e4316cd7-1b41-4ef6-aba9-dc5482cff2d3",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "e4316cd7-1b41-4ef6-aba9-dc5482cff2d3",
+    "name": "DefaultWebSocket",
+    "extends": "ior:esm:/ONCE/0.3.22.2/UcpComponent",
+    "implements": [],
+    "sourcePath": "src/ts/layer2/DefaultWebSocket.ts",
+    "indexPath": "scenarios/index/e4316cd7-1b41-4ef6-aba9-dc5482cff2d3.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/DefaultWebSocket.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [
+      {
+        "name": "socket",
+        "type": "Reference<WebSocket>",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [
+      {
+        "name": "ws",
+        "targetType": "WebSocket"
+      },
+      {
+        "name": "reconnectTimer",
+        "targetType": "ReturnType<typeof setTimeout>"
+      },
+      {
+        "name": "messageCallback",
+        "targetType": "(data: string) => void"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "modelDefault",
+        "parameters": [],
+        "returnType": "WebSocketModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "connect",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "disconnect",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleOpen",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onMessage",
+        "parameters": [
+          {
+            "name": "callback",
+            "type": "(data: string) => void",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleMessage",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "MessageEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleError",
+        "parameters": [
+          {
+            "name": "_event",
+            "type": "Event",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleClose",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "attemptReconnect",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "send",
+        "parameters": [
+          {
+            "name": "data",
+            "type": "string | object",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T16:45:43.062Z",
+    "updatedAt": "2026-01-08T16:45:43.062Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

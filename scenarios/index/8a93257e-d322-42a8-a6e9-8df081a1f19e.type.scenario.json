@@ -1,0 +1,92 @@
+{
+  "ior": {
+    "uuid": "8a93257e-d322-42a8-a6e9-8df081a1f19e",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "8a93257e-d322-42a8-a6e9-8df081a1f19e",
+    "name": "View",
+    "extends": "ior:esm:/ONCE/0.3.22.2/JsInterface",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/View.ts",
+    "indexPath": "scenarios/index/8a93257e-d322-42a8-a6e9-8df081a1f19e.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/View.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [
+      {
+        "name": "component",
+        "type": "Component<TModel>",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "model",
+        "type": "TModel",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "refresh",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "add",
+        "parameters": [
+          {
+            "name": "childView",
+            "type": "View<Model>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "childRemove",
+        "parameters": [
+          {
+            "name": "childView",
+            "type": "View<Model>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "unknown",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T16:45:44.363Z",
+    "updatedAt": "2026-01-08T16:45:44.363Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

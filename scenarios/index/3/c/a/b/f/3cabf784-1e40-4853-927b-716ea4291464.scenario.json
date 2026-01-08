@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "3cabf784-1e40-4853-927b-716ea4291464",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "3cabf784-1e40-4853-927b-716ea4291464",
+    "name": "UserModel.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/UserModel.interface.ts",
+    "definition": "TypeScript UserModel.interface class/interface",
+    "filePath": "src/ts/layer3/UserModel.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T16:45:40.195Z",
+    "updatedAt": "2026-01-08T16:45:40.196Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/3/c/a/b/f/3cabf784-1e40-4853-927b-716ea4291464.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "3/c/a/b/f/3cabf784-1e40-4853-927b-716ea4291464.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T16:45:40.195Z",
+    "updatedAt": "2026-01-08T16:45:40.195Z"
+  }
+}

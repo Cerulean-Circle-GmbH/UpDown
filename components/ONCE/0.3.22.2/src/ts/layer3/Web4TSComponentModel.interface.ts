@@ -24,32 +24,13 @@ export interface Web4TSComponentModel extends Model {
   /** Component's own root directory */
   componentRoot: string;
   
-  /** 
-   * Project root path
-   * @deprecated DRY violation — Use CLI accessor: this.projectRoot
-   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3
-   */
-  projectRoot?: string;
-  
-  /** Target directory for component operations */
-  targetDirectory: string;
-  
-  /** 
-   * Pre-calculated components directory
-   * @deprecated DRY violation — Use CLI accessor: this.componentsDirectory
-   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3
-   */
-  componentsDirectory?: string;
-  
-  /** Semantic flag indicating test isolation mode */
-  isTestIsolation: boolean;
-  
-  /** 
-   * Test data directory path (only when isTestIsolation = true)
-   * @deprecated DRY violation — Use CLI accessor: this.testDataDirectory
-   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3
-   */
-  testDataDirectory?: string;
+  // NOTE: Path properties DELETED — Use accessors via CLI Path Authority
+  // @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.6
+  // REMOVED: projectRoot — Use this.projectRoot accessor
+  // REMOVED: targetDirectory — Use this.targetDirectory accessor (returns projectRoot)
+  // REMOVED: componentsDirectory — Use this.componentsDirectory accessor
+  // REMOVED: testDataDirectory — Use this.testDataDirectory accessor
+  // REMOVED: isTestIsolation — Use this.isTestIsolation accessor (derived from projectRoot)
   
   /** Display identity - Component name to show */
   displayName: string;
@@ -72,11 +53,10 @@ export interface Web4TSComponentModel extends Model {
   /** Context: Another component INSTANCE for delegation */
   context?: Reference<unknown>;
   
-  /** Calculated path to TARGET component root */
+  /** Calculated path to TARGET component root (for 'on' command) */
   targetComponentRoot?: string;
   
-  /** @deprecated Use targetComponentRoot instead */
-  componentPath?: string;
+  // REMOVED: componentPath — Use targetComponentRoot
   
   /** Layer2 implementation class name */
   implementationClassName?: string;

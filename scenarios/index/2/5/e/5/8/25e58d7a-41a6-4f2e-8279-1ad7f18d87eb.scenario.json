@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "25e58d7a-41a6-4f2e-8279-1ad7f18d87eb",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "25e58d7a-41a6-4f2e-8279-1ad7f18d87eb",
+    "name": "MethodInfo.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/MethodInfo.interface.ts",
+    "definition": "TypeScript MethodInfo.interface class/interface",
+    "filePath": "dist/ts/layer3/MethodInfo.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T16:45:41.647Z",
+    "updatedAt": "2026-01-08T16:45:41.648Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/2/5/e/5/8/25e58d7a-41a6-4f2e-8279-1ad7f18d87eb.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "2/5/e/5/8/25e58d7a-41a6-4f2e-8279-1ad7f18d87eb.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T16:45:41.647Z",
+    "updatedAt": "2026-01-08T16:45:41.647Z"
+  }
+}

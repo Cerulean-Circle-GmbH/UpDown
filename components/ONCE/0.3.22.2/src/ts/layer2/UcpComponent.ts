@@ -311,6 +311,42 @@ export abstract class UcpComponent<TModel extends Model> extends Component<TMode
     return this.cliField?.model?.scriptsVersionDirectory ?? '';
   }
   
+  /**
+   * Component root directory (this component's own root)
+   * Derived from model or context
+   */
+  get componentRoot(): string {
+    return (this.model as any)?.componentRoot ?? '';
+  }
+  
+  /**
+   * Target component root directory (component being operated on)
+   * For delegation: the target component's root
+   * For non-delegation: same as componentRoot
+   * @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.6
+   */
+  get targetComponentRoot(): string {
+    return (this.model as any)?.targetComponentRoot ?? this.componentRoot;
+  }
+  
+  /**
+   * Target directory (legacy alias for projectRoot)
+   * @deprecated Use projectRoot instead
+   * @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.6
+   */
+  get targetDirectory(): string {
+    return this.projectRoot;
+  }
+  
+  /**
+   * Test isolation mode flag
+   * Derived from projectRoot containing '/test/data'
+   * @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.6
+   */
+  get isTestIsolation(): boolean {
+    return this.projectRoot.includes('/test/data');
+  }
+  
   // ═══════════════════════════════════════════════════════════════
   // Scenario Accessors (P16: TypeScript accessors)
   // @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md SOI.1

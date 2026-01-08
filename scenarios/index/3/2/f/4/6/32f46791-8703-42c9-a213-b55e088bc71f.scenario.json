@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "32f46791-8703-42c9-a213-b55e088bc71f",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "32f46791-8703-42c9-a213-b55e088bc71f",
+    "name": "DelegationProxy.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/DelegationProxy.ts",
+    "definition": "TypeScript DelegationProxy class/interface",
+    "filePath": "dist/ts/layer2/DelegationProxy.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T16:45:40.597Z",
+    "updatedAt": "2026-01-08T16:45:40.597Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/3/2/f/4/6/32f46791-8703-42c9-a213-b55e088bc71f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "3/2/f/4/6/32f46791-8703-42c9-a213-b55e088bc71f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T16:45:40.597Z",
+    "updatedAt": "2026-01-08T16:45:40.597Z"
+  }
+}

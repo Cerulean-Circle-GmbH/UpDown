@@ -136,27 +136,16 @@ export interface ONCEPeerModel extends Model {
     capabilities?: ServerCapability[];
     
     // ═══════════════════════════════════════════════════════════════
-    // BACKWARD COMPATIBILITY (deprecated, will be removed)
-    // @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.1
-    // These properties are for gradual migration from ONCEModel
-    // Path properties should come from CLI accessor (MC.2.6)
+    // PATH PROPERTIES — REMOVED (Ocam's Razor)
+    // @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.6
+    // Use CLI accessors instead:
+    //   this.projectRoot, this.componentRoot, this.targetDirectory,
+    //   this.targetComponentRoot, this.componentsDirectory, this.testDataDirectory
+    //   this.isTestIsolation (derived from projectRoot.includes('/test/data'))
     // ═══════════════════════════════════════════════════════════════
     
-    // --- PATH PROPERTIES (migrate to CLI accessor) ---
-    /** @deprecated Use CLI accessor: this.projectRoot instead of this.model.projectRoot */
-    projectRoot?: string;
-    /** @deprecated Use CLI accessor: this.componentRoot */
+    /** Component's own root directory (discovered from import.meta.url) */
     componentRoot?: string;
-    /** @deprecated Use CLI accessor */
-    targetDirectory?: string;
-    /** @deprecated Use CLI accessor */
-    targetComponentRoot?: string;
-    /** @deprecated Use CLI accessor: this.componentsDirectory */
-    componentsDirectory?: string;
-    /** @deprecated Use CLI accessor: this.testDataDirectory */
-    testDataDirectory?: string;
-    /** @deprecated Derive from projectRoot containing '/test/data/' */
-    isTestIsolation?: boolean;
     
     // --- DISPLAY PROPERTIES (CLI context) ---
     /** @deprecated Use name property */

@@ -47,18 +47,23 @@ export class Test01_PathAuthorityAndProjectRootDetection extends ONCETestCase {
     
     const productionOutput = this.runOnceCLI('info');
     
-    // Parse PATH DISCOVERY line
-    const productionMatch = productionOutput.match(
-      /\[PATH DISCOVERY\] componentRoot=([^\s]+) projectRoot=([^\s]+) isTestIsolation=(true|false)/
+    // Parse [ONCE] componentRoot log line (PC.6: updated format)
+    // Format: 🔍 [ONCE] componentRoot=/path version=0.3.22.2
+    const componentRootMatch = productionOutput.match(
+      /\[ONCE\] componentRoot=([^\s]+) version=([^\s]+)/
     );
     
-    if (!productionMatch) {
-      throw new Error('Could not parse PATH DISCOVERY from production once info');
+    if (!componentRootMatch) {
+      throw new Error('Could not parse [ONCE] componentRoot from production once info');
     }
     
-    const prodComponentRoot = productionMatch[1];
-    const prodProjectRoot = productionMatch[2];
-    const prodIsTestIsolation = productionMatch[3] === 'true';
+    const prodComponentRoot = componentRootMatch[1];
+    // PC.6: projectRoot and isTestIsolation are now derived via accessors
+    // Extract from the "📂 Paths:" section of info output
+    const projectRootMatch = productionOutput.match(/Project Root:\s+(\S+)/);
+    const prodProjectRoot = projectRootMatch ? projectRootMatch[1] : '';
+    // isTestIsolation is derived from projectRoot containing '/test/data'
+    const prodIsTestIsolation = prodProjectRoot.includes('/test/data');
     
     this.logEvidence('output', 'Production context detected', {
       componentRoot: prodComponentRoot,

@@ -1,0 +1,241 @@
+{
+  "ior": {
+    "uuid": "dd55fa9f-fffb-47eb-9260-67748b4dc18b",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "dd55fa9f-fffb-47eb-9260-67748b4dc18b",
+    "name": "TypeRegistry",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/TypeRegistry.ts",
+    "indexPath": "scenarios/index/dd55fa9f-fffb-47eb-9260-67748b4dc18b.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/TypeRegistry.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "typeMap",
+        "type": "Map<InterfaceConstructor, TypeDescriptor>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "nameMap",
+        "type": "Map<string, InterfaceConstructor>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "iorMap",
+        "type": "Map<string, InterfaceConstructor>",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "instance",
+        "type": "TypeRegistry",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "size",
+        "type": "number",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [
+      {
+        "name": "instanceField",
+        "targetType": "TypeRegistry"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "register",
+        "parameters": [
+          {
+            "name": "classConstructor",
+            "type": "InterfaceConstructor",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "astData",
+            "type": "TypeDescriptorJSON",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "registerIOR",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "classConstructor",
+            "type": "InterfaceConstructor",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unregister",
+        "parameters": [
+          {
+            "name": "classConstructor",
+            "type": "InterfaceConstructor",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "typeLookup",
+        "parameters": [
+          {
+            "name": "classConstructor",
+            "type": "InterfaceConstructor",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<TypeDescriptor>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "classFromName",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<InterfaceConstructor>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "classFromIOR",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<InterfaceConstructor>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "implementationsLookup",
+        "parameters": [
+          {
+            "name": "interfaceType",
+            "type": "InterfaceConstructor",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "InterfaceConstructor[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "resolveIOR",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<InterfaceConstructor>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toIOR",
+        "parameters": [
+          {
+            "name": "classConstructor",
+            "type": "InterfaceConstructor",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<string>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "allClasses",
+        "parameters": [],
+        "returnType": "InterfaceConstructor[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "allNames",
+        "parameters": [],
+        "returnType": "string[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "clear",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T16:45:43.735Z",
+    "updatedAt": "2026-01-08T16:45:43.735Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

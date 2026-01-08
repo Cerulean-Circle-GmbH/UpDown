@@ -1,0 +1,103 @@
+{
+  "ior": {
+    "uuid": "7a8ed43c-74c4-421d-bfb1-17d23cfedd85",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "7a8ed43c-74c4-421d-bfb1-17d23cfedd85",
+    "name": "FolderItemView",
+    "extends": "ior:esm:/ONCE/0.3.22.2/UcpView",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/FolderItemView.ts",
+    "indexPath": "scenarios/index/7a8ed43c-74c4-421d-bfb1-17d23cfedd85.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/FolderItemView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "cssPath",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "FolderItemView.css"
+      },
+      {
+        "name": "selected",
+        "type": "any",
+        "optional": false,
+        "defaultValue": false
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "childRef",
+        "targetType": "ResolvedChild"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getDisplayData",
+        "parameters": [],
+        "returnType": "{ name: string; itemCount: number; hasChildren: boolean; uuid: string } | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleSelect",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleNavigate",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "Event",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleDragStart",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "DragEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T16:45:44.560Z",
+    "updatedAt": "2026-01-08T16:45:44.560Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

@@ -414,12 +414,11 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
       web4ts.cli = this.cli;
     }
     
-    // Set web4ts model paths from ONCE's already-discovered paths (DRY)
+    // PC.6: Path properties removed from Web4TSComponentModel
+    // Only set componentRoot (still needed) and targetComponentRoot (for 'on' command)
+    // Other paths come from CLI accessors
     web4ts.model!.componentRoot = componentRoot;
-    web4ts.model!.projectRoot = projectRoot;
-    web4ts.model!.targetDirectory = projectRoot;
     web4ts.model!.targetComponentRoot = componentRoot;
-    web4ts.model!.componentsDirectory = componentsDir;
     
     // WM.3 Fix: Set version to match ONCE component version
     if (this.model.version) {
@@ -463,8 +462,9 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
     web4ts.model.projectRoot = this.projectRoot;  // Use accessor, not this.model.projectRoot
     
     // Test isolation context (if applicable)
-    if (this.model.isTestIsolation && this.model.projectRoot) {
-      const match = this.model.projectRoot.match(/components\/([^/]+)\/([^/]+)\/test\/data/);
+    // PC.6: Use accessors — isTestIsolation derived from projectRoot.includes('/test/data')
+    if (this.isTestIsolation && this.projectRoot) {
+      const match = this.projectRoot.match(/components\/([^/]+)\/([^/]+)\/test\/data/);
       if (match) {
         web4ts.model.testIsolationContext = `${match[1]} v${match[2]}`;
       } else {
@@ -506,17 +506,15 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
     }
     
     // Calculate test isolation context
-    if (this.model.isTestIsolation && this.model.componentRoot) {
-      const match = this.model.componentRoot.match(/components\/([^/]+)\/([^/]+)/);
+    // PC.6: Use accessors
+    if (this.isTestIsolation && this.componentRoot) {
+      const match = this.componentRoot.match(/components\/([^/]+)\/([^/]+)/);
       if (match) {
         this.model.testIsolationContext = `${match[1]} v${match[2]}`;
       }
     }
     
-    // Calculate components directory
-    if (this.model.componentRoot) {
-      this.model.componentsDirectory = path.dirname(path.dirname(this.model.componentRoot));
-    }
+    // PC.6: componentsDirectory removed from ONCEPeerModel — use this.componentsDirectory accessor
   }
 
   // init() moved near constructor — @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.2
@@ -541,13 +539,13 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
     
     // Process scenario (Scenario<ONCEPeerModel> format)
     if (scenario && typeof scenario === 'object' && 'model' in scenario) {
-      console.log(`🔍 [PATH] DefaultONCE.init() BEFORE: projectRoot=${this.model.projectRoot} componentRoot=${this.model.componentRoot}`);
+      console.log(`🔍 [PATH] DefaultONCE.init() BEFORE: projectRoot=${this.projectRoot} componentRoot=${this.componentRoot}`);
       // Store the scenario and merge model data
       this.model.scenario = scenario;
       if (scenario.model) {
         Object.assign(this.model, scenario.model);
       }
-      console.log(`🔍 [PATH] DefaultONCE.init() AFTER: projectRoot=${this.model.projectRoot} componentRoot=${this.model.componentRoot} isTestIsolation=${this.model.isTestIsolation}`);
+      console.log(`🔍 [PATH] DefaultONCE.init() AFTER: projectRoot=${this.projectRoot} componentRoot=${this.componentRoot} isTestIsolation=${this.isTestIsolation}`);
     }
     
     // Discover methods for CLI completion (redundant if called in constructor, but safe)
@@ -617,7 +615,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
    * @cliHide
    */
   private async storageInitialize(): Promise<void> {
-    const projectRoot = this.model.projectRoot;
+    const projectRoot = this.projectRoot;  // PC.6: Use accessor
     if (!projectRoot) {
       console.warn('[NodeJsOnce] Cannot initialize storage: projectRoot not set');
       return;
@@ -1217,7 +1215,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
       this.showInteractiveHeader();
       this.showInteractiveHelp();
       
-      console.log('🏠 Project root detected:', this.model.projectRoot || '(not set)');
+      console.log('🏠 Project root detected:', this.projectRoot || '(not set)');  // PC.6: Use accessor
       console.log('🚫 No environment variables required');
       console.log('🌐 Server hierarchy: Port 42777 → 8080+');
       console.log('');
@@ -1231,7 +1229,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
     }
     
     // Non-interactive modes (headless, browser-only, or no TTY)
-    console.log('🏠 Project root:', this.model.projectRoot || '(not set)');
+    console.log('🏠 Project root:', this.projectRoot || '(not set)');  // PC.6: Use accessor
     console.log('🚫 No environment variables required');
     console.log('🌐 Server hierarchy: Port 42777 → 8080+ (enhanced v0.2.0.0)');
     console.log('🎯 TRUE Radical OOP architecture (v0.3.20.1)');
@@ -1605,8 +1603,8 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
       const fs = await import('fs');
       const path = await import('path');
       
-      // Get project root from model or calculate
-      const projectRoot = this.model.projectRoot || path.resolve(path.dirname(new URL(import.meta.url).pathname), '../../../../../../');
+      // Get project root using accessor (PC.6)
+      const projectRoot = this.projectRoot || path.resolve(path.dirname(new URL(import.meta.url).pathname), '../../../../../../');
       const scenarioBaseDir = path.join(projectRoot, 'scenarios/local.once/ONCE/0.3.20.4');
       
       // Check if scenarios directory exists
@@ -2741,7 +2739,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
     const fs = await import('fs');
     const path = await import('path');
     
-    const projectRoot = this.model.projectRoot || process.cwd();
+    const projectRoot = this.projectRoot || process.cwd();  // PC.6: Use accessor
     const scenariosDir = path.join(projectRoot, 'scenarios');
     
     if (!fs.existsSync(scenariosDir)) {
@@ -3153,11 +3151,12 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
     console.log(`📋 Loading ${componentKey} (implementation: ${implementationClassName})`);
     
     // 3. Dynamic import (ONCE's unique responsibility)
-    if (!this.model.projectRoot) {
+    // PC.6: Use accessor
+    if (!this.projectRoot) {
       throw new Error('projectRoot not set in ONCE model. Call init() first.');
     }
     
-    const componentPath = path.join(this.model.projectRoot, 'components', componentName, version);
+    const componentPath = path.join(this.projectRoot, 'components', componentName, version);
     const possiblePaths = [
       path.join(componentPath, 'dist/ts/layer2', `${implementationClassName}.js`),
       path.join(componentPath, 'dist/ts/layer1', `${implementationClassName}.js`),

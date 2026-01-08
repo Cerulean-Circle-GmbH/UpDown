@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "9e1f7652-add4-47c7-8e75-a93a0b3c1ba9",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "9e1f7652-add4-47c7-8e75-a93a0b3c1ba9",
+    "name": "LitUcpView.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/LitUcpView.ts",
+    "definition": "TypeScript LitUcpView class/interface",
+    "filePath": "src/ts/layer5/views/LitUcpView.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T16:45:40.354Z",
+    "updatedAt": "2026-01-08T16:45:40.354Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/9/e/1/f/7/9e1f7652-add4-47c7-8e75-a93a0b3c1ba9.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "9/e/1/f/7/9e1f7652-add4-47c7-8e75-a93a0b3c1ba9.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T16:45:40.354Z",
+    "updatedAt": "2026-01-08T16:45:40.354Z"
+  }
+}

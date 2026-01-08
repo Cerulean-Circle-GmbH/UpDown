@@ -1,0 +1,115 @@
+{
+  "ior": {
+    "uuid": "153b1531-0567-434f-8eb3-6db38a21643d",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "153b1531-0567-434f-8eb3-6db38a21643d",
+    "name": "Test26_DomainCertificateStore",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/tests/Test26_DomainCertificateStore.ts",
+    "indexPath": "scenarios/index/153b1531-0567-434f-8eb3-6db38a21643d.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Test26_DomainCertificateStore.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "testDir",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "/tmp/once-test-certs"
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "run",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cleanup",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testCertificateSaveLoad",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testDomainsListGet",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testExpiringCertificatesGet",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "testCertificateDelete",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "statisticsCreate",
+        "parameters": [],
+        "returnType": "StatisticsModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "mockCertificateCreate",
+        "parameters": [
+          {
+            "name": "domain",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "daysValid",
+            "type": "number",
+            "optional": false,
+            "defaultValue": "90"
+          }
+        ],
+        "returnType": "DomainCertificateModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T16:45:44.709Z",
+    "updatedAt": "2026-01-08T16:45:44.709Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}
