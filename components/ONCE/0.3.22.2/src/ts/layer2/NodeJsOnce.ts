@@ -515,7 +515,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
    * @cliHide
    */
   async initAsync(scenario?: Scenario<ONCEPeerModel>): Promise<this> {
-    // Paths already discovered in constructor via _discoverPaths()
+    // Paths already discovered in constructor via discoverPathsFromFilesystem()
     
     // ✅ Always transition to INITIALIZING (even without scenario)
     if (this.getLifecycleState() === LifecycleState.CREATED) {
@@ -695,7 +695,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
    */
   async peerStart(scenario?: string | Scenario<ONCEPeerModel>): Promise<void> {
     console.log('🚀 Starting ONCE peer...');
-    return this._startPeerInternal(scenario);
+    return this.peerStartInternal(scenario);
   }
 
   /**
@@ -706,14 +706,14 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
   async startServer(scenario?: string | Scenario<ONCEPeerModel>): Promise<void> {
     console.warn('⚠️  startServer() is deprecated, use peerStart() instead');
     console.log('🚀 Starting ONCE server...');
-    return this._startPeerInternal(scenario);
+    return this.peerStartInternal(scenario);
   }
 
   /**
    * Internal peer start implementation
    * @internal
    */
-  private async _startPeerInternal(scenario?: string | Scenario<ONCEPeerModel>): Promise<void> {
+  private async peerStartInternal(scenario?: string | Scenario<ONCEPeerModel>): Promise<void> {
     
     try {
       // ✅ Use UcpComponent's isInitialized guard (not model.initialized)
@@ -1030,7 +1030,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
    * @cliSyntax peerStop [scenario]
    */
   async peerStop(scenario?: string): Promise<void> {
-    return this._stopPeerInternal(scenario);
+    return this.peerStopInternal(scenario);
   }
 
   /**
@@ -1044,14 +1044,14 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
    */
   async stopServer(scenario?: string): Promise<void> {
     console.warn('⚠️  stopServer() is deprecated, use peerStop() instead');
-    return this._stopPeerInternal(scenario);
+    return this.peerStopInternal(scenario);
   }
 
   /**
    * Internal peer stop implementation
    * @internal
    */
-  private async _stopPeerInternal(scenario?: string): Promise<void> {
+  private async peerStopInternal(scenario?: string): Promise<void> {
     // Only process if scenario is a non-empty string
     if (scenario && typeof scenario === 'string' && scenario.trim().length > 0) {
       // Stop a specific server by scenario

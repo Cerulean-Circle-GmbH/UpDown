@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "12d7680a-2fce-480b-adb0-fad979994606",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "12d7680a-2fce-480b-adb0-fad979994606",
+    "name": "HttpMethod.enum.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/HttpMethod.enum.ts",
+    "definition": "TypeScript HttpMethod.enum class/interface",
+    "filePath": "src/ts/layer3/HttpMethod.enum.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T11:54:33.200Z",
+    "updatedAt": "2026-01-08T11:54:33.200Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/1/2/d/7/6/12d7680a-2fce-480b-adb0-fad979994606.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "1/2/d/7/6/12d7680a-2fce-480b-adb0-fad979994606.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:54:33.200Z",
+    "updatedAt": "2026-01-08T11:54:33.200Z"
+  }
+}

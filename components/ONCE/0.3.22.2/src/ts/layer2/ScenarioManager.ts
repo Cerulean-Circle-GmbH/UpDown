@@ -20,12 +20,12 @@ import { logAction, serverIdentity } from '../layer1/LoggingUtils.js';
  * ✅ TRUE Radical OOP: Uses backward link for path authority
  */
 export class ScenarioManager {
-    private _projectRoot: string | undefined;
+    private projectRootField: string | undefined;
     component?: any; // Backward link to DefaultONCE for path authority
 
     constructor(projectRoot?: string) {
         // Allow explicit projectRoot override, otherwise derive from component path
-        this._projectRoot = projectRoot;
+        this.projectRootField = projectRoot;
     }
 
     /**
@@ -50,8 +50,8 @@ export class ScenarioManager {
      */
     private get projectRoot(): string {
         // Explicit override takes precedence
-        if (this._projectRoot) {
-            return this._projectRoot;
+        if (this.projectRootField) {
+            return this.projectRootField;
         }
         
         // Path authority: Use backward link to component instance if available
@@ -305,7 +305,7 @@ export class ScenarioManager {
      * Set project root
      */
     setProjectRoot(projectRoot: string): void {
-        this._projectRoot = projectRoot;
+        this.projectRootField = projectRoot;
     }
 }
 

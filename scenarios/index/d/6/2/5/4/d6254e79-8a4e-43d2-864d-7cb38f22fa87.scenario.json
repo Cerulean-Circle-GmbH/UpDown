@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "d6254e79-8a4e-43d2-864d-7cb38f22fa87",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "d6254e79-8a4e-43d2-864d-7cb38f22fa87",
+    "name": "ReferenceState.enum.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/ReferenceState.enum.ts",
+    "definition": "TypeScript ReferenceState.enum class/interface",
+    "filePath": "src/ts/layer3/ReferenceState.enum.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T11:54:33.343Z",
+    "updatedAt": "2026-01-08T11:54:33.344Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/d/6/2/5/4/d6254e79-8a4e-43d2-864d-7cb38f22fa87.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "d/6/2/5/4/d6254e79-8a4e-43d2-864d-7cb38f22fa87.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:54:33.343Z",
+    "updatedAt": "2026-01-08T11:54:33.343Z"
+  }
+}

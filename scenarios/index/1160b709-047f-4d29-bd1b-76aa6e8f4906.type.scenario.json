@@ -1,0 +1,307 @@
+{
+  "ior": {
+    "uuid": "1160b709-047f-4d29-bd1b-76aa6e8f4906",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "1160b709-047f-4d29-bd1b-76aa6e8f4906",
+    "name": "TestFileParser",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer4/TestFileParser.ts",
+    "indexPath": "scenarios/index/1160b709-047f-4d29-bd1b-76aa6e8f4906.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/TestFileParser.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "scanTestFiles",
+        "parameters": [
+          {
+            "name": "testDir",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "baseDir",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "TestFile[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "parseDescribeBlocks",
+        "parameters": [
+          {
+            "name": "filePath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "DescribeBlock[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "parseItCases",
+        "parameters": [
+          {
+            "name": "filePath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "describeIndex",
+            "type": "number",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "ItCase[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "isDescribeCall",
+        "parameters": [
+          {
+            "name": "node",
+            "type": "ts.Node",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "isItCall",
+        "parameters": [
+          {
+            "name": "node",
+            "type": "ts.Node",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "formatFilesForCompletion",
+        "parameters": [
+          {
+            "name": "files",
+            "type": "TestFile[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getAllFilesHierarchical",
+        "parameters": [
+          {
+            "name": "testDir",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "{\n    display: string[];\n    tokens: string[];\n  }",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "formatDescribesForCompletion",
+        "parameters": [
+          {
+            "name": "describes",
+            "type": "DescribeBlock[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "formatItCasesForCompletion",
+        "parameters": [
+          {
+            "name": "itCases",
+            "type": "ItCase[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getFileByNumber",
+        "parameters": [
+          {
+            "name": "files",
+            "type": "TestFile[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "num",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "TestFile | undefined",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getDescribeByNumber",
+        "parameters": [
+          {
+            "name": "describes",
+            "type": "DescribeBlock[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "num",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "DescribeBlock | undefined",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getItCaseByNumber",
+        "parameters": [
+          {
+            "name": "itCases",
+            "type": "ItCase[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "num",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "ItCase | undefined",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getAllItCasesHierarchical",
+        "parameters": [
+          {
+            "name": "testDir",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "{\n    display: string[];\n    tokens: string[];\n  }",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getAllDescribesHierarchical",
+        "parameters": [
+          {
+            "name": "testDir",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "{\n    display: string[];\n    tokens: string[];\n  }",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "parseDescribeReference",
+        "parameters": [
+          {
+            "name": "ref",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "{ fileNum: number; describeIndex: number } | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getDescribeByReference",
+        "parameters": [
+          {
+            "name": "testDir",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "ref",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "{ file: TestFile; describe: DescribeBlock } | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:54:35.100Z",
+    "updatedAt": "2026-01-08T11:54:35.100Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "ior": {
+    "uuid": "e028bfbe-4ce7-4c1c-9b59-247508f527f6",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "e028bfbe-4ce7-4c1c-9b59-247508f527f6",
+    "name": "TLSOptions",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/TLSOptions.interface.ts",
+    "indexPath": "scenarios/index/e028bfbe-4ce7-4c1c-9b59-247508f527f6.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/TLSOptions.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "certPath",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "keyPath",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "caPath",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "passphrase",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "minVersion",
+        "type": "'TLSv1.2' | 'TLSv1.3'",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:54:34.984Z",
+    "updatedAt": "2026-01-08T11:54:34.984Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

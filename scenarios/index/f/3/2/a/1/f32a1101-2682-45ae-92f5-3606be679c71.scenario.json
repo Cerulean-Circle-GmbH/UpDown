@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "f32a1101-2682-45ae-92f5-3606be679c71",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "f32a1101-2682-45ae-92f5-3606be679c71",
+    "name": "ScenarioLoader.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/ScenarioLoader.ts",
+    "definition": "TypeScript ScenarioLoader class/interface",
+    "filePath": "dist/ts/layer2/ScenarioLoader.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T11:54:33.734Z",
+    "updatedAt": "2026-01-08T11:54:33.734Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/f/3/2/a/1/f32a1101-2682-45ae-92f5-3606be679c71.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "f/3/2/a/1/f32a1101-2682-45ae-92f5-3606be679c71.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:54:33.734Z",
+    "updatedAt": "2026-01-08T11:54:33.734Z"
+  }
+}

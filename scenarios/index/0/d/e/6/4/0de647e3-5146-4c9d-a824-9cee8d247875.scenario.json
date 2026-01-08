@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "0de647e3-5146-4c9d-a824-9cee8d247875",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "0de647e3-5146-4c9d-a824-9cee8d247875",
+    "name": "once-client.html",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/html/once-client.html",
+    "definition": "HTML template once-client",
+    "filePath": "src/ts/layer5/views/html/once-client.html",
+    "mimetype": "text/html",
+    "createdAt": "2026-01-08T11:54:32.832Z",
+    "updatedAt": "2026-01-08T11:54:32.832Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/0/d/e/6/4/0de647e3-5146-4c9d-a824-9cee8d247875.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "0/d/e/6/4/0de647e3-5146-4c9d-a824-9cee8d247875.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:54:32.832Z",
+    "updatedAt": "2026-01-08T11:54:32.832Z"
+  }
+}
