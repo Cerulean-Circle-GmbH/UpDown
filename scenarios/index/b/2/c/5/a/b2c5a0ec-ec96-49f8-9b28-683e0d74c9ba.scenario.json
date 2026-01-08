@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "b2c5a0ec-ec96-49f8-9b28-683e0d74c9ba",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "b2c5a0ec-ec96-49f8-9b28-683e0d74c9ba",
+    "name": "RouteOverView.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/RouteOverView.ts",
+    "definition": "TypeScript RouteOverView class/interface",
+    "filePath": "src/ts/layer5/views/RouteOverView.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:12:18.664Z",
+    "updatedAt": "2026-01-08T12:12:18.665Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/b/2/c/5/a/b2c5a0ec-ec96-49f8-9b28-683e0d74c9ba.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "b/2/c/5/a/b2c5a0ec-ec96-49f8-9b28-683e0d74c9ba.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:12:18.664Z",
+    "updatedAt": "2026-01-08T12:12:18.664Z"
+  }
+}

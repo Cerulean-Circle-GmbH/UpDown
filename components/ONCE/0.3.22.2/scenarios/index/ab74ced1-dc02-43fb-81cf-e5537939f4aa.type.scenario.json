@@ -1,0 +1,90 @@
+{
+  "ior": {
+    "uuid": "ab74ced1-dc02-43fb-81cf-e5537939f4aa",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "ab74ced1-dc02-43fb-81cf-e5537939f4aa",
+    "name": "IORModel",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/IORModel.interface.ts",
+    "indexPath": "scenarios/index/ab74ced1-dc02-43fb-81cf-e5537939f4aa.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/IORModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "component",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "version",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "uuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "protocol",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "host",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "port",
+        "type": "number",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "path",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "iorString",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "params",
+        "type": "Record<string, string>",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "profiles",
+        "elementType": "IORProfile"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:16:50.652Z",
+    "updatedAt": "2026-01-08T12:16:50.652Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "ior": {
+    "uuid": "29cbebce-bf3c-4692-b704-6e6cd30d8bf0",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "29cbebce-bf3c-4692-b704-6e6cd30d8bf0",
+    "name": "Collection",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Array",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/Collection.interface.ts",
+    "indexPath": "scenarios/index/29cbebce-bf3c-4692-b704-6e6cd30d8bf0.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Collection.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:16:50.618Z",
+    "updatedAt": "2026-01-08T12:16:50.618Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

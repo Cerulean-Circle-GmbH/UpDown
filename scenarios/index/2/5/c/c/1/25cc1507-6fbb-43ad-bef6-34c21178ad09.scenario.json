@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "25cc1507-6fbb-43ad-bef6-34c21178ad09",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "25cc1507-6fbb-43ad-bef6-34c21178ad09",
+    "name": "IORMethodCall.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/IORMethodCall.interface.ts",
+    "definition": "TypeScript IORMethodCall.interface class/interface",
+    "filePath": "src/ts/layer3/IORMethodCall.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:12:18.167Z",
+    "updatedAt": "2026-01-08T12:12:18.167Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/2/5/c/c/1/25cc1507-6fbb-43ad-bef6-34c21178ad09.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "2/5/c/c/1/25cc1507-6fbb-43ad-bef6-34c21178ad09.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:12:18.167Z",
+    "updatedAt": "2026-01-08T12:12:18.167Z"
+  }
+}

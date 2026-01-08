@@ -1,0 +1,490 @@
+{
+  "ior": {
+    "uuid": "9ff9f784-6400-4394-a9ee-38f72ec5e254",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "9ff9f784-6400-4394-a9ee-38f72ec5e254",
+    "name": "UcpComponent",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Component",
+    "implements": [],
+    "sourcePath": "src/ts/layer2/UcpComponent.ts",
+    "indexPath": "scenarios/index/9ff9f784-6400-4394-a9ee-38f72ec5e254.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/UcpComponent.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "type",
+        "type": "TypeDescriptor",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "controller",
+        "type": "UcpController<TModel>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "ownerField",
+        "type": "string",
+        "optional": false,
+        "defaultValue": "system"
+      },
+      {
+        "name": "uuidProviderInstance",
+        "type": "UUIDProvider",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "sha256ProviderInstance",
+        "type": "SHA256Provider",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "cli",
+        "type": "Reference<DefaultCLI>",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "cliAvailable",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "projectRoot",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "componentsDirectory",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "testDataDirectory",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "ior",
+        "type": "{ uuid: string; component: string; version: string; iorString?: string }",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "owner",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "scenarioUnit",
+        "type": "import('../layer3/ScenarioUnit.interface.js').ScenarioUnit | undefined",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "componentVersion",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "model",
+        "type": "TModel",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "hasModel",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "value",
+        "type": "TModel",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "updateObject",
+        "type": "Partial<TModel>",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "isDirty",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "indexPath",
+        "type": "Reference<string>",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "references",
+        "type": "UnitReference[]",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "unit",
+        "type": "Reference<UcpComponent<UnitModel>>",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [
+      {
+        "name": "ucpModel",
+        "targetType": "UcpModel<TModel>"
+      },
+      {
+        "name": "storage",
+        "targetType": "Storage"
+      },
+      {
+        "name": "iorField",
+        "targetType": "{ uuid: string; component: string; version: string; iorString?: string }"
+      },
+      {
+        "name": "scenarioUnitField",
+        "targetType": "import('../layer3/ScenarioUnit.interface.js').ScenarioUnit"
+      },
+      {
+        "name": "cliField",
+        "targetType": "DefaultCLI"
+      },
+      {
+        "name": "unitInstance",
+        "targetType": "UcpComponent<UnitModel>"
+      },
+      {
+        "name": "artefactInstance",
+        "targetType": "UcpComponent<any>"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "implements",
+        "parameters": [],
+        "returnType": "AbstractConstructor<JsInterface>[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "start",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "idProvidersRegister",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "requireInitialized",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toIOR",
+        "parameters": [],
+        "returnType": "{ uuid: string; component: string; version: string; iorString?: string }",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Scenario<TModel>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioDefault",
+        "parameters": [],
+        "returnType": "Scenario<TModel>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<TModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioPersist",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "commit",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "rollback",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "storageSet",
+        "parameters": [
+          {
+            "name": "storage",
+            "type": "Storage",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "uuidCreate",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "contentIdCreate",
+        "parameters": [
+          {
+            "name": "content",
+            "type": "ArrayBuffer | string | Uint8Array",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "contentIdCreateSync",
+        "parameters": [
+          {
+            "name": "content",
+            "type": "ArrayBuffer | string | Uint8Array",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "viewRegister",
+        "parameters": [
+          {
+            "name": "view",
+            "type": "View<TModel>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "viewUnregister",
+        "parameters": [
+          {
+            "name": "view",
+            "type": "View<TModel>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "viewsUpdateAll",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioReceive",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "{ model?: TModel }",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioCreate",
+        "parameters": [
+          {
+            "name": "contentHash",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          },
+          {
+            "name": "contentSize",
+            "type": "number",
+            "optional": true,
+            "defaultValue": null
+          },
+          {
+            "name": "mimetype",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioStore",
+        "parameters": [
+          {
+            "name": "basePath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": "'/scenarios'"
+          },
+          {
+            "name": "version",
+            "type": "string",
+            "optional": false,
+            "defaultValue": "'0.0.0.0'"
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "hibernate",
+        "parameters": [
+          {
+            "name": "symlinkPaths",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": "[]"
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "restore",
+        "parameters": [
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:17:33.659Z",
+    "updatedAt": "2026-01-08T12:17:33.659Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

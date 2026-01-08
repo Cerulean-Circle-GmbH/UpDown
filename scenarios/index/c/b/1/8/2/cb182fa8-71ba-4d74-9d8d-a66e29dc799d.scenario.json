@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "cb182fa8-71ba-4d74-9d8d-a66e29dc799d",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "cb182fa8-71ba-4d74-9d8d-a66e29dc799d",
+    "name": "DomainCertificateModel.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/DomainCertificateModel.interface.ts",
+    "definition": "TypeScript DomainCertificateModel.interface class/interface",
+    "filePath": "src/ts/layer3/DomainCertificateModel.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:16:48.703Z",
+    "updatedAt": "2026-01-08T12:16:48.703Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/b/1/8/2/cb182fa8-71ba-4d74-9d8d-a66e29dc799d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/b/1/8/2/cb182fa8-71ba-4d74-9d8d-a66e29dc799d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:16:48.703Z",
+    "updatedAt": "2026-01-08T12:16:48.703Z"
+  }
+}

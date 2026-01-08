@@ -1,0 +1,61 @@
+{
+  "ior": {
+    "uuid": "414ef5b9-22d4-429f-8e6d-3f29ad0ec8bd",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "414ef5b9-22d4-429f-8e6d-3f29ad0ec8bd",
+    "name": "HTTPSServerModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/HTTPServerModel",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/HTTPSServerModel.interface.ts",
+    "indexPath": "scenarios/index/414ef5b9-22d4-429f-8e6d-3f29ad0ec8bd.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/HTTPSServerModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "tls",
+        "type": "TLSOptions",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "httpRedirect",
+        "type": "{\n        enabled: boolean;\n        httpPort: number;  // Port for HTTP redirect server\n    }",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "certificateExpiry",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "isSelfSigned",
+        "type": "boolean",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "sniEnabled",
+        "type": "boolean",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:12:21.082Z",
+    "updatedAt": "2026-01-08T12:12:21.082Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

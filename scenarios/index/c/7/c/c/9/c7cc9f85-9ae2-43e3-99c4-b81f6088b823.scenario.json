@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "c7cc9f85-9ae2-43e3-99c4-b81f6088b823",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "c7cc9f85-9ae2-43e3-99c4-b81f6088b823",
+    "name": "MethodDescriptor.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/MethodDescriptor.interface.ts",
+    "definition": "TypeScript MethodDescriptor.interface class/interface",
+    "filePath": "dist/ts/layer3/MethodDescriptor.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T12:20:59.302Z",
+    "updatedAt": "2026-01-08T12:20:59.302Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/7/c/c/9/c7cc9f85-9ae2-43e3-99c4-b81f6088b823.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/7/c/c/9/c7cc9f85-9ae2-43e3-99c4-b81f6088b823.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:20:59.302Z",
+    "updatedAt": "2026-01-08T12:20:59.302Z"
+  }
+}

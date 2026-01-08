@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "865214a3-cc0a-4b7e-9818-9446ff76d183",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "865214a3-cc0a-4b7e-9818-9446ff76d183",
+    "name": "JsInterface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/JsInterface.ts",
+    "definition": "TypeScript JsInterface class/interface",
+    "filePath": "dist/ts/layer3/JsInterface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T12:12:19.497Z",
+    "updatedAt": "2026-01-08T12:12:19.497Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/8/6/5/2/1/865214a3-cc0a-4b7e-9818-9446ff76d183.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "8/6/5/2/1/865214a3-cc0a-4b7e-9818-9446ff76d183.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:12:19.497Z",
+    "updatedAt": "2026-01-08T12:12:19.497Z"
+  }
+}

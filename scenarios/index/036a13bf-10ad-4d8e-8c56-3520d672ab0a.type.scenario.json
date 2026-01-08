@@ -1,0 +1,39 @@
+{
+  "ior": {
+    "uuid": "036a13bf-10ad-4d8e-8c56-3520d672ab0a",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "036a13bf-10ad-4d8e-8c56-3520d672ab0a",
+    "name": "HierarchicalResult",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer4/HierarchicalCompletionFilter.ts",
+    "indexPath": "scenarios/index/036a13bf-10ad-4d8e-8c56-3520d672ab0a.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/HierarchicalResult.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "display",
+        "elementType": "string"
+      },
+      {
+        "name": "tokens",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:21:00.252Z",
+    "updatedAt": "2026-01-08T12:21:00.252Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

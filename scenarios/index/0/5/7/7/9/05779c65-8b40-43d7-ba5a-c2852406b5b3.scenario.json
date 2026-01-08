@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "05779c65-8b40-43d7-ba5a-c2852406b5b3",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "05779c65-8b40-43d7-ba5a-c2852406b5b3",
+    "name": "Route.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/Route.ts",
+    "definition": "TypeScript Route class/interface",
+    "filePath": "src/ts/layer3/Route.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:17:31.879Z",
+    "updatedAt": "2026-01-08T12:17:31.880Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/0/5/7/7/9/05779c65-8b40-43d7-ba5a-c2852406b5b3.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "0/5/7/7/9/05779c65-8b40-43d7-ba5a-c2852406b5b3.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:17:31.880Z",
+    "updatedAt": "2026-01-08T12:17:31.880Z"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "a997f4a8-0276-4b9c-9b8d-00f4e97f77d8",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "a997f4a8-0276-4b9c-9b8d-00f4e97f77d8",
+    "name": "EnvironmentInfo.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/EnvironmentInfo.interface.ts",
+    "definition": "TypeScript EnvironmentInfo.interface class/interface",
+    "filePath": "dist/ts/layer3/EnvironmentInfo.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T12:16:49.458Z",
+    "updatedAt": "2026-01-08T12:16:49.458Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/a/9/9/7/f/a997f4a8-0276-4b9c-9b8d-00f4e97f77d8.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "a/9/9/7/f/a997f4a8-0276-4b9c-9b8d-00f4e97f77d8.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:16:49.458Z",
+    "updatedAt": "2026-01-08T12:16:49.458Z"
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "ior": {
+    "uuid": "c30c708c-2a0f-4fdd-bbaa-3b54dcd76c94",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "c30c708c-2a0f-4fdd-bbaa-3b54dcd76c94",
+    "name": "LitOverView",
+    "extends": "ior:esm:/ONCE/0.3.22.2/LitElement",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/LitOverView.ts",
+    "indexPath": "scenarios/index/c30c708c-2a0f-4fdd-bbaa-3b54dcd76c94.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/LitOverView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "scenario",
+        "type": "Scenario<TModel> | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "kernel",
+        "type": "unknown",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "styles",
+        "type": "CSSResult",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "model",
+        "type": "TModel",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "viewTitle",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "items",
+        "type": "ItemViewModel[]",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [
+      {
+        "name": "itemsLocal",
+        "elementType": "ItemViewModel"
+      }
+    ],
+    "methods": [
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "itemAdd",
+        "parameters": [
+          {
+            "name": "item",
+            "type": "ItemViewModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "itemRemove",
+        "parameters": [
+          {
+            "name": "item",
+            "type": "ItemViewModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "itemUpdate",
+        "parameters": [
+          {
+            "name": "item",
+            "type": "ItemViewModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "itemsClear",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:14:24.337Z",
+    "updatedAt": "2026-01-08T12:14:24.337Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

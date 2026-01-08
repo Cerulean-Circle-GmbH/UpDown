@@ -1,0 +1,156 @@
+{
+  "ior": {
+    "uuid": "d1d85b43-4bc7-4896-8d9a-b6c102f99416",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "d1d85b43-4bc7-4896-8d9a-b6c102f99416",
+    "name": "DefaultColors",
+    "extends": null,
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.2/Colors"
+    ],
+    "sourcePath": "src/ts/layer4/DefaultColors.ts",
+    "indexPath": "scenarios/index/d1d85b43-4bc7-4896-8d9a-b6c102f99416.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/DefaultColors.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "reset",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[0m"
+      },
+      {
+        "name": "bold",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[1m"
+      },
+      {
+        "name": "dim",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[90m"
+      },
+      {
+        "name": "red",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[31m"
+      },
+      {
+        "name": "green",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[32m"
+      },
+      {
+        "name": "yellow",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[33m"
+      },
+      {
+        "name": "blue",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[34m"
+      },
+      {
+        "name": "magenta",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[35m"
+      },
+      {
+        "name": "cyan",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[36m"
+      },
+      {
+        "name": "white",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[37m"
+      },
+      {
+        "name": "orange",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[38;5;208m"
+      },
+      {
+        "name": "toolName",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[1;36m"
+      },
+      {
+        "name": "version",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[1;36m"
+      },
+      {
+        "name": "commands",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[0;37m"
+      },
+      {
+        "name": "parameters",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[1;33m"
+      },
+      {
+        "name": "descriptions",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[0;32m"
+      },
+      {
+        "name": "examples",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[0;37m"
+      },
+      {
+        "name": "sections",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "\\x1b[1;37m"
+      },
+      {
+        "name": "instance",
+        "type": "DefaultColors",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "getInstance",
+        "parameters": [],
+        "returnType": "DefaultColors",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:21:00.238Z",
+    "updatedAt": "2026-01-08T12:21:00.238Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "fc46f9b1-4b9d-4464-ab84-391885fd1508",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "fc46f9b1-4b9d-4464-ab84-391885fd1508",
+    "name": "once",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/once",
+    "definition": "Root component file: once",
+    "filePath": "once",
+    "mimetype": "application/x-shellscript",
+    "createdAt": "2026-01-08T12:14:05.875Z",
+    "updatedAt": "2026-01-08T12:14:05.876Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/f/c/4/6/f/fc46f9b1-4b9d-4464-ab84-391885fd1508.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "f/c/4/6/f/fc46f9b1-4b9d-4464-ab84-391885fd1508.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:14:05.875Z",
+    "updatedAt": "2026-01-08T12:14:05.875Z"
+  }
+}

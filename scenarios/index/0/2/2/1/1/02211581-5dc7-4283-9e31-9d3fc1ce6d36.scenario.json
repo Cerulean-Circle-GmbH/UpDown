@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "02211581-5dc7-4283-9e31-9d3fc1ce6d36",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "02211581-5dc7-4283-9e31-9d3fc1ce6d36",
+    "name": "FolderJs.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/FolderJs.ts",
+    "definition": "TypeScript FolderJs class/interface",
+    "filePath": "src/ts/layer3/FolderJs.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:20:58.583Z",
+    "updatedAt": "2026-01-08T12:20:58.583Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/0/2/2/1/1/02211581-5dc7-4283-9e31-9d3fc1ce6d36.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "0/2/2/1/1/02211581-5dc7-4283-9e31-9d3fc1ce6d36.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:20:58.583Z",
+    "updatedAt": "2026-01-08T12:20:58.583Z"
+  }
+}

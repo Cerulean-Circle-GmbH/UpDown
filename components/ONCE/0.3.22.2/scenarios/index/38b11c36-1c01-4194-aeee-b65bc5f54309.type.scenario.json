@@ -1,0 +1,85 @@
+{
+  "ior": {
+    "uuid": "38b11c36-1c01-4194-aeee-b65bc5f54309",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "38b11c36-1c01-4194-aeee-b65bc5f54309",
+    "name": "Tree",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/Tree.interface.ts",
+    "indexPath": "scenarios/index/38b11c36-1c01-4194-aeee-b65bc5f54309.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Tree.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "parent",
+        "type": "LazyReference<Tree<T>>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "hasChildren",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "childCount",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "children",
+        "elementType": "T"
+      }
+    ],
+    "methods": [
+      {
+        "name": "childAdd",
+        "parameters": [
+          {
+            "name": "child",
+            "type": "T",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "childRemove",
+        "parameters": [
+          {
+            "name": "child",
+            "type": "T",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:16:50.723Z",
+    "updatedAt": "2026-01-08T12:16:50.723Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

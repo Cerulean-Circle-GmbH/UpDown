@@ -1,0 +1,103 @@
+{
+  "ior": {
+    "uuid": "f9d8a537-062a-4175-99d2-2bb8423bf03a",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "f9d8a537-062a-4175-99d2-2bb8423bf03a",
+    "name": "TLSCertificateLoader",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/TLSCertificateLoader.ts",
+    "indexPath": "scenarios/index/f9d8a537-062a-4175-99d2-2bb8423bf03a.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/TLSCertificateLoader.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "TLSCertificateLoaderModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "cert",
+        "type": "Buffer | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "key",
+        "type": "Buffer | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "ca",
+        "type": "Buffer | null",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<TLSCertificateLoaderModel>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "load",
+        "parameters": [],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "certificateInfoExtract",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "secureContextOptionsGet",
+        "parameters": [],
+        "returnType": "tls.SecureContextOptions",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Promise<Scenario<TLSCertificateLoaderModel>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:14:06.330Z",
+    "updatedAt": "2026-01-08T12:14:06.330Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

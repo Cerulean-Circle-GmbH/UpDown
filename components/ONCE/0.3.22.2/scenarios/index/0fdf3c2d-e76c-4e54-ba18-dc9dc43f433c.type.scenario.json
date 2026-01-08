@@ -1,0 +1,118 @@
+{
+  "ior": {
+    "uuid": "0fdf3c2d-e76c-4e54-ba18-dc9dc43f433c",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "0fdf3c2d-e76c-4e54-ba18-dc9dc43f433c",
+    "name": "OnceLoggerView",
+    "extends": "ior:esm:/ONCE/0.3.22.2/UcpView",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/OnceLoggerView.ts",
+    "indexPath": "scenarios/index/0fdf3c2d-e76c-4e54-ba18-dc9dc43f433c.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/OnceLoggerView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "cssPath",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "OnceLoggerView.css"
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "logs",
+        "elementType": "LogEntry"
+      }
+    ],
+    "methods": [
+      {
+        "name": "connectedCallback",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "logEntryAdd",
+        "parameters": [
+          {
+            "name": "entry",
+            "type": "LogEntry",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "logsClear",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "directionIconGet",
+        "parameters": [
+          {
+            "name": "direction",
+            "type": "LogEntry['direction']",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "logEntryRender",
+        "parameters": [
+          {
+            "name": "entry",
+            "type": "LogEntry",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "index",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:16:50.955Z",
+    "updatedAt": "2026-01-08T12:16:50.955Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

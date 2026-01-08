@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "b42d5a49-4c09-4bd0-b2f0-26471e4d28ba",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "b42d5a49-4c09-4bd0-b2f0-26471e4d28ba",
+    "name": "LifecycleEventType.enum.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/LifecycleEventType.enum.ts",
+    "definition": "TypeScript LifecycleEventType.enum class/interface",
+    "filePath": "src/ts/layer3/LifecycleEventType.enum.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:20:58.635Z",
+    "updatedAt": "2026-01-08T12:20:58.635Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/b/4/2/d/5/b42d5a49-4c09-4bd0-b2f0-26471e4d28ba.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "b/4/2/d/5/b42d5a49-4c09-4bd0-b2f0-26471e4d28ba.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:20:58.635Z",
+    "updatedAt": "2026-01-08T12:20:58.635Z"
+  }
+}

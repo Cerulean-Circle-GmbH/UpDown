@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "9dd4d0f7-cc68-4287-bf1f-517f008e8e76",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "9dd4d0f7-cc68-4287-bf1f-517f008e8e76",
+    "name": "LoggingUtils.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer1/LoggingUtils.ts",
+    "definition": "TypeScript LoggingUtils class/interface",
+    "filePath": "src/ts/layer1/LoggingUtils.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:14:22.308Z",
+    "updatedAt": "2026-01-08T12:14:22.309Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/9/d/d/4/d/9dd4d0f7-cc68-4287-bf1f-517f008e8e76.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "9/d/d/4/d/9dd4d0f7-cc68-4287-bf1f-517f008e8e76.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:14:22.308Z",
+    "updatedAt": "2026-01-08T12:14:22.308Z"
+  }
+}

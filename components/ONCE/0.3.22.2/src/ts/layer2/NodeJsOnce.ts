@@ -97,8 +97,9 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
     // @pdca 2026-01-06-UTC-1200.modeldefault-elimination.pdca.md MDE.2
     this.init();
     
-    // ✅ Synchronous path discovery (needed for CLI to work)
-    this.discoverPathsFromFilesystem();
+    // ✅ Discover componentRoot and version (NodeJsOnce-specific)
+    // NOTE: projectRoot comes from CLI (path authority)
+    this.discoverComponentRootAndVersion();
     
     // Initialize managers (domain logic from 0.2.0.0)
     this.serverHierarchyManager = new ServerHierarchyManager(this.idProvider);
@@ -166,25 +167,43 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
   // testDataDirectory — inherited from UcpComponent
   
   /**
-   * Override projectRoot to add fallback to model (backward compatibility)
+   * Override projectRoot: CLI is path authority, derive from componentRoot if CLI not set
+   * 
+   * Priority:
+   * 1. CLI (path authority)
+   * 2. Derived from componentRoot (componentRoot/../.. = project root)
    */
   override get projectRoot(): string {
-    // Prefer CLI (Path Authority), fallback to model for backward compatibility
-    return super.projectRoot || this.model?.projectRoot || '';
+    if (super.projectRoot) return super.projectRoot;  // CLI path authority
+    
+    // Derive from componentRoot: /project/components/ONCE/0.3.22.2 → /project
+    const componentRoot = this.model?.componentRoot;
+    if (componentRoot) {
+      return path.resolve(componentRoot, '..', '..', '..');
+    }
+    return '';
   }
 
   /**
-   * Override componentsDirectory to add fallback to model (backward compatibility)
+   * Override componentsDirectory: CLI is path authority, derive from componentRoot if CLI not set
    */
   override get componentsDirectory(): string {
-    return super.componentsDirectory || this.model?.componentsDirectory || '';
+    if (super.componentsDirectory) return super.componentsDirectory;  // CLI path authority
+    
+    // Derive from componentRoot: /project/components/ONCE/0.3.22.2 → /project/components
+    const componentRoot = this.model?.componentRoot;
+    if (componentRoot) {
+      return path.resolve(componentRoot, '..', '..');
+    }
+    return '';
   }
 
   /**
-   * Override testDataDirectory to add fallback to model (backward compatibility)
+   * Override testDataDirectory: CLI is path authority, derive from projectRoot if CLI not set
    */
   override get testDataDirectory(): string {
-    return super.testDataDirectory || this.model?.testDataDirectory || '';
+    if (super.testDataDirectory) return super.testDataDirectory;  // CLI path authority
+    return path.join(this.projectRoot, 'test', 'data');
   }
 
   /**
@@ -249,18 +268,19 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
   }
 
   /**
-   * ✅ Synchronous path discovery - SINGLE SOURCE for NodeJsOnce paths
+   * ✅ Discover componentRoot and version from import.meta.url
    * 
-   * Called in constructor. Discovers componentRoot and version from import.meta.url.
-   * All other methods (getWeb4TSComponent, etc.) use these values — NO recalculation.
+   * ONLY discovers NodeJsOnce-specific values:
+   * - componentRoot: where this ONCE component is located
+   * - version: from directory name (e.g., 0.3.22.2)
    * 
-   * CPA.7.2: This is the ONLY place paths are calculated for NodeJsOnce.
+   * projectRoot comes from CLI (path authority) - NOT calculated here!
    * 
    * @pdca 2025-11-21-UTC-1630.test-isolation-path-violation.pdca.md
    * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.7.2
    * @cliHide
    */
-  private discoverPathsFromFilesystem(): void {
+  private discoverComponentRootAndVersion(): void {
     try {
       const currentFilePath = path.dirname(new URL(import.meta.url).pathname);
       const currentVersionDir = realpathSync(path.resolve(currentFilePath, '..', '..', '..'));
@@ -270,25 +290,17 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
       const versionString = isVersionDir ? componentDirName : '0.0.0.0';
       const componentRoot = currentVersionDir;
       
-      // ✅ Derive projectRoot from componentRoot
-      // Path: /path/to/project/components/ONCE/0.3.21.6
-      // projectRoot: /path/to/project
-      const componentsDir = path.resolve(componentRoot, '..', '..'); // up to components/
-      const projectRoot = path.resolve(componentsDir, '..'); // up to project root
-      
-      // Set component's own discovered paths
+      // Set ONLY NodeJsOnce-specific values
       this.model.componentRoot = componentRoot;
-      this.model.projectRoot = projectRoot;
       this.model.version = versionString;
       
-      // Detect test isolation: check if we're running from test/data
-      const isTestIsolation = componentRoot.includes('/test/data/');
-      this.model.isTestIsolation = isTestIsolation;
+      // NOTE: projectRoot comes from CLI (path authority)
+      // isTestIsolation is derived from CLI's testDataDirectory
       
-      console.log(`🔍 [PATH DISCOVERY] componentRoot=${componentRoot} projectRoot=${projectRoot} isTestIsolation=${isTestIsolation}`);
+      console.log(`🔍 [ONCE] componentRoot=${componentRoot} version=${versionString}`);
     } catch (error) {
-      // Fallback: if path discovery fails, keep defaults
-      console.warn('⚠️  Path discovery failed, using defaults:', error);
+      // Fallback: if discovery fails, keep defaults
+      console.warn('⚠️  Component discovery failed, using defaults:', error);
     }
   }
 
@@ -384,11 +396,9 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
   private async getWeb4TSComponent(): Promise<any> {
     if (this.web4ts) return this.web4ts;
 
-    // CPA.7.2: Use paths already discovered (NO recalculation)
-    // Paths come from discoverPathsFromFilesystem() called in constructor
-    // These are guaranteed to be set by constructor — use non-null assertion
-    const componentRoot = this.model.componentRoot!;
-    const projectRoot = this.model.projectRoot!;
+    // CPA.7.2: Use CLI as path authority, componentRoot from model (NodeJsOnce-specific)
+    const componentRoot = this.model.componentRoot!;  // From discoverComponentRootAndVersion()
+    const projectRoot = this.projectRoot;              // From CLI (path authority)
     const componentsDir = this.componentsDirectory || path.dirname(path.dirname(componentRoot));
 
     // WM.3: Use ONCE's inline DefaultWeb4TSComponent (no external dependency)
@@ -445,11 +455,12 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
     
     // ✅ CRITICAL: Set component name and paths for infrastructure methods
     // These are needed by test(), build(), and other delegated methods
+    // CPA.7.2: Use accessors for paths (CLI path authority)
     web4ts.model.component = this.model.component;
     web4ts.model.version = this.model.version;
     web4ts.model.componentRoot = this.model.componentRoot;
     web4ts.model.targetComponentRoot = this.model.componentRoot;
-    web4ts.model.projectRoot = this.model.projectRoot;
+    web4ts.model.projectRoot = this.projectRoot;  // Use accessor, not this.model.projectRoot
     
     // Test isolation context (if applicable)
     if (this.model.isTestIsolation && this.model.projectRoot) {
@@ -521,7 +532,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
    * @cliHide
    */
   async initAsync(scenario?: Scenario<ONCEPeerModel>): Promise<this> {
-    // Paths already discovered in constructor via discoverPathsFromFilesystem()
+    // componentRoot/version already discovered in constructor via discoverComponentRootAndVersion()
     
     // ✅ Always transition to INITIALIZING (even without scenario)
     if (this.getLifecycleState() === LifecycleState.CREATED) {

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "bad11485-f59a-4a81-99b9-a72106055fce",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "bad11485-f59a-4a81-99b9-a72106055fce",
+    "name": "FileItemView.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/FileItemView.ts",
+    "definition": "TypeScript FileItemView class/interface",
+    "filePath": "src/ts/layer5/views/FileItemView.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:12:18.628Z",
+    "updatedAt": "2026-01-08T12:12:18.629Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/b/a/d/1/1/bad11485-f59a-4a81-99b9-a72106055fce.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "b/a/d/1/1/bad11485-f59a-4a81-99b9-a72106055fce.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:12:18.628Z",
+    "updatedAt": "2026-01-08T12:12:18.628Z"
+  }
+}

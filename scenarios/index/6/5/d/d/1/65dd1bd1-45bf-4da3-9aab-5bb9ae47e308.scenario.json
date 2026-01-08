@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "65dd1bd1-45bf-4da3-9aab-5bb9ae47e308",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "65dd1bd1-45bf-4da3-9aab-5bb9ae47e308",
+    "name": "HrefRewriter.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/HrefRewriter.ts",
+    "definition": "TypeScript HrefRewriter class/interface",
+    "filePath": "src/ts/layer2/HrefRewriter.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:20:58.379Z",
+    "updatedAt": "2026-01-08T12:20:58.380Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/6/5/d/d/1/65dd1bd1-45bf-4da3-9aab-5bb9ae47e308.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "6/5/d/d/1/65dd1bd1-45bf-4da3-9aab-5bb9ae47e308.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:20:58.379Z",
+    "updatedAt": "2026-01-08T12:20:58.379Z"
+  }
+}

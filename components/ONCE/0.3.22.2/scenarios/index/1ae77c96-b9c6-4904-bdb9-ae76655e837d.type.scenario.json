@@ -1,0 +1,125 @@
+{
+  "ior": {
+    "uuid": "1ae77c96-b9c6-4904-bdb9-ae76655e837d",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "1ae77c96-b9c6-4904-bdb9-ae76655e837d",
+    "name": "TypeDescriptorModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/TypeDescriptorModel.interface.ts",
+    "indexPath": "scenarios/index/1ae77c96-b9c6-4904-bdb9-ae76655e837d.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/TypeDescriptorModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "uuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "sourcePath",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "indexPath",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "component",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "version",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "createdAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "updatedAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isInterface",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isAbstract",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "extends",
+        "targetType": "string"
+      }
+    ],
+    "collections": [
+      {
+        "name": "implements",
+        "elementType": "string"
+      },
+      {
+        "name": "symlinkPaths",
+        "elementType": "string"
+      },
+      {
+        "name": "attributes",
+        "elementType": "AttributeDescriptor"
+      },
+      {
+        "name": "properties",
+        "elementType": "PropertyDescriptor"
+      },
+      {
+        "name": "references",
+        "elementType": "ReferenceDescriptor"
+      },
+      {
+        "name": "collections",
+        "elementType": "CollectionDescriptor"
+      },
+      {
+        "name": "methods",
+        "elementType": "MethodDescriptor"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:14:24.256Z",
+    "updatedAt": "2026-01-08T12:14:24.256Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

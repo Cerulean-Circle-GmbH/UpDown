@@ -1,0 +1,234 @@
+{
+  "ior": {
+    "uuid": "104ea6ce-5135-40e5-9498-ad4677aa368a",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "104ea6ce-5135-40e5-9498-ad4677aa368a",
+    "name": "CertificateRenewalScheduler",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/CertificateRenewalScheduler.ts",
+    "indexPath": "scenarios/index/104ea6ce-5135-40e5-9498-ad4677aa368a.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/CertificateRenewalScheduler.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "CertificateRenewalSchedulerModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "checkIntervalHandle",
+        "type": "ReturnType<typeof setInterval> | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "renewalCallback",
+        "type": "RenewalCallback | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "configurations",
+        "type": "Map<string, DomainConfigurationModel>",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<CertificateRenewalSchedulerModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "renewalCallbackSet",
+        "parameters": [
+          {
+            "name": "callback",
+            "type": "RenewalCallback",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "certificateRegister",
+        "parameters": [
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "certificate",
+            "type": "DomainCertificateModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "taskDomainFilter",
+        "parameters": [
+          {
+            "name": "domainToExclude",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "task",
+            "type": "RenewalTask",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "certificateUnregister",
+        "parameters": [
+          {
+            "name": "domain",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "start",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "stop",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "renewalCheck",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "renewalTrigger",
+        "parameters": [
+          {
+            "name": "task",
+            "type": "RenewalTask",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "renewalSuccess",
+        "parameters": [
+          {
+            "name": "task",
+            "type": "RenewalTask",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "renewalError",
+        "parameters": [
+          {
+            "name": "task",
+            "type": "RenewalTask",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "error",
+            "type": "Error",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "pendingTasksGet",
+        "parameters": [],
+        "returnType": "RenewalTask[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Promise<Scenario<CertificateRenewalSchedulerModel>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:20:59.743Z",
+    "updatedAt": "2026-01-08T12:20:59.743Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

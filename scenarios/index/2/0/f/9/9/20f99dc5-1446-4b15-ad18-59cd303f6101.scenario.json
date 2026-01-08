@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "20f99dc5-1446-4b15-ad18-59cd303f6101",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "20f99dc5-1446-4b15-ad18-59cd303f6101",
+    "name": "FileItemView.css",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/css/FileItemView.css",
+    "definition": "CSS stylesheet for FileItemView",
+    "filePath": "src/ts/layer5/views/css/FileItemView.css",
+    "mimetype": "text/css",
+    "createdAt": "2026-01-08T12:17:31.062Z",
+    "updatedAt": "2026-01-08T12:17:31.062Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/2/0/f/9/9/20f99dc5-1446-4b15-ad18-59cd303f6101.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "2/0/f/9/9/20f99dc5-1446-4b15-ad18-59cd303f6101.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:17:31.062Z",
+    "updatedAt": "2026-01-08T12:17:31.062Z"
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "ior": {
+    "uuid": "66acc1a1-86ac-45bf-8cb8-d7a3e922a6b6",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "66acc1a1-86ac-45bf-8cb8-d7a3e922a6b6",
+    "name": "OnceServerStatusView",
+    "extends": "ior:esm:/ONCE/0.3.22.2/UcpView",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/OnceServerStatusView.ts",
+    "indexPath": "scenarios/index/66acc1a1-86ac-45bf-8cb8-d7a3e922a6b6.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/OnceServerStatusView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "cssPath",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "OnceServerStatusView.css"
+      },
+      {
+        "name": "refreshing",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": false
+      }
+    ],
+    "properties": [
+      {
+        "name": "uptimeFormatted",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "memoryFormatted",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "serverType",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [
+      {
+        "name": "router",
+        "targetType": "HTMLElement"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "connectedCallback",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "statusFetch",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "iorLoadHealth",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "IOR",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "healthDataHandle",
+        "parameters": [
+          {
+            "name": "data",
+            "type": "unknown",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "healthErrorHandle",
+        "parameters": [
+          {
+            "name": "error",
+            "type": "Error",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:14:24.354Z",
+    "updatedAt": "2026-01-08T12:14:24.354Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

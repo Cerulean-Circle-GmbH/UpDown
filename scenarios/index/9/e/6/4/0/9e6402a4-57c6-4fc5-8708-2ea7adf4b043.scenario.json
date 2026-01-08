@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "9e6402a4-57c6-4fc5-8708-2ea7adf4b043",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "9e6402a4-57c6-4fc5-8708-2ea7adf4b043",
+    "name": "IORProfile.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/IORProfile.interface.ts",
+    "definition": "TypeScript IORProfile.interface class/interface",
+    "filePath": "dist/ts/layer3/IORProfile.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T12:14:05.545Z",
+    "updatedAt": "2026-01-08T12:14:05.546Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/9/e/6/4/0/9e6402a4-57c6-4fc5-8708-2ea7adf4b043.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "9/e/6/4/0/9e6402a4-57c6-4fc5-8708-2ea7adf4b043.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:14:05.545Z",
+    "updatedAt": "2026-01-08T12:14:05.545Z"
+  }
+}

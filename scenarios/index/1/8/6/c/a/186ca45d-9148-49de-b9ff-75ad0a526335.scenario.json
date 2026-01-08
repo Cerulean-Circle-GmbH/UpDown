@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "186ca45d-9148-49de-b9ff-75ad0a526335",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "186ca45d-9148-49de-b9ff-75ad0a526335",
+    "name": "Test26_DomainCertificateStore.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/tests/Test26_DomainCertificateStore.ts",
+    "definition": "TypeScript Test26_DomainCertificateStore class/interface",
+    "filePath": "src/ts/tests/Test26_DomainCertificateStore.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:14:04.633Z",
+    "updatedAt": "2026-01-08T12:14:04.634Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/1/8/6/c/a/186ca45d-9148-49de-b9ff-75ad0a526335.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "1/8/6/c/a/186ca45d-9148-49de-b9ff-75ad0a526335.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:14:04.633Z",
+    "updatedAt": "2026-01-08T12:14:04.633Z"
+  }
+}

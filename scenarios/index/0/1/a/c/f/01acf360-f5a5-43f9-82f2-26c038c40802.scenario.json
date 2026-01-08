@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "01acf360-f5a5-43f9-82f2-26c038c40802",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "01acf360-f5a5-43f9-82f2-26c038c40802",
+    "name": "ProxyRoute.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer4/ProxyRoute.ts",
+    "definition": "TypeScript ProxyRoute class/interface",
+    "filePath": "src/ts/layer4/ProxyRoute.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:14:22.872Z",
+    "updatedAt": "2026-01-08T12:14:22.872Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/0/1/a/c/f/01acf360-f5a5-43f9-82f2-26c038c40802.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "0/1/a/c/f/01acf360-f5a5-43f9-82f2-26c038c40802.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:14:22.872Z",
+    "updatedAt": "2026-01-08T12:14:22.872Z"
+  }
+}

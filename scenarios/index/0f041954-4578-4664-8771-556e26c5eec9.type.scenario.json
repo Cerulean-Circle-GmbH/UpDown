@@ -1,0 +1,84 @@
+{
+  "ior": {
+    "uuid": "0f041954-4578-4664-8771-556e26c5eec9",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "0f041954-4578-4664-8771-556e26c5eec9",
+    "name": "MimetypeHandlerRegistry",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/MimetypeHandlerRegistry.interface.ts",
+    "indexPath": "scenarios/index/0f041954-4578-4664-8771-556e26c5eec9.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/MimetypeHandlerRegistry.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "handlerRegister",
+        "parameters": [
+          {
+            "name": "handler",
+            "type": "MimetypeHandler",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handlerUnregister",
+        "parameters": [
+          {
+            "name": "pattern",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handlerLookup",
+        "parameters": [
+          {
+            "name": "mimetype",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<MimetypeHandler>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handlersAll",
+        "parameters": [],
+        "returnType": "MimetypeHandler[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:21:00.171Z",
+    "updatedAt": "2026-01-08T12:21:00.171Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

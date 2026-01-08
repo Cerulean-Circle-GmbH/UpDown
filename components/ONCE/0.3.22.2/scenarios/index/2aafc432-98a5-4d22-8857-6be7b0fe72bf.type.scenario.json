@@ -1,0 +1,37 @@
+{
+  "ior": {
+    "uuid": "2aafc432-98a5-4d22-8857-6be7b0fe72bf",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "2aafc432-98a5-4d22-8857-6be7b0fe72bf",
+    "name": "FeatureDescriptor",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/FeatureDescriptor.interface.ts",
+    "indexPath": "scenarios/index/2aafc432-98a5-4d22-8857-6be7b0fe72bf.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/FeatureDescriptor.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:17:33.733Z",
+    "updatedAt": "2026-01-08T12:17:33.733Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

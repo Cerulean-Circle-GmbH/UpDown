@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "eb85818b-0512-4286-8843-3213fc6c748b",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "eb85818b-0512-4286-8843-3213fc6c748b",
+    "name": "themeBase.css",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/css/themeBase.css",
+    "definition": "CSS stylesheet for themeBase",
+    "filePath": "src/ts/layer5/views/css/themeBase.css",
+    "mimetype": "text/css",
+    "createdAt": "2026-01-08T12:16:48.400Z",
+    "updatedAt": "2026-01-08T12:16:48.401Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/e/b/8/5/8/eb85818b-0512-4286-8843-3213fc6c748b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "e/b/8/5/8/eb85818b-0512-4286-8843-3213fc6c748b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:16:48.400Z",
+    "updatedAt": "2026-01-08T12:16:48.400Z"
+  }
+}

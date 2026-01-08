@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "feee39a0-b2f4-47e5-ba02-eb0e6ac78dff",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "feee39a0-b2f4-47e5-ba02-eb0e6ac78dff",
+    "name": "DefaultColors.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer4/DefaultColors.ts",
+    "definition": "TypeScript DefaultColors class/interface",
+    "filePath": "src/ts/layer4/DefaultColors.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:17:32.052Z",
+    "updatedAt": "2026-01-08T12:17:32.052Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/f/e/e/e/3/feee39a0-b2f4-47e5-ba02-eb0e6ac78dff.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "f/e/e/e/3/feee39a0-b2f4-47e5-ba02-eb0e6ac78dff.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:17:32.052Z",
+    "updatedAt": "2026-01-08T12:17:32.052Z"
+  }
+}

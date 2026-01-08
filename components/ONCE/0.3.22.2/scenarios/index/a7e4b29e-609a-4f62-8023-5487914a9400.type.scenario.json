@@ -1,0 +1,103 @@
+{
+  "ior": {
+    "uuid": "a7e4b29e-609a-4f62-8023-5487914a9400",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "a7e4b29e-609a-4f62-8023-5487914a9400",
+    "name": "UnitModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/UnitModel.interface.ts",
+    "indexPath": "scenarios/index/a7e4b29e-609a-4f62-8023-5487914a9400.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/UnitModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "origin",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "definition",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "typeM3",
+        "type": "TypeM3",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "indexPath",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "createdAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "updatedAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "componentType",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "componentIor",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "artefactUuid",
+        "targetType": "string"
+      },
+      {
+        "name": "fileUuid",
+        "targetType": "string"
+      },
+      {
+        "name": "storagePath",
+        "targetType": "string"
+      }
+    ],
+    "collections": [
+      {
+        "name": "references",
+        "elementType": "UnitReference"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:16:50.743Z",
+    "updatedAt": "2026-01-08T12:16:50.743Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

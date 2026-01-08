@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "8a351d78-aadb-443d-a9b3-a94f17492c3f",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "8a351d78-aadb-443d-a9b3-a94f17492c3f",
+    "name": "ActionStyle.enum.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/ActionStyle.enum.ts",
+    "definition": "TypeScript ActionStyle.enum class/interface",
+    "filePath": "src/ts/layer3/ActionStyle.enum.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:20:58.478Z",
+    "updatedAt": "2026-01-08T12:20:58.478Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/8/a/3/5/1/8a351d78-aadb-443d-a9b3-a94f17492c3f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "8/a/3/5/1/8a351d78-aadb-443d-a9b3-a94f17492c3f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:20:58.478Z",
+    "updatedAt": "2026-01-08T12:20:58.478Z"
+  }
+}

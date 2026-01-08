@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "360f20dd-a143-427f-96da-b7bbdf870a9d",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "360f20dd-a143-427f-96da-b7bbdf870a9d",
+    "name": "CertificateRenewalScheduler.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/CertificateRenewalScheduler.ts",
+    "definition": "TypeScript CertificateRenewalScheduler class/interface",
+    "filePath": "src/ts/layer2/CertificateRenewalScheduler.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:14:03.861Z",
+    "updatedAt": "2026-01-08T12:14:03.862Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/3/6/0/f/2/360f20dd-a143-427f-96da-b7bbdf870a9d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "3/6/0/f/2/360f20dd-a143-427f-96da-b7bbdf870a9d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:14:03.862Z",
+    "updatedAt": "2026-01-08T12:14:03.862Z"
+  }
+}

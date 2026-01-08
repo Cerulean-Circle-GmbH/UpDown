@@ -1,0 +1,744 @@
+{
+  "ior": {
+    "uuid": "0c0e9e9e-daa4-4ead-a65e-2d4c2d7619ab",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "0c0e9e9e-daa4-4ead-a65e-2d4c2d7619ab",
+    "name": "BrowserOnce",
+    "extends": "ior:esm:/ONCE/0.3.22.2/DefaultOnceKernel",
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.2/ONCEKernel"
+    ],
+    "sourcePath": "src/ts/layer2/BrowserOnce.ts",
+    "indexPath": "scenarios/index/0c0e9e9e-daa4-4ead-a65e-2d4c2d7619ab.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/BrowserOnce.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "uiElements",
+        "type": "{\n        connectionStatus: HTMLElement | null;\n        primaryConnection: HTMLElement | null;\n        connectedPeers: HTMLElement | null;\n        messageLog: HTMLElement | null;\n        messagesSent: HTMLElement | null;\n        messagesReceived: HTMLElement | null;\n        acknowledgmentsSent: HTMLElement | null;\n        connectionTime: HTMLElement | null;\n    }",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "legacyStats",
+        "type": "any",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "orchestrator",
+        "type": "BrowserOnceOrchestrator",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "browserModel",
+        "type": "ONCEPeerModel",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "defaultView",
+        "type": "Reference<string>",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "appEntryView",
+        "type": "Reference<string>",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "componentVersion",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [
+      {
+        "name": "orchestratorInstance",
+        "targetType": "BrowserOnceOrchestrator"
+      },
+      {
+        "name": "mainView",
+        "targetType": "LitElement"
+      },
+      {
+        "name": "scenarioStorage",
+        "targetType": "BrowserScenarioStorage"
+      }
+    ],
+    "collections": [
+      {
+        "name": "messagesCache",
+        "elementType": "any"
+      }
+    ],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<ONCEPeerModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getPeerModel",
+        "parameters": [],
+        "returnType": "ONCEPeerModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "appRender",
+        "parameters": [
+          {
+            "name": "container",
+            "type": "Element",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "assetsPreload",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "viewsImport",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "initAsync",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<ONCEPeerModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "storageInitialize",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "persistenceManagerGet",
+        "parameters": [],
+        "returnType": "BrowserScenarioStorage | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getHealth",
+        "parameters": [],
+        "returnType": "Promise<any>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "invokeMethod",
+        "parameters": [
+          {
+            "name": "method",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "params",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<any>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "start",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "stop",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "startComponent",
+        "parameters": [
+          {
+            "name": "componentIOR",
+            "type": "IOR",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "scenario",
+            "type": "Scenario<ONCEPeerModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Component>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "saveAsScenario",
+        "parameters": [
+          {
+            "name": "component",
+            "type": "Component",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Scenario<ONCEPeerModel>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "loadScenario",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<ONCEPeerModel>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Component>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getEnvironment",
+        "parameters": [],
+        "returnType": "EnvironmentInfo",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "registerComponent",
+        "parameters": [
+          {
+            "name": "component",
+            "type": "Component",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "ior",
+            "type": "IOR",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "discoverComponents",
+        "parameters": [
+          {
+            "name": "query",
+            "type": "ComponentQuery",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<IOR[]>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "connectPeer",
+        "parameters": [
+          {
+            "name": "peerIOR",
+            "type": "IOR",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "exchangeScenario",
+        "parameters": [
+          {
+            "name": "peerIOR",
+            "type": "IOR",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "scenario",
+            "type": "Scenario<ONCEPeerModel>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "isLifecycleInitialized",
+        "parameters": [],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getVersion",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getMetrics",
+        "parameters": [],
+        "returnType": "PerformanceMetrics",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "pauseComponent",
+        "parameters": [
+          {
+            "name": "component",
+            "type": "Component",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "resumeComponent",
+        "parameters": [
+          {
+            "name": "component",
+            "type": "Component",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "stopComponent",
+        "parameters": [
+          {
+            "name": "component",
+            "type": "Component",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getServerModel",
+        "parameters": [],
+        "returnType": "ONCEPeerModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "startServer",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<ONCEPeerModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "registerWithPrimaryServer",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "isPrimary",
+        "parameters": [],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getRegisteredServers",
+        "parameters": [],
+        "returnType": "ONCEPeerModel[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "initializeUIElements",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getHealthAndPeerInfo",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getPeers",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "connectWebSocket",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "listenForScenarioUpdates",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleScenarioUpdate",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleCacheInvalidate",
+        "parameters": [
+          {
+            "name": "message",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "browserStorageGet",
+        "parameters": [],
+        "returnType": "Promise<any>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "updatePeerState",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioSaveToStorage",
+        "parameters": [
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "scenario",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioRemoveFromStorage",
+        "parameters": [
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleMessageScenario",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "updateHealthDisplay",
+        "parameters": [
+          {
+            "name": "health",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "updatePrimaryDisplay",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "updatePeersDisplay",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "startConnectionTimer",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "updateConnectionTime",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "updateStatsDisplay",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "addMessageToLog",
+        "parameters": [
+          {
+            "name": "type",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "text",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "clearLog",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "broadcastToAll",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "relayViaPrimary",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "sendP2PDirect",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "sendAcknowledgment",
+        "parameters": [
+          {
+            "name": "originalScenario",
+            "type": "any",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:17:33.237Z",
+    "updatedAt": "2026-01-08T12:17:33.237Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

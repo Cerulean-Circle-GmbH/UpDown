@@ -1,0 +1,359 @@
+{
+  "ior": {
+    "uuid": "37623551-98b4-4874-8484-ca2ecfa42cf7",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "37623551-98b4-4874-8484-ca2ecfa42cf7",
+    "name": "BrowserOnceOrchestrator",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer4/BrowserOnceOrchestrator.ts",
+    "indexPath": "scenarios/index/37623551-98b4-4874-8484-ca2ecfa42cf7.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/BrowserOnceOrchestrator.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "component",
+        "type": "BrowserOnce",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "mainView",
+        "targetType": "LitElement"
+      },
+      {
+        "name": "router",
+        "targetType": "UcpRouter"
+      },
+      {
+        "name": "ws",
+        "targetType": "WebSocket"
+      },
+      {
+        "name": "container",
+        "targetType": "Element"
+      },
+      {
+        "name": "serverModel",
+        "targetType": "ServerDefaultModel"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "appRender",
+        "parameters": [
+          {
+            "name": "container",
+            "type": "Element",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "routesRegister",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "assetsPreload",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "viewsImport",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "webSocketConnect",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "webSocketOnOpen",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "webSocketOnMessage",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "MessageEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "webSocketOnError",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "Event",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "webSocketOnClose",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "serverModelFetch",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "mapToServerDefaultModel",
+        "parameters": [
+          {
+            "name": "onceModel",
+            "type": "ONCEPeerModel",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "peerCount",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "ServerDefaultModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "serversFetch",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "iorCall",
+        "parameters": [
+          {
+            "name": "host",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "port",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "method",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<any>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "healthFetch",
+        "parameters": [],
+        "returnType": "Promise<any>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "viewRefresh",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "navigationHandle",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "CustomEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "actionRequestHandle",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "CustomEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "peerStartAction",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "serviceWorkerRegister",
+        "parameters": [],
+        "returnType": "Promise<ServiceWorkerRegistration | null>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "swUpdateHandle",
+        "parameters": [
+          {
+            "name": "registration",
+            "type": "ServiceWorkerRegistration",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "swStateChangeHandle",
+        "parameters": [
+          {
+            "name": "worker",
+            "type": "ServiceWorker",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "registration",
+            "type": "ServiceWorkerRegistration",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "swMessageHandle",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "MessageEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "swUpdate",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "swStatusGet",
+        "parameters": [],
+        "returnType": "Promise<object>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "destroy",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:14:24.272Z",
+    "updatedAt": "2026-01-08T12:14:24.272Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

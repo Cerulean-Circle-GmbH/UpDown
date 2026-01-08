@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "af19b342-5cc1-4df2-bc22-9b7f9c21b8a6",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "af19b342-5cc1-4df2-bc22-9b7f9c21b8a6",
+    "name": "DefaultFileSystem.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/DefaultFileSystem.ts",
+    "definition": "TypeScript DefaultFileSystem class/interface",
+    "filePath": "src/ts/layer2/DefaultFileSystem.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:14:03.877Z",
+    "updatedAt": "2026-01-08T12:14:03.878Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/a/f/1/9/b/af19b342-5cc1-4df2-bc22-9b7f9c21b8a6.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "a/f/1/9/b/af19b342-5cc1-4df2-bc22-9b7f9c21b8a6.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:14:03.877Z",
+    "updatedAt": "2026-01-08T12:14:03.877Z"
+  }
+}

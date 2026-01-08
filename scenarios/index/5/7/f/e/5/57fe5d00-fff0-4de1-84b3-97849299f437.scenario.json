@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "57fe5d00-fff0-4de1-84b3-97849299f437",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "57fe5d00-fff0-4de1-84b3-97849299f437",
+    "name": "CachedUnitModel.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/CachedUnitModel.interface.ts",
+    "definition": "TypeScript CachedUnitModel.interface class/interface",
+    "filePath": "dist/ts/layer3/CachedUnitModel.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T12:16:49.394Z",
+    "updatedAt": "2026-01-08T12:16:49.394Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/5/7/f/e/5/57fe5d00-fff0-4de1-84b3-97849299f437.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "5/7/f/e/5/57fe5d00-fff0-4de1-84b3-97849299f437.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:16:49.394Z",
+    "updatedAt": "2026-01-08T12:16:49.394Z"
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "ior": {
+    "uuid": "26015351-3b14-4b86-917e-df84329cae04",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "26015351-3b14-4b86-917e-df84329cae04",
+    "name": "EnvironmentInfo",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/EnvironmentInfo.interface.ts",
+    "indexPath": "scenarios/index/26015351-3b14-4b86-917e-df84329cae04.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/EnvironmentInfo.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "type",
+        "type": "EnvironmentType",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isNode",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isBrowser",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isWorker",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isServiceWorker",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isPWA",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isIframe",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "version",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isOnline",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "hostname",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "ip",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "capabilities",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:14:06.442Z",
+    "updatedAt": "2026-01-08T12:14:06.442Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "ior": {
+    "uuid": "bf06f869-9acc-4361-8609-8e517ee8e8e0",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "bf06f869-9acc-4361-8609-8e517ee8e8e0",
+    "name": "Action",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/Action.ts",
+    "indexPath": "scenarios/index/bf06f869-9acc-4361-8609-8e517ee8e8e0.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Action.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "lookup",
+        "parameters": [
+          {
+            "name": "registry",
+            "type": "RelatedObjects",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "methodName",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<ActionMetadata>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "all",
+        "parameters": [
+          {
+            "name": "registry",
+            "type": "RelatedObjects",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "ActionMetadata[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "do",
+        "parameters": [
+          {
+            "name": "metadata",
+            "type": "ActionMetadata",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "target",
+            "type": "ActionTarget",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "args",
+            "type": "unknown[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<unknown>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "register",
+        "parameters": [
+          {
+            "name": "registry",
+            "type": "RelatedObjects",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "metadata",
+            "type": "ActionMetadataImpl",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "create",
+        "parameters": [
+          {
+            "name": "componentName",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "methodName",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "label",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "ActionMetadataImpl",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "methodNameToActionId",
+        "parameters": [
+          {
+            "name": "methodName",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "parseFromTSDoc",
+        "parameters": [
+          {
+            "name": "componentName",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "methodName",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "tsdoc",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<ActionMetadataImpl>",
+        "isAsync": false,
+        "isAction": true,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:14:05.954Z",
+    "updatedAt": "2026-01-08T12:14:05.954Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

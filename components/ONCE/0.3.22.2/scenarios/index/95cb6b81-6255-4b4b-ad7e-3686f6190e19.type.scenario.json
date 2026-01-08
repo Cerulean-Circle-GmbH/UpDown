@@ -1,0 +1,146 @@
+{
+  "ior": {
+    "uuid": "95cb6b81-6255-4b4b-ad7e-3686f6190e19",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "95cb6b81-6255-4b4b-ad7e-3686f6190e19",
+    "name": "DefaultArtefact",
+    "extends": "ior:esm:/ONCE/0.3.22.2/UcpComponent",
+    "implements": [],
+    "sourcePath": "src/ts/layer2/DefaultArtefact.ts",
+    "indexPath": "scenarios/index/95cb6b81-6255-4b4b-ad7e-3686f6190e19.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/DefaultArtefact.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [
+      {
+        "name": "contentHash",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "algorithm",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "size",
+        "type": "number",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "unitUuid",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "mimetype",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "modelDefault",
+        "parameters": [],
+        "returnType": "ArtefactModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "initFromHash",
+        "parameters": [
+          {
+            "name": "contentHash",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "size",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "mimetype",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "unitUuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "storagePathCompute",
+        "parameters": [
+          {
+            "name": "basePath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "scenarioData",
+        "parameters": [],
+        "returnType": "Record<string, unknown>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "contentEquals",
+        "parameters": [
+          {
+            "name": "other",
+            "type": "DefaultArtefact",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:16:50.042Z",
+    "updatedAt": "2026-01-08T12:16:50.042Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "96e7f2d2-d5d4-4d24-87f2-aff7dca711c6",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "96e7f2d2-d5d4-4d24-87f2-aff7dca711c6",
+    "name": "SemanticVersion.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/SemanticVersion.ts",
+    "definition": "TypeScript SemanticVersion class/interface",
+    "filePath": "dist/ts/layer2/SemanticVersion.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T12:20:59.079Z",
+    "updatedAt": "2026-01-08T12:20:59.079Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/9/6/e/7/f/96e7f2d2-d5d4-4d24-87f2-aff7dca711c6.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "9/6/e/7/f/96e7f2d2-d5d4-4d24-87f2-aff7dca711c6.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:20:59.079Z",
+    "updatedAt": "2026-01-08T12:20:59.079Z"
+  }
+}

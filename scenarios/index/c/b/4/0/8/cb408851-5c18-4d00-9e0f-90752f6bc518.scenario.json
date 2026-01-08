@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "cb408851-5c18-4d00-9e0f-90752f6bc518",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "cb408851-5c18-4d00-9e0f-90752f6bc518",
+    "name": "FileSystemModel.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/FileSystemModel.interface.ts",
+    "definition": "TypeScript FileSystemModel.interface class/interface",
+    "filePath": "dist/ts/layer3/FileSystemModel.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T12:17:32.477Z",
+    "updatedAt": "2026-01-08T12:17:32.478Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/b/4/0/8/cb408851-5c18-4d00-9e0f-90752f6bc518.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/b/4/0/8/cb408851-5c18-4d00-9e0f-90752f6bc518.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:17:32.477Z",
+    "updatedAt": "2026-01-08T12:17:32.477Z"
+  }
+}

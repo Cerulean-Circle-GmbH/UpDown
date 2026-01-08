@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "f82f74f9-080b-4c38-8119-15cf41745066",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "f82f74f9-080b-4c38-8119-15cf41745066",
+    "name": "ImageModel.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/ImageModel.interface.ts",
+    "definition": "TypeScript ImageModel.interface class/interface",
+    "filePath": "src/ts/layer3/ImageModel.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:20:58.611Z",
+    "updatedAt": "2026-01-08T12:20:58.611Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/f/8/2/f/7/f82f74f9-080b-4c38-8119-15cf41745066.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "f/8/2/f/7/f82f74f9-080b-4c38-8119-15cf41745066.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:20:58.611Z",
+    "updatedAt": "2026-01-08T12:20:58.611Z"
+  }
+}

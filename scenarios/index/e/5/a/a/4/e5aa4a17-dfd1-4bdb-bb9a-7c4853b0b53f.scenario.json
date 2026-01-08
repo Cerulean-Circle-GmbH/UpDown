@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "e5aa4a17-dfd1-4bdb-bb9a-7c4853b0b53f",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "e5aa4a17-dfd1-4bdb-bb9a-7c4853b0b53f",
+    "name": "ItemViewModel.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/ItemViewModel.interface.ts",
+    "definition": "TypeScript ItemViewModel.interface class/interface",
+    "filePath": "dist/ts/layer3/ItemViewModel.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T12:14:23.443Z",
+    "updatedAt": "2026-01-08T12:14:23.444Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/e/5/a/a/4/e5aa4a17-dfd1-4bdb-bb9a-7c4853b0b53f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "e/5/a/a/4/e5aa4a17-dfd1-4bdb-bb9a-7c4853b0b53f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:14:23.443Z",
+    "updatedAt": "2026-01-08T12:14:23.443Z"
+  }
+}

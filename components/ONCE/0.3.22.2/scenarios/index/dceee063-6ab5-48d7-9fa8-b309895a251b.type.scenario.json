@@ -1,0 +1,91 @@
+{
+  "ior": {
+    "uuid": "dceee063-6ab5-48d7-9fa8-b309895a251b",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "dceee063-6ab5-48d7-9fa8-b309895a251b",
+    "name": "HostnameParser",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer1/HostnameParser.ts",
+    "indexPath": "scenarios/index/dceee063-6ab5-48d7-9fa8-b309895a251b.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/HostnameParser.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "extractHostname",
+        "parameters": [
+          {
+            "name": "fqdn",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "extractDomain",
+        "parameters": [
+          {
+            "name": "fqdn",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "extractDomainOriginal",
+        "parameters": [
+          {
+            "name": "fqdn",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "parseFQDN",
+        "parameters": [
+          {
+            "name": "fqdn",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "{\n        hostname: string;\n        domain: string;\n        domainReversed: string;\n        fqdn: string;\n    }",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:16:49.901Z",
+    "updatedAt": "2026-01-08T12:16:49.901Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "9a59314e-9c08-43fd-8a7c-37249d0aa640",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "9a59314e-9c08-43fd-8a7c-37249d0aa640",
+    "name": "index.html",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/html/index.html",
+    "definition": "HTML template index",
+    "filePath": "src/ts/layer5/views/html/index.html",
+    "mimetype": "text/html",
+    "createdAt": "2026-01-08T12:14:22.284Z",
+    "updatedAt": "2026-01-08T12:14:22.285Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/9/a/5/9/3/9a59314e-9c08-43fd-8a7c-37249d0aa640.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "9/a/5/9/3/9a59314e-9c08-43fd-8a7c-37249d0aa640.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:14:22.284Z",
+    "updatedAt": "2026-01-08T12:14:22.284Z"
+  }
+}

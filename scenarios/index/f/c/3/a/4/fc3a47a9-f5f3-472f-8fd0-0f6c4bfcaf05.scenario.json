@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "fc3a47a9-f5f3-472f-8fd0-0f6c4bfcaf05",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "fc3a47a9-f5f3-472f-8fd0-0f6c4bfcaf05",
+    "name": "IORMethodRouter.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer4/IORMethodRouter.ts",
+    "definition": "TypeScript IORMethodRouter class/interface",
+    "filePath": "dist/ts/layer4/IORMethodRouter.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T12:20:59.469Z",
+    "updatedAt": "2026-01-08T12:20:59.469Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/f/c/3/a/4/fc3a47a9-f5f3-472f-8fd0-0f6c4bfcaf05.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "f/c/3/a/4/fc3a47a9-f5f3-472f-8fd0-0f6c4bfcaf05.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:20:59.469Z",
+    "updatedAt": "2026-01-08T12:20:59.469Z"
+  }
+}

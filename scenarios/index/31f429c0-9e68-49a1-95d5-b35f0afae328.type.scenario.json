@@ -1,0 +1,219 @@
+{
+  "ior": {
+    "uuid": "31f429c0-9e68-49a1-95d5-b35f0afae328",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "31f429c0-9e68-49a1-95d5-b35f0afae328",
+    "name": "CSSLoader",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/CSSLoader.ts",
+    "indexPath": "scenarios/index/31f429c0-9e68-49a1-95d5-b35f0afae328.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/CSSLoader.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "cache",
+        "type": "Map<string, CSSStyleSheet>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "loading",
+        "type": "Map<string, Promise<CSSStyleSheet>>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "MAX_RETRIES",
+        "type": "any",
+        "optional": false,
+        "defaultValue": 3
+      },
+      {
+        "name": "INITIAL_DELAY_MS",
+        "type": "any",
+        "optional": false,
+        "defaultValue": 100
+      }
+    ],
+    "properties": [
+      {
+        "name": "cachedPaths",
+        "type": "string[]",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "preload",
+        "parameters": [
+          {
+            "name": "cssPath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<CSSStyleSheet>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fetchAndParse",
+        "parameters": [
+          {
+            "name": "cssPath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<CSSStyleSheet>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "delay",
+        "parameters": [
+          {
+            "name": "ms",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "resolveAfterDelay",
+        "parameters": [
+          {
+            "name": "ms",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "resolve",
+            "type": "() => void",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "preloadAll",
+        "parameters": [
+          {
+            "name": "cssPaths",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "addPreloadPromise",
+        "parameters": [
+          {
+            "name": "promises",
+            "type": "Promise<CSSStyleSheet>[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "cssPath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "get",
+        "parameters": [
+          {
+            "name": "cssPath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<CSSStyleSheet>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "has",
+        "parameters": [
+          {
+            "name": "cssPath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "clear",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "extractFilename",
+        "parameters": [
+          {
+            "name": "cssPath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:20:59.738Z",
+    "updatedAt": "2026-01-08T12:20:59.738Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

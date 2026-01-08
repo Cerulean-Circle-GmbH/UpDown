@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "f966e089-bb8c-41e5-91ca-eea0b392a3d1",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "f966e089-bb8c-41e5-91ca-eea0b392a3d1",
+    "name": "Container.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/Container.interface.ts",
+    "definition": "TypeScript Container.interface class/interface",
+    "filePath": "dist/ts/layer3/Container.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T12:20:59.198Z",
+    "updatedAt": "2026-01-08T12:20:59.198Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/f/9/6/6/e/f966e089-bb8c-41e5-91ca-eea0b392a3d1.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "f/9/6/6/e/f966e089-bb8c-41e5-91ca-eea0b392a3d1.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:20:59.198Z",
+    "updatedAt": "2026-01-08T12:20:59.198Z"
+  }
+}
