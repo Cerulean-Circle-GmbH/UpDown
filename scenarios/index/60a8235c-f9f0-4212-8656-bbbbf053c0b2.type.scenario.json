@@ -1,0 +1,177 @@
+{
+  "ior": {
+    "uuid": "60a8235c-f9f0-4212-8656-bbbbf053c0b2",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "60a8235c-f9f0-4212-8656-bbbbf053c0b2",
+    "name": "HTMLTemplateLoader",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/HTMLTemplateLoader.ts",
+    "indexPath": "scenarios/index/60a8235c-f9f0-4212-8656-bbbbf053c0b2.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/HTMLTemplateLoader.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "cache",
+        "type": "Map<string, string>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "loading",
+        "type": "Map<string, Promise<string>>",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "cachedPaths",
+        "type": "string[]",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "preload",
+        "parameters": [
+          {
+            "name": "templatePath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fetchTemplate",
+        "parameters": [
+          {
+            "name": "templatePath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "preloadAll",
+        "parameters": [
+          {
+            "name": "templatePaths",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "addPreloadPromise",
+        "parameters": [
+          {
+            "name": "promises",
+            "type": "Promise<string>[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "templatePath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "get",
+        "parameters": [
+          {
+            "name": "templatePath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<string>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "has",
+        "parameters": [
+          {
+            "name": "templatePath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "interpolate",
+        "parameters": [
+          {
+            "name": "template",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "model",
+            "type": "Record<string, any>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "clear",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:24:44.590Z",
+    "updatedAt": "2026-01-08T11:24:44.590Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

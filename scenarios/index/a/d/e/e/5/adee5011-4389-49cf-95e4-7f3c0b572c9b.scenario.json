@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "adee5011-4389-49cf-95e4-7f3c0b572c9b",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "adee5011-4389-49cf-95e4-7f3c0b572c9b",
+    "name": "HostnameParser.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer1/HostnameParser.ts",
+    "definition": "TypeScript HostnameParser class/interface",
+    "filePath": "src/ts/layer1/HostnameParser.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T11:44:30.876Z",
+    "updatedAt": "2026-01-08T11:44:30.876Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/a/d/e/e/5/adee5011-4389-49cf-95e4-7f3c0b572c9b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "a/d/e/e/5/adee5011-4389-49cf-95e4-7f3c0b572c9b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:44:30.876Z",
+    "updatedAt": "2026-01-08T11:44:30.876Z"
+  }
+}

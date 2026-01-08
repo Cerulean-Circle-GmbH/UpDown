@@ -1,0 +1,49 @@
+{
+  "ior": {
+    "uuid": "6fdd8e8e-6698-42a3-a420-2b8a7fabb0c3",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "6fdd8e8e-6698-42a3-a420-2b8a7fabb0c3",
+    "name": "StorageIOR",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/StorageScenario.interface.ts",
+    "indexPath": "scenarios/index/6fdd8e8e-6698-42a3-a420-2b8a7fabb0c3.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/StorageIOR.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "uuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "component",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "version",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:24:44.833Z",
+    "updatedAt": "2026-01-08T11:24:44.833Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "ior": {
+    "uuid": "efa3f15d-e31c-4dce-b134-c04bffbd60f8",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "efa3f15d-e31c-4dce-b134-c04bffbd60f8",
+    "name": "RESTLoader",
+    "extends": null,
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.2/Loader"
+    ],
+    "sourcePath": "src/ts/layer2/RESTLoader.ts",
+    "indexPath": "scenarios/index/efa3f15d-e31c-4dce-b134-c04bffbd60f8.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/RESTLoader.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "protocol",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "REST"
+      },
+      {
+        "name": "model",
+        "type": "LoaderModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "nextLoaderRegistry",
+        "type": "Map<string, Loader>",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "registerLoader",
+        "parameters": [
+          {
+            "name": "loader",
+            "type": "Loader",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "load",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "options",
+            "type": "any",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "save",
+        "parameters": [
+          {
+            "name": "data",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "options",
+            "type": "any",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "extractNextProtocol",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<LoaderModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Promise<Scenario<LoaderModel>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:30:53.263Z",
+    "updatedAt": "2026-01-08T11:30:53.263Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

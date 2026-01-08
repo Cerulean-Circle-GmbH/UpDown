@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "f4a5f9c5-9404-4981-98d2-7a1a3bd5765f",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "f4a5f9c5-9404-4981-98d2-7a1a3bd5765f",
+    "name": "CacheStrategy.enum.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/CacheStrategy.enum.ts",
+    "definition": "TypeScript CacheStrategy.enum class/interface",
+    "filePath": "src/ts/layer3/CacheStrategy.enum.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T11:39:32.300Z",
+    "updatedAt": "2026-01-08T11:39:32.300Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/f/4/a/5/f/f4a5f9c5-9404-4981-98d2-7a1a3bd5765f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "f/4/a/5/f/f4a5f9c5-9404-4981-98d2-7a1a3bd5765f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:39:32.300Z",
+    "updatedAt": "2026-01-08T11:39:32.300Z"
+  }
+}

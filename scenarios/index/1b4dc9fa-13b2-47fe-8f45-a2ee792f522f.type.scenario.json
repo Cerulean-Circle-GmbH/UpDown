@@ -1,0 +1,78 @@
+{
+  "ior": {
+    "uuid": "1b4dc9fa-13b2-47fe-8f45-a2ee792f522f",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "1b4dc9fa-13b2-47fe-8f45-a2ee792f522f",
+    "name": "FolderModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/FolderModel.interface.ts",
+    "indexPath": "scenarios/index/1b4dc9fa-13b2-47fe-8f45-a2ee792f522f.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/FolderModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "path",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "folderName",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "parent",
+        "type": "LazyReference<Folder>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "createdAt",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "modifiedAt",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isLink",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "linkTarget",
+        "type": "LazyReference<Folder>",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "children",
+        "elementType": "File"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:24:44.783Z",
+    "updatedAt": "2026-01-08T11:24:44.783Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

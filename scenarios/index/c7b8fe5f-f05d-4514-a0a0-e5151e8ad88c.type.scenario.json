@@ -1,0 +1,43 @@
+{
+  "ior": {
+    "uuid": "c7b8fe5f-f05d-4514-a0a0-e5151e8ad88c",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "c7b8fe5f-f05d-4514-a0a0-e5151e8ad88c",
+    "name": "ManifestUnits",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ComponentManifest.interface.ts",
+    "indexPath": "scenarios/index/c7b8fe5f-f05d-4514-a0a0-e5151e8ad88c.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ManifestUnits.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "css",
+        "elementType": "ManifestUnit"
+      },
+      {
+        "name": "templates",
+        "elementType": "ManifestUnit"
+      },
+      {
+        "name": "typescript",
+        "elementType": "ManifestUnit"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:44:32.436Z",
+    "updatedAt": "2026-01-08T11:44:32.436Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

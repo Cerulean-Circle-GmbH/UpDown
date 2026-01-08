@@ -1,0 +1,60 @@
+{
+  "ior": {
+    "uuid": "5bae3f01-bd27-4460-b85a-05428b481e3d",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "5bae3f01-bd27-4460-b85a-05428b481e3d",
+    "name": "UnitFilePattern",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/UnitDefinition.interface.ts",
+    "indexPath": "scenarios/index/5bae3f01-bd27-4460-b85a-05428b481e3d.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/UnitFilePattern.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "glob",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "typeM3",
+        "type": "TypeM3",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "mimetype",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "recursive",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "excludeDirs",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:37:05.655Z",
+    "updatedAt": "2026-01-08T11:37:05.655Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

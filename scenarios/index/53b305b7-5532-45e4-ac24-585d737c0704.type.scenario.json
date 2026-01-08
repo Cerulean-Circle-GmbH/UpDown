@@ -1,0 +1,87 @@
+{
+  "ior": {
+    "uuid": "53b305b7-5532-45e4-ac24-585d737c0704",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "53b305b7-5532-45e4-ac24-585d737c0704",
+    "name": "ImageDefaultView",
+    "extends": "ior:esm:/ONCE/0.3.22.2/UcpView",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/ImageDefaultView.ts",
+    "indexPath": "scenarios/index/53b305b7-5532-45e4-ac24-585d737c0704.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ImageDefaultView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "styles",
+        "type": "any",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isLoading",
+        "type": "any",
+        "optional": false,
+        "defaultValue": true
+      },
+      {
+        "name": "hasError",
+        "type": "any",
+        "optional": false,
+        "defaultValue": false
+      }
+    ],
+    "properties": [
+      {
+        "name": "shouldShowMetadata",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [
+      {
+        "name": "imageModel",
+        "targetType": "ImageModel"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleImageLoad",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleImageError",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:39:33.873Z",
+    "updatedAt": "2026-01-08T11:39:33.873Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

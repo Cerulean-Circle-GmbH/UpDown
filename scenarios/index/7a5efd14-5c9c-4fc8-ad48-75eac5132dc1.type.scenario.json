@@ -1,0 +1,67 @@
+{
+  "ior": {
+    "uuid": "7a5efd14-5c9c-4fc8-ad48-75eac5132dc1",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "7a5efd14-5c9c-4fc8-ad48-75eac5132dc1",
+    "name": "TypeDescriptorJSON",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/TypeDescriptor.ts",
+    "indexPath": "scenarios/index/7a5efd14-5c9c-4fc8-ad48-75eac5132dc1.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/TypeDescriptorJSON.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "extends",
+        "targetType": "string"
+      }
+    ],
+    "collections": [
+      {
+        "name": "implements",
+        "elementType": "string"
+      },
+      {
+        "name": "attributes",
+        "elementType": "AttributeDescriptor"
+      },
+      {
+        "name": "properties",
+        "elementType": "PropertyDescriptor"
+      },
+      {
+        "name": "references",
+        "elementType": "ReferenceDescriptor"
+      },
+      {
+        "name": "collections",
+        "elementType": "CollectionDescriptor"
+      },
+      {
+        "name": "methods",
+        "elementType": "MethodDescriptor"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:24:44.837Z",
+    "updatedAt": "2026-01-08T11:24:44.837Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "d1f7f0dc-4716-4d16-bc3b-076fa5c59f92",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "d1f7f0dc-4716-4d16-bc3b-076fa5c59f92",
+    "name": "Colors.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/Colors.interface.ts",
+    "definition": "TypeScript Colors.interface class/interface",
+    "filePath": "src/ts/layer3/Colors.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T11:30:51.907Z",
+    "updatedAt": "2026-01-08T11:30:51.908Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/d/1/f/7/f/d1f7f0dc-4716-4d16-bc3b-076fa5c59f92.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "d/1/f/7/f/d1f7f0dc-4716-4d16-bc3b-076fa5c59f92.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:30:51.907Z",
+    "updatedAt": "2026-01-08T11:30:51.907Z"
+  }
+}

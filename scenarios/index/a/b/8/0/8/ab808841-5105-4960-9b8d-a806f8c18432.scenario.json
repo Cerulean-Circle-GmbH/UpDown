@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "ab808841-5105-4960-9b8d-a806f8c18432",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "ab808841-5105-4960-9b8d-a806f8c18432",
+    "name": "StatisticsModel.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/StatisticsModel.interface.ts",
+    "definition": "TypeScript StatisticsModel.interface class/interface",
+    "filePath": "src/ts/layer3/StatisticsModel.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T11:44:31.241Z",
+    "updatedAt": "2026-01-08T11:44:31.242Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/a/b/8/0/8/ab808841-5105-4960-9b8d-a806f8c18432.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "a/b/8/0/8/ab808841-5105-4960-9b8d-a806f8c18432.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:44:31.241Z",
+    "updatedAt": "2026-01-08T11:44:31.241Z"
+  }
+}

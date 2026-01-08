@@ -1,0 +1,251 @@
+{
+  "ior": {
+    "uuid": "e3844a2d-b3fa-494b-b24b-a5499d71cfd8",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "e3844a2d-b3fa-494b-b24b-a5499d71cfd8",
+    "name": "ProxyRoute",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Route",
+    "implements": [],
+    "sourcePath": "src/ts/layer4/ProxyRoute.ts",
+    "indexPath": "scenarios/index/e3844a2d-b3fa-494b-b24b-a5499d71cfd8.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ProxyRoute.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "ProxyRouteModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "headerRewriter",
+        "type": "HeaderRewriter",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "upstreamIndex",
+        "type": "number",
+        "optional": false,
+        "defaultValue": 0
+      },
+      {
+        "name": "loadBalancingStrategies",
+        "type": "Record<string, (upstreams: string[]) => string>",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<ProxyRouteModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "iconGet",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "labelGet",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "matchesPattern",
+        "parameters": [
+          {
+            "name": "path",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "pattern",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "handleRequest",
+        "parameters": [
+          {
+            "name": "req",
+            "type": "IncomingMessage",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "res",
+            "type": "ServerResponse",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "upstreamResponseHandle",
+        "parameters": [
+          {
+            "name": "res",
+            "type": "ServerResponse",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "context",
+            "type": "RewriteContext",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "upstreamRes",
+            "type": "IncomingMessage",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "proxyErrorHandle",
+        "parameters": [
+          {
+            "name": "res",
+            "type": "ServerResponse",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "error",
+            "type": "Error",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "proxyTimeoutHandle",
+        "parameters": [
+          {
+            "name": "res",
+            "type": "ServerResponse",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "proxyReq",
+            "type": "http.ClientRequest",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "upstreamSelect",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "selectRoundRobin",
+        "parameters": [
+          {
+            "name": "upstreams",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "selectRandom",
+        "parameters": [
+          {
+            "name": "upstreams",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "clientIpExtract",
+        "parameters": [
+          {
+            "name": "req",
+            "type": "IncomingMessage",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:44:32.557Z",
+    "updatedAt": "2026-01-08T11:44:32.557Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

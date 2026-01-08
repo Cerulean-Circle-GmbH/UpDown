@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "c87db60f-4005-4e2a-940a-501f4ee407a6",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "c87db60f-4005-4e2a-940a-501f4ee407a6",
+    "name": "UcpRouter.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/UcpRouter.ts",
+    "definition": "TypeScript UcpRouter class/interface",
+    "filePath": "dist/ts/layer5/views/UcpRouter.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T11:30:52.810Z",
+    "updatedAt": "2026-01-08T11:30:52.810Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/8/7/d/b/c87db60f-4005-4e2a-940a-501f4ee407a6.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/8/7/d/b/c87db60f-4005-4e2a-940a-501f4ee407a6.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:30:52.810Z",
+    "updatedAt": "2026-01-08T11:30:52.810Z"
+  }
+}

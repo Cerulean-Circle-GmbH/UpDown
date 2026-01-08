@@ -1,0 +1,163 @@
+{
+  "ior": {
+    "uuid": "2973cc30-1a1f-4a30-a405-235033780660",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "2973cc30-1a1f-4a30-a405-235033780660",
+    "name": "LifecycleHooks",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/LifecycleEvents.ts",
+    "indexPath": "scenarios/index/2973cc30-1a1f-4a30-a405-235033780660.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/LifecycleHooks.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "beforeInit",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "afterInit",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "beforeStart",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "afterStart",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "beforePause",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "afterPause",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "beforeResume",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "afterResume",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "beforeStop",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "afterStop",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "beforeShutdown",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "afterShutdown",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "beforeSave",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "afterSave",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "beforeLoad",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "afterLoad",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "onServerRegistration",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "onServerDiscovery",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "onPortConflict",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "onPrimaryServerElection",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "onError",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "onWarning",
+        "type": "LifecycleEventHandler",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:44:32.468Z",
+    "updatedAt": "2026-01-08T11:44:32.468Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

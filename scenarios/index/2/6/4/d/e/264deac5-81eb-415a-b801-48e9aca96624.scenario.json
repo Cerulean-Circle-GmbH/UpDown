@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "264deac5-81eb-415a-b801-48e9aca96624",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "264deac5-81eb-415a-b801-48e9aca96624",
+    "name": "DefaultOnceKernel.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/DefaultOnceKernel.ts",
+    "definition": "TypeScript DefaultOnceKernel class/interface",
+    "filePath": "dist/ts/layer2/DefaultOnceKernel.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T11:44:31.462Z",
+    "updatedAt": "2026-01-08T11:44:31.462Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/2/6/4/d/e/264deac5-81eb-415a-b801-48e9aca96624.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "2/6/4/d/e/264deac5-81eb-415a-b801-48e9aca96624.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:44:31.462Z",
+    "updatedAt": "2026-01-08T11:44:31.462Z"
+  }
+}

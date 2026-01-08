@@ -1,0 +1,268 @@
+{
+  "ior": {
+    "uuid": "a4cc9d8f-92b6-47c1-9e20-7927a411f1a3",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "a4cc9d8f-92b6-47c1-9e20-7927a411f1a3",
+    "name": "TypeDescriptor",
+    "extends": null,
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.2/FeatureDescriptor"
+    ],
+    "sourcePath": "src/ts/layer3/TypeDescriptor.ts",
+    "indexPath": "scenarios/index/a4cc9d8f-92b6-47c1-9e20-7927a411f1a3.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/TypeDescriptor.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": ""
+      },
+      {
+        "name": "implements",
+        "type": "Set<InterfaceConstructor>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "attributes",
+        "type": "Map<string, AttributeDescriptor>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "properties",
+        "type": "Map<string, PropertyDescriptor>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "references",
+        "type": "Map<string, ReferenceDescriptor>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "collections",
+        "type": "Map<string, CollectionDescriptor>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "methods",
+        "type": "Map<string, MethodDescriptor>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "implementingClasses",
+        "type": "Set<InterfaceConstructor>",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "implementations",
+        "type": "InterfaceConstructor[]",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [
+      {
+        "name": "extends",
+        "targetType": "TypeDescriptor"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "config",
+            "type": "{\n    name: string;\n    extends?: Reference<TypeDescriptor>;\n  }",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "fromASTData",
+        "parameters": [
+          {
+            "name": "astData",
+            "type": "TypeDescriptorJSON",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "TypeDescriptor",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "attributeLookup",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<AttributeDescriptor>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "propertyLookup",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<PropertyDescriptor>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "referenceLookup",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<ReferenceDescriptor>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "collectionLookup",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<CollectionDescriptor>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "methodLookup",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<MethodDescriptor>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "implementationAdd",
+        "parameters": [
+          {
+            "name": "implementingClass",
+            "type": "InterfaceConstructor",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "implementationCheck",
+        "parameters": [
+          {
+            "name": "implementingClass",
+            "type": "InterfaceConstructor",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "implementsAdd",
+        "parameters": [
+          {
+            "name": "interfaceType",
+            "type": "InterfaceConstructor",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "implementsCheck",
+        "parameters": [
+          {
+            "name": "interfaceType",
+            "type": "InterfaceConstructor",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toJSON",
+        "parameters": [],
+        "returnType": "TypeDescriptorJSON",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:39:33.774Z",
+    "updatedAt": "2026-01-08T11:39:33.774Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

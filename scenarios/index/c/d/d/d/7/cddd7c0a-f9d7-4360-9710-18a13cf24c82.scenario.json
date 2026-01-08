@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "cddd7c0a-f9d7-4360-9710-18a13cf24c82",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "cddd7c0a-f9d7-4360-9710-18a13cf24c82",
+    "name": "sw.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/sw.ts",
+    "definition": "TypeScript sw class/interface",
+    "filePath": "dist/sw.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T11:44:31.417Z",
+    "updatedAt": "2026-01-08T11:44:31.417Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/d/d/d/7/cddd7c0a-f9d7-4360-9710-18a13cf24c82.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/d/d/d/7/cddd7c0a-f9d7-4360-9710-18a13cf24c82.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:44:31.417Z",
+    "updatedAt": "2026-01-08T11:44:31.417Z"
+  }
+}

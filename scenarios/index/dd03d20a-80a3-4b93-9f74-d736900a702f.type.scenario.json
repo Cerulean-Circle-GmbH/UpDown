@@ -1,0 +1,99 @@
+{
+  "ior": {
+    "uuid": "dd03d20a-80a3-4b93-9f74-d736900a702f",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "dd03d20a-80a3-4b93-9f74-d736900a702f",
+    "name": "SHA256Provider",
+    "extends": null,
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.2/ContentIDProvider"
+    ],
+    "sourcePath": "src/ts/layer2/SHA256Provider.ts",
+    "indexPath": "scenarios/index/dd03d20a-80a3-4b93-9f74-d736900a702f.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/SHA256Provider.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "algorithm",
+        "type": "any",
+        "optional": false,
+        "defaultValue": "SHA-256"
+      },
+      {
+        "name": "hashLength",
+        "type": "any",
+        "optional": false,
+        "defaultValue": 64
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "create",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "validate",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "contentIdCreate",
+        "parameters": [
+          {
+            "name": "content",
+            "type": "ArrayBuffer | string | Uint8Array",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "contentIdCreateSync",
+        "parameters": [
+          {
+            "name": "content",
+            "type": "ArrayBuffer | string | Uint8Array",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<string>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:39:33.606Z",
+    "updatedAt": "2026-01-08T11:39:33.606Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

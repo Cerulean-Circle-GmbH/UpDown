@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "988536dc-3fcf-47c3-8dcb-e2a2694d0fb2",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "988536dc-3fcf-47c3-8dcb-e2a2694d0fb2",
+    "name": "CSSLoader.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/CSSLoader.ts",
+    "definition": "TypeScript CSSLoader class/interface",
+    "filePath": "src/ts/layer2/CSSLoader.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T11:30:51.745Z",
+    "updatedAt": "2026-01-08T11:30:51.746Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/9/8/8/5/3/988536dc-3fcf-47c3-8dcb-e2a2694d0fb2.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "9/8/8/5/3/988536dc-3fcf-47c3-8dcb-e2a2694d0fb2.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:30:51.745Z",
+    "updatedAt": "2026-01-08T11:30:51.745Z"
+  }
+}

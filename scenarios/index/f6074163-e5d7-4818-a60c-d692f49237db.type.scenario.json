@@ -1,0 +1,303 @@
+{
+  "ior": {
+    "uuid": "f6074163-e5d7-4818-a60c-d692f49237db",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "f6074163-e5d7-4818-a60c-d692f49237db",
+    "name": "CertificateOrchestrator",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer4/CertificateOrchestrator.ts",
+    "indexPath": "scenarios/index/f6074163-e5d7-4818-a60c-d692f49237db.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/CertificateOrchestrator.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "CertificateOrchestratorModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "serverNameIndicationManager",
+        "type": "ServerNameIndicationManager",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "letsEncryptCertificateProvider",
+        "type": "LetsEncryptCertificateProvider",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "domainCertificateStore",
+        "type": "DomainCertificateStore",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "certificateRenewalScheduler",
+        "type": "CertificateRenewalScheduler",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<CertificateOrchestratorModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "serverNameIndicationCallbackGet",
+        "parameters": [],
+        "returnType": "(\n        serverName: string,\n        callback: (error: Error | null, context?: any) => void\n    ) => void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "serverNameIndicationManagerGet",
+        "parameters": [],
+        "returnType": "ServerNameIndicationManager",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "letsEncryptCertificateProviderGet",
+        "parameters": [],
+        "returnType": "LetsEncryptCertificateProvider",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "domainCertificateStoreGet",
+        "parameters": [],
+        "returnType": "DomainCertificateStore",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "certificateRequest",
+        "parameters": [
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<DomainCertificateModel>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "domainConfigurationAdd",
+        "parameters": [
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "domainConfigurationMatch",
+        "parameters": [
+          {
+            "name": "domain",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "config",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "domainAdd",
+        "parameters": [
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<DomainCertificateModel | null>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "domainRemove",
+        "parameters": [
+          {
+            "name": "domain",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<boolean>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "domainConfigurationFilterOut",
+        "parameters": [
+          {
+            "name": "domain",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "config",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "domainsGet",
+        "parameters": [],
+        "returnType": "Promise<DomainConfigurationModel[]>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "certificateStatusGet",
+        "parameters": [
+          {
+            "name": "domain",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<{\n        domain: string;\n        expiresAt: string;\n        daysRemaining: number;\n        issuer: string;\n        isActive: boolean;\n    } | null>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "certificateStatusesGet",
+        "parameters": [],
+        "returnType": "Promise<Array<{\n        domain: string;\n        expiresAt: string;\n        daysRemaining: number;\n        issuer: string;\n        isActive: boolean;\n    }>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "start",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "stop",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "renewalCheckTrigger",
+        "parameters": [],
+        "returnType": "Promise<number>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "existingCertificatesLoad",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "renewalHandle",
+        "parameters": [
+          {
+            "name": "task",
+            "type": "RenewalTask",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "configuration",
+            "type": "DomainConfigurationModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Promise<Scenario<CertificateOrchestratorModel>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:27:23.471Z",
+    "updatedAt": "2026-01-08T11:27:23.471Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

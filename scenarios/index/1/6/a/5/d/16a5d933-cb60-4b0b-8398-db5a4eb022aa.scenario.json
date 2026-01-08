@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "16a5d933-cb60-4b0b-8398-db5a4eb022aa",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "16a5d933-cb60-4b0b-8398-db5a4eb022aa",
+    "name": "AbstractOverView.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/AbstractOverView.ts",
+    "definition": "TypeScript AbstractOverView class/interface",
+    "filePath": "dist/ts/layer3/AbstractOverView.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T11:44:31.589Z",
+    "updatedAt": "2026-01-08T11:44:31.590Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/1/6/a/5/d/16a5d933-cb60-4b0b-8398-db5a4eb022aa.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "1/6/a/5/d/16a5d933-cb60-4b0b-8398-db5a4eb022aa.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:44:31.590Z",
+    "updatedAt": "2026-01-08T11:44:31.590Z"
+  }
+}

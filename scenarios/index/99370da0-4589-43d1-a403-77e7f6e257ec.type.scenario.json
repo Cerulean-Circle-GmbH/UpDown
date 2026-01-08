@@ -1,0 +1,37 @@
+{
+  "ior": {
+    "uuid": "99370da0-4589-43d1-a403-77e7f6e257ec",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "99370da0-4589-43d1-a403-77e7f6e257ec",
+    "name": "OnceKernelModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer2/DefaultOnceKernel.ts",
+    "indexPath": "scenarios/index/99370da0-4589-43d1-a403-77e7f6e257ec.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/OnceKernelModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "state",
+        "type": "LifecycleState",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:44:32.191Z",
+    "updatedAt": "2026-01-08T11:44:32.191Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

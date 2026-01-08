@@ -1,0 +1,100 @@
+{
+  "ior": {
+    "uuid": "de7c9ff3-8163-46d9-b215-63dd12feb396",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "de7c9ff3-8163-46d9-b215-63dd12feb396",
+    "name": "HrefRewriter",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/HrefRewriter.ts",
+    "indexPath": "scenarios/index/de7c9ff3-8163-46d9-b215-63dd12feb396.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/HrefRewriter.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "rewrite",
+        "parameters": [
+          {
+            "name": "body",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "rules",
+            "type": "RewriteRule[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "ruleApply",
+        "parameters": [
+          {
+            "name": "body",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "rule",
+            "type": "RewriteRule",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "absoluteToRelativeRewrite",
+        "parameters": [
+          {
+            "name": "body",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "fromHost",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "toPath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:24:44.626Z",
+    "updatedAt": "2026-01-08T11:24:44.626Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

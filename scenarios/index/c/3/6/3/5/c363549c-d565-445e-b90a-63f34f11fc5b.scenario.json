@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "c363549c-d565-445e-b90a-63f34f11fc5b",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "c363549c-d565-445e-b90a-63f34f11fc5b",
+    "name": "FileLoader.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer4/FileLoader.ts",
+    "definition": "TypeScript FileLoader class/interface",
+    "filePath": "dist/ts/layer4/FileLoader.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T11:27:22.782Z",
+    "updatedAt": "2026-01-08T11:27:22.782Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/3/6/3/5/c363549c-d565-445e-b90a-63f34f11fc5b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/3/6/3/5/c363549c-d565-445e-b90a-63f34f11fc5b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:27:22.782Z",
+    "updatedAt": "2026-01-08T11:27:22.782Z"
+  }
+}

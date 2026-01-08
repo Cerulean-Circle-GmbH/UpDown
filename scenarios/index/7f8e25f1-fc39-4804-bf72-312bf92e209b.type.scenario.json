@@ -1,0 +1,100 @@
+{
+  "ior": {
+    "uuid": "7f8e25f1-fc39-4804-bf72-312bf92e209b",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "7f8e25f1-fc39-4804-bf72-312bf92e209b",
+    "name": "ServiceWorkerModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ServiceWorkerModel.interface.ts",
+    "indexPath": "scenarios/index/7f8e25f1-fc39-4804-bf72-312bf92e209b.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ServiceWorkerModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "version",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "cacheNamePrefix",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "defaultCacheStrategy",
+        "type": "CacheStrategy",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "maxCacheSizeBytes",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "maxCachedUnits",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isActive",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isWaiting",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "cachedUnitsCount",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "cachedSizeBytes",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "statistics",
+        "type": "StatisticsModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "precachePatterns",
+        "elementType": "string"
+      },
+      {
+        "name": "noCachePatterns",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:30:53.465Z",
+    "updatedAt": "2026-01-08T11:30:53.465Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

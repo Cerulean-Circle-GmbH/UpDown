@@ -1,0 +1,228 @@
+{
+  "ior": {
+    "uuid": "fecc53ef-ccff-47fc-bea0-d4d002ce749d",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "fecc53ef-ccff-47fc-bea0-d4d002ce749d",
+    "name": "Web4TSComponent",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/Web4TSComponent.interface.ts",
+    "indexPath": "scenarios/index/fecc53ef-ccff-47fc-bea0-d4d002ce749d.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Web4TSComponent.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<Web4TSComponentModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Scenario<Web4TSComponentModel>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "test",
+        "parameters": [
+          {
+            "name": "scope",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          },
+          {
+            "name": "references",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "build",
+        "parameters": [
+          {
+            "name": "flags",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "clean",
+        "parameters": [],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "tree",
+        "parameters": [
+          {
+            "name": "depth",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          },
+          {
+            "name": "showHidden",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "links",
+        "parameters": [
+          {
+            "name": "action",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cliWrapperGenerate",
+        "parameters": [
+          {
+            "name": "componentName",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "version",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "targetDirectorySet",
+        "parameters": [
+          {
+            "name": "directory",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitsDiscover",
+        "parameters": [],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "componentDescriptorUpdate",
+        "parameters": [],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "componentDescriptorRead",
+        "parameters": [
+          {
+            "name": "componentName",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "version",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<any>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "componentStart",
+        "parameters": [
+          {
+            "name": "componentName",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "version",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<this>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:37:05.661Z",
+    "updatedAt": "2026-01-08T11:37:05.661Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

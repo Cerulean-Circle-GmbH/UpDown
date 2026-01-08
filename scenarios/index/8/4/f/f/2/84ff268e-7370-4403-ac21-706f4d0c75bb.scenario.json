@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "84ff268e-7370-4403-ac21-706f4d0c75bb",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "84ff268e-7370-4403-ac21-706f4d0c75bb",
+    "name": "package-lock.json",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/package-lock.json",
+    "definition": "Root component file: package-lock.json",
+    "filePath": "package-lock.json",
+    "mimetype": "application/json",
+    "createdAt": "2026-01-08T11:24:44.336Z",
+    "updatedAt": "2026-01-08T11:24:44.336Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/8/4/f/f/2/84ff268e-7370-4403-ac21-706f4d0c75bb.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "8/4/f/f/2/84ff268e-7370-4403-ac21-706f4d0c75bb.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:24:44.336Z",
+    "updatedAt": "2026-01-08T11:24:44.336Z"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "06da2b36-2c19-447d-b4f0-b050802d1159",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "06da2b36-2c19-447d-b4f0-b050802d1159",
+    "name": "Test28_ACMEChallengeRoute.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/tests/Test28_ACMEChallengeRoute.ts",
+    "definition": "TypeScript Test28_ACMEChallengeRoute class/interface",
+    "filePath": "dist/ts/tests/Test28_ACMEChallengeRoute.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T11:30:52.823Z",
+    "updatedAt": "2026-01-08T11:30:52.824Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/0/6/d/a/2/06da2b36-2c19-447d-b4f0-b050802d1159.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "0/6/d/a/2/06da2b36-2c19-447d-b4f0-b050802d1159.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:30:52.823Z",
+    "updatedAt": "2026-01-08T11:30:52.823Z"
+  }
+}

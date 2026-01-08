@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "d83f9c39-e2ac-40fd-9f37-4305863b983f",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "d83f9c39-e2ac-40fd-9f37-4305863b983f",
+    "name": "IORLoadingView.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/IORLoadingView.ts",
+    "definition": "TypeScript IORLoadingView class/interface",
+    "filePath": "src/ts/layer5/views/IORLoadingView.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T11:37:04.520Z",
+    "updatedAt": "2026-01-08T11:37:04.521Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/d/8/3/f/9/d83f9c39-e2ac-40fd-9f37-4305863b983f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "d/8/3/f/9/d83f9c39-e2ac-40fd-9f37-4305863b983f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:37:04.520Z",
+    "updatedAt": "2026-01-08T11:37:04.520Z"
+  }
+}

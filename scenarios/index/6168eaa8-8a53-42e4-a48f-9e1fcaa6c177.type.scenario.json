@@ -1,0 +1,87 @@
+{
+  "ior": {
+    "uuid": "6168eaa8-8a53-42e4-a48f-9e1fcaa6c177",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "6168eaa8-8a53-42e4-a48f-9e1fcaa6c177",
+    "name": "LitDefaultView",
+    "extends": "ior:esm:/ONCE/0.3.22.2/LitElement",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/LitDefaultView.ts",
+    "indexPath": "scenarios/index/6168eaa8-8a53-42e4-a48f-9e1fcaa6c177.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/LitDefaultView.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "scenario",
+        "type": "Scenario<TModel> | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "kernel",
+        "type": "unknown",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "styles",
+        "type": "CSSResult",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "model",
+        "type": "TModel",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "viewTitle",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "subtitle",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "actions",
+        "type": "string[]",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:30:53.580Z",
+    "updatedAt": "2026-01-08T11:30:53.580Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

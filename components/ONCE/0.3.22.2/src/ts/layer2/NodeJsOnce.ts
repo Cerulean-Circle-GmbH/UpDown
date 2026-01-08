@@ -716,8 +716,10 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
   private async _startPeerInternal(scenario?: string | Scenario<ONCEPeerModel>): Promise<void> {
     
     try {
-      // Initialize if not already initialized
-      if (!this.model.initialized) {
+      // ✅ Use UcpComponent's isInitialized guard (not model.initialized)
+      // The constructor already calls init() - don't call it again!
+      // @pdca 2026-01-06-UTC-1600.web4-component-lifecycle.pdca.md
+      if (!this.isInitialized) {
         // ✅ Filter out CLI keywords that are not scenarios
         // "primary" and "client" are command keywords, not scenario paths
         const isKeyword = typeof scenario === 'string' && ['primary', 'client'].includes(scenario.toLowerCase());
@@ -744,6 +746,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
       
       // Save current state as scenario (Web4 Standard format)
       const web4Scenario = await this.toScenario();
+      console.log(`[NodeJsOnce] After toScenario: scenario.model.version=${web4Scenario.model.version}`);
       await this.scenarioManager.saveScenario(web4Scenario);
       
       // ✅ Transition to RUNNING state

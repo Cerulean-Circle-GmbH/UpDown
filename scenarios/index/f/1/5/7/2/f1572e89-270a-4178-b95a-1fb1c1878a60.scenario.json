@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "f1572e89-270a-4178-b95a-1fb1c1878a60",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "f1572e89-270a-4178-b95a-1fb1c1878a60",
+    "name": "BrowserOnceOrchestrator.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer4/BrowserOnceOrchestrator.ts",
+    "definition": "TypeScript BrowserOnceOrchestrator class/interface",
+    "filePath": "dist/ts/layer4/BrowserOnceOrchestrator.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T11:30:52.704Z",
+    "updatedAt": "2026-01-08T11:30:52.705Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/f/1/5/7/2/f1572e89-270a-4178-b95a-1fb1c1878a60.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "f/1/5/7/2/f1572e89-270a-4178-b95a-1fb1c1878a60.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:30:52.704Z",
+    "updatedAt": "2026-01-08T11:30:52.704Z"
+  }
+}

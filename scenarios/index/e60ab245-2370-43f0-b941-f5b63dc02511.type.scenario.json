@@ -1,0 +1,307 @@
+{
+  "ior": {
+    "uuid": "e60ab245-2370-43f0-b941-f5b63dc02511",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "e60ab245-2370-43f0-b941-f5b63dc02511",
+    "name": "DefaultUser",
+    "extends": null,
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.2/User"
+    ],
+    "sourcePath": "src/ts/layer2/DefaultUser.ts",
+    "indexPath": "scenarios/index/e60ab245-2370-43f0-b941-f5b63dc02511.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/DefaultUser.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "UserModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "infrastructure",
+        "type": "NodeOSInfrastructure",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "persistenceManagerRef",
+        "type": "PersistenceManager | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "scenarioServiceRef",
+        "type": "ScenarioService | null",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<Model>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "detectEnvironment",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getUuid",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getUsername",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getHostname",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "setInfrastructure",
+        "parameters": [
+          {
+            "name": "infrastructure",
+            "type": "NodeOSInfrastructure",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getInfrastructure",
+        "parameters": [],
+        "returnType": "NodeOSInfrastructure",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "setPersistenceManager",
+        "parameters": [
+          {
+            "name": "pm",
+            "type": "PersistenceManager",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "setScenarioService",
+        "parameters": [
+          {
+            "name": "ss",
+            "type": "ScenarioService",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getUserUUID",
+        "parameters": [
+          {
+            "name": "username",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Promise<Scenario<UserModel>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "create",
+        "parameters": [
+          {
+            "name": "username",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          },
+          {
+            "name": "infrastructure",
+            "type": "NodeOSInfrastructure",
+            "optional": true,
+            "defaultValue": null
+          },
+          {
+            "name": "projectRoot",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          },
+          {
+            "name": "scenarioService",
+            "type": "ScenarioService",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<DefaultUser>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getScenarioPath",
+        "parameters": [
+          {
+            "name": "projectRoot",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "saveScenario",
+        "parameters": [
+          {
+            "name": "projectRoot",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "saveScenarioLegacy",
+        "parameters": [
+          {
+            "name": "projectRoot",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "scenario",
+            "type": "Scenario<UserModel>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getOwnerObject",
+        "parameters": [
+          {
+            "name": "username",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          },
+          {
+            "name": "infrastructure",
+            "type": "NodeOSInfrastructure",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<{user: string, hostname: string, utcTimestamp: string, uuid: string}>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getOwnerBase64",
+        "parameters": [
+          {
+            "name": "username",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          },
+          {
+            "name": "infrastructure",
+            "type": "NodeOSInfrastructure",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:37:05.289Z",
+    "updatedAt": "2026-01-08T11:37:05.289Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

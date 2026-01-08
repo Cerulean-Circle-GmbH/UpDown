@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "ba1266b7-da9c-4bdf-9cb4-04bb35066a7f",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "ba1266b7-da9c-4bdf-9cb4-04bb35066a7f",
+    "name": "tsconfig.json",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/tsconfig.json",
+    "definition": "Root component file: tsconfig.json",
+    "filePath": "tsconfig.json",
+    "mimetype": "application/json",
+    "createdAt": "2026-01-08T11:39:33.261Z",
+    "updatedAt": "2026-01-08T11:39:33.261Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/b/a/1/2/6/ba1266b7-da9c-4bdf-9cb4-04bb35066a7f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "b/a/1/2/6/ba1266b7-da9c-4bdf-9cb4-04bb35066a7f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:39:33.261Z",
+    "updatedAt": "2026-01-08T11:39:33.261Z"
+  }
+}
