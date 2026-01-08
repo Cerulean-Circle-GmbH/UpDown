@@ -14,11 +14,19 @@ export interface IdealMinimalComponentModel extends Model {
   updatedAt: string;
   component?: string;             // Component name for CLI display
   version?: string;               // Component version for CLI display and test promotion
-  // @pdca 2025-11-10-UTC-1010.pdca.md - Path Authority fields for delegation
+  
+  // Component-specific (discovered from import.meta.url)
   componentRoot?: string;         // THIS component's root directory
-  projectRoot?: string;           // Project root directory (for delegation)
-  targetDirectory?: string;       // Target directory for operations (Path Authority from CLI)
-  targetComponentRoot?: string;   // Target component's root (for tree/links delegation)
+  
+  // @deprecated Path properties — Use accessors instead
+  // @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.5
+  /** @deprecated Use this.projectRoot accessor */
+  projectRoot?: string;
+  /** @deprecated Use this.projectRoot accessor */
+  targetDirectory?: string;
+  /** @deprecated */
+  targetComponentRoot?: string;
+  
   context?: any;                  // Context for "on" delegation mode (holds delegated component instance)
   isTestIsolation?: boolean;      // Test isolation mode flag (for DelegationProxy context)
 }
