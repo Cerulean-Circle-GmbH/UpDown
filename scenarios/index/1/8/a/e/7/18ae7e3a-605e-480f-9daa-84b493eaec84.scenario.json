@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "18ae7e3a-605e-480f-9daa-84b493eaec84",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "18ae7e3a-605e-480f-9daa-84b493eaec84",
+    "name": "RouterModel.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/RouterModel.interface.ts",
+    "definition": "TypeScript RouterModel.interface class/interface",
+    "filePath": "dist/ts/layer3/RouterModel.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T13:52:22.615Z",
+    "updatedAt": "2026-01-08T13:52:22.618Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/1/8/a/e/7/18ae7e3a-605e-480f-9daa-84b493eaec84.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "1/8/a/e/7/18ae7e3a-605e-480f-9daa-84b493eaec84.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T13:52:22.615Z",
+    "updatedAt": "2026-01-08T13:52:22.615Z"
+  }
+}

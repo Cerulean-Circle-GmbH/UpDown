@@ -1,0 +1,55 @@
+{
+  "ior": {
+    "uuid": "1c1ede7d-6f8a-4920-bcb1-c0ef927b88fe",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "1c1ede7d-6f8a-4920-bcb1-c0ef927b88fe",
+    "name": "LoaderModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/LoaderModel.interface.ts",
+    "indexPath": "scenarios/index/1c1ede7d-6f8a-4920-bcb1-c0ef927b88fe.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/LoaderModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "protocol",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "iorComponent",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "iorVersion",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "statistics",
+        "type": "StatisticsModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T13:52:23.911Z",
+    "updatedAt": "2026-01-08T13:52:23.911Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

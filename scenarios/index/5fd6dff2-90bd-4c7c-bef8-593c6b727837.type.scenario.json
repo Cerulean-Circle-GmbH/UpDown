@@ -1,0 +1,48 @@
+{
+  "ior": {
+    "uuid": "5fd6dff2-90bd-4c7c-bef8-593c6b727837",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "5fd6dff2-90bd-4c7c-bef8-593c6b727837",
+    "name": "DefaultViewModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/AbstractDefaultView.ts",
+    "indexPath": "scenarios/index/5fd6dff2-90bd-4c7c-bef8-593c6b727837.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/DefaultViewModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "title",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "subtitle",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "actions",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T13:52:23.841Z",
+    "updatedAt": "2026-01-08T13:52:23.841Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "ior": {
+    "uuid": "e5371e85-8021-4e21-b0bc-6ddc6a949f69",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "e5371e85-8021-4e21-b0bc-6ddc6a949f69",
+    "name": "PortManager",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/PortManager.ts",
+    "indexPath": "scenarios/index/e5371e85-8021-4e21-b0bc-6ddc6a949f69.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/PortManager.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "instance",
+        "type": "PortManager | null",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "getInstance",
+        "parameters": [],
+        "returnType": "PortManager",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "isPortAvailable",
+        "parameters": [
+          {
+            "name": "port",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<boolean>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getNextAvailablePort",
+        "parameters": [],
+        "returnType": "Promise<PortAvailabilityResult>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "isPrimaryServerRunning",
+        "parameters": [],
+        "returnType": "Promise<boolean>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getPrimaryPort",
+        "parameters": [],
+        "returnType": "number",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "isPrimaryPort",
+        "parameters": [
+          {
+            "name": "port",
+            "type": "number",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T13:52:23.725Z",
+    "updatedAt": "2026-01-08T13:52:23.725Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

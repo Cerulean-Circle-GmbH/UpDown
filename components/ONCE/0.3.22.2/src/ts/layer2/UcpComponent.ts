@@ -295,6 +295,22 @@ export abstract class UcpComponent<TModel extends Model> extends Component<TMode
       ?? '';
   }
   
+  /**
+   * Scripts directory
+   * CLI is path authority
+   */
+  get scriptsDirectory(): string {
+    return this.cliField?.model?.scriptsDirectory ?? '';
+  }
+  
+  /**
+   * Scripts version directory
+   * CLI is path authority
+   */
+  get scriptsVersionDirectory(): string {
+    return this.cliField?.model?.scriptsVersionDirectory ?? '';
+  }
+  
   // ═══════════════════════════════════════════════════════════════
   // Scenario Accessors (P16: TypeScript accessors)
   // @pdca 2026-01-04-UTC-1800.scenario-only-init-violations.pdca.md SOI.1

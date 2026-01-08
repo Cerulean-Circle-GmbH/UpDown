@@ -100,6 +100,88 @@ export class DefaultWeb4TSComponent
   }
   
   // ═══════════════════════════════════════════════════════════════
+  // PATH ACCESSORS — CLI is Path Authority
+  // @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.3
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Project root directory
+   * Priority: CLI → context → model → derived from componentRoot
+   */
+  override get projectRoot(): string {
+    // 1. CLI is path authority
+    if (super.projectRoot) return super.projectRoot;
+    
+    // 2. Context (delegating component) has projectRoot accessor
+    const context = (this.model as any)?.context;
+    if (context?.projectRoot) return context.projectRoot;
+    
+    // 3. Derive from componentRoot (fallback)
+    const componentRoot = this.model?.componentRoot;
+    if (componentRoot) {
+      return path.resolve(componentRoot, '..', '..', '..');
+    }
+    
+    return '';
+  }
+  
+  /**
+   * Components directory
+   * Priority: CLI → context → derived
+   */
+  override get componentsDirectory(): string {
+    if (super.componentsDirectory) return super.componentsDirectory;
+    
+    const context = (this.model as any)?.context;
+    if (context?.componentsDirectory) return context.componentsDirectory;
+    
+    const projectRoot = this.projectRoot;
+    return projectRoot ? path.join(projectRoot, 'components') : '';
+  }
+  
+  /**
+   * Test data directory
+   * Priority: CLI → context → derived
+   */
+  override get testDataDirectory(): string {
+    if (super.testDataDirectory) return super.testDataDirectory;
+    
+    const context = (this.model as any)?.context;
+    if (context?.testDataDirectory) return context.testDataDirectory;
+    
+    const projectRoot = this.projectRoot;
+    return projectRoot ? path.join(projectRoot, 'test', 'data') : '';
+  }
+  
+  /**
+   * Scripts directory
+   * Priority: CLI → context → derived
+   */
+  override get scriptsDirectory(): string {
+    if (super.scriptsDirectory) return super.scriptsDirectory;
+    
+    const context = (this.model as any)?.context;
+    if (context?.scriptsDirectory) return context.scriptsDirectory;
+    
+    const projectRoot = this.projectRoot;
+    return projectRoot ? path.join(projectRoot, 'scripts') : '';
+  }
+  
+  /**
+   * Scripts version directory
+   * Priority: CLI → context → derived
+   */
+  override get scriptsVersionDirectory(): string {
+    if (super.scriptsVersionDirectory) return super.scriptsVersionDirectory;
+    
+    const context = (this.model as any)?.context;
+    if (context?.scriptsVersionDirectory) return context.scriptsVersionDirectory;
+    
+    const scriptsDir = this.scriptsDirectory;
+    return scriptsDir ? path.join(scriptsDir, 'versions') : '';
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
   // METHOD DISCOVERY (for CLI routing)
   // ═══════════════════════════════════════════════════════════════
   
@@ -189,18 +271,20 @@ export class DefaultWeb4TSComponent
     }
     
     const testDataRoot = path.join(componentRoot, 'test', 'data');
-    const alreadyInTestIsolation = this.model!.projectRoot?.includes('/test/data') || false;
+    const currentProjectRoot = this.projectRoot;  // PC.3: Use accessor
+    const alreadyInTestIsolation = currentProjectRoot?.includes('/test/data') || false;
     
     if (alreadyInTestIsolation) {
       console.log(`🔒 [TOOTSIE TEST ISOLATION] Already in test/data environment`);
-      console.log(`   Project Root: ${this.model!.projectRoot}`);
+      console.log(`   Project Root: ${currentProjectRoot}`);
     } else {
       console.log(`🔒 [TOOTSIE TEST ISOLATION] Enforcing test/data isolation`);
-      console.log(`   Production Root: ${this.model!.projectRoot}`);
+      console.log(`   Production Root: ${currentProjectRoot}`);
       console.log(`   Test Data Root: ${testDataRoot}`);
       console.log(`   ⚠️  Tests will ONLY run in isolated environment`);
       console.log(`   ⚠️  Production files CANNOT be affected\n`);
       
+      // Temporarily override model paths for test isolation
       const originalProjectRoot = this.model!.projectRoot;
       const originalIsTestIsolation = this.model!.isTestIsolation;
       
@@ -236,7 +320,7 @@ export class DefaultWeb4TSComponent
       console.log(`   References: ${references.join(', ')}`);
     }
     console.log(`   Test Isolation: ${this.model!.isTestIsolation ? '✅ ENABLED' : '❌ DISABLED'}`);
-    console.log(`   Project Root: ${this.model!.projectRoot}\n`);
+    console.log(`   Project Root: ${this.projectRoot}\n`);  // PC.3: Use accessor
     
     const discoveryResult = await this.discoverTestFile(scope, references);
     
@@ -293,7 +377,7 @@ export class DefaultWeb4TSComponent
     }
     
     const tootsieRunnerPath = path.join(
-      this.model!.componentsDirectory || path.join(this.model!.projectRoot || '', 'components'),
+      this.componentsDirectory,  // PC.3: Use accessor
       'Tootsie',
       '0.3.20.6',
       'src',
@@ -308,7 +392,7 @@ export class DefaultWeb4TSComponent
       const command = `npx tsx ${tootsieRunnerPath} ${testFilePath}`;
       
       execSync(command, {
-        cwd: this.model!.projectRoot || process.cwd(),
+        cwd: this.projectRoot || process.cwd(),  // PC.3: Use accessor
         encoding: 'utf-8',
         stdio: 'inherit'
       });
@@ -536,7 +620,7 @@ export class DefaultWeb4TSComponent
    */
   private async typesExtract(): Promise<void> {
     const componentRoot = this.model!.targetComponentRoot || this.model!.componentRoot;
-    const projectRoot = this.model!.projectRoot || componentRoot;
+    const projectRoot = this.projectRoot;  // PC.3: Use accessor
     const scenariosDir = path.join(projectRoot, 'scenarios');
     
     // Initialize type extractor if needed
@@ -907,9 +991,12 @@ await component.init();
    * Set target directory for component operations
    * Web4 P16: targetDirectorySet (not setTargetDirectory)
    */
+  /**
+   * @deprecated Use CLI path authority instead
+   */
   targetDirectorySet(directory: string): void {
     this.model!.targetDirectory = directory;
-    this.model!.componentsDirectory = path.join(directory, 'components');
+    // Note: componentsDirectory should come from CLI, not be set here
   }
   
   // ═══════════════════════════════════════════════════════════════
@@ -1101,8 +1188,8 @@ ${'='.repeat(80)}
     // Generate UUID for scenario
     const scenarioUuid = randomUUID();
     
-    // Path Authority: Use projectRoot from model
-    const projectRoot = this.model!.projectRoot || '';
+    // PC.3: Use projectRoot accessor (CLI path authority)
+    const projectRoot = this.projectRoot;
     const scenariosRoot = path.join(projectRoot, 'scenarios');
     const scenarioDir = path.join(scenariosRoot, componentName, componentVersion);
     
@@ -1234,8 +1321,8 @@ ${'='.repeat(80)}
    * @returns Scenario or null if no descriptor exists
    */
   async componentDescriptorRead(componentName: string, version: string): Promise<any> {
-    // Resolve component path (respects delegation context)
-    const projectRoot = (this.model as any).context?.model?.projectRoot || this.model!.projectRoot;
+    // PC.3: Use projectRoot accessor (handles delegation context)
+    const projectRoot = this.projectRoot;
     const componentPath = path.join(projectRoot, 'components', componentName, version);
     const descriptorPath = path.join(componentPath, `${componentName}.component.json`);
     
@@ -1276,8 +1363,8 @@ ${'='.repeat(80)}
    * @param version Component version (e.g., "0.3.19.1")
    */
   async componentStart(componentName: string, version: string): Promise<this> {
-    // Resolve component path (respects delegation context)
-    const projectRoot = (this.model as any).context?.model?.projectRoot || this.model!.projectRoot;
+    // PC.3: Use projectRoot accessor (handles delegation context)
+    const projectRoot = this.projectRoot;
     const componentPath = path.join(projectRoot, 'components', componentName, version);
     
     // 1. Check if component exists
@@ -1387,8 +1474,8 @@ ${'='.repeat(80)}
    * Run comprehensive TAB completion test suite
    */
   async testCompletion(): Promise<this> {
-    const componentRoot = this.model!.projectRoot;
-    const testSuitePath = path.join(componentRoot || '', 'test/sh/test-completion-suite.sh');
+    const projectRoot = this.projectRoot;  // PC.3: Use accessor
+    const testSuitePath = path.join(projectRoot || '', 'test/sh/test-completion-suite.sh');
     
     console.log('🧪 Running TAB completion test suite...');
     console.log(`📂 Component: ${this.model!.component} ${this.model!.version?.toString()}`);
@@ -1397,7 +1484,7 @@ ${'='.repeat(80)}
     
     try {
       execSync(`bash "${testSuitePath}"`, {
-        cwd: componentRoot || undefined,
+        cwd: projectRoot || undefined,
         stdio: 'inherit',
       });
       
@@ -1426,32 +1513,26 @@ ${'='.repeat(80)}
   }
 
   /**
-   * Update model with calculated paths for target component
+   * Update model with target component identity
+   * PC.3: Paths come from accessors, NOT calculated here
    * @cliHide
    */
   private updateModelPaths(): void {
+    // Copy component identity from context (if delegating)
     if ((this.model as any).context) {
       this.model!.component = (this.model as any).context.model.component;
       this.model!.version = (this.model as any).context.model.version;
     }
     
-    const cli = this.getCLI();
-    
-    if (!this.model!.projectRoot) {
-      this.model!.projectRoot = path.dirname(path.dirname(path.dirname(this.model!.componentRoot || '')));
-    }
-    if (!this.model!.targetDirectory) {
-      this.model!.targetDirectory = this.model!.projectRoot;
-    }
-    if (!this.model!.componentsDirectory) {
-      this.model!.componentsDirectory = path.join(this.model!.targetDirectory, 'components');
-    }
-    
+    // PC.3: targetComponentRoot uses accessors, not model paths
     this.model!.targetComponentRoot = path.join(
-      cli.model?.componentsDirectory || this.model!.componentsDirectory || '',
+      this.componentsDirectory,  // Accessor handles CLI → context → derived
       this.model!.component || '',
       this.model!.version?.toString() || ''
     );
+    
+    // targetDirectory is just projectRoot (for backward compatibility)
+    this.model!.targetDirectory = this.projectRoot;
   }
 
   /**
@@ -1561,7 +1642,7 @@ ${'='.repeat(80)}
       targetVersion = version;
     }
 
-    const componentDir = path.join(this.model!.componentsDirectory || '', targetComponent);
+    const componentDir = path.join(this.componentsDirectory, targetComponent);  // PC.3: Use accessor
     const versionDir = path.join(componentDir, targetVersion);
 
     if (!fs.existsSync(versionDir)) {
@@ -1611,8 +1692,7 @@ ${'='.repeat(80)}
    * @cliHide
    */
   private async cleanupVersionScriptSymlinks(componentName: string, version: string): Promise<void> {
-    const projectRoot = this.model!.projectRoot || '';
-    const versionsDir = path.join(projectRoot, 'scripts', 'versions');
+    const versionsDir = this.scriptsVersionDirectory;  // PC.3: Use accessor
     
     if (!fs.existsSync(versionsDir)) {
       return;
@@ -1636,7 +1716,7 @@ ${'='.repeat(80)}
       try {
         const linkTarget = await fs.promises.readlink(mainScriptPath);
         if (linkTarget.includes(versionScriptName)) {
-          const componentDir = path.join(this.model!.componentsDirectory || '', componentName);
+          const componentDir = path.join(this.componentsDirectory, componentName);  // PC.3: Use accessor
           const versions = this.getAvailableVersions(componentDir);
           const highestVersion = versions.length > 0 ? this.getHighestVersion(versions) : null;
           
@@ -1671,7 +1751,7 @@ ${'='.repeat(80)}
       targetComponent = component;
     }
 
-    const componentDir = path.join(this.model!.componentsDirectory || '', targetComponent);
+    const componentDir = path.join(this.componentsDirectory, targetComponent);  // PC.3: Use accessor
 
     if (!fs.existsSync(componentDir)) {
       throw new Error(`Component ${targetComponent} does not exist at ${componentDir}`);
@@ -1702,8 +1782,7 @@ ${'='.repeat(80)}
    * @cliHide
    */
   private async cleanupAllComponentScriptSymlinks(componentName: string, versions: string[]): Promise<void> {
-    const scriptsDir = path.join(this.model!.targetDirectory || '', 'scripts');
-    const versionsDir = path.join(scriptsDir, 'versions');
+    const versionsDir = this.scriptsVersionDirectory;  // PC.3: Use accessor
     
     if (!fs.existsSync(versionsDir)) {
       return;
@@ -1726,6 +1805,7 @@ ${'='.repeat(80)}
     }
 
     // Remove main script symlink
+    const scriptsDir = this.scriptsDirectory;  // PC.3: Use accessor
     const mainScriptPath = path.join(scriptsDir, componentLowerCase);
     try {
       fs.lstatSync(mainScriptPath);
@@ -1778,8 +1858,9 @@ ${'='.repeat(80)}
    * @cliHide
    */
   private async createVersionFromExisting(): Promise<void> {
-    const sourcePath = path.join(this.model!.componentsDirectory || '', this.model!.component || '', this.model!.version?.toString() || '');
-    const targetPath = path.join(this.model!.componentsDirectory || '', this.model!.component || '', (this.model as any).toVersion);
+    // PC.3: Use componentsDirectory accessor
+    const sourcePath = path.join(this.componentsDirectory, this.model!.component || '', this.model!.version?.toString() || '');
+    const targetPath = path.join(this.componentsDirectory, this.model!.component || '', (this.model as any).toVersion);
     
     if (fs.existsSync(targetPath)) {
       console.error(`❌ ERROR: Version ${(this.model as any).toVersion} already exists!`);
@@ -1894,7 +1975,8 @@ ${'='.repeat(80)}
    * @cliHide
    */
   private async updateLatestSymlink(): Promise<void> {
-    const componentDir = path.join(this.model!.componentsDirectory || '', this.model!.component || '');
+    // PC.3: Use componentsDirectory accessor
+    const componentDir = path.join(this.componentsDirectory, this.model!.component || '');
     const latestPath = path.join(componentDir, 'latest');
     
     try {
@@ -1925,8 +2007,7 @@ ${'='.repeat(80)}
    * @cliHide
    */
   private async createVersionScriptSymlink(version: string = (this.model as any).toVersion): Promise<void> {
-    const projectRoot = this.model!.projectRoot || '';
-    const versionsDir = path.join(projectRoot, 'scripts', 'versions');
+    const versionsDir = this.scriptsVersionDirectory;  // PC.3: Use accessor
     
     await fs.promises.mkdir(versionsDir, { recursive: true });
     
@@ -1934,7 +2015,8 @@ ${'='.repeat(80)}
     const scriptName = `${componentLower}-v${version}`;
     const scriptPath = path.join(versionsDir, scriptName);
     
-    const componentVersionDir = path.join(projectRoot, 'components', this.model!.component || '', version);
+    // PC.3: Use componentsDirectory accessor
+    const componentVersionDir = path.join(this.componentsDirectory, this.model!.component || '', version);
     const possibleScripts = [`${componentLower}.sh`, componentLower, 'cli.sh', 'cli'];
     
     let targetScript = '';
@@ -1966,7 +2048,8 @@ ${'='.repeat(80)}
     const componentLower = (this.model!.component || '').toLowerCase();
     const mainScriptPath = path.join(scriptsDir, componentLower);
     
-    const componentDir = path.join(this.model!.componentsDirectory || '', this.model!.component || '');
+    // PC.3: Use componentsDirectory accessor
+    const componentDir = path.join(this.componentsDirectory, this.model!.component || '');
     const targetPath = path.relative(scriptsDir, path.join(componentDir, 'latest', componentLower));
     
     try {

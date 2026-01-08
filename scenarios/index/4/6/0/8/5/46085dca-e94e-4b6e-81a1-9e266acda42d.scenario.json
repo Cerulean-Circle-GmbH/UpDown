@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "46085dca-e94e-4b6e-81a1-9e266acda42d",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "46085dca-e94e-4b6e-81a1-9e266acda42d",
+    "name": "FolderOverView.css",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/css/FolderOverView.css",
+    "definition": "CSS stylesheet for FolderOverView",
+    "filePath": "src/ts/layer5/views/css/FolderOverView.css",
+    "mimetype": "text/css",
+    "createdAt": "2026-01-08T13:52:20.192Z",
+    "updatedAt": "2026-01-08T13:52:20.192Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/4/6/0/8/5/46085dca-e94e-4b6e-81a1-9e266acda42d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "4/6/0/8/5/46085dca-e94e-4b6e-81a1-9e266acda42d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T13:52:20.192Z",
+    "updatedAt": "2026-01-08T13:52:20.192Z"
+  }
+}

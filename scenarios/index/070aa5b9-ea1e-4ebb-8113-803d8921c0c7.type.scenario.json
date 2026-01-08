@@ -1,0 +1,76 @@
+{
+  "ior": {
+    "uuid": "070aa5b9-ea1e-4ebb-8113-803d8921c0c7",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "070aa5b9-ea1e-4ebb-8113-803d8921c0c7",
+    "name": "LifecycleSubject",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/LifecycleSubject.interface.ts",
+    "indexPath": "scenarios/index/070aa5b9-ea1e-4ebb-8113-803d8921c0c7.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/LifecycleSubject.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "attach",
+        "parameters": [
+          {
+            "name": "observer",
+            "type": "LifecycleObserver",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "detach",
+        "parameters": [
+          {
+            "name": "observer",
+            "type": "LifecycleObserver",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "notify",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T13:52:23.909Z",
+    "updatedAt": "2026-01-08T13:52:23.909Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "ior": {
+    "uuid": "056472be-f510-4220-9cf0-0f594fb763d3",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "056472be-f510-4220-9cf0-0f594fb763d3",
+    "name": "ActionMetadata",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/MethodDescriptor.interface.ts",
+    "indexPath": "scenarios/index/056472be-f510-4220-9cf0-0f594fb763d3.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ActionMetadata.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "label",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "icon",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "style",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "shortcut",
+        "targetType": "string"
+      },
+      {
+        "name": "confirmMessage",
+        "targetType": "string"
+      }
+    ],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T13:52:23.912Z",
+    "updatedAt": "2026-01-08T13:52:23.912Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "f9acd75d-ddb6-4242-a5d8-8fbd0c7ff95e",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "f9acd75d-ddb6-4242-a5d8-8fbd0c7ff95e",
+    "name": "RouteStatisticsModel.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/RouteStatisticsModel.interface.ts",
+    "definition": "TypeScript RouteStatisticsModel.interface class/interface",
+    "filePath": "src/ts/layer3/RouteStatisticsModel.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T13:52:21.391Z",
+    "updatedAt": "2026-01-08T13:52:21.391Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/f/9/a/c/d/f9acd75d-ddb6-4242-a5d8-8fbd0c7ff95e.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "f/9/a/c/d/f9acd75d-ddb6-4242-a5d8-8fbd0c7ff95e.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T13:52:21.391Z",
+    "updatedAt": "2026-01-08T13:52:21.391Z"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "ior": {
+    "uuid": "ac5c64fd-ade6-45cc-aff3-f700f80353b1",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "ac5c64fd-ade6-45cc-aff3-f700f80353b1",
+    "name": "AbstractDefaultView",
+    "extends": "ior:esm:/ONCE/0.3.22.2/AbstractView",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/AbstractDefaultView.ts",
+    "indexPath": "scenarios/index/ac5c64fd-ade6-45cc-aff3-f700f80353b1.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/AbstractDefaultView.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [
+      {
+        "name": "title",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "subtitle",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "actions",
+        "type": "string[]",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T13:52:23.841Z",
+    "updatedAt": "2026-01-08T13:52:23.841Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}
