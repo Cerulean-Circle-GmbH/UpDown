@@ -1,0 +1,110 @@
+{
+  "ior": {
+    "uuid": "3e39cdb7-7d18-4f2b-b88f-fbfcfa163478",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "3e39cdb7-7d18-4f2b-b88f-fbfcfa163478",
+    "name": "DefaultEnvironmentModel",
+    "extends": null,
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.2/EnvironmentModel"
+    ],
+    "sourcePath": "src/ts/layer1/DefaultEnvironmentModel.ts",
+    "indexPath": "scenarios/index/3e39cdb7-7d18-4f2b-b88f-fbfcfa163478.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/DefaultEnvironmentModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "hostnameField",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "fqdnField",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "primaryIPField",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "domainField",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "hostname",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "fqdn",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "primaryIP",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "domain",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "EnvironmentScenario",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "EnvironmentScenario",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:04:12.262Z",
+    "updatedAt": "2026-01-08T12:04:12.262Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

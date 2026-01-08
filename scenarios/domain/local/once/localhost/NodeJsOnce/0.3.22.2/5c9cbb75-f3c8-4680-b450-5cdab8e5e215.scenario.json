@@ -1,0 +1,78 @@
+{
+  "ior": {
+    "uuid": "104fcbdb-239b-40d0-b63c-ded6ff6d55bc",
+    "component": "NodeJsOnce",
+    "version": "0.0.0.0"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "5c9cbb75-f3c8-4680-b450-5cdab8e5e215",
+    "name": "ONCE",
+    "version": "0.3.22.2",
+    "component": "ONCE",
+    "environment": {
+      "model": {
+        "type": "nodejs",
+        "isNode": false,
+        "isBrowser": false,
+        "isWorker": false,
+        "isServiceWorker": false,
+        "isPWA": false,
+        "isIframe": false,
+        "version": "",
+        "capabilities": [],
+        "isOnline": false
+      }
+    },
+    "state": "starting",
+    "startTime": "2026-01-08T12:00:26.509Z",
+    "connectionTime": null,
+    "host": "localhost",
+    "port": 42777,
+    "isPrimary": false,
+    "primaryPeerUuid": null,
+    "peers": [],
+    "componentRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.22.2",
+    "projectRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown",
+    "isTestIsolation": false,
+    "targetDirectory": "/Users/Shared/Workspaces/2cuGitHub/UpDown",
+    "targetComponentRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.22.2",
+    "serverModel": {
+      "uuid": "5c9cbb75-f3c8-4680-b450-5cdab8e5e215",
+      "name": "ONCE",
+      "version": "0.3.22.2",
+      "environment": {
+        "platform": "node",
+        "version": "v23.6.1",
+        "capabilities": [
+          "server",
+          "websocket",
+          "p2p"
+        ],
+        "isOnline": true
+      },
+      "state": "running",
+      "startTime": "2026-01-08T12:00:26.513Z",
+      "connectionTime": null,
+      "host": "McDonges.fritz.box",
+      "port": 42777,
+      "domain": "box.fritz",
+      "hostname": "McDonges",
+      "ip": "192.168.178.49",
+      "isPrimary": true,
+      "primaryPeerUuid": null,
+      "peers": [],
+      "pid": 10638,
+      "capabilities": [
+        {
+          "capability": "httpsPort",
+          "port": 42777
+        },
+        {
+          "capability": "httpRedirect",
+          "port": 42000
+        }
+      ]
+    }
+  }
+}

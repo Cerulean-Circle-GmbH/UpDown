@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "fc148c35-b076-426d-94e3-52213f6e0d72",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "fc148c35-b076-426d-94e3-52213f6e0d72",
+    "name": "ContentIDProvider.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/ContentIDProvider.interface.ts",
+    "definition": "TypeScript ContentIDProvider.interface class/interface",
+    "filePath": "dist/ts/layer3/ContentIDProvider.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T12:04:11.759Z",
+    "updatedAt": "2026-01-08T12:04:11.759Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/f/c/1/4/8/fc148c35-b076-426d-94e3-52213f6e0d72.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "f/c/1/4/8/fc148c35-b076-426d-94e3-52213f6e0d72.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:04:11.759Z",
+    "updatedAt": "2026-01-08T12:04:11.759Z"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "8a8ef50f-de8c-435b-b49b-692fce049dab",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "8a8ef50f-de8c-435b-b49b-692fce049dab",
+    "name": "demo-hub.html",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/html/demo-hub.html",
+    "definition": "HTML template demo-hub",
+    "filePath": "src/ts/layer5/views/html/demo-hub.html",
+    "mimetype": "text/html",
+    "createdAt": "2026-01-08T12:04:10.407Z",
+    "updatedAt": "2026-01-08T12:04:10.408Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/8/a/8/e/f/8a8ef50f-de8c-435b-b49b-692fce049dab.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "8/a/8/e/f/8a8ef50f-de8c-435b-b49b-692fce049dab.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:04:10.407Z",
+    "updatedAt": "2026-01-08T12:04:10.407Z"
+  }
+}

@@ -249,9 +249,15 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
   }
 
   /**
-   * ✅ Synchronous path discovery - called in constructor
-   * Discovers componentRoot and version from import.meta.url (with realpathSync)
+   * ✅ Synchronous path discovery - SINGLE SOURCE for NodeJsOnce paths
+   * 
+   * Called in constructor. Discovers componentRoot and version from import.meta.url.
+   * All other methods (getWeb4TSComponent, etc.) use these values — NO recalculation.
+   * 
+   * CPA.7.2: This is the ONLY place paths are calculated for NodeJsOnce.
+   * 
    * @pdca 2025-11-21-UTC-1630.test-isolation-path-violation.pdca.md
+   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.7.2
    * @cliHide
    */
   private discoverPathsFromFilesystem(): void {
@@ -367,31 +373,23 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
 
   /**
    * ✅ TRUE Radical OOP: Lazy initialization of Web4TSComponent for delegation (DRY principle)
+   * 
+   * CPA.7.2: Uses paths from this.model (already discovered in discoverPathsFromFilesystem())
+   * NO duplicate path calculations — DRY principle
+   * 
    * @pdca 2025-11-10-UTC-1830.migrate-once-to-0.3.20.0.pdca.md
+   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.7.2
    * @cliHide
    */
   private async getWeb4TSComponent(): Promise<any> {
     if (this.web4ts) return this.web4ts;
 
-    const path = await import('path');
-    const componentRoot = path.resolve(
-      path.dirname(new URL(import.meta.url).pathname),
-      '../../..'
-    );
-
-    // Web4 Principle: Detect project root correctly for test isolation
-    const componentsDir = path.dirname(path.dirname(componentRoot));
-    const projectRoot = path.dirname(componentsDir);
-    
-    // Web4 Principle: Detect test isolation from model paths, NOT environment variables
-    const isTestIsolation = projectRoot.includes('/test/data');
-    
-    // Set THIS component's paths for delegation
-    this.model.componentRoot = componentRoot;
-    this.model.projectRoot = projectRoot;
-    this.model.targetDirectory = projectRoot;
-    this.model.targetComponentRoot = componentRoot;
-    this.model.isTestIsolation = isTestIsolation;
+    // CPA.7.2: Use paths already discovered (NO recalculation)
+    // Paths come from discoverPathsFromFilesystem() called in constructor
+    // These are guaranteed to be set by constructor — use non-null assertion
+    const componentRoot = this.model.componentRoot!;
+    const projectRoot = this.model.projectRoot!;
+    const componentsDir = this.componentsDirectory || path.dirname(path.dirname(componentRoot));
 
     // WM.3: Use ONCE's inline DefaultWeb4TSComponent (no external dependency)
     // @pdca 2025-12-21-UTC-0300.web4tscomponent-inline-migration.pdca.md
@@ -400,11 +398,19 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
     // ✅ CRITICAL: Initialize Web4TSComponent for delegation
     const web4ts = new DefaultWeb4TSComponent();
     await web4ts.init();
+    
+    // CPA.7.2: Pass CLI reference if available (path authority)
+    if (this.cli) {
+      web4ts.cli = this.cli;
+    }
+    
+    // Set web4ts model paths from ONCE's already-discovered paths (DRY)
     web4ts.model!.componentRoot = componentRoot;
     web4ts.model!.projectRoot = projectRoot;
     web4ts.model!.targetDirectory = projectRoot;
     web4ts.model!.targetComponentRoot = componentRoot;
-    web4ts.model!.componentsDirectory = path.dirname(path.dirname(componentRoot));
+    web4ts.model!.componentsDirectory = componentsDir;
+    
     // WM.3 Fix: Set version to match ONCE component version
     if (this.model.version) {
       const semVer = new SemanticVersion().init();

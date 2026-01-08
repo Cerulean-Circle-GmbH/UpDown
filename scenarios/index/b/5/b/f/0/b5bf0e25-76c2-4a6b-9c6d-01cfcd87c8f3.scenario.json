@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "b5bf0e25-76c2-4a6b-9c6d-01cfcd87c8f3",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "b5bf0e25-76c2-4a6b-9c6d-01cfcd87c8f3",
+    "name": "README.md",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/README.md",
+    "definition": "Root component file: README.md",
+    "filePath": "README.md",
+    "mimetype": "text/markdown",
+    "createdAt": "2026-01-08T12:04:12.217Z",
+    "updatedAt": "2026-01-08T12:04:12.218Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/b/5/b/f/0/b5bf0e25-76c2-4a6b-9c6d-01cfcd87c8f3.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "b/5/b/f/0/b5bf0e25-76c2-4a6b-9c6d-01cfcd87c8f3.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:04:12.217Z",
+    "updatedAt": "2026-01-08T12:04:12.217Z"
+  }
+}

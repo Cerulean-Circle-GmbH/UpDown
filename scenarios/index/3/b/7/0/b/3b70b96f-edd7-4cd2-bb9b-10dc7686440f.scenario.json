@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "3b70b96f-edd7-4cd2-bb9b-10dc7686440f",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "3b70b96f-edd7-4cd2-bb9b-10dc7686440f",
+    "name": "Action.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/Action.interface.ts",
+    "definition": "TypeScript Action.interface class/interface",
+    "filePath": "dist/ts/layer3/Action.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T12:04:11.693Z",
+    "updatedAt": "2026-01-08T12:04:11.694Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/3/b/7/0/b/3b70b96f-edd7-4cd2-bb9b-10dc7686440f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "3/b/7/0/b/3b70b96f-edd7-4cd2-bb9b-10dc7686440f.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:04:11.693Z",
+    "updatedAt": "2026-01-08T12:04:11.693Z"
+  }
+}

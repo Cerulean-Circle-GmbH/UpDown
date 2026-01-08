@@ -1,0 +1,67 @@
+{
+  "ior": {
+    "uuid": "b70b24fa-ee02-43fc-a4b0-a7d6ad49b19d",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "b70b24fa-ee02-43fc-a4b0-a7d6ad49b19d",
+    "name": "Container",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Tree",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/Container.interface.ts",
+    "indexPath": "scenarios/index/b70b24fa-ee02-43fc-a4b0-a7d6ad49b19d.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Container.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "displayName",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "uuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "pathFromRoot",
+        "parameters": [],
+        "returnType": "Container<T>[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "navigateTo",
+        "parameters": [
+          {
+            "name": "child",
+            "type": "T",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:04:12.879Z",
+    "updatedAt": "2026-01-08T12:04:12.879Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

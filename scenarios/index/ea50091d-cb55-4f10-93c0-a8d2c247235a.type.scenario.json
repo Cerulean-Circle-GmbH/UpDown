@@ -1,0 +1,39 @@
+{
+  "ior": {
+    "uuid": "ea50091d-cb55-4f10-93c0-a8d2c247235a",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "ea50091d-cb55-4f10-93c0-a8d2c247235a",
+    "name": "ActionView",
+    "extends": "ior:esm:/ONCE/0.3.22.2/View",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ActionView.interface.ts",
+    "indexPath": "scenarios/index/ea50091d-cb55-4f10-93c0-a8d2c247235a.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ActionView.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "actionExecute",
+        "parameters": [],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:04:12.860Z",
+    "updatedAt": "2026-01-08T12:04:12.860Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

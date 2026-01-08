@@ -1,0 +1,74 @@
+{
+  "ior": {
+    "uuid": "fd399a16-07d1-4290-9123-c524fc164550",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "fd399a16-07d1-4290-9123-c524fc164550",
+    "name": "ContentIDProvider",
+    "extends": "ior:esm:/ONCE/0.3.22.2/IDProvider",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ContentIDProvider.interface.ts",
+    "indexPath": "scenarios/index/fd399a16-07d1-4290-9123-c524fc164550.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ContentIDProvider.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "algorithm",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "hashLength",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "contentIdCreate",
+        "parameters": [
+          {
+            "name": "content",
+            "type": "ArrayBuffer | string | Uint8Array",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "contentIdCreateSync",
+        "parameters": [
+          {
+            "name": "content",
+            "type": "ArrayBuffer | string | Uint8Array",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Reference<string>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:04:12.881Z",
+    "updatedAt": "2026-01-08T12:04:12.881Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

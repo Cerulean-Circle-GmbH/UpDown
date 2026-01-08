@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "ea19d540-5081-4b4b-a894-057b7c8c3dfc",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "ea19d540-5081-4b4b-a894-057b7c8c3dfc",
+    "name": "AutomaticCertificateManagementEnvironmentChallengeType.enum.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/AutomaticCertificateManagementEnvironmentChallengeType.enum.ts",
+    "definition": "TypeScript AutomaticCertificateManagementEnvironmentChallengeType.enum class/interface",
+    "filePath": "src/ts/layer3/AutomaticCertificateManagementEnvironmentChallengeType.enum.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T12:04:10.629Z",
+    "updatedAt": "2026-01-08T12:04:10.630Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/e/a/1/9/d/ea19d540-5081-4b4b-a894-057b7c8c3dfc.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "e/a/1/9/d/ea19d540-5081-4b4b-a894-057b7c8c3dfc.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T12:04:10.630Z",
+    "updatedAt": "2026-01-08T12:04:10.630Z"
+  }
+}

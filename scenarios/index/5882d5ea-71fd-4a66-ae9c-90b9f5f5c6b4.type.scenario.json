@@ -1,0 +1,108 @@
+{
+  "ior": {
+    "uuid": "5882d5ea-71fd-4a66-ae9c-90b9f5f5c6b4",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "5882d5ea-71fd-4a66-ae9c-90b9f5f5c6b4",
+    "name": "UcpView",
+    "extends": null,
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.2/View"
+    ],
+    "sourcePath": "src/ts/layer3/UcpView.ts",
+    "indexPath": "scenarios/index/5882d5ea-71fd-4a66-ae9c-90b9f5f5c6b4.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/UcpView.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [
+      {
+        "name": "component",
+        "type": "Component<TModel>",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "model",
+        "type": "TModel",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      }
+    ],
+    "references": [
+      {
+        "name": "componentRef",
+        "targetType": "Component<TModel>"
+      },
+      {
+        "name": "modelRef",
+        "targetType": "TModel"
+      }
+    ],
+    "collections": [
+      {
+        "name": "childViews",
+        "elementType": "View<Model>"
+      }
+    ],
+    "methods": [
+      {
+        "name": "add",
+        "parameters": [
+          {
+            "name": "childView",
+            "type": "View<Model>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "childRemove",
+        "parameters": [
+          {
+            "name": "childView",
+            "type": "View<Model>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "refresh",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "unknown",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T12:04:12.985Z",
+    "updatedAt": "2026-01-08T12:04:12.985Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}
