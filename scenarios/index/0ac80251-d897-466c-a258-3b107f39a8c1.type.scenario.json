@@ -1,0 +1,328 @@
+{
+  "ior": {
+    "uuid": "0ac80251-d897-466c-a258-3b107f39a8c1",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "0ac80251-d897-466c-a258-3b107f39a8c1",
+    "name": "UcpRouter",
+    "extends": "ior:esm:/ONCE/0.3.22.2/LitElement",
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/UcpRouter.ts",
+    "indexPath": "scenarios/index/0ac80251-d897-466c-a258-3b107f39a8c1.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/UcpRouter.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "styles",
+        "type": "any",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "currentRoute",
+        "type": "string",
+        "optional": false,
+        "defaultValue": "/"
+      },
+      {
+        "name": "routes",
+        "type": "Map<string, Route>",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "currentView",
+        "targetType": "HTMLElement"
+      },
+      {
+        "name": "activeRoute",
+        "targetType": "Route"
+      },
+      {
+        "name": "kernel",
+        "targetType": "any"
+      },
+      {
+        "name": "model",
+        "targetType": "any"
+      },
+      {
+        "name": "serverModel",
+        "targetType": "any"
+      }
+    ],
+    "collections": [],
+    "methods": [
+      {
+        "name": "connectedCallback",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "disconnectedCallback",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "routeRegister",
+        "parameters": [
+          {
+            "name": "pattern",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "viewTag",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "options",
+            "type": "Partial<RouteModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Route>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "routeInstanceRegister",
+        "parameters": [
+          {
+            "name": "route",
+            "type": "Route",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "routeUnregister",
+        "parameters": [
+          {
+            "name": "pattern",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "routesGet",
+        "parameters": [],
+        "returnType": "Map<string, Route>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "activeRouteGet",
+        "parameters": [],
+        "returnType": "Reference<Route>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "navigateTo",
+        "parameters": [
+          {
+            "name": "path",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "replace",
+            "type": "boolean",
+            "optional": false,
+            "defaultValue": "false"
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "navigateBack",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "navigateForward",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "routeChangeHandle",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "PopStateEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "routeResolve",
+        "parameters": [
+          {
+            "name": "path",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "queryParamsToObject",
+        "parameters": [
+          {
+            "name": "search",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Record<string, string>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "queryParamAdd",
+        "parameters": [
+          {
+            "name": "result",
+            "type": "Record<string, string>",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "key",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "viewCreate",
+        "parameters": [
+          {
+            "name": "route",
+            "type": "Route",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "viewPropSet",
+        "parameters": [
+          {
+            "name": "view",
+            "type": "HTMLElement",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "entry",
+            "type": "[string, any]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "serverRouteNotify",
+        "parameters": [
+          {
+            "name": "path",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "render",
+        "parameters": [],
+        "returnType": "TemplateResult",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:10:41.719Z",
+    "updatedAt": "2026-01-08T11:10:41.719Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

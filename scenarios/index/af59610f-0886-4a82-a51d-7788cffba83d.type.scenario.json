@@ -1,0 +1,49 @@
+{
+  "ior": {
+    "uuid": "af59610f-0886-4a82-a51d-7788cffba83d",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "af59610f-0886-4a82-a51d-7788cffba83d",
+    "name": "RouteInitScenario",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/Route.ts",
+    "indexPath": "scenarios/index/af59610f-0886-4a82-a51d-7788cffba83d.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/RouteInitScenario.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "ior",
+        "type": "{\n    uuid?: string;\n    component?: string;\n    version?: string;\n  }",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "owner",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "model",
+        "type": "Partial<RouteModel> & { pattern: string; viewTag: string }",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:10:41.595Z",
+    "updatedAt": "2026-01-08T11:10:41.595Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

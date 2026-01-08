@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "c68f2fde-5067-4289-84a6-09cf827beb5b",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "c68f2fde-5067-4289-84a6-09cf827beb5b",
+    "name": "NavigationDirection.enum.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/NavigationDirection.enum.ts",
+    "definition": "TypeScript NavigationDirection.enum class/interface",
+    "filePath": "src/ts/layer3/NavigationDirection.enum.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T11:10:40.176Z",
+    "updatedAt": "2026-01-08T11:10:40.176Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/6/8/f/2/c68f2fde-5067-4289-84a6-09cf827beb5b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/6/8/f/2/c68f2fde-5067-4289-84a6-09cf827beb5b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:10:40.176Z",
+    "updatedAt": "2026-01-08T11:10:40.176Z"
+  }
+}

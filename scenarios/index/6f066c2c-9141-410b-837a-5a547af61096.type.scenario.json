@@ -1,0 +1,96 @@
+{
+  "ior": {
+    "uuid": "6f066c2c-9141-410b-837a-5a547af61096",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "6f066c2c-9141-410b-837a-5a547af61096",
+    "name": "DomainCertificateModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/DomainCertificateModel.interface.ts",
+    "indexPath": "scenarios/index/6f066c2c-9141-410b-837a-5a547af61096.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/DomainCertificateModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "domain",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "certificatePem",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "privateKeyPem",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "certificateAuthorityChainPem",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "expiresAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "issuedAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "issuer",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isSelfSigned",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "fingerprintSha256",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "serialNumber",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "alternativeNames",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:10:41.553Z",
+    "updatedAt": "2026-01-08T11:10:41.553Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

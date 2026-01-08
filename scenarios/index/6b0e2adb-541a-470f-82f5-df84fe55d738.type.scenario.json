@@ -1,0 +1,55 @@
+{
+  "ior": {
+    "uuid": "6b0e2adb-541a-470f-82f5-df84fe55d738",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "6b0e2adb-541a-470f-82f5-df84fe55d738",
+    "name": "ScenarioReference",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ScenarioReference.interface.ts",
+    "indexPath": "scenarios/index/6b0e2adb-541a-470f-82f5-df84fe55d738.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ScenarioReference.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "ior",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "optional",
+        "type": "boolean",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:10:41.601Z",
+    "updatedAt": "2026-01-08T11:10:41.601Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

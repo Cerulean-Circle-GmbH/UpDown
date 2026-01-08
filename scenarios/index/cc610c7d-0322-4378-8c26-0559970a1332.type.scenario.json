@@ -1,0 +1,61 @@
+{
+  "ior": {
+    "uuid": "cc610c7d-0322-4378-8c26-0559970a1332",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "cc610c7d-0322-4378-8c26-0559970a1332",
+    "name": "ScenarioQuery",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ScenarioQuery.interface.ts",
+    "indexPath": "scenarios/index/cc610c7d-0322-4378-8c26-0559970a1332.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ScenarioQuery.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "component",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "version",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "domain",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "capabilityType",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "capabilityValue",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:10:41.601Z",
+    "updatedAt": "2026-01-08T11:10:41.601Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ior": {
+    "uuid": "369d9d20-c79c-4380-95ad-9d11f5b864a7",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "369d9d20-c79c-4380-95ad-9d11f5b864a7",
+    "name": "PeerCapability",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer5/views/OncePeerItemView.ts",
+    "indexPath": "scenarios/index/369d9d20-c79c-4380-95ad-9d11f5b864a7.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/PeerCapability.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "capability",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "port",
+        "type": "number",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:10:41.710Z",
+    "updatedAt": "2026-01-08T11:10:41.710Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "7745763f-9293-40e3-a7db-eb32e5e94d58",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "7745763f-9293-40e3-a7db-eb32e5e94d58",
+    "name": "LifecycleEvent.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/LifecycleEvent.interface.ts",
+    "definition": "TypeScript LifecycleEvent.interface class/interface",
+    "filePath": "dist/ts/layer3/LifecycleEvent.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-08T11:10:40.809Z",
+    "updatedAt": "2026-01-08T11:10:40.809Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/7/7/4/5/7/7745763f-9293-40e3-a7db-eb32e5e94d58.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "7/7/4/5/7/7745763f-9293-40e3-a7db-eb32e5e94d58.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:10:40.809Z",
+    "updatedAt": "2026-01-08T11:10:40.809Z"
+  }
+}

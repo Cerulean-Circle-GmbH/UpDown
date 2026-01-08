@@ -1,0 +1,463 @@
+{
+  "ior": {
+    "uuid": "bf064c49-220b-4f89-a5e6-80c1cda30174",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "bf064c49-220b-4f89-a5e6-80c1cda30174",
+    "name": "UnitCacheManager",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/UnitCacheManager.ts",
+    "indexPath": "scenarios/index/bf064c49-220b-4f89-a5e6-80c1cda30174.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/UnitCacheManager.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "model",
+        "type": "UnitCacheManagerModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "cache",
+        "type": "Cache | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "unitMetadata",
+        "type": "Map<string, CachedUnitModel>",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "model",
+            "type": "Partial<UnitCacheManagerModel>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cacheOpen",
+        "parameters": [],
+        "returnType": "Promise<Cache>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cacheStoreHandle",
+        "parameters": [
+          {
+            "name": "cache",
+            "type": "Cache",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Cache",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitGet",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Response | undefined>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitGetHandle",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "response",
+            "type": "Response | undefined",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Response | undefined",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitAccessRecord",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitPut",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "response",
+            "type": "Response",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "unitType",
+            "type": "UnitType",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitPutHandle",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "response",
+            "type": "Response",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "unitType",
+            "type": "UnitType",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "nameFromIor",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "addAllToCache",
+        "parameters": [
+          {
+            "name": "urls",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "addAllHandle",
+        "parameters": [
+          {
+            "name": "urls",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "urlMetadataCreate",
+        "parameters": [
+          {
+            "name": "now",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "url",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "typeFromUrl",
+        "parameters": [
+          {
+            "name": "url",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "UnitType",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "mimeFromUrl",
+        "parameters": [
+          {
+            "name": "url",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "strategyForType",
+        "parameters": [
+          {
+            "name": "unitType",
+            "type": "UnitType",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "CacheStrategy",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitDelete",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<boolean>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitDeleteHandle",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "deleted",
+            "type": "boolean",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitHas",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<boolean>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "unitHasHandle",
+        "parameters": [
+          {
+            "name": "response",
+            "type": "Response | undefined",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cachedIorsGet",
+        "parameters": [],
+        "returnType": "string[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "metadataGet",
+        "parameters": [
+          {
+            "name": "ior",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "CachedUnitModel | undefined",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cacheClear",
+        "parameters": [],
+        "returnType": "Promise<boolean>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "cacheClearHandle",
+        "parameters": [
+          {
+            "name": "deleted",
+            "type": "boolean",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "modelGet",
+        "parameters": [],
+        "returnType": "UnitCacheManagerModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "statisticsCreate",
+        "parameters": [
+          {
+            "name": "now",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "StatisticsModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "statisticsSuccessRecord",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "statisticsErrorRecord",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "uuidGenerate",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:10:41.522Z",
+    "updatedAt": "2026-01-08T11:10:41.522Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

@@ -710,6 +710,10 @@ export class ServerHierarchyManager {
         // ✅ Auto-discover TLS certificates from component certs folder
         this.tlsConfigAutoDiscover();
         
+        // ✅ Register routes ONCE before attempting any ports
+        // (prevents double registration when falling back from 42777 to 8080)
+        this.registerRoutes();
+        
         // First try primary port 42777 (HTTPS)
         try {
             await this.startHttpServer(PRIMARY_HTTPS_PORT);
@@ -852,8 +856,8 @@ export class ServerHierarchyManager {
      * @pdca 2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md H.3
      */
     private async startHttpServer(port: number): Promise<void> {
-        // Register all routes
-        this.registerRoutes();
+        // NOTE: Routes are registered once in findAndBindPort(), not here
+        // (prevents double registration when falling back from 42777 to 8080)
         
         // ✅ H.3: HTTPS by default - use auto-discovered TLS config
         if (this.tlsConfig && this.tlsConfig.certPath && this.tlsConfig.keyPath) {

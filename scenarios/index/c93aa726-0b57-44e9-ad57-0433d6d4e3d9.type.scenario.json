@@ -1,0 +1,73 @@
+{
+  "ior": {
+    "uuid": "c93aa726-0b57-44e9-ad57-0433d6d4e3d9",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "c93aa726-0b57-44e9-ad57-0433d6d4e3d9",
+    "name": "HTTPServerModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/HTTPServerModel.interface.ts",
+    "indexPath": "scenarios/index/c93aa726-0b57-44e9-ad57-0433d6d4e3d9.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/HTTPServerModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "port",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "bindInterface",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "urlHost",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "state",
+        "type": "LifecycleState",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "routerUuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "defaultHeaders",
+        "type": "Record<string, string>",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "statistics",
+        "type": "StatisticsModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:10:41.562Z",
+    "updatedAt": "2026-01-08T11:10:41.562Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}
