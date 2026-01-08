@@ -1,0 +1,61 @@
+{
+  "ior": {
+    "uuid": "0ea6f6fb-b79b-448a-922c-9eef8ca5f1bb",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "0ea6f6fb-b79b-448a-922c-9eef8ca5f1bb",
+    "name": "PropertyDescriptor",
+    "extends": "ior:esm:/ONCE/0.3.22.2/FeatureDescriptor",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/PropertyDescriptor.interface.ts",
+    "indexPath": "scenarios/index/0ea6f6fb-b79b-448a-922c-9eef8ca5f1bb.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/PropertyDescriptor.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "hasGetter",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "hasSetter",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isReadonly",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:15:24.963Z",
+    "updatedAt": "2026-01-08T11:15:24.963Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

@@ -462,12 +462,18 @@ export abstract class UcpComponent<TModel extends Model> extends Component<TMode
     }
     
     // SW Cache: Post to ServiceWorker for caching (browser only)
+    // NOTE: Must serialize to plain JSON - postMessage cannot clone Proxies/objects
     if (Once.isBrowser && navigator.serviceWorker?.controller) {
-      navigator.serviceWorker.controller.postMessage({
-        type: 'CACHE_SCENARIO',
-        uuid,
-        scenario
-      });
+      try {
+        const plainScenario = JSON.parse(JSON.stringify(scenario));
+        navigator.serviceWorker.controller.postMessage({
+          type: 'CACHE_SCENARIO',
+          uuid,
+          scenario: plainScenario
+        });
+      } catch (e) {
+        console.warn('[UcpComponent] Could not serialize scenario for SW cache:', e);
+      }
     }
   }
   

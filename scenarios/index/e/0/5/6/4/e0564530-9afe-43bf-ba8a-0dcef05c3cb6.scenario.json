@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "e0564530-9afe-43bf-ba8a-0dcef05c3cb6",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "e0564530-9afe-43bf-ba8a-0dcef05c3cb6",
+    "name": "IORLoadingView.css",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/css/IORLoadingView.css",
+    "definition": "CSS stylesheet for IORLoadingView",
+    "filePath": "src/ts/layer5/views/css/IORLoadingView.css",
+    "mimetype": "text/css",
+    "createdAt": "2026-01-08T11:15:23.266Z",
+    "updatedAt": "2026-01-08T11:15:23.267Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/e/0/5/6/4/e0564530-9afe-43bf-ba8a-0dcef05c3cb6.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "e/0/5/6/4/e0564530-9afe-43bf-ba8a-0dcef05c3cb6.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:15:23.267Z",
+    "updatedAt": "2026-01-08T11:15:23.267Z"
+  }
+}

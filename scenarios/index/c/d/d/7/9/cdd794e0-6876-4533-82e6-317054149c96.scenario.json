@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "cdd794e0-6876-4533-82e6-317054149c96",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "cdd794e0-6876-4533-82e6-317054149c96",
+    "name": "View.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/View.ts",
+    "definition": "TypeScript View class/interface",
+    "filePath": "src/ts/layer3/View.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T11:15:23.787Z",
+    "updatedAt": "2026-01-08T11:15:23.787Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/d/d/7/9/cdd794e0-6876-4533-82e6-317054149c96.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/d/d/7/9/cdd794e0-6876-4533-82e6-317054149c96.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:15:23.787Z",
+    "updatedAt": "2026-01-08T11:15:23.787Z"
+  }
+}

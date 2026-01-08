@@ -1,0 +1,361 @@
+{
+  "ior": {
+    "uuid": "c28bceec-a085-400e-a82e-d79af41e7905",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "c28bceec-a085-400e-a82e-d79af41e7905",
+    "name": "LifecycleObserver",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/LifecycleObserver.interface.ts",
+    "indexPath": "scenarios/index/c28bceec-a085-400e-a82e-d79af41e7905.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/LifecycleObserver.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "onBeforeInit",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onAfterInit",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onBeforeStart",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onAfterStart",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onBeforePause",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onAfterPause",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onBeforeResume",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onAfterResume",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onBeforeStop",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onAfterStop",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onBeforeShutdown",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onAfterShutdown",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onBeforeSave",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onAfterSave",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onBeforeLoad",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onAfterLoad",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onServerRegistration",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onServerDiscovery",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onPortConflict",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onPrimaryServerElection",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onError",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "onWarning",
+        "parameters": [
+          {
+            "name": "event",
+            "type": "LifecycleEvent",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void | Promise<void>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:15:24.946Z",
+    "updatedAt": "2026-01-08T11:15:24.946Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

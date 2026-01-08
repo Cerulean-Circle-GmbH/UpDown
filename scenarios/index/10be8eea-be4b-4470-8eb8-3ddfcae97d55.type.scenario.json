@@ -1,0 +1,73 @@
+{
+  "ior": {
+    "uuid": "10be8eea-be4b-4470-8eb8-3ddfcae97d55",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "10be8eea-be4b-4470-8eb8-3ddfcae97d55",
+    "name": "StatisticsModel",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/StatisticsModel.interface.ts",
+    "indexPath": "scenarios/index/10be8eea-be4b-4470-8eb8-3ddfcae97d55.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/StatisticsModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "totalOperations",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "successCount",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "errorCount",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "lastOperationAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "lastErrorAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "createdAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "updatedAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:15:24.979Z",
+    "updatedAt": "2026-01-08T11:15:24.979Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

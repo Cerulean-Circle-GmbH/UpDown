@@ -1,0 +1,54 @@
+{
+  "ior": {
+    "uuid": "53e171d8-1252-477c-8400-8e27cdf034e6",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "53e171d8-1252-477c-8400-8e27cdf034e6",
+    "name": "Storage",
+    "extends": "ior:esm:/ONCE/0.3.22.2/PersistenceManager",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/Storage.interface.ts",
+    "indexPath": "scenarios/index/53e171d8-1252-477c-8400-8e27cdf034e6.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Storage.type.scenario.json"
+    ],
+    "attributes": [],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "StorageScenario",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [],
+        "returnType": "Promise<StorageScenario>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:15:24.980Z",
+    "updatedAt": "2026-01-08T11:15:24.980Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

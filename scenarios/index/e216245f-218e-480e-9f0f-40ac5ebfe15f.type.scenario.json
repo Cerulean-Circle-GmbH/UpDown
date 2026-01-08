@@ -1,0 +1,268 @@
+{
+  "ior": {
+    "uuid": "e216245f-218e-480e-9f0f-40ac5ebfe15f",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "e216245f-218e-480e-9f0f-40ac5ebfe15f",
+    "name": "ScenarioManager",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer2/ScenarioManager.ts",
+    "indexPath": "scenarios/index/e216245f-218e-480e-9f0f-40ac5ebfe15f.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ScenarioManager.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "_projectRoot",
+        "type": "string | undefined",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "component",
+        "type": "any",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "version",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "projectRoot",
+        "type": "string",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "saveScenario",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<ONCEPeerModel>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "parseFqdnToDomainPath",
+        "parameters": [
+          {
+            "name": "fqdn",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "{ domainPath: string[], hostname: string }",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "saveScenarioDirect",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<ONCEPeerModel>",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "componentType",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "version",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "domainPath",
+            "type": "string[]",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "hostname",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "port",
+            "type": "string | number",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "loadScenario",
+        "parameters": [
+          {
+            "name": "scenarioPath",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Scenario<ONCEPeerModel>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "loadScenarioByUUID",
+        "parameters": [
+          {
+            "name": "uuid",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          },
+          {
+            "name": "fqdn",
+            "type": "string",
+            "optional": false,
+            "defaultValue": "'localhost'"
+          },
+          {
+            "name": "component",
+            "type": "string",
+            "optional": false,
+            "defaultValue": "'ONCE'"
+          },
+          {
+            "name": "version",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<Scenario<ONCEPeerModel>>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "createScenarioFromServerModel",
+        "parameters": [
+          {
+            "name": "peerModel",
+            "type": "ONCEPeerModel",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Scenario<ONCEPeerModel>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "createServerModelFromScenario",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<ONCEPeerModel>",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "ONCEPeerModel",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "findScenarios",
+        "parameters": [
+          {
+            "name": "domain",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          },
+          {
+            "name": "component",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          },
+          {
+            "name": "version",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<string[]>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getProjectRoot",
+        "parameters": [],
+        "returnType": "string",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "setProjectRoot",
+        "parameters": [
+          {
+            "name": "projectRoot",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-08T11:15:24.819Z",
+    "updatedAt": "2026-01-08T11:15:24.819Z",
+    "isInterface": false,
+    "isAbstract": false
+  }
+}

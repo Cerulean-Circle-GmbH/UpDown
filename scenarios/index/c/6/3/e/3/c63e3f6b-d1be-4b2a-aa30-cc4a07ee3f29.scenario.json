@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "c63e3f6b-d1be-4b2a-aa30-cc4a07ee3f29",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "c63e3f6b-d1be-4b2a-aa30-cc4a07ee3f29",
+    "name": "OnceServerStatusView.css",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/css/OnceServerStatusView.css",
+    "definition": "CSS stylesheet for OnceServerStatusView",
+    "filePath": "src/ts/layer5/views/css/OnceServerStatusView.css",
+    "mimetype": "text/css",
+    "createdAt": "2026-01-08T11:15:23.280Z",
+    "updatedAt": "2026-01-08T11:15:23.281Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/6/3/e/3/c63e3f6b-d1be-4b2a-aa30-cc4a07ee3f29.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/6/3/e/3/c63e3f6b-d1be-4b2a-aa30-cc4a07ee3f29.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:15:23.280Z",
+    "updatedAt": "2026-01-08T11:15:23.280Z"
+  }
+}

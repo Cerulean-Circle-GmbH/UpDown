@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "cb4d60cb-ed7d-4698-9baa-d5c4c01248d9",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "cb4d60cb-ed7d-4698-9baa-d5c4c01248d9",
+    "name": "HierarchicalCompletionFilter.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer4/HierarchicalCompletionFilter.ts",
+    "definition": "TypeScript HierarchicalCompletionFilter class/interface",
+    "filePath": "src/ts/layer4/HierarchicalCompletionFilter.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-08T11:15:23.809Z",
+    "updatedAt": "2026-01-08T11:15:23.809Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/c/b/4/d/6/cb4d60cb-ed7d-4698-9baa-d5c4c01248d9.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "c/b/4/d/6/cb4d60cb-ed7d-4698-9baa-d5c4c01248d9.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-08T11:15:23.809Z",
+    "updatedAt": "2026-01-08T11:15:23.809Z"
+  }
+}
