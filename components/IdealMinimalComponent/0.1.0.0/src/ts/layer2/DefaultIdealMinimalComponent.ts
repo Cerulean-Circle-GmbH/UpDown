@@ -9,7 +9,7 @@ import { IdealMinimalComponentModel } from '../layer3/IdealMinimalComponentModel
 import { User } from '../layer3/User.interface.js';
 import { MethodSignature } from '../layer3/MethodSignature.interface.js';
 import { existsSync, lstatSync, readlinkSync, readdirSync, statSync } from 'fs';
-import { join, dirname } from 'path';
+import { join, dirname, resolve } from 'path';
 
 export class DefaultIdealMinimalComponent implements IdealMinimalComponent {
   // @pdca 2025-11-03-1105-component-template-bugs.pdca.md - Changed to public for Component interface compliance
@@ -17,6 +17,30 @@ export class DefaultIdealMinimalComponent implements IdealMinimalComponent {
   private web4ts?: any; // Lazy-initialized Web4TSComponent for delegation (dynamic import, no static dependency)
   private user?: User; // Optional User service (lazy initialization) - @pdca 2025-11-03-1135.pdca.md
   private methods: Map<string, MethodSignature> = new Map(); // @pdca 2025-11-05-UTC-2301 - Match Web4TSComponent type
+
+  // ═══════════════════════════════════════════════════════════════
+  // PATH ACCESSORS — Derive from componentRoot (PC.4)
+  // @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.4
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Project root derived from componentRoot
+   * Path: /project/components/ComponentName/0.1.0.0 → /project
+   */
+  get projectRoot(): string {
+    const componentRoot = this.model?.componentRoot;
+    if (!componentRoot) return '';
+    return resolve(componentRoot, '..', '..', '..');
+  }
+  
+  /**
+   * Components directory derived from projectRoot
+   */
+  get componentsDirectory(): string {
+    const projectRoot = this.projectRoot;
+    if (!projectRoot) return '';
+    return join(projectRoot, 'components');
+  }
 
   constructor() {
     // Empty constructor - Web4 pattern
@@ -109,7 +133,13 @@ export class DefaultIdealMinimalComponent implements IdealMinimalComponent {
 
   /**
    * Lazy initialization of Web4TSComponent for delegation (DRY principle)
-   * Dynamic imports resolve paths at runtime, enabling location-independent operation
+   * 
+   * PC.4: Path Authority Pattern
+   * - componentRoot: Discovered from import.meta.url (component-specific)
+   * - projectRoot: Derived from componentRoot (NOT stored in model)
+   * - web4ts gets paths from this component's accessors
+   * 
+   * @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.4
    * @cliHide
    */
   private async getWeb4TSComponent(): Promise<any> {
@@ -118,28 +148,17 @@ export class DefaultIdealMinimalComponent implements IdealMinimalComponent {
     const path = await import('path');
     const url = new URL(import.meta.url);
     const __filename = url.pathname;
+    
+    // PC.4: Discover componentRoot (component-specific, from import.meta.url)
     const componentRoot = path.resolve(path.dirname(__filename), '../../..');
-
-    // @pdca 2025-11-10-UTC-1230.test-isolation-path-pollution-analysis.pdca.md
-    // Web4 Principle: Detect project root correctly for test isolation
-    // Component path: .../test/data/components/ComponentName/0.1.0.0
-    // OR: .../components/ComponentName/0.1.0.0
-    // Project root is 2 levels up from component directory
-    // (ComponentName/ and components/)
-    const componentsDir = path.dirname(path.dirname(componentRoot)); // Go up 2: version → component → components
-    const projectRoot = path.dirname(componentsDir); // Go up 1 more: components → project root
-    
-    // @pdca 2025-11-10-UTC-1230.test-isolation-path-pollution-analysis.pdca.md
-    // Web4 Principle: Detect test isolation from model paths, NOT environment variables
-    // Test isolation: projectRoot contains '/test/data'
-    const isTestIsolation = projectRoot.includes('/test/data');
-    
-    // @pdca 2025-11-10-UTC-1010.pdca.md - Set THIS component's paths for delegation
-    // When Web4TSComponent reads context, it needs to know THIS component's paths
     this.model.componentRoot = componentRoot;
-    this.model.projectRoot = projectRoot;
-    this.model.targetDirectory = projectRoot;
-    this.model.targetComponentRoot = componentRoot;
+    
+    // PC.4: Derive projectRoot locally (NOT stored in model)
+    // Path: /project/components/ComponentName/0.1.0.0 → /project
+    const projectRoot = path.resolve(componentRoot, '..', '..', '..');
+    
+    // PC.4: Test isolation detection
+    const isTestIsolation = projectRoot.includes('/test/data');
     this.model.isTestIsolation = isTestIsolation;
 
     // Import Web4TSComponent and SemanticVersion dynamically
@@ -152,19 +171,13 @@ export class DefaultIdealMinimalComponent implements IdealMinimalComponent {
     const { DefaultWeb4TSComponent } = web4tscomponentModule;
     const { SemanticVersion } = semanticVersionModule;
 
-    // ✅ CRITICAL: Initialize Web4TSComponent for delegation
-    // @pdca 2025-11-03-UTC-1237.pdca.md - Full delegation initialization
-    // @pdca 2025-11-04-UTC-1630.pdca.md - Added projectRoot for version display fix
-    // @pdca 2025-11-10-UTC-1010.pdca.md - DO NOT override component identity!
-    // Web4TSComponent must retain its own identity ('Web4TSComponent')
-    // The delegating component's identity will be set via context in delegateToWeb4TS()
+    // PC.4: Initialize Web4TSComponent with minimal paths
+    // web4ts will use accessors to derive other paths from componentRoot
     this.web4ts = new DefaultWeb4TSComponent().init({
       model: {
-        // DO NOT set 'component' here - let Web4TSComponent keep its own identity
-        version: await SemanticVersion.fromString(this.model.version || '0.0.0.0'), // THIS component's version
-        componentRoot: componentRoot,              // THIS component's root directory
-        projectRoot: projectRoot,                  // Project root for Path Authority (version display needs this)
-        targetDirectory: projectRoot               // Project root for path authority
+        version: await SemanticVersion.fromString(this.model.version || '0.0.0.0'),
+        componentRoot: componentRoot,  // Component-specific
+        // NOTE: projectRoot NOT set — web4ts derives it from componentRoot via accessor
       }
     });
 
