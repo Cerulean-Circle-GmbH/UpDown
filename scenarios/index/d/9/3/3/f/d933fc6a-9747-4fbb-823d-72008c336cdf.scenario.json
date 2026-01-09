@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "d933fc6a-9747-4fbb-823d-72008c336cdf",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "d933fc6a-9747-4fbb-823d-72008c336cdf",
+    "name": "VersionModel.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/VersionModel.interface.ts",
+    "definition": "TypeScript VersionModel.interface class/interface",
+    "filePath": "src/ts/layer3/VersionModel.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-09T12:41:18.816Z",
+    "updatedAt": "2026-01-09T12:41:18.817Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/d/9/3/3/f/d933fc6a-9747-4fbb-823d-72008c336cdf.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "d/9/3/3/f/d933fc6a-9747-4fbb-823d-72008c336cdf.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-09T12:41:18.817Z",
+    "updatedAt": "2026-01-09T12:41:18.817Z"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "8e548f81-a7b5-4eb1-bee5-59f2a365bf24",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "8e548f81-a7b5-4eb1-bee5-59f2a365bf24",
+    "name": "LifecycleObserver.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/LifecycleObserver.interface.ts",
+    "definition": "TypeScript LifecycleObserver.interface class/interface",
+    "filePath": "src/ts/layer3/LifecycleObserver.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-09T12:41:18.640Z",
+    "updatedAt": "2026-01-09T12:41:18.640Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/8/e/5/4/8/8e548f81-a7b5-4eb1-bee5-59f2a365bf24.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "8/e/5/4/8/8e548f81-a7b5-4eb1-bee5-59f2a365bf24.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-09T12:41:18.640Z",
+    "updatedAt": "2026-01-09T12:41:18.640Z"
+  }
+}

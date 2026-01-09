@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "df64ef6c-c7cf-446f-94d4-13c4d212aa7b",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "df64ef6c-c7cf-446f-94d4-13c4d212aa7b",
+    "name": "ServiceWorkerModel.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/ServiceWorkerModel.interface.ts",
+    "definition": "TypeScript ServiceWorkerModel.interface class/interface",
+    "filePath": "src/ts/layer3/ServiceWorkerModel.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-09T12:31:50.452Z",
+    "updatedAt": "2026-01-09T12:31:50.452Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/d/f/6/4/e/df64ef6c-c7cf-446f-94d4-13c4d212aa7b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "d/f/6/4/e/df64ef6c-c7cf-446f-94d4-13c4d212aa7b.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-09T12:31:50.452Z",
+    "updatedAt": "2026-01-09T12:31:50.452Z"
+  }
+}

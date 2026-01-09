@@ -1,0 +1,126 @@
+{
+  "ior": {
+    "uuid": "bd7e963f-ae5d-4a28-a428-3c0204d7b27d",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "bd7e963f-ae5d-4a28-a428-3c0204d7b27d",
+    "name": "CLIModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/CLIModel.interface.ts",
+    "indexPath": "scenarios/index/bd7e963f-ae5d-4a28-a428-3c0204d7b27d.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/CLIModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "projectRoot",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "componentsDirectory",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "scriptsDirectory",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "scriptsVersionDirectory",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "testDataDirectory",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "completionCliName",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "completionCompCword",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "completionCurrentWord",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "completionPreviousWord",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "completionCommand",
+        "type": "string | null",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "completionParameterIndex",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "completionIsCompletingMethod",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "completionIsCompletingParameter",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "completionCompWords",
+        "elementType": "string"
+      },
+      {
+        "name": "completionParameters",
+        "elementType": "string"
+      },
+      {
+        "name": "completionChainedCommands",
+        "elementType": "string"
+      },
+      {
+        "name": "completionOutputLines",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-09T12:31:53.461Z",
+    "updatedAt": "2026-01-09T12:31:53.461Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

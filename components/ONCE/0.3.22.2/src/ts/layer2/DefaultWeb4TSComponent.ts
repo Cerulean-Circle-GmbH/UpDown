@@ -66,6 +66,18 @@ export class DefaultWeb4TSComponent
   private testIsolationProjectRoot: string | null = null;
   
   /**
+   * Component root directory (this component's own root)
+   * Web4TSComponentModel HAS componentRoot — no as any needed
+   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3.3
+   */
+  get componentRoot(): string {
+    return this.model?.componentRoot ?? '';
+  }
+  
+  // targetComponentRoot defined below with full context logic (line ~219)
+  // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3.3
+  
+  /**
    * Initialize component with scenario (SYNC)
    * 
    * If no scenario provided:
@@ -197,8 +209,9 @@ export class DefaultWeb4TSComponent
    * Priority: model.targetComponentRoot → context → derived → componentRoot
    * @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.6
    */
-  override get targetComponentRoot(): string {
+  get targetComponentRoot(): string {
     // 1. Explicitly set targetComponentRoot (from 'on' command)
+    // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3.3
     if (this.model?.targetComponentRoot) return this.model.targetComponentRoot;
     
     // 2. Context (delegating component)

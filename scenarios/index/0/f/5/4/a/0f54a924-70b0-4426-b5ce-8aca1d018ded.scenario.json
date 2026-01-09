@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "0f54a924-70b0-4426-b5ce-8aca1d018ded",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "0f54a924-70b0-4426-b5ce-8aca1d018ded",
+    "name": "FileJs.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/FileJs.ts",
+    "definition": "TypeScript FileJs class/interface",
+    "filePath": "src/ts/layer3/FileJs.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-09T12:41:18.576Z",
+    "updatedAt": "2026-01-09T12:41:18.576Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/0/f/5/4/a/0f54a924-70b0-4426-b5ce-8aca1d018ded.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "0/f/5/4/a/0f54a924-70b0-4426-b5ce-8aca1d018ded.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-09T12:41:18.576Z",
+    "updatedAt": "2026-01-09T12:41:18.576Z"
+  }
+}

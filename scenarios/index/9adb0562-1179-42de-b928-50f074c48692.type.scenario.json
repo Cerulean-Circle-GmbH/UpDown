@@ -1,0 +1,55 @@
+{
+  "ior": {
+    "uuid": "9adb0562-1179-42de-b928-50f074c48692",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "9adb0562-1179-42de-b928-50f074c48692",
+    "name": "IORProfile",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/IORProfile.interface.ts",
+    "indexPath": "scenarios/index/9adb0562-1179-42de-b928-50f074c48692.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/IORProfile.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "host",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "port",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "protocol",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "priority",
+        "type": "number",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-09T12:31:53.628Z",
+    "updatedAt": "2026-01-09T12:31:53.628Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

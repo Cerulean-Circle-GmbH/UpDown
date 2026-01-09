@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "51fbf520-1456-4234-805e-52b42c5dd730",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "51fbf520-1456-4234-805e-52b42c5dd730",
+    "name": "HTTPSLoader.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer4/HTTPSLoader.ts",
+    "definition": "TypeScript HTTPSLoader class/interface",
+    "filePath": "src/ts/layer4/HTTPSLoader.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-09T12:41:18.850Z",
+    "updatedAt": "2026-01-09T12:41:18.850Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/5/1/f/b/f/51fbf520-1456-4234-805e-52b42c5dd730.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "5/1/f/b/f/51fbf520-1456-4234-805e-52b42c5dd730.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-09T12:41:18.850Z",
+    "updatedAt": "2026-01-09T12:41:18.850Z"
+  }
+}

@@ -71,8 +71,8 @@ export class DefaultFile extends UcpComponent<FileModel> implements FileJs {
   /**
    * Called when class is loaded - auto-registers with JsInterfaces
    */
-  static start(): void {
-    super.start();  // Auto-registers with FileJs
+  static override async start(): Promise<void> {
+    await super.start();  // Auto-registers with FileJs
   }
   
   // ═══════════════════════════════════════════════════════════════

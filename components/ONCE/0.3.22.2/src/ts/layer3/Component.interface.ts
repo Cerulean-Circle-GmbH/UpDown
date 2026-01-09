@@ -63,30 +63,31 @@ export interface Component<TModel extends Model = Model> {
   // ========================================
   // METHOD DISCOVERY INTERFACE (Web4 pattern)
   // @pdca 2025-11-05-UTC-1158.pdca.md - Type-safe method routing
+  // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3
   // ========================================
   
-  // /**
-  //  * Check if component has a method
-  //  * Used by CLI for type-safe method routing without `as any` casting
-  //  * @param name Method name to check
-  //  * @returns true if method exists, false otherwise
-  //  */
-  // hasMethod(name: string): boolean;
+  /**
+   * Check if component has a method
+   * Used by CLI for type-safe method routing without `as any` casting
+   * @param name Method name to check
+   * @returns true if method exists, false otherwise
+   */
+  hasMethod(name: string): boolean;
   
-  // /**
-  //  * Get method signature for CLI routing
-  //  * Returns null if method doesn't exist (explicit null, not undefined)
-  //  * @param name Method name
-  //  * @returns Method signature or null
-  //  */
-  // getMethodSignature(name: string): MethodSignature | null;
+  /**
+   * Get method signature for CLI routing
+   * Returns null if method doesn't exist (explicit null, not undefined)
+   * @param name Method name
+   * @returns Method signature or null
+   */
+  getMethodSignature(name: string): MethodSignature | null;
   
-  // /**
-  //  * List all available method names
-  //  * Used for CLI completion and usage generation
-  //  * @returns Array of method names
-  //  */
-  // listMethods(): string[];
+  /**
+   * List all available method names
+   * Used for CLI completion and usage generation
+   * @returns Array of method names
+   */
+  listMethods(): string[];
   
   // ========================================
   // CLI METHODS (Optional - for development)

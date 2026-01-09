@@ -68,6 +68,26 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
   // CLI inherited from UcpComponent (CPA.1)
   // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md
   
+  /**
+   * Component root directory (this component's own root)
+   * ONCEPeerModel HAS componentRoot — no as any needed
+   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3.2
+   */
+  get componentRoot(): string {
+    return this.model?.componentRoot ?? '';
+  }
+  
+  /**
+   * Target component root directory (component being operated on)
+   * For delegation: delegates to Web4TSComponent which has targetComponentRoot
+   * For non-delegation: same as componentRoot
+   * ONCEPeerModel does NOT have targetComponentRoot — use componentRoot
+   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3.2
+   */
+  get targetComponentRoot(): string {
+    return this.componentRoot;  // NodeJsOnce doesn't have targetComponentRoot
+  }
+  
   private methods: Map<string, MethodSignature> = new Map();
   private idProvider: IDProvider; // ✅ Web4 Principle 20: Radical OOP ID generation
   
@@ -219,8 +239,9 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
    * @returns ONCE instance registered globally
    * @pdca 2025-11-22-UTC-1200.iteration-01.6.3-defaultonce-microkernel.pdca.md - Phase 2
    * @pdca 2026-01-06-UTC-1400.initialization-guard.pdca.md IG.2
+   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3 — renamed from start()
    */
-  static start(scenario?: any): NodeJsOnce {
+  static create(scenario?: any): NodeJsOnce {
     // Create instance (constructor calls init() with defaults)
     const once = new NodeJsOnce();
     

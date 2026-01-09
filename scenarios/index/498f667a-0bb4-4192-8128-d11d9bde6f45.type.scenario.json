@@ -1,0 +1,157 @@
+{
+  "ior": {
+    "uuid": "498f667a-0bb4-4192-8128-d11d9bde6f45",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "498f667a-0bb4-4192-8128-d11d9bde6f45",
+    "name": "Component",
+    "extends": "ior:esm:/ONCE/0.3.22.2/JsInterface",
+    "implements": [
+      "ior:esm:/ONCE/0.3.22.2/ComponentInterface"
+    ],
+    "sourcePath": "src/ts/layer3/Component.ts",
+    "indexPath": "scenarios/index/498f667a-0bb4-4192-8128-d11d9bde6f45.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Component.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "classStateField",
+        "type": "LifecycleState",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "instanceStateField",
+        "type": "LifecycleState",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "classState",
+        "type": "LifecycleState",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "isStarted",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "instanceState",
+        "type": "LifecycleState",
+        "hasGetter": true,
+        "hasSetter": true,
+        "isReadonly": false
+      },
+      {
+        "name": "isInitialized",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "isReady",
+        "type": "boolean",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "ior",
+        "type": "IORModel",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      },
+      {
+        "name": "model",
+        "type": "TModel",
+        "hasGetter": true,
+        "hasSetter": false,
+        "isReadonly": true
+      }
+    ],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "load",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "start",
+        "parameters": [
+          {
+            "name": "args",
+            "type": "string[]",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Promise<void>",
+        "isAsync": true,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "stop",
+        "parameters": [],
+        "returnType": "void",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<TModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Scenario<TModel>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-09T12:31:53.472Z",
+    "updatedAt": "2026-01-09T12:31:53.472Z",
+    "isInterface": false,
+    "isAbstract": true
+  }
+}

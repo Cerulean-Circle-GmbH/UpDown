@@ -144,5 +144,19 @@ implements ComponentInterface<TModel> {
   
   /** Convert component state to scenario for persistence */
   abstract toScenario(name?: string): Scenario<TModel>;
+  
+  // ═══════════════════════════════════════════════════════════════
+  // METHOD DISCOVERY (from Component.interface.ts)
+  // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3
+  // ═══════════════════════════════════════════════════════════════
+  
+  /** Check if component has a method */
+  abstract hasMethod(name: string): boolean;
+  
+  /** Get method signature for CLI routing */
+  abstract getMethodSignature(name: string): import('./MethodSignature.interface.js').MethodSignature | null;
+  
+  /** List all available method names */
+  abstract listMethods(): string[];
 }
 

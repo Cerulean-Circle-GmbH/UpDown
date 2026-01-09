@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "5e43187d-fe3f-4a8b-81ac-e4711a006d6d",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "5e43187d-fe3f-4a8b-81ac-e4711a006d6d",
+    "name": "ONCEPeerModel.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/ONCEPeerModel.interface.ts",
+    "definition": "TypeScript ONCEPeerModel.interface class/interface",
+    "filePath": "src/ts/layer3/ONCEPeerModel.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-09T12:41:18.674Z",
+    "updatedAt": "2026-01-09T12:41:18.675Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/5/e/4/3/1/5e43187d-fe3f-4a8b-81ac-e4711a006d6d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "5/e/4/3/1/5e43187d-fe3f-4a8b-81ac-e4711a006d6d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-09T12:41:18.674Z",
+    "updatedAt": "2026-01-09T12:41:18.674Z"
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "ior": {
+    "uuid": "e510f26c-de40-4f00-b765-d17d545d6488",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "e510f26c-de40-4f00-b765-d17d545d6488",
+    "name": "Component",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/Component.interface.ts",
+    "indexPath": "scenarios/index/e510f26c-de40-4f00-b765-d17d545d6488.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Component.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "ior",
+        "type": "IORModel",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "model",
+        "type": "TModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [
+      {
+        "name": "init",
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "Scenario<TModel>",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "this",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "toScenario",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": true,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "Scenario<TModel>",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "hasMethod",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "boolean",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "getMethodSignature",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "defaultValue": null
+          }
+        ],
+        "returnType": "MethodSignature | null",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      },
+      {
+        "name": "listMethods",
+        "parameters": [],
+        "returnType": "string[]",
+        "isAsync": false,
+        "isAction": false,
+        "actionMetadata": null
+      }
+    ],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-09T12:41:21.061Z",
+    "updatedAt": "2026-01-09T12:41:21.061Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

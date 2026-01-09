@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "4597425c-e960-4a0c-8fda-5eebc5cc7dfe",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "4597425c-e960-4a0c-8fda-5eebc5cc7dfe",
+    "name": "OnceLoggerView.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/OnceLoggerView.ts",
+    "definition": "TypeScript OnceLoggerView class/interface",
+    "filePath": "dist/ts/layer5/views/OnceLoggerView.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-09T12:31:52.110Z",
+    "updatedAt": "2026-01-09T12:31:52.112Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/4/5/9/7/4/4597425c-e960-4a0c-8fda-5eebc5cc7dfe.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "4/5/9/7/4/4597425c-e960-4a0c-8fda-5eebc5cc7dfe.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-09T12:31:52.111Z",
+    "updatedAt": "2026-01-09T12:31:52.111Z"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "4808ae32-8621-472c-a4d4-68fb8b76048e",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "4808ae32-8621-472c-a4d4-68fb8b76048e",
+    "name": "FileOrchestrator.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer4/FileOrchestrator.ts",
+    "definition": "TypeScript FileOrchestrator class/interface",
+    "filePath": "src/ts/layer4/FileOrchestrator.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-09T12:41:18.848Z",
+    "updatedAt": "2026-01-09T12:41:18.848Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/4/8/0/8/a/4808ae32-8621-472c-a4d4-68fb8b76048e.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "4/8/0/8/a/4808ae32-8621-472c-a4d4-68fb8b76048e.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-09T12:41:18.848Z",
+    "updatedAt": "2026-01-09T12:41:18.848Z"
+  }
+}

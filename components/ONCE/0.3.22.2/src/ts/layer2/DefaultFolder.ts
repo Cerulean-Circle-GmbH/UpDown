@@ -77,8 +77,8 @@ export class DefaultFolder extends UcpComponent<FolderModel>
   /**
    * Called when class is loaded - auto-registers with JsInterfaces
    */
-  static start(): void {
-    super.start();  // Auto-registers with FileJs and FolderJs
+  static override async start(): Promise<void> {
+    await super.start();  // Auto-registers with FileJs and FolderJs
   }
   
   // ═══════════════════════════════════════════════════════════════

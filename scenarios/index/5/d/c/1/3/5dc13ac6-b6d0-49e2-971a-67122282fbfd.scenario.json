@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "5dc13ac6-b6d0-49e2-971a-67122282fbfd",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "5dc13ac6-b6d0-49e2-971a-67122282fbfd",
+    "name": "LoaderModel.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/LoaderModel.interface.ts",
+    "definition": "TypeScript LoaderModel.interface class/interface",
+    "filePath": "dist/ts/layer3/LoaderModel.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-09T12:41:19.923Z",
+    "updatedAt": "2026-01-09T12:41:19.923Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/5/d/c/1/3/5dc13ac6-b6d0-49e2-971a-67122282fbfd.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "5/d/c/1/3/5dc13ac6-b6d0-49e2-971a-67122282fbfd.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-09T12:41:19.923Z",
+    "updatedAt": "2026-01-09T12:41:19.923Z"
+  }
+}

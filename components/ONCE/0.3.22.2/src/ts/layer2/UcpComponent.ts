@@ -35,6 +35,7 @@ import type { IDProvider } from '../layer3/IDProvider.interface.js';
 import type { ContentIDProvider } from '../layer3/ContentIDProvider.interface.js';
 import type { AbstractConstructor } from '../layer3/InterfaceConstructor.type.js';
 import type { CLIModel } from '../layer3/CLIModel.interface.js';
+import type { MethodSignature } from '../layer3/MethodSignature.interface.js';
 import { PersistenceManager } from '../layer3/PersistenceManager.interface.js';
 import { UUIDProvider } from './UUIDProvider.js';
 import { SHA256Provider } from './SHA256Provider.js';
@@ -267,32 +268,29 @@ export abstract class UcpComponent<TModel extends Model> extends Component<TMode
   
   /**
    * Project root directory
-   * Prefers CLI (Path Authority), falls back to model for backward compatibility
+   * CLI is path authority — no backward compat fallback
+   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3.1
    */
   get projectRoot(): string {
-    return this.cliField?.model?.projectRoot 
-      ?? (this.model as any)?.projectRoot 
-      ?? '';
+    return this.cliField?.model?.projectRoot ?? '';
   }
   
   /**
    * Components directory
-   * Prefers CLI (Path Authority), falls back to model for backward compatibility
+   * CLI is path authority — no backward compat fallback
+   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3.1
    */
   get componentsDirectory(): string {
-    return this.cliField?.model?.componentsDirectory 
-      ?? (this.model as any)?.componentsDirectory 
-      ?? '';
+    return this.cliField?.model?.componentsDirectory ?? '';
   }
   
   /**
    * Test data directory
-   * Prefers CLI (Path Authority), falls back to model for backward compatibility
+   * CLI is path authority — no backward compat fallback
+   * @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3.1
    */
   get testDataDirectory(): string {
-    return this.cliField?.model?.testDataDirectory 
-      ?? (this.model as any)?.testDataDirectory 
-      ?? '';
+    return this.cliField?.model?.testDataDirectory ?? '';
   }
   
   /**
@@ -311,23 +309,9 @@ export abstract class UcpComponent<TModel extends Model> extends Component<TMode
     return this.cliField?.model?.scriptsVersionDirectory ?? '';
   }
   
-  /**
-   * Component root directory (this component's own root)
-   * Derived from model or context
-   */
-  get componentRoot(): string {
-    return (this.model as any)?.componentRoot ?? '';
-  }
-  
-  /**
-   * Target component root directory (component being operated on)
-   * For delegation: the target component's root
-   * For non-delegation: same as componentRoot
-   * @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.6
-   */
-  get targetComponentRoot(): string {
-    return (this.model as any)?.targetComponentRoot ?? this.componentRoot;
-  }
+  // componentRoot and targetComponentRoot moved to subclasses where model type is known
+  // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3.4
+  // See: NodeJsOnce.componentRoot, DefaultWeb4TSComponent.componentRoot
   
   /**
    * Target directory (legacy alias for projectRoot)
@@ -560,6 +544,36 @@ export abstract class UcpComponent<TModel extends Model> extends Component<TMode
     return this.ucpModel !== null;
   }
   
+  // ═══════════════════════════════════════════════════════════════
+  // METHOD DISCOVERY INTERFACE (Component base)
+  // Override in subclasses that need CLI method routing
+  // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Check if component has a method
+   * Default: returns false (override in subclasses with CLI methods)
+   */
+  hasMethod(name: string): boolean {
+    return false;
+  }
+  
+  /**
+   * Get method signature for CLI routing
+   * Default: returns null (override in subclasses with CLI methods)
+   */
+  getMethodSignature(name: string): MethodSignature | null {
+    return null;
+  }
+  
+  /**
+   * List all available method names
+   * Default: returns empty array (override in subclasses with CLI methods)
+   */
+  listMethods(): string[] {
+    return [];
+  }
+  
   /**
    * PROTECTED: Get raw model (bypass view updates)
    * 
@@ -790,7 +804,7 @@ export abstract class UcpComponent<TModel extends Model> extends Component<TMode
     unit.initForComponent(
       this.constructor.name,
       this.ior?.iorString || '',
-      (this.model as any).uuid || this.uuidCreate()
+      this.model?.uuid ?? this.uuidCreate()  // Model HAS uuid — no as any needed
     );
     
     // 2. Create Artefact if content hash provided
@@ -838,27 +852,27 @@ export abstract class UcpComponent<TModel extends Model> extends Component<TMode
     const { DefaultArtefact } = await import('./DefaultArtefact.js');
     
     // Store Unit
+    // TODO: DefaultUnit needs storagePathCompute() and scenarioData() methods
+    // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md CPA.3.6
     const unit = this.controller.relatedObjectLookupFirst(DefaultUnit);
     if (unit) {
-      const unitPath = (unit as any).storagePathCompute(basePath, version);
-      const unitData = (unit as any).scenarioData();
-      
       // Create symlinks for type and domain
       const symlinkPaths = [
         `${basePath}/type/${this.constructor.name}/${version}`,
         `${basePath}/domain/local`
       ];
       
-      await this.storage.scenarioSave(unit.model.uuid, unitData, symlinkPaths);
+      const scenario = await unit.toScenario();
+      await this.storage.scenarioSave(unit.model.uuid, scenario, symlinkPaths);
     }
     
-    // Store Artefact
+    // Store Artefact — DefaultArtefact has these methods
     const artefact = this.controller.relatedObjectLookupFirst(DefaultArtefact);
     if (artefact) {
-      const artefactPath = (artefact as any).storagePathCompute(basePath);
-      const artefactData = (artefact as any).scenarioData();
+      const artefactPath = artefact.storagePathCompute(basePath);
+      const artefactScenario = await artefact.toScenario();
       
-      await this.storage.scenarioSave(artefact.model.uuid, artefactData, [artefactPath]);
+      await this.storage.scenarioSave(artefact.model.uuid, artefactScenario, [artefactPath]);
     }
   }
   

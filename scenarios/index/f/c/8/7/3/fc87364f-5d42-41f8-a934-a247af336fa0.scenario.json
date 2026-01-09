@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "fc87364f-5d42-41f8-a934-a247af336fa0",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "fc87364f-5d42-41f8-a934-a247af336fa0",
+    "name": "UcpStorage.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/UcpStorage.ts",
+    "definition": "TypeScript UcpStorage class/interface",
+    "filePath": "dist/ts/layer2/UcpStorage.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-09T12:41:19.422Z",
+    "updatedAt": "2026-01-09T12:41:19.422Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/f/c/8/7/3/fc87364f-5d42-41f8-a934-a247af336fa0.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "f/c/8/7/3/fc87364f-5d42-41f8-a934-a247af336fa0.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-09T12:41:19.422Z",
+    "updatedAt": "2026-01-09T12:41:19.422Z"
+  }
+}
