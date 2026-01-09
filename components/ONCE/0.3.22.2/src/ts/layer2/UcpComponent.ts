@@ -84,7 +84,7 @@ export abstract class UcpComponent<TModel extends Model> extends Component<TMode
    * @pdca 2025-12-22-UTC-1400.jsinterface-naming-impact.pdca.md
    */
   static implements(): AbstractConstructor<JsInterface>[] {
-    return [Component<TModel>];  // Default: no JsInterfaces
+    return [Component];  // Default: no JsInterfaces
   }
   
   /**

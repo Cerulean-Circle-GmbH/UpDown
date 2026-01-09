@@ -66,10 +66,7 @@ implements CLI {
    * Note: Named 'cliStart' to avoid conflict with UcpComponent.start()
    * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.1
    */
-  static async cliStart(args: string[]): Promise<void> {
-    const cli = new (this as any)();
-    await cli.execute(args);
-  }
+  //abstract static async start(args: string[]): Promise<void>;
   
   /**
    * Empty constructor (Web4 radical OOP pattern)

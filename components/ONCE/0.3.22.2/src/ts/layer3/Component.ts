@@ -143,6 +143,6 @@ implements ComponentInterface<TModel> {
   abstract init(scenario?: Scenario<TModel>): this;
   
   /** Convert component state to scenario for persistence */
-  abstract toScenario(name?: string): Scenario<TModel> | Promise<Scenario<TModel>>;
+  abstract toScenario(name?: string): Scenario<TModel>;
 }
 
