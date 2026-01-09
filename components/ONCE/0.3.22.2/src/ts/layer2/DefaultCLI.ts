@@ -32,7 +32,9 @@ import { join, basename } from "path";
 import * as ts from "typescript";
 import { webcrypto as crypto } from "crypto";
 
-export abstract class DefaultCLI extends UcpComponent<CLIModel> implements CLI {
+export abstract class DefaultCLI 
+extends UcpComponent<CLIModel> 
+implements CLI {
   // @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.2.1
   // model inherited from UcpComponent via getter
   

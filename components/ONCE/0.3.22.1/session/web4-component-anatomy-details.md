@@ -1,7 +1,7 @@
 # Web4 Component Anatomy Details
 
 **Checklist:** [§/session/web4-component-anatomy-checklist.md](./web4-component-anatomy-checklist.md)  
-**Updated:** 2026-01-01
+**Updated:** 2026-01-08
 
 ---
 
@@ -276,11 +276,95 @@ For runtime interfaces that need to exist in JavaScript (for RelatedObjects, imp
 
 ---
 
+## Path Authority Pattern
+
+**PDCA:** [§/session/2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md](../../0.3.22.2/session/2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md)  
+**Updated:** 2026-01-08 (Occam's Razor — DELETE, don't deprecate)
+
+### Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      PATH AUTHORITY HIERARCHY                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────────┐                                                        │
+│  │   DefaultCLI    │ ← PATH AUTHORITY (calculates projectRoot ONCE)        │
+│  │  extends Ucp    │   CLIModel.projectRoot is the SINGLE SOURCE           │
+│  └────────┬────────┘                                                        │
+│           │                                                                 │
+│           ▼ wraps                                                           │
+│  ┌─────────────────┐                                                        │
+│  │    DefaultXYZ   │ ← REAL BUSINESS METHODS (e.g., NodeJsOnce)            │
+│  │  extends Ucp    │   Only has componentRoot (from import.meta.url)       │
+│  │                 │   Gets projectRoot via this.projectRoot accessor      │
+│  └────────┬────────┘                                                        │
+│           │                                                                 │
+│           ▼ uses                                                            │
+│  ┌─────────────────┐                                                        │
+│  │ Web4TSComponent │ ← LIFECYCLE MANAGEMENT (build, test, upgrade)          │
+│  │ (DelegationProxy)│   Gets paths via context accessors                    │
+│  └─────────────────┘                                                        │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Accessors (UcpComponent)
+
+```typescript
+// In UcpComponent.ts — Path Accessors (delegate to CLI)
+get projectRoot(): string {
+  return this.cli?.model?.projectRoot ?? '';
+}
+
+get componentsDirectory(): string {
+  return this.cli?.model?.componentsDirectory ?? '';
+}
+
+get componentRoot(): string {
+  return (this.model as any)?.componentRoot ?? '';
+}
+
+get targetComponentRoot(): string {
+  return (this.model as any)?.targetComponentRoot ?? this.componentRoot;
+}
+
+get isTestIsolation(): boolean {
+  return this.projectRoot.includes('/test/data');  // DERIVED, not stored
+}
+```
+
+### Occam's Razor — DELETED Properties
+
+The following were DELETED from model interfaces (use accessors instead):
+
+**Web4TSComponentModel:**
+- ~~`projectRoot`~~ → `this.projectRoot` accessor
+- ~~`targetDirectory`~~ → `this.targetDirectory` accessor
+- ~~`componentsDirectory`~~ → `this.componentsDirectory` accessor
+- ~~`testDataDirectory`~~ → `this.testDataDirectory` accessor
+- ~~`isTestIsolation`~~ → `this.isTestIsolation` accessor (derived)
+
+**ONCEPeerModel:**
+- Same properties deleted
+- KEPT: `componentRoot` (discovered from import.meta.url)
+
+### Key Rules
+
+1. **CLI calculates paths ONCE** — No duplicate path calculations in components
+2. **Accessors delegate to CLI** — `this.projectRoot` → `this.cli.model.projectRoot`
+3. **componentRoot is component-specific** — Discovered from `import.meta.url`
+4. **Derived properties use accessors** — `isTestIsolation` derived from path, not stored
+5. **Test isolation override** — Use private field, not model mutation
+
+---
+
 ## References
 
 - **Unit README**: [§/components/Unit/0.3.0.5/README.md](../../../Unit/0.3.0.5/README.md)
 - **Web4TSComponent README**: [§/components/Web4TSComponent/0.3.20.6/README.md](../../../Web4TSComponent/0.3.20.6/README.md)
 - **JsInterface Pattern**: [§/session/web4-jsinterface-pattern.md](./web4-jsinterface-pattern.md)
+- **Path Authority PDCA**: [§/session/2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md](../../0.3.22.2/session/2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md)
 - **Generator**: `src/ts/layer2/DefaultWeb4TSComponent.ts` (units live here)
 - **Legacy**: `src/ts/layer2/UnitDiscoveryService.ts` (to be deprecated/removed)
 - **Test14**: `test/tootsie/Test14_CSSUnitCreation.ts`

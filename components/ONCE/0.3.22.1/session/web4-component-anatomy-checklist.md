@@ -1,7 +1,7 @@
 # 🧱 Web4 Component Anatomy Checklist
 
 **Purpose:** CHECK BEFORE RELEASE during component development.  
-**Updated:** 2026-01-01
+**Updated:** 2026-01-08
 
 ## Component Criteria
 
@@ -38,3 +38,11 @@
 - [x] JsInterface J1: Runtime Naming - `Xxx.interface.ts` (compile-time) + `XxxJs.ts` (runtime) - [Pattern](./web4-jsinterface-pattern.md)
 - [x] JsInterface J2: FileJs/FolderJs - Runtime interfaces for File/Folder avoiding browser collision - [Example](../src/ts/layer3/FileJs.ts)
 - [x] JsInterface J3: `static implements()` - Auto-registration pattern - [Example](../src/ts/layer2/DefaultFile.ts)
+
+## Path Authority Pattern (CPA)
+
+- [x] Path P1: CLI is Path Authority - `DefaultCLI` calculates `projectRoot` ONCE - [Details](./web4-component-anatomy-details.md#path-authority-pattern)
+- [x] Path P2: Accessors NOT Model - Path properties via `get projectRoot()` accessor, NOT `this.model.projectRoot` - [PDCA](../../0.3.22.2/session/2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md)
+- [x] Path P3: Occam's Razor - DELETED deprecated path props from model interfaces - [Web4TSComponentModel](../../0.3.22.2/src/ts/layer3/Web4TSComponentModel.interface.ts)
+- [x] Path P4: Derived Props - `isTestIsolation` derived from `projectRoot.includes('/test/data')` - [UcpComponent](../../0.3.22.2/src/ts/layer2/UcpComponent.ts)
+- [x] Path P5: ComponentRoot is Source - Discovered from `import.meta.url`, all other paths derived

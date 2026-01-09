@@ -84,7 +84,7 @@ export abstract class UcpComponent<TModel extends Model> extends Component<TMode
    * @pdca 2025-12-22-UTC-1400.jsinterface-naming-impact.pdca.md
    */
   static implements(): AbstractConstructor<JsInterface>[] {
-    return [];  // Default: no JsInterfaces
+    return [Component<TModel>];  // Default: no JsInterfaces
   }
   
   /**
@@ -93,9 +93,9 @@ export abstract class UcpComponent<TModel extends Model> extends Component<TMode
    * 
    * @pdca session/2026-01-06-UTC-1600.web4-component-lifecycle.pdca.md
    */
-  static override start(): void {
+  static override async start(args?: string[]): Promise<void> {
     // Call Component.start() for lifecycle state management
-    super.start();
+    super.start(args);
     
     // Build TypeDescriptor if not already set
     if (!this.type) {
