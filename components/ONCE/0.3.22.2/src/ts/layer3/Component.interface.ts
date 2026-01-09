@@ -58,76 +58,76 @@ export interface Component<TModel extends Model = Model> {
    * @param name Optional scenario name
    * @returns Scenario representation of current state
    */
-  toScenario(name?: string): Promise<Scenario<TModel>>;
+  toScenario(name?: string): Scenario<TModel>;
   
   // ========================================
   // METHOD DISCOVERY INTERFACE (Web4 pattern)
   // @pdca 2025-11-05-UTC-1158.pdca.md - Type-safe method routing
   // ========================================
   
-  /**
-   * Check if component has a method
-   * Used by CLI for type-safe method routing without `as any` casting
-   * @param name Method name to check
-   * @returns true if method exists, false otherwise
-   */
-  hasMethod(name: string): boolean;
+  // /**
+  //  * Check if component has a method
+  //  * Used by CLI for type-safe method routing without `as any` casting
+  //  * @param name Method name to check
+  //  * @returns true if method exists, false otherwise
+  //  */
+  // hasMethod(name: string): boolean;
   
-  /**
-   * Get method signature for CLI routing
-   * Returns null if method doesn't exist (explicit null, not undefined)
-   * @param name Method name
-   * @returns Method signature or null
-   */
-  getMethodSignature(name: string): MethodSignature | null;
+  // /**
+  //  * Get method signature for CLI routing
+  //  * Returns null if method doesn't exist (explicit null, not undefined)
+  //  * @param name Method name
+  //  * @returns Method signature or null
+  //  */
+  // getMethodSignature(name: string): MethodSignature | null;
   
-  /**
-   * List all available method names
-   * Used for CLI completion and usage generation
-   * @returns Array of method names
-   */
-  listMethods(): string[];
+  // /**
+  //  * List all available method names
+  //  * Used for CLI completion and usage generation
+  //  * @returns Array of method names
+  //  */
+  // listMethods(): string[];
   
   // ========================================
   // CLI METHODS (Optional - for development)
   // @pdca session/2025-11-21-UTC-1900.iteration-01.6-once-architecture-consolidation.pdca.md
   // ========================================
   
-  /**
-   * Display component information
-   * @param topic Optional specific topic to display
-   */
-  info?(topic?: string): Promise<this>;
+  // /**
+  //  * Display component information
+  //  * @param topic Optional specific topic to display
+  //  */
+  // info?(topic?: string): Promise<this>;
   
-  /**
-   * Run component tests
-   * @param scope Optional test scope filter
-   * @param references Optional test file references
-   */
-  test?(scope?: string, ...references: string[]): Promise<this>;
+  // /**
+  //  * Run component tests
+  //  * @param scope Optional test scope filter
+  //  * @param references Optional test file references
+  //  */
+  // test?(scope?: string, ...references: string[]): Promise<this>;
   
-  /**
-   * Build component artifacts
-   */
-  build?(): Promise<this>;
+  // /**
+  //  * Build component artifacts
+  //  */
+  // build?(): Promise<this>;
   
-  /**
-   * Clean component build artifacts
-   */
-  clean?(): Promise<this>;
+  // /**
+  //  * Clean component build artifacts
+  //  */
+  // clean?(): Promise<this>;
   
-  /**
-   * Display component directory tree
-   * @param depth Optional tree depth
-   * @param showHidden Optional show hidden files flag
-   */
-  tree?(depth?: string, showHidden?: string): Promise<this>;
+  // /**
+  //  * Display component directory tree
+  //  * @param depth Optional tree depth
+  //  * @param showHidden Optional show hidden files flag
+  //  */
+  // tree?(depth?: string, showHidden?: string): Promise<this>;
   
-  /**
-   * Manage component symlinks
-   * @param action Optional action (list, create, verify, clean)
-   */
-  links?(action?: string): Promise<this>;
+  // /**
+  //  * Manage component symlinks
+  //  * @param action Optional action (list, create, verify, clean)
+  //  */
+  // links?(action?: string): Promise<this>;
 }
 
 

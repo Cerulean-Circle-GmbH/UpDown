@@ -24,6 +24,7 @@ import { LifecycleState } from './LifecycleState.enum.js';
 import type { Model } from './Model.interface.js';
 import type { Scenario } from './Scenario.interface.js';
 import type { IORModel } from './IORModel.interface.js';
+import type { Component as ComponentInterface } from './Component.interface.js';
 
 /**
  * Component - Runtime interface for all Web4 components
@@ -31,7 +32,7 @@ import type { IORModel } from './IORModel.interface.js';
  * Extends JsInterface for runtime type introspection.
  * All UcpComponent subclasses implement this.
  */
-export abstract class Component<TModel extends Model = Model> extends JsInterface {
+export abstract class Component<TModel extends Model = Model> extends JsInterface implements ComponentInterface<TModel> {
   
   // ═══════════════════════════════════════════════════════════════
   // CLASS LEVEL LIFECYCLE STATE
@@ -68,7 +69,7 @@ export abstract class Component<TModel extends Model = Model> extends JsInterfac
    * START phase - called after load, before any instances
    * Registers with TypeRegistry, loads Views, applies CSS
    */
-  static start(): void {
+  static async start(args: string[]): Promise<void> {
     if (this.classStateField === LifecycleState.STARTED) return; // Idempotent
     
     this.classStateField = LifecycleState.STARTING;

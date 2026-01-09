@@ -19,31 +19,15 @@ export class ONCECLI extends DefaultCLI {
   /** Method signatures for CLI help and completion */
   protected methodSignatures: Map<string, MethodSignature> = new Map();
 
-  /**
-   * Empty constructor (Web4 P6)
-   */
-  constructor() {
-    super();
-  }
-  
-  /**
-   * Initialize CLI (sync)
-   * @param scenario Optional scenario with model overrides
-   * @returns this for chaining
-   */
-  init(scenario?: any): this {
-    super.init(scenario);
-    return this;
-  }
 
-  /**
+    /**
    * Static CLI entry — ONLY entry point for CLI
    * All async work happens here (Layer 5 allows async)
    * 
    * Note: Named 'cliStart' to avoid conflict with UcpComponent.start()
    * @pdca 2026-01-04-UTC-1121.model-consolidation-dry-cleanup.pdca.md MC.4, MC.2.1
    */
-  static async cliStart(args: string[]): Promise<void> {
+  static async start(args: string[]): Promise<void> {
     const cli = new ONCECLI().init();
     
     // Create and wrap component (async work)
@@ -63,6 +47,25 @@ export class ONCECLI extends DefaultCLI {
     
     await cli.execute(args);
   }
+
+  /**
+   * Empty constructor (Web4 P6)
+   */
+  constructor() {
+    super();
+  }
+  
+  /**
+   * Initialize CLI (sync)
+   * @param scenario Optional scenario with model overrides
+   * @returns this for chaining
+   */
+  init(scenario?: any): this {
+    super.init(scenario);
+    return this;
+  }
+
+
 
   /**
    * Discover component and delegated methods for CLI completion
@@ -170,5 +173,5 @@ export class ONCECLI extends DefaultCLI {
 
 // Static entry point for shell execution
 if (import.meta.url === `file://${process.argv[1]}`) {
-  ONCECLI.cliStart(process.argv.slice(2));
+  ONCECLI.start(process.argv.slice(2));
 }

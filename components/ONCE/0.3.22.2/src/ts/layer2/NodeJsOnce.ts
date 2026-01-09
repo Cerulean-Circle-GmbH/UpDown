@@ -153,7 +153,9 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
       };
     }
     
-    return super.init(scenario);
+    const self = super.init(scenario);
+    
+    return self;
   }
 
   // ═══════════════════════════════════════════════════════════════
