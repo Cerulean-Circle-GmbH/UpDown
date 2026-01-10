@@ -11,6 +11,7 @@ import type { Model } from './Model.interface.js';
 import type { ComponentDependency } from './ComponentDependency.interface.js';
 import type { SemanticVersion } from '../layer2/SemanticVersion.js';
 import type { Reference } from './Reference.interface.js';
+import type { Web4TSComponent } from './Web4TSComponent.interface.js';  // Type-only import avoids circular dep
 
 export interface Web4TSComponentModel extends Model {
   // uuid, name inherited from Model
@@ -50,8 +51,11 @@ export interface Web4TSComponentModel extends Model {
   /** Component dependencies with auto-build */
   dependencies?: ComponentDependency[];
   
+  /** Unit IOR paths discovered for this component */
+  units?: string[];
+  
   /** Context: Another component INSTANCE for delegation */
-  context?: Reference<unknown>;
+  context?: Reference<Web4TSComponent>;
   
   /** Calculated path to TARGET component root (for 'on' command) */
   targetComponentRoot?: string;

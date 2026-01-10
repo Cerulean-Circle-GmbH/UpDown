@@ -1,0 +1,117 @@
+{
+  "ior": {
+    "uuid": "092e06c0-6581-4ca1-87e0-a4b97e3f8e54",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "092e06c0-6581-4ca1-87e0-a4b97e3f8e54",
+    "name": "Web4TSComponentModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/Web4TSComponentModel.interface.ts",
+    "indexPath": "scenarios/index/092e06c0-6581-4ca1-87e0-a4b97e3f8e54.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/Web4TSComponentModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "component",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "version",
+        "type": "SemanticVersion",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "componentRoot",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "displayName",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "displayVersion",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isDelegation",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "delegationInfo",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "testIsolationContext",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "targetComponentRoot",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "implementationClassName",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "promotionLevel",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "toVersion",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "context",
+        "targetType": "Web4TSComponent"
+      }
+    ],
+    "collections": [
+      {
+        "name": "dependencies",
+        "elementType": "ComponentDependency"
+      },
+      {
+        "name": "units",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-10T18:10:35.734Z",
+    "updatedAt": "2026-01-10T18:10:35.734Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

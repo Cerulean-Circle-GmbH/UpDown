@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "d5cdae44-d822-41e0-9000-98468a880de7",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "d5cdae44-d822-41e0-9000-98468a880de7",
+    "name": "OncePeerItemView.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/OncePeerItemView.ts",
+    "definition": "TypeScript OncePeerItemView class/interface",
+    "filePath": "dist/ts/layer5/views/OncePeerItemView.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-10T18:10:34.212Z",
+    "updatedAt": "2026-01-10T18:10:34.213Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/d/5/c/d/a/d5cdae44-d822-41e0-9000-98468a880de7.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "d/5/c/d/a/d5cdae44-d822-41e0-9000-98468a880de7.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-10T18:10:34.213Z",
+    "updatedAt": "2026-01-10T18:10:34.213Z"
+  }
+}

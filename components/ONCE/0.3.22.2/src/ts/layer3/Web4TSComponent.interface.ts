@@ -14,9 +14,36 @@ import type { Web4TSComponentModel } from './Web4TSComponentModel.interface.js';
 
 /**
  * Web4TSComponent interface - Development component methods
- * Note: 'model' is accessed via getter from UcpComponent (protected internally)
  */
 export interface Web4TSComponent {
+  
+  // ═══════════════════════════════════════════════════════════════
+  // MODEL & ACCESSORS (from UcpComponent)
+  // ═══════════════════════════════════════════════════════════════
+  
+  /** Model (state) of the component */
+  readonly model: Web4TSComponentModel;
+  
+  /** Project root directory (from CLI) */
+  readonly projectRoot: string;
+  
+  /** Components directory (from CLI) */
+  readonly componentsDirectory: string;
+  
+  /** Test data directory (from CLI) */
+  readonly testDataDirectory: string;
+  
+  /** Scripts directory (from CLI) */
+  readonly scriptsDirectory: string;
+  
+  /** Scripts version directory (from CLI) */
+  readonly scriptsVersionDirectory: string;
+  
+  /** Component root directory */
+  readonly componentRoot: string;
+  
+  /** True if running in test isolation mode */
+  readonly isTestIsolation: boolean;
   
   // ═══════════════════════════════════════════════════════════════
   // LIFECYCLE METHODS (from UcpComponent)
@@ -105,5 +132,10 @@ export interface Web4TSComponent {
    * Start a component (ensures it's built and ready for import)
    */
   componentStart(componentName: string, version: string): Promise<this>;
+  
+  /**
+   * Load a component dynamically (optional - implemented by NodeJsOnce)
+   */
+  componentLoad?(componentName: string, version: string): Promise<unknown>;
 }
 

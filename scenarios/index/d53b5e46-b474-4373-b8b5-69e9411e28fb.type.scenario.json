@@ -1,0 +1,49 @@
+{
+  "ior": {
+    "uuid": "d53b5e46-b474-4373-b8b5-69e9411e28fb",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "d53b5e46-b474-4373-b8b5-69e9411e28fb",
+    "name": "MethodSignature",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/MethodSignature.interface.ts",
+    "indexPath": "scenarios/index/d53b5e46-b474-4373-b8b5-69e9411e28fb.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/MethodSignature.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "paramCount",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "isAsync",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-10T18:10:35.684Z",
+    "updatedAt": "2026-01-10T18:10:35.684Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

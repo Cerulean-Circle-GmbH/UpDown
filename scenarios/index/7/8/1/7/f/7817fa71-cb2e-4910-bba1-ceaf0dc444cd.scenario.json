@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "7817fa71-cb2e-4910-bba1-ceaf0dc444cd",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "7817fa71-cb2e-4910-bba1-ceaf0dc444cd",
+    "name": "TypeRegistry.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/TypeRegistry.ts",
+    "definition": "TypeScript TypeRegistry class/interface",
+    "filePath": "src/ts/layer2/TypeRegistry.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-10T18:10:32.425Z",
+    "updatedAt": "2026-01-10T18:10:32.425Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/7/8/1/7/f/7817fa71-cb2e-4910-bba1-ceaf0dc444cd.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "7/8/1/7/f/7817fa71-cb2e-4910-bba1-ceaf0dc444cd.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-10T18:10:32.425Z",
+    "updatedAt": "2026-01-10T18:10:32.425Z"
+  }
+}

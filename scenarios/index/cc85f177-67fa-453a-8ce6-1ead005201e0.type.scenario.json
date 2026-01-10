@@ -1,0 +1,49 @@
+{
+  "ior": {
+    "uuid": "cc85f177-67fa-453a-8ce6-1ead005201e0",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "cc85f177-67fa-453a-8ce6-1ead005201e0",
+    "name": "DescribeBlock",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer4/TestFileParser.ts",
+    "indexPath": "scenarios/index/cc85f177-67fa-453a-8ce6-1ead005201e0.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/DescribeBlock.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "line",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "fullName",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-10T18:10:35.855Z",
+    "updatedAt": "2026-01-10T18:10:35.855Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

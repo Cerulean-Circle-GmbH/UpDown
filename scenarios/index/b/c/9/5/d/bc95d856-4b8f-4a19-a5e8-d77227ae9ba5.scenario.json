@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "bc95d856-4b8f-4a19-a5e8-d77227ae9ba5",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "bc95d856-4b8f-4a19-a5e8-d77227ae9ba5",
+    "name": "package.json",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/package.json",
+    "definition": "Root component file: package.json",
+    "filePath": "package.json",
+    "mimetype": "application/json",
+    "createdAt": "2026-01-10T18:10:34.410Z",
+    "updatedAt": "2026-01-10T18:10:34.413Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/b/c/9/5/d/bc95d856-4b8f-4a19-a5e8-d77227ae9ba5.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "b/c/9/5/d/bc95d856-4b8f-4a19-a5e8-d77227ae9ba5.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-10T18:10:34.410Z",
+    "updatedAt": "2026-01-10T18:10:34.410Z"
+  }
+}

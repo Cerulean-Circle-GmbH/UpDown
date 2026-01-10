@@ -1,0 +1,243 @@
+{
+  "ior": {
+    "uuid": "fb2d68b6-fdf9-4c72-b116-1fae73093497",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "fb2d68b6-fdf9-4c72-b116-1fae73093497",
+    "name": "ONCEPeerModel",
+    "extends": "ior:esm:/ONCE/0.3.22.2/Model",
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ONCEPeerModel.interface.ts",
+    "indexPath": "scenarios/index/fb2d68b6-fdf9-4c72-b116-1fae73093497.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ONCEPeerModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "version",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "environment",
+        "type": "EnvironmentInfo",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "state",
+        "type": "LifecycleState",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "shutdownTime",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "host",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "port",
+        "type": "number",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "domain",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "hostname",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "ip",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "isPrimary",
+        "type": "boolean",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "components",
+        "type": "Map<string, Component>",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "isConnected",
+        "type": "boolean",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "peerHost",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "peerVersion",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "pid",
+        "type": "number",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "componentRoot",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "component",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "displayName",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "displayVersion",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "isDelegation",
+        "type": "boolean",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "delegationInfo",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "testIsolationContext",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "context",
+        "type": "any",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "initialized",
+        "type": "boolean",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "initializationTime",
+        "type": "number",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "scenario",
+        "type": "any",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "serverModel",
+        "type": "ONCEPeerModel",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "eventHandlers",
+        "type": "Map<any, any>",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "messageTracker",
+        "type": "{\n        sent: any[];\n        received: any[];\n        acknowledged: string[];\n        patterns: { broadcast: number; relay: number; p2p: number; };\n    }",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [
+      {
+        "name": "startTime",
+        "targetType": "Date"
+      },
+      {
+        "name": "connectionTime",
+        "targetType": "Date"
+      },
+      {
+        "name": "primaryPeerUuid",
+        "targetType": "string"
+      },
+      {
+        "name": "ws",
+        "targetType": "WebSocket"
+      },
+      {
+        "name": "peerUUID",
+        "targetType": "string"
+      },
+      {
+        "name": "primaryPeer",
+        "targetType": "Reference<{\n        host: string;\n        port: number;\n        uuid: string;\n    }>"
+      }
+    ],
+    "collections": [
+      {
+        "name": "peers",
+        "elementType": "any"
+      },
+      {
+        "name": "capabilities",
+        "elementType": "ServerCapability"
+      },
+      {
+        "name": "observers",
+        "elementType": "import('./LifecycleObserver.interface.js').LifecycleObserver"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-10T18:10:35.690Z",
+    "updatedAt": "2026-01-10T18:10:35.690Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

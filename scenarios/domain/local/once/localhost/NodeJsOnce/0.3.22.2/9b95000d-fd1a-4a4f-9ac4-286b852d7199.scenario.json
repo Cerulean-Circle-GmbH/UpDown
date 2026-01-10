@@ -1,0 +1,74 @@
+{
+  "ior": {
+    "uuid": "a323e9e3-341c-4c2e-a380-85ef6c46beda",
+    "component": "NodeJsOnce",
+    "version": "0.0.0.0"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "9b95000d-fd1a-4a4f-9ac4-286b852d7199",
+    "name": "ONCE",
+    "version": "0.3.22.2",
+    "component": "ONCE",
+    "environment": {
+      "model": {
+        "type": "nodejs",
+        "isNode": false,
+        "isBrowser": false,
+        "isWorker": false,
+        "isServiceWorker": false,
+        "isPWA": false,
+        "isIframe": false,
+        "version": "",
+        "capabilities": [],
+        "isOnline": false
+      }
+    },
+    "state": "starting",
+    "startTime": "2026-01-10T18:11:05.539Z",
+    "connectionTime": null,
+    "host": "localhost",
+    "port": 42777,
+    "isPrimary": false,
+    "primaryPeerUuid": null,
+    "peers": [],
+    "componentRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.22.2",
+    "serverModel": {
+      "uuid": "9b95000d-fd1a-4a4f-9ac4-286b852d7199",
+      "name": "ONCE",
+      "version": "0.3.22.2",
+      "environment": {
+        "platform": "node",
+        "version": "v23.6.1",
+        "capabilities": [
+          "server",
+          "websocket",
+          "p2p"
+        ],
+        "isOnline": true
+      },
+      "state": "running",
+      "startTime": "2026-01-10T18:11:05.543Z",
+      "connectionTime": null,
+      "host": "McDonges.fritz.box",
+      "port": 42777,
+      "domain": "box.fritz",
+      "hostname": "McDonges",
+      "ip": "192.168.178.49",
+      "isPrimary": true,
+      "primaryPeerUuid": null,
+      "peers": [],
+      "pid": 19058,
+      "capabilities": [
+        {
+          "capability": "httpsPort",
+          "port": 42777
+        },
+        {
+          "capability": "httpRedirect",
+          "port": 42000
+        }
+      ]
+    }
+  }
+}

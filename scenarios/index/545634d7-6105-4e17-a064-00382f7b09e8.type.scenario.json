@@ -1,0 +1,88 @@
+{
+  "ior": {
+    "uuid": "545634d7-6105-4e17-a064-00382f7b09e8",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "545634d7-6105-4e17-a064-00382f7b09e8",
+    "name": "ScenarioUnit",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ScenarioUnit.interface.ts",
+    "indexPath": "scenarios/index/545634d7-6105-4e17-a064-00382f7b09e8.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ScenarioUnit.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "indexPath",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "typeM3",
+        "type": "TypeM3",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "origin",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "definition",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "schemaVersion",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "createdBy",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "createdAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "updatedAt",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "symlinkPaths",
+        "elementType": "string"
+      },
+      {
+        "name": "references",
+        "elementType": "UnitReference"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-10T18:10:35.708Z",
+    "updatedAt": "2026-01-10T18:10:35.708Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

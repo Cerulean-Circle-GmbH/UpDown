@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "1a607e30-0997-4003-9394-88e5b6711f58",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "1a607e30-0997-4003-9394-88e5b6711f58",
+    "name": "RouteItemView.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer5/views/RouteItemView.ts",
+    "definition": "TypeScript RouteItemView class/interface",
+    "filePath": "dist/ts/layer5/views/RouteItemView.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-10T18:10:34.216Z",
+    "updatedAt": "2026-01-10T18:10:34.219Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/1/a/6/0/7/1a607e30-0997-4003-9394-88e5b6711f58.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "1/a/6/0/7/1a607e30-0997-4003-9394-88e5b6711f58.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-10T18:10:34.216Z",
+    "updatedAt": "2026-01-10T18:10:34.216Z"
+  }
+}

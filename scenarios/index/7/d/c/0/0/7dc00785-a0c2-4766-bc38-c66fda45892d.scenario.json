@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "7dc00785-a0c2-4766-bc38-c66fda45892d",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "7dc00785-a0c2-4766-bc38-c66fda45892d",
+    "name": "LazyReference.interface.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/LazyReference.interface.ts",
+    "definition": "TypeScript LazyReference.interface class/interface",
+    "filePath": "dist/ts/layer3/LazyReference.interface.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-10T18:10:33.782Z",
+    "updatedAt": "2026-01-10T18:10:33.782Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/7/d/c/0/0/7dc00785-a0c2-4766-bc38-c66fda45892d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "7/d/c/0/0/7dc00785-a0c2-4766-bc38-c66fda45892d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-10T18:10:33.782Z",
+    "updatedAt": "2026-01-10T18:10:33.782Z"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "ior": {
+    "uuid": "18c708ec-00f0-46aa-8f29-c84bd3cc016a",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "18c708ec-00f0-46aa-8f29-c84bd3cc016a",
+    "name": "ComponentQuery",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ComponentQuery.interface.ts",
+    "indexPath": "scenarios/index/18c708ec-00f0-46aa-8f29-c84bd3cc016a.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ComponentQuery.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "name",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "version",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "domain",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "capabilities",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-10T18:10:35.615Z",
+    "updatedAt": "2026-01-10T18:10:35.615Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

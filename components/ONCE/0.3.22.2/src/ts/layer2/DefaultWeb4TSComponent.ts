@@ -15,6 +15,7 @@
  */
 
 import { UcpComponent } from './UcpComponent.js';
+import { DefaultCLI } from './DefaultCLI.js';  // Type for getCLI() return
 import { UnitDiscoveryService } from './UnitDiscoveryService.js';
 import { ScenarioService } from './ScenarioService.js';
 import { UcpStorage } from './UcpStorage.js';
@@ -136,7 +137,7 @@ export class DefaultWeb4TSComponent
     if (super.projectRoot) return super.projectRoot;
     
     // 2. Context (delegating component) has projectRoot accessor
-    const context = (this.model as any)?.context;
+    const context = this.model?.context;
     if (context?.projectRoot) return context.projectRoot;
     
     // 3. Derive from componentRoot (fallback)
@@ -155,7 +156,7 @@ export class DefaultWeb4TSComponent
   override get componentsDirectory(): string {
     if (super.componentsDirectory) return super.componentsDirectory;
     
-    const context = (this.model as any)?.context;
+    const context = this.model?.context;
     if (context?.componentsDirectory) return context.componentsDirectory;
     
     const projectRoot = this.projectRoot;
@@ -169,7 +170,7 @@ export class DefaultWeb4TSComponent
   override get testDataDirectory(): string {
     if (super.testDataDirectory) return super.testDataDirectory;
     
-    const context = (this.model as any)?.context;
+    const context = this.model?.context;
     if (context?.testDataDirectory) return context.testDataDirectory;
     
     const projectRoot = this.projectRoot;
@@ -183,7 +184,7 @@ export class DefaultWeb4TSComponent
   override get scriptsDirectory(): string {
     if (super.scriptsDirectory) return super.scriptsDirectory;
     
-    const context = (this.model as any)?.context;
+    const context = this.model?.context;
     if (context?.scriptsDirectory) return context.scriptsDirectory;
     
     const projectRoot = this.projectRoot;
@@ -197,7 +198,7 @@ export class DefaultWeb4TSComponent
   override get scriptsVersionDirectory(): string {
     if (super.scriptsVersionDirectory) return super.scriptsVersionDirectory;
     
-    const context = (this.model as any)?.context;
+    const context = this.model?.context;
     if (context?.scriptsVersionDirectory) return context.scriptsVersionDirectory;
     
     const scriptsDir = this.scriptsDirectory;
@@ -215,7 +216,7 @@ export class DefaultWeb4TSComponent
     if (this.model?.targetComponentRoot) return this.model.targetComponentRoot;
     
     // 2. Context (delegating component)
-    const context = (this.model as any)?.context;
+    const context = this.model?.context;
     if (context?.componentRoot) return context.componentRoot;
     
     // 3. Derive from componentsDirectory + component + version
@@ -236,7 +237,7 @@ export class DefaultWeb4TSComponent
    */
   override get isTestIsolation(): boolean {
     // Check context first for delegation
-    const context = (this.model as any)?.context;
+    const context = this.model?.context;
     if (context?.isTestIsolation !== undefined) return context.isTestIsolation;
     
     // Derive from projectRoot path
@@ -350,7 +351,7 @@ export class DefaultWeb4TSComponent
       // isTestIsolation is now derived from projectRoot.includes('/test/data')
       try {
         this.testIsolationProjectRoot = testDataRoot;
-        (this.model as any).testIsolationContext = `${this.model!.component} v${this.model!.version?.toString()}`;
+        this.model!.testIsolationContext = `${this.model!.component} v${this.model!.version?.toString()}`;
         
         console.log(`   Switched to Test Isolation Mode ✅`);
         console.log(`   All operations scoped to: ${testDataRoot}\n`);
@@ -467,7 +468,7 @@ export class DefaultWeb4TSComponent
    * @cliHide
    */
   private async loadTootsieComponent(): Promise<any> {
-    const context = (this.model as any).context;
+    const context = this.model!.context;
     
     if (context && typeof context.componentLoad === 'function') {
       try {
@@ -1069,15 +1070,15 @@ await component.init();
     let header = `Web4 ${this.model!.displayName} CLI Tool`;
     header += ` v${this.model!.displayVersion}`;
     
-    if (this.model!.isDelegation && (this.model as any).delegationInfo) {
-      header += ` (${(this.model as any).delegationInfo})`;
+    if (this.model!.isDelegation && this.model!.delegationInfo) {
+      header += ` (${this.model!.delegationInfo})`;
     }
     
     header += ' - Dynamic Method Discovery';
     console.log(header);
     
-    if ((this.model as any).testIsolationContext) {
-      console.log(`⚠️  TEST ISOLATION MODE (${(this.model as any).testIsolationContext})`);
+    if (this.model!.testIsolationContext) {
+      console.log(`⚠️  TEST ISOLATION MODE (${this.model!.testIsolationContext})`);
     }
     
     console.log('');
@@ -1090,7 +1091,7 @@ await component.init();
    * @cliHide
    */
   protected getTarget(): DefaultWeb4TSComponent {
-    return ((this.model as any).context as DefaultWeb4TSComponent) || this;
+    return (this.model!.context as DefaultWeb4TSComponent) || this;
   }
   
   /**
@@ -1119,7 +1120,7 @@ await component.init();
     
     const target = this.getTarget();
     const targetModel = target.model!;
-    const isContextMode = !!(this.model as any).context;
+    const isContextMode = !!this.model!.context;
     
     switch (topic) {
       case 'standard':
@@ -1157,10 +1158,7 @@ ${'='.repeat(80)}
         console.log(`   Target Directory: ${target.targetDirectory || 'N/A'}`);
         console.log();
         
-        console.log(`⚙️  Configuration:`);
-        console.log(`   Origin:       ${(targetModel as any).origin || 'N/A'}`);
-        console.log(`   Definition:   ${(targetModel as any).definition || 'N/A'}`);
-        console.log();
+        // origin/definition fields removed — not part of Web4TSComponentModel
         
         if (isContextMode) {
           console.log(`🔗 Context Delegation:`);
@@ -1193,13 +1191,13 @@ ${'='.repeat(80)}
     this.printQuickHeader();
     
     // Must have context loaded via on()
-    if (!(this.model as any).context) {
+    if (!this.model!.context) {
       console.error('❌ Error: No component context loaded');
       console.log('   Usage: ./once on <Component> <Version> componentDescriptorUpdate');
       throw new Error('componentDescriptorUpdate requires context from on() command');
     }
     
-    const targetComponent = (this.model as any).context;
+    const targetComponent = this.model!.context;
     const componentName = targetComponent.model.component;
     const componentVersion = targetComponent.model.version.toString();
     const componentRoot = this.targetComponentRoot || this.componentRoot;  // PC.6: Use accessors
@@ -1500,7 +1498,7 @@ ${'='.repeat(80)}
    */
   async start(): Promise<this> {
     // RADICAL OOP: Context required for start
-    if (!(this.model as any).context) {
+    if (!this.model!.context) {
       throw new Error('No component context loaded. Use "on <component> <version>" first.');
     }
 
@@ -1566,8 +1564,8 @@ ${'='.repeat(80)}
    * Get CLI instance
    * @cliHide
    */
-  private getCLI(): any {
-    return (this as any).cli || this;
+  private getCLI(): DefaultCLI | this {
+    return this.cli || this;
   }
 
   /**
@@ -1577,9 +1575,9 @@ ${'='.repeat(80)}
    */
   private updateModelPaths(): void {
     // Copy component identity from context (if delegating)
-    if ((this.model as any).context) {
-      this.model!.component = (this.model as any).context.model.component;
-      this.model!.version = (this.model as any).context.model.version;
+    if (this.model!.context) {
+      this.model!.component = this.model!.context.model.component;
+      this.model!.version = this.model!.context.model.version;
     }
     
     // PC.6: targetComponentRoot MUST be set for 'on' command (this is the only setter)
@@ -1599,7 +1597,7 @@ ${'='.repeat(80)}
     try {
       const entries = fs.readdirSync(componentDir);
       return entries.filter(entry => {
-        if (SemanticVersion.SEMANTIC_LINKS_SET.has(entry as any)) {
+        if (SemanticVersion.isSemanticLink(entry)) {
           return false;
         }
         const entryPath = path.join(componentDir, entry);
@@ -1658,7 +1656,7 @@ ${'='.repeat(80)}
     console.log(`🔍 Discovering ${what === 'method' ? 'methods' : 'parameter completions'} on ${this.model!.component} ${this.model!.version?.toString()}${filter ? ` (filter: ${filter})` : ''}`);
     console.log(`---`);
     
-    if (!(this.model as any).context) {
+    if (!this.model!.context) {
       // List methods from this component
       const methods = this.methodsList();
       const filtered = filter ? methods.filter(m => m.startsWith(filter)) : methods;
@@ -1687,10 +1685,10 @@ ${'='.repeat(80)}
     let targetVersion: string;
 
     if (component === 'current' || version === 'current') {
-      if (!(this.model as any).context) {
+      if (!this.model!.context) {
         throw new Error('No component context loaded. Use "on <component> <version>" first.');
       }
-      const target = (this.model as any).context;
+      const target = this.model!.context;
       targetComponent = component === 'current' ? target.model.component : component;
       targetVersion = version === 'current' ? target.model.version.toString() : version;
     } else {
@@ -1799,10 +1797,10 @@ ${'='.repeat(80)}
     let targetComponent: string;
 
     if (component === 'current') {
-      if (!(this.model as any).context) {
+      if (!this.model!.context) {
         throw new Error('No component context loaded. Use "on <component> <version>" first.');
       }
-      targetComponent = (this.model as any).context.model.component;
+      targetComponent = this.model!.context.model.component;
     } else {
       targetComponent = component;
     }
@@ -1824,8 +1822,8 @@ ${'='.repeat(80)}
     await this.cleanupAllComponentScriptSymlinks(targetComponent, versions);
 
     // Clear context if we removed the loaded component
-    if ((this.model as any).context?.model?.component === targetComponent) {
-      (this.model as any).context = undefined;
+    if (this.model!.context?.model?.component === targetComponent) {
+      this.model!.context = undefined;
       this.updateModelPaths();
       console.log(`🔧 Cleared component context`);
     }
@@ -1888,7 +1886,7 @@ ${'='.repeat(80)}
     const nextVersion = await SemanticVersion.promote(targetVersion?.toString() || '0.0.0.0', versionPromotion);
     console.log(`🔧 Upgrading ${targetComponent}: ${targetVersion?.toString()} → ${nextVersion}`);
     
-    (this.model as any).toVersion = nextVersion;
+    this.model!.toVersion = nextVersion;
     
     if (target !== this) {
       this.model!.component = targetComponent;
@@ -1901,9 +1899,9 @@ ${'='.repeat(80)}
     console.log(`✅ ${targetComponent} ${nextVersion} created successfully`);
     console.log(`   Location: components/${targetComponent}/${nextVersion}`);
     
-    if ((this.model as any).context) {
-      (this.model as any).context.model.version = SemanticVersion.fromString(nextVersion);
-      (this.model as any).context.model.origin = `components/${targetComponent}/${nextVersion}`;
+    if (this.model!.context) {
+      this.model!.context.model.version = SemanticVersion.fromString(nextVersion);
+      // origin field removed — not part of Web4TSComponentModel
     }
     
     return this;
@@ -1916,11 +1914,11 @@ ${'='.repeat(80)}
   private async createVersionFromExisting(): Promise<void> {
     // PC.3: Use componentsDirectory accessor
     const sourcePath = path.join(this.componentsDirectory, this.model!.component || '', this.model!.version?.toString() || '');
-    const targetPath = path.join(this.componentsDirectory, this.model!.component || '', (this.model as any).toVersion);
+    const targetPath = path.join(this.componentsDirectory, this.model!.component || '', this.model!.toVersion || '');
     
     if (fs.existsSync(targetPath)) {
-      console.error(`❌ ERROR: Version ${(this.model as any).toVersion} already exists!`);
-      throw new Error(`Version ${(this.model as any).toVersion} already exists`);
+      console.error(`❌ ERROR: Version ${this.model!.toVersion} already exists!`);
+      throw new Error(`Version ${this.model!.toVersion} already exists`);
     }
     
     await this.copyDirectory(sourcePath, targetPath);
@@ -1977,7 +1975,7 @@ ${'='.repeat(80)}
     const packageJsonPath = path.join(targetPath, 'package.json');
     if (fs.existsSync(packageJsonPath)) {
       const packageContent = JSON.parse(await fs.promises.readFile(packageJsonPath, 'utf-8'));
-      packageContent.version = (this.model as any).toVersion;
+      packageContent.version = this.model!.toVersion;
       await fs.promises.writeFile(packageJsonPath, JSON.stringify(packageContent, null, 2));
     }
   }
@@ -2001,7 +1999,7 @@ ${'='.repeat(80)}
           let cliContent = await fs.promises.readFile(cliScriptPath, 'utf-8');
           cliContent = cliContent.replace(
             /COMPONENT_VERSION="[^"]+"/,
-            `COMPONENT_VERSION="${(this.model as any).toVersion}"`
+            `COMPONENT_VERSION="${this.model!.toVersion}"`
           );
           await fs.promises.writeFile(cliScriptPath, cliContent);
           console.log(`   ✅ CLI script updated: ${cliScript}`);
@@ -2020,7 +2018,7 @@ ${'='.repeat(80)}
     try {
       await this.updateLatestSymlink();
       await this.updateScriptsSymlinks();
-      console.log(`   🔗 Symlinks updated: latest → ${(this.model as any).toVersion}`);
+      console.log(`   🔗 Symlinks updated: latest → ${this.model!.toVersion}`);
     } catch (error: any) {
       console.log(`   ⚠️ Symlink update had issues: ${error.message}`);
     }
@@ -2039,7 +2037,7 @@ ${'='.repeat(80)}
       if (fs.existsSync(latestPath)) {
         await fs.promises.unlink(latestPath);
       }
-      await fs.promises.symlink((this.model as any).toVersion, latestPath);
+      await fs.promises.symlink(this.model!.toVersion || '', latestPath);
     } catch (error: any) {
       console.log(`   ⚠️ Could not update latest symlink: ${error.message}`);
     }
@@ -2062,7 +2060,7 @@ ${'='.repeat(80)}
    * Create version-specific script symlink
    * @cliHide
    */
-  private async createVersionScriptSymlink(version: string = (this.model as any).toVersion): Promise<void> {
+  private async createVersionScriptSymlink(version: string = this.model!.toVersion || ''): Promise<void> {
     const versionsDir = this.scriptsVersionDirectory;  // PC.3: Use accessor
     
     await fs.promises.mkdir(versionsDir, { recursive: true });

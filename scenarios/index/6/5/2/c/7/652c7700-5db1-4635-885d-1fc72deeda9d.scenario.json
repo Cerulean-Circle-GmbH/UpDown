@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "652c7700-5db1-4635-885d-1fc72deeda9d",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "652c7700-5db1-4635-885d-1fc72deeda9d",
+    "name": "vitest.config.ts",
+    "typeM3": "ATTRIBUTE",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/vitest.config.ts",
+    "definition": "Root component file: vitest.config.ts",
+    "filePath": "vitest.config.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-10T18:10:34.419Z",
+    "updatedAt": "2026-01-10T18:10:34.420Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/6/5/2/c/7/652c7700-5db1-4635-885d-1fc72deeda9d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "6/5/2/c/7/652c7700-5db1-4635-885d-1fc72deeda9d.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-10T18:10:34.419Z",
+    "updatedAt": "2026-01-10T18:10:34.419Z"
+  }
+}

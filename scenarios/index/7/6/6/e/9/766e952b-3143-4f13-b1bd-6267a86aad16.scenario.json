@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "766e952b-3143-4f13-b1bd-6267a86aad16",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "766e952b-3143-4f13-b1bd-6267a86aad16",
+    "name": "SHA256Provider.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/SHA256Provider.ts",
+    "definition": "TypeScript SHA256Provider class/interface",
+    "filePath": "src/ts/layer2/SHA256Provider.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-10T18:10:32.383Z",
+    "updatedAt": "2026-01-10T18:10:32.388Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/7/6/6/e/9/766e952b-3143-4f13-b1bd-6267a86aad16.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "7/6/6/e/9/766e952b-3143-4f13-b1bd-6267a86aad16.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-10T18:10:32.383Z",
+    "updatedAt": "2026-01-10T18:10:32.383Z"
+  }
+}

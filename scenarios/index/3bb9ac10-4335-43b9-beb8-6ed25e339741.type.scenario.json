@@ -1,0 +1,72 @@
+{
+  "ior": {
+    "uuid": "3bb9ac10-4335-43b9-beb8-6ed25e339741",
+    "component": "ONCE",
+    "version": "0.3.22.2"
+  },
+  "owner": "TsAstExtractor",
+  "model": {
+    "uuid": "3bb9ac10-4335-43b9-beb8-6ed25e339741",
+    "name": "ServerNameIndicationManagerModel",
+    "extends": null,
+    "implements": [],
+    "sourcePath": "src/ts/layer3/ServerNameIndicationManagerModel.interface.ts",
+    "indexPath": "scenarios/index/3bb9ac10-4335-43b9-beb8-6ed25e339741.type.scenario.json",
+    "symlinkPaths": [
+      "scenarios/type/ServerNameIndicationManagerModel.type.scenario.json"
+    ],
+    "attributes": [
+      {
+        "name": "uuid",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "iorComponent",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "iorVersion",
+        "type": "string",
+        "optional": true,
+        "defaultValue": null
+      },
+      {
+        "name": "defaultDomain",
+        "type": "string",
+        "optional": false,
+        "defaultValue": null
+      },
+      {
+        "name": "statistics",
+        "type": "StatisticsModel",
+        "optional": false,
+        "defaultValue": null
+      }
+    ],
+    "properties": [],
+    "references": [],
+    "collections": [
+      {
+        "name": "configuredDomains",
+        "elementType": "string"
+      }
+    ],
+    "methods": [],
+    "component": "ONCE",
+    "version": "0.3.22.2",
+    "createdAt": "2026-01-10T18:10:35.709Z",
+    "updatedAt": "2026-01-10T18:10:35.709Z",
+    "isInterface": true,
+    "isAbstract": false
+  }
+}

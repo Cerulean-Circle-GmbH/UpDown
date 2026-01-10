@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "314a332f-5fb4-4486-8b91-bfc8405a4d63",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "314a332f-5fb4-4486-8b91-bfc8405a4d63",
+    "name": "ServerListModel.interface.ts",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer3/ServerListModel.interface.ts",
+    "definition": "TypeScript ServerListModel.interface class/interface",
+    "filePath": "src/ts/layer3/ServerListModel.interface.ts",
+    "mimetype": "text/typescript",
+    "createdAt": "2026-01-10T18:10:32.743Z",
+    "updatedAt": "2026-01-10T18:10:32.746Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/3/1/4/a/3/314a332f-5fb4-4486-8b91-bfc8405a4d63.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "3/1/4/a/3/314a332f-5fb4-4486-8b91-bfc8405a4d63.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-10T18:10:32.743Z",
+    "updatedAt": "2026-01-10T18:10:32.743Z"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "ior": {
+    "uuid": "43f15431-6936-4332-bbc5-e61afed448aa",
+    "component": "Unit",
+    "version": "0.3.22.2"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "43f15431-6936-4332-bbc5-e61afed448aa",
+    "name": "LetsEncryptCertificateProvider.js",
+    "typeM3": "CLASS",
+    "origin": "ior:git:github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.2/src/ts/layer2/LetsEncryptCertificateProvider.ts",
+    "definition": "TypeScript LetsEncryptCertificateProvider class/interface",
+    "filePath": "dist/ts/layer2/LetsEncryptCertificateProvider.js",
+    "mimetype": "application/javascript",
+    "createdAt": "2026-01-10T18:10:33.349Z",
+    "updatedAt": "2026-01-10T18:10:33.350Z",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/4/3/f/1/5/43f15431-6936-4332-bbc5-e61afed448aa.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ]
+  },
+  "unit": {
+    "indexPath": "4/3/f/1/5/43f15431-6936-4332-bbc5-e61afed448aa.scenario.json",
+    "symlinkPaths": [
+      "type/Unit/0.3.22.2"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "Unit/0.3.22.2",
+    "createdAt": "2026-01-10T18:10:33.349Z",
+    "updatedAt": "2026-01-10T18:10:33.349Z"
+  }
+}
