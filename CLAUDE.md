@@ -137,3 +137,18 @@ docs/                # Project documentation
 ./web4tscomponent on COMPONENT VERSION build
 ./web4tscomponent on COMPONENT VERSION upgrade nextBuild
 ```
+
+---
+
+## MANDATORY CHECKLISTS (Read Before Every Commit)
+
+**READ these files at session start and before every commit:**
+
+1. **CMM3 Compliance Checklist**
+   - [GitHub](https://github.com/Cerulean-Circle-GmbH/Web4Articles/blob/dev/2025-10-17-UTC-0747/scrum.pmo/roles/_shared/cmm3.compliance.checklist.md) | [§/scrum.pmo/roles/_shared/cmm3.compliance.checklist.md](/Users/Shared/Workspaces/2cuGitHub/Web4Articles/scrum.pmo/roles/_shared/cmm3.compliance.checklist.md)
+
+2. **Web4 Principles Checklist (35 Principles)**
+   - [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/session/web4-principles-checklist.md) | [§/components/ONCE/0.3.22.1/session/web4-principles-checklist.md](/Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.22.1/session/web4-principles-checklist.md)
+
+3. **Web4 Component Anatomy Checklist**
+   - [GitHub](https://github.com/Cerulean-Circle-GmbH/UpDown/blob/dev/web4v0100/components/ONCE/0.3.22.1/session/web4-component-anatomy-checklist.md) | [§/components/ONCE/0.3.22.1/session/web4-component-anatomy-checklist.md](/Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.22.1/session/web4-component-anatomy-checklist.md)
