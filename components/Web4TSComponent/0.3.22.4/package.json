@@ -1,0 +1,20 @@
+{
+  "name": "@web4x/web4tscomponent",
+  "version": "0.3.22.4",
+  "type": "module",
+  "description": "Web4TSComponent - Standalone wrapper using @web4x/once",
+  "main": "dist/ts/layer5/Web4TSComponentCLI.js",
+  "private": true,
+  "scripts": {
+    "build": "./src/sh/build.sh",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@web4x/once": "file:../../ONCE/0.3.22.2"
+  }
+}
