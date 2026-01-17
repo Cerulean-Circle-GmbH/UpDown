@@ -19,7 +19,7 @@ import { execSync } from 'child_process';
 import { randomUUID } from 'crypto';
 import type { User } from '../layer3/User.interface.js';
 
-export class DefaultWeb4TSComponent implements Web4TSComponent {
+export class DefaultWeb4TSComponent implements  Web4TSComponent {
   public model!: Web4TSComponentModel; // Definite assignment - initialized in init() - public for CLI/external access
   private colors: Colors = DefaultColors.getInstance();
   private user?: User; // Optional User service (lazy initialization)
