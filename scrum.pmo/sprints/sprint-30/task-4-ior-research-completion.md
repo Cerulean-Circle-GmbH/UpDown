@@ -1,238 +1,253 @@
-# Task 4: IOR Infrastructure R.2-R.6 Research Completion
+→[Back to Planning Sprint 30](./planning.md)
 
-**Status:** 📋 PLANNED
-**Priority:** 2 (High - Complete IOR Vision)
-**Estimated Time:** 6 hours
-**Assignee:** TBD
-**Sprint:** 30
+# Task 4: IOR Infrastructure R.2-R.6 Research Completion
+[task:uuid:IOR-0004-2026-0118-RESEARCH-COMPLETION]
+
+## Naming Conventions
+- Tasks: `task-<number>-<short-description>.md`
+- Subtasks: `task-<number>.<subnumber>-<role>-<short-description>.md` (e.g., `task-4.1-researcher-browser-loading.md`)
+- Subtasks must always indicate the affected role in the filename.
+- Subtasks must be ordered to avoid blocking dependencies.
+
+## Status
+- [ ] Planned
+- [ ] In Progress
+  - [ ] refinement
+  - [ ] researching R.2
+  - [ ] researching R.3
+  - [ ] researching R.4
+  - [ ] researching R.5
+  - [ ] researching R.6
+  - [ ] documenting findings
+- [ ] QA Review
+- [ ] Done
+
+## Traceability
+- Source: Web4 IOR Infrastructure Vision - Research Phase R.2-R.6
+- **Up:**
+  - [Web4 IOR Infrastructure Vision PDCA](../../components/ONCE/0.3.22.1/session/2025-12-22-UTC-0100.web4-ior-infrastructure-vision.pdca.md)
+  - [Iteration Tracking PDCA](../../components/ONCE/0.3.22.1/session/2025-12-12-UTC-2100.iteration-tracking.pdca.md)
+- **Down:**
+  - [ ] [Task 4.1: Researcher - Browser Loading Research](./task-4.1-researcher-browser-loading.md)
+  - [ ] [Task 4.2: Researcher - Descriptor Chain Research](./task-4.2-researcher-descriptor-chain.md)
+  - [ ] [Task 4.3: Researcher - CSS Loading Research](./task-4.3-researcher-css-loading.md)
+  - [ ] [Task 4.4: Researcher - PWA Offline Strategy](./task-4.4-researcher-pwa-offline.md)
+  - [ ] [Task 4.5: Researcher - WebSocket Sync Integration](./task-4.5-researcher-websocket-sync.md)
 
 ---
 
-## **Objective**
-
+## **What** (WODA)
 Complete remaining 5 research tasks (R.2-R.6) for Web4 IOR Infrastructure Vision, establishing the complete resource access chain from Node.js to PWA offline mode.
 
----
+## **Overview** (WODA)
+- **Priority:** 2 (High - Complete IOR Vision)
+- **Estimated Time:** 6 hours
+- **Current State:** R.1 complete (Node.js file loading mapped), R.2-R.6 pending
+- **Target State:** Complete resource chain documented (Node.js → Browser → PWA → WebSocket sync)
+- **Progress:** IOR Infrastructure Research 20% → 50%+ after completion
+- **Can run parallel to:** Task 1 (FFM.4a), Task 2 (FFM.4b) - Independent research phase
 
-## **Background**
+## Context
+Web4 IOR Infrastructure vision requires mapping the complete resource access chain. R.1 mapped Node.js file loading (15 files, 99 fs calls). R.2-R.6 extend this across browser resource loading, descriptor chains, CSS injection, PWA offline strategies, and WebSocket synchronization. This research establishes clear migration paths for all resource types.
 
-From [2025-12-22-UTC-0100.web4-ior-infrastructure-vision.pdca.md](../../components/ONCE/0.3.22.1/session/2025-12-22-UTC-0100.web4-ior-infrastructure-vision.pdca.md):
-
-**Vision:** Complete Web4 chain — Node.js load → Unit → Descriptor → Browser → CSS → PWA → Offline → WebSocket sync
-
-**Goal:** ALL resource access via IOR — NO fetch(), NO fs functions
-
-**Current State:**
-- ✅ R.1: Node.js file loading mapped (15 files, 99 fs calls)
-- ⏳ R.2-R.6: Remaining research tasks
-
----
-
-## **Requirements**
-
-### **R.2: Browser Resource Loading Research** (~1.5h)
-- [ ] Map all browser-side resource loads (fetch, import, etc.)
-- [ ] Document current loading patterns
-- [ ] Identify IOR.load() conversion candidates
-- [ ] Note browser-specific constraints (CORS, same-origin)
-
-### **R.3: Descriptor Chain Research** (~1h)
-- [ ] Trace component.json → Unit → Artefact chain
-- [ ] Document current descriptor loading flow
-- [ ] Identify where IOR integration should occur
-- [ ] Map dependencies between descriptors
-
-### **R.4: CSS Loading via IOR Research** (~1h)
-- [ ] Analyze current CSSLoader implementation
-- [ ] Document how CSS becomes IOR-accessible
-- [ ] Research CSS injection patterns for IOR
-- [ ] Identify inline vs link tag approaches
-
-### **R.5: PWA Offline Resource Strategy** (~1.5h)
-- [ ] Research Service Worker caching with IOR
-- [ ] Document offline-first resource strategy
-- [ ] Map IOR → SW cache integration points
-- [ ] Identify cache invalidation patterns
-
-### **R.6: WebSocket Sync Integration** (~1h)
-- [ ] Research how IOR resources sync over WebSocket
-- [ ] Document peer-to-peer resource sharing
-- [ ] Identify conflict resolution strategies
-- [ ] Map IOR version tracking for sync
+## Intention
+Create comprehensive technical foundation for IOR Infrastructure implementation. Document current resource access patterns across all layers (Node.js, Browser, PWA, offline). Identify integration points where IOR.load() replaces fetch()/fs functions. Enable teams to execute fs→IOR migration (Tasks 5-6) with clear, researched approaches.
 
 ---
 
-## **Deliverables**
+## **Details** (WODA)
 
-For each research task (R.2-R.6), produce:
+### Research Tasks Breakdown
 
-1. **Findings Document** (in PDCA):
-   - Current state analysis
-   - IOR integration points identified
-   - Technical constraints documented
-   - Recommended approach
+| Task | Duration | Focus | Output |
+|------|----------|-------|--------|
+| R.2 | 1.5h | Browser resource loads (fetch, import, dynamic) | Loading pattern analysis + IOR migration points |
+| R.3 | 1h | Descriptor chain (component.json → Unit → Artefact) | Descriptor dependency map + IOR integration |
+| R.4 | 1h | CSS loading via IOR (injection patterns) | CSS access patterns + IOR approach |
+| R.5 | 1.5h | PWA offline strategy (Service Worker + IOR) | Offline caching strategy + IOR sync |
+| R.6 | 1h | WebSocket resource sync (peer-to-peer) | Sync patterns + conflict resolution |
 
-2. **Code Examples**:
-   - Current pattern (before IOR)
-   - Proposed pattern (with IOR)
-   - Migration complexity estimate
+### Deliverables per Research Task (R.2-R.6)
 
-3. **Dependency Map**:
-   - Prerequisites for implementation
-   - Blockers identified
+For each research task, produce in PDCA:
+
+1. **Current State Analysis:**
+   - How resource loading works today
+   - Pain points and constraints
+   - Files/code involved
+
+2. **IOR Integration Approach:**
+   - Proposed migration pattern
+   - Technical changes required
+   - Browser/PWA constraints addressed
+
+3. **Code Examples:**
+   - CURRENT: Existing pattern (fetch, fs, dynamic import)
+   - PROPOSED: IOR-based pattern
+   - Feasibility verification
+
+4. **Migration Impact:**
+   - Effort estimate (hours)
+   - Prerequisites identified
+   - Blockers/risks documented
    - Integration points with other R tasks
 
----
-
-## **Acceptance Criteria**
-
-1. **Completeness:**
-   - All 5 research tasks (R.2-R.6) documented
-   - Complete chain from browser fetch → WebSocket sync mapped
-   - No gaps in IOR integration vision
-
-2. **Quality:**
-   - Technical feasibility verified for each approach
-   - Code examples compile and make sense
-   - Constraints clearly documented
-
-3. **Actionability:**
-   - Clear next steps for implementation
-   - Migration effort estimated for each area
-   - Integration points identified
-
-4. **Documentation:**
-   - PDCA updated with all findings
-   - Diagrams/flowcharts for complex chains
-   - Reference code examples committed
+5. **Next Steps:**
+   - Concrete action items for implementation
+   - Testing approach
+   - Rollback plan
 
 ---
 
-## **Technical Focus Areas**
+## **Actions** (WODA)
 
-### **R.2: Browser Loading**
-Key questions to answer:
-- How to replace fetch() with IOR.load()?
-- Can dynamic imports use IOR?
-- How to handle CORS with IOR?
-- What about external resources?
+### Phase 1: Research Planning
+- [ ] Review R.1 findings (Node.js file loading baseline)
+- [ ] Define research scope and constraints for each R task
+- [ ] Identify integration dependencies between R.2-R.6
+- [ ] Create findings template (PDCA structure)
 
-### **R.3: Descriptor Chain**
-Key questions:
-- How does component.json reference units via IOR?
-- How to handle nested dependencies?
-- Circular dependency prevention?
-- Version mismatch detection?
+### Phase 2: Execute Research Tasks
+- [ ] **R.2: Browser Resource Loading**
+  - Map all fetch() calls in codebase
+  - Document dynamic import patterns
+  - Identify CORS constraints
+  - Propose IOR.load() replacement strategy
+  - Effort estimate for migration
 
-### **R.4: CSS Loading**
-Key questions:
-- Inline styles vs link tags with IOR?
-- How to inject CSS from IOR reference?
-- Scoping and precedence with IOR?
-- Hot reload with IOR?
+- [ ] **R.3: Descriptor Chain**
+  - Trace component.json loading flow
+  - Document Unit → Artefact resolution
+  - Map nested dependency patterns
+  - Identify circular dependency prevention
+  - Propose IOR integration points
 
-### **R.5: PWA Offline**
-Key questions:
-- How does SW cache IOR resources?
-- Offline-first strategy with IOR?
-- Cache invalidation on IOR version change?
-- Fallback for missing IOR resources?
+- [ ] **R.4: CSS Loading via IOR**
+  - Analyze CSSLoader implementation
+  - Document CSS injection patterns
+  - Compare inline vs link tag approaches
+  - Identify scoping/precedence issues
+  - Propose IOR-based CSS access
 
-### **R.6: WebSocket Sync**
-Key questions:
-- How to sync IOR resources between peers?
-- Conflict resolution for same IOR?
-- Bandwidth optimization (delta sync)?
-- Version tracking across peers?
+- [ ] **R.5: PWA Offline Resource Strategy**
+  - Research Service Worker caching patterns
+  - Document offline-first requirements
+  - Map IOR → SW cache integration
+  - Identify cache invalidation strategy
+  - Propose fallback patterns
+
+- [ ] **R.6: WebSocket Resource Sync**
+  - Research peer-to-peer sync patterns
+  - Document IOR version tracking
+  - Identify conflict resolution strategies
+  - Analyze bandwidth optimization (delta sync)
+  - Propose sync protocol for IOR resources
+
+### Phase 3: Consolidation & Documentation
+- [ ] Consolidate all 5 research findings in PDCA
+- [ ] Create integration dependency diagram
+- [ ] Verify code examples (compile check)
+- [ ] Estimate total migration effort across all R tasks
+- [ ] Document next steps for implementation
+- [ ] QA review of findings
 
 ---
 
-## **Dependencies**
+## Acceptance Criteria
 
-### **Prerequisites:**
-- ✅ R.1 complete (Node.js mapping done)
-- ✅ IOR Infrastructure I.1-I.6 (85% complete)
-
-### **Enables:**
-- 🟢 Task 5 (DefaultUnit IOR Migration)
-- 🟢 Task 6 (DefaultWeb4TSComponent IOR Migration)
-- 🟢 Complete IOR Infrastructure vision
-
----
-
-## **Output Format**
-
-Update PDCA with this structure for each research task:
-
-```markdown
-### R.X: [Task Name]
-
-**Status:** ✅ COMPLETE
-
-**Current State:**
-- [How it works now]
-- [Pain points]
-
-**IOR Integration Approach:**
-- [Proposed pattern]
-- [Technical changes needed]
-
-**Code Example:**
+**Web4Requirement Integration:**
 ```typescript
-// CURRENT:
-// [existing code]
-
-// PROPOSED (with IOR):
-// [IOR-based code]
+// In test/tootsie/Test_IOR_Research_R2R6.ts
+const req = this.requirement('IOR Infrastructure R.2-R.6 Research', 'Complete resource chain mapping');
+req.addCriterion('AC-01', 'R.2 Browser loading documented with IOR patterns');
+req.addCriterion('AC-02', 'R.3 Descriptor chain mapped with dependency analysis');
+req.addCriterion('AC-03', 'R.4 CSS loading approach documented');
+req.addCriterion('AC-04', 'R.5 PWA offline strategy defined');
+req.addCriterion('AC-05', 'R.6 WebSocket sync patterns identified');
+req.addCriterion('AC-06', 'All code examples verified for feasibility');
+req.addCriterion('AC-07', 'Migration effort estimated for each R task');
+req.addCriterion('AC-08', 'Integration dependencies documented');
 ```
 
-**Migration Effort:** Xh
-
-**Prerequisites:**
-- [List dependencies]
-
-**Blockers:**
-- [List any blockers]
-
-**Next Steps:**
-- [Concrete action items]
-```
+- [ ] **AC-01:** R.2 (Browser Loading) findings documented with fetch() → IOR.load() patterns
+- [ ] **AC-02:** R.3 (Descriptor Chain) dependency map with nested resolution documented
+- [ ] **AC-03:** R.4 (CSS Loading) approach with inline/link tag analysis documented
+- [ ] **AC-04:** R.5 (PWA Offline) Service Worker strategy with cache invalidation documented
+- [ ] **AC-05:** R.6 (WebSocket Sync) peer-to-peer sync with conflict resolution documented
+- [ ] **AC-06:** Code examples compile and demonstrate feasibility
+- [ ] **AC-07:** Migration effort estimated (hours) for each area
+- [ ] **AC-08:** PDCA updated with all findings and integration points
+- [ ] **AC-09:** Diagrams/flowcharts created for complex chains (R.3, R.5, R.6)
+- [ ] **AC-10:** Team review completed
+- [ ] **AC-11:** No gaps in resource access chain (Node.js → PWA offline)
 
 ---
 
-## **Definition of Done**
+## Dependencies
 
-- [ ] R.2 (Browser Loading) research complete and documented
-- [ ] R.3 (Descriptor Chain) research complete and documented
-- [ ] R.4 (CSS Loading) research complete and documented
-- [ ] R.5 (PWA Offline) research complete and documented
-- [ ] R.6 (WebSocket Sync) research complete and documented
-- [ ] All code examples verified
-- [ ] Migration estimates provided for each area
-- [ ] PDCA updated with complete vision
-- [ ] Team review completed
+### Prerequisites:
+- ✅ R.1 complete (Node.js file loading mapped)
+- ✅ IOR Infrastructure I.1-I.6 (85% complete)
+- ✅ Component architecture understanding
+
+### Blocks:
+- 🔵 Task 5 (DefaultUnit IOR Migration - requires R.2-R.6 guidance)
+- 🔵 Task 6 (DefaultWeb4TSComponent IOR Migration - requires R.2-R.6 guidance)
+
+### Can run parallel to:
+- 🟢 Task 1 (FFM.4a Scenario Housekeeping - independent)
+- 🟢 Task 2 (FFM.4b ServerHierarchyManager - independent)
+- 🟢 Task 3 (FFM.5-7 fs migration - independent)
 
 ---
 
-## **Related Documents**
+## Definition of Done
+
+- [ ] All 5 research tasks (R.2-R.6) findings documented in PDCA
+- [ ] Current state analysis for each resource type complete
+- [ ] IOR integration approach defined for each resource type
+- [ ] Code examples provided and verified (compile check)
+- [ ] Migration effort estimated for each area
+- [ ] Integration dependencies between R tasks documented
+- [ ] No gaps in resource access chain (Node.js → PWA → offline → WebSocket)
+- [ ] Diagrams/flowcharts created for complex chains
+- [ ] PDCA entry updated with complete vision
+- [ ] Team review completed and feedback incorporated
+- [ ] Findings enable Task 5-6 implementation with confidence
+
+---
+
+## QA Audit & User Feedback
+
+### TRON Requirements - IOR Infrastructure Research
+```quote
+Complete remaining research tasks (R.2-R.6) establishing the complete resource access chain from Node.js to PWA offline mode. All resource access via IOR — NO fetch(), NO fs functions.
+```
+
+- **Issue:** Incomplete understanding of resource access patterns across all layers
+- **Resolution:** Systematic research of each layer with IOR integration approach identified
+- **Pattern:** Research-driven implementation (findings guide Tasks 5-6)
+
+### Web4 Principles Verified
+- [ ] **P1:** Everything is a Scenario (resource access in scenario context)
+- [ ] **P6:** Empty Constructor + init() (research findings shape patterns)
+- [ ] **P34:** IOR as Unified Entry Point (replaces fetch(), fs, dynamic import)
+- [ ] **P25:** Tootsie Tests Only (Web4Requirement-based verification)
+
+---
+
+## Related Documents
 
 - [PDCA: Web4 IOR Infrastructure Vision](../../components/ONCE/0.3.22.1/session/2025-12-22-UTC-0100.web4-ior-infrastructure-vision.pdca.md)
 - [PDCA: IOR Infrastructure Implementation](../../components/ONCE/0.3.22.1/session/2025-12-20-UTC-1315.ior-infrastructure-universal-access.pdca.md)
 - [PDCA: fs→IOR Migration](../../components/ONCE/0.3.22.1/session/2025-12-22-UTC-0200.fs-to-ior-migration.pdca.md)
 - [Iteration Tracking PDCA](../../components/ONCE/0.3.22.1/session/2025-12-12-UTC-2100.iteration-tracking.pdca.md)
+- [Web4 Principles Checklist](../../components/ONCE/0.3.22.1/session/web4-principles-checklist.md)
+- [CMM3 Compliance Checklist](../../../Web4Articles/scrum.pmo/roles/_shared/cmm3.compliance.checklist.md)
 
 ---
 
-## **Success Metrics**
-
-This research completes the IOR Infrastructure vision:
-- 🎯 Complete resource chain documented (Node.js → PWA)
-- 🎯 Clear migration path for ALL resource types
-- 🎯 IOR Infrastructure 10% → 50%+ (research phase complete)
-- 🎯 Foundation for fs→IOR migration (Tasks 5-6)
-
----
-
-**Created:** 2026-01-17
-**Last Updated:** 2026-01-17
-**Sprint:** [Sprint 30 Planning](./planning.md)
+*Sprint 30 - IOR Infrastructure R.2-R.6 Research Completion*
+*Priority: 2 (High) - Complete IOR Vision*
+*Pattern: Systematic Research with IOR Integration Approach*
+*Parallel Tasks: FFM.4a, FFM.4b, FFM.5-7*

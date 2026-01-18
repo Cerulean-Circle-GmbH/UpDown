@@ -1,189 +1,269 @@
+[Back to Planning Sprint 30](./planning.md)
+
 # Task 5: DefaultUnit IOR Migration
+[task:uuid:IOR-0005-2026-0118-DEFAULTUNIT-MIGRATION]
 
-**Status:** 📋 PLANNED
-**Priority:** 2 (High - IOR Pattern Adoption)
-**Estimated Time:** 1 hour
-**Assignee:** TBD
-**Sprint:** 30
+## Naming Conventions
+- Tasks: `task-<number>-<short-description>.md`
+- Subtasks: `task-<number>.<subnumber>-<role>-<short-description>.md` (e.g., `task-5.1-developer-ior-analysis.md`)
+- Subtasks must always indicate the affected role in the filename.
+- Subtasks must be ordered to avoid blocking dependencies.
 
----
+## Status
+- [ ] Planned
+- [ ] In Progress
+  - [ ] refinement
+  - [ ] creating test cases
+  - [ ] implementing
+  - [ ] testing
+- [ ] QA Review
+- [ ] Done
 
-## **Objective**
-
-Migrate 4 fs calls in DefaultUnit to IOR.load() / IOR.save() pattern, establishing the reference implementation for IOR-based resource access.
-
----
-
-## **Background**
-
-From [2025-12-22-UTC-0200.fs-to-ior-migration.pdca.md](../../components/ONCE/0.3.22.1/session/2025-12-22-UTC-0200.fs-to-ior-migration.pdca.md):
-
-**Current State:**
-- DefaultUnit has ~4 fs calls for reading component metadata
-- Uses fs.readFileSync() for package.json, component.json, etc.
-- Small, focused scope makes it ideal first migration target
-
-**Target State:**
-- All resource loads via IOR.load()
-- All resource saves via IOR.save()
-- Pattern established for larger migrations (Task 6)
-
----
-
-## **Requirements**
-
-### **1. Identify fs Calls in DefaultUnit**
-- [ ] Scan DefaultUnit.ts for all fs.* calls
-- [ ] Document purpose of each call
-- [ ] Determine if read-only or read-write
-
-Expected calls:
-- `fs.readFileSync('package.json')`
-- `fs.readFileSync('component.json')`
-- `fs.readFileSync('tsconfig.json')`
-- `fs.existsSync(...)` checks
-
-### **2. Replace with IOR Pattern**
-- [ ] Replace `fs.readFileSync()` with `await IOR.load(path)`
-- [ ] Replace `fs.writeFileSync()` with `await IOR.save(path, content)`
-- [ ] Replace `fs.existsSync()` with IOR existence check
-- [ ] Convert methods to async if needed
-
-### **3. Update Method Signatures**
-- [ ] Convert sync methods to async
-- [ ] Update return types to Promise<T>
-- [ ] Ensure proper await usage throughout
-- [ ] Update calling code in test files
+## Traceability
+- Source: Web4 IOR Infrastructure Completion - DefaultUnit fs→IOR Migration Phase
+- **Up:**
+  - [Iteration Tracking PDCA](../../components/ONCE/0.3.22.1/session/2025-12-12-UTC-2100.iteration-tracking.pdca.md)
+  - [fs→IOR Migration PDCA](../../components/ONCE/0.3.22.1/session/2025-12-22-UTC-0200.fs-to-ior-migration.pdca.md)
+- **Down:**
+  - [ ] [Task 5.1: Developer - IOR Pattern Analysis](./task-5.1-developer-ior-analysis.md)
+  - [ ] [Task 5.2: Developer - IOR Implementation](./task-5.2-developer-ior-implementation.md)
+  - [ ] [Task 5.3: Developer - Async Method Migration](./task-5.3-developer-async-migration.md)
 
 ---
 
-## **Acceptance Criteria**
+## **What** (WODA)
+Migrate 4 fs calls in DefaultUnit to IOR.load() / IOR.save() pattern, establishing the reference implementation for IOR-based resource access across ONCE.
 
-1. **Code Quality:**
-   - Zero fs.* calls in DefaultUnit.ts
-   - All resource loads via IOR.load()
-   - All resource saves via IOR.save()
-   - Proper async/await usage
+## **Overview** (WODA)
+- **Priority:** 2 (High - IOR Pattern Adoption)
+- **Estimated Time:** 1 hour
+- **Current State:** DefaultUnit uses fs.readFileSync() for metadata, mixed fs/IOR usage
+- **Target State:** 100% IOR-based resource access via IOR.load()/IOR.save()
+- **Progress:** Web4 IOR Infrastructure 10% → 20% after completion
 
-2. **Functionality:**
-   - All existing tests passing
-   - No regressions in unit operations
-   - Performance comparable to previous
+## Context
+DefaultUnit currently reads component metadata (package.json, component.json, etc.) using synchronous fs calls. This creates a blocking operation and couples the code to Node.js file system, violating P34 (IOR as Unified Entry Point). The small, focused scope (4 fs calls) makes DefaultUnit the ideal first migration target to establish patterns for larger migrations (Task 6 with 32+ calls).
 
-3. **Pattern Establishment:**
-   - Clear IOR pattern for Task 6 to follow
-   - Code comments explain IOR usage
-   - Example for other components
-
-4. **Documentation:**
-   - PDCA entry updated with migration details
-   - Pattern documented for reference
-   - Lessons learned captured
+## Intention
+Create Web4 compliant resource access using IOR abstraction layer. Enable DefaultUnit to work seamlessly in both Node.js and browser contexts through IOR virtualization. Establish the reference pattern for DefaultWeb4TSComponent (Task 6) and future component migrations.
 
 ---
 
-## **Technical Approach**
+## **Details** (WODA)
 
-### **Migration Pattern:**
+### Files to Modify:
+| File | Purpose | fs calls to migrate |
+|------|---------|---------------------|
+| `layer2/DefaultUnit.ts` | Unit initialization, metadata loading | 4 |
+| `test/*Unit*` | Unit test updates for async API | 2-3 test calls |
 
-**File Read (OLD):**
+### Technical Specifications (Complete Code)
+
+**Current State (OLD - fs-based):**
 ```typescript
-const packageJson = JSON.parse(
-  fs.readFileSync('package.json', 'utf8')
-);
+// File: components/ONCE/0.3.22.2/src/layer2/DefaultUnit.ts
+import fs from 'fs';
+
+export class DefaultUnit implements Unit {
+  model!: UnitModel;
+
+  init(scenario: Scenario<UnitModel>): this {
+    this.model = scenario.model;
+
+    // OLD (fs-based, blocking):
+    const packageJson = JSON.parse(
+      fs.readFileSync('package.json', 'utf8')
+    );
+    const componentJson = JSON.parse(
+      fs.readFileSync('component.json', 'utf8')
+    );
+
+    if (fs.existsSync('tsconfig.json')) {
+      const tsconfig = JSON.parse(
+        fs.readFileSync('tsconfig.json', 'utf8')
+      );
+      this.model.config = tsconfig;
+    }
+
+    return this;
+  }
+}
 ```
 
-**File Read (NEW with IOR):**
+**Target State (NEW - IOR-based):**
 ```typescript
-const packageJson = JSON.parse(
-  await IOR.load('package.json')
-);
+// File: components/ONCE/0.3.22.2/src/layer2/DefaultUnit.ts
+import { IOR } from '../layer3/IOR.interface';
+
+export class DefaultUnit implements Unit {
+  model!: UnitModel;
+  private ior!: IOR;
+
+  init(scenario: Scenario<UnitModel>): this {
+    this.model = scenario.model;
+    return this;
+  }
+
+  // Convert to async for IOR support
+  async loadMetadata(): Promise<this> {
+    // NEW (IOR-based, abstracted):
+    const packageJson = JSON.parse(
+      await this.ior.load('package.json')
+    );
+    const componentJson = JSON.parse(
+      await this.ior.load('component.json')
+    );
+
+    try {
+      const tsconfig = JSON.parse(
+        await this.ior.load('tsconfig.json')
+      );
+      this.model.config = tsconfig;
+    } catch (e) {
+      // File doesn't exist - IOR throws instead of returning false
+      this.model.config = undefined;
+    }
+
+    return this;
+  }
+}
 ```
 
-**File Write (OLD):**
+**IOR Load/Save Pattern:**
 ```typescript
-fs.writeFileSync(
-  'component.json',
-  JSON.stringify(componentData, null, 2)
-);
-```
+// PATTERN: File Read
+// OLD: const data = JSON.parse(fs.readFileSync(path, 'utf8'));
+// NEW:
+const data = JSON.parse(await IOR.load(path));
 
-**File Write (NEW with IOR):**
-```typescript
-await IOR.save(
-  'component.json',
-  JSON.stringify(componentData, null, 2)
-);
-```
+// PATTERN: File Write
+// OLD: fs.writeFileSync(path, JSON.stringify(data));
+// NEW:
+await IOR.save(path, JSON.stringify(data));
 
-**Existence Check (OLD):**
-```typescript
-if (fs.existsSync(path)) { ... }
-```
-
-**Existence Check (NEW with IOR):**
-```typescript
+// PATTERN: Existence Check
+// OLD: if (fs.existsSync(path)) { ... }
+// NEW:
 try {
   await IOR.load(path);
-  // exists
-} catch {
-  // doesn't exist
+  // File exists
+} catch (e) {
+  // File doesn't exist
 }
 ```
 
 ---
 
-## **Dependencies**
+## **Actions** (WODA)
 
-### **Prerequisites:**
+### 1. Identify fs Calls in DefaultUnit
+- [ ] Scan DefaultUnit.ts for all fs.* calls
+- [ ] Document purpose of each call (read vs write, blocking vs async)
+- [ ] Verify count matches 4 expected calls
+- [ ] Identify all fs module imports to remove
+
+### 2. Replace with IOR Pattern
+- [ ] Replace all `fs.readFileSync()` calls with `await IOR.load(path)`
+- [ ] Replace any `fs.writeFileSync()` calls with `await IOR.save(path, content)`
+- [ ] Replace `fs.existsSync()` checks with try/catch around IOR.load()
+- [ ] Remove fs module import from DefaultUnit.ts
+
+### 3. Update Method Signatures to Async
+- [ ] Identify methods that perform file I/O
+- [ ] Convert sync methods to async (e.g., `init()` → async if needed)
+- [ ] Update return types from `this` to `Promise<this>`
+- [ ] Ensure proper await usage in all calling code
+- [ ] Update type signatures in tests
+
+### 4. Update Tests for Async API
+- [ ] Update test calls to use await for async methods
+- [ ] Verify all unit tests passing with async API
+- [ ] Add test for IOR existence check (try/catch pattern)
+- [ ] No regressions in unit operations
+
+---
+
+## Acceptance Criteria
+
+**Web4Requirement Integration:**
+```typescript
+// In test/tootsie/Test_IOR0005_DefaultUnitMigration.ts
+const req = this.requirement('IOR.0005 DefaultUnit Migration', 'IOR.load()/save() replaces fs.*');
+req.addCriterion('AC-01', 'All 4 fs.* calls replaced with IOR methods');
+req.addCriterion('AC-02', 'IOR abstraction enables Node.js and browser contexts');
+req.addCriterion('AC-03', 'Async/await properly implemented in all methods');
+req.addCriterion('AC-04', 'Zero fs module imports remaining in DefaultUnit');
+```
+
+- [ ] **AC-01:** All 4 fs.* calls replaced with IOR.load()/IOR.save()
+- [ ] **AC-02:** DefaultUnit works with IOR abstraction (browser/Node.js agnostic)
+- [ ] **AC-03:** All file I/O methods properly async with correct signatures
+- [ ] **AC-04:** Zero fs module imports in DefaultUnit.ts
+- [ ] **AC-05:** Unit tests passing (90%+ coverage maintained)
+- [ ] **AC-06:** Manual test: DefaultUnit loads metadata correctly
+- [ ] **AC-07:** Manual test: IOR pattern verified for Task 6 reference
+
+---
+
+## Dependencies
+
+### Prerequisites:
 - ✅ IOR Infrastructure I.1-I.6 (85% complete)
+- ✅ IOR.load() / IOR.save() API stabilized
 - 🔵 Task 4 (R.2-R.6 Research) - recommended but not blocking
 
-### **Blocks:**
+### Blocks:
 - None (parallel work possible)
 
-### **Enables:**
-- 🟢 Task 6 (DefaultWeb4TSComponent migration)
-- 🟢 IOR pattern reference for other components
+### Enables:
+- 🟢 Task 6 (DefaultWeb4TSComponent IOR migration - 32 calls)
+- 🟢 IOR pattern reference for all future component migrations
 
 ---
 
-## **Files to Modify**
-
-- `components/ONCE/0.3.22.2/src/layer2/DefaultUnit.ts` (primary)
-- `components/ONCE/0.3.22.2/test/*Unit*` (test updates for async)
-
----
-
-## **Definition of Done**
+## Definition of Done
 
 - [ ] All 4 fs calls replaced with IOR methods
 - [ ] fs module import removed from DefaultUnit.ts
 - [ ] All methods properly async with correct signatures
-- [ ] All unit tests passing
-- [ ] Manual test: unit operations work correctly
-- [ ] Pattern documented in PDCA
-- [ ] Code reviewed and merged
+- [ ] All unit tests passing with 90%+ coverage
+- [ ] Manual test: DefaultUnit metadata loading works
+- [ ] Manual test: IOR pattern verified and documented
+- [ ] Tootsie tests with Web4Requirement passing
+- [ ] PDCA entry updated with results
+- [ ] Code reviewed and merged to dev/claudeFlow.v1
 
 ---
 
-## **Related Documents**
+## QA Audit & User Feedback
+
+### TRON Requirements - DefaultUnit IOR Migration
+```quote
+Migrate 4 fs calls in DefaultUnit to IOR.load() / IOR.save() pattern, establishing reference implementation for IOR-based resource access
+```
+
+- **Issue:** DefaultUnit couples to Node.js fs API, blocks browser compatibility
+- **Resolution:** IOR abstraction virtualizes all resource access
+- **Pattern:** Radical OOP with IOR.load()/IOR.save() (P34 compliant)
+
+### Web4 Principles Verified
+- [ ] **P1:** Everything is a Scenario (metadata in unit model)
+- [ ] **P6:** Empty Constructor + init(scenario)
+- [ ] **P34:** IOR as Unified Entry Point (replaces direct fs calls)
+- [ ] **P25:** Tootsie Tests Only (Web4Requirement based)
+
+---
+
+## Related Documents
 
 - [PDCA: fs→IOR Migration](../../components/ONCE/0.3.22.1/session/2025-12-22-UTC-0200.fs-to-ior-migration.pdca.md)
 - [PDCA: IOR Infrastructure](../../components/ONCE/0.3.22.1/session/2025-12-20-UTC-1315.ior-infrastructure-universal-access.pdca.md)
-- [Iteration Tracking PDCA](../../components/ONCE/0.3.22.1/session/2025-12-12-UTC-2100.iteration-tracking.pdca.md)
+- [PDCA: Iteration Tracking](../../components/ONCE/0.3.22.1/session/2025-12-12-UTC-2100.iteration-tracking.pdca.md)
+- [Web4 Principles Checklist](../../components/ONCE/0.3.22.1/session/web4-principles-checklist.md)
+- [CMM3 Compliance Checklist](../../../Web4Articles/scrum.pmo/roles/_shared/cmm3.compliance.checklist.md)
 
 ---
 
-## **Notes**
-
-- Small scope (4 calls) makes this quick win
-- Establishes pattern for larger Task 6 migration
-- Should complete in ~1h if IOR infrastructure stable
-- Good opportunity to verify IOR.load()/save() API design
-
----
-
-**Created:** 2026-01-17
-**Last Updated:** 2026-01-17
-**Sprint:** [Sprint 30 Planning](./planning.md)
+*Sprint 30 - IOR.0005 DefaultUnit IOR Migration*
+*Priority: High - IOR Pattern Adoption & Reference Implementation*
+*Pattern: Radical OOP with IOR Abstraction Layer (P34)*

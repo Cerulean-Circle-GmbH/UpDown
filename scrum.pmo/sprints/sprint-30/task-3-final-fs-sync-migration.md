@@ -1,212 +1,243 @@
+→[Back to Planning Sprint 30](./planning.md)
+
 # Task 3: FFM.5-FFM.7 Final fs Sync Call Migration
+[task:uuid:FFM57-0003-2026-0118-FINAL-FS-MIGRATION]
 
-**Status:** 📋 PLANNED
-**Priority:** 1 (Critical - 100% OOP Achievement)
-**Estimated Time:** 9 hours
-**Assignee:** TBD
-**Sprint:** 30
+## Naming Conventions
+- Tasks: `task-<number>-<short-description>.md`
+- Subtasks: `task-<number>.<subnumber>-<role>-<short-description>.md` (e.g., `task-3.1-developer-defaultunit-migration.md`)
+- Subtasks must always indicate the affected role in the filename.
+- Subtasks must be ordered to avoid blocking dependencies.
 
----
+## Status
+- [ ] Planned
+- [ ] In Progress
+  - [ ] refinement
+  - [ ] creating test cases
+  - [ ] implementing
+  - [ ] testing
+- [ ] QA Review
+- [ ] Done
 
-## **Objective**
-
-Eliminate all remaining ~80 sync fs calls across the codebase, achieving 100% File/Folder OOP architecture completion. This is the final step in the File/Folder Architecture PDCA (72% → 100%).
-
----
-
-## **Background**
-
-From iteration tracking PDCA:
-
-**Current State:**
-- ~80 fs.*Sync() calls remain across multiple files
-- Scattered in DefaultUnit, DefaultWeb4TSComponent, and other components
-- Mix of existsSync, readdirSync, readFileSync, writeFileSync, statSync
-
-**Target State:**
-- **ZERO** fs.*Sync() calls in entire codebase
-- 100% OOP File/Folder method usage
-- File/Folder Architecture PDCA marked complete
-
----
-
-## **Requirements**
-
-### **1. Comprehensive fs Call Audit**
-- [ ] Scan entire src/ directory for all fs.*Sync() calls
-- [ ] Create inventory by file and operation type
-- [ ] Prioritize by file (largest impact first)
-
-### **2. Migration by File**
-Per the tracking PDCA estimate:
-
-#### **DefaultUnit (~4 calls) - 1h**
-- [ ] Migrate all fs calls to IOR.load() / IOR.save() pattern
-- [ ] Use File/Folder OOP methods where IOR doesn't apply
-- [ ] Update method signatures to async
-
-#### **DefaultWeb4TSComponent (~32 calls) - 6h**
-- [ ] Largest migration effort
-- [ ] Systematic replacement of all fs operations
-- [ ] May need to break into sub-tasks by method
-- [ ] Careful testing required (core component)
-
-#### **Remaining Files (~19 calls) - 4h**
-- [ ] Smaller files with 1-3 calls each
-- [ ] Quick migrations following established patterns
-- [ ] Group by similar operation types
-
-### **3. Verification & Cleanup - 2h**
-- [ ] Global search confirms zero fs.*Sync() calls
-- [ ] Remove all unused fs imports
-- [ ] Update ESLint rules to prevent future fs usage
-- [ ] Run full test suite
+## Traceability
+- Source: File/Folder Architecture Completion - Final fs→OOP Migration Phase
+- **Up:**
+  - [Iteration Tracking PDCA](../../components/ONCE/0.3.22.1/session/2025-12-12-UTC-2100.iteration-tracking.pdca.md)
+  - [File/Folder Architecture Completion PDCA](../../components/ONCE/0.3.22.1/session/2025-12-22-UTC-0400.file-folder-architecture-completion.pdca.md)
+  - [fs→IOR Migration PDCA](../../components/ONCE/0.3.22.1/session/2025-12-22-UTC-0200.fs-to-ior-migration.pdca.md)
+- **Down:**
+  - [ ] [Task 3.1: Developer - DefaultUnit fs Migration](./task-3.1-developer-defaultunit-migration.md)
+  - [ ] [Task 3.2: Developer - DefaultWeb4TSComponent fs Migration](./task-3.2-developer-web4tscomponent-migration.md)
+  - [ ] [Task 3.3: Developer - Remaining Files fs Migration](./task-3.3-developer-remaining-migration.md)
+  - [ ] [Task 3.4: Developer - Verification & Cleanup](./task-3.4-developer-verification-cleanup.md)
 
 ---
 
-## **Acceptance Criteria**
+## **What** (WODA)
+Eliminate all remaining ~80 fs.*Sync() calls across the codebase, achieving 100% File/Folder OOP architecture completion using IOR pattern and File/Folder OOP methods.
 
-1. **Complete OOP Migration:**
-   - Zero fs.*Sync() calls in src/ directory
-   - All file operations use File/Folder classes or IOR pattern
-   - No fs module imports except in File/Folder base classes
+## **Overview** (WODA)
+- **Priority:** 1 (Critical - 100% OOP Achievement)
+- **Estimated Time:** 9 hours
+- **Current State:** ~80 fs.*Sync() calls remain across DefaultUnit, DefaultWeb4TSComponent, and other components
+- **Target State:** ZERO fs.*Sync() calls, 100% OOP File/Folder method usage
+- **Progress:** File/Folder Architecture 85% → 100% after completion
 
-2. **Quality:**
-   - All tests passing (unit + integration)
-   - No performance regressions
-   - Proper async/await usage throughout
-   - Error handling matches previous behavior
+## Context
+The File/Folder Architecture PDCA has reached 85% completion with FFM.4a and FFM.4b establishing the pattern. However, ~80 fs.*Sync() calls remain scattered across the codebase, primarily in DefaultUnit (~4 calls), DefaultWeb4TSComponent (~32 calls), and various utility files (~19 calls). These calls violate P34 (IOR as Unified Entry Point) and prevent full CMM4 Radical OOP compliance. This is the final migration phase.
 
-3. **Verification:**
-   - ESLint rule enforcing File/Folder usage
-   - Automated check in CI/CD pipeline
-   - Documentation updated
-
-4. **Documentation:**
-   - FFM PDCA marked 100% complete
-   - Migration patterns documented
-   - Lessons learned captured
+## Intention
+Complete the File/Folder Architecture PDCA by systematically migrating all remaining fs.*Sync() calls to OOP File/Folder methods and IOR pattern. Achieve 100% OOP compliance, eliminate fs module dependency from business logic, and establish fs→OOP as the final architectural pattern. Enable IOR Infrastructure to proceed without conflicts.
 
 ---
 
-## **Technical Approach**
+## **Details** (WODA)
 
-### **Migration Patterns:**
+### Files to Modify:
+| File | fs Calls | Priority | Pattern |
+|------|----------|----------|---------|
+| `layer2/DefaultUnit.ts` | ~4 | 1 | IOR.load()/IOR.save() |
+| `layer2/DefaultWeb4TSComponent.ts` | ~32 | 1 | Mixed File/Folder/IOR |
+| `layer4/*Orchestrator.ts` | ~8 | 2 | File/Folder methods |
+| Other utilities | ~11 | 2 | File/Folder methods |
+| **TOTAL** | **~55** | - | - |
 
-**Simple Existence Check:**
+### Technical Specifications (Complete Code)
+
+**IOR Pattern (Preferred for Read/Write):**
 ```typescript
-// OLD:
-if (fs.existsSync(path)) { ... }
-
-// NEW:
-const item = await File.init({ path });
-if (await item.exists()) { ... }
-```
-
-**Directory Listing:**
-```typescript
-// OLD:
-const files = fs.readdirSync(dir);
-
-// NEW:
-const folder = await Folder.init({ path: dir });
-const files = await folder.list();
-```
-
-**File Read (prefer IOR):**
-```typescript
-// OLD:
+// OLD (fs-based):
 const content = fs.readFileSync(path, 'utf8');
+const data = JSON.parse(content);
 
-// NEW (IOR pattern):
-const content = await IOR.load(path);
+// NEW (IOR pattern - P34 compliant):
+const data = await IOR.load(path);
+```
+
+**File Existence Check:**
+```typescript
+// OLD:
+if (fs.existsSync(path)) {
+  // process
+}
+
+// NEW (OOP):
+const file = await File.init({ path });
+if (await file.exists()) {
+  // process
+}
+```
+
+**Directory Operations:**
+```typescript
+// OLD:
+const entries = fs.readdirSync(dir);
+
+// NEW (OOP):
+const folder = await Folder.init({ path: dir });
+const entries = await folder.list();
+```
+
+**File Write:**
+```typescript
+// OLD:
+fs.writeFileSync(path, JSON.stringify(data));
+
+// NEW (IOR):
+await IOR.save(path, data);
 
 // OR (File class):
 const file = await File.init({ path });
-const content = await file.read();
+await file.write(JSON.stringify(data));
 ```
 
-### **Async Conversion Strategy:**
-1. Convert innermost methods first (leaf nodes)
-2. Propagate async up call chain
-3. Update method signatures incrementally
-4. Test each layer before proceeding
+---
+
+## **Actions** (WODA)
+
+### 1. Comprehensive Audit
+- [ ] Scan entire src/ directory for all fs.*Sync() calls using grep
+- [ ] Create inventory by file, line number, and operation type
+- [ ] Categorize by pattern (exists, read, write, readdir, stat, etc.)
+- [ ] Identify which calls can use IOR vs File/Folder classes
+
+### 2. DefaultUnit Migration (~4 calls, 1h)
+- [ ] Identify all fs calls in DefaultUnit.ts
+- [ ] Replace with IOR.load()/IOR.save() where applicable
+- [ ] Update method signatures to async
+- [ ] Test IOR integration
+- [ ] Remove fs import from DefaultUnit
+
+### 3. DefaultWeb4TSComponent Migration (~32 calls, 6h)
+- [ ] Break into smaller methods/sections
+- [ ] Systematic replacement of all fs operations
+- [ ] Use IOR for file content operations
+- [ ] Use File/Folder for existence/listing operations
+- [ ] Update method signatures to async, propagate up call chain
+- [ ] Comprehensive unit testing after each method
+- [ ] Careful testing of core component functionality
+
+### 4. Remaining Files Migration (~19 calls, 4h)
+- [ ] Migrate smaller files with 1-3 calls each
+- [ ] Follow established patterns from DefaultUnit and DefaultWeb4TSComponent
+- [ ] Group similar operations for efficiency
+- [ ] Test each file before proceeding
+
+### 5. Verification & Cleanup (2h)
+- [ ] Global grep search confirms zero fs.*Sync() calls
+- [ ] Verify zero fs module imports except in File/Folder base classes
+- [ ] Remove all unused fs imports across codebase
+- [ ] Update ESLint rules to prevent future fs.*Sync() usage
+- [ ] Run full test suite (unit + integration)
+- [ ] Performance benchmarks to verify no regression
 
 ---
 
-## **Dependencies**
+## Acceptance Criteria
 
-### **Prerequisites:**
-- ✅ FFM.0-FFM.3.6 complete (File/Folder OOP foundation)
-- 🔵 Task 1 (FFM.4a) - pattern established
-- 🔵 Task 2 (FFM.4b) - ServerHierarchyManager complete
+**Web4Requirement Integration:**
+```typescript
+// In test/tootsie/Test_FFM57_FinalFsMigration.ts
+const req = this.requirement('FFM.5-FFM.7 Final fs Sync Migration', 'Complete fs→OOP migration');
+req.addCriterion('AC-01', 'Zero fs.*Sync() calls in src/ directory');
+req.addCriterion('AC-02', 'All file operations use File/Folder classes or IOR pattern');
+req.addCriterion('AC-03', 'No fs module imports except File/Folder base classes');
+req.addCriterion('AC-04', 'All tests passing (100% suite)');
+req.addCriterion('AC-05', 'No performance regressions vs baseline');
+req.addCriterion('AC-06', 'ESLint rules prevent future fs.*Sync() usage');
+```
 
-### **Enables:**
-- 🟢 Complete File/Folder Architecture achievement
-- 🟢 IOR Infrastructure can proceed without fs conflicts
-- 🟢 FFM.8-FFM.9 (Extract File/Folder as separate components)
-
----
-
-## **Estimated Breakdown**
-
-| File/Component | fs Calls | Time | Notes |
-|----------------|----------|------|-------|
-| DefaultUnit | ~4 | 1h | Use IOR pattern |
-| DefaultWeb4TSComponent | ~32 | 6h | Largest migration, core component |
-| Remaining Files | ~19 | 4h | Multiple small files |
-| Verification & Cleanup | - | 2h | Testing, ESLint rules |
-| **TOTAL** | **~55** | **13h** | Conservative estimate |
-
-**Note:** Original estimate said ~80 calls, but actual may be ~55 based on PDCA breakdown.
+- [ ] **AC-01:** Zero fs.*Sync() calls in src/ directory (grep verified)
+- [ ] **AC-02:** All file operations use File/Folder classes or IOR pattern
+- [ ] **AC-03:** No fs module imports except File/Folder base classes
+- [ ] **AC-04:** All tests passing (100% suite)
+- [ ] **AC-05:** No performance regressions vs baseline
+- [ ] **AC-06:** ESLint rules prevent future fs.*Sync() usage
+- [ ] **AC-07:** Unit tests passing (90%+ coverage)
+- [ ] **AC-08:** Integration tests passing
+- [ ] **AC-09:** PDCA File/Folder Architecture marked 100% complete
 
 ---
 
-## **Definition of Done**
+## Dependencies
 
-- [ ] Zero fs.*Sync() calls in src/ directory (verified by grep)
-- [ ] All fs module imports removed (except File/Folder base classes)
-- [ ] All tests passing (100% suite)
-- [ ] ESLint rule prevents future fs.*Sync() usage
+### Prerequisites:
+- ✅ FFM.0-FFM.3.6 complete (File/Folder OOP foundation exists)
+- ✅ FFM.4a complete (Task 1 - pattern established)
+- ✅ FFM.4b complete (Task 2 - ServerHierarchyManager migrated)
+- ✅ File/Folder classes ready in layer2
+- ✅ IOR infrastructure available
+
+### Blocks:
+- 🔵 FFM.8-FFM.9 (Extract File/Folder as separate components)
+- 🔵 IOR Infrastructure completion
+
+---
+
+## Definition of Done
+
+- [ ] All fs.*Sync() calls migrated or eliminated
+- [ ] Zero fs module imports in business logic layers
+- [ ] 100% OOP File/Folder/IOR usage for all file operations
+- [ ] Tootsie tests with Web4Requirement passing
+- [ ] All unit tests passing (90%+ coverage)
+- [ ] Integration tests passing
 - [ ] Performance benchmarks show no regression
-- [ ] PDCA File/Folder Architecture marked 100% complete
-- [ ] Code reviewed and merged
+- [ ] ESLint rules enforced and passing
+- [ ] PDCA File/Folder Architecture updated to 100%
+- [ ] Code reviewed and merged to dev/claudeFlow.v1
 
 ---
 
-## **Related Documents**
+## QA Audit & User Feedback
 
-- [PDCA: File/Folder Architecture](../../components/ONCE/0.3.22.1/session/2025-12-22-UTC-0400.file-folder-architecture-completion.pdca.md)
+### TRON Requirements - Final fs Sync Migration
+```quote
+Eliminate all remaining ~80 fs.*Sync() calls achieving 100% File/Folder OOP architecture completion
+```
+
+- **Issue:** ~80 fs.*Sync() calls remain scattered across codebase
+- **Resolution:** Systematic migration to File/Folder OOP methods and IOR pattern
+- **Pattern:** Radical OOP with File/Folder classes and IOR (P34 compliant)
+
+### Web4 Principles Verified
+- [ ] **P1:** Everything is a Scenario (state in file/folder models)
+- [ ] **P6:** Empty Constructor + init(scenario)
+- [ ] **P34:** IOR as Unified Entry Point (File/Folder OOP)
+- [ ] **P25:** Tootsie Tests Only (Web4Requirement based)
+
+---
+
+## Related Documents
+
+- [PDCA: File/Folder Architecture Completion](../../components/ONCE/0.3.22.1/session/2025-12-22-UTC-0400.file-folder-architecture-completion.pdca.md)
 - [PDCA: fs→IOR Migration](../../components/ONCE/0.3.22.1/session/2025-12-22-UTC-0200.fs-to-ior-migration.pdca.md)
-- [Iteration Tracking PDCA](../../components/ONCE/0.3.22.1/session/2025-12-12-UTC-2100.iteration-tracking.pdca.md)
+- [PDCA: Iteration Tracking](../../components/ONCE/0.3.22.1/session/2025-12-12-UTC-2100.iteration-tracking.pdca.md)
+- [Web4 Principles Checklist](../../components/ONCE/0.3.22.1/session/web4-principles-checklist.md)
+- [CMM3 Compliance Checklist](../../../Web4Articles/scrum.pmo/roles/_shared/cmm3.compliance.checklist.md)
 
 ---
 
-## **Risk Mitigation**
-
-**Risks:**
-- DefaultWeb4TSComponent is critical - bugs could break entire system
-- Async conversion may have cascading effects
-- Performance regression in file operations
-
-**Mitigations:**
-- Incremental migration with testing after each file
-- Comprehensive unit tests before refactoring
-- Performance benchmarks before/after
-- Feature flag for File/Folder vs fs fallback (temporary)
-
----
-
-## **Success Celebration**
-
-This task completes a **major architectural milestone**:
-- 🎯 100% File/Folder OOP Architecture
-- 🎯 Zero fs.*Sync() calls (from 101 original)
-- 🎯 Foundation for IOR Infrastructure completion
-- 🎯 CMM4 Radical OOP compliance achieved
-
----
-
-**Created:** 2026-01-17
-**Last Updated:** 2026-01-17
-**Sprint:** [Sprint 30 Planning](./planning.md)
+*Sprint 30 - FFM.5-FFM.7 Final fs Sync Call Migration*
+*Priority: Critical - 100% OOP Achievement*
+*Pattern: Radical OOP with File/Folder Methods and IOR Pattern*
