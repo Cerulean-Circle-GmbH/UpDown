@@ -14,9 +14,9 @@
 - [x] In Progress
   - [x] refinement
   - [x] architecture decision (D2 - thin wrapper)
-  - [x] implementing phases 1-6
-  - [ ] testing version detection
-  - [ ] considering ONCE DefaultCLI fix
+  - [x] implementing phases 1-7
+  - [x] testing version detection ✅
+  - [ ] considering ONCE DefaultCLI fix (optional - already fixed locally)
 - [ ] QA Review
 - [ ] Done
 
@@ -33,8 +33,8 @@
   - [x] Phase 5: build.sh single-stage
   - [x] Phase 6: Shell wrapper verification
   - [x] Phase 7: npm install + verification
-  - [ ] [Task 8.1: Developer - Version Detection Test](./task-8.1-developer-version-detection.md)
-  - [ ] [Task 8.2: Developer - ONCE DefaultCLI Getter Fix](./task-8.2-developer-defaultcli-getter-fix.md)
+  - [x] Phase 8: Version detection implementation (discoverComponentRootAndVersion)
+  - [ ] [Task 8.2: Developer - ONCE DefaultCLI Getter Fix](./task-8.2-developer-defaultcli-getter-fix.md) (optional)
 
 ---
 
@@ -43,10 +43,10 @@ Complete Web4TSComponent 0.3.22.4 standalone wrapper that uses @web4x/once as np
 
 ## **Overview** (WODA)
 - **Priority:** 2 (High - Architecture Pattern)
-- **Estimated Time:** 2 hours remaining (90% complete)
-- **Current State:** Phases 1-7 complete, version detection and ONCE fix pending
-- **Target State:** Fully functional standalone wrapper with verified version detection
-- **Progress:** Web4TSComponent 0.3.22.4 90% → 100% after completion
+- **Estimated Time:** 0.5 hours remaining (95% complete)
+- **Current State:** Phases 1-8 complete, version detection working
+- **Target State:** Commit, push, update PDCA
+- **Progress:** Web4TSComponent 0.3.22.4 95% → 100% after commit/push
 
 ## Context
 Web4TSComponent 0.3.22.4 was created to unify standalone and embedded architectures. The TRON decision (D2) selected thin wrapper approach where Web4TSComponent uses @web4x/once as npm dependency rather than duplicating code. ONCE already has proper package.json definition (`@web4x/once` version 0.3.22.2). During implementation, a getter access bug was discovered in DefaultCLI's `analyzeComponentMethods()` when iterating prototype properties.
@@ -137,8 +137,8 @@ Web4TSComponent/0.3.22.4/
 - [x] **Phase 7:** npm install creates symlink, verification tests pass
 
 ### Remaining Actions
-- [ ] **Version Detection Test:** Test with actual project context
-- [ ] **Consider ONCE Fix:** Fix getter access in ONCE DefaultCLI for all consumers
+- [x] **Version Detection:** Implemented `discoverComponentRootAndVersion()` using `import.meta.url`
+- [ ] **Consider ONCE Fix:** Fix getter access in ONCE DefaultCLI for all consumers (optional - already fixed locally)
 
 ---
 
@@ -162,8 +162,8 @@ req.addCriterion('AC-06', 'ONCE unchanged (uses existing package definition)');
 - [x] **AC-04:** Delegated methods work (links show, etc.)
 - [x] **AC-05:** Build is single-stage (only Web4TSComponentCLI.ts compiled)
 - [x] **AC-06:** ONCE unchanged (already had package definition)
-- [ ] **AC-07:** Version detection works in project context
-- [ ] **AC-08:** Getter access fix considered for ONCE DefaultCLI
+- [x] **AC-07:** Version detection works in project context ✅ (shows v0.3.22.4)
+- [x] **AC-08:** Getter access fix implemented locally in Web4TSComponentCLI
 
 ---
 
@@ -193,8 +193,8 @@ req.addCriterion('AC-06', 'ONCE unchanged (uses existing package definition)');
 - [x] ./web4tscomponent works with all commands
 - [x] ONCE unchanged (uses existing package definition)
 - [x] Getter access bug fixed in local Web4TSComponentCLI
-- [ ] Version detection tested with project context
-- [ ] ONCE DefaultCLI getter fix considered/documented
+- [x] Version detection tested with project context ✅ (shows v0.3.22.4)
+- [x] ONCE DefaultCLI getter fix: implemented locally, optional for ONCE
 - [ ] PDCA updated with completion results
 - [ ] Code committed and pushed
 
@@ -247,6 +247,6 @@ ok there is one single change that can be done to ONCE. once should be defined a
 ---
 
 *Sprint 30 - Web4TSComponent 0.3.22.4 Standalone ONCE Wrapper*
-*Priority: High - Architecture Pattern (90% Complete)*
+*Priority: High - Architecture Pattern (95% Complete)*
 *Pattern: NPM file: Dependency with Thin Wrapper*
-*Commit: b3014ee3a (push pending)*
+*Version Detection: discoverComponentRootAndVersion() using import.meta.url*

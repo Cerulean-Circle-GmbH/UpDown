@@ -14,9 +14,13 @@
 
 import { DefaultCLI } from '@web4x/once/dist/ts/layer2/DefaultCLI.js';
 import { DefaultWeb4TSComponent } from '@web4x/once/dist/ts/layer2/DefaultWeb4TSComponent.js';
+import { SemanticVersion } from '@web4x/once/dist/ts/layer2/SemanticVersion.js';
 import type { Reference } from '@web4x/once/dist/ts/layer3/Reference.interface.js';
 import type { MethodSignature } from '@web4x/once/dist/ts/layer3/MethodSignature.interface.js';
 import { TSCompletion } from '@web4x/once/dist/ts/layer4/TSCompletion.js';
+import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
+import { realpathSync } from 'fs';
 
 export class Web4TSComponentCLI extends DefaultCLI {
   // @pdca 2025-11-03-1105-component-template-bugs.pdca.md - Override component type for Web4TSComponent-specific operations
@@ -44,13 +48,17 @@ export class Web4TSComponentCLI extends DefaultCLI {
     // 4. Initialize component (creates ucpModel)
     component.init();
 
-    // 5. Assign to CLI
+    // 5. Discover version from CLI path and set on component
+    // @pdca 2026-01-16-UTC-1202.standalone-once-wrapper-architecture.pdca.md - Version detection
+    cli.discoverComponentRootAndVersion(component);
+
+    // 6. Assign to CLI
     cli.component = component;
 
-    // 6. Discover CLI methods
+    // 7. Discover CLI methods
     cli.discoverMethods();
 
-    // 7. Execute
+    // 8. Execute
     await cli.execute(args);
   }
 
@@ -70,6 +78,35 @@ export class Web4TSComponentCLI extends DefaultCLI {
   override init(scenario?: any): this {
     super.init(scenario);
     return this;
+  }
+
+  /**
+   * Discover component root and version from CLI's file path
+   * Uses import.meta.url to find version directory (e.g., .../Web4TSComponent/0.3.22.4)
+   *
+   * @pdca 2026-01-16-UTC-1202.standalone-once-wrapper-architecture.pdca.md - Version detection
+   * @cliHide
+   */
+  private discoverComponentRootAndVersion(component: DefaultWeb4TSComponent): void {
+    try {
+      // Get path to this CLI file
+      const currentFilePath = dirname(fileURLToPath(import.meta.url));
+      // Navigate up: layer5 → ts → src → version dir
+      const versionDir = realpathSync(resolve(currentFilePath, '..', '..', '..'));
+      const versionDirName = versionDir.split('/').pop() || '';
+
+      // Check if it's a semantic version format (X.X.X.X)
+      const isVersionDir = /^\d+\.\d+\.\d+\.\d+$/.test(versionDirName);
+      const versionString = isVersionDir ? versionDirName : '0.0.0.0';
+
+      // Set on component model
+      component.model!.componentRoot = versionDir;
+      component.model!.version = SemanticVersion.fromString(versionString);
+      component.model!.displayVersion = versionString;
+    } catch (error) {
+      // Keep defaults if discovery fails
+      console.warn('⚠️  Version discovery failed, using defaults:', error);
+    }
   }
 
   /**
