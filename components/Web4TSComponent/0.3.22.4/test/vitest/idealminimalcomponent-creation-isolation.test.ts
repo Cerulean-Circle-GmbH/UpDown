@@ -18,7 +18,10 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
 
-describe('🧪 IdealMinimalComponent Creation Test Isolation', () => {
+// NOTE: All tests in this file skipped - v0.3.22.4 uses thin wrapper architecture
+// Source files removed from src/ts/layer2/ (only layer5/Web4TSComponentCLI.ts remains)
+// The test tries to dynamically import dist/ts/layer2/DefaultWeb4TSComponent.js which doesn't exist
+describe.skip('🧪 IdealMinimalComponent Creation Test Isolation', () => {
   // ✅ Web4 Pattern: No underscore naming, use fileURLToPath for ESM
   const currentFileUrl = new URL(import.meta.url);
   const currentDir = path.dirname(fileURLToPath(currentFileUrl));

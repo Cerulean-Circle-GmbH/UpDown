@@ -7,11 +7,14 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { DefaultWeb4TSComponent } from '../../src/ts/layer2/DefaultWeb4TSComponent.js';
+// SKIPPED: v0.3.22.4 thin wrapper - DefaultWeb4TSComponent removed, imports from @web4x/once
+// import { DefaultWeb4TSComponent } from '../../src/ts/layer2/DefaultWeb4TSComponent.js';
 import * as fs from 'fs';
 import * as path from 'path';
 
-describe('Component Template Context Delegation', () => {
+// NOTE: All tests in this file skipped - v0.3.22.4 uses thin wrapper architecture
+// Source files removed from src/ts/layer2/ (only layer5/Web4TSComponentCLI.ts remains)
+describe.skip('Component Template Context Delegation', () => {
   let component: DefaultWeb4TSComponent;
   const testComponentName = 'TestContextComponent';
   const testVersion = '0.1.0.0';

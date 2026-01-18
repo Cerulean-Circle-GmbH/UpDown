@@ -8,7 +8,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { DefaultWeb4TSComponent } from '../../../src/ts/layer2/DefaultWeb4TSComponent.js';
+// SKIPPED: v0.3.22.4 thin wrapper - DefaultWeb4TSComponent removed, imports from @web4x/once
+// import { DefaultWeb4TSComponent } from '../../../src/ts/layer2/DefaultWeb4TSComponent.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -21,8 +22,11 @@ const testDataPath = path.join(componentRoot, 'test/data');
 /**
  * Test Version Operations - MUST be GREEN
  * @pdca 2025-10-28-UTC-0934.pdca.md:506
+ *
+ * NOTE: All tests in this file skipped - v0.3.22.4 uses thin wrapper architecture
+ * Source files removed from src/ts/layer2/ (only layer5/Web4TSComponentCLI.ts remains)
  */
-describe('DefaultWeb4TSComponent - Version Operations', () => {
+describe.skip('DefaultWeb4TSComponent - Version Operations', () => {
   /**
    * Test 1: parseVersion exists and works
    * @pdca 2025-10-28-UTC-0934.pdca.md:526

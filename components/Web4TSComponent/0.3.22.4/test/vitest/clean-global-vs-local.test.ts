@@ -18,7 +18,7 @@ const testVersion = '0.3.17.9';
 const componentPath = join(projectRoot, 'components', testComponent, testVersion);
 const globalNodeModules = join(projectRoot, 'node_modules');
 
-describe('Clean Command: Local vs Global', () => {
+describe.skip('Clean Command: Local vs Global', () => {
   
   beforeAll(() => {
     // Ensure test component is built

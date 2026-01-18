@@ -1,14 +1,18 @@
 import { describe, it, expect, vi } from 'vitest';
-import { DefaultCLI } from '../../../src/ts/layer2/DefaultCLI.js';
+// SKIPPED: v0.3.22.4 thin wrapper - DefaultCLI removed, imports from @web4x/once
+// import { DefaultCLI } from '../../../src/ts/layer2/DefaultCLI.js';
 
 /**
  * User Service Integration - Scenario Pattern Tests
  * @pdca 2025-10-28-UTC-2015.user-scenario-antipattern.pdca.md - Test-First verification
- * 
+ *
  * Purpose: Verify that DefaultCLI uses User.toScenario() instead of generateOwnerData()
  * Pattern: Components expose state via toScenario(), not custom methods
+ *
+ * NOTE: All tests in this file skipped - v0.3.22.4 uses thin wrapper architecture
+ * Source files removed from src/ts/layer2/ (only layer5/Web4TSComponentCLI.ts remains)
  */
-describe('DefaultCLI - User Service Integration', () => {
+describe.skip('DefaultCLI - User Service Integration', () => {
   
   it('should use User.toScenario() for owner data', async () => {
     const cli = new DefaultCLI().init();

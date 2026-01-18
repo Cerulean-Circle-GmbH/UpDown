@@ -9,11 +9,14 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { DefaultWeb4TSComponent } from '../../../src/ts/layer2/DefaultWeb4TSComponent.js';
+// SKIPPED: v0.3.22.4 thin wrapper - DefaultWeb4TSComponent removed, imports from @web4x/once
+// import { DefaultWeb4TSComponent } from '../../../src/ts/layer2/DefaultWeb4TSComponent.js';
 import { readlinkSync } from 'fs';
 import { join } from 'path';
 
-describe('Delegation Version Display', () => {
+// NOTE: All tests in this file skipped - v0.3.22.4 uses thin wrapper architecture
+// Source files removed from src/ts/layer2/ (only layer5/Web4TSComponentCLI.ts remains)
+describe.skip('Delegation Version Display', () => {
   let component: DefaultWeb4TSComponent;
   let projectRoot: string;
 

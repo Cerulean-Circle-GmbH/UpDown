@@ -11,10 +11,13 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { DefaultCLI } from '../../src/ts/layer2/DefaultCLI.js';
-import { DefaultWeb4TSComponent } from '../../src/ts/layer2/DefaultWeb4TSComponent.js';
+// SKIPPED: v0.3.22.4 thin wrapper - DefaultCLI and DefaultWeb4TSComponent removed
+// import { DefaultCLI } from '../../src/ts/layer2/DefaultCLI.js';
+// import { DefaultWeb4TSComponent } from '../../src/ts/layer2/DefaultWeb4TSComponent.js';
 
-describe('Path Authority Architecture', () => {
+// NOTE: All tests in this file skipped - v0.3.22.4 uses thin wrapper architecture
+// Source files removed from src/ts/layer2/ (only layer5/Web4TSComponentCLI.ts remains)
+describe.skip('Path Authority Architecture', () => {
   
   it('CLI is Path Authority - calculates projectRoot in init()', async () => {
     const cli = await new DefaultCLI().init({});
