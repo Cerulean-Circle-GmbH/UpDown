@@ -2,9 +2,9 @@
 
 # Sprint 30 Planning - ONCE 0.3.22.2 Fractal PDCA Completion
 
-**📊 Sprint Status:** 0% Complete - Fresh Sprint
-**🎯 Sprint Goal:** Complete Fractal PDCA methodology on ONCE 0.3.22.2 - File/Folder Architecture, IOR Infrastructure, and HTTPS.PWA
-**⏱️ Estimated Work:** ~35-40 hours
+**📊 Sprint Status:** 5% Complete - Task 8 at 90%
+**🎯 Sprint Goal:** Complete Fractal PDCA methodology on ONCE 0.3.22.2 - File/Folder Architecture, IOR Infrastructure, HTTPS.PWA, and Web4TSComponent 0.3.22.4
+**⏱️ Estimated Work:** ~37-42 hours (12 tasks)
 **📍 Branch:** dev/claudeFlow.v1 (UpDown repository)
 
 ---
@@ -63,20 +63,31 @@
   **Dependencies:** None (independent work)
   **PDCA Reference:** [2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md](../../components/ONCE/0.3.21.8/session/2025-12-12-UTC-2300.https-pwa-letsencrypt-integration.pdca.md)
 
+### **Priority 2: High - Web4TSComponent Architecture**
+
+- [ ] [Task 8: Web4TSComponent 0.3.22.4 Standalone ONCE Wrapper](./task-8-web4tscomponent-standalone-wrapper.md)
+  **Priority:** 2 (High - Architecture Pattern) **Status:** 🟡 90% COMPLETE
+  **Estimated Time:** 2h remaining
+  **Objective:** Complete standalone wrapper using @web4x/once as npm dependency
+  **Dependencies:** None (independent, ONCE already has package definition)
+  **PDCA Reference:** [2026-01-16-UTC-1202.standalone-once-wrapper-architecture.pdca.md](../../components/Web4TSComponent/0.3.22.4/session/2026-01-16-UTC-1202.standalone-once-wrapper-architecture.pdca.md)
+  **Completed:** Phases 1-7 (src cleanup, package.json, imports, tsconfig, build.sh, verification)
+  **Remaining:** Version detection test, ONCE DefaultCLI getter fix consideration
+
 ---
 
 ## **📋 MEDIUM PRIORITY TASKS**
 
 ### **Component Descriptor & Web4TSComponent**
 
-- [ ] [Task 8: Component Descriptor CD.5 Asset-Manifest Fallback Removal](./task-8-component-descriptor-cleanup.md)
+- [ ] [Task 9: Component Descriptor CD.5 Asset-Manifest Fallback Removal](./task-9-component-descriptor-cleanup.md)
   **Priority:** 4 (Medium - Cleanup) **Status:** 📋 PLANNED
   **Estimated Time:** 1.5h
   **Objective:** Remove deprecated asset-manifest fallback logic
   **Dependencies:** None
   **PDCA Reference:** [2025-12-21-UTC-0200.component-descriptor-refactor.pdca.md](../../components/ONCE/0.3.22.1/session/2025-12-21-UTC-0200.component-descriptor-refactor.pdca.md)
 
-- [ ] [Task 9: Web4TSComponent Inline Backlog Methods](./task-9-web4tscomponent-backlog.md)
+- [ ] [Task 10: Web4TSComponent Inline Backlog Methods](./task-10-web4tscomponent-backlog.md)
   **Priority:** 4 (Medium - Technical Debt) **Status:** 📋 PLANNED
   **Estimated Time:** 8h
   **Objective:** Inline remaining 7 backlog methods (WM.B1-WM.B7)
@@ -89,7 +100,7 @@
 
 ### **Legacy Migration (Type Safety)**
 
-- [ ] [Task 10: Legacy toScenario() Migration](./task-10-legacy-toscenario-migration.md)
+- [ ] [Task 11: Legacy toScenario() Migration](./task-11-legacy-toscenario-migration.md)
   **Priority:** 5 (Low - Deferred) **Status:** 🟡 PLANNED
   **Estimated Time:** 8h
   **Objective:** Migrate 15+ classes using legacy toScenario() pattern
@@ -98,7 +109,7 @@
 
 ### **Fetch Centralization**
 
-- [ ] [Task 11: Fetch Centralization F.5 Test19 Verification](./task-11-fetch-centralization-final.md)
+- [ ] [Task 12: Fetch Centralization F.5 Test19 Verification](./task-12-fetch-centralization-final.md)
   **Priority:** 5 (Low - Deferred) **Status:** 🟡 PLANNED
   **Estimated Time:** 2h
   **Objective:** Verify Test19 shows 0 P7 violations (currently 8 remaining)
