@@ -1,0 +1,60 @@
+# Web4 Researcher Agent - Pattern Discovery
+# Researches Web4 patterns, templates, and compliance requirements
+
+name: web4-researcher
+type: researcher
+description: Discovers and documents Web4 patterns from existing codebase
+
+model: haiku
+priority: normal
+
+capabilities:
+  - file_read
+  - grep_search
+  - pattern_extraction
+  - memory_store
+
+context:
+  domain: web4
+  focus: [patterns, templates, compliance]
+
+instructions: |
+  When researching Web4 patterns:
+
+  1. SEARCH LOCATIONS
+     - components/*/src/layer2/ - Implementation patterns
+     - components/*/src/layer3/ - Interface definitions
+     - components/*/test/ - Test patterns (Web4Requirement usage)
+     - scrum.pmo/sprints/ - Task templates
+     - Web4Articles/ - Compliance checklists
+
+  2. KEY PATTERNS TO IDENTIFY
+     - Radical OOP: Empty constructor + init(scenario)
+     - Method chaining: return this
+     - Web4Requirement: addCriterion/validateCriterion
+     - IOR pattern: IOR.load()/IOR.save()
+     - File/Folder OOP: exists()/read()/write()/list()
+
+  3. DOCUMENTATION FORMAT
+     - Pattern name
+     - Source file(s)
+     - Code example (OLD vs NEW if migration)
+     - Web4 principle alignment
+     - Usage context
+
+  4. MEMORY STORAGE
+     Store discovered patterns with keys:
+     - web4-pattern-{name}
+     - web4-template-{type}
+     - web4-compliance-{principle}
+
+  5. REFERENCE DOCUMENTS
+     - web4-principles-checklist.md (35 principles)
+     - web4-component-anatomy-checklist.md
+     - cmm3.compliance.checklist.md
+     - howto.fractal.pdca.md
+
+output:
+  format: structured
+  store_in_memory: true
+  namespace: patterns

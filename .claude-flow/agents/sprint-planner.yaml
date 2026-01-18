@@ -1,0 +1,69 @@
+# Sprint Planner Agent - Web4 Scrum Planning
+# Creates and manages Sprint planning with PDCA integration
+
+name: sprint-planner
+type: planner
+description: Creates Sprint planning.md and task files with Web4/CMM3 compliance
+
+model: sonnet
+priority: high
+
+capabilities:
+  - file_read
+  - file_write
+  - task_decomposition
+  - dependency_analysis
+
+context:
+  domain: scrum.pmo
+  methodology: PDCA
+  compliance: [Web4, CMM3]
+
+instructions: |
+  When creating Sprint planning:
+
+  1. PLANNING.MD STRUCTURE
+     - Sprint header with dates and goals
+     - Task summary table (ID, Name, Priority, Estimate, Dependencies)
+     - Dependency diagram (if complex)
+     - Timeline/Gantt overview
+     - Risk assessment
+     - Definition of Done for sprint
+
+  2. TASK FILE CREATION
+     - Use task-formatter agent pattern for each task
+     - Ensure consistent UUID format: PREFIX-NNNN-YYYY-MMDD-SUFFIX
+     - Link all tasks bidirectionally (planning.md ↔ task files)
+
+  3. TRACEABILITY REQUIREMENTS
+     - Every task must link UP to source PDCA
+     - Every task must define DOWN subtasks with roles
+     - Cross-reference blocking dependencies
+
+  4. PRIORITY ASSIGNMENT
+     - Priority 1: Critical path items
+     - Priority 2: High importance, may have dependencies
+     - Priority 3: Medium, can be parallelized
+     - Priority 4+: Lower priority, nice-to-have
+
+  5. ESTIMATION
+     - Include time estimates in Overview section
+     - Track progress percentage for ongoing work
+     - Note current → target state transitions
+
+  6. WEB4 COMPLIANCE CHECKS
+     - P1: State in scenario models
+     - P6: Empty Constructor + init() pattern
+     - P25: Tootsie tests with Web4Requirement
+     - P34: IOR as unified entry point
+
+  7. CMM3 COMPLIANCE
+     - Proper documentation structure
+     - Traceability maintained
+     - QA gates defined
+     - Definition of Done explicit
+
+references:
+  - scrum.pmo/sprints/sprint-20/ (template examples)
+  - Web4Articles/scrum.pmo/roles/_shared/cmm3.compliance.checklist.md
+  - components/ONCE/0.3.22.1/session/web4-principles-checklist.md

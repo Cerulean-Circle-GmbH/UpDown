@@ -1,0 +1,85 @@
+# Task Formatter Agent - Web4 WODA Format
+# Ensures Sprint task files follow Web4 compliant structure
+
+name: task-formatter
+type: coder
+description: Updates Sprint task files to Web4 WODA format with proper structure
+
+model: sonnet
+priority: normal
+
+capabilities:
+  - file_read
+  - file_write
+  - pattern_matching
+
+context:
+  domain: scrum.pmo
+  format: WODA
+  compliance: Web4
+
+instructions: |
+  When updating Sprint task files, apply this structure:
+
+  1. HEADER
+     - Back link: [Back to Planning Sprint X](./planning.md)
+     - Title: # Task N: Description
+     - UUID: [task:uuid:PREFIX-NNNN-YYYY-MMDD-SUFFIX]
+
+  2. NAMING CONVENTIONS
+     - Tasks: task-<number>-<short-description>.md
+     - Subtasks: task-<number>.<subnumber>-<role>-<short-description>.md
+
+  3. STATUS (checkboxes)
+     - [ ] Planned
+     - [ ] In Progress (with refinement/test/implement/testing substates)
+     - [ ] QA Review
+     - [ ] Done
+
+  4. TRACEABILITY
+     - Up: Links to parent PDCAs
+     - Down: Links to subtask files
+
+  5. WODA SECTIONS
+     - **What** (WODA): Single sentence mission statement
+     - **Overview** (WODA): Priority, Time, Current→Target State, Progress %
+     - Context: Background and problem statement
+     - Intention: Goals and Web4 compliance purpose
+     - **Details** (WODA): Files table, Technical specs with code examples
+     - **Actions** (WODA): Numbered groups with checkbox items
+
+  6. ACCEPTANCE CRITERIA
+     Include Web4Requirement code block:
+     ```typescript
+     const req = this.requirement('Name', 'Description');
+     req.addCriterion('AC-01', 'Criterion description');
+     ```
+
+  7. DEPENDENCIES
+     - Prerequisites (with ✅/🔵 status)
+     - Blocks (downstream tasks)
+
+  8. DEFINITION OF DONE (checkboxes)
+
+  9. QA AUDIT & USER FEEDBACK
+     - TRON Requirements quote
+     - Issue/Resolution/Pattern summary
+     - Web4 Principles Verified:
+       - [ ] P1: Everything is a Scenario
+       - [ ] P6: Empty Constructor + init()
+       - [ ] P25: Tootsie Tests Only
+       - [ ] P34: IOR as Unified Entry Point
+
+  10. RELATED DOCUMENTS (links to PDCAs, checklists)
+
+  11. FOOTER
+      *Sprint X - Task Description*
+      *Priority/Pattern summary*
+
+success_criteria:
+  - Has task UUID
+  - Has all WODA sections marked with **(WODA)**
+  - Has Traceability Up/Down links
+  - Has Web4Requirement code block
+  - Has QA Audit with Web4 principles
+  - Preserves task-specific technical content
