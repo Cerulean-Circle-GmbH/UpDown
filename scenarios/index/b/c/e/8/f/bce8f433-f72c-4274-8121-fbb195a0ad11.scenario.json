@@ -1,0 +1,76 @@
+{
+  "ior": {
+    "uuid": "bce8f433-f72c-4274-8121-fbb195a0ad11",
+    "component": "ONCE",
+    "version": "0.3.21.9"
+  },
+  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkyTFRBekxURXlWREUxT2pRNU9qTTFMamczTUZvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwibmFtZSI6InNub3ciLCJ1c2VybmFtZSI6InN5c3RlbSIsImhvc3RuYW1lIjoic25vdy1vbmNlIn19",
+  "model": {
+    "uuid": "bce8f433-f72c-4274-8121-fbb195a0ad11",
+    "name": "snow-once",
+    "objectType": "ONCE",
+    "version": "0.3.21.9",
+    "state": {
+      "uuid": "bce8f433-f72c-4274-8121-fbb195a0ad11",
+      "pid": 47696,
+      "state": "running",
+      "platform": {
+        "platform": "node",
+        "version": "v24.14.0",
+        "capabilities": [
+          "server",
+          "websocket",
+          "p2p"
+        ],
+        "isOnline": true
+      },
+      "domain": "local.once",
+      "hostname": "snow-once",
+      "host": "snow-once",
+      "ip": "192.168.122.220",
+      "capabilities": [
+        {
+          "capability": "httpsPort",
+          "port": 42777
+        },
+        {
+          "capability": "httpRedirect",
+          "port": 42000
+        }
+      ],
+      "isPrimaryServer": true
+    },
+    "metadata": {
+      "created": "2026-03-12T15:49:35.856Z",
+      "modified": "2026-03-12T15:49:35.871Z",
+      "creator": "ONCE-v0.3.21.9",
+      "description": "ONCE server Primary server instance",
+      "tags": [
+        "server",
+        "once",
+        "primary"
+      ],
+      "domain": "local.once",
+      "host": "snow-once",
+      "isPrimaryServer": true
+    },
+    "indexPath": "/home/snow/code/UpDown/scenarios/index/b/c/e/8/f/bce8f433-f72c-4274-8121-fbb195a0ad11.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.21.9",
+      "domain/local/snow-once/snow-once/ONCE/0.3.21.9"
+    ],
+    "updatedAt": "2026-03-12T15:49:35.872Z"
+  },
+  "unit": {
+    "indexPath": "b/c/e/8/f/bce8f433-f72c-4274-8121-fbb195a0ad11.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.21.9",
+      "domain/local/snow-once/snow-once/ONCE/0.3.21.9"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "ONCE/0.3.21.9",
+    "createdAt": "2026-03-12T15:49:35.871Z",
+    "updatedAt": "2026-03-12T15:49:35.871Z"
+  }
+}

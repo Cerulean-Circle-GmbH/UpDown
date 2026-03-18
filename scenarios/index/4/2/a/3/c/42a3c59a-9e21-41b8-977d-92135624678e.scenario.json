@@ -1,0 +1,62 @@
+{
+  "ior": {
+    "uuid": "42a3c59a-9e21-41b8-977d-92135624678e",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkyTFRBekxURXpWREV6T2pBME9qUTNMakF4TVZvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwibmFtZSI6InNub3ciLCJ1c2VybmFtZSI6InN5c3RlbSIsImhvc3RuYW1lIjoic25vdy1vbmNlIn19",
+  "model": {
+    "uuid": "42a3c59a-9e21-41b8-977d-92135624678e",
+    "name": "NodeJsONCEKernel",
+    "version": "0.3.22.1",
+    "environment": {
+      "platform": "node",
+      "version": "v22.22.1",
+      "capabilities": [
+        "server",
+        "websocket",
+        "p2p"
+      ],
+      "isOnline": true
+    },
+    "state": "starting",
+    "startTime": "2026-03-13T13:04:47.006Z",
+    "connectionTime": null,
+    "host": "snow-once",
+    "port": 42777,
+    "isPrimary": true,
+    "primaryPeerUuid": null,
+    "peers": [],
+    "pid": 57755,
+    "capabilities": [
+      {
+        "capability": "httpsPort",
+        "port": 42777
+      },
+      {
+        "capability": "httpRedirect",
+        "port": 42000
+      }
+    ],
+    "indexPath": "/home/snow/code/UpDown/scenarios/index/4/2/a/3/c/42a3c59a-9e21-41b8-977d-92135624678e.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.22.1",
+      "domain/local/snow-once/snow-once/ONCE/0.3.22.1",
+      "domain/local/snow-once/snow-once/ONCE/0.3.22.1/capability/httpPort/42777"
+    ],
+    "updatedAt": "2026-03-13T13:04:47.012Z"
+  },
+  "unit": {
+    "indexPath": "4/2/a/3/c/42a3c59a-9e21-41b8-977d-92135624678e.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.22.1",
+      "domain/local/snow-once/snow-once/ONCE/0.3.22.1",
+      "domain/local/snow-once/snow-once/ONCE/0.3.22.1/capability/httpPort/42777"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "ONCE/0.3.22.1",
+    "createdAt": "2026-03-13T13:04:47.011Z",
+    "updatedAt": "2026-03-13T13:04:47.011Z"
+  }
+}
