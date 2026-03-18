@@ -97,7 +97,9 @@ export class DefaultWeb4TSComponent
     }
     
     // Discover methods for CLI routing
+    console.time("discoverMethods");
     this.methodsDiscover();
+    console.timeEnd("discoverMethods");
     
     return this;
   }
@@ -110,6 +112,7 @@ export class DefaultWeb4TSComponent
    * Discover methods from prototype chain
    * Skips getters/setters to avoid triggering them with wrong 'this'
    */
+  /*
   private methodsDiscover(): void {
     const prototype = Object.getPrototypeOf(this);
     const methodNames = Object.getOwnPropertyNames(prototype)
@@ -127,6 +130,31 @@ export class DefaultWeb4TSComponent
         name: methodName,
         paramCount: method.length,
         isAsync: method.constructor.name === 'AsyncFunction',
+      });
+    }
+  }
+    */
+
+  private methodsDiscover(): void {
+    const AsyncFunction = (async () => {}).constructor;
+    const prototype = Object.getPrototypeOf(this);
+    const skip = new Set(["init", "hasMethod", "getMethodSignature", "listMethods", "methodsDiscover", "constructor"]);
+    const names = Object.getOwnPropertyNames(prototype);
+
+    for (let i = 0; i < names.length; i++) {
+      const name = names[i];
+      if (name.charCodeAt(0) === 95 || skip.has(name)) continue; // 95 = '_'
+
+      const descriptor = Object.getOwnPropertyDescriptor(prototype, name)!;
+      if (descriptor.get || descriptor.set) continue;
+
+      const method = descriptor.value;
+      if (typeof method !== "function") continue;
+
+      this.methods.set(name, {
+        name,
+        paramCount: method.length,
+        isAsync: method[Symbol.toStringTag] === "AsyncGeneratorFunction" || method.constructor === AsyncFunction,
       });
     }
   }
@@ -1422,6 +1450,14 @@ ${'='.repeat(80)}
    * @cliHide
    */
   private getCLI(): any {
+    return (this as any).cli || this;
+  }
+
+  /**
+   * Get CLI instance
+   * @cliHide
+   */
+  private getCLITest(): any {
     return (this as any).cli || this;
   }
 

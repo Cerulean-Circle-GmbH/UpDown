@@ -110,6 +110,8 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
    * IMPORTANT: Must skip getters/setters! Accessing prototype["getter"] triggers
    * the getter with this=prototype (not instance), causing undefined errors.
    */
+
+  /*
   private discoverMethods(): void {
     const prototype = Object.getPrototypeOf(this);
     const methodNames = Object.getOwnPropertyNames(prototype)
@@ -131,6 +133,32 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
       });
     }
   }
+    */
+
+  private discoverMethods(): void {
+    const AsyncFunction = (async () => {}).constructor;
+    const prototype = Object.getPrototypeOf(this);
+    const skip = new Set(["init", "hasMethod", "getMethodSignature", "listMethods", "discoverMethods", "constructor"]);
+    const names = Object.getOwnPropertyNames(prototype);
+
+    for (let i = 0; i < names.length; i++) {
+      const name = names[i];
+      if (name.charCodeAt(0) === 95 || skip.has(name)) continue; // 95 = '_'
+
+      const descriptor = Object.getOwnPropertyDescriptor(prototype, name)!;
+      if (descriptor.get || descriptor.set) continue;
+
+      const method = descriptor.value;
+      if (typeof method !== "function") continue;
+
+      this.methods.set(name, {
+        name,
+        paramCount: method.length,
+        isAsync: method[Symbol.toStringTag] === "AsyncGeneratorFunction" || method.constructor === AsyncFunction,
+      });
+    }
+  }
+  
   
   /**
    * Check if component has a method (Component interface)
@@ -206,6 +234,7 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
     }
 
     // ✅ Merge scenario data FIRST (before path calculation)
+    console.time("ScenarioMerge");
     if (scenario?.model) {
       const { version: scenarioVersion, ...otherFields } = scenario.model;
       this.model = { ...this.model, ...otherFields };
@@ -224,15 +253,20 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
         }
       }
     }
+    console.timeEnd("ScenarioMerge");
     
     // @pdca 2025-11-07-UTC-0000.eliminate-path-duplication-all-cases.pdca.md
     // ✅ Calculate ALL paths FIRST (before discoverMethods triggers getters)
+    console.time("updateModelPaths");
     this.updateModelPaths();
+    console.timeEnd("updateModelPaths");
     
     // ✅ Self-discovery: Component discovers ITSELF when created
     // @pdca 2025-11-05-UTC-1158.pdca.md - Event-driven, not batch
     // NOTE: Must come AFTER updateModelPaths() - getters are triggered during discovery
+    console.time("discoverMethods");
     this.discoverMethods();
+    console.timeEnd("discoverMethods");
     
     return this;
   }
@@ -270,6 +304,17 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
    * @cliHide
    */
   private getCLI(): any {
+    return this.cli || this;
+  }
+
+  /**
+   * Get CLI for Path Authority (Radical OOP - DRY)
+   * Returns CLI instance that has path infrastructure, or self as fallback
+   * @pdca 2025-11-06-UTC-0200.systematic-path-authority-violation.pdca.md
+   * @returns CLI instance (with path authority) or this (if standalone)
+   * @cliHide
+   */
+  private getCLITest(): any {
     return this.cli || this;
   }
 
