@@ -16,8 +16,7 @@ export class TSCompletion implements Completion {
   static getParsedFile(filePath: string): ts.SourceFile {
     const mtime = statSync(filePath).mtimeMs;
     const cached = TSCompletion.parsedFiles.get(filePath);
-    console.log("***** MTIME COMPARE ***** -> ");
-  console.log("***** MTIME COMPARE ***** -> ", cached?.mtime, mtime);
+  
     if (cached && cached.mtime === mtime) {
       return cached.sf;
     }

@@ -4,12 +4,28 @@
 
 
 import type { Completion } from '../layer3/Completion.js';
-import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as ts from 'typescript';
 
 export class TSCompletion implements Completion {
+    // ── Memoized parse: never read+parse the same file twice per process ──
+  private static parsedFiles = new Map<string, {sf: ts.SourceFile; mtime: number}>();
+
+  static getParsedFile(filePath: string): ts.SourceFile {
+    const mtime = statSync(filePath).mtimeMs;
+    const cached = TSCompletion.parsedFiles.get(filePath);
+  
+    if (cached && cached.mtime === mtime) {
+      return cached.sf;
+    }
+
+    const sf = ts.createSourceFile(filePath, readFileSync(filePath, 'utf8'), ts.ScriptTarget.Latest, true);
+    TSCompletion.parsedFiles.set(filePath, {sf, mtime});
+    return sf;
+  }
+
   private static extractJsDocText(node: ts.Node): string {
     const anyNode: any = node as any;
     if (anyNode && Array.isArray(anyNode.jsDoc) && anyNode.jsDoc.length > 0) {
@@ -87,8 +103,7 @@ export class TSCompletion implements Completion {
     const files = TSCompletion.getProjectSourceFiles();
     const classNames: Set<string> = new Set();
     for (const file of files) {
-      const src = readFileSync(file, 'utf8');
-      const sourceFile = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true);
+      const sourceFile = TSCompletion.getParsedFile(file);
       ts.forEachChild(sourceFile, node => {
         if (ts.isClassDeclaration(node) && node.name) {
           classNames.add(node.name.text);
@@ -119,8 +134,7 @@ export class TSCompletion implements Completion {
     
     // First pass: find the class and its methods, and discover base class
     for (const file of files) {
-      const src = readFileSync(file, 'utf8');
-      const sourceFile = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true);
+      const sourceFile = TSCompletion.getParsedFile(file);
       
       ts.forEachChild(sourceFile, node => {
         if (ts.isClassDeclaration(node) && node.name && node.name.text === className) {
@@ -174,8 +188,7 @@ export class TSCompletion implements Completion {
     let defaultValues: Record<string, string> = {};
     let paramMap: Record<string, string> = {};
     for (const file of files) {
-      const src = readFileSync(file, 'utf8');
-      const sourceFile = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true);
+      const sourceFile = TSCompletion.getParsedFile(file);
       ts.forEachChild(sourceFile, node => {
         if (ts.isClassDeclaration(node) && node.name && node.name.text === className) {
           for (const m of node.members) {
@@ -249,8 +262,7 @@ export class TSCompletion implements Completion {
   static getClassDoc(className: string): string {
     const files = TSCompletion.getProjectSourceFiles();
     for (const file of files) {
-      const src = readFileSync(file, 'utf8');
-      const sourceFile = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true);
+      const sourceFile = TSCompletion.getParsedFile(file);
       let doc = '';
       ts.forEachChild(sourceFile, node => {
         if (ts.isClassDeclaration(node) && node.name && node.name.text === className) {
@@ -265,8 +277,7 @@ export class TSCompletion implements Completion {
   static getMethodDoc(className: string, methodName: string): string {
     const files = TSCompletion.getProjectSourceFiles();
     for (const file of files) {
-      const src = readFileSync(file, 'utf8');
-      const sourceFile = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true);
+      const sourceFile = TSCompletion.getParsedFile(file);
       let doc = '';
       ts.forEachChild(sourceFile, node => {
         if (ts.isClassDeclaration(node) && node.name && node.name.text === className) {
@@ -289,8 +300,7 @@ export class TSCompletion implements Completion {
   static isMethodHidden(className: string, methodName: string): boolean {
     const files = TSCompletion.getProjectSourceFiles();
     for (const file of files) {
-      const src = readFileSync(file, 'utf8');
-      const sourceFile = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true);
+      const sourceFile = TSCompletion.getParsedFile(file);
       let hidden = false;
       ts.forEachChild(sourceFile, node => {
         if (ts.isClassDeclaration(node) && node.name && node.name.text === className) {
@@ -310,8 +320,7 @@ export class TSCompletion implements Completion {
   static getParamDoc(className: string, methodName: string, paramName: string): string {
     const files = TSCompletion.getProjectSourceFiles();
     for (const file of files) {
-      const src = readFileSync(file, 'utf8');
-      const sourceFile = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true);
+      const sourceFile = TSCompletion.getParsedFile(file);
       let doc = '';
       ts.forEachChild(sourceFile, node => {
         if (ts.isClassDeclaration(node) && node.name && node.name.text === className) {
@@ -401,9 +410,9 @@ export class TSCompletion implements Completion {
           if (params.length > 0) {
             // Check if a completion method exists for first parameter (required or optional)
             const completionMethodName = `${params[0]}ParameterCompletion`;
-            const methods = TSCompletion.getClassMethods(className);
+            const allMethods = TSCompletion.getClassMethods(className);
             
-            if (methods.includes(completionMethodName)) {
+            if (allMethods.includes(completionMethodName)) {
               // Completion method exists - return callback hint for dynamic VALUES
               // Bash completion will call back to get actual values
               return [`__CALLBACK__:${params[0]}ParameterCompletion`];
@@ -613,8 +622,7 @@ export class TSCompletion implements Completion {
     const parameterInfo: any[] = [];
     
     for (const file of files) {
-      const src = readFileSync(file, 'utf8');
-      const sourceFile = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true);
+      const sourceFile = TSCompletion.getParsedFile(file);
       
       ts.forEachChild(sourceFile, node => {
         if (ts.isClassDeclaration(node) && node.name && node.name.text === className) {
@@ -693,8 +701,7 @@ export class TSCompletion implements Completion {
     
     for (const file of files) {
       try {
-        const src = readFileSync(file, 'utf8');
-        const sourceFile = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true);
+        const sourceFile = TSCompletion.getParsedFile(file);
         
         const result = TSCompletion.searchClassForAnnotations(sourceFile, className, methodName, paramName);
         if (result) {
@@ -722,8 +729,7 @@ export class TSCompletion implements Completion {
       const files = TSCompletion.getAllTypeScriptFiles();
       
       for (const file of files) {
-        const src = readFileSync(file, 'utf8');
-        const sourceFile = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true);
+        const sourceFile = TSCompletion.getParsedFile(file);
         
         const values = TSCompletion.searchClassForCliValues(sourceFile, className, methodName, paramName);
         if (values && values.length > 0) {
