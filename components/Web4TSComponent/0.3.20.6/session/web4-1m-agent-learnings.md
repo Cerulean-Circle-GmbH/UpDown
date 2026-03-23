@@ -255,6 +255,31 @@ Full audit results:
 
 Running `web4tscomponent upgrade` (no args) defaults to `nextMinor` and immediately creates a new version. I accidentally created 0.3.21.0 this way. The command should require an explicit version promotion type.
 
+### Discovery 7: `pdca` (latest=0.3.20.1) lost `getDualLink` and all dual link methods
+
+`pdca getDualLink` → `Unknown command: getDualLink`. The method exists in PDCA 0.3.5.2 (prod) but is gone from 0.3.20.1 (latest). This is a major regression — the dual link toolkit was one of PDCA 0.3.5.2's best features.
+
+**Affected methods lost:** `getDualLink`, `getDualLinkRelativePath`, `ensureValidLinks`, `fixDualLinks`, `findPDCAsLinking`, `updateLinksToFile`
+
+**Workaround:** Use version-specific script `pdca-v0.3.5.2` instead of `pdca`.
+
+### Discovery 8: `pdca.prod` variant doesn't load prod version
+
+`pdca.prod getDualLink` → still loads 0.3.20.1 source.env (latest), not 0.3.5.2 (prod). The `.prod` suffix variant doesn't work — same as BUG-W1 (completion broken on `.prod`/`.test` variants).
+
+### Discovery 9: `getDualLink` crashes on git push failure
+
+`pdca-v0.3.5.2 getDualLink <file>` auto-commits and auto-pushes. When push is rejected (remote ahead), the command crashes and NEVER outputs the actual dual link. The link generation should succeed regardless of push status.
+
+### Discovery 10: `pdca-v0.3.5.2` tools work correctly
+
+Once using the version-specific script, the dual link tools work:
+- `getDualLinkRelativePath` correctly calculates relative paths
+- `fixDualLinks` validates dual links inside a file
+- `ensureValidLinks` scans project for PDCAs referencing a file
+
+**Key lesson:** Always use `pdca-v0.3.5.2` for dual link operations, never `pdca` (latest).
+
 ---
 
 ## 9. Backlog
@@ -268,15 +293,26 @@ Running `web4tscomponent upgrade` (no args) defaults to `nextMinor` and immediat
 | BUG-W11 | LOW | 13 components missing dev/test links | Most components only have prod+latest. `links fix` should be able to create missing dev/test links | 2026-03-20 |
 | BUG-W12 | LOW | 4 components missing prod link | Tootsie, User, Web4Requirement, Web4Test need prod set | 2026-03-20 |
 | BUG-W13 | LOW | `upgrade` with no args has no confirmation | Creates a new version immediately without prompting. Should require explicit promotion type or confirm | 2026-03-20 |
+| BUG-W14 | HIGH | PDCA latest (0.3.20.1) lost all dual link methods | `getDualLink`, `ensureValidLinks`, `fixDualLinks` etc. gone from latest. Only in 0.3.5.2 | 2026-03-20 |
+| BUG-W15 | HIGH | `.prod`/`.test` variants load wrong version | `pdca.prod` loads latest source.env, not prod. Same root cause as BUG-W1 | 2026-03-20 |
+| BUG-W16 | MEDIUM | `getDualLink` crashes on push failure | Auto-push fails → entire command crashes, never outputs the link | 2026-03-20 |
 | BUG-W1 | MEDIUM | Tab completion broken on .prod/.test/-vX variants | Falls to filesystem glob instead of method completion | Pre-existing |
 | BUG-W3 | LOW | Completion latency ~15s on dev variant | Tab completion takes too long | Pre-existing |
 | BUG-W6 | HIGH | `links fix` regression in ONCE 0.3.22.2 | 5 verify/fix methods completely removed during ONCE embedding rewrite | Pre-existing |
 
 ### Priority Rationale
 
-- **HIGH:** BUG-W7, W8, W6 — `links fix` is broken in multiple ways, actively damages prod links
-- **MEDIUM:** BUG-W9, W10, W1 — `on` command and completion are core developer workflows
+- **HIGH:** BUG-W7, W8, W6, W14, W15 — `links fix` broken, dual link tools lost from latest, `.prod` variant broken
+- **MEDIUM:** BUG-W9, W10, W1, W16 — `on` command, completion, and getDualLink push handling
 - **LOW:** BUG-W11, W12, W13, W3 — missing links are cosmetic, upgrade confirmation is nice-to-have
+
+### Workarounds
+
+| Bug | Workaround |
+|-----|------------|
+| BUG-W14 | Use `pdca-v0.3.5.2` instead of `pdca` for dual link operations |
+| BUG-W15 | Use `pdca-v0.3.5.2` instead of `pdca.prod` |
+| BUG-W16 | Run `git pull` before `getDualLink`, or generate links manually |
 
 ---
 
