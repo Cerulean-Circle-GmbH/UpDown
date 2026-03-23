@@ -234,7 +234,6 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
     }
 
     // ✅ Merge scenario data FIRST (before path calculation)
-    console.time("ScenarioMerge");
     if (scenario?.model) {
       const { version: scenarioVersion, ...otherFields } = scenario.model;
       this.model = { ...this.model, ...otherFields };
@@ -253,20 +252,15 @@ export class DefaultWeb4TSComponent implements Web4TSComponent {
         }
       }
     }
-    console.timeEnd("ScenarioMerge");
     
     // @pdca 2025-11-07-UTC-0000.eliminate-path-duplication-all-cases.pdca.md
     // ✅ Calculate ALL paths FIRST (before discoverMethods triggers getters)
-    console.time("updateModelPaths");
     this.updateModelPaths();
-    console.timeEnd("updateModelPaths");
     
     // ✅ Self-discovery: Component discovers ITSELF when created
     // @pdca 2025-11-05-UTC-1158.pdca.md - Event-driven, not batch
     // NOTE: Must come AFTER updateModelPaths() - getters are triggered during discovery
-    console.time("discoverMethods");
     this.discoverMethods();
-    console.timeEnd("discoverMethods");
     
     return this;
   }
