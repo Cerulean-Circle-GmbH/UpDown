@@ -299,20 +299,61 @@ Once using the version-specific script, the dual link tools work:
 | BUG-W1 | MEDIUM | Tab completion broken on .prod/.test/-vX variants | Falls to filesystem glob instead of method completion | Pre-existing |
 | BUG-W3 | LOW | Completion latency ~15s on dev variant | Tab completion takes too long | Pre-existing |
 | BUG-W6 | HIGH | `links fix` regression in ONCE 0.3.22.2 | 5 verify/fix methods completely removed during ONCE embedding rewrite | Pre-existing |
+| BUG-W17 | HIGH | Staging completions not registered | `source.env` doesn't register `.prod`/`.test`/`.dev` variants for tab completion | 2026-03-23 |
+| BUG-W18 | HIGH | Staging symlinks out of sync | `scripts/versions/pdca.prod` pointed to wrong version, no sync tool exists | 2026-03-23 |
+| BUG-W19 | MEDIUM | `pdca` main script not registered for completion | Auto-registration requires `TSCompletion.ts` at exact path, PDCA doesn't match | 2026-03-23 |
 
 ### Priority Rationale
 
-- **HIGH:** BUG-W7, W8, W6, W14, W15 — `links fix` broken, dual link tools lost from latest, `.prod` variant broken
-- **MEDIUM:** BUG-W9, W10, W1, W16 — `on` command, completion, and getDualLink push handling
+- **HIGH:** BUG-W7, W8, W6, W14, W15, W17, W18 — `links fix` broken, dual link tools lost, staging variants broken
+- **MEDIUM:** BUG-W9, W10, W1, W16, W19 — `on` command, completion, and getDualLink push handling
 - **LOW:** BUG-W11, W12, W13, W3 — missing links are cosmetic, upgrade confirmation is nice-to-have
 
 ### Workarounds
 
 | Bug | Workaround |
 |-----|------------|
-| BUG-W14 | Use `pdca-v0.3.5.2` instead of `pdca` for dual link operations |
-| BUG-W15 | Use `pdca-v0.3.5.2` instead of `pdca.prod` |
+| BUG-W14 | Use `pdca-v0.3.5.2` or `pdca.prod` (after fix) instead of `pdca` for dual link operations |
+| BUG-W15 | Fixed: `scripts/versions/pdca.prod` now points to `pdca-v0.3.5.2`. Register completion manually (see BUG-W17) |
 | BUG-W16 | Run `git pull` before `getDualLink`, or generate links manually |
+| BUG-W17 | Run in shell: `for s in scripts/versions/*.prod scripts/versions/*.test scripts/versions/*.dev; do [ -e "$s" ] && complete -o nospace -F _web4_generic_completion "$(basename "$s")"; done` |
+
+### Discovery 11: Staging variant completions not registered (BUG-W17)
+
+`source.env` `_web4_auto_register_completions()` only registers:
+- Main scripts (`scripts/componentname`) if symlink matches `components/X/latest` and has `TSCompletion.ts`
+- Versioned scripts (`scripts/versions/component-vX.Y.Z.W`) if pattern matches `-v\d+\.\d+\.\d+\.\d+`
+
+It does NOT register:
+- `.prod`/`.test`/`.dev` staging variants (pattern `component.prod`)
+- Main scripts missing `TSCompletion.ts` (like `pdca` — no TSCompletion in PDCA latest)
+
+**Fix needed in `source.env` line ~165:** Add a third loop for staging variants:
+```bash
+# Register staging variants (.prod, .test, .dev)
+for cli in "$scripts/versions"/*.{prod,test,dev}; do
+    [ -x "$cli" ] && [ ! -d "$cli" ] || continue
+    local name=$(basename "$cli")
+    complete -F _web4_generic_completion -o nospace "$name"
+    registered+=("$name")
+done
+```
+
+### Discovery 12: Staging variant symlinks out of sync with component links (BUG-W18)
+
+`scripts/versions/pdca.prod` pointed to `pdca-v0.3.20.1` but component `PDCA/prod` was 0.3.5.2.
+`scripts/versions/once.prod` pointed to `once-v0.3.21.5` but component `ONCE/prod` was 0.3.22.1.
+`scripts/versions/unit.prod` pointed to `unit-v0.3.19.1` but component `Unit/prod` was 0.3.0.5.
+
+These staging symlinks are set by `links fix` or `upgrade` but never re-synced when component links change manually. There's no tool to sync them.
+
+**Manual fix applied:** All staging variants now match component links.
+
+### Discovery 13: `pdca` main script not registered for completion (BUG-W19)
+
+`complete -p | grep " pdca$"` → empty. The auto-registration in `source.env` requires `TSCompletion.ts` in `components/PDCA/latest/src/ts/layer4/`, but PDCA 0.3.20.1 uses a different completion path. Only `unit`, `once`, `web4tscomponent` get registered.
+
+**Manual fix:** `complete -o nospace -F _web4_generic_completion pdca`
 
 ---
 
@@ -402,6 +443,63 @@ For a new 1M agent starting fresh, follow this sequence:
 - Use direct CLI scripts from `scripts/`, not `web4tscomponent on X latest`
 - Never run `upgrade` without explicit args — defaults to nextMinor
 - Radical OOP: `this.model` everywhere, zero parameters, empty constructors
+
+---
+
+## 12. Migration Plan: 0.3.20.6 → 0.3.22.4 (ONCE-embedded)
+
+**Status:** Approved, Phase 1 starting
+
+### Architecture Overview
+
+| Version | Architecture | Code Location |
+|---------|-------------|---------------|
+| 0.3.20.6 (current dev) | Standalone — own local dist copies | 27 compiled JS files locally |
+| ONCE 0.3.22.2 (monolith) | Embedded — 15 files from W4TSC+Unit, 229 ONCE-native | Master source |
+| 0.3.22.4 (thin wrapper) | 1 source file, imports from `@web4x/once` | `file:../../ONCE/0.3.22.2` |
+
+### What ONCE absorbed
+
+- **From Web4TSComponent/0.3.20.6:** DefaultWeb4TSComponent.ts, SemanticVersion.ts, DefaultCLI.ts, DelegationProxy.ts (L2) + 9 interfaces (L3) + TSCompletion.ts, HierarchicalCompletionFilter.ts, TestFileParser.ts, DefaultColors.ts (L4)
+- **From Unit/0.3.0.5:** DefaultUnit.ts (L2, `@master Unit/0.3.0.5/...`) + UnitModel.interface.ts (L3)
+
+### IdealMinimalComponent = hello world reference
+
+- Generated by `web4tscomponent create` using templates
+- 3 own methods + DelegationProxy → 120+ inherited from Web4TSComponent
+- DelegationProxy.ts is COPIED into each generated component (Unit dedup opportunity)
+
+### Unit deduplication vision
+
+Currently: manual `Migrated from` / `@master` comments. Target: `.unit` files with `origin` IOR for automated `detectCopyChanges` / `syncFromCopy` / `syncToCopy`.
+
+### Phase 1 Blocker: BUG-W20
+
+`web4tscomponent-v0.3.22.4 links` returns `WORD: __CALLBACK__:actionParameterCompletion` instead of executing. The CLI's `executeDynamicCommandWithChaining()` sees the `action` parameter has a completion callback and returns it instead of calling the method with 0 args. Optional parameters with callbacks must still allow execution without the arg.
+
+**Location:** `Web4TSComponent/0.3.22.4/src/ts/layer5/Web4TSComponentCLI.ts` line ~220 — `executeDynamicCommandWithChaining()`.
+
+**Fix applied:** Check `(p as any).required === false` from TSCompletion metadata instead of relying on `hasDefault`/`isOptional`. Web4 parameter syntax: `<param>` = required, `<?param>` = optional, `!<param>` = required but completion method is missing (! does NOT mean mandatory — it means no completion available).
+
+### Full Migration Plan — De-monolithization to 0.3.23.0
+
+**Goal:** All 8 framework components at unified version 0.3.23.0 (prod). ONCE has no copies — proper npm dependencies.
+
+**Phases:**
+1. Create Web4TSComponent 0.3.23.0 (move 17 files back from ONCE)
+2. Create Unit 0.3.23.0 (move 2 files back from ONCE)
+3. Create ONCE 0.3.23.0 (replace copies with `@web4x/web4tscomponent` + `@web4x/unit` imports)
+4. Create IdealMinimalComponent + PDCA + framework components 0.3.23.0
+5. Unit tracking for all migrated files (origin IOR, copy detection)
+6. Fix tester-found issues (test/data, BUG-W21, completion gaps)
+
+**Version lifecycle:** 0.3.23.0=prod → 0.3.23.1=dev → 0.3.23.2++=iterations → releaseTest 100% → 0.3.24.0=prod
+
+**Build constraint:** `./component` (no args) = builds all deps + shows usage. Cascading: W4TSC → Unit → ONCE → all others.
+
+**PDCA:** Expert implements → Tester verifies → bugs to backlog → fix → re-test → next phase.
+
+Full plan at: `/root/.claude/plans/staged-gliding-stearns.md`
 
 ---
 

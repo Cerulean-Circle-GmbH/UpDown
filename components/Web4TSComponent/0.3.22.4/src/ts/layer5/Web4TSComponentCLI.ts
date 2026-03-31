@@ -212,12 +212,28 @@ export class Web4TSComponentCLI extends DefaultCLI {
     if (signature === null) {
       return { executed: false, remainingArgs: args };
     }
-    const minArgs = Math.min(signature.paramCount, 1); // At least 1 arg for most methods
 
     // Filter out empty strings from args (bash completion sends empty strings for incomplete args)
     const nonEmptyArgs = args.filter(arg => arg !== '');
 
-    if (nonEmptyArgs.length < minArgs && signature.paramCount > 0) {
+    // Determine minimum required args from TSCompletion parameter metadata
+    // TSCompletion returns { name, type, required: bool, default, ... }
+    // Web4 parameter syntax: <param> = required, <?param> = optional, !<param> = required (no completion)
+    const params = TSCompletion.getEnhancedMethodParameters('DefaultCLI,DefaultWeb4TSComponent', command);
+    let minArgs = 0;
+    if (params && params.length > 0) {
+      for (const p of params) {
+        const isOptional = (p as any).required === false  // TSCompletion uses required: false
+          || p.hasDefault                                  // Has default value
+          || p.isOptional                                  // Marked optional
+          || (p.name && p.name.startsWith('?'))            // Web4 syntax: <?param>
+          || (p.name && p.name.includes(":'"));            // Web4 syntax: <?param:'default'>
+        if (isOptional) break;
+        minArgs++;
+      }
+    }
+
+    if (nonEmptyArgs.length < minArgs && minArgs > 0) {
       // Before failing, check if TSCompletion has a callback for the first missing parameter
       // This enables tab completion: web4tscomponent completion <TAB> → __CALLBACK__:whatParameterCompletion
       const paramIndex = nonEmptyArgs.length; // Index of first missing parameter

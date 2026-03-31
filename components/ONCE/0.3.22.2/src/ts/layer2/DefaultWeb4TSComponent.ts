@@ -757,25 +757,185 @@ export class DefaultWeb4TSComponent
    * Show semantic version links
    */
   async links(action?: string): Promise<this> {
-    const componentDir = path.dirname(this.model!.componentRoot);
-    
-    console.log(`🔗 Semantic links for ${this.model!.component}:`);
-    
-    for (const link of SemanticVersion.SEMANTIC_LINKS) {
-      const linkPath = path.join(componentDir, link);
-      if (fs.existsSync(linkPath)) {
-        try {
-          const target = fs.readlinkSync(linkPath);
-          console.log(`  ${link} → ${target}`);
-        } catch {
-          console.log(`  ${link} (not a symlink)`);
-        }
+    this.printQuickHeader();
+    const target = this.getTarget();
+    const componentName = target.model!.component || this.model!.component;
+    const componentDir = path.join(this.componentsDirectory, componentName);
+    const availableVersions = this.getAvailableVersions(componentDir);
+
+    // If 'fix' action requested, verify and fix all symlinks
+    if (action === 'fix') {
+      console.log(`\n🔧 Fixing links and symlinks for ${componentName}...`);
+      if (availableVersions.length === 0) {
+        console.log(`   ❌ No versions found for ${componentName}`);
       } else {
-        console.log(`  ${link} (missing)`);
+        const highestVersion = this.getHighestVersion(availableVersions);
+        console.log(`   📊 Highest version found: ${highestVersion}`);
+        // Verify and fix latest symlink
+        await this.verifyLatestSymlink(componentName, componentDir, highestVersion);
+        // Verify and fix scripts symlinks
+        await this.verifyScriptsSymlinks(componentName, componentDir, availableVersions);
+        // Create missing dev/test links (but NEVER touch existing prod)
+        await this.verifySemanticLinksafe(componentName, componentDir, highestVersion);
+        console.log(`   ✅ Symlink verification completed`);
+      }
+      console.log(`✅ All links repaired for ${componentName}\n`);
+    }
+
+    // Display semantic links with status
+    console.log(`🔗 Semantic Version Links for ${componentName}:`);
+    console.log(`   📂 Searching in: ${componentDir}`);
+    console.log(`   📊 Available versions: ${availableVersions.length}`);
+    console.log('');
+    const linkOrder: string[] = ['prod', 'test', 'dev', 'latest'];
+    const icons: Record<string, string> = { prod: '🚀', test: '🧪', dev: '🚧', latest: '📦' };
+    for (const linkType of linkOrder) {
+      const linkPath = path.join(componentDir, linkType);
+      let linkTarget = '';
+      try { linkTarget = fs.readlinkSync(linkPath); } catch { /* not set */ }
+      const status = linkTarget ? `→ ${linkTarget}` : '(not set)';
+      const exists = linkTarget && availableVersions.includes(linkTarget) ? '✅' : linkTarget ? '❌' : '⚪';
+      console.log(`   ${icons[linkType] || '📁'} ${linkType.padEnd(6)} ${status.padEnd(15)} ${exists}`);
+    }
+    console.log('');
+    console.log('Legend: ✅ Valid  ❌ Broken  ⚪ Not Set');
+    console.log('');
+    console.log('Workflow: dev → test → prod');
+    console.log('  🚧 dev:  Version under development');
+    console.log('  🧪 test: Ready for 100% revision testing');
+    console.log('  🚀 prod: Achieved 100% testing success');
+    console.log('  📦 latest: Current stable release');
+    return this;
+  }
+
+  /**
+   * Verify and fix latest symlink → highest version
+   * @cliHide
+   */
+  private async verifyLatestSymlink(componentName: string, componentDir: string, highestVersion: string): Promise<void> {
+    const latestPath = path.join(componentDir, 'latest');
+    try {
+      const current = fs.readlinkSync(latestPath);
+      if (current === highestVersion) {
+        console.log(`   ✅ latest → ${current}`);
+      } else {
+        console.log(`   🔧 Fixing latest: ${current} → ${highestVersion}`);
+        await fs.promises.unlink(latestPath);
+        await fs.promises.symlink(highestVersion, latestPath);
+      }
+    } catch {
+      console.log(`   🔧 Creating latest → ${highestVersion}`);
+      await fs.promises.symlink(highestVersion, latestPath);
+    }
+  }
+
+  /**
+   * Verify and fix scripts/ symlinks for a component
+   * Creates scripts/component → ../components/X/latest/x
+   * Creates scripts/versions/component-vX.Y.Z.W for each version
+   * @cliHide
+   */
+  private async verifyScriptsSymlinks(componentName: string, componentDir: string, versions: string[]): Promise<void> {
+    const projectRoot = this.projectRoot;
+    const scriptsDir = path.join(projectRoot, 'scripts');
+    const versionsDir = path.join(scriptsDir, 'versions');
+    const componentLower = componentName.toLowerCase();
+
+    await fs.promises.mkdir(versionsDir, { recursive: true });
+
+    // Check/fix main script symlink: scripts/component → ../components/X/latest/component
+    const mainScriptPath = path.join(scriptsDir, componentLower);
+    const expectedTarget = `../components/${componentName}/latest/${componentLower}`;
+    // Check if the CLI script actually exists in any version
+    let cliExists = false;
+    for (const ver of versions) {
+      const possibleScripts = [`${componentLower}.sh`, componentLower, 'cli.sh', 'cli'];
+      for (const s of possibleScripts) {
+        if (fs.existsSync(path.join(componentDir, ver, s))) {
+          cliExists = true;
+          break;
+        }
+      }
+      if (cliExists) break;
+    }
+
+    if (cliExists) {
+      try {
+        if (fs.existsSync(mainScriptPath)) {
+          const linkTarget = fs.readlinkSync(mainScriptPath);
+          if (linkTarget === expectedTarget) {
+            console.log(`   ✅ scripts/${componentLower} → ${linkTarget}`);
+          } else {
+            console.log(`   🔧 Fixing scripts/${componentLower}: ${linkTarget} → ${expectedTarget}`);
+            await fs.promises.unlink(mainScriptPath);
+            await fs.promises.symlink(expectedTarget, mainScriptPath);
+          }
+        } else {
+          console.log(`   🔧 Creating scripts/${componentLower} → ${expectedTarget}`);
+          await fs.promises.symlink(expectedTarget, mainScriptPath);
+        }
+      } catch (error: any) {
+        console.log(`   ❌ Could not fix scripts/${componentLower}: ${error.message}`);
+      }
+
+      // Create version-specific symlinks for each version
+      for (const version of versions) {
+        const scriptName = `${componentLower}-v${version}`;
+        const scriptPath = path.join(versionsDir, scriptName);
+        if (!fs.existsSync(scriptPath)) {
+          const versionDir = path.join(componentDir, version);
+          const possibleScripts = [`${componentLower}.sh`, componentLower, 'cli.sh', 'cli'];
+          for (const s of possibleScripts) {
+            if (fs.existsSync(path.join(versionDir, s))) {
+              const relTarget = path.relative(versionsDir, path.join(versionDir, s));
+              try {
+                await fs.promises.symlink(relTarget, scriptPath);
+                console.log(`   🔧 Created scripts/versions/${scriptName}`);
+              } catch { /* already exists */ }
+              break;
+            }
+          }
+        }
       }
     }
-    
-    return this;
+  }
+
+  /**
+   * Create missing dev/test links, but NEVER touch existing prod
+   * Safe policy: only creates links that don't exist yet
+   * @cliHide
+   */
+  private async verifySemanticLinksafe(componentName: string, componentDir: string, highestVersion: string): Promise<void> {
+    for (const link of ['dev', 'test']) {
+      const linkPath = path.join(componentDir, link);
+      if (!fs.existsSync(linkPath)) {
+        try {
+          await fs.promises.symlink(highestVersion, linkPath);
+          console.log(`   🔧 Created ${link} → ${highestVersion}`);
+        } catch (error: any) {
+          console.log(`   ⚠️ Could not create ${link}: ${error.message}`);
+        }
+      } else {
+        try {
+          const current = fs.readlinkSync(linkPath);
+          console.log(`   ✅ ${link} → ${current}`);
+        } catch {
+          console.log(`   ✅ ${link} exists`);
+        }
+      }
+    }
+    // Prod: NEVER auto-create or auto-promote — only report status
+    const prodPath = path.join(componentDir, 'prod');
+    if (fs.existsSync(prodPath)) {
+      try {
+        const current = fs.readlinkSync(prodPath);
+        console.log(`   ✅ prod → ${current} (untouched)`);
+      } catch {
+        console.log(`   ✅ prod exists (untouched)`);
+      }
+    } else {
+      console.log(`   ⚠️ prod not set — use 'setCICDVersion prod <version>' to set explicitly`);
+    }
   }
   
   /**

@@ -1,0 +1,21 @@
+{
+  "name": "@web4x/unit",
+  "version": "0.3.23.0",
+  "type": "module",
+  "description": "Unit Component - Atomic file tracking, discovery, and scenario persistence",
+  "main": "dist/ts/layer2/DefaultUnit.js",
+  "private": true,
+  "scripts": {
+    "start": "./unit",
+    "build": "./src/sh/build.sh",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@web4x/ucp": "file:../../UCP/0.3.23.0"
+  }
+}
