@@ -1,0 +1,111 @@
+/**
+ * OnceServerStatusView.css - Server Status Dashboard Styles
+ * @component ONCE
+ * @layer 5
+ */
+
+:host {
+    display: block;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.status-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+.status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.status-header h2 {
+    margin: 0;
+    font-size: 1.75rem;
+}
+
+.refresh-btn {
+    padding: 0.5rem 1rem;
+    background: #4a90d9;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.refresh-btn:hover:not(:disabled) {
+    background: #3a80c9;
+}
+
+.refresh-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.server-info {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    color: white;
+}
+
+.server-type {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.server-version {
+    opacity: 0.9;
+    font-family: 'Fira Code', monospace;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.metric {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    text-align: center;
+}
+
+.metric-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #212529;
+}
+
+.nav-back {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.back-link {
+    color: #4a90d9;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}

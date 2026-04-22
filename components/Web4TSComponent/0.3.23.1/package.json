@@ -1,0 +1,25 @@
+{
+  "name": "@web4x/web4tscomponent",
+  "version": "0.3.23.1",
+  "type": "module",
+  "description": "Web4TSComponent - Component Standards Enforcement & Architecture Compliance",
+  "main": "dist/ts/layer5/Web4TSComponentCLI.js",
+  "private": true,
+  "scripts": {
+    "start": "./web4tscomponent",
+    "build": "./src/sh/build.sh",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@web4x/ucp": "file:../../UCP/0.3.23.0",
+    "@web4x/unit": "file:../../Unit/0.3.23.0",
+    "@web4x/persistence": "file:../../Persistence/0.3.23.0",
+    "glob": "^11.0.3",
+    "minimatch": "^10.0.3"
+  }
+}

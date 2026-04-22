@@ -1,0 +1,21 @@
+{
+  "name": "@web4x/tls",
+  "version": "0.3.23.0",
+  "type": "module",
+  "description": "TLS Component - Certificate management, SNI, Let's Encrypt, and renewal scheduling",
+  "main": "dist/ts/layer2/TLSCertificateLoader.js",
+  "private": true,
+  "scripts": {
+    "start": "./tls",
+    "build": "./src/sh/build.sh",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@web4x/ucp": "file:../../UCP/0.3.23.0"
+  }
+}

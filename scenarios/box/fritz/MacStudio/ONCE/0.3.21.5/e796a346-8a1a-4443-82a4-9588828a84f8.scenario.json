@@ -1,0 +1,58 @@
+{
+  "ior": {
+    "uuid": "e796a346-8a1a-4443-82a4-9588828a84f8",
+    "component": "ONCE",
+    "version": "0.3.21.5"
+  },
+  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkxTFRFeUxUQTFWREUyT2pNek9qSXpMamM1T1ZvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwidXNlcm5hbWUiOiJzeXN0ZW0iLCJob3N0bmFtZSI6Ik1hY1N0dWRpby5mcml0ei5ib3gifX0=",
+  "model": {
+    "uuid": "e796a346-8a1a-4443-82a4-9588828a84f8",
+    "objectType": "ONCE",
+    "version": "0.3.21.5",
+    "state": {
+      "pid": 81769,
+      "state": "running",
+      "domain": "box.fritz",
+      "host": "MacStudio.fritz.box",
+      "ip": "192.168.178.196",
+      "capabilities": [
+        {
+          "capability": "httpPort",
+          "port": 42777
+        },
+        {
+          "capability": "wsPort",
+          "port": 42777
+        }
+      ],
+      "isPrimaryServer": true,
+      "uuid": "e796a346-8a1a-4443-82a4-9588828a84f8",
+      "platform": {
+        "platform": "node",
+        "version": "v24.5.0",
+        "capabilities": [
+          "server",
+          "websocket",
+          "p2p"
+        ],
+        "isOnline": true
+      },
+      "hostname": "MacStudio"
+    },
+    "metadata": {
+      "created": "2025-12-05T16:33:23.798Z",
+      "modified": "2025-12-05T16:33:23.799Z",
+      "creator": "ONCE-v0.3.21.5",
+      "description": "ONCE server Primary server instance",
+      "tags": [
+        "server",
+        "once",
+        "primary"
+      ],
+      "domain": "box.fritz",
+      "host": "MacStudio.fritz.box",
+      "port": 42777,
+      "isPrimaryServer": true
+    }
+  }
+}

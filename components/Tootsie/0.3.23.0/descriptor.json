@@ -1,0 +1,11 @@
+{
+  "name": "Tootsie",
+  "version": "0.3.20.6",
+  "description": "Total Object-Oriented Testing Suite for Web4 - Quality consciousness testing framework",
+  "implementationClassName": "DefaultTootsie",
+  "layer": "layer2",
+  "dependencies": {
+    "Web4Test": "0.3.20.6"
+  }
+}
+

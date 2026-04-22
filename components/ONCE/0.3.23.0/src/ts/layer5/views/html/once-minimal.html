@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<!--
+  @deprecated LEGACY HTML Template — Minimal ONCE Kernel Bootstrap
+  
+  This is the minimal entry point for ONCE kernel. Consider migrating to
+  a UcpView-based bootstrap that uses IOR-based component discovery.
+  
+  @pdca 2025-12-31-UTC-1900.unit-descriptor-sw-verification.pdca.md
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONCE Kernel</title>
+    <style>
+        body { 
+            font-family: 'Courier New', monospace; 
+            background: #000; 
+            color: #0f0; 
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .status {
+            text-align: center;
+            font-size: 1.2em;
+        }
+        .status h1 {
+            margin: 0 0 20px 0;
+            color: #0ff;
+        }
+        .status p {
+            margin: 5px 0;
+        }
+        .success { color: #0f0; }
+        .loading { color: #ff0; }
+    </style>
+</head>
+<body>
+    <div class="status">
+        <h1>⚡ ONCE Kernel</h1>
+        <p id="status" class="loading">🔄 Initializing...</p>
+    </div>
+    
+    <!-- ✅ Minimal ONCE Bootstrap: Load Once.ts and start kernel -->
+    <script type="module">
+        import { ONCE } from '../../dist/ts/layer1/ONCE.js';
+        
+        // Get peer host from URL or use current location
+        const urlParams = new URLSearchParams(window.location.search);
+        const peerHost = urlParams.get('peer') || window.location.host;
+        
+        // Initialize with minimal scenario
+        const scenario = {
+            peerHost: peerHost
+        };
+        
+        try {
+            // ONCE.start() detects environment (browser) and loads BrowserOnce
+            const kernel = await ONCE.start(scenario);
+            
+            // Update status
+            document.getElementById('status').textContent = '✅ ONCE Kernel Loaded';
+            document.getElementById('status').className = 'success';
+            
+            // Console logging for development
+            console.log('✅ ONCE Kernel started:', kernel);
+            console.log('   Environment:', kernel.model?.environment?.type || 'browser');
+            console.log('   Peer:', peerHost);
+            console.log('');
+            console.log('Global Access:');
+            console.log('   window.ONCE →', window.ONCE);
+            console.log('   global.ONCE →', window.global?.ONCE);
+            console.log('   ONCE.getInstance() →', ONCE.getInstance());
+        } catch (error) {
+            document.getElementById('status').textContent = '❌ Failed to load kernel';
+            document.getElementById('status').style.color = '#f00';
+            console.error('Failed to start ONCE kernel:', error);
+        }
+    </script>
+</body>
+</html>
+
+
+
+

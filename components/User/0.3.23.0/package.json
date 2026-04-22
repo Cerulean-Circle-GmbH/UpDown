@@ -1,0 +1,22 @@
+{
+  "name": "@web4x/user",
+  "version": "0.3.23.0",
+  "type": "module",
+  "description": "User Component - Identity, environment detection, and owner attribution",
+  "main": "dist/ts/layer2/DefaultUser.js",
+  "private": true,
+  "scripts": {
+    "start": "./user",
+    "build": "./src/sh/build.sh",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@web4x/ucp": "file:../../UCP/0.3.23.0",
+    "@web4x/unit": "file:../../Unit/0.3.23.0"
+  }
+}
