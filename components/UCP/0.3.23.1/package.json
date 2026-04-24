@@ -1,0 +1,19 @@
+{
+  "name": "@web4x/ucp",
+  "version": "0.3.23.1",
+  "type": "module",
+  "description": "Universal Component Pattern - Base class for ALL Web4 components",
+  "main": "dist/ts/layer5/UcpCLI.js",
+  "private": true,
+  "scripts": {
+    "start": "./ucp",
+    "build": "./src/sh/build.sh",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {}
+}

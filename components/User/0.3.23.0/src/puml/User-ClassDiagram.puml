@@ -1,0 +1,123 @@
+@startuml User-ClassDiagram
+!theme plain
+skinparam backgroundColor White
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 9
+skinparam classAttributeIconSize 0
+
+title @web4x/user 0.3.23.0 — Identity & Environment Detection\nDepends on: @web4x/ucp, @web4x/unit
+
+package "Layer 3 — Interfaces" as L3 #F5F5F5 {
+  interface "User" as IUser {
+    + init(scenario: Scenario): this
+    + toScenario(): Promise<Scenario>
+  }
+
+  interface "UserModel" as IUM {
+    + uuid: string
+    + name: string
+    + username: string
+    + hostname: string
+  }
+
+  interface "EnvironmentModel" as IEM {
+    + hostname: string
+    + fqdn: string
+    + primaryIP: string
+    + domain: string
+    + toScenario(): EnvironmentScenario
+    + init(scenario?): this
+  }
+
+  interface "EnvironmentScenario" as IES {
+    + hostname: string
+    + fqdn: string
+    + primaryIP: string
+    + domain: string
+  }
+
+  IUM --|> "Model" : extends
+}
+
+package "Layer 1 — Infrastructure" as L1 #FFF9C4 {
+  class "NodeOSInfrastructure" as NOSI <<P21: Wraps os module>> {
+    - model: EnvironmentModel
+    + constructor()
+    + getModel(): EnvironmentModel
+    + setModel(model): void
+    + detectEnvironment(): Promise<EnvironmentModel>
+    + init(scenario?): this
+    + toScenario(): EnvironmentScenario
+    + getScenarioPathComponents(fqdn):\n  {domainPath: string[], hostname: string}
+    - extractHostname(fqdn): string
+    - extractDomain(fqdn): string
+    - detectPrimaryIP(os): string
+  }
+
+  class "DefaultEnvironmentModel" as DEM <<P16: TS Accessors>> {
+    - hostnameField: string
+    - fqdnField: string
+    - primaryIPField: string
+    - domainField: string
+    + constructor()
+    + get/set hostname: string
+    + get/set fqdn: string
+    + get/set primaryIP: string
+    + get/set domain: string
+    + toScenario(): EnvironmentScenario
+    + init(scenario?): this
+  }
+
+  DEM ..|> IEM : implements
+  NOSI --> DEM : creates & uses
+}
+
+package "Layer 2 — Implementation" as L2 #E8F5E9 {
+  class "DefaultUser" as DU <<P6 + P29>> {
+    - model: UserModel
+    - infrastructure: NodeOSInfrastructure
+    - persistenceManagerRef: PersistenceManager
+    - scenarioServiceRef: ScenarioService
+    __P6: Lifecycle__
+    + constructor()
+    + init(scenario?: Scenario<Model>): this
+    + toScenario(): Promise<Scenario<UserModel>>
+    __Identity__
+    + getUuid(): string
+    + getUsername(): string
+    + getHostname(): string
+    + getUserUUID(username): string  <<deterministic SHA-256>>
+    + detectEnvironment(): Promise<void>
+    __Services__
+    + setInfrastructure(infra): void
+    + getInfrastructure(): NodeOSInfrastructure
+    + setPersistenceManager(pm): void
+    + setScenarioService(ss): void
+    __Persistence__
+    + saveScenario(projectRoot): Promise<string>
+    - saveScenarioLegacy(root, scenario): Promise<string>
+    - getScenarioPath(root): Promise<string>
+    __Static Factories__
+    + {static} create(username?, infra?, root?, ss?): Promise<DefaultUser>
+    + {static} getOwnerObject(username?, infra?):\n  Promise<{user, hostname, utcTimestamp, uuid}>
+    + {static} getOwnerBase64(username?, infra?): Promise<string>
+  }
+
+  DU ..|> IUser : implements
+  DU --> NOSI : uses for\nenvironment detection
+  DU --> IUM : model type
+}
+
+note right of DU
+  **Deterministic UUID**
+  getUserUUID() creates SHA-256
+  hash of "user:{username}".
+  Same user → same UUID always.
+
+  **Owner Attribution**
+  getOwnerBase64() creates the
+  base64-encoded owner string
+  used in ALL scenarios.
+end note
+
+@enduml

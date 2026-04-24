@@ -1,0 +1,33 @@
+#!/bin/bash
+# @web4x/CLI_NAME_PLACEHOLDER — Self-registering library component
+# Derives project root from own location, never from $PWD
+
+# Resolve real script path (follow symlinks)
+SCRIPT_FILE="${BASH_SOURCE[0]}"
+while [ -L "$SCRIPT_FILE" ]; do
+    SCRIPT_FILE="$(readlink "$SCRIPT_FILE")"
+    [[ "$SCRIPT_FILE" != /* ]] && SCRIPT_FILE="$(dirname "${BASH_SOURCE[0]}")/$SCRIPT_FILE"
+done
+SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_FILE")" && pwd -P)"
+
+# Component identity from directory (single source of truth)
+COMPONENT_VERSION="$(basename "$SCRIPT_DIR")"
+COMPONENT_NAME="$(basename "$(dirname "$SCRIPT_DIR")")"
+CLI_NAME="$(echo "$COMPONENT_NAME" | tr '[:upper:]' '[:lower:]')"
+
+# Project root: derive from component path (3 levels up from components/{Name}/{Version})
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd -P)"
+export PROJECT_ROOT
+
+# Self-registration: create version symlink if missing
+VERSIONS_DIR="$PROJECT_ROOT/scripts/versions"
+VERSION_LINK="$VERSIONS_DIR/${CLI_NAME}-v${COMPONENT_VERSION}"
+if [ -d "$VERSIONS_DIR" ] && [ ! -e "$VERSION_LINK" ]; then
+    ln -s "../../components/${COMPONENT_NAME}/${COMPONENT_VERSION}/${CLI_NAME}" "$VERSION_LINK" 2>/dev/null && \
+        echo "[self-register] Created ${CLI_NAME}-v${COMPONENT_VERSION}"
+fi
+
+# Build
+cd "$SCRIPT_DIR" || exit 1
+./src/sh/build.sh "$@"
+echo "@web4x/$CLI_NAME $COMPONENT_VERSION — built successfully"

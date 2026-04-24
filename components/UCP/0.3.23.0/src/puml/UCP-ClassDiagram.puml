@@ -1,0 +1,400 @@
+@startuml UCP-ClassDiagram
+!theme plain
+skinparam backgroundColor White
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 9
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+title @web4x/ucp 0.3.23.0 — Universal Component Pattern\nFoundation Component (ZERO external deps)
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 3: Interfaces & Runtime Types
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 3 — Interfaces" as L3 #F5F5F5 {
+
+  interface "Model" as IModel {
+    + uuid: string
+    + name: string
+  }
+
+  interface "Scenario<TModel>" as IScenario {
+    + ior: { uuid, component, version }
+    + owner: string
+    + model: TModel
+  }
+
+  interface "Component<TModel>" as IComponent {
+    + model: TModel
+    + init(scenario?: Scenario<TModel>): this
+    + toScenario(name?: string): Promise<Scenario>
+    + hasMethod(name: string): boolean
+    + getMethodSignature(name: string): MethodSignature
+    + listMethods(): string[]
+  }
+
+  interface "Controller<TModel>" as IController {
+    + init(model: TModel): this
+    + get model(): TModel
+    + scenarioReceive(scenario: any): void
+    + viewRegister(view: View<TModel>): void
+    + viewUnregister(view: View<TModel>): void
+  }
+
+  interface "View<TModel>" as IView {
+    + render(model: TModel): void
+    + update(model: TModel): void
+  }
+
+  interface "RelatedObjects" as IRelObj {
+    + relatedObjectRegister<T>(key, instance): void
+    + relatedObjectLookup<T>(key): T[]
+    + relatedObjectLookupFirst<T>(key): Reference<T>
+    + relatedObjectUnregister<T>(instance): void
+  }
+
+  interface "IDProvider" as IIDProv {
+    + create(): string
+    + validate(id: string): boolean
+  }
+
+  interface "ContentIDProvider" as ICIDProv {
+    + contentIdCreate(content): Promise<string>
+    + contentIdCreateSync(content): string
+  }
+
+  interface "Loader" as ILoader {
+    + load(ior: string, options?): Promise<any>
+    + save(data, ior: string, options?): Promise<void>
+    + exists(path: string): Promise<boolean>
+  }
+
+  interface "IOR<T>" as IIOR {
+    + initRemote(iorString: string): this
+    + initLocal(value: T): this
+    + resolve(options?): Promise<T>
+    + save(data, options?): Promise<void>
+  }
+
+  abstract class "JsInterface" as JSI <<P35: Runtime Interface>> {
+    - {static} typeField: TypeDescriptor
+    + {static} get type(): TypeDescriptor
+    + {static} implementationRegister(cls): void
+    + {static} get implementations(): InterfaceConstructor[]
+    + {static} implementationCheck(cls): boolean
+  }
+
+  abstract class "PersistenceManager" as PM <<extends JsInterface>> {
+    + {abstract} scenarioSave(uuid, scenario, paths): Promise<void>
+    + {abstract} scenarioLoad(uuid): Promise<Scenario>
+    + {abstract} scenarioFind(query): Promise<Scenario[]>
+    + {abstract} scenarioDelete(uuid): Promise<void>
+    + {abstract} scenarioExists(uuid): Promise<boolean>
+    + {abstract} typePathBuild(component, version): string
+    + {abstract} domainPathBuild(parts, host, comp, ver): string
+    + {abstract} capabilityPathBuild(...): string
+  }
+
+  abstract class "Storage" as STG <<extends PersistenceManager>> {
+    + {abstract} init(scenario: StorageScenario): this
+    + {abstract} toScenario(): Promise<StorageScenario>
+  }
+
+  class "UcpModel<T>" as UcpM <<P34: ISR Proxy>> {
+    - rawModel: T
+    - proxyModel: T
+    - updateObjectInternal: Partial<T>
+    - viewUpdateCallback: () => void
+    - persistenceCallback: Reference<() => void>
+    __P6: Lifecycle__
+    + constructor()
+    + init(model: T, onViewUpdate: () => void): this
+    __Model Access__
+    + get model(): T  <<ISR Proxy>>
+    + get value(): T  <<tracked, no update>>
+    + get updateObject(): Partial<T>
+    + get isDirty(): boolean
+    __Change Management__
+    + commit(): void
+    + rollback(): void
+    + merge(partial: Partial<T>): void
+    + mergeSilent(partial: Partial<T>): void
+    + persistenceCallbackSet(cb): void
+    __ISR Internals (Private)__
+    - modelProxyCreate(model: T): T
+    - arrayProxyCreate(arr, parent, key): unknown[]
+    - valueProxyCreate(model: T): T
+  }
+
+  class "TypeDescriptor" as TD <<P28: Object IS Type>> {
+    + name: string
+    + extends: Reference<TypeDescriptor>
+    + implements: Set<InterfaceConstructor>
+    + attributes: Map<string, AttributeDescriptor>
+    + methods: Map<string, MethodDescriptor>
+    + implementingClasses: Set<InterfaceConstructor>
+    __P6: Lifecycle__
+    + constructor()
+    + init(config): this
+    + {static} fromASTData(astData): TypeDescriptor
+    __P16: Lookup Methods__
+    + attributeLookup(name): Reference<AttributeDescriptor>
+    + methodLookup(name): Reference<MethodDescriptor>
+    + get implementations(): InterfaceConstructor[]
+    + implementationAdd(cls): void
+    + implementsAdd(iface): void
+    + toJSON(): TypeDescriptorJSON
+  }
+
+  PM --|> JSI : extends
+  STG --|> PM : extends
+  ICIDProv --|> IIDProv : extends
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 2: Implementation
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 2 — Implementation" as L2 #E8F5E9 {
+
+  class "UcpComponent<TModel>" as UcpC <<P6 + P29: IDProvider>> {
+    # controller: UcpController<TModel>
+    - ucpModel: Reference<UcpModel<TModel>>
+    # storage: Reference<Storage>
+    - iorField: Reference<{uuid, component, version}>
+    - ownerField: string
+    + {static} type: TypeDescriptor
+    + {static} uuidProviderInstance: UUIDProvider
+    + {static} sha256ProviderInstance: SHA256Provider
+    __P6: Lifecycle__
+    + constructor()
+    + init(scenario?: Scenario<TModel>): this
+    + scenarioDefault(): Scenario<TModel>
+    + toScenario(): Scenario<TModel>
+    + {static} start(args?: string[]): Promise<void>
+    + {static} implements(): AbstractConstructor[]
+    __Model & IOR Access__
+    + get model(): TModel
+    + get hasModel(): boolean
+    + get ior(): {uuid, component, version}
+    + get owner(): string
+    + toIOR(): {uuid, component, version}
+    __P29: ID Generation__
+    # uuidCreate(): string
+    # contentIdCreate(content): Promise<string>
+    # contentIdCreateSync(content): string
+    + idProvidersRegister(): void
+    __MVC__
+    + viewRegister(view: View<TModel>): void
+    + viewUnregister(view: View<TModel>): void
+    + viewsUpdateAll(): void
+    + scenarioReceive(scenario): void
+    __Change Tracking__
+    # get value(): TModel
+    + get updateObject(): Partial<TModel>
+    + get isDirty(): boolean
+    + commit(): void
+    + rollback(): void
+    __Persistence__
+    + storageSet(storage: Storage): void
+    + hibernate(symlinkPaths?: string[]): Promise<void>
+    + restore(uuid: string): Promise<this>
+    # scenarioPersist(): void
+  }
+
+  class "UcpController<TModel>" as UcpCtrl <<P24: RelatedObjects>> {
+    - registeredViews: Set<View<TModel>>
+    - ucpModel: Reference<UcpModel<TModel>>
+    - relatedObjectsRegistry: Map<InterfaceKey, Set>
+    - instanceToInterfaces: Map<unknown, Set>
+    __P6: Lifecycle__
+    + {static} start(): void
+    + constructor()
+    + initWithUcpModel(ucpModel: UcpModel): this
+    __MVC Controller__
+    + get model(): TModel
+    + scenarioReceive(scenario): void
+    + viewRegister(view: View<TModel>): void
+    + viewUnregister(view: View<TModel>): void
+    + viewsUpdateAll(): void
+    __P24: RelatedObjects Registry__
+    + relatedObjectRegister<T>(key, instance): void
+    + relatedObjectLookup<T>(key): T[]
+    + relatedObjectLookupFirst<T>(key): Reference<T>
+    + relatedObjectUnregister<T>(instance): void
+    - prototypeChainRegister(instance, skipType): void
+  }
+
+  class "TypeRegistry" as TR <<Singleton>> {
+    - {static} instanceField: Reference<TypeRegistry>
+    - typeMap: Map<InterfaceConstructor, TypeDescriptor>
+    - nameMap: Map<string, InterfaceConstructor>
+    - iorMap: Map<string, InterfaceConstructor>
+    __Singleton__
+    + {static} get instance(): TypeRegistry
+    - constructor()
+    __Registration__
+    + register(cls, astData?): void
+    + registerIOR(ior: string, cls): void
+    + unregister(cls): void
+    __P16: Lookup Methods__
+    + typeLookup(cls): Reference<TypeDescriptor>
+    + classFromName(name): Reference<InterfaceConstructor>
+    + classFromIOR(ior): Reference<InterfaceConstructor>
+    + implementationsLookup(iface): InterfaceConstructor[]
+    + resolveIOR(ior): Reference<InterfaceConstructor>
+    + toIOR(cls): Reference<string>
+    + allClasses(): InterfaceConstructor[]
+    + allNames(): string[]
+    + get size(): number
+  }
+
+  class "UUIDProvider" as UUID <<P29>> {
+    + create(): string
+    + validate(id: string): boolean
+  }
+
+  class "SHA256Provider" as SHA <<P29>> {
+    + algorithm: 'SHA-256'
+    + hashLength: 64
+    + create(): string
+    + validate(id: string): boolean
+    + contentIdCreate(content): Promise<string>
+    + contentIdCreateSync(content): Reference<string>
+  }
+
+  UcpC ..|> IComponent : implements
+  UcpCtrl ..|> IController : implements
+  UcpCtrl ..|> IRelObj : implements
+  UUID ..|> IIDProv : implements
+  SHA ..|> ICIDProv : implements
+  UcpC --> UcpCtrl : controller
+  UcpC --> UcpM : ucpModel
+  UcpC --> UUID : uuidProviderInstance
+  UcpC --> SHA : sha256ProviderInstance
+  UcpCtrl --> UcpM : ucpModel
+  UcpC ..> TR : registers via\nstatic start()
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 4: Orchestration (IOR + FileLoader)
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 4 — Orchestration" as L4 #FFF3E0 {
+
+  class "IOR<T>" as IORImpl <<P34: Pluggable Loader Registry>> {
+    + model: IORModel
+    - resolvedValue: T
+    - referenceState: ReferenceState
+    - parentModel: object  <<ISR>>
+    - parentKey: string  <<ISR>>
+    - {static} loaders: Map<string, Loader>
+    - {static} loadersInitialized: boolean
+    __P6: Lifecycle__
+    + constructor()
+    + initRemote(iorString: string): this
+    + initLocal(value: T): this
+    + init(valueOrIor): Promise<this>
+    __Pluggable Loader Registry__
+    + {static} loaderRegister(protocol, loader): void
+    + {static} loaderGet(protocol): Loader
+    + {static} loaderList(): string[]
+    - {static} ensureLoadersInitialized(): void
+    __Reference States__
+    + get isLocal(): boolean
+    + get isRemote(): boolean
+    + get isResolved(): boolean
+    + get state(): ReferenceState
+    + get value(): T
+    __Resolution__
+    + resolve(options?): Promise<T>
+    + resolveInstance<C>(): Promise<C>
+    + load<R>(options?): Promise<R>
+    + save(data, options?): Promise<void>
+    __ISR Support__
+    + initWithParent(parent, key, index?): this
+    + resolveAndReplace<C>(): Promise<C>
+    + get hasParent(): boolean
+    __IOR Manipulation__
+    + computeIorString(): string
+    + parseIorString(iorString): this
+    + enrichWithLocation(location): this
+    + getProfiles(): IORProfile[]
+    + toUrl(): string
+    + fromUrl(url: string): this
+    __Instantiation__
+    + {static} instantiate<C>(scenario): Promise<C>
+    + {static} dereference<C>(reference): Promise<C>
+  }
+
+  class "FileLoader" as FL <<Built-in Loader>> {
+    + protocol: 'file'
+    + model: LoaderModel
+    __P6: Lifecycle__
+    + constructor()
+    + init(scenario?): this
+    + toScenario(): Promise<Scenario>
+    __Loader Operations__
+    + load(ior: string, options?): Promise<string>
+    + save(data, ior: string, options?): Promise<void>
+    + exists(filePath: string): Promise<boolean>
+    - extractPath(ior: string): string
+  }
+
+  IORImpl ..|> IIOR : implements
+  FL ..|> ILoader : implements
+  IORImpl --> FL : built-in\n(file:, fs:)
+  IORImpl ..> ILoader : dispatches to\nregistered loaders
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 5: CLI
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 5 — CLI" as L5 #FCE4EC {
+  class "UcpCLI" as UCLI <<Minimal Info CLI>> {
+    + {static} start(args: string[]): Promise<void>
+    + {static} info(): void
+    + {static} exports(): void
+    + {static} usage(): void
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' Cross-Layer Relationships
+' ═══════════════════════════════════════════════════════════════
+
+UcpM --> IORImpl : ISR: detects "ior:" strings\nin model properties,\ncreates IOR objects
+JSI ..> TD : type field
+TR --> TD : manages registry of
+
+note right of UcpM
+  **ISR (IOR Self-Replacement)**
+  Proxy getter intercepts model property access.
+  If value is string starting with "ior:":
+  1. Creates IOR().initRemote(value) synchronously
+  2. Replaces string with IOR object in model
+  3. Fires resolveAndReplace() async (no await)
+  4. Next access returns resolved object
+
+  Also handles arrays of IOR strings (ISR.3)
+end note
+
+note bottom of IORImpl
+  **Pluggable Loader Registry**
+  Built-in: FileLoader (file:, fs:)
+  Runtime-registered (by @web4x/once):
+    HTTPSLoader (https:, http:)
+    ScenarioLoader (scenario:)
+    WebSocketLoader (wss:, ws:)
+end note
+
+note right of TR
+  **Singleton Pattern**
+  TypeRegistry.instance (lazy)
+  Used by UcpComponent.start()
+  to register class metadata
+end note
+
+@enduml

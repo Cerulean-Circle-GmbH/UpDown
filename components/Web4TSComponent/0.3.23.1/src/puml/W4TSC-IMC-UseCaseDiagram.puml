@@ -1,0 +1,207 @@
+@startuml W4TSC-IMC-UseCaseDiagram
+!theme plain
+skinparam backgroundColor White
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 10
+
+title Web4TSComponent + IdealMinimalComponent\nUse Case Diagram — CLI Commands as Object.verb Use Cases
+
+left to right direction
+
+actor "User" as user
+actor "Shell\n(Tab Completion)" as shell
+
+' ═══════════════════════════════════════════════════════════════
+' WEB4TSCOMPONENT — System Boundary
+' ═══════════════════════════════════════════════════════════════
+
+rectangle "Web4TSComponent (prod 0.3.19.1)" as W4TSC {
+
+  ' --- Top-level CLI Use Cases (Object.verb) ---
+
+  usecase "UC1: web4tscomponent.info" as UC1
+  usecase "UC2: web4tscomponent.build" as UC2
+  usecase "UC3: web4tscomponent.test" as UC3
+  usecase "UC4: web4tscomponent.clean" as UC4
+  usecase "UC5: web4tscomponent.links" as UC5
+  usecase "UC6: web4tscomponent.tree" as UC6
+  usecase "UC7: web4tscomponent.start" as UC7
+  usecase "UC8: web4tscomponent.upgrade" as UC8
+  usecase "UC9: web4tscomponent.releaseTest" as UC9
+  usecase "UC10: web4tscomponent.create" as UC10
+  usecase "UC11: web4tscomponent.on" as UC11
+  usecase "UC12: web4tscomponent.completion" as UC12
+  usecase "UC13: web4tscomponent.shCompletion" as UC13
+
+  ' --- Sub-Use Cases (internal methods) ---
+
+  usecase "UC1a: DefaultWeb4TSComponent.init()" as UC1a
+  usecase "UC1b: DefaultCLI.componentInfoDisplay()" as UC1b
+  usecase "UC1c: SemanticVersion.fromString()" as UC1c
+
+  usecase "UC2a: DefaultWeb4TSComponent.buildDependencies()" as UC2a
+  usecase "UC2b: child_process.execSync(npx tsc)" as UC2b
+
+  usecase "UC3a: DefaultWeb4TSComponent.test()" as UC3a
+  usecase "UC3b: TestFileParser.parse()" as UC3b
+
+  usecase "UC5a: DefaultWeb4TSComponent.linksGet()" as UC5a
+  usecase "UC5b: SemanticVersion.resolveVersion()" as UC5b
+  usecase "UC5c: SemanticVersion.isSemanticLink()" as UC5c
+
+  usecase "UC8a: SemanticVersion.promote()" as UC8a
+  usecase "UC8b: DefaultWeb4TSComponent.scaffoldComponent()" as UC8b
+
+  usecase "UC10a: DefaultWeb4TSComponent.scaffoldComponent()" as UC10a
+  usecase "UC10b: DefaultWeb4TSComponent.generateLocationResilientCLI()" as UC10b
+
+  usecase "UC11a: DefaultCLI.loadComponent()" as UC11a
+  usecase "UC11b: DefaultCLI.on()" as UC11b
+
+  usecase "UC12a: TSCompletion.discover()" as UC12a
+  usecase "UC12b: HierarchicalCompletionFilter.filter()" as UC12b
+
+  usecase "UC13a: Web4TSComponentCLI.executeDynamicCommandWithChaining()" as UC13a
+  usecase "UC13b: Web4TSComponentCLI.determineArgumentConsumption()" as UC13b
+}
+
+' ═══════════════════════════════════════════════════════════════
+' IDEALMINIMALCOMPONENT — System Boundary
+' ═══════════════════════════════════════════════════════════════
+
+rectangle "IdealMinimalComponent (prod 0.1.0.0)" as IMC {
+
+  ' --- Own Use Cases ---
+  usecase "UC20: idealMinimalComponent.create" as UC20
+  usecase "UC21: idealMinimalComponent.process" as UC21
+  usecase "UC22: idealMinimalComponent.completion" as UC22
+
+  ' --- Delegated Use Cases (via DelegationProxy) ---
+  usecase "UC30: idealMinimalComponent.info" as UC30
+  usecase "UC31: idealMinimalComponent.build" as UC31
+  usecase "UC32: idealMinimalComponent.test" as UC32
+  usecase "UC33: idealMinimalComponent.clean" as UC33
+  usecase "UC34: idealMinimalComponent.links" as UC34
+  usecase "UC35: idealMinimalComponent.tree" as UC35
+  usecase "UC36: idealMinimalComponent.upgrade" as UC36
+
+  ' --- Delegation Sub-Use Cases ---
+  usecase "UC30a: DelegationProxy.delegateMethod()" as UC30a
+  usecase "UC30b: DelegationProxy.setDelegationContext()" as UC30b
+  usecase "UC30c: IdealMinimalComponentCLI.initComponent()" as UC30c
+  usecase "UC30d: DelegationProxy.start(target)" as UC30d
+}
+
+' ═══════════════════════════════════════════════════════════════
+' Actor Relationships
+' ═══════════════════════════════════════════════════════════════
+
+user --> UC1
+user --> UC2
+user --> UC3
+user --> UC4
+user --> UC5
+user --> UC6
+user --> UC7
+user --> UC8
+user --> UC9
+user --> UC10
+user --> UC11
+
+user --> UC20
+user --> UC21
+user --> UC30
+user --> UC31
+user --> UC32
+user --> UC33
+user --> UC34
+user --> UC35
+user --> UC36
+
+shell --> UC12
+shell --> UC13
+shell --> UC22
+
+' ═══════════════════════════════════════════════════════════════
+' <<include>> Relationships — Web4TSComponent
+' ═══════════════════════════════════════════════════════════════
+
+UC1 ..> UC1a : <<include>>
+UC1 ..> UC1b : <<include>>
+UC1 ..> UC1c : <<include>>
+
+UC2 ..> UC2a : <<include>>
+UC2 ..> UC2b : <<include>>
+
+UC3 ..> UC3a : <<include>>
+UC3 ..> UC3b : <<include>>
+
+UC5 ..> UC5a : <<include>>
+UC5 ..> UC5b : <<include>>
+UC5 ..> UC5c : <<include>>
+
+UC8 ..> UC8a : <<include>>
+UC8 ..> UC8b : <<include>>
+
+UC10 ..> UC10a : <<include>>
+UC10 ..> UC10b : <<include>>
+
+UC11 ..> UC11a : <<include>>
+UC11 ..> UC11b : <<include>>
+
+UC12 ..> UC12a : <<include>>
+UC12 ..> UC12b : <<include>>
+
+UC13 ..> UC13a : <<include>>
+UC13 ..> UC13b : <<include>>
+
+' ═══════════════════════════════════════════════════════════════
+' <<include>> Relationships — IdealMinimalComponent Delegation
+' ═══════════════════════════════════════════════════════════════
+
+UC30 ..> UC30a : <<include>>
+UC30 ..> UC30b : <<include>>
+UC30 ..> UC30c : <<include>>
+UC30 ..> UC30d : <<include>>
+
+UC31 ..> UC30a : <<include>>
+UC32 ..> UC30a : <<include>>
+UC33 ..> UC30a : <<include>>
+UC34 ..> UC30a : <<include>>
+UC35 ..> UC30a : <<include>>
+UC36 ..> UC30a : <<include>>
+
+' ═══════════════════════════════════════════════════════════════
+' Delegation: IMC delegates to W4TSC
+' ═══════════════════════════════════════════════════════════════
+
+UC30a ..> UC1 : <<delegates to>>
+UC31 ..> UC2 : <<delegates to>>
+UC32 ..> UC3 : <<delegates to>>
+UC33 ..> UC4 : <<delegates to>>
+UC34 ..> UC5 : <<delegates to>>
+UC35 ..> UC6 : <<delegates to>>
+UC36 ..> UC8 : <<delegates to>>
+
+' ═══════════════════════════════════════════════════════════════
+' Notes
+' ═══════════════════════════════════════════════════════════════
+
+note right of IMC
+  **DelegationProxy Pattern**
+  IMC's own use cases: create, process, completion
+  Delegated use cases: info, build, test, clean,
+    links, tree, upgrade
+  All delegated UCs go through
+    DelegationProxy.delegateMethod()
+    which calls the W4TSC equivalent
+end note
+
+note bottom of UC11
+  **on() = Context Loading**
+  web4tscomponent on ONCE 0.3.23.1 info
+  Loads ONCE as context, then
+  executes info on ONCE via W4TSC
+end note
+
+@enduml

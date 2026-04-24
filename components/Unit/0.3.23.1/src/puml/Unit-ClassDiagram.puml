@@ -1,0 +1,236 @@
+@startuml Unit-ClassDiagram
+!theme plain
+skinparam backgroundColor White
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 9
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+title @web4x/unit 0.3.23.0 — Atomic File Tracking & Discovery\nDepends on: @web4x/ucp
+
+' ═══════════════════════════════════════════════════════════════
+' EXTERNAL: @web4x/ucp (dependency)
+' ═══════════════════════════════════════════════════════════════
+
+package "@web4x/ucp (external)" as UCP #EEEEEE {
+  abstract class "UcpComponent<TModel>" as ExtUcpC {
+    + init(scenario?): this
+    + get model(): TModel
+    + toScenario(): Scenario
+    # uuidCreate(): string
+  }
+
+  abstract class "PersistenceManager" as ExtPM {
+    + {abstract} scenarioSave(uuid, scenario, paths): Promise<void>
+    + {abstract} scenarioLoad(uuid): Promise<Scenario>
+  }
+
+  class "IOR<T>" as ExtIOR {
+    + initRemote(iorString): this
+    + resolve(): Promise<T>
+    + save(data): Promise<void>
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 3: Interfaces
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 3 — Interfaces" as L3 #F5F5F5 {
+
+  interface "UnitDefinition" as IUnitDef {
+    + filename: string
+    + relativePath: string
+    + fullPath: string
+    + description: string
+    + typeM3: TypeM3
+    + mimetype: string
+    + extension?: string
+    + existingUuid?: string
+  }
+
+  interface "UnitFilePattern" as IUnitPat {
+    + glob: string
+    + typeM3: TypeM3
+    + mimetype: string
+    + recursive: boolean
+    + excludeDirs?: string[]
+  }
+
+  interface "ManifestUnit" as IManUnit {
+    + uuid: string
+    + name: string
+    + path: string
+    + unitPath: string
+    + mimetype: string
+  }
+
+  interface "ManifestUnits" as IManUnits {
+    + css: ManifestUnit[]
+    + templates: ManifestUnit[]
+    + typescript?: ManifestUnit[]
+  }
+
+  interface "ComponentManifestModel" as ICManModel {
+    + name: string
+    + version: string
+    + description: string
+    + units: ManifestUnits
+    + entryPoints?: ManifestEntryPoints
+    + dependencies?: Record<string, string>
+  }
+
+  interface "UnitModel" as IUnitModel {
+    + uuid: string
+    + name: string
+    + origin: string
+    + definition: string
+    + typeM3: TypeM3
+    + indexPath: string
+    + references?: UnitReference[]
+    + createdAt: string
+    + updatedAt: string
+    + componentType?: string
+    + componentIor?: string
+    + fileUuid?: string
+    + artefactUuid?: string
+  }
+
+  enum "TypeM3" as TM3 {
+    CLASS
+    RELATIONSHIP
+    FOLDER
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 2: Implementation
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 2 — Implementation" as L2 #E8F5E9 {
+
+  class "DefaultUnit" as DU <<P6 + extends UcpComponent>> {
+    + model: UnitModel
+    __P6: Lifecycle__
+    + constructor()
+    + init(scenario?): this  <<inherited>>
+    + toScenario(): Scenario  <<inherited>>
+    __Accessors__
+    + get originName(): string
+    __Unit Operations__
+    + initForComponent(type, ior, fileUuid?): void
+    + artefactLink(artefactUuid: string): void
+    + validateModel(): Promise<boolean>
+    + from(path, startPos?, endPos?): Promise<this>
+    + link(identifier, filename): Promise<this>
+    + linkInto(unit, folder): Promise<this>
+    __Private__
+    - originNameExtract(): string
+    - filePathFromIOR(ior): string
+    - projectRootFind(): string
+    - indexPathBuild(uuid): string
+    - fileUnitCreate(filename): Promise<void>
+    - folderUnitCreate(folderPath): Promise<void>
+    - scenarioLoad(uuid): Promise<Scenario>
+    - scenarioSave(uuid, scenario): Promise<void>
+  }
+
+  class "UnitDiscoveryService" as UDS <<P6: Stateful Service>> {
+    - scenarioService: ScenarioService
+    - componentRoot: string
+    - componentName: string
+    - componentVersion: string
+    - projectRoot: string
+    __P6: Lifecycle__
+    + constructor()
+    + init(config: {scenarioService,\n  componentRoot, componentName,\n  componentVersion, projectRoot}): this
+    __Discovery__
+    + unitsDiscover(directory, pattern): Promise<UnitDefinition[]>
+    + unitCreate(definition, originPath?): Promise<DiscoveryResult>
+    + unitSave(result): Promise<void>
+    __Manifest__
+    + manifestUnitsGenerate(): Promise<ManifestUnits>
+    + manifestUpdate(manifestPath): Promise<void>
+    __Private__
+    - scanDirectory(dir, pattern, results): Promise<void>
+    - matchesPattern(filename, glob): boolean
+    - generateDescription(filename, typeM3): string
+    - collectManifestUnits(dir, units): Promise<void>
+    - parseUnitSymlink(path, name): Promise<ManifestUnit>
+    - getMimeType(filename): string
+  }
+
+  class "ScenarioService" as SS <<P1: Single Point of Truth>> {
+    - persistenceManager: Reference<PersistenceManager>
+    - component: Reference<UcpComponent>
+    - componentName: string
+    - componentVersion: string
+    __P6: Lifecycle__
+    + constructor()
+    + init(config: {persistenceManager,\n  component?, componentName?,\n  componentVersion?}): this
+    __Scenario CRUD__
+    + scenarioCreate<T>(config): Scenario<T>
+    + scenarioSave<T>(scenario, symlinkPaths?): Promise<void>
+    + scenarioLoad<T>(uuid): Promise<Scenario<T>>
+    + scenarioDelete(uuid, removeSymlinks?): Promise<void>
+    + scenarioExists(uuid): Promise<boolean>
+    __Path Building (delegates to PM)__
+    + indexPathBuild(uuid): string
+    + typePathBuild(component, version): string
+    + domainPathBuild(parts, host, comp, ver): string
+    + capabilityPathBuild(...): string
+    __Migration & References__
+    + scenarioMigrate<T>(scenario): Scenario<T>
+    + referenceTrack<T>(scenario, location, target): Scenario<T>
+    + referenceCreate(location, uuid): UnitReference
+    + referenceBroken<T>(scenario, location): Scenario<T>
+    __Private__
+    - migrateViaConvention<T>(scenario, sourceVer): Scenario<T>
+    - unitAdd<T>(scenario): Scenario<T>
+    - unitEnsure<T>(scenario, paths?): Scenario<T>
+  }
+
+  DU --|> ExtUcpC : extends
+  UDS --> SS : uses for\nscenario operations
+  SS --> ExtPM : delegates\npersistence to
+  DU ..> ExtIOR : uses for\nscenario load/save
+  UDS ..> DU : creates\nunit instances
+}
+
+' ═══════════════════════════════════════════════════════════════
+' Relationships
+' ═══════════════════════════════════════════════════════════════
+
+UDS ..> IUnitDef : discovers
+UDS ..> IUnitPat : matches against
+UDS ..> IManUnit : generates
+UDS ..> IManUnits : produces manifest
+DU --> IUnitModel : model type
+SS ..> IUnitModel : adds unit metadata
+
+note right of DU
+  **Unit = Scenario for a File/Folder**
+  - from("path") creates unit from file
+  - Stores in scenarios/index/{uuid}
+  - Creates .unit symlink next to source
+  - Origin IOR tracks source file
+  - typeM3: CLASS/RELATIONSHIP/FOLDER
+end note
+
+note bottom of SS
+  **Convention-Based Migration**
+  On scenarioLoad(), checks version mismatch.
+  Calls component.upgradeScenarioFromX_Y_Z()
+  if migration method exists on component class.
+  Auto-saves migrated scenario.
+end note
+
+note right of UDS
+  **Discovery Flow**
+  1. unitsDiscover(dir, pattern) → scans files
+  2. unitCreate(definition) → creates scenario
+  3. unitSave(result) → persists + symlink
+  4. manifestUpdate() → writes manifest JSON
+end note
+
+@enduml

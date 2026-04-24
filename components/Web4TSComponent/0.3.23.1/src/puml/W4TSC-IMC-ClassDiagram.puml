@@ -1,0 +1,301 @@
+@startuml W4TSC-IMC-ClassDiagram
+!theme plain
+skinparam backgroundColor White
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 10
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+title Web4TSComponent (prod 0.3.19.1) + IdealMinimalComponent (prod 0.1.0.0)\nClass Diagram — DelegationProxy Interplay
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 3: Interfaces
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 3 — Interfaces" as L3 #F5F5F5 {
+
+  interface "Component<TModel>" as Component {
+    + model: TModel
+    + init(scenario?: Scenario<TModel>): this
+    + toScenario(name?: string): Promise<Scenario>
+    + hasMethod(name: string): boolean
+    + getMethodSignature(name: string): MethodSignature
+    + listMethods(): string[]
+  }
+
+  interface "CLI" as CLI {
+    + init(scenario: Scenario<CLIModel>): this
+    + execute(args: string[]): Promise<void>
+    + showUsage(): void
+  }
+
+  interface "Web4TSComponent" as IW4TSC {
+    + test(scope?: string, ...refs: string[]): Promise<this>
+    + build(...flags: string[]): Promise<this>
+    + clean(): Promise<this>
+    + tree(depth?: string, hidden?: string): Promise<this>
+    + links(action?: string): Promise<this>
+    + generateLocationResilientCLI(name: string, version: string): Promise<string>
+    + setTargetDirectory(dir: string): void
+  }
+
+  interface "IdealMinimalComponent" as IIMC {
+    + init(scenario?: Scenario): Promise<this>
+    + toScenario(name?: string): Promise<Scenario>
+    + create(input: string, format?: string): Promise<this>
+    + process(data: string): Promise<this>
+  }
+
+  interface "Version" as IVersion {
+    + init(scenario?: Scenario<VersionModel>): this
+    + parse(version: string): this
+    + toString(): string
+    + compareTo(other: Version): number
+  }
+
+  IW4TSC --|> Component : extends
+  IIMC --|> Component : extends
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 2: Implementation — Web4TSComponent
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 2 — Web4TSComponent (prod)" as L2_W4TSC #E8F5E9 {
+
+  class "DefaultWeb4TSComponent" as DW4TSC <<P6: Empty Constructor>> {
+    + model: Web4TSComponentModel
+    - colors: Colors
+    - user?: User
+    - cli?: CLI
+    - methods: Map<string, MethodSignature>
+    __P6: Lifecycle__
+    + constructor()
+    + init(scenario?: Scenario): this
+    + toScenario(name?: string): Promise<Scenario>
+    __P16: Object.verb Methods__
+    + info(topic?: string): Promise<this>
+    + test(scope?: string, ...refs: string[]): Promise<this>
+    + build(...flags: string[]): Promise<this>
+    + clean(): Promise<this>
+    + tree(depth?: string, hidden?: string): Promise<this>
+    + links(action?: string): Promise<this>
+    + start(): Promise<this>
+    + upgrade(toVersion: string): Promise<this>
+    + releaseTest(level: string): Promise<this>
+    + create(name: string, features?: string): Promise<this>
+    + on(component: string, version?: string): Promise<this>
+    + setTargetDirectory(dir: string): void
+    + setDependencies(deps: ComponentDependency[]): this
+    + buildDependencies(name: string, version?: string): Promise<void>
+    + generateLocationResilientCLI(name: string, version: string): Promise<string>
+    - discoverMethods(): void
+    - updateModelPaths(): void
+    - getUser(): Promise<User>
+  }
+
+  class "SemanticVersion" as SV <<P19: One File One Type>> {
+    + model: VersionModel
+    + {static} SEMANTIC_LINKS: string[]
+    __P6: Lifecycle__
+    + constructor()
+    + init(scenario?: Scenario<VersionModel>): this
+    + toScenario(name?: string): Promise<Scenario>
+    __Version Operations__
+    + {static} fromString(version: string): SemanticVersion
+    + parse(version: string): this
+    + isValid(version: string): boolean
+    + toString(): string
+    + compareTo(other: Version): number
+    + {static} compare(a: string, b: string): number
+    + {static} getHighest(versions: string[]): string
+    + {static} isSemanticLink(link: string): boolean
+    + {static} resolveVersion(str: string, dir: string, current: SV): Promise<string>
+    __Promotion (Immutable)__
+    + promoteMajor(): Promise<Version>
+    + promoteMinor(): Promise<Version>
+    + promotePatch(): Promise<Version>
+    + promoteRevision(): Promise<Version>
+    + {static} promote(current: string, type: string): Promise<string>
+  }
+
+  abstract class "DefaultCLI" as DCLI <<P6 + P16>> {
+    + model: CLIModel
+    # cliMethods: Map<string, MethodSignature>
+    # colors: Colors
+    # component: Reference<Component>
+    # context: Reference<Component>
+    # user?: User
+    __P6: Lifecycle__
+    + {static} start(args: string[]): Promise<void>
+    + constructor()
+    + init(scenario?: Scenario<CLIModel>): this
+    + toScenario(): Promise<Scenario>
+    __P16: CLI Operations__
+    + on(component: string, version?: string): Promise<this>
+    + completion(filter?: string): Promise<void>
+    + shCompletion(cword: string, ...words: string[]): Promise<void>
+    + {abstract} execute(args: string[]): Promise<void>
+    + {abstract} showUsage(): void
+    __Path Authority (Single Source)__
+    # calculateProjectRootInternal(): string
+    # getTarget(): DefaultWeb4TSComponent
+    # getComponentName(): string
+    # getComponentVersion(): string
+    # discoverMethods(): void
+    - loadComponent(name: string, version: string, path: string): Promise<Component>
+  }
+
+  DW4TSC ..|> IW4TSC : implements
+  SV ..|> IVersion : implements
+  DCLI ..|> CLI : implements
+  DCLI ..|> Component : implements
+  DW4TSC --> SV : model.version
+  DCLI --> DW4TSC : component / context
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 2: Implementation — IdealMinimalComponent
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 2 — IdealMinimalComponent (prod)" as L2_IMC #E3F2FD {
+
+  class "DefaultIdealMinimalComponent" as DIMC <<P6: Empty Constructor>> {
+    + model: IdealMinimalComponentModel
+    - web4ts?: any
+    - user?: User
+    - methods: Map<string, MethodSignature>
+    __P6: Lifecycle__
+    + constructor()
+    + init(scenario?: Scenario): Promise<this>
+    + toScenario(name?: string): Promise<Scenario>
+    __Own Methods__
+    + create(input: string, format?: string): Promise<this>
+    + process(data: string): Promise<this>
+    + completion(what: string, filter?: string): Promise<this>
+    __Delegated (via DelegationProxy)__
+    + info(topic?: string): Promise<this>
+    + test(scope?, ...refs): Promise<this>
+    + build(...flags): Promise<this>
+    + clean(): Promise<this>
+    + tree(depth?, hidden?): Promise<this>
+    + links(action?): Promise<this>
+    + upgrade(version): Promise<this>
+    __Path Accessors (PC.4)__
+    + get projectRoot(): string
+    + get componentsDirectory(): string
+    - discoverMethods(): void
+    - getWeb4TSComponent(): Promise<any>
+  }
+
+  class "DelegationProxy<T>" as DP <<P4: Radical OOP>> {
+    + model: DelegationProxyModel
+    __P6: Lifecycle__
+    + constructor()
+    + init(scenario?: Scenario): this
+    + setTarget(target: T): Promise<this>
+    + toScenario(): any
+    __Component Interface__
+    + hasMethod(name: string): boolean
+    + getMethodSignature(name: string): any
+    + listMethods(): string[]
+    + hasDelegation(): boolean
+    + getDelegationTarget(): any
+    __Delegation__
+    + getWeb8TSComponent(): Promise<any>
+    + {static} start<T>(target: T): Promise<T>
+    - getWeb4TS(): Promise<any>
+    - setDelegationContext(): void
+    - delegateMethod(name: string, ...args): Promise<Component>
+    + toProxy(): T
+  }
+
+  DIMC ..|> IIMC : implements
+  DP ..|> Component : implements
+  DP --> DW4TSC : delegates to\n(lazy-loaded)
+  DP --> DIMC : wraps (target)
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 4: Orchestration (shared by both)
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 4 — Orchestration" as L4 #FFF3E0 {
+  class "TSCompletion" as TSC {
+    + discover(filePath: string): MethodSignature[]
+    + complete(prefix: string): string[]
+  }
+
+  class "DefaultColors" as DC {
+    + format(text: string, style: string): string
+  }
+
+  class "TestFileParser" as TFP {
+    + parse(testDir: string): TestFile[]
+  }
+
+  class "HierarchicalCompletionFilter" as HCF {
+    + filter(items: string[], prefix: string): string[]
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 5: CLI Entry Points
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 5 — CLI" as L5 #FCE4EC {
+
+  class "Web4TSComponentCLI" as W4CLI {
+    # component: Reference<DefaultWeb4TSComponent>
+    + constructor()
+    + {static} start(args: string[]): Promise<void>
+    + showUsage(): void
+    + execute(args: string[]): Promise<void>
+    - executeDynamicCommandWithChaining(cmd, args): Promise<{...}>
+    - determineArgumentConsumption(cmd, args): number
+  }
+
+  class "IdealMinimalComponentCLI" as IMCCLI {
+    # methodSignatures: Map<string, MethodSignature>
+    + constructor()
+    + {static} start(args: string[]): Promise<void>
+    + initComponent(): Promise<void>
+    + showUsage(): void
+    + execute(args: string[]): Promise<void>
+    + shCompletion(cword, ...words): Promise<void>
+    - executeDynamicCommand(cmd, args): Promise<boolean>
+  }
+
+  W4CLI --|> DCLI : extends
+  IMCCLI --|> DCLI : extends
+  W4CLI --> DW4TSC : creates & uses
+  IMCCLI --> DIMC : creates
+  IMCCLI --> DP : wraps DIMC\nvia DelegationProxy.start()
+}
+
+' ═══════════════════════════════════════════════════════════════
+' Cross-Component Delegation Flow
+' ═══════════════════════════════════════════════════════════════
+
+note right of DP
+  **DelegationProxy Pattern**
+  1. IMC_CLI creates DefaultIMC
+  2. DelegationProxy.start(imc) wraps it
+  3. Missing methods intercepted by Proxy
+  4. Proxy delegates to Web4TSComponent
+  5. W4TSC executes (build, test, links...)
+  6. Returns to IMC for chaining
+end note
+
+note bottom of DW4TSC
+  **Web4 Principles Applied**
+  P6: Empty constructor + init()
+  P16: Object.verb naming (links(), build(), test())
+  P19: One File One Type
+  P4: No arrow functions
+end note
+
+DCLI ..> TSC : uses for\nmethod discovery
+DCLI ..> DC : uses for\ncolored output
+
+@enduml

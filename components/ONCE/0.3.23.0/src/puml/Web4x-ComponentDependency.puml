@@ -1,0 +1,191 @@
+@startuml Web4x-ComponentDependency
+!theme plain
+skinparam backgroundColor White
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 10
+skinparam componentStyle rectangle
+skinparam linetype ortho
+
+title @web4x Component Ecosystem — Full Dependency Graph\n13 Components at 0.3.23.0 → dev 0.3.23.1 → release 0.3.24.0
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 0: Foundation
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 0 — Foundation" as L0 #E8F5E9 {
+  component "@web4x/ucp" as ucp {
+    card "UcpComponent" as uc
+    card "UcpController" as ctrl
+    card "UcpModel (ISR)" as um
+    card "TypeRegistry" as tr
+    card "JsInterface" as jsi
+    card "IOR + FileLoader" as ior
+    card "UUIDProvider" as uuid
+    card "SHA256Provider" as sha
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 1: Core Services
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 1 — Core Services" as L1 #E3F2FD {
+  component "@web4x/unit" as unit {
+    card "DefaultUnit" as du
+    card "UnitDiscoveryService" as uds
+    card "ScenarioService" as ss
+  }
+
+  component "@web4x/persistence" as persist {
+    card "UcpStorage (Node)" as ucps
+    card "BrowserScenarioStorage" as bss
+  }
+
+  component "@web4x/user" as user {
+    card "DefaultUser" as duser
+    card "NodeOSInfrastructure" as nosi
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 2: Infrastructure
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 2 — Infrastructure" as L2 #FFF3E0 {
+  component "@web4x/filesystem" as fs {
+    card "DefaultFile" as df
+    card "DefaultFolder" as dfo
+    card "DefaultFileSystem" as dfs
+    card "DefaultImage" as di
+    card "MimetypeHandlerRegistry" as mhr
+  }
+
+  component "@web4x/http" as http {
+    card "HTTPServer" as hs
+    card "HTTPRouter" as hr
+    card "Route (7 subclasses)" as rt
+    card "PortManager" as pm
+    card "IORMethodRouter" as iormr
+  }
+
+  component "@web4x/tls" as tls {
+    card "TLSCertificateLoader" as tcl
+    card "SNIManager" as sni
+    card "DomainCertStore" as dcs
+    card "LetsEncryptProvider" as le
+    card "CertOrchestrator" as co
+  }
+
+  component "@web4x/web4tscomponent" as w4tsc {
+    card "DefaultWeb4TSComponent" as dw4
+    card "DefaultCLI" as dcli
+    card "SemanticVersion" as sv
+    card "DelegationProxy" as dp
+    card "TSCompletion" as tsc
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 3: Platform
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 3 — Platform (Kernel)" as L3 #FCE4EC {
+  component "@web4x/once" as once {
+    card "DefaultOnceKernel" as dok
+    card "NodeJsOnce" as njo
+    card "BrowserOnce" as bo
+    card "ServerHierarchyManager" as shm
+    card "HTTPSServer" as https
+    card "DefaultWebSocket" as dws
+    card "ONCECLI" as ocli
+    card "Lit Views (24)" as views
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 4: Application
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 4 — Application" as L4 #F3E5F5 {
+  component "@web4x/web4test" as w4test {
+    card "DefaultWeb4TestCase" as dtc
+  }
+
+  component "@web4x/tootsie" as tootsie {
+    card "TootsieTestRunner" as ttr
+    card "QualityOracle" as qo
+  }
+
+  component "@web4x/pdca" as pdca {
+    card "DefaultPDCA" as dpdca
+  }
+
+  component "@web4x/idealminimalcomponent" as imc {
+    card "DefaultIdealMinimalComponent" as dimc
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' Dependencies (file: refs in package.json)
+' ═══════════════════════════════════════════════════════════════
+
+unit --> ucp
+persist --> ucp
+user --> ucp
+user --> unit
+
+fs --> ucp
+fs --> unit
+http --> ucp
+tls --> ucp
+w4tsc --> ucp
+w4tsc --> unit
+w4tsc --> persist
+
+once --> ucp
+once --> unit
+once --> persist
+once --> user
+once --> fs
+once --> http
+once --> tls
+
+imc ..> w4tsc : via DelegationProxy
+pdca ..> w4tsc : via DelegationProxy
+w4test ..> ucp : standalone
+tootsie ..> w4test : extends
+
+' ═══════════════════════════════════════════════════════════════
+' Build Order
+' ═══════════════════════════════════════════════════════════════
+
+note bottom of L0
+  **Build Order (cascading)**
+  1. ucp (zero deps)
+  2. unit, persistence, user, filesystem, http, tls (parallel)
+  3. web4tscomponent, web4test
+  4. tootsie, pdca, idealminimal
+  5. once (depends on ALL)
+
+  Each ./component auto-builds missing deps
+  via build.sh file: dependency parsing
+end note
+
+note right of once
+  **@web4x/once = Runtime Kernel**
+  244 files (full ONCE monolith copy)
+  with file: deps to all extracted components.
+  Contains files that cross component boundaries:
+  HTTPSServer, ServerHierarchyManager,
+  ProxyRoute, WebSocket, Layer5 Views.
+end note
+
+note right of w4tsc
+  **Component Lifecycle Tool**
+  create, build, test, upgrade,
+  links, releaseTest, on (delegation)
+  Every component uses this for
+  its development workflow.
+end note
+
+@enduml

@@ -1,0 +1,167 @@
+@startuml TLS-ClassDiagram
+!theme plain
+skinparam backgroundColor White
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 9
+skinparam classAttributeIconSize 0
+
+title @web4x/tls 0.3.23.0 — Certificate Management\nSNI, Let's Encrypt, Renewal Scheduling\nDepends on: @web4x/ucp
+
+package "Layer 3 — Interfaces" as L3 #F5F5F5 {
+  interface "TLSOptions" as ITLS {
+    + certPath: string
+    + keyPath: string
+    + caPath?: string
+    + passphrase?: string
+  }
+
+  interface "DomainCertificateModel" as IDCM {
+    + domain: string
+    + certPath: string
+    + keyPath: string
+    + caPath?: string
+    + source: CertificateSource
+    + expiresAt: string
+    + issuedAt: string
+  }
+
+  interface "DomainCertificateStoreModel" as IDCSM {
+    + domains: Map<string, DomainCertificateModel>
+    + defaultDomain?: string
+    + statistics: StatisticsModel
+  }
+
+  interface "ServerNameIndicationManagerModel" as ISNIM {
+    + domains: string[]
+    + statistics: StatisticsModel
+  }
+
+  interface "LetsEncryptCertificateProviderModel" as ILECPM {
+    + accountEmail: string
+    + directoryUrl: string
+    + domains: string[]
+  }
+
+  interface "CertificateRenewalSchedulerModel" as ICRSM {
+    + renewalThresholdDays: number
+    + checkIntervalMs: number
+    + domains: DomainConfigurationModel[]
+  }
+
+  enum "CertificateSource" as CS {
+    SELF_SIGNED
+    LETS_ENCRYPT
+    MANUAL
+    CA_SIGNED
+  }
+}
+
+package "Layer 2 — Implementation" as L2 #E8F5E9 {
+
+  class "TLSCertificateLoader" as TCL <<P6: Loads cert/key/ca>> {
+    - cert: Buffer
+    - key: Buffer
+    - ca: Buffer
+    + constructor()
+    + init(scenario): this
+    + load(certPath, keyPath, caPath?): this
+    + toTLSOptions(): tls.SecureContextOptions
+    + get isLoaded(): boolean
+    + get certificate(): Buffer
+    + get privateKey(): Buffer
+  }
+
+  class "ServerNameIndicationManager" as SNIM <<P6: SNI per-domain>> {
+    + model: ServerNameIndicationManagerModel
+    - secureContexts: Map<string, tls.SecureContext>
+    - defaultSecureContext: tls.SecureContext
+    + constructor()
+    + init(scenario): this
+    + contextRegister(domain, options): void
+    + contextLookup(servername): tls.SecureContext
+    + defaultContextSet(options): void
+    + get domains(): string[]
+    + sniCallback(servername, cb): void
+  }
+
+  class "DomainCertificateStore" as DCS <<P6: Certificate Registry>> {
+    + model: DomainCertificateStoreModel
+    + constructor()
+    + init(scenario): this
+    + certificateRegister(domain, cert): void
+    + certificateLookup(domain): Reference<DomainCertificateModel>
+    + certificateRemove(domain): boolean
+    + defaultDomainSet(domain): void
+    + get allDomains(): string[]
+    + isExpiringSoon(domain, thresholdDays): boolean
+  }
+
+  class "LetsEncryptCertificateProvider" as LECP <<P6 + ACME Protocol>> {
+    + model: LetsEncryptCertificateProviderModel
+    + constructor()
+    + init(scenario): this
+    + certificateRequest(domain): Promise<DomainCertificateModel>
+    + challengeRespond(token, keyAuth): Promise<void>
+    + certificateRenew(domain): Promise<DomainCertificateModel>
+    - acmeDirectoryFetch(): Promise<any>
+    - accountCreate(email): Promise<any>
+    - orderCreate(domain): Promise<any>
+  }
+
+  class "CertificateRenewalScheduler" as CRS <<P6: Scheduled Renewal>> {
+    + model: CertificateRenewalSchedulerModel
+    + constructor()
+    + init(scenario): this
+    + start(): void
+    + stop(): void
+    + checkAndRenew(): Promise<void>
+    + onRenewalNeeded(callback): void
+    + get isRunning(): boolean
+  }
+
+  SNIM --> TCL : loads certs\nper domain
+  DCS --> SNIM : provides certs\nfor SNI registration
+  CRS --> DCS : checks expiry\nin store
+  CRS --> LECP : triggers renewal\nvia Let's Encrypt
+}
+
+package "Layer 4 — Orchestration" as L4 #FFF3E0 {
+  class "CertificateOrchestrator" as CO <<P7: Async Coordination>> {
+    + init(config): Promise<this>
+    + setupDomain(domain, config): Promise<void>
+    + renewAll(): Promise<void>
+    + start(): Promise<void>
+    + stop(): void
+  }
+
+  class "HTTPSLoader" as HTTPSL <<Isomorphic Loader>> {
+    + protocol: 'https'
+    + load(ior, options?): Promise<any>
+    + save(data, ior, options?): Promise<void>
+  }
+
+  CO --> SNIM : manages
+  CO --> DCS : manages
+  CO --> LECP : manages
+  CO --> CRS : manages
+}
+
+note right of CO
+  **Certificate Lifecycle**
+  1. CertOrchestrator.setupDomain()
+  2. LetsEncrypt requests cert (ACME)
+  3. DomainCertStore registers cert
+  4. SNIManager creates SecureContext
+  5. RenewalScheduler monitors expiry
+  6. Auto-renew before expiry
+end note
+
+note bottom of SNIM
+  **SNI (Server Name Indication)**
+  One HTTPS server, multiple domains.
+  sniCallback(servername) returns
+  the correct SecureContext per domain.
+  Used by Node.js tls.createServer().
+end note
+
+@enduml

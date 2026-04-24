@@ -1,0 +1,197 @@
+@startuml UnitModel-Enhanced
+!theme plain
+skinparam backgroundColor White
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 9
+skinparam classAttributeIconSize 0
+
+title @web4x/unit — Enhanced UnitModel with MDAv4 Traceability\nTask 7.1 Architect Specification
+
+' ═══════════════════════════════════════════════════════════════
+' EXISTING: Model Foundation (in @web4x/ucp)
+' ═══════════════════════════════════════════════════════════════
+
+package "@web4x/ucp — Layer 3" as UCP_L3 #EEEEEE {
+  interface "Model" as IModel {
+    + uuid: string
+    + name: string
+  }
+
+  enum "SyncStatus" as SS {
+    SYNCED
+    OUTDATED
+    BROKEN
+    UNKNOWN
+    MODIFIED
+    TO_BE_CHECKED
+    RUNTIME
+  }
+
+  enum "TypeM3" as TM3 {
+    CLASS
+    ATTRIBUTE
+    RELATIONSHIP
+    **FOLDER**  <<NEW>>
+  }
+
+  interface "UnitReference" as IUR {
+    + linkLocation: string
+    + linkTarget: string
+    + syncStatus: SyncStatus
+  }
+
+  interface "UnitModel" as IUM <<ALREADY EXISTS>> {
+    .. Core Identity ..
+    + name: string
+    + **origin: string**  <<IOR to source .ts>>
+    + definition: string
+    + **typeM3?: TypeM3**  <<CLASS/RELATIONSHIP/FOLDER>>
+    + indexPath: string
+    .. Reference Tracking ..
+    + **references: UnitReference[]**  <<bidirectional>>
+    .. Timestamps ..
+    + createdAt: string
+    + updatedAt: string
+    .. ONCE Extensions (optional) ..
+    + componentType?: string
+    + componentIor?: string
+    + artefactUuid?: Reference<string>
+    + fileUuid?: Reference<string>
+  }
+
+  IUM --|> IModel : extends
+  IUM --> TM3 : typeM3
+  IUM --> IUR : references[]
+  IUR --> SS : syncStatus
+}
+
+' ═══════════════════════════════════════════════════════════════
+' NEW: PumlUnitConverter
+' ═══════════════════════════════════════════════════════════════
+
+package "@web4x/unit — Layer 2 (NEW)" as UNIT_L2 #E8F5E9 {
+
+  class "PumlUnitConverter" as PUC <<NEW CLASS>> {
+    - scenarioService: ScenarioService
+    - projectRoot: string
+    - componentName: string
+    - componentVersion: string
+    __P6: Lifecycle__
+    + constructor()
+    + init(config): this
+    __Pipeline__
+    + pumlParse(pumlFilePath): Promise<PumlClass[]>
+    + m3UnitsCreate(classes): Promise<Scenario<UnitModel>[]>
+    + tsUnitsLink(m3Units, componentRoot): Promise<void>
+    + convertPuml(pumlFile, componentRoot): Promise<ConversionResult>
+  }
+
+  class "UnitDiscoveryService" as UDS <<ENHANCED>> {
+    .. existing methods ..
+    + unitsDiscover(dir, pattern): Promise<UnitDefinition[]>
+    + unitCreate(def, origin?): Promise<DiscoveryResult>
+    + unitSave(result): Promise<void>
+    .. **NEW method** ..
+    + **tsUnitCreate(classFilePath, m3Unit): Promise<void>**
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' NEW: Data Interfaces
+' ═══════════════════════════════════════════════════════════════
+
+package "New Interfaces" as NI #FFF3E0 {
+  interface "PumlClass" as IPC {
+    + name: string
+    + stereotype?: string
+    + extends?: string
+    + implements?: string[]
+    + methods: string[]
+    + properties: string[]
+    + packageName?: string
+  }
+
+  interface "ConversionResult" as ICR {
+    + pumlFile: string
+    + classesFound: number
+    + m3UnitsCreated: number
+    + tsUnitsLinked: number
+    + errors: string[]
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' MDAv4 Directory Structure
+' ═══════════════════════════════════════════════════════════════
+
+package "MDAv4/M3/ (Filesystem)" as MDA #FCE4EC {
+  folder "CLASS/" as MCLS {
+    file "UcpComponent.unit" as f1
+    file "DefaultUnit.unit" as f2
+    file "HTTPServer.unit" as f3
+    file "..." as f4
+  }
+  folder "RELATIONSHIP/" as MREL {
+    file "extends.unit" as r1
+    file "implements.unit" as r2
+    file "depends-on.unit" as r3
+  }
+  folder "FOLDER/" as MFOL {
+    file "{component}.unit" as fo1
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' .ts.unit Files (next to source)
+' ═══════════════════════════════════════════════════════════════
+
+package "Component Source (Filesystem)" as SRC #E3F2FD {
+  folder "UCP/0.3.23.1/src/ts/layer2/" as srcdir {
+    file "UcpComponent.ts" as ts1
+    file "UcpComponent.ts.unit" as tsu1 #FFE0B2
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' Relationships
+' ═══════════════════════════════════════════════════════════════
+
+PUC --> IPC : parses PUML into
+PUC --> ICR : returns result
+PUC --> UDS : calls tsUnitCreate()
+PUC ..> f1 : creates M3 CLASS units
+UDS ..> tsu1 : creates .ts.unit files
+
+f1 ..> tsu1 : references[]\nlinkLocation → .ts.unit
+tsu1 ..> f1 : references[]\nlinkLocation → M3 unit
+tsu1 ..> ts1 : origin IOR →\nsource .ts file
+
+' ═══════════════════════════════════════════════════════════════
+' Traceability Chain
+' ═══════════════════════════════════════════════════════════════
+
+note bottom of PUC
+  **Full Traceability Chain**
+  1. PUML diagram (src/puml/*.puml)
+     ↓ PumlUnitConverter.pumlParse()
+  2. PumlClass[] (in-memory)
+     ↓ PumlUnitConverter.m3UnitsCreate()
+  3. MDAv4/M3/CLASS/*.unit (JSON scenario)
+     ↓ UnitDiscoveryService.tsUnitCreate()
+  4. {component}/src/ts/layer2/*.ts.unit
+     ↓ origin IOR
+  5. {component}/src/ts/layer2/*.ts (source)
+
+  Bidirectional: step 3↔4 via references[]
+end note
+
+note right of TM3
+  **TypeM3 Change**
+  ADD: FOLDER value
+  Used by MDAv4/M3/FOLDER/ units
+  and component folder discovery.
+
+  Existing values unchanged.
+end note
+
+@enduml

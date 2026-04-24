@@ -1,0 +1,165 @@
+@startuml Filesystem-ClassDiagram
+!theme plain
+skinparam backgroundColor White
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 9
+skinparam classAttributeIconSize 0
+
+title @web4x/filesystem 0.3.23.0 — OOP File Operations with ISR Lazy Loading\nDepends on: @web4x/ucp, @web4x/unit
+
+package "@web4x/ucp (external)" as UCP #EEEEEE {
+  abstract class "UcpComponent<TModel>" as ExtUcpC
+  abstract class "JsInterface" as ExtJSI
+}
+
+package "Layer 1 — Infrastructure" as L1 #FFF9C4 {
+  class "PlatformDetection" as PD <<Replaces Once.isNode>> {
+    + {static} isNode: boolean
+  }
+  note right of PD : typeof process !== 'undefined'\n&& process.versions?.node
+}
+
+package "Layer 3 — Interfaces" as L3 #F5F5F5 {
+  abstract class "FileJs" as FJs <<P35: JsInterface>> {
+    + {static} implementations: [DefaultFile, DefaultFolder]
+  }
+  abstract class "FolderJs" as FoJs <<P35: JsInterface>>
+
+  interface "Tree<T>" as ITree <<P30>> {
+    + parent: Reference<Tree<T>>
+    + children: Collection<T>
+    + childAdd(child: T): void
+    + childRemove(child: T): boolean
+    + hasChildren: boolean
+    + childCount: number
+  }
+
+  interface "Container<T>" as ICont <<P30: extends Tree>> {
+    + displayName: string
+    + uuid: string
+    + pathFromRoot(): Container<T>[]
+    + navigateTo(child: T): boolean
+  }
+
+  interface "MimetypeHandler" as IMH {
+    + pattern: string
+    + componentClass: ComponentConstructor
+    + priority: number
+    + name: string
+  }
+
+  ICont --|> ITree : extends
+  FJs --|> ExtJSI : extends
+  FoJs --|> FJs : extends
+}
+
+package "Layer 2 — Implementation" as L2 #E8F5E9 {
+
+  class "DefaultFile" as DF <<P4: File IS UcpComponent>> {
+    + model: FileModel
+    - contentBlob: Reference<Blob>
+    __Accessors__
+    + get parent(): Reference<DefaultFolder>
+    + get path(): string
+    + get name(): string
+    + get size(): number
+    + get mimetype(): string
+    + get fullPath(): string
+    + get isFile(): boolean
+    + get isFolder(): boolean
+    + get content(): Reference<Blob>
+    + get hasContent(): boolean
+    + get objectUrl(): Reference<string>
+    __P6: Lifecycle__
+    + {static} start(): Promise<void>
+    + initFromPath(filePath): Promise<this>
+    + initFromBlob(blob, filename, mimetype): Promise<this>
+    __File Operations__
+    + contentHashCompute(): Promise<string>
+    + symlinkCreate(symlinkPath): Promise<DefaultFile>
+    + pathMove(newPath): Promise<void>
+    + rename(newName): Promise<void>
+    + delete(): Promise<void>
+    + deleteLink(): Promise<void>
+    __Unit Integration__
+    + unitGet(): Promise<Reference<DefaultUnit>>
+    + unitCreate(): Promise<DefaultUnit>
+    + unitEnsure(): Promise<DefaultUnit>
+  }
+
+  class "DefaultFolder" as DFo <<P4: Folder IS-A File>> {
+    + model: FolderModel
+    __Tree/Container (P30)__
+    + get parent(): Reference<Tree<FileJs>>
+    + get children(): FileJs[]
+    + get hasChildren(): boolean
+    + get childCount(): number
+    + get displayName(): string
+    + get files(): DefaultFile[]
+    + get subfolders(): DefaultFolder[]
+    __P6: Lifecycle__
+    + {static} start(): Promise<void>
+    + initFromPath(folderPath): Promise<this>
+    __Folder Operations__
+    + create(recursive?): Promise<void>
+    + list(): Promise<string[]>
+    + symlinkCreate(symlinkPath): Promise<DefaultFolder>
+    + pathMove(newPath): Promise<void>
+    + rename(newName): Promise<void>
+    + delete(force?): Promise<void>
+    __Unit Integration__
+    + unitGet(): Promise<Reference<DefaultUnit>>
+    + unitCreate(): Promise<DefaultUnit>
+    + unitEnsure(): Promise<DefaultUnit>
+  }
+
+  class "DefaultFileSystem" as DFS <<P6: Root Component>> {
+    + model: FileSystemModel
+    - rootFolderInstance: Reference<DefaultFolder>
+    + get mimetypeRegistry(): DefaultMimetypeHandlerRegistry
+    # modelDefault(): FileSystemModel
+  }
+
+  class "DefaultImage" as DI <<P31: Drop Support>> {
+    + model: ImageModel
+    - fileInstance: Reference<DefaultFile>
+    + {static} registerMimetypeHandler(): void
+  }
+
+  class "DefaultMimetypeHandlerRegistry" as DMHR <<Singleton>> {
+    - {static} singletonInstance: DMHR
+    - handlers: MimetypeHandler[]
+    + {static} get instance(): DMHR
+    + handlerRegister(handler: MimetypeHandler): void
+    + handlerLookup(mimetype): Reference<MimetypeHandler>
+    + handlerRemove(pattern): boolean
+    + {static} resetSingleton(): void
+  }
+
+  DF --|> ExtUcpC : extends
+  DF ..|> FJs : implements
+  DFo --|> ExtUcpC : extends
+  DFo ..|> FoJs : implements
+  DFo ..|> ICont : implements
+  DFS --|> ExtUcpC : extends
+  DI --|> ExtUcpC : extends
+
+  DFo --> DF : children contain\nFiles and Folders
+  DFS --> DFo : rootFolder
+  DFS --> DMHR : mimetypeRegistry
+  DI --> DF : fileInstance
+  DI ..> DMHR : registers via\nregisterMimetypeHandler()
+  DF ..> PD : uses isNode\nfor platform checks
+  DFo ..> PD : uses isNode
+}
+
+note bottom of DFo
+  **Folder IS-A File (P4)**
+  Both implement FileJs.
+  Folder adds Tree/Container
+  for parent/children navigation.
+  Children lazy-loaded via ISR
+  (IOR strings resolved on access).
+end note
+
+@enduml
