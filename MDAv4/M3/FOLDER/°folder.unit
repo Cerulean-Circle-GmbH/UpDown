@@ -1,0 +1,19 @@
+{
+  "ior": {
+    "uuid": "6cacf0f1-8bbc-4c32-9a35-62df3130114c",
+    "component": "MDAv4",
+    "version": "0.3.23.1"
+  },
+  "owner": "MDAv4-v0.3.23.1",
+  "model": {
+    "uuid": "6cacf0f1-8bbc-4c32-9a35-62df3130114c",
+    "name": "FOLDER",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/FOLDER",
+    "definition": "ior:folder://FOLDER",
+    "typeM3": "FOLDER",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/FOLDER/°folder.unit",
+    "references": [],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

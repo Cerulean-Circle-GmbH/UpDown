@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "c62f0ece-a00e-484c-a750-35aee4264126",
+    "component": "TLS",
+    "version": "0.3.23.1"
+  },
+  "owner": "TLS-v0.3.23.1",
+  "model": {
+    "uuid": "c62f0ece-a00e-484c-a750-35aee4264126",
+    "name": "ServerNameIndicationManager",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/TLS/0.3.23.1/src/ts/layer2/ServerNameIndicationManager.ts",
+    "definition": "ior:class://ServerNameIndicationManager",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/ServerNameIndicationManager.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/ServerNameIndicationManager.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/TLS/0.3.23.1/src/ts/layer2/ServerNameIndicationManager.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

@@ -7,7 +7,7 @@ skinparam classAttributeIconSize 0
 
 title @web4x/user 0.3.23.0 — Identity & Environment Detection\nDepends on: @web4x/ucp, @web4x/unit
 
-package "Layer 3 — Interfaces" as L3 #F5F5F5 {
+package "Layer 3 — Interfaces & Runtime Types" as L3 #F5F5F5 {
   interface "User" as IUser {
     + init(scenario: Scenario): this
     + toScenario(): Promise<Scenario>
@@ -39,7 +39,7 @@ package "Layer 3 — Interfaces" as L3 #F5F5F5 {
   IUM --|> "Model" : extends
 }
 
-package "Layer 1 — Infrastructure" as L1 #FFF9C4 {
+package "Layer 1 — Kernel & OS Infrastructure" as L1 #FFF9C4 {
   class "NodeOSInfrastructure" as NOSI <<P21: Wraps os module>> {
     - model: EnvironmentModel
     + constructor()

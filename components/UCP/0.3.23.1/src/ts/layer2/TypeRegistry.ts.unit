@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "533f7ee8-6ce8-4588-9dff-3808fbd6c98e",
+    "component": "UCP",
+    "version": "0.3.23.1"
+  },
+  "owner": "UCP-v0.3.23.1",
+  "model": {
+    "uuid": "533f7ee8-6ce8-4588-9dff-3808fbd6c98e",
+    "name": "TypeRegistry",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/UCP/0.3.23.1/src/ts/layer2/TypeRegistry.ts",
+    "definition": "ior:class://TypeRegistry",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/UCP/0.3.23.1/src/ts/layer2/TypeRegistry.ts.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/UCP/0.3.23.1/src/ts/layer2/TypeRegistry.ts.unit",
+        "linkTarget": "ior:unit:533f7ee8-6ce8-4588-9dff-3808fbd6c98e",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "ior": {
+    "uuid": "977d4b6a-fe16-4812-9fe2-480265edc381",
+    "component": "Unit",
+    "version": "0.3.23.1"
+  },
+  "owner": "Unit-v0.3.23.1",
+  "model": {
+    "uuid": "977d4b6a-fe16-4812-9fe2-480265edc381",
+    "name": "Unit",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Unit/0.3.23.1/",
+    "definition": "ior:folder://Unit",
+    "typeM3": "FOLDER",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/FOLDER/Unit.unit",
+    "references": [],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

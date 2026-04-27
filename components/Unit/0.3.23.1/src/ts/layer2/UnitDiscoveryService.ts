@@ -15,9 +15,6 @@ import type { Model } from '../layer3/Model.interface.js';
 import type { UnitDefinition, UnitFilePattern } from '../layer3/UnitDefinition.interface.js';
 import type { ComponentManifest, ManifestUnit, ManifestUnits } from '../layer3/ComponentManifest.interface.js';
 import { TypeM3 } from '../layer3/TypeM3.enum.js';
-import { SyncStatus } from '../layer3/SyncStatus.enum.js';
-import type { UnitReference } from '../layer3/UnitReference.interface.js';
-import type { UnitModel } from '../layer3/UnitModel.interface.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
@@ -302,6 +299,68 @@ export class UnitDiscoveryService {
   }
   
   // ═══════════════════════════════════════════════════════════════
+  // TypeScript Unit File Creation (.ts.unit)
+  // ═══════════════════════════════════════════════════════════════
+
+  /**
+   * Create a .ts.unit file next to a TypeScript source file
+   * Links the source file to an M3 CLASS unit with bidirectional references
+   *
+   * @param classFilePath Absolute path to the .ts file
+   * @param m3UnitScenario The M3 CLASS unit scenario to link to
+   */
+  async tsUnitCreate(
+    classFilePath: string,
+    m3UnitScenario: Scenario<Model>
+  ): Promise<void> {
+    const m3Model = m3UnitScenario.model as any;
+    const uuid = m3Model.uuid;
+    const unitFilePath = `${classFilePath}.unit`;
+    const relativePath = path.relative(this.componentRoot, classFilePath);
+    const originIor = `ior:file://${classFilePath}`;
+
+    const tsUnitScenario = {
+      ior: {
+        uuid,
+        component: this.componentName,
+        version: this.componentVersion,
+      },
+      owner: 'system',
+      model: {
+        uuid,
+        name: path.basename(classFilePath),
+        typeM3: TypeM3.CLASS,
+        origin: originIor,
+        definition: m3Model.definition || '',
+        filePath: relativePath,
+        references: [
+          {
+            linkLocation: `ior:file://${unitFilePath}`,
+            linkTarget: m3Model.indexPath ? `ior:file://${m3Model.indexPath}` : `ior:unit:${uuid}`,
+            syncStatus: 'SYNCED',
+          },
+        ],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    };
+
+    await fs.promises.writeFile(
+      unitFilePath,
+      JSON.stringify(tsUnitScenario, null, 2) + '\n'
+    );
+
+    // Add back-link from M3 unit to this .ts.unit
+    if (m3Model.references && Array.isArray(m3Model.references)) {
+      m3Model.references.push({
+        linkLocation: m3Model.indexPath ? `ior:file://${m3Model.indexPath}` : `ior:unit:${uuid}`,
+        linkTarget: `ior:file://${unitFilePath}`,
+        syncStatus: 'SYNCED',
+      });
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
   // Manifest Generation
   // ═══════════════════════════════════════════════════════════════
   
@@ -438,57 +497,6 @@ export class UnitDiscoveryService {
       manifestPath,
       JSON.stringify(manifest, null, 2) + '\n'
     );
-  }
-
-  async tsUnitCreate(
-    classFilePath: string,
-    m3UnitScenario: Scenario<UnitModel>
-  ): Promise<void> {
-    const tsUnitPath = classFilePath + '.unit';
-    const m3Model = m3UnitScenario.model;
-
-    const tsUnitReference: UnitReference = {
-      linkLocation: `ior:file://${tsUnitPath}`,
-      linkTarget: `ior:unit:${m3Model.uuid}`,
-      syncStatus: SyncStatus.SYNCED
-    };
-
-    const m3BackLink: UnitReference = {
-      linkLocation: `ior:file://${m3Model.indexPath || ''}`,
-      linkTarget: `ior:file://${tsUnitPath}`,
-      syncStatus: SyncStatus.SYNCED
-    };
-
-    const tsUnitScenario: Scenario<UnitModel> = {
-      ior: {
-        uuid: m3Model.uuid,
-        component: 'Unit',
-        version: '0.3.23.1'
-      },
-      owner: m3UnitScenario.owner,
-      model: {
-        uuid: m3Model.uuid,
-        name: path.basename(classFilePath, '.ts'),
-        origin: `ior:file://${classFilePath}`,
-        definition: m3Model.definition,
-        typeM3: TypeM3.CLASS,
-        indexPath: tsUnitPath,
-        references: [tsUnitReference],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-    };
-
-    await fs.promises.writeFile(
-      tsUnitPath,
-      JSON.stringify(tsUnitScenario, null, 2) + '\n'
-    );
-
-    if (!m3Model.references) {
-      m3Model.references = [];
-    }
-    m3Model.references.push(m3BackLink);
-    m3Model.updatedAt = new Date().toISOString();
   }
 }
 

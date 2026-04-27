@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "e36b083a-18b7-4a49-a5b2-2eb089ea2ee2",
+    "component": "HTTP",
+    "version": "0.3.23.1"
+  },
+  "owner": "HTTP-v0.3.23.1",
+  "model": {
+    "uuid": "e36b083a-18b7-4a49-a5b2-2eb089ea2ee2",
+    "name": "HTTPServer",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/HTTP/0.3.23.1/src/ts/layer2/HTTPServer.ts",
+    "definition": "ior:class://HTTPServer",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/HTTPServer.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/HTTPServer.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/HTTP/0.3.23.1/src/ts/layer2/HTTPServer.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

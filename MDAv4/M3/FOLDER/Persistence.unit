@@ -1,0 +1,19 @@
+{
+  "ior": {
+    "uuid": "80b32c16-fce7-4b4e-82ab-14f27a1ae401",
+    "component": "Persistence",
+    "version": "0.3.23.1"
+  },
+  "owner": "Persistence-v0.3.23.1",
+  "model": {
+    "uuid": "80b32c16-fce7-4b4e-82ab-14f27a1ae401",
+    "name": "Persistence",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Persistence/0.3.23.1/",
+    "definition": "ior:folder://Persistence",
+    "typeM3": "FOLDER",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/FOLDER/Persistence.unit",
+    "references": [],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

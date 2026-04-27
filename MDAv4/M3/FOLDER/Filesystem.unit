@@ -1,0 +1,19 @@
+{
+  "ior": {
+    "uuid": "ca9b602c-1661-453a-87fe-912a3c74d0b6",
+    "component": "Filesystem",
+    "version": "0.3.23.1"
+  },
+  "owner": "Filesystem-v0.3.23.1",
+  "model": {
+    "uuid": "ca9b602c-1661-453a-87fe-912a3c74d0b6",
+    "name": "Filesystem",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Filesystem/0.3.23.1/",
+    "definition": "ior:folder://Filesystem",
+    "typeM3": "FOLDER",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/FOLDER/Filesystem.unit",
+    "references": [],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

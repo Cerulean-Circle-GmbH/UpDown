@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "ac930416-1f3e-4cf9-a46d-2ea0265694d1",
+    "component": "ONCE",
+    "version": "0.3.23.1"
+  },
+  "owner": "ONCE-v0.3.23.1",
+  "model": {
+    "uuid": "ac930416-1f3e-4cf9-a46d-2ea0265694d1",
+    "name": "DefaultWebSocket",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.23.1/src/ts/layer2/DefaultWebSocket.ts",
+    "definition": "ior:class://DefaultWebSocket",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultWebSocket.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultWebSocket.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.23.1/src/ts/layer2/DefaultWebSocket.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "910c389d-8fc7-427f-9021-8df7446850ae",
+    "component": "Tootsie",
+    "version": "0.3.23.1"
+  },
+  "owner": "Tootsie-v0.3.23.1",
+  "model": {
+    "uuid": "910c389d-8fc7-427f-9021-8df7446850ae",
+    "name": "QualityOracle",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Tootsie/0.3.23.1/src/ts/layer2/QualityOracle.ts",
+    "definition": "ior:class://QualityOracle",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/QualityOracle.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/QualityOracle.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Tootsie/0.3.23.1/src/ts/layer2/QualityOracle.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

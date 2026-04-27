@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "80bbaa94-0d28-4207-b25a-55ef6cafb1b6",
+    "component": "UCP",
+    "version": "0.3.23.1"
+  },
+  "owner": "UCP-v0.3.23.1",
+  "model": {
+    "uuid": "80bbaa94-0d28-4207-b25a-55ef6cafb1b6",
+    "name": "UUIDProvider",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/UCP/0.3.23.1/src/ts/layer2/UUIDProvider.ts",
+    "definition": "ior:class://UUIDProvider",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/UCP/0.3.23.1/src/ts/layer2/UUIDProvider.ts.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/UCP/0.3.23.1/src/ts/layer2/UUIDProvider.ts.unit",
+        "linkTarget": "ior:unit:80bbaa94-0d28-4207-b25a-55ef6cafb1b6",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

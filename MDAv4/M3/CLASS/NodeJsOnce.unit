@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "c63ddb14-dd51-40f3-aa7e-6a88f32589ec",
+    "component": "ONCE",
+    "version": "0.3.23.1"
+  },
+  "owner": "ONCE-v0.3.23.1",
+  "model": {
+    "uuid": "c63ddb14-dd51-40f3-aa7e-6a88f32589ec",
+    "name": "NodeJsOnce",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.23.1/src/ts/layer2/NodeJsOnce.ts",
+    "definition": "ior:class://NodeJsOnce",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/NodeJsOnce.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/NodeJsOnce.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.23.1/src/ts/layer2/NodeJsOnce.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

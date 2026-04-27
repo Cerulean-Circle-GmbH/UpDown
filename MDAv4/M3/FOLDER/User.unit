@@ -1,0 +1,19 @@
+{
+  "ior": {
+    "uuid": "7049da73-68ae-4ba3-80da-d4a26129adb0",
+    "component": "User",
+    "version": "0.3.23.1"
+  },
+  "owner": "User-v0.3.23.1",
+  "model": {
+    "uuid": "7049da73-68ae-4ba3-80da-d4a26129adb0",
+    "name": "User",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/User/0.3.23.1/",
+    "definition": "ior:folder://User",
+    "typeM3": "FOLDER",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/FOLDER/User.unit",
+    "references": [],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

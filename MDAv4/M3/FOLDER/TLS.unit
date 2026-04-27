@@ -1,0 +1,19 @@
+{
+  "ior": {
+    "uuid": "f8159d29-3563-422d-8051-44031f7db15b",
+    "component": "TLS",
+    "version": "0.3.23.1"
+  },
+  "owner": "TLS-v0.3.23.1",
+  "model": {
+    "uuid": "f8159d29-3563-422d-8051-44031f7db15b",
+    "name": "TLS",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/TLS/0.3.23.1/",
+    "definition": "ior:folder://TLS",
+    "typeM3": "FOLDER",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/FOLDER/TLS.unit",
+    "references": [],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

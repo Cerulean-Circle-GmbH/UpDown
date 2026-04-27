@@ -7,7 +7,7 @@ skinparam classAttributeIconSize 0
 
 title @web4x/tls 0.3.23.0 — Certificate Management\nSNI, Let's Encrypt, Renewal Scheduling\nDepends on: @web4x/ucp
 
-package "Layer 3 — Interfaces" as L3 #F5F5F5 {
+package "Layer 3 — Interfaces & Runtime Types" as L3 #F5F5F5 {
   interface "TLSOptions" as ITLS {
     + certPath: string
     + keyPath: string
@@ -125,7 +125,7 @@ package "Layer 2 — Implementation" as L2 #E8F5E9 {
   CRS --> LECP : triggers renewal\nvia Let's Encrypt
 }
 
-package "Layer 4 — Orchestration" as L4 #FFF3E0 {
+package "Layer 4 — Async Orchestration (P7: only async layer)" as L4 #FFF3E0 {
   class "CertificateOrchestrator" as CO <<P7: Async Coordination>> {
     + init(config): Promise<this>
     + setupDomain(domain, config): Promise<void>

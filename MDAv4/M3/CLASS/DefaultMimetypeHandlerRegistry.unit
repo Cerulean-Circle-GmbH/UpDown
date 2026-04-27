@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "3677dfa7-9743-4fb5-b4c1-c77527776f26",
+    "component": "Filesystem",
+    "version": "0.3.23.1"
+  },
+  "owner": "Filesystem-v0.3.23.1",
+  "model": {
+    "uuid": "3677dfa7-9743-4fb5-b4c1-c77527776f26",
+    "name": "DefaultMimetypeHandlerRegistry",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Filesystem/0.3.23.1/src/ts/layer2/DefaultMimetypeHandlerRegistry.ts",
+    "definition": "ior:class://DefaultMimetypeHandlerRegistry",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultMimetypeHandlerRegistry.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultMimetypeHandlerRegistry.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Filesystem/0.3.23.1/src/ts/layer2/DefaultMimetypeHandlerRegistry.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

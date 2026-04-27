@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "777cef00-85f3-4188-8c93-52492be507bf",
+    "component": "ONCE",
+    "version": "0.3.23.1"
+  },
+  "owner": "ONCE-v0.3.23.1",
+  "model": {
+    "uuid": "777cef00-85f3-4188-8c93-52492be507bf",
+    "name": "ScenarioManager",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.23.1/src/ts/layer2/ScenarioManager.ts",
+    "definition": "ior:class://ScenarioManager",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/ScenarioManager.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/ScenarioManager.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.23.1/src/ts/layer2/ScenarioManager.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

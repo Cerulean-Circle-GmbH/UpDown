@@ -12,7 +12,7 @@ title Web4TSComponent (prod 0.3.19.1) + IdealMinimalComponent (prod 0.1.0.0)\nCl
 ' LAYER 3: Interfaces
 ' ═══════════════════════════════════════════════════════════════
 
-package "Layer 3 — Interfaces" as L3 #F5F5F5 {
+package "Layer 3 — Interfaces & Runtime Types" as L3 #F5F5F5 {
 
   interface "Component<TModel>" as Component {
     + model: TModel
@@ -220,7 +220,7 @@ package "Layer 2 — IdealMinimalComponent (prod)" as L2_IMC #E3F2FD {
 ' LAYER 4: Orchestration (shared by both)
 ' ═══════════════════════════════════════════════════════════════
 
-package "Layer 4 — Orchestration" as L4 #FFF3E0 {
+package "Layer 4 — Async Orchestration (P7: only async layer)" as L4 #FFF3E0 {
   class "TSCompletion" as TSC {
     + discover(filePath: string): MethodSignature[]
     + complete(prefix: string): string[]

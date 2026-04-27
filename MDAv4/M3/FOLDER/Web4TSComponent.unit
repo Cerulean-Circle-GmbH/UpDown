@@ -1,0 +1,19 @@
+{
+  "ior": {
+    "uuid": "872f72c6-0e34-4744-af73-a432d7871ee0",
+    "component": "Web4TSComponent",
+    "version": "0.3.23.1"
+  },
+  "owner": "Web4TSComponent-v0.3.23.1",
+  "model": {
+    "uuid": "872f72c6-0e34-4744-af73-a432d7871ee0",
+    "name": "Web4TSComponent",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.23.1/",
+    "definition": "ior:folder://Web4TSComponent",
+    "typeM3": "FOLDER",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/FOLDER/Web4TSComponent.unit",
+    "references": [],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

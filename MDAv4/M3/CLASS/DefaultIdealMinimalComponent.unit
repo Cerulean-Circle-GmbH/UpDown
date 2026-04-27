@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "fedc5a56-97a9-4dc8-bd9b-16f55da5b13a",
+    "component": "IdealMinimalComponent",
+    "version": "0.3.23.1"
+  },
+  "owner": "IdealMinimalComponent-v0.3.23.1",
+  "model": {
+    "uuid": "fedc5a56-97a9-4dc8-bd9b-16f55da5b13a",
+    "name": "DefaultIdealMinimalComponent",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/IdealMinimalComponent/0.3.23.1/src/ts/layer2/DefaultIdealMinimalComponent.ts",
+    "definition": "ior:class://DefaultIdealMinimalComponent",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultIdealMinimalComponent.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultIdealMinimalComponent.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/IdealMinimalComponent/0.3.23.1/src/ts/layer2/DefaultIdealMinimalComponent.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

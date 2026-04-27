@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "1fac353a-ad02-4d35-a759-91b6f0e59f9a",
+    "component": "Web4TSComponent",
+    "version": "0.3.23.1"
+  },
+  "owner": "Web4TSComponent-v0.3.23.1",
+  "model": {
+    "uuid": "1fac353a-ad02-4d35-a759-91b6f0e59f9a",
+    "name": "SemanticVersion",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.23.1/src/ts/layer2/SemanticVersion.ts",
+    "definition": "ior:class://SemanticVersion",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/SemanticVersion.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/SemanticVersion.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.23.1/src/ts/layer2/SemanticVersion.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

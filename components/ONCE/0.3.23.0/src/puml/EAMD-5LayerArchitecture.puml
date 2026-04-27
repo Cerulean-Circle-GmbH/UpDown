@@ -1,0 +1,131 @@
+@startuml EAMD-5LayerArchitecture
+!theme plain
+skinparam backgroundColor White
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 10
+skinparam componentStyle rectangle
+
+title EAMD.ucp 5-Layer Architecture Reference\nOriginal EAM layers + UpDown P7 extension
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 5: UX & Views
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 5 — UX & Views" as L5 #FCE4EC {
+  note as N5
+    **Purpose:** User-facing components
+    **EAMD original:** Card, Form, FileSystem, UserPanel,
+      Workflow, css/, html/ — Web Components, visual elements
+    **UpDown:** ONCECLI, Web4TSComponentCLI, Lit Views
+      (OnceServerStatusView, OncePeerItemView, etc.)
+    **Rule:** Presentation only, delegates to L2/L4
+  end note
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 4: Async Orchestration (ADDED BY UPDOWN)
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 4 — Async Orchestration" as L4 #FFF3E0 {
+  note as N4
+    **Purpose:** Asynchronous coordination
+    **EAMD original:** DID NOT EXIST (no L4 in EAMD.ucp)
+    **UpDown added:** IOR (Internet Object Reference),
+      FileLoader, HTTPSLoader, WebSocketLoader,
+      CertificateOrchestrator, TSCompletion,
+      ProxyRoute, ReverseProxyRoute
+    **P7 Rule:** ONLY layer where async/await is allowed
+      L1-L3 must be synchronous
+    **Key insight:** This split enables testability —
+      sync logic (L1-L3) is easy to test,
+      async orchestration (L4) handles I/O
+  end note
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 3: Interfaces & Runtime Types
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 3 — Interfaces & Runtime Types" as L3 #F5F5F5 {
+  note as N3
+    **Purpose:** Contracts + domain services
+    **EAMD original:** DomainEntity, Filter, Governance,
+      Service, connectors, accounting, inventory —
+      EAM DOMAIN BUSINESS LOGIC (not just interfaces!)
+    **UpDown:** *.interface.ts files + RUNTIME CLASSES:
+      JsInterface (P35: runtime interface base),
+      UcpModel (ISR proxy — hundreds of lines of logic),
+      TypeDescriptor, PersistenceManager, Storage
+    **Key insight:** L3 is NOT "just interfaces" — it contains
+      runtime classes that NEED to exist at runtime
+      for RelatedObjects, type checking, and ISR
+    **Rule:** Synchronous (P7)
+  end note
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 2: Implementation
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 2 — Implementation (Default* classes)" as L2 #E8F5E9 {
+  note as N2
+    **Purpose:** Concrete implementations
+    **EAMD original:** DefaultFile, DefaultFolder,
+      User, Session, RESTClient, Web4Proxy, TestRunner —
+      the Default* classes that implement L3 interfaces
+    **UpDown:** UcpComponent, UcpController, TypeRegistry,
+      DefaultUnit, UcpStorage, HTTPServer, HTTPRouter,
+      DefaultWeb4TSComponent, DefaultCLI, SemanticVersion
+    **P6 Rule:** Empty constructor + init(scenario)
+    **P16 Rule:** Object.verb naming (linksGet, scenarioSave)
+    **Rule:** Synchronous (P7)
+  end note
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 1: Kernel & OS Infrastructure
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 1 — Kernel & OS Infrastructure" as L1 #E3F2FD {
+  note as N1
+    **Purpose:** Runtime kernel and OS primitives
+    **EAMD original:** Thinglish/Once kernel (the ONCE runtime),
+      OnceServices (EventService) — the foundation
+      that everything else runs on
+    **UpDown:** ONCE.ts (kernel singleton),
+      NodeOSInfrastructure (wraps os module),
+      LoggingUtils, HostnameParser,
+      PlatformDetection (isNode check),
+      DefaultEnvironmentModel
+    **Key insight:** L1 is specifically the KERNEL —
+      not generic infrastructure. Only code that
+      MUST run before anything else belongs here.
+    **Rule:** Synchronous (P7)
+  end note
+}
+
+' ═══════════════════════════════════════════════════════════════
+' Dependency Direction
+' ═══════════════════════════════════════════════════════════════
+
+L5 -[hidden]-> L4
+L4 -[hidden]-> L3
+L3 -[hidden]-> L2
+L2 -[hidden]-> L1
+
+note right of L5
+  **Dependency Rule**
+  Higher layers depend on lower layers.
+  Never upward: L1 never imports from L2.
+
+  **P7 Async Boundary**
+  L1, L2, L3 = synchronous
+  L4 = async (await allowed)
+  L5 = async (UI events)
+
+  **EAMD vs UpDown**
+  EAMD had 4 layers (1,2,3,5)
+  UpDown added L4 for P7 async separation
+end note
+
+@enduml

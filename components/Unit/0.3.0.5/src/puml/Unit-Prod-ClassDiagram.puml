@@ -1,0 +1,344 @@
+@startuml Unit-Prod-ClassDiagram
+!theme plain
+skinparam backgroundColor White
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 9
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+title @web4x/unit prod (0.3.0.5) — The ORIGINAL Unit Component\nGitTextIOR · MDAv4 · Unified References · Folder Support\n<color:red>Red annotations = missing from Unit 0.3.23.x extraction</color>
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 3: Interfaces & Types
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 3 — Interfaces" as L3 #F5F5F5 {
+
+  interface "Model" as IModel {
+    + uuid: string
+    + name: string
+  }
+
+  interface "Unit" as IUnit {
+    + init(scenario?): this
+    + toScenario(): Promise<Scenario>
+    + from(filename, startPos?, endPos?): Promise<this>
+    + link(identifier, filename): Promise<this>
+    + linkInto(unit, folder, original?): Promise<this>
+    + on(identifier): Promise<this>
+    + set(identifier?, attribute, value): Promise<this>
+    + get(identifier?, attribute): Promise<this>
+    + discover(identifier): Promise<this>
+    + find(name): Promise<this>
+    + references(identifier): Promise<this>
+    + copyInto(identifier, targetFolder): Promise<this>
+  }
+
+  interface "Upgrade" as IUpgrade {
+    + upgrade(targetVersion): Promise<this>
+  }
+
+  interface "UnitModel" as IUnitModel <<extends Model>> {
+    + uuid: string
+    + name: string
+    + origin: string  <<GitTextIOR format>>
+    + definition: string  <<GitTextIOR format>>
+    + typeM3?: TypeM3
+    + indexPath: string
+    + <color:red>references: UnitReference[]  <<UNIFIED>></color>
+    + createdAt: string
+    + updatedAt: string
+  }
+
+  interface "UnitReference" as IUnitRef {
+    + linkLocation: string  <<ior:local:ln:file://...>>
+    + linkTarget: string  <<ior:unit:uuid:...>>
+    + syncStatus: SyncStatus
+  }
+
+  enum "SyncStatus" as ESS {
+    SYNCED
+    OUTDATED
+    BROKEN
+    UNKNOWN
+    MODIFIED
+    TO_BE_CHECKED
+  }
+
+  enum "TypeM3" as ETM3 {
+    CLASS
+    ATTRIBUTE
+    RELATIONSHIP
+  }
+
+  interface "BaseIOR" as IBIOR {
+    + init(scenario): this
+    + toScenario(): Promise<any>
+    + validate(): boolean
+    + toString(): string
+  }
+
+  interface "GitPositioning" as IGP {
+    + type: 'line-column' | 'character'
+    + startLine?: number
+    + startColumn?: number
+    + endLine?: number
+    + endColumn?: number
+    + startChar?: number
+    + endChar?: number
+  }
+
+  interface "Storage" as ISTG {
+    + init(scenario: StorageScenario): this
+    + saveScenario(uuid, scenario, paths): Promise<void>
+    + loadScenario(uuid): Promise<Scenario>
+    + toScenario(): Promise<StorageScenario>
+  }
+
+  interface "CLI" as ICLI {
+    + execute(args: string[]): Promise<void>
+    + showUsage(): void
+  }
+
+  class "UUIDv4" as UUID4 <<Value Object>> {
+    - value: string
+    + constructor(uuidString?: string)
+    + {static} generate(): UUIDv4
+    + {static} from(str: string): UUIDv4
+    + {static} isValid(str: string): boolean
+    + toString(): string
+    + valueOf(): string
+    + isValid(): boolean
+    + getVersion(): number
+    + equals(other: UUIDv4): boolean
+    + toHex(): string
+    + toJSON(): string
+  }
+
+  IUnitRef --> ESS : syncStatus
+  IUnitModel --> ETM3 : typeM3
+  IUnitModel --> IUnitRef : references[]
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 2: Implementation
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 2 — Implementation" as L2 #E8F5E9 {
+
+  class "DefaultUnit" as DU <<P6 + Upgrade>> {
+    + model: UnitModel
+    - storage: DefaultStorage
+    __P6: Lifecycle__
+    + constructor()  <<generates UUID>>
+    + init(scenario?): this
+    + toScenario(): Promise<Scenario>
+    + validateModel(): Promise<boolean>
+    __Context__
+    + on(identifier): Promise<this>
+    + info(unitFile?): Promise<this>
+    __Creation__
+    + from(filename, startPos?, endPos?): Promise<this>
+    + copyInto(identifier, targetFolder): Promise<this>
+    __<color:red>Definition (GitTextIOR)</color>__
+    + <color:red>definition(id?, file, start, end): Promise<this></color>
+    + <color:red>setTerminalIdentity(name, origin, def): void</color>
+    + <color:red>validateTerminalIdentity(): boolean</color>
+    __References__
+    + link(identifier, filename): Promise<this>
+    + linkInto(unit, folder, original?): Promise<this>
+    + deleteLink(identifier): Promise<this>
+    + move(lnfile, targetFolder): Promise<this>
+    + references(identifier): Promise<this>
+    __<color:red>Discovery & Search</color>__
+    + <color:red>discover(identifier): Promise<this></color>
+    + <color:red>find(name): Promise<this></color>
+    + <color:red>list(): Promise<this></color>
+    __<color:red>Bidirectional Sync</color>__
+    + <color:red>detectCopyChanges(path, uuid): Promise<any></color>
+    + <color:red>notifyOriginOfCopyChange(...): Promise<void></color>
+    + <color:red>syncFromCopy(...): Promise<void></color>
+    + <color:red>syncToCopy(...): Promise<void></color>
+    __Attribute Access__
+    + set(id?, attribute, value): Promise<this>
+    + get(id?, attribute): Promise<this>
+    __<color:red>Rename</color>__
+    + <color:red>rename(newName): Promise<this></color>
+    + <color:red>renameLink(oldPath, newPath): Promise<this></color>
+    __Upgrade__
+    + upgrade(targetVersion): Promise<this>
+    __<color:red>Folder Support</color>__
+    - <color:red>createFromFolder(path): Promise<void></color>
+    - <color:red>analyzeFolder(): {fileCount, size, hash}</color>
+    __Private__
+    - loadFromUUIDString(uuid): Promise<void>
+    - loadFromUnitFile(file): Promise<void>
+    - findProjectRoot(): string
+    - buildIndexPath(uuid): string
+    - extractFilePathFromIOR(ior): string
+  }
+
+  class "GitTextIOR" as GTIOR <<P6 + <color:red>MISSING from 0.3.23.x</color>>> {
+    - model: { uuid, gitUrl, iorFormat,\n  positioning, timestamps }
+    __P6: Lifecycle__
+    + constructor()
+    + init(scenario: GitTextIORScenario): this
+    + toScenario(): Promise<GitTextIORScenario>
+    __IOR Operations__
+    + validate(): boolean
+    + toString(): string
+    + parse(gitUrl: string): string
+    + format(gitUrl: string): string
+    __<color:red>Git Origin Tracking</color>__
+    + <color:red>extractPositioning(gitUrl): GitPositioning</color>
+    + <color:red>getGitUrl(): string</color>
+    + <color:red>getPositioning(): GitPositioning</color>
+  }
+
+  class "DefaultStorage" as DSt <<P6 + 5-Level UUID>> {
+    - model: StorageModel
+    __P6: Lifecycle__
+    + constructor()
+    + init(scenario: StorageScenario): this
+    + toScenario(): Promise<StorageScenario>
+    __Storage Operations__
+    + saveScenario(uuid, scenario, paths): Promise<void>
+    + loadScenario(uuid): Promise<Scenario>
+    __Private__
+    - generateUUIDFolderPath(uuid): string
+    - getScenarioIndexPath(uuid): string
+    - createSymbolicLink(index, symlink): Promise<void>
+    - findProjectRoot(): string
+  }
+
+  abstract class "DefaultCLI" as DCLI <<P6 + TSRanger 2.2>> {
+    # componentClass: any
+    # componentName: string
+    # componentVersion: string
+    # componentInstance: any
+    # methodSignatures: Map<string, MethodSignature>
+    # colors: ColorScheme
+    __P6: Lifecycle__
+    + constructor()
+    + initWithComponentClass(cls, name, ver): void
+    + {static} start(args: string[]): Promise<void>
+    + {abstract} execute(args): Promise<void>
+    + {abstract} showUsage(): void
+    __CLI Utilities__
+    + validateArgs(args, min, msg): void
+    + formatError/Success/Warning/Info(msg): string
+    + generateStructuredUsage(): void
+    + analyzeComponentMethods(): void
+    + assembleUnifiedCommandsSection(): void
+  }
+
+  DU ..|> IUnit : implements
+  DU ..|> IUpgrade : implements
+  GTIOR ..|> IBIOR : implements
+  DSt ..|> ISTG : implements
+  DCLI ..|> ICLI : implements
+  DU --> DSt : storage
+  DU --> GTIOR : uses for\norigin/definition
+  DU --> IUnitModel : model type
+  GTIOR --> IGP : positioning
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 4: Orchestration
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 4 — Orchestration" as L4 #FFF3E0 {
+  class "TSCompletion" as TSC <<has .ts.unit!>> {
+    + discover(filePath): MethodSignature[]
+    + complete(prefix): string[]
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 5: CLI
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 5 — CLI" as L5 #FCE4EC {
+  class "UnitCLI" as UCLI <<extends DefaultCLI>> {
+    - unit: DefaultUnit
+    + constructor()
+    + {static} start(args): Promise<void>
+    + execute(args): Promise<void>
+    + showUsage(): void
+    + <color:red>create(name, definition?, typeM3?): Promise<void></color>
+    + <color:red>classify(uuid, typeM3): Promise<void></color>
+  }
+
+  UCLI --|> DCLI : extends
+  UCLI --> DU : creates & uses
+}
+
+' ═══════════════════════════════════════════════════════════════
+' MDAv4 Integration (external)
+' ═══════════════════════════════════════════════════════════════
+
+package "MDAv4 Ontology" as MDA #FFEBEE {
+  note as MDANote
+    **MDAv4/M3/CLASS/**
+    DefaultUnit.unit
+    GitTextIOR.unit
+    DefaultCLI.unit
+    TSCompletion.unit
+
+    **MDAv4/M3/RELATIONSHIP/**
+    extends.unit
+
+    **MDAv4/M3/FOLDER/**
+    0.3.0.5.unit
+    °folder.unit
+
+    Each .unit file = scenario JSON
+    with typeM3, origin, references[]
+  end note
+}
+
+DU ..> MDA : creates\nM3 CLASS units
+
+' ═══════════════════════════════════════════════════════════════
+' Comparison Notes
+' ═══════════════════════════════════════════════════════════════
+
+note right of GTIOR
+  **GitTextIOR — NOT in Unit 0.3.23.x**
+
+  IOR format: ior:git:text:{url}#{positioning}
+
+  Positioning formats:
+  • #L42          (single line)
+  • #L42:15-67:23 (line:col range)
+  • #L1250-1890   (char range)
+
+  Enables tracking origin of code
+  at sub-file granularity.
+
+  Sprint 1 Task 7: Must port to 0.3.23.x
+end note
+
+note bottom of DU
+  **Unit 0.3.0.5 vs 0.3.23.x — Key Differences**
+
+  <color:red>0.3.0.5 HAS / 0.3.23.x MISSING:</color>
+  • GitTextIOR (git origin tracking)
+  • Unified references[] (not split arrays)
+  • discover/find/list (search operations)
+  • Bidirectional sync (copy detection)
+  • Folder support (°folder.unit)
+  • rename/renameLink
+  • Terminal identity (setTerminalIdentity)
+  • UUIDv4 value object
+  • DefaultStorage (own, not shared)
+  • UnitCLI create/classify commands
+
+  <color:green>0.3.23.x HAS / 0.3.0.5 MISSING:</color>
+  • UnitDiscoveryService (auto-discovery)
+  • ScenarioService (migration + CRUD)
+  • ComponentManifest generation
+  • @web4x/ucp integration (extends UcpComponent)
+end note
+
+@enduml

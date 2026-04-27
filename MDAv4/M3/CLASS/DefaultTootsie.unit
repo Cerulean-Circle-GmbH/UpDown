@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "17dec466-c6a6-46af-b29c-b8247b6dcaa3",
+    "component": "Tootsie",
+    "version": "0.3.23.1"
+  },
+  "owner": "Tootsie-v0.3.23.1",
+  "model": {
+    "uuid": "17dec466-c6a6-46af-b29c-b8247b6dcaa3",
+    "name": "DefaultTootsie",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Tootsie/0.3.23.1/src/ts/layer2/DefaultTootsie.ts",
+    "definition": "ior:class://DefaultTootsie",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultTootsie.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultTootsie.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Tootsie/0.3.23.1/src/ts/layer2/DefaultTootsie.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

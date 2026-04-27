@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "432078cd-8715-480a-a2e7-4dee70a28083",
+    "component": "TLS",
+    "version": "0.3.23.1"
+  },
+  "owner": "TLS-v0.3.23.1",
+  "model": {
+    "uuid": "432078cd-8715-480a-a2e7-4dee70a28083",
+    "name": "LetsEncryptCertificateProvider",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/TLS/0.3.23.1/src/ts/layer2/LetsEncryptCertificateProvider.ts",
+    "definition": "ior:class://LetsEncryptCertificateProvider",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/LetsEncryptCertificateProvider.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/LetsEncryptCertificateProvider.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/TLS/0.3.23.1/src/ts/layer2/LetsEncryptCertificateProvider.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

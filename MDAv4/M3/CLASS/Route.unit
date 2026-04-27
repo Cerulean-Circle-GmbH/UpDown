@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "97193aae-8698-4350-a9a1-bf0f08f07ef8",
+    "component": "HTTP",
+    "version": "0.3.23.1"
+  },
+  "owner": "HTTP-v0.3.23.1",
+  "model": {
+    "uuid": "97193aae-8698-4350-a9a1-bf0f08f07ef8",
+    "name": "Route",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/HTTP/0.3.23.1/src/ts/layer2/Route.ts",
+    "definition": "ior:class://Route",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/Route.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/Route.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/HTTP/0.3.23.1/src/ts/layer2/Route.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

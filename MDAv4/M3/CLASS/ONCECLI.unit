@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "4a529167-ada8-4812-91f3-795c9b62ee9c",
+    "component": "ONCE",
+    "version": "0.3.23.1"
+  },
+  "owner": "ONCE-v0.3.23.1",
+  "model": {
+    "uuid": "4a529167-ada8-4812-91f3-795c9b62ee9c",
+    "name": "ONCECLI",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.23.1/src/ts/layer5/ONCECLI.ts",
+    "definition": "ior:class://ONCECLI",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/ONCECLI.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/ONCECLI.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.23.1/src/ts/layer5/ONCECLI.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

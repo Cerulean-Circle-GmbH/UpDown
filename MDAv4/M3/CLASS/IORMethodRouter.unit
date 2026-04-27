@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "194faa1d-d1d0-4b56-a129-71456fd6872d",
+    "component": "HTTP",
+    "version": "0.3.23.1"
+  },
+  "owner": "HTTP-v0.3.23.1",
+  "model": {
+    "uuid": "194faa1d-d1d0-4b56-a129-71456fd6872d",
+    "name": "IORMethodRouter",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/HTTP/0.3.23.1/src/ts/layer4/IORMethodRouter.ts",
+    "definition": "ior:class://IORMethodRouter",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/IORMethodRouter.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/IORMethodRouter.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/HTTP/0.3.23.1/src/ts/layer4/IORMethodRouter.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

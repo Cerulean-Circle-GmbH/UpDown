@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "d0355af5-61e4-4860-97bd-d64aead016b9",
+    "component": "HTTP",
+    "version": "0.3.23.1"
+  },
+  "owner": "HTTP-v0.3.23.1",
+  "model": {
+    "uuid": "d0355af5-61e4-4860-97bd-d64aead016b9",
+    "name": "PortManager",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/HTTP/0.3.23.1/src/ts/layer2/PortManager.ts",
+    "definition": "ior:class://PortManager",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/PortManager.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/PortManager.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/HTTP/0.3.23.1/src/ts/layer2/PortManager.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

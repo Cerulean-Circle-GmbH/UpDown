@@ -16,6 +16,6 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@web4x/ucp": "file:../../UCP/0.3.23.1"
+    "@web4x/ucp": "file:../../UCP/0.3.23.0"
   }
 }

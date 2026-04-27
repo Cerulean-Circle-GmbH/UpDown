@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "8a61c1e9-aae2-44d7-8d08-f66d629c34e4",
+    "component": "UCP",
+    "version": "0.3.23.1"
+  },
+  "owner": "UCP-v0.3.23.1",
+  "model": {
+    "uuid": "8a61c1e9-aae2-44d7-8d08-f66d629c34e4",
+    "name": "UcpComponent",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/UCP/0.3.23.1/src/ts/layer2/UcpComponent.ts",
+    "definition": "ior:class://UcpComponent",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/UcpComponent.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/UcpComponent.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/UCP/0.3.23.1/src/ts/layer2/UcpComponent.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "16bfda86-e8b1-4d99-905e-128f134d3bf7",
+    "component": "TLS",
+    "version": "0.3.23.1"
+  },
+  "owner": "TLS-v0.3.23.1",
+  "model": {
+    "uuid": "16bfda86-e8b1-4d99-905e-128f134d3bf7",
+    "name": "CertificateOrchestrator",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/TLS/0.3.23.1/src/ts/layer4/CertificateOrchestrator.ts",
+    "definition": "ior:class://CertificateOrchestrator",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/CertificateOrchestrator.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/CertificateOrchestrator.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/TLS/0.3.23.1/src/ts/layer4/CertificateOrchestrator.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

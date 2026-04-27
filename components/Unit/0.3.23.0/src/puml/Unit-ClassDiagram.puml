@@ -36,7 +36,7 @@ package "@web4x/ucp (external)" as UCP #EEEEEE {
 ' LAYER 3: Interfaces
 ' ═══════════════════════════════════════════════════════════════
 
-package "Layer 3 — Interfaces" as L3 #F5F5F5 {
+package "Layer 3 — Interfaces & Runtime Types" as L3 #F5F5F5 {
 
   interface "UnitDefinition" as IUnitDef {
     + filename: string

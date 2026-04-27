@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "24ddc54c-e0ec-49ee-8970-0d19b6c66c84",
+    "component": "User",
+    "version": "0.3.23.1"
+  },
+  "owner": "User-v0.3.23.1",
+  "model": {
+    "uuid": "24ddc54c-e0ec-49ee-8970-0d19b6c66c84",
+    "name": "NodeOSInfrastructure",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/User/0.3.23.1/src/ts/layer1/NodeOSInfrastructure.ts",
+    "definition": "ior:class://NodeOSInfrastructure",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/NodeOSInfrastructure.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/NodeOSInfrastructure.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/User/0.3.23.1/src/ts/layer1/NodeOSInfrastructure.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "47ca618b-7f0a-46d8-b300-b8e91d128d2e",
+    "component": "Unit",
+    "version": "0.3.23.1"
+  },
+  "owner": "Unit-v0.3.23.1",
+  "model": {
+    "uuid": "47ca618b-7f0a-46d8-b300-b8e91d128d2e",
+    "name": "UnitDiscoveryService",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Unit/0.3.23.1/src/ts/layer2/UnitDiscoveryService.ts",
+    "definition": "ior:class://UnitDiscoveryService",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/UnitDiscoveryService.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/UnitDiscoveryService.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Unit/0.3.23.1/src/ts/layer2/UnitDiscoveryService.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

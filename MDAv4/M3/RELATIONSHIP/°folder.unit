@@ -1,0 +1,19 @@
+{
+  "ior": {
+    "uuid": "423f8d22-c37b-42f0-81eb-dd6b0c12fc5c",
+    "component": "MDAv4",
+    "version": "0.3.23.1"
+  },
+  "owner": "MDAv4-v0.3.23.1",
+  "model": {
+    "uuid": "423f8d22-c37b-42f0-81eb-dd6b0c12fc5c",
+    "name": "RELATIONSHIP",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/RELATIONSHIP",
+    "definition": "ior:folder://RELATIONSHIP",
+    "typeM3": "FOLDER",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/RELATIONSHIP/°folder.unit",
+    "references": [],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "b6153841-1097-4856-80b9-8272cb8435a5",
+    "component": "Unit",
+    "version": "0.3.23.1"
+  },
+  "owner": "Unit-v0.3.23.1",
+  "model": {
+    "uuid": "b6153841-1097-4856-80b9-8272cb8435a5",
+    "name": "DefaultUnit",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Unit/0.3.23.1/src/ts/layer2/DefaultUnit.ts",
+    "definition": "ior:class://DefaultUnit",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/Unit/0.3.23.1/src/ts/layer2/DefaultUnit.ts.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Unit/0.3.23.1/src/ts/layer2/DefaultUnit.ts.unit",
+        "linkTarget": "ior:unit:b6153841-1097-4856-80b9-8272cb8435a5",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

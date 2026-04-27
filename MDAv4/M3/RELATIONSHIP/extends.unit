@@ -1,0 +1,19 @@
+{
+  "ior": {
+    "uuid": "f8b2fbd9-2f56-401b-b5e2-2944b498b49f",
+    "component": "MDAv4",
+    "version": "0.3.23.1"
+  },
+  "owner": "MDAv4-v0.3.23.1",
+  "model": {
+    "uuid": "f8b2fbd9-2f56-401b-b5e2-2944b498b49f",
+    "name": "extends",
+    "origin": "ior:relationship://extends",
+    "definition": "ior:relationship://extends",
+    "typeM3": "RELATIONSHIP",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/RELATIONSHIP/extends.unit",
+    "references": [],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

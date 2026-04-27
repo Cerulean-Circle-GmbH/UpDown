@@ -1,0 +1,19 @@
+{
+  "ior": {
+    "uuid": "b4115020-b0c6-48f6-87aa-2bfebcbd0e72",
+    "component": "Web4Test",
+    "version": "0.3.23.1"
+  },
+  "owner": "Web4Test-v0.3.23.1",
+  "model": {
+    "uuid": "b4115020-b0c6-48f6-87aa-2bfebcbd0e72",
+    "name": "Web4Test",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4Test/0.3.23.1/",
+    "definition": "ior:folder://Web4Test",
+    "typeM3": "FOLDER",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/FOLDER/Web4Test.unit",
+    "references": [],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

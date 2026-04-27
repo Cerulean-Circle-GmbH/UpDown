@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "9e776072-4c17-45fa-9e4b-4ea6eef55574",
+    "component": "PDCA",
+    "version": "0.3.23.1"
+  },
+  "owner": "PDCA-v0.3.23.1",
+  "model": {
+    "uuid": "9e776072-4c17-45fa-9e4b-4ea6eef55574",
+    "name": "DefaultPDCA",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/PDCA/0.3.23.1/src/ts/layer2/DefaultPDCA.ts",
+    "definition": "ior:class://DefaultPDCA",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultPDCA.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultPDCA.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/PDCA/0.3.23.1/src/ts/layer2/DefaultPDCA.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

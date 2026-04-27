@@ -12,14 +12,14 @@ package "@web4x/ucp (external)" as UCP #EEEEEE {
   abstract class "JsInterface" as ExtJSI
 }
 
-package "Layer 1 — Infrastructure" as L1 #FFF9C4 {
+package "Layer 1 — Kernel & OS Infrastructure" as L1 #FFF9C4 {
   class "PlatformDetection" as PD <<Replaces Once.isNode>> {
     + {static} isNode: boolean
   }
   note right of PD : typeof process !== 'undefined'\n&& process.versions?.node
 }
 
-package "Layer 3 — Interfaces" as L3 #F5F5F5 {
+package "Layer 3 — Interfaces & Runtime Types" as L3 #F5F5F5 {
   abstract class "FileJs" as FJs <<P35: JsInterface>> {
     + {static} implementations: [DefaultFile, DefaultFolder]
   }

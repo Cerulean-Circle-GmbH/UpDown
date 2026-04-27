@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "121e9f5b-4ee9-4537-9510-d69a087cff12",
+    "component": "UCP",
+    "version": "0.3.23.1"
+  },
+  "owner": "UCP-v0.3.23.1",
+  "model": {
+    "uuid": "121e9f5b-4ee9-4537-9510-d69a087cff12",
+    "name": "UcpCLI",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/UCP/0.3.23.1/src/ts/layer5/UcpCLI.ts",
+    "definition": "ior:class://UcpCLI",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/UCP/0.3.23.1/src/ts/layer5/UcpCLI.ts.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/UCP/0.3.23.1/src/ts/layer5/UcpCLI.ts.unit",
+        "linkTarget": "ior:unit:121e9f5b-4ee9-4537-9510-d69a087cff12",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

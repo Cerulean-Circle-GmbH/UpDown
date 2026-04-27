@@ -1,0 +1,21 @@
+{
+  "name": "@web4x/http",
+  "version": "0.3.23.1",
+  "type": "module",
+  "description": "HTTP Component - Server, Router, Route subclasses, and IOR method routing",
+  "main": "dist/ts/layer2/HTTPServer.js",
+  "private": true,
+  "scripts": {
+    "start": "./http",
+    "build": "./src/sh/build.sh",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@web4x/ucp": "file:../../UCP/0.3.23.1"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "84b6e86e-b630-4f87-a177-f4e8c328dc14",
+    "component": "User",
+    "version": "0.3.23.1"
+  },
+  "owner": "User-v0.3.23.1",
+  "model": {
+    "uuid": "84b6e86e-b630-4f87-a177-f4e8c328dc14",
+    "name": "DefaultUser",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/User/0.3.23.1/src/ts/layer2/DefaultUser.ts",
+    "definition": "ior:class://DefaultUser",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultUser.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultUser.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/User/0.3.23.1/src/ts/layer2/DefaultUser.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

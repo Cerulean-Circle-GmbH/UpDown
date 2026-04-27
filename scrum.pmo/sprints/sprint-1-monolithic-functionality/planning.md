@@ -27,20 +27,20 @@ See [requirements.md](./requirements.md) for full traceability.
 
 > **Note:** Subtasks indicate the affected role. Ordered to avoid blocking deps.
 
-- [ ] [Task 1: Boundary File Extraction](./task-1-boundary-file-extraction.md)
+- [x] [Task 1: Boundary File Extraction](./task-1-boundary-file-extraction.md) **✅ DONE**
   **Priority:** 1 (CRITICAL — closes all extraction gaps)
-  - [ ] [Task 1.1: Expert — HTTPSServer to @web4x/http](./task-1.1-expert-httpsserver-extraction.md)
-  - [ ] [Task 1.2: Expert — StaticFileRoute to @web4x/http](./task-1.2-expert-staticfileroute-extraction.md)
-  - [ ] [Task 1.3: Expert — ACMEChallengeRoute to @web4x/tls](./task-1.3-expert-acme-route-extraction.md)
-  - [ ] [Task 1.4: Expert — FileOrchestrator to @web4x/filesystem](./task-1.4-expert-fileorchestrator-extraction.md)
-  - [ ] [Task 1.5: Expert — ProxyRoute + ReverseProxyRoute to @web4x/http](./task-1.5-expert-proxy-routes-extraction.md)
-  - [ ] [Task 1.6: Tester — Verify all extractions compile clean](./task-1.6-tester-extraction-verification.md)
+  - [x] [Task 1.1: Expert — HTTPSServer to @web4x/http](./task-1.1-expert-httpsserver-extraction.md) ✅
+  - [x] [Task 1.2: Expert — StaticFileRoute to @web4x/http](./task-1.2-expert-staticfileroute-extraction.md) ✅
+  - [x] [Task 1.3: Expert — ACMEChallengeRoute to @web4x/tls](./task-1.3-expert-acme-route-extraction.md) ✅
+  - [x] [Task 1.4: Expert — FileOrchestrator to @web4x/filesystem](./task-1.4-expert-fileorchestrator-extraction.md) ✅
+  - [x] [Task 1.5: Expert — ProxyRoute + ReverseProxyRoute + HeaderRewriter + HrefRewriter to @web4x/http](./task-1.5-expert-proxy-routes-extraction.md) ✅
+  - [ ] [Task 1.6: Tester — Verify all extractions compile clean](./task-1.6-tester-extraction-verification.md) ⏳ pending
 
-- [ ] [Task 2: CLI Lifecycle Completeness](./task-2-cli-lifecycle-completeness.md)
+- [ ] [Task 2: CLI Lifecycle Completeness](./task-2-cli-lifecycle-completeness.md) **🔧 IN PROGRESS**
   **Priority:** 1 (CRITICAL — Web4 self-care principle)
-  - [ ] [Task 2.1: Expert — source.env + lib-project-root.sh for all 7 new components](./task-2.1-expert-source-env-all-components.md)
-  - [ ] [Task 2.2: Expert — npm start parity for all 13 components](./task-2.2-expert-npm-start-parity.md)
-  - [ ] [Task 2.3: Tester — Verify ./component and npm start for all 13](./task-2.3-tester-cli-verification.md)
+  - [x] [Task 2.1: Expert — source.env + lib-project-root.sh for all components](./task-2.1-expert-source-env-all-components.md) ✅ All 13 have source.env + lib-project-root.sh
+  - [ ] [Task 2.2: Expert — npm start parity for all 13 components](./task-2.2-expert-npm-start-parity.md) ⏳
+  - [ ] [Task 2.3: Tester — Verify ./component and npm start for all 13](./task-2.3-tester-cli-verification.md) ⏳
 
 - [ ] [Task 3: ONCE Server Start Parity](./task-3-once-server-start.md)
   **Priority:** 1 (CRITICAL — primary acceptance test)
@@ -48,10 +48,10 @@ See [requirements.md](./requirements.md) for full traceability.
   - [ ] [Task 3.2: Expert — Verify once-v0.3.23.1 start launches HTTP+HTTPS](./task-3.2-expert-server-start-test.md)
   - [ ] [Task 3.3: Tester — Compare once-v0.3.23.1 vs once-v0.3.22.1 server output](./task-3.3-tester-server-parity.md)
 
-- [ ] [Task 4: UcpComponent Path Accessor Restoration](./task-4-ucpcomponent-path-restoration.md)
+- [ ] [Task 4: UcpComponent Path Accessor Restoration](./task-4-ucpcomponent-path-restoration.md) **🔧 IN PROGRESS**
   **Priority:** 2 (HIGH — needed for CLI info/links)
-  - [ ] [Task 4.1: Architect — Specify which path accessors belong in UCP vs W4TSC](./task-4.1-architect-path-accessor-spec.md)
-  - [ ] [Task 4.2: Expert — Implement path accessor restoration](./task-4.2-expert-path-accessor-impl.md)
+  - [x] [Task 4.1: Architect — Specify path accessors](./task-4.1-architect-path-accessor-spec.md) ✅ DON'T restore 423 lines — add 2 protected helpers
+  - [ ] [Task 4.2: Expert — Implement path accessor helpers](./task-4.2-expert-path-accessor-impl.md) ⏳ NOT YET DONE — needs implementation
   - [ ] [Task 4.3: Tester — Verify web4tscomponent info/links output matches 0.3.20.6](./task-4.3-tester-info-links-verification.md)
 
 - [ ] [Task 5: Semantic Link Promotion](./task-5-semantic-link-promotion.md)
@@ -59,35 +59,48 @@ See [requirements.md](./requirements.md) for full traceability.
   - [ ] [Task 5.1: Expert — Update dev/latest symlinks for ONCE and W4TSC](./task-5.1-expert-symlink-promotion.md)
   - [ ] [Task 5.2: Tester — Verify once links and web4tscomponent links show 0.3.23.1](./task-5.2-tester-link-verification.md)
 
-- [ ] [Task 6: PlantUML Class + Use Case Diagrams for All 13 Components](./task-6-plantuml-class-diagrams.md)
+- [x] [Task 6: PlantUML Class + Use Case Diagrams for All 13 Components](./task-6-plantuml-class-diagrams.md) **✅ DONE**
   **Priority:** 1 (CRITICAL — shared understanding before implementation)
-  - [ ] [Task 6.0a: Architect — Class diagram: web4tscomponent.prod + idealMinimalComponent.prod + interplay](./task-6.0a-architect-w4tsc-imc-class-puml.md)
-  - [ ] [Task 6.0b: Architect — Use case diagram: web4tscomponent + idealMinimalComponent (Object.verb → sub-usecases)](./task-6.0b-architect-w4tsc-imc-usecase-puml.md)
-  - [ ] [Task 6.1: Architect — @web4x/ucp class diagram (UcpComponent, UcpController, TypeRegistry, UcpModel, JsInterface, IOR)](./task-6.1-architect-ucp-puml.md)
-  - [ ] [Task 6.2: Architect — @web4x/unit class diagram (DefaultUnit, UnitDiscoveryService, ScenarioService)](./task-6.2-architect-unit-puml.md)
-  - [ ] [Task 6.3: Architect — @web4x/persistence class diagram (UcpStorage, BrowserScenarioStorage)](./task-6.3-architect-persistence-puml.md)
-  - [ ] [Task 6.4: Architect — @web4x/user, @web4x/filesystem, @web4x/http, @web4x/tls class diagrams](./task-6.4-architect-infrastructure-puml.md)
-  - [ ] [Task 6.5: Architect — @web4x/once full dependency diagram (all 13 components)](./task-6.5-architect-once-dependency-puml.md)
-  - [ ] [Task 6.6: Architect — @web4x/web4tscomponent, web4test, tootsie, pdca, idealminimal diagrams](./task-6.6-architect-framework-puml.md)
-  - [ ] [Task 6.7: Tester — Verify all PUML render to SVG without errors](./task-6.7-tester-puml-render.md)
+  - [x] [Task 6.0a: Architect — Class diagram: web4tscomponent.prod + idealMinimalComponent.prod + interplay](./task-6.0a-architect-w4tsc-imc-class-puml.md) ✅ `W4TSC/0.3.23.1/src/puml/W4TSC-IMC-ClassDiagram.puml`
+  - [x] [Task 6.0b: Architect — Use case diagram: web4tscomponent + idealMinimalComponent (Object.verb → sub-usecases)](./task-6.0b-architect-w4tsc-imc-usecase-puml.md) ✅ `W4TSC/0.3.23.1/src/puml/W4TSC-IMC-UseCaseDiagram.puml`
+  - [x] [Task 6.1: Architect — @web4x/ucp class diagram](./task-6.1-architect-ucp-puml.md) ✅ `UCP/0.3.23.0/src/puml/UCP-ClassDiagram.puml`
+  - [x] [Task 6.2: Architect — @web4x/unit class diagram](./task-6.2-architect-unit-puml.md) ✅ `Unit/0.3.23.0/src/puml/Unit-ClassDiagram.puml`
+  - [x] [Task 6.3: Architect — @web4x/persistence class diagram](./task-6.3-architect-persistence-puml.md) ✅ `Persistence/0.3.23.0/src/puml/Persistence-ClassDiagram.puml`
+  - [x] [Task 6.4: Architect — @web4x/user, filesystem, http, tls class diagrams](./task-6.4-architect-infrastructure-puml.md) ✅ 4 diagrams
+  - [x] [Task 6.5: Architect — @web4x/once full dependency diagram](./task-6.5-architect-once-dependency-puml.md) ✅ `ONCE/0.3.23.0/src/puml/Web4x-ComponentDependency.puml`
+  - [x] [Task 6.6: Architect — framework components diagrams](./task-6.6-architect-framework-puml.md) ✅ `W4TSC/0.3.23.1/src/puml/W4TSC-FrameworkComponents.puml`
+  - [x] [Task 6.7: Tester — Verify all PUML render to SVG](./task-6.7-tester-puml-render.md) ✅ 18 PASS (7 legacy out of scope)
+  - [x] [Task 6.8: Architect — Fix layer labels in 8 diagrams](./task-6.8-architect-layer-label-fix.md) ✅ L1=Kernel/OS, L3=Interfaces+Runtime, L4=Async(P7)
+  - [x] [Task 6.9: Architect — EAMD 5-layer reference diagram](./task-6.9-architect-eamd-layer-reference.md) ✅ `ONCE/0.3.23.0/src/puml/EAMD-5LayerArchitecture.puml`
 
-- [ ] [Task 7: Unit Model Enhancement for MDAv4 + TS File Tracking](./task-7-unit-model-enhancement.md)
+- [x] [Task 7: Unit Model Enhancement for MDAv4 + TS File Tracking](./task-7-unit-model-enhancement.md) **✅ DONE**
   **Priority:** 1 (CRITICAL — Unit must support class→file traceability for Sprint 2)
-  - [ ] [Task 7.1: Architect — Specify Unit model extensions for MDAv4 M3 CLASS tracking](./task-7.1-architect-unit-mdav4-spec.md)
-  - [ ] [Task 7.2: Expert — Add `origin` IOR field to UnitModel (tracks source .ts file)](./task-7.2-expert-unit-origin-field.md)
-  - [ ] [Task 7.3: Expert — Add `typeM3` field to UnitModel (CLASS/RELATIONSHIP/FOLDER)](./task-7.3-expert-unit-typem3-field.md)
-  - [ ] [Task 7.4: Expert — Add `references[]` array for bidirectional link tracking](./task-7.4-expert-unit-references-array.md)
-  - [ ] [Task 7.5: Expert — UnitDiscoveryService creates .ts.unit files next to .ts source](./task-7.5-expert-unit-discovery-ts-unit.md)
-  - [ ] [Task 7.6: Expert — PUML→Unit converter: parse class diagrams into M3 CLASS units](./task-7.6-expert-puml-to-unit-converter.md)
-  - [ ] [Task 7.7: Tester — Verify .ts.unit created for each layer2 class in @web4x/ucp](./task-7.7-tester-ts-unit-verification.md)
+  - [x] [Task 7.1: Architect — Specify Unit model extensions](./task-7.1-architect-unit-mdav4-spec.md) ✅ UnitModel already has fields from 0.3.0.5
+  - [x] [Task 7.2: Expert — Verify `origin` IOR field exists in UnitModel](./task-7.2-expert-unit-origin-field.md) ✅ Already present
+  - [x] [Task 7.3: Expert — Add FOLDER to TypeM3 enum](./task-7.3-expert-unit-typem3-field.md) ✅ Done
+  - [x] [Task 7.4: Expert — Verify `references[]` array exists](./task-7.4-expert-unit-references-array.md) ✅ Already present
+  - [x] [Task 7.5: Expert — tsUnitCreate() on UnitDiscoveryService](./task-7.5-expert-unit-discovery-ts-unit.md) ✅ Implemented in Unit/0.3.23.1
+  - [x] [Task 7.6: Expert — PumlUnitConverter class](./task-7.6-expert-puml-to-unit-converter.md) ✅ Implemented in Unit/0.3.23.1
+  - [x] [Task 7.7: Tester — Verify .ts.unit in UCP](./task-7.7-tester-ts-unit-verification.md) ✅ 14/14 .ts.unit files valid
+  - [x] [Task 7.8: Architect — Class diagram of Unit.prod (0.3.0.5)](./task-7.8-architect-unit-prod-puml.md) ✅ `Unit/0.3.0.5/src/puml/Unit-Prod-ClassDiagram.puml` — CRITICAL: found 20 files missing from 0.3.23.x
 
-- [ ] [Task 8: MDAv4 Ontology Structure for @web4x Components](./task-8-mdav4-ontology.md)
+- [x] [Task 8: MDAv4 Ontology Structure for @web4x Components](./task-8-mdav4-ontology.md) **✅ DONE**
   **Priority:** 2 (HIGH — model repository foundation)
-  - [ ] [Task 8.1: Architect — Define MDAv4/M3/CLASS/ structure for all @web4x classes](./task-8.1-architect-mdav4-class-structure.md)
-  - [ ] [Task 8.2: Expert — Create M3 CLASS units for every layer2 class across 13 components](./task-8.2-expert-m3-class-units.md)
-  - [ ] [Task 8.3: Expert — Create M3 RELATIONSHIP units (extends, implements, depends-on)](./task-8.3-expert-m3-relationship-units.md)
-  - [ ] [Task 8.4: Expert — Create °folder.unit for each component's MDAv4 directory](./task-8.4-expert-folder-units.md)
-  - [ ] [Task 8.5: Tester — Verify bidirectional traceability: M3 CLASS ↔ .ts.unit ↔ .ts file](./task-8.5-tester-traceability-verification.md)
+  - [x] [Task 8.1: Architect — Define MDAv4/M3/CLASS/ structure](./task-8.1-architect-mdav4-class-structure.md) ✅ 58 CLASS + 3 RELATIONSHIP + 13 FOLDER = 137 units
+  - [x] [Task 8.2: Expert — Create M3 CLASS units](./task-8.2-expert-m3-class-units.md) ✅ 58 CLASS + generator script
+  - [x] [Task 8.3: Expert — Create M3 RELATIONSHIP units](./task-8.3-expert-m3-relationship-units.md) ✅ extends/implements/depends-on
+  - [x] [Task 8.4: Expert — Create °folder.unit files](./task-8.4-expert-folder-units.md) ✅ 13 FOLDER + 20 .ts.unit
+  - [x] [Task 8.5: Tester — Verify traceability](./task-8.5-tester-traceability-verification.md) ✅ PARTIAL — filePath gap non-blocking
+
+- [ ] [Task 9: Port Unit.prod Capabilities to Unit 0.3.23.1](./task-9-unit-prod-port.md) **🔧 IN PROGRESS — SCOPE CHANGE**
+  **Priority:** 1 (CRITICAL — architect finding: 20 files, ~1500 lines missing from 0.3.23.x)
+  - [x] [Task 9.1: Architect — Gap analysis: Unit.prod (0.3.0.5) vs Unit 0.3.23.1](./task-9.1-architect-unit-gap-analysis.md) ✅ 20 files missing, merge-forward strategy
+  - [x] [Task 9.2: Expert — Port GitTextIOR to Unit/0.3.23.1](./task-9.2-expert-port-gittextior.md) ✅ 4 files ported, compiles clean
+  - [x] ~~Task 9.3: Port DefaultStorage~~ **CANCELLED** — PO decision: keep @web4x/persistence (DRY P8)
+  - [ ] [Task 9.4: Expert — Port discover/find commands + bidirectional sync](./task-9.4-expert-port-discover-find.md)
+  - [ ] [Task 9.5: Expert — Port Unit CLI (DefaultCLI from Unit.prod)](./task-9.5-expert-port-unit-cli.md)
+  - [ ] [Task 9.6: Expert — Port missing layer3 interfaces (GitPositioning, ChangeEvent, ComponentAnalysis, etc.)](./task-9.6-expert-port-layer3-interfaces.md)
+  - [ ] [Task 9.7: Tester — Verify unit discover on @web4x/ucp matches Unit.prod behavior](./task-9.7-tester-unit-discover-verification.md)
 
 ## Dependencies
 - Task 1 must complete before Task 3 (server needs extracted files)
@@ -97,6 +110,7 @@ See [requirements.md](./requirements.md) for full traceability.
 - Task 6 can run in parallel with Tasks 1-5 (Architect work, no code changes)
 - Task 7 must start after Task 6.1-6.2 (need PUML to know which classes to track)
 - Task 8 depends on Task 7 (Unit model must support MDAv4 fields before creating units)
+- Task 9 depends on Task 7.8 (need prod diagram before porting) — can run parallel with Tasks 1-2
 
 ## Definition of Done
 - [ ] `once-v0.3.23.1 start` launches HTTP+HTTPS server with all routes

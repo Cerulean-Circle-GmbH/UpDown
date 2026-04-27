@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "ca2dd379-ab98-4cd8-9429-487d7f824079",
+    "component": "ONCE",
+    "version": "0.3.23.1"
+  },
+  "owner": "ONCE-v0.3.23.1",
+  "model": {
+    "uuid": "ca2dd379-ab98-4cd8-9429-487d7f824079",
+    "name": "DefaultOnceKernel",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.23.1/src/ts/layer2/DefaultOnceKernel.ts",
+    "definition": "ior:class://DefaultOnceKernel",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultOnceKernel.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultOnceKernel.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.23.1/src/ts/layer2/DefaultOnceKernel.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

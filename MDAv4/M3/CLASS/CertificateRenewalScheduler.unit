@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "7859bea7-ddb1-4fcc-896c-020185407cf4",
+    "component": "TLS",
+    "version": "0.3.23.1"
+  },
+  "owner": "TLS-v0.3.23.1",
+  "model": {
+    "uuid": "7859bea7-ddb1-4fcc-896c-020185407cf4",
+    "name": "CertificateRenewalScheduler",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/TLS/0.3.23.1/src/ts/layer2/CertificateRenewalScheduler.ts",
+    "definition": "ior:class://CertificateRenewalScheduler",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/CertificateRenewalScheduler.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/CertificateRenewalScheduler.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/TLS/0.3.23.1/src/ts/layer2/CertificateRenewalScheduler.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

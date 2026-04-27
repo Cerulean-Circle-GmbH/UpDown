@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "8842d0c3-24cd-4fa1-af9e-8e9c77f2f54b",
+    "component": "Web4TSComponent",
+    "version": "0.3.23.1"
+  },
+  "owner": "Web4TSComponent-v0.3.23.1",
+  "model": {
+    "uuid": "8842d0c3-24cd-4fa1-af9e-8e9c77f2f54b",
+    "name": "TsAstExtractor",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.23.1/src/ts/layer2/TsAstExtractor.ts",
+    "definition": "ior:class://TsAstExtractor",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/TsAstExtractor.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/TsAstExtractor.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.23.1/src/ts/layer2/TsAstExtractor.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

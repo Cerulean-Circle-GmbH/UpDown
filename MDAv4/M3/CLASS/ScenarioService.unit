@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "dc6ebdb6-dfbc-49fe-89e7-3bbdd54e3f67",
+    "component": "Unit",
+    "version": "0.3.23.1"
+  },
+  "owner": "Unit-v0.3.23.1",
+  "model": {
+    "uuid": "dc6ebdb6-dfbc-49fe-89e7-3bbdd54e3f67",
+    "name": "ScenarioService",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Unit/0.3.23.1/src/ts/layer2/ScenarioService.ts",
+    "definition": "ior:class://ScenarioService",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/ScenarioService.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/ScenarioService.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Unit/0.3.23.1/src/ts/layer2/ScenarioService.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

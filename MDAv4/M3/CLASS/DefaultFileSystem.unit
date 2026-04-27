@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "f24987a1-c657-42e7-a21d-5a056e3ec6b4",
+    "component": "Filesystem",
+    "version": "0.3.23.1"
+  },
+  "owner": "Filesystem-v0.3.23.1",
+  "model": {
+    "uuid": "f24987a1-c657-42e7-a21d-5a056e3ec6b4",
+    "name": "DefaultFileSystem",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Filesystem/0.3.23.1/src/ts/layer2/DefaultFileSystem.ts",
+    "definition": "ior:class://DefaultFileSystem",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultFileSystem.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultFileSystem.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Filesystem/0.3.23.1/src/ts/layer2/DefaultFileSystem.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

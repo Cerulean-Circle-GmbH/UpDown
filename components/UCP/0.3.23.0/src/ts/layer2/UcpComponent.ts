@@ -21,6 +21,7 @@
  * @ior ior:esm:/UCP/{version}/UcpComponent
  */
 
+import { resolve, join } from 'path';
 import { UcpController } from './UcpController.js';
 import { TypeDescriptor } from '../layer3/TypeDescriptor.js';
 import { UcpModel } from '../layer3/UcpModel.js';
@@ -209,6 +210,25 @@ export abstract class UcpComponent<TModel extends Model> extends Component<TMode
    */
   protected get componentVersion(): string {
     return '0.0.0.0';
+  }
+
+  /**
+   * Derive project root from model.componentRoot (3 levels up)
+   * Convention: components/{Name}/{Version} → project root
+   */
+  protected get projectRoot(): string {
+    const componentRoot = (this.model as any)?.componentRoot;
+    if (!componentRoot) return '';
+    return resolve(componentRoot, '..', '..', '..');
+  }
+
+  /**
+   * Components directory derived from project root
+   */
+  protected get componentsDirectory(): string {
+    const root = this.projectRoot;
+    if (!root) return '';
+    return join(root, 'components');
   }
 
   // ═══════════════════════════════════════════════════════════════

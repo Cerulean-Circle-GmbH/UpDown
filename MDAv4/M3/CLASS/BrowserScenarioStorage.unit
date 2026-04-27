@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "83c4565d-5d43-4d65-b598-1c1f9d96e2ce",
+    "component": "Persistence",
+    "version": "0.3.23.1"
+  },
+  "owner": "Persistence-v0.3.23.1",
+  "model": {
+    "uuid": "83c4565d-5d43-4d65-b598-1c1f9d96e2ce",
+    "name": "BrowserScenarioStorage",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Persistence/0.3.23.1/src/ts/layer2/BrowserScenarioStorage.ts",
+    "definition": "ior:class://BrowserScenarioStorage",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/BrowserScenarioStorage.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/BrowserScenarioStorage.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Persistence/0.3.23.1/src/ts/layer2/BrowserScenarioStorage.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

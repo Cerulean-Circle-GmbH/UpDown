@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "6579c101-aba6-4164-bbf4-01a61dba49ba",
+    "component": "Web4Test",
+    "version": "0.3.23.1"
+  },
+  "owner": "Web4Test-v0.3.23.1",
+  "model": {
+    "uuid": "6579c101-aba6-4164-bbf4-01a61dba49ba",
+    "name": "DefaultWeb4TestCase",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4Test/0.3.23.1/src/ts/layer2/DefaultWeb4TestCase.ts",
+    "definition": "ior:class://DefaultWeb4TestCase",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultWeb4TestCase.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/DefaultWeb4TestCase.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4Test/0.3.23.1/src/ts/layer2/DefaultWeb4TestCase.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

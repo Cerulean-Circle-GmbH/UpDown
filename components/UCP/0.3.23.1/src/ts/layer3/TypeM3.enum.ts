@@ -16,7 +16,7 @@ export enum TypeM3 {
   ATTRIBUTE = 'ATTRIBUTE',
   /** LD Links, associations, connections */
   RELATIONSHIP = 'RELATIONSHIP',
-  /** Directories, containers, namespaces */
+  /** Directories, packages, namespaces */
   FOLDER = 'FOLDER'
 }
 

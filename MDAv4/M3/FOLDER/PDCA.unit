@@ -1,0 +1,19 @@
+{
+  "ior": {
+    "uuid": "8d56cde5-a964-43d4-a9e7-7413226d86ed",
+    "component": "PDCA",
+    "version": "0.3.23.1"
+  },
+  "owner": "PDCA-v0.3.23.1",
+  "model": {
+    "uuid": "8d56cde5-a964-43d4-a9e7-7413226d86ed",
+    "name": "PDCA",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/PDCA/0.3.23.1/",
+    "definition": "ior:folder://PDCA",
+    "typeM3": "FOLDER",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/FOLDER/PDCA.unit",
+    "references": [],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

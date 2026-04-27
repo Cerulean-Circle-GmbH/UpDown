@@ -12,7 +12,7 @@ title @web4x/ucp 0.3.23.0 — Universal Component Pattern\nFoundation Component 
 ' LAYER 3: Interfaces & Runtime Types
 ' ═══════════════════════════════════════════════════════════════
 
-package "Layer 3 — Interfaces" as L3 #F5F5F5 {
+package "Layer 3 — Interfaces & Runtime Types" as L3 #F5F5F5 {
 
   interface "Model" as IModel {
     + uuid: string
@@ -281,7 +281,7 @@ package "Layer 2 — Implementation" as L2 #E8F5E9 {
 ' LAYER 4: Orchestration (IOR + FileLoader)
 ' ═══════════════════════════════════════════════════════════════
 
-package "Layer 4 — Orchestration" as L4 #FFF3E0 {
+package "Layer 4 — Async Orchestration (P7: only async layer)" as L4 #FFF3E0 {
 
   class "IOR<T>" as IORImpl <<P34: Pluggable Loader Registry>> {
     + model: IORModel

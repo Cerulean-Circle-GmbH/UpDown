@@ -1,0 +1,19 @@
+{
+  "ior": {
+    "uuid": "ecf6d597-bacb-42e2-a7d4-d4ed0765dd83",
+    "component": "MDAv4",
+    "version": "0.3.23.1"
+  },
+  "owner": "MDAv4-v0.3.23.1",
+  "model": {
+    "uuid": "ecf6d597-bacb-42e2-a7d4-d4ed0765dd83",
+    "name": "implements",
+    "origin": "ior:relationship://implements",
+    "definition": "ior:relationship://implements",
+    "typeM3": "RELATIONSHIP",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/RELATIONSHIP/implements.unit",
+    "references": [],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

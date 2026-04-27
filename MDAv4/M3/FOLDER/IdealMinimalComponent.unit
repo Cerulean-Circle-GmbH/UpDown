@@ -1,0 +1,19 @@
+{
+  "ior": {
+    "uuid": "6dc3f25f-77b5-4c05-8588-a9885360c45f",
+    "component": "IdealMinimalComponent",
+    "version": "0.3.23.1"
+  },
+  "owner": "IdealMinimalComponent-v0.3.23.1",
+  "model": {
+    "uuid": "6dc3f25f-77b5-4c05-8588-a9885360c45f",
+    "name": "IdealMinimalComponent",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/IdealMinimalComponent/0.3.23.1/",
+    "definition": "ior:folder://IdealMinimalComponent",
+    "typeM3": "FOLDER",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/FOLDER/IdealMinimalComponent.unit",
+    "references": [],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

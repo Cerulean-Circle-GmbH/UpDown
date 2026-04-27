@@ -1,0 +1,19 @@
+{
+  "ior": {
+    "uuid": "dd6d3811-605e-45d6-889a-3842f05b3322",
+    "component": "ONCE",
+    "version": "0.3.23.1"
+  },
+  "owner": "ONCE-v0.3.23.1",
+  "model": {
+    "uuid": "dd6d3811-605e-45d6-889a-3842f05b3322",
+    "name": "ONCE",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.23.1/",
+    "definition": "ior:folder://ONCE",
+    "typeM3": "FOLDER",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/FOLDER/ONCE.unit",
+    "references": [],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

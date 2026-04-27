@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "cb1424e6-e932-4829-847b-674248e5802f",
+    "component": "Tootsie",
+    "version": "0.3.23.1"
+  },
+  "owner": "Tootsie-v0.3.23.1",
+  "model": {
+    "uuid": "cb1424e6-e932-4829-847b-674248e5802f",
+    "name": "TootsieTestRunner",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Tootsie/0.3.23.1/src/ts/layer4/TootsieTestRunner.ts",
+    "definition": "ior:class://TootsieTestRunner",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/TootsieTestRunner.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/MDAv4/M3/CLASS/TootsieTestRunner.unit",
+        "linkTarget": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Tootsie/0.3.23.1/src/ts/layer4/TootsieTestRunner.ts.unit",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

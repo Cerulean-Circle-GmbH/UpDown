@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "5a8d9653-8bf0-4c4e-b367-c63f7ed29fe4",
+    "component": "UCP",
+    "version": "0.3.23.1"
+  },
+  "owner": "UCP-v0.3.23.1",
+  "model": {
+    "uuid": "5a8d9653-8bf0-4c4e-b367-c63f7ed29fe4",
+    "name": "IOR",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/UCP/0.3.23.1/src/ts/layer4/IOR.ts",
+    "definition": "ior:class://IOR",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/UCP/0.3.23.1/src/ts/layer4/IOR.ts.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/UCP/0.3.23.1/src/ts/layer4/IOR.ts.unit",
+        "linkTarget": "ior:unit:5a8d9653-8bf0-4c4e-b367-c63f7ed29fe4",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}

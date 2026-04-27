@@ -1,0 +1,25 @@
+{
+  "ior": {
+    "uuid": "e22845cb-552c-4a52-b274-4ac22792a22b",
+    "component": "Web4TSComponent",
+    "version": "0.3.23.1"
+  },
+  "owner": "Web4TSComponent-v0.3.23.1",
+  "model": {
+    "uuid": "e22845cb-552c-4a52-b274-4ac22792a22b",
+    "name": "Web4TSComponentCLI",
+    "origin": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.23.1/src/ts/layer5/Web4TSComponentCLI.ts",
+    "definition": "ior:class://Web4TSComponentCLI",
+    "typeM3": "CLASS",
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.23.1/src/ts/layer5/Web4TSComponentCLI.ts.unit",
+    "references": [
+      {
+        "linkLocation": "ior:file:///Users/Shared/Workspaces/2cuGitHub/UpDown/components/Web4TSComponent/0.3.23.1/src/ts/layer5/Web4TSComponentCLI.ts.unit",
+        "linkTarget": "ior:unit:e22845cb-552c-4a52-b274-4ac22792a22b",
+        "syncStatus": "SYNCED"
+      }
+    ],
+    "createdAt": "2026-04-24T10:20:28.636Z",
+    "updatedAt": "2026-04-24T10:20:28.636Z"
+  }
+}
