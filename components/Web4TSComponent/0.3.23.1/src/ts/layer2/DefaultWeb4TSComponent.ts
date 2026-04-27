@@ -190,7 +190,7 @@ export class DefaultWeb4TSComponent
    * Priority: CLI → context → derived
    */
   get componentsDirectory(): string {
-    const cliDir = this.cliInstance?.model?.componentsDirectory;
+    const cliDir = this.cliInstance?.model?.componentsDir;
     if (cliDir) return cliDir;
 
     const context = this.model?.context;
@@ -205,7 +205,7 @@ export class DefaultWeb4TSComponent
    * Priority: CLI → context → derived
    */
   get testDataDirectory(): string {
-    const cliDir = this.cliInstance?.model?.testDataDirectory;
+    const cliDir = this.cliInstance?.model?.testDataDir;
     if (cliDir) return cliDir;
 
     const context = this.model?.context;
@@ -220,7 +220,7 @@ export class DefaultWeb4TSComponent
    * Priority: CLI → context → derived
    */
   get scriptsDirectory(): string {
-    const cliDir = this.cliInstance?.model?.scriptsDirectory;
+    const cliDir = this.cliInstance?.model?.scriptsDir;
     if (cliDir) return cliDir;
 
     const context = this.model?.context;
@@ -235,7 +235,7 @@ export class DefaultWeb4TSComponent
    * Priority: CLI → context → derived
    */
   get scriptsVersionDirectory(): string {
-    const cliDir = this.cliInstance?.model?.scriptsVersionDirectory;
+    const cliDir = this.cliInstance?.model?.scriptsVersionDir;
     if (cliDir) return cliDir;
 
     const context = this.model?.context;

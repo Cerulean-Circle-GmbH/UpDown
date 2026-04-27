@@ -9,9 +9,9 @@
  */
 
 import { ScenarioService } from './ScenarioService.js';
-import { TypeM3 } from '../layer3/TypeM3.enum.js';
-import type { Scenario } from '../layer3/Scenario.interface.js';
-import type { Model } from '../layer3/Model.interface.js';
+import { TypeM3 } from '@web4x/ucp/TypeM3';
+import type { Scenario } from '@web4x/ucp/Scenario';
+import type { Model } from '@web4x/ucp/Model';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';

@@ -64,9 +64,14 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
   
   private web4ts?: any; // Lazy-initialized Web4TSComponent for delegation (dynamic import, no static dependency)
   private user?: User; // Optional User service (lazy initialization)
-  
-  // CLI inherited from UcpComponent (CPA.1)
-  // @pdca 2026-01-04-UTC-1630.cli-path-authority-full-migration.pdca.md
+
+  /** CLI instance (was on UcpComponent in monolith, now local) */
+  public cli: any = null;
+
+  /** Test isolation derived from projectRoot path */
+  get isTestIsolation(): boolean {
+    return this.projectRoot?.includes('/test/data') ?? false;
+  }
   
   /**
    * Component root directory (this component's own root)
@@ -223,8 +228,7 @@ export class NodeJsOnce extends DefaultOnceKernel<ONCEPeerModel> implements ONCE
   /**
    * Override testDataDirectory: CLI is path authority, derive from projectRoot if CLI not set
    */
-  override get testDataDirectory(): string {
-    if (super.testDataDirectory) return super.testDataDirectory;  // CLI path authority
+  get testDataDirectory(): string {
     return path.join(this.projectRoot, 'test', 'data');
   }
 

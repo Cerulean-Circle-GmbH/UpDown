@@ -1,6 +1,6 @@
 {
   "name": "@web4x/filesystem",
-  "version": "0.3.23.0",
+  "version": "0.3.23-0",
   "type": "module",
   "description": "Filesystem Component - OOP file operations with ISR lazy loading",
   "main": "dist/ts/layer2/DefaultFileSystem.js",
@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@web4x/ucp": "file:../../UCP/0.3.23.0",
+    "@web4x/cli": "file:../../CLI/0.3.23.0",
     "@web4x/unit": "file:../../Unit/0.3.23.0"
   }
 }

@@ -1,4 +1,1 @@
-// Completion interface for oosh CLI completion backend
-export interface Completion {
-  complete(args: string[]): string[];
-}
+export {  } from '@web4x/cli/dist/ts/layer3/Completion.js';

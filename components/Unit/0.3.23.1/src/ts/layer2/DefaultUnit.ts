@@ -20,18 +20,18 @@
  * @pdca 2025-12-21-UTC-2100.defaultunit-inline-migration.pdca.md
  */
 
-import { UcpComponent } from '@web4x/ucp/dist/ts/layer2/UcpComponent.js';
-import { UnitModel } from '../layer3/UnitModel.interface.js';
-import { UnitReference } from '../layer3/UnitReference.interface.js';
-import { SyncStatus } from '../layer3/SyncStatus.enum.js';
-import { TypeM3 } from '../layer3/TypeM3.enum.js';
-import { Scenario } from '../layer3/Scenario.interface.js';
-import { Reference } from '../layer3/Reference.interface.js';
+import { UcpComponent } from '@web4x/ucp/UcpComponent';
+import type { UnitModel } from '@web4x/ucp/UnitModel';
+import type { UnitReference } from '@web4x/ucp/UnitReference';
+import { SyncStatus } from '@web4x/ucp/SyncStatus';
+import { TypeM3 } from '@web4x/ucp/TypeM3';
+import type { Scenario } from '@web4x/ucp/Scenario';
+import type { Reference } from '@web4x/ucp/Reference';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { existsSync, readlinkSync } from 'fs';
 import { dirname } from 'path';
-import { IOR } from '@web4x/ucp/dist/ts/layer4/IOR.js';  // FsM.4: IOR-based unit ops
+import { IOR } from '@web4x/ucp/IOR';  // FsM.4: IOR-based unit ops
 
 // Type for unit identifier (UUID string or .unit file path)
 type UnitIdentifier = string;

@@ -10,11 +10,11 @@
  */
 
 import { ScenarioService } from './ScenarioService.js';
-import type { Scenario } from '../layer3/Scenario.interface.js';
-import type { Model } from '../layer3/Model.interface.js';
+import type { Scenario } from '@web4x/ucp/Scenario';
+import type { Model } from '@web4x/ucp/Model';
 import type { UnitDefinition, UnitFilePattern } from '../layer3/UnitDefinition.interface.js';
 import type { ComponentManifest, ManifestUnit, ManifestUnits } from '../layer3/ComponentManifest.interface.js';
-import { TypeM3 } from '../layer3/TypeM3.enum.js';
+import { TypeM3 } from '@web4x/ucp/TypeM3';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';

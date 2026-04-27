@@ -36,11 +36,11 @@ See [requirements.md](./requirements.md) for full traceability.
   - [x] [Task 1.5: Expert — ProxyRoute + ReverseProxyRoute + HeaderRewriter + HrefRewriter to @web4x/http](./task-1.5-expert-proxy-routes-extraction.md) ✅
   - [ ] [Task 1.6: Tester — Verify all extractions compile clean](./task-1.6-tester-extraction-verification.md) ⏳ pending
 
-- [ ] [Task 2: CLI Lifecycle Completeness](./task-2-cli-lifecycle-completeness.md) **🔧 IN PROGRESS**
+- [x] [Task 2: CLI Lifecycle Completeness](./task-2-cli-lifecycle-completeness.md) **✅ DONE**
   **Priority:** 1 (CRITICAL — Web4 self-care principle)
   - [x] [Task 2.1: Expert — source.env + lib-project-root.sh for all components](./task-2.1-expert-source-env-all-components.md) ✅ All 13 have source.env + lib-project-root.sh
-  - [ ] [Task 2.2: Expert — npm start parity for all 13 components](./task-2.2-expert-npm-start-parity.md) ⏳
-  - [ ] [Task 2.3: Tester — Verify ./component and npm start for all 13](./task-2.3-tester-cli-verification.md) ⏳
+  - [x] [Task 2.2: Expert — CLI infrastructure via @web4x/cli for all 13](./task-2.2-expert-npm-start-parity.md) ✅ Task 9.5 delivered this
+  - [ ] [Task 2.3: Tester — Verify ./component and npm start for all 13](./task-2.3-tester-cli-verification.md) ⏳ pending tester
 
 - [ ] [Task 3: ONCE Server Start Parity](./task-3-once-server-start.md)
   **Priority:** 1 (CRITICAL — primary acceptance test)
@@ -98,7 +98,7 @@ See [requirements.md](./requirements.md) for full traceability.
   - [x] [Task 9.2: Expert — Port GitTextIOR to Unit/0.3.23.1](./task-9.2-expert-port-gittextior.md) ✅ 4 files ported, compiles clean
   - [x] ~~Task 9.3: Port DefaultStorage~~ **CANCELLED** — PO decision: keep @web4x/persistence (DRY P8)
   - [ ] [Task 9.4: Expert — Port discover/find commands + bidirectional sync](./task-9.4-expert-port-discover-find.md)
-  - [ ] [Task 9.5: Expert — Port Unit CLI (DefaultCLI from Unit.prod)](./task-9.5-expert-port-unit-cli.md)
+  - [x] [Task 9.5: Expert — CLI infrastructure for all 6 library components (BLOCKER)](./task-9.5-expert-port-unit-cli.md) ✅ @web4x/cli created, Phase A+B+C done, `on` delegation works
   - [ ] [Task 9.6: Expert — Port missing layer3 interfaces (GitPositioning, ChangeEvent, ComponentAnalysis, etc.)](./task-9.6-expert-port-layer3-interfaces.md)
   - [ ] [Task 9.7: Tester — Verify unit discover on @web4x/ucp matches Unit.prod behavior](./task-9.7-tester-unit-discover-verification.md)
 

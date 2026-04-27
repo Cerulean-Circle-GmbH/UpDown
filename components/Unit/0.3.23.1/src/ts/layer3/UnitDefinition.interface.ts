@@ -7,7 +7,7 @@
  * @pdca 2025-12-08-UTC-1200.unit-manifest-generation.pdca.md
  */
 
-import { TypeM3 } from './TypeM3.enum.js';
+import { TypeM3 } from '@web4x/ucp/TypeM3';
 
 /**
  * UnitDefinition - Describes a unit to be discovered/created

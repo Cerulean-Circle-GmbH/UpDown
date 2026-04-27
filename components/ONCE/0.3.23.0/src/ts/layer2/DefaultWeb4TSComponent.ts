@@ -43,6 +43,9 @@ export class DefaultWeb4TSComponent
   extends UcpComponent<Web4TSComponentModel> 
   implements Web4TSComponent {
   
+  /** CLI instance (was on UcpComponent in monolith, now local) */
+  public cli: any = null;
+
   /** Unit discovery service for build-time unit creation */
   private unitDiscoveryService: UnitDiscoveryService | null = null;
   
@@ -167,8 +170,7 @@ export class DefaultWeb4TSComponent
    * Test data directory
    * Priority: CLI → context → derived
    */
-  override get testDataDirectory(): string {
-    if (super.testDataDirectory) return super.testDataDirectory;
+  get testDataDirectory(): string {
     
     const context = this.model?.context;
     if (context?.testDataDirectory) return context.testDataDirectory;
@@ -181,26 +183,22 @@ export class DefaultWeb4TSComponent
    * Scripts directory
    * Priority: CLI → context → derived
    */
-  override get scriptsDirectory(): string {
-    if (super.scriptsDirectory) return super.scriptsDirectory;
-    
+  get scriptsDirectory(): string {
     const context = this.model?.context;
     if (context?.scriptsDirectory) return context.scriptsDirectory;
-    
+
     const projectRoot = this.projectRoot;
     return projectRoot ? path.join(projectRoot, 'scripts') : '';
   }
-  
+
   /**
    * Scripts version directory
-   * Priority: CLI → context → derived
+   * Priority: context → derived
    */
-  override get scriptsVersionDirectory(): string {
-    if (super.scriptsVersionDirectory) return super.scriptsVersionDirectory;
-    
+  get scriptsVersionDirectory(): string {
     const context = this.model?.context;
     if (context?.scriptsVersionDirectory) return context.scriptsVersionDirectory;
-    
+
     const scriptsDir = this.scriptsDirectory;
     return scriptsDir ? path.join(scriptsDir, 'versions') : '';
   }
@@ -235,7 +233,7 @@ export class DefaultWeb4TSComponent
    * Test isolation mode (derived from projectRoot path)
    * @pdca 2026-01-08-UTC-1400.path-calculation-consolidation.pdca.md PC.6
    */
-  override get isTestIsolation(): boolean {
+  get isTestIsolation(): boolean {
     // Check context first for delegation
     const context = this.model?.context;
     if (context?.isTestIsolation !== undefined) return context.isTestIsolation;
@@ -1315,7 +1313,7 @@ ${'='.repeat(80)}
         // PC.6: Use accessors instead of model properties (path properties removed)
         console.log(`   Project Root:     ${target.projectRoot || 'N/A'}`);
         console.log(`   Component Root:   ${targetModel.componentRoot || 'N/A'}`);
-        console.log(`   Target Directory: ${target.targetDirectory || 'N/A'}`);
+        console.log(`   Target Directory: ${target.projectRoot || 'N/A'}`);
         console.log();
         
         // origin/definition fields removed — not part of Web4TSComponentModel
@@ -2258,7 +2256,7 @@ ${'='.repeat(80)}
    * @cliHide
    */
   private async updateMainScriptSymlink(): Promise<void> {
-    const scriptsDir = path.join(this.targetDirectory || '', 'scripts');  // PC.6: Use accessor
+    const scriptsDir = path.join(this.projectRoot || '', 'scripts');  // PC.6: Use accessor
     const componentLower = (this.model!.component || '').toLowerCase();
     const mainScriptPath = path.join(scriptsDir, componentLower);
     

@@ -1,6 +1,6 @@
 {
   "name": "@web4x/ucp",
-  "version": "0.3.23.0",
+  "version": "0.3.23-0",
   "type": "module",
   "description": "Universal Component Pattern - Base class for ALL Web4 components",
   "main": "dist/ts/layer5/UcpCLI.js",

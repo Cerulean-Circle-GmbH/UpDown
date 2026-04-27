@@ -1,6 +1,6 @@
 {
   "name": "@web4x/user",
-  "version": "0.3.23.0",
+  "version": "0.3.23-0",
   "type": "module",
   "description": "User Component - Identity, environment detection, and owner attribution",
   "main": "dist/ts/layer2/DefaultUser.js",
@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@web4x/ucp": "file:../../UCP/0.3.23.0",
+    "@web4x/cli": "file:../../CLI/0.3.23.0",
     "@web4x/unit": "file:../../Unit/0.3.23.0"
   }
 }

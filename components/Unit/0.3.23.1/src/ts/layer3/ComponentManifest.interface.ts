@@ -8,7 +8,7 @@
  * @pdca 2025-12-08-UTC-1200.unit-manifest-generation.pdca.md
  */
 
-import type { Model } from './Model.interface.js';
+import type { Model } from '@web4x/ucp/Model';
 
 /**
  * Unit entry in component manifest

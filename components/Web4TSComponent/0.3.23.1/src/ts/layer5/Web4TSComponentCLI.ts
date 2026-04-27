@@ -21,7 +21,7 @@ import { TSCompletion } from '../layer4/TSCompletion.js';
 export class Web4TSComponentCLI extends DefaultCLI {
   // @pdca 2025-11-03-1105-component-template-bugs.pdca.md - Override component type for Web4TSComponent-specific operations
   // @pdca 2025-11-05-UTC-1158.pdca.md - Changed to Reference<T> (null not undefined)
-  protected declare component: Reference<DefaultWeb4TSComponent>;
+  protected declare component: any;
 
   /**
    * Static CLI entry — ONLY entry point for CLI

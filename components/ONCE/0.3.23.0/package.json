@@ -1,6 +1,6 @@
 {
   "name": "@web4x/once",
-  "version": "0.3.23.0",
+  "version": "0.3.23-0",
   "type": "module",
   "description": "ONCE Component - Distributed kernel, multi-server orchestration, PWA",
   "main": "dist/ts/layer5/ONCECLI.js",

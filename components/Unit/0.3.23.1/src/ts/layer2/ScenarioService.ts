@@ -15,15 +15,15 @@
  * @pdca 2025-12-08-UTC-1000.scenario-unit-unification.pdca.md
  */
 
-import type { Scenario } from '../layer3/Scenario.interface.js';
-import type { Model } from '../layer3/Model.interface.js';
-import type { ScenarioUnit } from '../layer3/ScenarioUnit.interface.js';
-import type { UnitReference } from '../layer3/UnitReference.interface.js';
-import type { PersistenceManager } from '../layer3/PersistenceManager.interface.js';
-import type { Reference } from '../layer3/Reference.interface.js';
-import type { UcpComponent } from '@web4x/ucp/dist/ts/layer2/UcpComponent.js';
-import { SyncStatus } from '../layer3/SyncStatus.enum.js';
-import { SCENARIO_SCHEMA_VERSION, SCENARIO_SCHEMA_VERSION_LEGACY } from '../layer3/ScenarioUnit.interface.js';
+import type { Scenario } from '@web4x/ucp/Scenario';
+import type { Model } from '@web4x/ucp/Model';
+import type { ScenarioUnit } from '@web4x/ucp/ScenarioUnit';
+import type { UnitReference } from '@web4x/ucp/UnitReference';
+import { PersistenceManager } from '@web4x/ucp/PersistenceManager';
+import type { Reference } from '@web4x/ucp/Reference';
+import type { UcpComponent } from '@web4x/ucp/UcpComponent';
+import { SyncStatus } from '@web4x/ucp/SyncStatus';
+import { SCENARIO_SCHEMA_VERSION, SCENARIO_SCHEMA_VERSION_LEGACY } from '@web4x/ucp/ScenarioUnit';
 
 /**
  * Migration method signature for convention-based upgrades
