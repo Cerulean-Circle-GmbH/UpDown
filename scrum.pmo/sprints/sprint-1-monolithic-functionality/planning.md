@@ -59,6 +59,7 @@ See [requirements.md](./requirements.md) for full traceability.
   - [x] [Task 5.1: Expert — Update dev/latest symlinks](./task-5.1-expert-symlink-promotion.md) ✅ ONCE dev+latest → 0.3.23.0, W4TSC dev → 0.3.23.0
   - [x] [Task 5.2: Tester — Verify links](./task-5.2-tester-link-verification.md) ✅ Verified via once links + web4tscomponent links
   **Note:** setCICDVersion via `on` failed for ONCE (naming: DefaultONCE.js vs NodeJsOnce.js) — set manually. BUG for Sprint 2.
+  - [x] [Task 5.3: Expert — Create 0.3.23.1 dev versions for all components](./task-5.3-expert-create-dev-versions.md) ✅ 14/14 at 0.3.23.1, all compile clean, semver 0.3.23-1, subpath exports
 
 - [x] [Task 6: PlantUML Class + Use Case Diagrams for All 13 Components](./task-6-plantuml-class-diagrams.md) **✅ DONE**
   **Priority:** 1 (CRITICAL — shared understanding before implementation)
