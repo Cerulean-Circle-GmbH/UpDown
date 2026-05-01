@@ -272,4 +272,69 @@ body {
 
 .mp-gameover-content .btn { margin-top: 8px; }
 
+/* Your result card in game over */
+.mp-your-result {
+  background: rgba(255,255,255,0.15);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.mp-your-rank { font-size: 2.5rem; }
+.mp-your-stats { display: flex; justify-content: center; gap: 16px; margin: 8px 0; font-size: 0.95rem; }
+.mp-diamonds { font-size: 1.1rem; font-weight: 700; color: #4dd0e1; margin-top: 4px; }
+.mp-lb-diamonds { font-size: 0.85rem; color: #4dd0e1; margin-left: 8px; }
+
+/* Special effects display */
+.mp-effects { margin-top: 8px; }
+.mp-effect { font-size: 0.9rem; padding: 4px 0; color: #ffd54f; }
+.mp-all-effects { margin: 8px 0; }
+.mp-effect-other { font-size: 0.8rem; opacity: 0.7; padding: 2px 0; }
+
+/* Mobile touch optimization */
+@media (max-width: 768px) {
+  #app { padding: 8px; }
+  .lobby-header h1 { font-size: 1.6rem; }
+  .btn-guess { padding: 20px 8px; font-size: 1.2rem; min-height: 60px; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .mp-card { width: 70px; height: 100px; }
+  .playing-card { width: 70px; height: 100px; }
+  .card-value { font-size: 1.2rem; }
+  .card-suit { font-size: 1.6rem; }
+  .card-placeholder { width: 70px; height: 100px; font-size: 1.5rem; }
+  .mp-player { padding: 4px 8px; font-size: 0.8rem; }
+  .room-card { padding: 10px 12px; }
+  .mp-gameover-content { padding: 16px; }
+  .mp-gameover-content h2 { font-size: 1.4rem; }
+}
+
+@media (max-width: 380px) {
+  .btn-guess { padding: 16px 4px; font-size: 1rem; }
+  .mp-cards { gap: 8px; }
+  .mp-arrow { font-size: 1.5rem; }
+}
+
+/* Safe area insets for PWA */
+@supports (padding: env(safe-area-inset-top)) {
+  #app { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+}
+
+/* Special card buttons */
+.mp-special-cards {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; justify-content: center;
+}
+.btn-special {
+  background: rgba(255,215,0,0.2);
+  border: 1px solid rgba(255,215,0,0.4);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.btn-special:active { transform: scale(0.95); }
+.btn-special:disabled { opacity: 0.4; cursor: default; }
+
 .error { text-align: center; padding: 40px; }

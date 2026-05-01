@@ -172,14 +172,19 @@ export class GameRoom {
     this.state = 'countdown';
     this.countdownSeconds = 10;
 
-    this.broadcast({
-      type: 'ROUND_START',
-      round: this.round,
-      currentCard: this.currentCard,
-      previousCard: this.previousCard,
-      countdown: this.countdownSeconds,
-      cardsLeft: this.deck.length + this.gmHand.length,
-      alivePlayers: alivePlayers.map(p => p.id)
+    // Send ROUND_START per-player (each gets their own inventory)
+    this.players.forEach(player => {
+      this.sendTo(player.id, {
+        type: 'ROUND_START',
+        round: this.round,
+        currentCard: this.currentCard,
+        previousCard: this.previousCard,
+        countdown: this.countdownSeconds,
+        cardsLeft: this.deck.length + this.gmHand.length,
+        alivePlayers: alivePlayers.map(p => p.id),
+        inventory: player.inventory,
+        frozen: player.frozen
+      });
     });
 
     this.startCountdown();
@@ -358,7 +363,18 @@ export class GameRoom {
 
     const leaderboard = [...this.players.values()]
       .sort((a, b) => b.score - a.score || b.roundsPlayed - a.roundsPlayed)
-      .map((p, i) => ({ rank: i + 1, playerId: p.id, name: p.name, score: p.score, rounds: p.roundsPlayed, streak: p.streak }));
+      .map((p, i) => {
+        // Diamond rewards: 1st=50, 2nd=30, 3rd=20, rest=5 per round survived
+        const rankDiamonds = i === 0 ? 50 : i === 1 ? 30 : i === 2 ? 20 : 0;
+        const roundDiamonds = p.roundsPlayed * 5;
+        const streakBonus = p.streak >= 10 ? 25 : p.streak >= 5 ? 10 : 0;
+        const diamonds = rankDiamonds + roundDiamonds + streakBonus;
+        return {
+          rank: i + 1, playerId: p.id, name: p.name,
+          score: p.score, rounds: p.roundsPlayed,
+          maxStreak: p.streak, diamonds
+        };
+      });
 
     this.broadcast({ type: 'GAME_OVER', leaderboard });
   }

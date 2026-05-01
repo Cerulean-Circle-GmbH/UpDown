@@ -24,6 +24,8 @@ export class MultiplayerUI {
   private countdown: number = 0;
   private hasPlayed: boolean = false;
   private round: number = 0;
+  private inventory: string[] = [];
+  private frozen: boolean = false;
   private onLeaveRoom: () => void;
 
   constructor(client: WebSocketClient, container: HTMLElement, onLeaveRoom: () => void) {
@@ -58,6 +60,8 @@ export class MultiplayerUI {
       this.currentCard = msg.currentCard;
       this.previousCard = msg.previousCard;
       this.countdown = msg.countdown;
+      this.inventory = msg.inventory || [];
+      this.frozen = msg.frozen || false;
       this.hasPlayed = false;
       this.renderGame();
     });
@@ -75,7 +79,7 @@ export class MultiplayerUI {
     this.client.on('ROUND_RESULT', (msg) => {
       this.currentCard = msg.revealedCard;
       this.previousCard = msg.previousCard;
-      this.renderRoundResult(msg.results, msg.scores);
+      this.renderRoundResult(msg.results, msg.scores, msg.specialEffects || []);
     });
 
     this.client.on('GAME_OVER', (msg) => {
@@ -172,16 +176,50 @@ export class MultiplayerUI {
     const el = document.getElementById('mp-controls');
     if (!el) return;
 
-    if (this.hasPlayed) {
+    if (this.frozen) {
+      el.innerHTML = '<p class="waiting-text">🧊 Frozen! Cannot play this round.</p>';
+    } else if (this.hasPlayed) {
       el.innerHTML = '<p class="waiting-text">Card played! Waiting for others...</p>';
     } else {
+      // Special card names for display
+      const CARD_INFO: Record<string, { emoji: string; name: string }> = {
+        protective_shell: { emoji: '🛡️', name: 'Shield' },
+        mass_intelligence: { emoji: '🧠', name: 'Mass Intel' },
+        double_points: { emoji: '💰', name: '2x Points' },
+        peek: { emoji: '👁️', name: 'Peek' },
+        sacrifice: { emoji: '💀', name: 'Sacrifice' },
+        swap: { emoji: '🔄', name: 'Swap' },
+        reveal_hand: { emoji: '🃏', name: 'Reveal' },
+        freeze: { emoji: '🧊', name: 'Freeze' },
+        one_for_the_team: { emoji: '🤝', name: 'Team Save' },
+        second_chance: { emoji: '🔮', name: '2nd Chance' },
+        point_steal: { emoji: '🏴‍☠️', name: 'Steal' },
+      };
+
       el.innerHTML = `
         <div class="mp-guess-buttons">
           <button class="btn btn-guess btn-up" data-guess="up">⬆️ Higher</button>
           <button class="btn btn-guess btn-equal" data-guess="equal">⚖️ Equal</button>
           <button class="btn btn-guess btn-down" data-guess="down">⬇️ Lower</button>
         </div>
+        ${this.inventory.length > 0 ? `
+          <div class="mp-special-cards">
+            ${this.inventory.map(cardId => {
+              const info = CARD_INFO[cardId] || { emoji: '🎴', name: cardId };
+              return `<button class="btn btn-special" data-card="${cardId}">${info.emoji} ${info.name}</button>`;
+            }).join('')}
+          </div>
+        ` : ''}
       `;
+
+      el.querySelectorAll('.btn-special').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cardId = (btn as HTMLElement).dataset.card!;
+          this.client.playSpecial(cardId);
+          (btn as HTMLButtonElement).disabled = true;
+          (btn as HTMLElement).style.opacity = '0.4';
+        });
+      });
 
       el.querySelectorAll('.btn-guess').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -230,18 +268,25 @@ export class MultiplayerUI {
     if (el) el.textContent = hasPlayed ? '✅' : '●';
   }
 
-  private renderRoundResult(results: any[], scores: PlayerScore[]): void {
+  private renderRoundResult(results: any[], scores: PlayerScore[], specialEffects: any[]): void {
     const el = document.getElementById('mp-result');
     if (!el) return;
 
     const myResult = results.find(r => r.playerId === this.client.clientId);
+    const myEffects = specialEffects.filter((e: any) => e.playerId === this.client.clientId);
 
     el.style.display = 'block';
     el.innerHTML = `
       <div class="mp-result-card ${myResult?.correct ? 'mp-result-correct' : 'mp-result-wrong'}">
         <h3>${myResult?.correct ? '✅ Correct!' : myResult?.eliminated ? '💀 Eliminated!' : '❌ Wrong!'}</h3>
-        <p>You guessed: ${myResult?.guess || 'nothing'}</p>
+        <p>You guessed: ${myResult?.guess || 'nothing'} | +${myResult?.score || 0} pts ${myResult?.streak ? `(${myResult.streak}🔥)` : ''}</p>
+        ${myEffects.length > 0 ? `<div class="mp-effects">${myEffects.map((e: any) => `<p class="mp-effect">${e.message}</p>`).join('')}</div>` : ''}
       </div>
+      ${specialEffects.length > 0 ? `
+        <div class="mp-all-effects">
+          ${specialEffects.filter((e: any) => e.playerId !== this.client.clientId).map((e: any) => `<p class="mp-effect-other">${e.message}</p>`).join('')}
+        </div>
+      ` : ''}
       <div class="mp-scores">
         ${scores.map(s => `
           <div class="mp-score-row ${!s.alive ? 'mp-eliminated' : ''} ${s.id === this.client.clientId ? 'mp-score-self' : ''}">
@@ -265,17 +310,30 @@ export class MultiplayerUI {
     const el = document.getElementById('mp-gameover');
     if (!el) return;
 
+    const myEntry = leaderboard.find((e: any) => e.playerId === this.client.clientId);
+
     el.style.display = 'block';
     el.innerHTML = `
       <div class="mp-gameover-content">
         <h2>🏆 Game Over!</h2>
+        ${myEntry ? `
+          <div class="mp-your-result">
+            <div class="mp-your-rank">${myEntry.rank === 1 ? '🥇' : myEntry.rank === 2 ? '🥈' : myEntry.rank === 3 ? '🥉' : `#${myEntry.rank}`}</div>
+            <div class="mp-your-stats">
+              <span>${myEntry.score} pts</span>
+              <span>${myEntry.rounds} rounds</span>
+              <span>${myEntry.maxStreak || 0}🔥 best streak</span>
+            </div>
+            <div class="mp-diamonds">💎 +${myEntry.diamonds || 0} diamonds earned</div>
+          </div>
+        ` : ''}
         <div class="mp-leaderboard">
-          ${leaderboard.map(entry => `
+          ${leaderboard.map((entry: any) => `
             <div class="mp-lb-row ${entry.playerId === this.client.clientId ? 'mp-lb-self' : ''}">
               <span class="mp-lb-rank">${entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : `#${entry.rank}`}</span>
               <span class="mp-lb-name">${entry.name}</span>
               <span class="mp-lb-score">${entry.score} pts</span>
-              <span class="mp-lb-rounds">${entry.rounds} rounds</span>
+              <span class="mp-lb-diamonds">💎${entry.diamonds || 0}</span>
             </div>
           `).join('')}
         </div>
