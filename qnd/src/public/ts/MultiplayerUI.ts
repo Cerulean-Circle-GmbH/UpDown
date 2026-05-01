@@ -77,9 +77,9 @@ export class MultiplayerUI {
     });
 
     this.client.on('ROUND_RESULT', (msg) => {
-      this.currentCard = msg.revealedCard;
+      this.renderRoundResult(msg.previousCard, msg.revealedCard, msg.results, msg.scores, msg.specialEffects || []);
       this.previousCard = msg.previousCard;
-      this.renderRoundResult(msg.results, msg.scores, msg.specialEffects || []);
+      this.currentCard = msg.revealedCard;
     });
 
     this.client.on('GAME_OVER', (msg) => {
@@ -272,18 +272,55 @@ export class MultiplayerUI {
     if (el) el.textContent = hasPlayed ? '✅' : '●';
   }
 
-  private renderRoundResult(results: any[], scores: PlayerScore[], specialEffects: any[]): void {
+  private cardText(card: Card | null): string {
+    if (!card) return '?';
+    const suit: Record<string, string> = { hearts: '♥', diamonds: '♦', clubs: '♣', spades: '♠' };
+    return `${card.value}${suit[card.suit] || card.suit}`;
+  }
+
+  private cardHtml(card: Card | null, size: 'small' | 'normal' = 'normal'): string {
+    if (!card) return '<div class="card-placeholder">?</div>';
+    const suit: Record<string, string> = { hearts: '♥', diamonds: '♦', clubs: '♣', spades: '♠' };
+    const color = (card.suit === 'hearts' || card.suit === 'diamonds') ? 'red' : 'black';
+    const cls = size === 'small' ? 'playing-card playing-card-sm' : 'playing-card';
+    return `<div class="${cls} ${color}"><span class="card-value">${card.value}</span><span class="card-suit">${suit[card.suit] || card.suit}</span></div>`;
+  }
+
+  private renderRoundResult(betCard: Card | null, revealedCard: Card | null, results: any[], scores: PlayerScore[], specialEffects: any[]): void {
     const el = document.getElementById('mp-result');
     if (!el) return;
 
     const myResult = results.find(r => r.playerId === this.client.clientId);
     const myEffects = specialEffects.filter((e: any) => e.playerId === this.client.clientId);
 
+    // Build explanation
+    const guessLabel: Record<string, string> = { up: '⬆️ HIGHER', down: '⬇️ LOWER', equal: '⚖️ EQUAL' };
+    const guessText = myResult?.guess ? guessLabel[myResult.guess] || myResult.guess : 'nothing';
+    let comparison = '';
+    if (betCard && revealedCard) {
+      if (revealedCard.numericValue > betCard.numericValue) comparison = 'went UP';
+      else if (revealedCard.numericValue < betCard.numericValue) comparison = 'went DOWN';
+      else comparison = 'stayed EQUAL';
+    }
+
+    // Update the table cards visually
+    this.renderCard('mp-prev-card', betCard);
+    this.renderCard('mp-current-card', revealedCard);
+
     el.style.display = 'block';
     el.innerHTML = `
       <div class="mp-result-card ${myResult?.correct ? 'mp-result-correct' : 'mp-result-wrong'}">
         <h3>${myResult?.correct ? '✅ Correct!' : myResult?.eliminated ? '💀 Eliminated!' : '❌ Wrong!'}</h3>
-        <p>You guessed: ${myResult?.guess || 'nothing'} | +${myResult?.score || 0} pts ${myResult?.streak ? `(${myResult.streak}🔥)` : ''}</p>
+        <div class="mp-result-explain">
+          <span>You bet ${guessText}</span>
+          <div class="mp-result-cards">
+            ${this.cardHtml(betCard, 'small')}
+            <span class="mp-result-arrow">→</span>
+            ${this.cardHtml(revealedCard, 'small')}
+          </div>
+          <span class="mp-result-comparison">${this.cardText(betCard)} ${comparison} to ${this.cardText(revealedCard)}</span>
+        </div>
+        <p class="mp-result-points">+${myResult?.roundScore || 0} pts ${myResult?.streak ? `(${myResult.streak}🔥 streak)` : ''} | Total: ${myResult?.score || 0}</p>
         ${myEffects.length > 0 ? `<div class="mp-effects">${myEffects.map((e: any) => `<p class="mp-effect">${e.message}</p>`).join('')}</div>` : ''}
       </div>
       ${specialEffects.length > 0 ? `

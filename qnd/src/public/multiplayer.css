@@ -198,9 +198,16 @@ input::placeholder { color: rgba(255,255,255,0.5); }
 
 /* Round results */
 .mp-result { margin-top: 6px; }
-.mp-result-card { border-radius: 10px; padding: 10px; text-align: center; margin-bottom: 6px; }
-.mp-result-card h3 { font-size: 1rem; }
-.mp-result-card p { font-size: 0.8rem; margin-top: 4px; }
+.mp-result-card { border-radius: 10px; padding: 12px; text-align: center; margin-bottom: 6px; }
+.mp-result-card h3 { font-size: 1.1rem; margin-bottom: 6px; }
+.mp-result-explain { display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 8px 0; }
+.mp-result-cards { display: flex; align-items: center; gap: 8px; justify-content: center; }
+.mp-result-arrow { font-size: 1.3rem; opacity: 0.6; }
+.mp-result-comparison { font-size: 0.85rem; font-weight: 600; opacity: 0.9; }
+.mp-result-points { font-size: 0.85rem; margin-top: 6px; opacity: 0.9; }
+.playing-card-sm { width: 45px; height: 65px; font-size: 0.8rem; }
+.playing-card-sm .card-value { font-size: 1rem; }
+.playing-card-sm .card-suit { font-size: 1.2rem; }
 .mp-result-correct { background: rgba(76,175,80,0.3); }
 .mp-result-wrong { background: rgba(244,67,54,0.3); }
 .mp-effects { margin-top: 6px; }

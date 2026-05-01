@@ -29,13 +29,14 @@ export class LobbyUI {
     this.client.on('ROOM_JOINED', (msg) => { this.onEnterRoom(msg.room.id); });
     this.client.on('ERROR', (msg) => { this.showError(msg.message); });
 
-    // Auto-join if ?join= param present
+    // On WS connect: auto-load rooms, auto-join if ?join= param
     const joinId = params.get('join');
-    if (joinId) {
-      this.client.on('welcome', () => {
+    this.client.on('welcome', () => {
+      this.client.listRooms();
+      if (joinId) {
         this.client.joinRoom(joinId, this.playerName);
-      });
-    }
+      }
+    });
   }
 
   show(): void {
