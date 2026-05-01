@@ -292,6 +292,9 @@ function setupWebSocketServer(server: https.Server): void {
       players: getAllPlayers()
     }));
     
+    // Send room list immediately
+    ws.send(JSON.stringify({ type: 'ROOM_LIST', rooms: roomManager.listRooms() }));
+
     // Broadcast new player to all other clients
     broadcastNewPlayer(client);
     
