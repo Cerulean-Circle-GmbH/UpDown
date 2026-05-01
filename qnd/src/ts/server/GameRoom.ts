@@ -1,0 +1,380 @@
+/**
+ * GameRoom — Multiplayer game room with WebSocket protocol
+ * QnD Sprint 3: Quick and dirty, web2, working multiplayer
+ */
+
+import { WebSocket } from 'ws';
+import crypto from 'node:crypto';
+
+// Card suits and values for French deck
+const SUITS = ['hearts', 'diamonds', 'clubs', 'spades'] as const;
+const VALUES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'] as const;
+
+export interface Card {
+  suit: typeof SUITS[number];
+  value: typeof VALUES[number];
+  numericValue: number;
+}
+
+export interface RoomPlayer {
+  id: string;
+  ws: WebSocket;
+  name: string;
+  avatarUrl: string;
+  score: number;
+  streak: number;
+  alive: boolean;
+  currentGuess: 'up' | 'down' | 'equal' | null;
+  specialCard: string | null;
+  roundsPlayed: number;
+}
+
+export type RoomState = 'waiting' | 'countdown' | 'revealing' | 'exchange' | 'finished';
+
+export interface GameRoomInfo {
+  id: string;
+  name: string;
+  hostId: string;
+  playerCount: number;
+  maxPlayers: number;
+  isPrivate: boolean;
+  state: RoomState;
+  round: number;
+}
+
+export class GameRoom {
+  id: string;
+  name: string;
+  hostId: string;
+  maxPlayers: number;
+  isPrivate: boolean;
+  roomKey: string | null;
+  state: RoomState = 'waiting';
+  round: number = 0;
+
+  players: Map<string, RoomPlayer> = new Map();
+
+  // GM state
+  private deck: Card[] = [];
+  private gmHand: Card[] = [];
+  currentCard: Card | null = null;
+  previousCard: Card | null = null;
+  private countdownTimer: NodeJS.Timeout | null = null;
+  private countdownSeconds: number = 0;
+
+  constructor(name: string, hostId: string, maxPlayers: number = 10, roomKey: string | null = null) {
+    this.id = crypto.randomUUID().slice(0, 8);
+    this.name = name;
+    this.hostId = hostId;
+    this.maxPlayers = maxPlayers;
+    this.isPrivate = roomKey !== null;
+    this.roomKey = roomKey;
+  }
+
+  addPlayer(id: string, ws: WebSocket, name: string, avatarUrl: string): boolean {
+    if (this.players.size >= this.maxPlayers) return false;
+    if (this.state !== 'waiting' && this.state !== 'exchange') return false;
+
+    this.players.set(id, {
+      id, ws, name, avatarUrl,
+      score: 0, streak: 0, alive: true,
+      currentGuess: null, specialCard: null, roundsPlayed: 0
+    });
+
+    this.broadcast({ type: 'PLAYER_JOINED', player: this.playerInfo(id), playerCount: this.players.size });
+    this.sendTo(id, { type: 'ROOM_JOINED', room: this.info(), players: this.allPlayerInfo() });
+    return true;
+  }
+
+  removePlayer(id: string): void {
+    this.players.delete(id);
+    this.broadcast({ type: 'PLAYER_LEFT', playerId: id, playerCount: this.players.size });
+
+    if (id === this.hostId && this.players.size > 0) {
+      this.hostId = this.players.keys().next().value!;
+      this.broadcast({ type: 'HOST_CHANGED', hostId: this.hostId });
+    }
+  }
+
+  startGame(): void {
+    if (this.players.size < 1) return;
+    this.deck = this.createShuffledDeck();
+    this.gmHand = [];
+    for (let i = 0; i < 7 && this.deck.length > 0; i++) {
+      this.gmHand.push(this.deck.pop()!);
+    }
+    this.round = 0;
+    this.currentCard = null;
+    this.previousCard = null;
+
+    this.players.forEach(p => {
+      p.score = 0; p.streak = 0; p.alive = true;
+      p.currentGuess = null; p.roundsPlayed = 0;
+    });
+
+    this.state = 'countdown';
+    this.nextRound();
+  }
+
+  private nextRound(): void {
+    if (this.gmHand.length === 0 && this.deck.length === 0) {
+      this.endGame();
+      return;
+    }
+
+    const alivePlayers = [...this.players.values()].filter(p => p.alive);
+    if (alivePlayers.length === 0) {
+      this.endGame();
+      return;
+    }
+
+    this.round++;
+
+    // GM plays a random card from hand
+    this.previousCard = this.currentCard;
+    const cardIndex = Math.floor(Math.random() * this.gmHand.length);
+    this.currentCard = this.gmHand.splice(cardIndex, 1)[0];
+
+    // Refill GM hand from deck
+    if (this.deck.length > 0) {
+      this.gmHand.push(this.deck.pop()!);
+    }
+
+    // Reset player guesses
+    this.players.forEach(p => { p.currentGuess = null; p.specialCard = null; });
+
+    this.state = 'countdown';
+    this.countdownSeconds = 10;
+
+    this.broadcast({
+      type: 'ROUND_START',
+      round: this.round,
+      currentCard: this.currentCard,
+      previousCard: this.previousCard,
+      countdown: this.countdownSeconds,
+      cardsLeft: this.deck.length + this.gmHand.length,
+      alivePlayers: alivePlayers.map(p => p.id)
+    });
+
+    this.startCountdown();
+  }
+
+  private startCountdown(): void {
+    if (this.countdownTimer) clearInterval(this.countdownTimer);
+
+    this.countdownTimer = setInterval(() => {
+      this.countdownSeconds--;
+      this.broadcast({ type: 'COUNTDOWN', seconds: this.countdownSeconds });
+
+      if (this.countdownSeconds <= 0) {
+        clearInterval(this.countdownTimer!);
+        this.countdownTimer = null;
+        this.resolveRound();
+      }
+    }, 1000);
+  }
+
+  playCard(playerId: string, guess: 'up' | 'down' | 'equal'): void {
+    const player = this.players.get(playerId);
+    if (!player || !player.alive || this.state !== 'countdown') return;
+    player.currentGuess = guess;
+
+    this.broadcast({ type: 'CARD_PLAYED', playerId, hasPlayed: true });
+
+    // Check if all alive players have played
+    const alivePlayers = [...this.players.values()].filter(p => p.alive);
+    const allPlayed = alivePlayers.every(p => p.currentGuess !== null);
+    if (allPlayed) {
+      if (this.countdownTimer) { clearInterval(this.countdownTimer); this.countdownTimer = null; }
+      this.resolveRound();
+    }
+  }
+
+  private resolveRound(): void {
+    this.state = 'revealing';
+
+    // GM plays next card
+    if (this.gmHand.length === 0 && this.deck.length === 0) {
+      this.endGame();
+      return;
+    }
+
+    this.previousCard = this.currentCard;
+    const cardIndex = Math.floor(Math.random() * this.gmHand.length);
+    const nextCard = this.gmHand.splice(cardIndex, 1)[0];
+
+    // Refill GM hand
+    if (this.deck.length > 0) {
+      this.gmHand.push(this.deck.pop()!);
+    }
+
+    const results: { playerId: string; guess: string | null; correct: boolean; eliminated: boolean }[] = [];
+
+    this.players.forEach(player => {
+      if (!player.alive) return;
+
+      let correct = false;
+      if (player.currentGuess === null) {
+        // Didn't play — eliminated
+        correct = false;
+      } else if (this.currentCard && nextCard) {
+        switch (player.currentGuess) {
+          case 'up': correct = nextCard.numericValue > this.currentCard.numericValue; break;
+          case 'down': correct = nextCard.numericValue < this.currentCard.numericValue; break;
+          case 'equal': correct = nextCard.numericValue === this.currentCard.numericValue; break;
+        }
+      }
+
+      if (correct) {
+        player.score += 10 + player.streak;
+        player.streak++;
+      } else {
+        player.alive = false;
+        player.streak = 0;
+      }
+      player.roundsPlayed++;
+
+      results.push({
+        playerId: player.id,
+        guess: player.currentGuess,
+        correct,
+        eliminated: !player.alive
+      });
+    });
+
+    this.currentCard = nextCard;
+
+    this.broadcast({
+      type: 'ROUND_RESULT',
+      round: this.round,
+      revealedCard: nextCard,
+      previousCard: this.previousCard,
+      results,
+      scores: this.allScores(),
+      cardsLeft: this.deck.length + this.gmHand.length
+    });
+
+    // Check game end
+    const alivePlayers = [...this.players.values()].filter(p => p.alive);
+    if (alivePlayers.length === 0 || (this.gmHand.length === 0 && this.deck.length === 0)) {
+      setTimeout(() => this.endGame(), 2000);
+    } else {
+      // Exchange phase then next round
+      this.state = 'exchange';
+      setTimeout(() => {
+        this.state = 'countdown';
+        this.nextRound();
+      }, 3000);
+    }
+  }
+
+  private endGame(): void {
+    this.state = 'finished';
+    if (this.countdownTimer) { clearInterval(this.countdownTimer); this.countdownTimer = null; }
+
+    const leaderboard = [...this.players.values()]
+      .sort((a, b) => b.score - a.score || b.roundsPlayed - a.roundsPlayed)
+      .map((p, i) => ({ rank: i + 1, playerId: p.id, name: p.name, score: p.score, rounds: p.roundsPlayed, streak: p.streak }));
+
+    this.broadcast({ type: 'GAME_OVER', leaderboard });
+  }
+
+  // Helpers
+
+  private createShuffledDeck(): Card[] {
+    const deck: Card[] = [];
+    for (const suit of SUITS) {
+      for (let i = 0; i < VALUES.length; i++) {
+        deck.push({ suit, value: VALUES[i], numericValue: i + 2 });
+      }
+    }
+    // Fisher-Yates shuffle
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    return deck;
+  }
+
+  info(): GameRoomInfo {
+    return {
+      id: this.id, name: this.name, hostId: this.hostId,
+      playerCount: this.players.size, maxPlayers: this.maxPlayers,
+      isPrivate: this.isPrivate, state: this.state, round: this.round
+    };
+  }
+
+  private playerInfo(id: string) {
+    const p = this.players.get(id);
+    if (!p) return null;
+    return { id: p.id, name: p.name, avatarUrl: p.avatarUrl, score: p.score, alive: p.alive };
+  }
+
+  private allPlayerInfo() {
+    return [...this.players.values()].map(p => ({
+      id: p.id, name: p.name, avatarUrl: p.avatarUrl, score: p.score, alive: p.alive
+    }));
+  }
+
+  private allScores() {
+    return [...this.players.values()].map(p => ({
+      id: p.id, name: p.name, score: p.score, streak: p.streak, alive: p.alive
+    }));
+  }
+
+  broadcast(msg: object): void {
+    const data = JSON.stringify(msg);
+    this.players.forEach(p => {
+      if (p.ws.readyState === WebSocket.OPEN) p.ws.send(data);
+    });
+  }
+
+  sendTo(playerId: string, msg: object): void {
+    const p = this.players.get(playerId);
+    if (p && p.ws.readyState === WebSocket.OPEN) {
+      p.ws.send(JSON.stringify(msg));
+    }
+  }
+}
+
+/**
+ * RoomManager — Manages all game rooms
+ */
+export class RoomManager {
+  private rooms: Map<string, GameRoom> = new Map();
+
+  createRoom(name: string, hostId: string, maxPlayers?: number, roomKey?: string | null): GameRoom {
+    const room = new GameRoom(name, hostId, maxPlayers, roomKey ?? null);
+    this.rooms.set(room.id, room);
+    return room;
+  }
+
+  getRoom(roomId: string): GameRoom | undefined {
+    return this.rooms.get(roomId);
+  }
+
+  removeRoom(roomId: string): void {
+    const room = this.rooms.get(roomId);
+    if (room?.countdownTimer) clearInterval(room.countdownTimer as any);
+    this.rooms.delete(roomId);
+  }
+
+  listRooms(): GameRoomInfo[] {
+    return [...this.rooms.values()]
+      .filter(r => !r.isPrivate)
+      .map(r => r.info());
+  }
+
+  findPlayerRoom(playerId: string): GameRoom | undefined {
+    for (const room of this.rooms.values()) {
+      if (room.players.has(playerId)) return room;
+    }
+    return undefined;
+  }
+
+  cleanupEmptyRooms(): void {
+    for (const [id, room] of this.rooms) {
+      if (room.players.size === 0) this.removeRoom(id);
+    }
+  }
+}

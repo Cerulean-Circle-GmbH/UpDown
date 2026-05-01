@@ -18,7 +18,7 @@ import { Scenario } from '../layer3/Scenario.interface.js';
 import { Model } from '../layer3/Model.interface.js';
 import { IDProvider } from '../layer3/IDProvider.interface.js';
 import { IORMethodCall } from '../layer3/IORMethodCall.interface.js';
-import { UUIDProvider } from '@web4x/ucp/dist/ts/layer2/UUIDProvider.js';
+import { UUIDProvider } from '@web4x/ucp/UUIDProvider';
 
 // Re-export for backwards compatibility
 export type { IORMethodCall } from '../layer3/IORMethodCall.interface.js';

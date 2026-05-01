@@ -1,6 +1,6 @@
 {
   "name": "@web4x/filesystem",
-  "version": "0.3.23.1",
+  "version": "0.3.23-1",
   "type": "module",
   "description": "Filesystem Component - OOP file operations with ISR lazy loading",
   "main": "dist/ts/layer2/DefaultFileSystem.js",

@@ -1,1 +1,13 @@
-/** Re-export from @web4x/ucp */ export type { FileModel } from "@web4x/ucp/dist/ts/layer3/FileModel.interface.js";
+import type { Model } from './Model.interface.js';
+export interface FileModel extends Model {
+  path: string;
+  size: number;
+  mimetype: string;
+  contentHash?: string;
+  filename?: string;
+  relativePath?: string;
+  extension?: string;
+  createdAt?: any;
+  updatedAt?: string;
+  [key: string]: any;
+}

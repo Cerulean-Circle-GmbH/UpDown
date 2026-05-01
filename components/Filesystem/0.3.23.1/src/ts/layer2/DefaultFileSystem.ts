@@ -15,7 +15,7 @@
  * @pdca 2025-12-14-UTC-1800.filesystem-component-architecture.pdca.md
  */
 
-import { UcpComponent } from '@web4x/ucp/dist/ts/layer2/UcpComponent.js';
+import { UcpComponent } from '@web4x/ucp/UcpComponent';
 import { FileSystemModel } from '../layer3/FileSystemModel.interface.js';
 import { DefaultFile } from './DefaultFile.js';
 import { DefaultFolder } from './DefaultFolder.js';

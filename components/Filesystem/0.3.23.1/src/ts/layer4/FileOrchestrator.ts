@@ -29,7 +29,7 @@ import { FileModel } from '../layer3/FileModel.interface.js';
 import { FolderModel } from '../layer3/FolderModel.interface.js';
 import { FileSystemModel } from '../layer3/FileSystemModel.interface.js';
 import type { Scenario } from '../layer3/Scenario.interface.js';
-import { UcpComponent } from '../layer2/UcpComponent.js';
+import { UcpComponent } from '@web4x/ucp/UcpComponent';
 
 /**
  * FileOrchestrator - Async operations for FileSystem
@@ -451,7 +451,7 @@ export class FileOrchestrator {
    */
   async folderLoadFromServer(folderPath: string): Promise<{ contentType: string; data: string | object }> {
     // Import IOR dynamically to avoid circular dependency
-    const { IOR } = await import('./IOR.js');
+    const { IOR } = await import('@web4x/ucp/IOR');
     
     // Use ?format=json to bypass SPA catch-all route
     const fetchUrl = folderPath + (folderPath.includes('?') ? '&' : '?') + 'format=json';
@@ -484,7 +484,7 @@ export class FileOrchestrator {
    * @pdca 2025-12-17-UTC-1740.fetch-centralization-dry.pdca.md
    */
   async fileLoadFromServer(filePath: string): Promise<string> {
-    const { IOR } = await import('./IOR.js');
+    const { IOR } = await import('@web4x/ucp/IOR');
     
     const ior = await new IOR().init(filePath);
     return await ior.load<string>();
@@ -506,7 +506,7 @@ export class FileOrchestrator {
    * @pdca 2025-12-30-UTC-1200.lazy-reference-kernel-isr.pdca.md
    */
   async folderLoad(path: string): Promise<DefaultFolder> {
-    const { IOR } = await import('./IOR.js');
+    const { IOR } = await import('@web4x/ucp/IOR');
     
     const ior = new IOR<DefaultFolder>();
     await ior.init(`ior:file://${path}`);
@@ -546,7 +546,7 @@ export class FileOrchestrator {
    * @pdca 2025-12-30-UTC-1200.lazy-reference-kernel-isr.pdca.md
    */
   async fileLoad(path: string): Promise<DefaultFile> {
-    const { IOR } = await import('./IOR.js');
+    const { IOR } = await import('@web4x/ucp/IOR');
     
     const ior = new IOR<DefaultFile>();
     await ior.init(`ior:file://${path}`);

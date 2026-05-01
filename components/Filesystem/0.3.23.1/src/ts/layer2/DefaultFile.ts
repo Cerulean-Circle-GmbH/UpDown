@@ -24,7 +24,7 @@
  * @pdca 2025-12-22-UTC-0500.ffm-implementation.pdca.md (FFM.0.1)
  */
 
-import { UcpComponent } from '@web4x/ucp/dist/ts/layer2/UcpComponent.js';
+import { UcpComponent } from '@web4x/ucp/UcpComponent';
 import { FileModel } from '../layer3/FileModel.interface.js';
 import { Reference } from '../layer3/Reference.interface.js';
 import type { LazyReference } from '../layer3/LazyReference.interface.js';

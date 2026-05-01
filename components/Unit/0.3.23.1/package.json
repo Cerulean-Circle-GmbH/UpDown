@@ -17,6 +17,6 @@
   },
   "dependencies": {
     "@web4x/ucp": "file:../../UCP/0.3.23.1",
-    "@web4x/cli": "file:../../CLI/0.3.23.0"
+    "@web4x/cli": "file:../../CLI/0.3.23.1"
   }
 }

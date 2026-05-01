@@ -49,13 +49,13 @@ import type { CachedUnitModel } from '../layer3/CachedUnitModel.interface.js';
 import type { Reference } from '../layer3/Reference.interface.js';
 import { UnitType } from '../layer3/UnitType.enum.js';
 import { CacheStrategy } from '../layer3/CacheStrategy.enum.js';
-import { sha256Provider } from './SHA256Provider.js';
-import { SyncStatus } from '../layer3/SyncStatus.enum.js';
+import { sha256Provider } from '@web4x/ucp/SHA256Provider';
+import { SyncStatus } from '@web4x/ucp/SyncStatus';
 import type { Scenario } from '../layer3/Scenario.interface.js';
 import type { FileModel } from '../layer3/FileModel.interface.js';
 import type { ArtefactModel } from '../layer3/ArtefactModel.interface.js';
 import type { UnitModel } from '../layer3/UnitModel.interface.js';
-import { IOR } from '../layer4/IOR.js';  // FsM.2: IOR-based file loading
+import { IOR } from '@web4x/ucp/IOR';  // FsM.2: IOR-based file loading
 
 /**
  * StaticFileRoute

@@ -1,0 +1,409 @@
+/**
+ * UcpRouter - Web4 SPA Router Component
+ * 
+ * Custom router following Web4 principles:
+ * - No external dependencies (except Lit)
+ * - Full control over routing logic  
+ * - Server-side route integration
+ * - NO arrow functions
+ * - Layer 5: SYNC view logic only
+ * - ✅ Web4 P1: Routes are Scenarios
+ * 
+ * @pdca 2025-12-05-UTC-1500.spa-architecture-cleanup.pdca.md
+ */
+
+import { LitElement, html, TemplateResult, css } from 'lit';
+import { customElement, state, property } from 'lit/decorators.js';
+import type { Reference } from '../../layer3/Reference.interface.js';
+import type { RouteScenario, RouteModel } from '../../layer3/RouteScenario.interface.js';
+import { Route } from '../../layer3/Route.js';
+
+/**
+ * UcpRouter - Web4 compliant SPA router
+ * 
+ * Usage:
+ * ```html
+ * <ucp-router>
+ *   <!-- Routes registered via routeRegister() -->
+ * </ucp-router>
+ * ```
+ * 
+ * Or programmatically:
+ * ```typescript
+ * const router = document.createElement('ucp-router') as UcpRouter;
+ * router.routeRegister('/', 'once-over-view', { title: 'Dashboard' });
+ * router.routeRegister('/peer/:uuid', 'once-peer-detail-view');
+ * ```
+ */
+@customElement('ucp-router')
+export class UcpRouter extends LitElement {
+  
+  static styles = css`
+    :host {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .router-outlet {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .not-found {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #ff6b6b;
+      font-size: 1.5rem;
+    }
+    
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #aaa;
+    }
+  `;
+  
+  // ═══════════════════════════════════════════════════════════════
+  // STATE
+  // ═══════════════════════════════════════════════════════════════
+  
+  /** Current route path */
+  @state() private currentRoute: string = '/';
+  
+  /** Currently rendered view element */
+  @state() private currentView: Reference<HTMLElement> = null;
+  
+  /** Current active route - ✅ Web4 P26: Route class not factory */
+  @state() private activeRoute: Reference<Route> = null;
+  
+  /** Registered routes - ✅ Web4 P1: Routes are Scenarios, P26: Classes */
+  private routes: Map<string, Route> = new Map();
+  
+  /** Kernel reference for model/server integration */
+  @property({ attribute: false }) kernel: Reference<any> = null;
+  
+  /** Model to pass to views */
+  @property({ attribute: false }) model: Reference<any> = null;
+  
+  /** Server model for once-peer-default-view (set by Layer 4 orchestrator) */
+  @property({ attribute: false }) serverModel: Reference<any> = null;
+  
+  // ═══════════════════════════════════════════════════════════════
+  // LIFECYCLE
+  // ═══════════════════════════════════════════════════════════════
+  
+  connectedCallback(): void {
+    super.connectedCallback();
+    // ✅ Web4: Bound methods, not arrow functions
+    window.addEventListener('popstate', this.routeChangeHandle.bind(this));
+    // ⚠️ NOTE: Initial route resolution deferred until routes are registered
+    // Routes are registered AFTER router is added to DOM (see BrowserOnceOrchestrator.appRender)
+    // So we don't resolve here - navigateTo() will be called after routes are registered
+    // Initial route resolution
+    // this.routeResolve(window.location.pathname);  // REMOVED - routes not registered yet
+  }
+  
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    window.removeEventListener('popstate', this.routeChangeHandle.bind(this));
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // ROUTE REGISTRATION
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Register a route - async because Route.init() is async
+   * ✅ Web4 P1: Routes are Scenarios
+   * ✅ Web4 P26: No Factory Functions - uses new Route().init()
+   * 
+   * @param pattern URL pattern (e.g., '/', '/peer/:uuid')
+   * @param viewTag Custom element tag name (e.g., 'once-over-view')
+   * @param options Additional route options
+   */
+  async routeRegister(pattern: string, viewTag: string, options?: Partial<RouteModel>): Promise<Route> {
+    const route = await new Route().init({
+      model: { pattern, viewTag, ...options }
+    });
+    this.routes.set(pattern, route);
+    console.log(`[UcpRouter] Registered route: ${pattern} → <${viewTag}>`);
+    return route;
+  }
+  
+  /**
+   * Register an existing Route instance
+   * ✅ Web4 P26: Route is a class
+   */
+  routeInstanceRegister(route: Route): void {
+    this.routes.set(route.pattern, route);
+    console.log(`[UcpRouter] Registered route: ${route.pattern} → <${route.viewTag}>`);
+  }
+  
+  /**
+   * Unregister a route
+   */
+  routeUnregister(pattern: string): void {
+    this.routes.delete(pattern);
+  }
+  
+  /**
+   * Get all registered routes
+   * ✅ Web4 P26: Returns Route classes
+   */
+  routesGet(): Map<string, Route> {
+    return new Map(this.routes);
+  }
+  
+  /**
+   * Get the currently active route
+   */
+  activeRouteGet(): Reference<Route> {
+    return this.activeRoute;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // NAVIGATION
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Navigate to a path
+   * 
+   * @param path URL path to navigate to
+   * @param replace If true, replaces current history entry
+   */
+  navigateTo(path: string, replace: boolean = false): void {
+    if (replace) {
+      window.history.replaceState({}, '', path);
+    } else {
+      window.history.pushState({}, '', path);
+    }
+    this.routeResolve(path);
+  }
+  
+  /**
+   * Navigate back in history
+   */
+  navigateBack(): void {
+    window.history.back();
+  }
+  
+  /**
+   * Navigate forward in history
+   */
+  navigateForward(): void {
+    window.history.forward();
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // ROUTE RESOLUTION
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Handle browser back/forward navigation
+   */
+  private routeChangeHandle(event: PopStateEvent): void {
+    this.routeResolve(window.location.pathname);
+  }
+  
+  /**
+   * Resolve path to a view
+   * ✅ Web4 P26: Works with Route class
+   */
+  private routeResolve(path: string): void {
+    console.log(`[UcpRouter] Resolving: ${path}`);
+    this.currentRoute = path;
+    
+    // Deactivate previous route
+    if (this.activeRoute) {
+      this.activeRoute.deactivate();
+    }
+    
+    // Try exact match first
+    let route = this.routes.get(path);
+    let params: Record<string, string> = {};
+    
+    // Try pattern matching if no exact match
+    if (!route) {
+      for (const [pattern, routeInstance] of this.routes) {
+        const match = routeInstance.pathMatch(path);
+        if (match) {
+          route = routeInstance;
+          params = match;
+          break;
+        }
+      }
+    }
+    
+    if (route) {
+      // Activate route with path and params
+      const query = this.queryParamsToObject(window.location.search);
+      route.activate(path, params, query);
+      
+      // Store active route
+      this.activeRoute = route;
+      
+      // Update page title if specified
+      if (route.title) {
+        document.title = route.title;
+      }
+      
+      // Create view element
+      this.viewCreate(route);
+      
+      // Notify server if configured
+      if (route.serverRoute) {
+        this.serverRouteNotify(path);
+      }
+    } else {
+      // 404 - no matching route
+      console.warn(`[UcpRouter] 404 - No route for: ${path}`);
+      this.currentView = null;
+      this.activeRoute = null;
+    }
+    
+    this.requestUpdate();
+  }
+  
+  /**
+   * Convert query string to object
+   */
+  private queryParamsToObject(search: string): Record<string, string> {
+    const params = new URLSearchParams(search);
+    const result: Record<string, string> = {};
+    params.forEach(this.queryParamAdd.bind(this, result));
+    return result;
+  }
+  
+  /**
+   * Add query param to result object (Web4: no arrow functions)
+   */
+  private queryParamAdd(result: Record<string, string>, value: string, key: string): void {
+    result[key] = value;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // NOTE: Pattern matching moved to Route.pathMatch() (Web4 P26)
+  // ═══════════════════════════════════════════════════════════════
+  // VIEW MANAGEMENT
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Create view element for route
+   * ✅ Web4 P26: Works with Route class
+   * ✅ Web4 P7: Layer 5 is synchronous - model must be set by Layer 4 orchestrator
+   * @pdca 2025-12-10-UTC-1202.main-route-0.3.21.5-regression.pdca.md
+   */
+  private viewCreate(route: Route): void {
+    // Create the view element
+    const view = document.createElement(route.viewTag);
+    
+    // Set kernel if available (needed for view to access orchestrator)
+    if (this.kernel) {
+      (view as any).kernel = this.kernel;
+    }
+    
+    // Set route reference (Web4 P26: pass the Route class instance)
+    (view as any).route = route;
+    
+    // Set router reference for RouteOverView to access registered routes
+    // @pdca 2025-12-11-UTC-1530.route-overview-migration.pdca.md Phase RO.5
+    (view as any).router = this;
+    
+    // Set additional view props if specified
+    if (route.viewProps) {
+      Object.entries(route.viewProps).forEach(
+        this.viewPropSet.bind(this, view)
+      );
+    }
+    
+    // Set model immediately - Lit will handle timing
+    // Model setter calls requestUpdate(), which Lit queues until element is connected
+    const modelToSet = route.viewTag === 'once-peer-default-view' && this.serverModel
+      ? this.serverModel
+      : this.model;
+    
+    this.currentView = view;
+    
+    // ⚠️ CRITICAL LOGGING: Verify model is set correctly
+    if (route.viewTag === 'once-peer-default-view') {
+      if (this.serverModel) {
+        console.log(`[UcpRouter] ✅ Setting SERVER model on <${route.viewTag}>`);
+        console.log(`[UcpRouter] Server UUID: ${(this.serverModel as any).uuid}`);
+        console.log(`[UcpRouter] Server domain: ${(this.serverModel as any).domain}`);
+        console.log(`[UcpRouter] Server lifecycleState: ${(this.serverModel as any).lifecycleState}`);
+      } else {
+        console.error(`[UcpRouter] ❌ CRITICAL: No serverModel available for <${route.viewTag}> - will use browserModel`);
+        console.error(`[UcpRouter] This means Identity section will show browser client UUID instead of server UUID!`);
+      }
+    }
+    
+    // Set model immediately - Lit's requestUpdate() will queue until element is connected
+    if (modelToSet) {
+      (view as any).model = modelToSet;
+    } else {
+      console.warn(`[UcpRouter] No model to set on <${route.viewTag}> - serverModel=${!!this.serverModel}, model=${!!this.model}`);
+    }
+  }
+  
+  /**
+   * Set a property on view element
+   */
+  private viewPropSet(view: HTMLElement, entry: [string, any]): void {
+    const [key, value] = entry;
+    (view as any)[key] = value;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // SERVER INTEGRATION
+  // ═══════════════════════════════════════════════════════════════
+  
+  /**
+   * Notify server of route change (for SSR/analytics)
+   * ✅ Web4 P26: Sends Route instance in event
+   */
+  private serverRouteNotify(path: string): void {
+    // Dispatch event for orchestrator to handle
+    this.dispatchEvent(new CustomEvent('route-change', {
+      bubbles: true,
+      composed: true,
+      detail: {
+        path,
+        route: this.activeRoute,
+        scenario: this.activeRoute?.toScenario()
+      }
+    }));
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // RENDER
+  // ═══════════════════════════════════════════════════════════════
+  
+  render(): TemplateResult {
+    if (this.currentView) {
+      return html`
+        <div class="router-outlet">
+          ${this.currentView}
+        </div>
+      `;
+    }
+    
+    // 404 fallback
+    return html`
+      <div class="not-found">
+        404 - Route not found: ${this.currentRoute}
+      </div>
+    `;
+  }
+}
+
+// Export for use by other modules
+// ✅ Web4 P1: Routes are Scenarios
+// ✅ Web4 P26: Route is a class (not factory)
+export type { RouteScenario, RouteModel } from '../../layer3/RouteScenario.interface.js';
+export { Route } from '../../layer3/Route.js';
+

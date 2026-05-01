@@ -14,7 +14,7 @@ import { Route } from './Route.js';
 import { HttpMethod } from '../layer3/HttpMethod.enum.js';
 import type { IncomingMessage, ServerResponse } from 'http';
 import type { RouteModel } from '../layer3/RouteModel.interface.js';
-import { IOR } from '@web4x/ucp/dist/ts/layer4/IOR.js';  // FsM.7: IOR-based file loading
+import { IOR } from '@web4x/ucp/IOR';  // FsM.7: IOR-based file loading
 import * as fs from 'fs';
 import * as path from 'path';
 

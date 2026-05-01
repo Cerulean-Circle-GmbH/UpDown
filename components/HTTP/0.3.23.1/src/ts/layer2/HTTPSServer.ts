@@ -18,7 +18,7 @@ import * as https from 'https';
 import * as http from 'http';
 import { IncomingMessage, ServerResponse } from 'http';
 import { HTTPServer } from './HTTPServer.js';
-import { TLSCertificateLoader } from './TLSCertificateLoader.js';
+import { TLSCertificateLoader } from '@web4x/tls/dist/ts/layer2/TLSCertificateLoader.js';
 import { HTTPSServerModel } from '../layer3/HTTPSServerModel.interface.js';
 import { Scenario } from '../layer3/Scenario.interface.js';
 import { LifecycleState } from '../layer3/LifecycleState.enum.js';
@@ -44,7 +44,7 @@ type SNICallback = (
 
 export class HTTPSServer extends HTTPServer {
     // Override model type
-    public override model!: HTTPSServerModel;
+    declare public model: HTTPSServerModel;
     
     // HTTPS-specific
     private httpsServer: Reference<https.Server> = null;

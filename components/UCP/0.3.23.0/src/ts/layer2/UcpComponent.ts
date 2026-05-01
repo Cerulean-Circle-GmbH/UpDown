@@ -341,7 +341,7 @@ export abstract class UcpComponent<TModel extends Model> extends Component<TMode
    * Assignments trigger IMMEDIATE view updates
    */
   get model(): TModel {
-    if (this.ucpModel === null) {
+    if (!this.ucpModel) {
       return null as unknown as TModel;
     }
     return this.ucpModel.model;

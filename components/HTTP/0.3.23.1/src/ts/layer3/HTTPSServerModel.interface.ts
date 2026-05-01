@@ -10,7 +10,7 @@
  */
 
 import { HTTPServerModel } from './HTTPServerModel.interface.js';
-import { TLSOptions } from './TLSOptions.interface.js';
+import { TLSOptions } from '@web4x/tls/dist/ts/layer3/TLSOptions.interface.js';
 
 export interface HTTPSServerModel extends HTTPServerModel {
     /** TLS certificate options */

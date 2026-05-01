@@ -1,6 +1,6 @@
 {
   "name": "@web4x/tls",
-  "version": "0.3.23.1",
+  "version": "0.3.23-1",
   "type": "module",
   "description": "TLS Component - Certificate management, SNI, Let's Encrypt, and renewal scheduling",
   "main": "dist/ts/layer2/TLSCertificateLoader.js",
@@ -16,6 +16,7 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@web4x/ucp": "file:../../UCP/0.3.23.1"
+    "@web4x/ucp": "file:../../UCP/0.3.23.1",
+    "@web4x/http": "file:../../HTTP/0.3.23.1"
   }
 }

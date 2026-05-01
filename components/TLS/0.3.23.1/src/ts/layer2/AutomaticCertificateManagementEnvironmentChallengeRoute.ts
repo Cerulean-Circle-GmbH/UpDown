@@ -14,8 +14,8 @@
  */
 
 import { IncomingMessage, ServerResponse } from 'http';
-import { Route } from './Route.js';
-import { HttpMethod } from '../layer3/HttpMethod.enum.js';
+import { Route } from '@web4x/http/dist/ts/layer2/Route.js';
+import { HttpMethod } from '@web4x/ucp/HttpMethod';
 import type { LetsEncryptCertificateProvider } from './LetsEncryptCertificateProvider.js';
 
 /**

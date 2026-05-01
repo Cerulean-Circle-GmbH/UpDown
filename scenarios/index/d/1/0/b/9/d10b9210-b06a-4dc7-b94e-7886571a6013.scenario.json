@@ -1,0 +1,62 @@
+{
+  "ior": {
+    "uuid": "d10b9210-b06a-4dc7-b94e-7886571a6013",
+    "component": "ONCE",
+    "version": "0.3.22.1"
+  },
+  "owner": "eyJpb3IiOnsidXVpZCI6ImYyYzdiOGJmLTYwZTAtNGEwMC04MmU0LThmZDQ5MGY2NzBjYyIsImNvbXBvbmVudCI6IlVzZXIiLCJ2ZXJzaW9uIjoiMC4zLjIxLjEifSwib3duZXIiOiJleUoxYzJWeUlqb2ljM2x6ZEdWdElpd2lhRzl6ZEc1aGJXVWlPaUp6ZVhOMFpXMGlMQ0oxZEdOVWFXMWxjM1JoYlhBaU9pSXlNREkyTFRBMExUTXdWREE1T2pJMU9qUTNMak01TkZvaUxDSjFkV2xrSWpvaVpqSmpOMkk0WW1ZdE5qQmxNQzAwWVRBd0xUZ3laVFF0T0daa05Ea3daalkzTUdOakluMD0iLCJtb2RlbCI6eyJ1dWlkIjoiZjJjN2I4YmYtNjBlMC00YTAwLTgyZTQtOGZkNDkwZjY3MGNjIiwibmFtZSI6ImRvbmdlcyIsInVzZXJuYW1lIjoic3lzdGVtIiwiaG9zdG5hbWUiOiJNYWNTdHVkaW8ifX0=",
+  "model": {
+    "uuid": "d10b9210-b06a-4dc7-b94e-7886571a6013",
+    "name": "NodeJsONCEKernel",
+    "version": "0.3.22.1",
+    "environment": {
+      "platform": "node",
+      "version": "v24.5.0",
+      "capabilities": [
+        "server",
+        "websocket",
+        "p2p"
+      ],
+      "isOnline": true
+    },
+    "state": "starting",
+    "startTime": "2026-04-30T09:25:47.390Z",
+    "connectionTime": null,
+    "host": "MacStudio",
+    "port": 42777,
+    "isPrimary": true,
+    "primaryPeerUuid": null,
+    "peers": [],
+    "pid": 14126,
+    "capabilities": [
+      {
+        "capability": "httpsPort",
+        "port": 42777
+      },
+      {
+        "capability": "httpRedirect",
+        "port": 42000
+      }
+    ],
+    "indexPath": "/Users/Shared/Workspaces/2cuGitHub/UpDown/scenarios/index/d/1/0/b/9/d10b9210-b06a-4dc7-b94e-7886571a6013.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.22.1",
+      "domain/local/MacStudio/MacStudio/ONCE/0.3.22.1",
+      "domain/local/MacStudio/MacStudio/ONCE/0.3.22.1/capability/httpPort/42777"
+    ],
+    "updatedAt": "2026-04-30T09:25:47.394Z"
+  },
+  "unit": {
+    "indexPath": "d/1/0/b/9/d10b9210-b06a-4dc7-b94e-7886571a6013.scenario.json",
+    "symlinkPaths": [
+      "type/ONCE/0.3.22.1",
+      "domain/local/MacStudio/MacStudio/ONCE/0.3.22.1",
+      "domain/local/MacStudio/MacStudio/ONCE/0.3.22.1/capability/httpPort/42777"
+    ],
+    "references": [],
+    "schemaVersion": "1.1.0",
+    "createdBy": "ONCE/0.3.22.1",
+    "createdAt": "2026-04-30T09:25:47.394Z",
+    "updatedAt": "2026-04-30T09:25:47.394Z"
+  }
+}

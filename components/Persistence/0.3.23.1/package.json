@@ -1,0 +1,22 @@
+{
+  "name": "@web4x/persistence",
+  "version": "0.3.23-1",
+  "type": "module",
+  "description": "Persistence Component - Scenario storage, UUID indexing, and PersistenceManager implementations",
+  "main": "dist/ts/layer2/UcpStorage.js",
+  "private": true,
+  "scripts": {
+    "start": "./persistence",
+    "build": "./src/sh/build.sh",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@web4x/ucp": "file:../../UCP/0.3.23.1",
+    "@web4x/cli": "file:../../CLI/0.3.23.1"
+  }
+}

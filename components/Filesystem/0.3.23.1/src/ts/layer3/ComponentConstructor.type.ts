@@ -2,7 +2,7 @@
  * ComponentConstructor.type.ts - Type for UcpComponent class constructors
  */
 
-import { UcpComponent } from '@web4x/ucp/dist/ts/layer2/UcpComponent.js';
+import { UcpComponent } from '@web4x/ucp/UcpComponent';
 import type { Model } from './Model.interface.js';
 
 /**

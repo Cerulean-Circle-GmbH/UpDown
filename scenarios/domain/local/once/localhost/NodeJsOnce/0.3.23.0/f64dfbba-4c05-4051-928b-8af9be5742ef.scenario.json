@@ -1,0 +1,70 @@
+{
+  "ior": {
+    "uuid": "2a78beeb-889f-4d99-8a0a-28f5c00b929f",
+    "component": "NodeJsOnce",
+    "version": "0.0.0.0"
+  },
+  "owner": "system",
+  "model": {
+    "uuid": "f64dfbba-4c05-4051-928b-8af9be5742ef",
+    "name": "ONCE",
+    "version": "0.3.23.0",
+    "component": "ONCE",
+    "environment": {
+      "model": {
+        "type": "nodejs",
+        "isNode": false,
+        "isBrowser": false,
+        "isWorker": false,
+        "isServiceWorker": false,
+        "isPWA": false,
+        "isIframe": false,
+        "version": "",
+        "capabilities": [],
+        "isOnline": false
+      }
+    },
+    "state": "starting",
+    "startTime": "2026-04-30T09:26:02.316Z",
+    "connectionTime": null,
+    "host": "localhost",
+    "port": 42777,
+    "isPrimary": false,
+    "primaryPeerUuid": null,
+    "peers": [],
+    "componentRoot": "/Users/Shared/Workspaces/2cuGitHub/UpDown/components/ONCE/0.3.23.0",
+    "serverModel": {
+      "uuid": "f64dfbba-4c05-4051-928b-8af9be5742ef",
+      "name": "ONCE",
+      "version": "0.3.23.0",
+      "environment": {
+        "platform": "node",
+        "version": "v24.5.0",
+        "capabilities": [
+          "server",
+          "websocket",
+          "p2p"
+        ],
+        "isOnline": true
+      },
+      "state": "running",
+      "startTime": "2026-04-30T09:26:02.317Z",
+      "connectionTime": null,
+      "host": "MacStudio",
+      "port": 42777,
+      "domain": "local.once",
+      "hostname": "MacStudio",
+      "ip": "192.168.178.196",
+      "isPrimary": false,
+      "primaryPeerUuid": null,
+      "peers": [],
+      "pid": 15457,
+      "capabilities": [
+        {
+          "capability": "httpsPort",
+          "port": 8081
+        }
+      ]
+    }
+  }
+}

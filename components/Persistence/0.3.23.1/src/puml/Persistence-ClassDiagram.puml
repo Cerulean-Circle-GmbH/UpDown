@@ -1,0 +1,189 @@
+@startuml Persistence-ClassDiagram
+!theme plain
+skinparam backgroundColor White
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 9
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+title @web4x/persistence 0.3.23.0 — Scenario Storage\nDual Platform: Node.js (filesystem) + Browser (IndexedDB)\nDepends on: @web4x/ucp
+
+' ═══════════════════════════════════════════════════════════════
+' EXTERNAL: @web4x/ucp (dependency)
+' ═══════════════════════════════════════════════════════════════
+
+package "@web4x/ucp (external)" as UCP #EEEEEE {
+  abstract class "PersistenceManager" as ExtPM <<JsInterface>> {
+    + {abstract} scenarioSave(uuid, scenario, paths): Promise<void>
+    + {abstract} scenarioLoad(uuid): Promise<Scenario>
+    + {abstract} scenarioFind(query): Promise<Scenario[]>
+    + {abstract} scenarioDelete(uuid, rmLinks?): Promise<void>
+    + {abstract} scenarioExists(uuid): Promise<boolean>
+    + {abstract} typePathBuild(comp, ver): string
+    + {abstract} domainPathBuild(parts, host, comp, ver): string
+    + {abstract} capabilityPathBuild(...): string
+  }
+
+  abstract class "Storage" as ExtSTG <<extends PersistenceManager>> {
+    + {abstract} init(scenario: StorageScenario): this
+    + {abstract} toScenario(): Promise<StorageScenario>
+  }
+
+  class "IOR<T>" as ExtIOR {
+    + initRemote(iorString): this
+    + resolve(): Promise<T>
+    + save(data): Promise<void>
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 3: Interfaces (re-exports from @web4x/ucp)
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 3 — Interfaces & Runtime Types" as L3 #F5F5F5 {
+
+  interface "StorageModel" as ISTM {
+    + uuid: string
+    + projectRoot: string
+    + indexBaseDir: string
+    + createdAt: string
+    + updatedAt: string
+  }
+
+  interface "StorageScenario" as ISTS {
+    + ior: { uuid, component, version }
+    + owner: string
+    + model: StorageModel
+  }
+
+  interface "ScenarioQuery" as ISQ {
+    + component?: string
+    + version?: string
+    + domain?: string
+    + capabilityType?: string
+    + capabilityValue?: string
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' LAYER 2: Implementation — Dual Platform
+' ═══════════════════════════════════════════════════════════════
+
+package "Layer 2 — Node.js Implementation" as L2_Node #E8F5E9 {
+
+  class "UcpStorage" as UcpSt <<P6 + Filesystem>> {
+    - model: StorageModel
+    __P6: Lifecycle__
+    + {static} start(): void  <<registers as Storage + PM>>
+    + constructor()
+    + init(scenario: StorageScenario): this
+    + toScenario(): Promise<StorageScenario>
+    __PersistenceManager Interface__
+    + scenarioSave<T>(uuid, scenario, paths): Promise<void>
+    + scenarioLoad<T>(uuid): Promise<Scenario<T>>
+    + scenarioFind<T>(query): Promise<Scenario<T>[]>
+    + scenarioDelete(uuid, rmLinks?): Promise<void>
+    + scenarioExists(uuid): Promise<boolean>
+    __Path Builders__
+    + typePathBuild(comp, ver): string
+    + domainPathBuild(parts, host, comp, ver): string
+    + capabilityPathBuild(...): string
+    __Legacy (Deprecated)__
+    + typeLinkPathGenerate(comp, ver, uuid): string
+    + domainLinkPathGenerate(domain, comp, ver, uuid): string
+    + capabilityLinkPathGenerate(type, value, uuid): string
+    __Private__
+    - uuidFolderPathGenerate(uuid): string
+    - scenarioIndexPathGet(uuid): string
+    - symlinkCreate(indexPath, symlinkPath): Promise<void>
+    - projectRootFind(): string
+    - scenarioFilesFind(dir): Promise<string[]>
+    - componentVersionGet(): Promise<string>
+    - componentNameGet(): Promise<string>
+  }
+}
+
+package "Layer 2 — Browser Implementation" as L2_Browser #E3F2FD {
+
+  class "BrowserScenarioStorage" as BSS <<P6 + IndexedDB>> {
+    - model: StorageModel
+    - db: IDBDatabase
+    __P6: Lifecycle__
+    + constructor()
+    + init(scenario: StorageScenario): this
+    + toScenario(): Promise<StorageScenario>
+    __PersistenceManager Interface__
+    + scenarioSave<T>(uuid, scenario, paths): Promise<void>
+    + scenarioLoad<T>(uuid): Promise<Scenario<T>>
+    + scenarioFind<T>(query): Promise<Scenario<T>[]>
+    + scenarioDelete(uuid, rmLinks?): Promise<void>
+    + scenarioExists(uuid): Promise<boolean>
+    __Path Builders__
+    + typePathBuild(comp, ver): string
+    + domainPathBuild(parts, host, comp, ver): string
+    + capabilityPathBuild(...): string
+    __Artefact Storage (I.9)__
+    + artefactSave(hash, blob, meta): Promise<void>
+    + artefactLoad(hash): Promise<{content, size, mimetype, unitUuid}>
+    + artefactExists(hash): Promise<boolean>
+    __Private__
+    - dbOpen(): Promise<IDBDatabase>
+    - linkPathTypeGet(path): 'type' | 'domain' | 'capability'
+  }
+}
+
+' ═══════════════════════════════════════════════════════════════
+' Relationships
+' ═══════════════════════════════════════════════════════════════
+
+UcpSt --|> ExtSTG : extends
+BSS ..|> ExtPM : implements
+UcpSt --> ISTM : model type
+BSS --> ISTM : model type
+UcpSt ..> ExtIOR : uses for\nscenario load/save\n(FsM.3 pattern)
+
+' ═══════════════════════════════════════════════════════════════
+' Storage Structure Diagrams
+' ═══════════════════════════════════════════════════════════════
+
+note right of UcpSt
+  **Filesystem Storage Structure**
+  scenarios/
+  ├── index/{a}/{b}/{c}/{d}/{e}/
+  │   └── {uuid}.scenario.json    PRIMARY
+  ├── type/{Component}/{version}/
+  │   └── {uuid}.scenario.json    SYMLINK
+  ├── domain/{dom}/{host}/{Comp}/{ver}/
+  │   └── {uuid}.scenario.json    SYMLINK
+  └── capability/{type}/{value}/
+      └── {uuid}.scenario.json    SYMLINK
+
+  UUID folder: 5 levels from first 5 chars
+  (strip hyphens, split into chars)
+end note
+
+note right of BSS
+  **IndexedDB Storage Structure**
+  Database: once-scenarios (v2)
+  ├── scenarios-index      keyPath: uuid
+  ├── scenarios-type       keyPath: key, index: uuid
+  ├── scenarios-domain     keyPath: key, index: uuid
+  ├── scenarios-capability keyPath: key, index: uuid
+  └── artefacts            keyPath: contentHash
+      (indexes: unitUuid, mimetype)
+
+  Same logical structure as filesystem,
+  adapted for browser IndexedDB.
+  Artefact store added in v2 for
+  content-addressable Blob deduplication.
+end note
+
+note bottom of L2_Node
+  **P14: Unified Kernel Architecture**
+  Same PersistenceManager interface,
+  two platform implementations.
+  Node.js: fs symlinks + JSON files
+  Browser: IndexedDB stores + Blob
+end note
+
+@enduml
