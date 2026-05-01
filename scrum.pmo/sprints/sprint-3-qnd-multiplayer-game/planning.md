@@ -145,14 +145,18 @@ Files to read:
   - [x] 13.1-13.4: Expert — Share button, clipboard copy, shareUrl in LIST_ROOMS ✅
   - [x] 13.5: Tester — shareUrl present in room list ✅
 
-- [ ] [Task 14: AI Agent Player](./task-14-ai-agent-player.md) **🔧 BUG FIX IN PROGRESS**
-  - [x] 14.1: Architect — Spec: card-counting heuristic, 4 personalities, no LLM ✅
+- [x] [Task 14: AI Agent Player](./task-14-ai-agent-player.md) **✅ TRON VERIFIED — bots work + beatable**
+  - [x] 14.1: Architect — Spec: card-counting heuristic, 4 personalities ✅
   - [x] 14.2: Expert — Add Bot button, ADD_BOT protocol ✅
-  - [x] 14.3: Expert — BotPlayer.ts (119 lines), probability-based decisions ✅
-  - [ ] 14.7: Tester — Bot unkillable (survived 5 rounds) — expert investigating
-  **BUG-BOT:** Bot not eliminated on wrong guess. Possible Protective Shell always active or resolveRound skip.
-  - [ ] 14.8: Tester — Verify game works with mix of human + AI players
-  - [ ] 12.9: PO — Provide Tron with direct join links for each room size
+  - [x] 14.3: Expert — BotPlayer.ts, 25% random guess + 30% shield = beatable ✅
+  - [x] 14.7: Tester — Bot eliminated correctly ✅ (after nerf fix)
+
+- [ ] [Task 15: Lobby Auto-Load Rooms on Connect](./task-15-lobby-autoload.md) **🔧 IN PROGRESS**
+  - [ ] 15.1: Expert — LobbyUI auto-requests LIST_ROOMS on WS connect (not on Refresh click)
+  - [ ] 15.2: Expert — Pre-created rooms visible INSTANTLY on first page load
+  - [ ] 15.3: Expert — Refresh button reliably updates room list
+  - [ ] 15.4: Tester — Open /mp fresh — rooms visible without clicking anything
+  - [ ] 15.5: PO — Tron verifies rooms show on first load
 
 ## E2E Test Results
 - Protocol suite: 23/26 PASS, 0 FAIL, 3 SKIP ✅
