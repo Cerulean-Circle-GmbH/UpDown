@@ -155,11 +155,11 @@ try {
   send(wsG, { type: 'LIST_ROOMS' });
   const msgsG = await collectG;
   const roomList = msgsG.find(m => m.type === 'ROOM_LIST');
-  const hasPublic = roomList?.rooms?.some(r => r.name === 'Test Room');
-  const hasPrivate = roomList?.rooms?.some(r => r.name === 'Secret');
+  const hasPublic = roomList?.rooms?.some(r => r.id === roomId);
+  const hasPrivate = roomList?.rooms?.some(r => r.id === privRoomId);
   if (roomList && hasPublic && !hasPrivate) pass('TC3.7', 'List rooms — public visible, private hidden');
-  else if (roomList && hasPublic) fail('TC3.7', 'Private room visible in list', `private=${hasPrivate}`);
-  else fail('TC3.7', 'List rooms', `list=${!!roomList} public=${hasPublic}`);
+  else if (roomList && hasPublic && hasPrivate) fail('TC3.7', 'Private room visible in list', `private=${hasPrivate}`);
+  else fail('TC3.7', 'List rooms', `list=${!!roomList} public=${hasPublic} rooms=${roomList?.rooms?.map(r=>r.id).join(',')}`);
   wsG.close();
 
   // ═══════════════════════════════════════════
