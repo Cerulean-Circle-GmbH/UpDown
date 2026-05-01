@@ -16,6 +16,7 @@ import { promisify } from 'node:util';
 import readline from 'node:readline';
 import { WebSocketServer, WebSocket } from 'ws';
 import fetch from 'node-fetch';
+import { RoomManager } from './GameRoom.js';
 
 const execAsync = promisify(exec);
 
@@ -73,6 +74,9 @@ const clientSessions = new Map<string, ClientSession>();
 const wsClients = new Set<WebSocketClient>();
 const avatarCache = new Map<string, string>(); // clientId -> data URL
 let totalRequests = 0;
+
+// Game room manager
+const roomManager = new RoomManager();
 let serverStartTime = new Date();
 const serverLogs: string[] = [];
 const MAX_LOGS = 1000; // Keep last 1000 log entries
@@ -288,15 +292,33 @@ function setupWebSocketServer(server: https.Server): void {
     // Broadcast new player to all other clients
     broadcastNewPlayer(client);
     
+    // Handle game messages
+    ws.on('message', (data) => {
+      try {
+        const msg = JSON.parse(data.toString());
+        handleGameMessage(clientId, ws, client.avatarUrl, msg);
+      } catch (e) {
+        // Ignore non-JSON messages
+      }
+    });
+
     ws.on('close', () => {
       wsClients.delete(client);
       avatarCache.delete(clientId);
       addLog(`👋 WebSocket disconnected: ${ip} (${wsClients.size} online)`);
-      
+
+      // Remove from any game room
+      const room = roomManager.findPlayerRoom(clientId);
+      if (room) {
+        room.removePlayer(clientId);
+        if (room.players.size === 0) roomManager.removeRoom(room.id);
+        addLog(`🚪 ${clientId.slice(0,8)} left room ${room.name}`);
+      }
+
       // Broadcast player left to all remaining clients
       broadcastPlayerLeft(client);
     });
-    
+
     ws.on('error', (error) => {
       console.error('WebSocket error:', error);
       wsClients.delete(client);
@@ -332,6 +354,78 @@ function broadcastPlayerLeft(leftClient: WebSocketClient): void {
       client.ws.send(message);
     }
   });
+}
+
+/**
+ * Handle game protocol messages from WebSocket clients
+ */
+function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, msg: any): void {
+  const send = (data: object) => ws.send(JSON.stringify(data));
+
+  switch (msg.type) {
+    case 'CREATE_ROOM': {
+      const room = roomManager.createRoom(
+        msg.name || 'Game Room',
+        clientId,
+        msg.maxPlayers || 10,
+        msg.roomKey || null
+      );
+      room.addPlayer(clientId, ws, msg.playerName || 'Player', avatarUrl);
+      addLog(`🏠 Room created: ${room.name} (${room.id}) by ${clientId.slice(0,8)}`);
+      break;
+    }
+
+    case 'JOIN_ROOM': {
+      const room = roomManager.getRoom(msg.roomId);
+      if (!room) { send({ type: 'ERROR', message: 'Room not found' }); break; }
+      if (room.isPrivate && room.roomKey !== msg.roomKey) { send({ type: 'ERROR', message: 'Wrong room key' }); break; }
+      const joined = room.addPlayer(clientId, ws, msg.playerName || 'Player', avatarUrl);
+      if (!joined) { send({ type: 'ERROR', message: 'Room is full or game in progress' }); break; }
+      addLog(`🎮 ${msg.playerName || clientId.slice(0,8)} joined room ${room.name}`);
+      break;
+    }
+
+    case 'LEAVE_ROOM': {
+      const room = roomManager.findPlayerRoom(clientId);
+      if (room) {
+        room.removePlayer(clientId);
+        if (room.players.size === 0) roomManager.removeRoom(room.id);
+        send({ type: 'ROOM_LEFT' });
+        addLog(`🚪 ${clientId.slice(0,8)} left room ${room.name}`);
+      }
+      break;
+    }
+
+    case 'LIST_ROOMS': {
+      send({ type: 'ROOM_LIST', rooms: roomManager.listRooms() });
+      break;
+    }
+
+    case 'START_GAME': {
+      const room = roomManager.findPlayerRoom(clientId);
+      if (room && room.hostId === clientId) {
+        room.startGame();
+        addLog(`🎲 Game started in room ${room.name} with ${room.players.size} players`);
+      }
+      break;
+    }
+
+    case 'PLAY_CARD': {
+      const room = roomManager.findPlayerRoom(clientId);
+      if (room && (msg.guess === 'up' || msg.guess === 'down' || msg.guess === 'equal')) {
+        room.playCard(clientId, msg.guess);
+      }
+      break;
+    }
+
+    case 'GAME_STATE': {
+      const room = roomManager.findPlayerRoom(clientId);
+      if (room) {
+        send({ type: 'GAME_STATE', room: room.info(), currentCard: room.currentCard, previousCard: room.previousCard });
+      }
+      break;
+    }
+  }
 }
 
 /**

@@ -59,7 +59,7 @@ export class GameRoom {
   private gmHand: Card[] = [];
   currentCard: Card | null = null;
   previousCard: Card | null = null;
-  private countdownTimer: NodeJS.Timeout | null = null;
+  countdownTimer: NodeJS.Timeout | null = null;
   private countdownSeconds: number = 0;
 
   constructor(name: string, hostId: string, maxPlayers: number = 10, roomKey: string | null = null) {
