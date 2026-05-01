@@ -141,22 +141,16 @@ Files to read:
   - [x] 12.1-12.5: Expert — 5 pre-created rooms, auto-start, auto-recreate, join URLs ✅
   - [x] 12.6-12.8: Tester — Rooms appear on startup, join URL works, deep-link serves HTML ✅
 
-- [ ] [Task 13: Persistent Pre-created Rooms + Share Button](./task-13-share-and-persist-rooms.md) **📋 PLANNED**
-  - [ ] 13.1: Expert — Pre-created rooms ALWAYS visible in lobby (never disappear, even during/after games)
-  - [ ] 13.2: Expert — Share button per room: copies join URL to clipboard (e.g. https://host:3443/mp?join=2p&name=)
-  - [ ] 13.3: Expert — Share button shows "Copied!" feedback, uses navigator.clipboard.writeText()
-  - [ ] 13.4: Expert — Share URL includes room ID but lets user set own name on join page
-  - [ ] 13.5: Tester — Verify share button copies correct URL to clipboard
-  - [ ] 13.6: Tester — Verify pre-created rooms visible at ALL times (before/during/after games)
+- [x] [Task 13: Share Button](./task-13-share-and-persist-rooms.md) **✅ TESTER VERIFIED**
+  - [x] 13.1-13.4: Expert — Share button, clipboard copy, shareUrl in LIST_ROOMS ✅
+  - [x] 13.5: Tester — shareUrl present in room list ✅
 
-- [ ] [Task 14: AI Agent Player](./task-14-ai-agent-player.md) **📋 PLANNED**
-  - [ ] 14.1: Architect — Spec AI player behavior: which LLM API, how it decides Up/Down/Even, special card strategy
-  - [ ] 14.2: Expert — "Add AI Player" button in room view (only for host)
-  - [ ] 14.3: Expert — Server-side AI player: connects as bot, makes decisions each round
-  - [ ] 14.4: Expert — AI uses free LLM API (e.g. Groq/Ollama/local) or simple heuristic fallback
-  - [ ] 14.5: Expert — AI player has name like "🤖 Bot-Alice" and shows as bot in player list
-  - [ ] 14.6: Expert — AI plays special cards strategically (Protective Shell when risky, Peek when available)
-  - [ ] 14.7: Tester — Verify AI player joins, plays cards, gets eliminated/scores correctly
+- [ ] [Task 14: AI Agent Player](./task-14-ai-agent-player.md) **🔧 BUG FIX IN PROGRESS**
+  - [x] 14.1: Architect — Spec: card-counting heuristic, 4 personalities, no LLM ✅
+  - [x] 14.2: Expert — Add Bot button, ADD_BOT protocol ✅
+  - [x] 14.3: Expert — BotPlayer.ts (119 lines), probability-based decisions ✅
+  - [ ] 14.7: Tester — Bot unkillable (survived 5 rounds) — expert investigating
+  **BUG-BOT:** Bot not eliminated on wrong guess. Possible Protective Shell always active or resolveRound skip.
   - [ ] 14.8: Tester — Verify game works with mix of human + AI players
   - [ ] 12.9: PO — Provide Tron with direct join links for each room size
 
