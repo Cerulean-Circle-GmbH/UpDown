@@ -154,8 +154,12 @@ export class MultiplayerUI {
 
     if (this.round === 0) {
       if (this.isHost) {
-        el.innerHTML = `<button id="start-game-btn" class="btn btn-primary btn-large">🎲 Start Game (${this.players.length} players)</button>`;
+        el.innerHTML = `
+          <button id="start-game-btn" class="btn btn-primary btn-large">🎲 Start Game (${this.players.length} players)</button>
+          <button id="add-bot-btn" class="btn btn-secondary" style="margin-top:6px;width:100%">🤖 Add Bot</button>
+        `;
         document.getElementById('start-game-btn')?.addEventListener('click', () => { this.client.startGame(); });
+        document.getElementById('add-bot-btn')?.addEventListener('click', () => { this.client.addBot(); });
       } else {
         el.innerHTML = '<p class="waiting-text">Waiting for host to start...</p>';
       }

@@ -6,6 +6,7 @@
 import { WebSocket } from 'ws';
 import crypto from 'node:crypto';
 import { SPECIAL_CARDS, resolveSpecialCards, type PlayedSpecialCard, type EffectResult } from './SpecialCards.js';
+import { BotPlayer, type BotPersonality } from './BotPlayer.js';
 
 // Card suits and values for French deck
 const SUITS = ['hearts', 'diamonds', 'clubs', 'spades'] as const;
@@ -59,6 +60,7 @@ export class GameRoom {
   round: number = 0;
 
   players: Map<string, RoomPlayer> = new Map();
+  private bots: Map<string, BotPlayer> = new Map();
 
   // GM state
   private deck: Card[] = [];
@@ -117,6 +119,47 @@ export class GameRoom {
     return true;
   }
 
+  addBot(personality?: BotPersonality): string {
+    const bot = new BotPlayer(personality);
+    const id = `bot-${crypto.randomUUID().slice(0, 6)}`;
+
+    this.players.set(id, {
+      id, ws: null as any, name: bot.name, avatarUrl: '',
+      score: 0, streak: 0, alive: true,
+      currentGuess: null, specialCard: null, specialCardTarget: null,
+      inventory: this.generateStarterInventory(), usedSpecials: [], frozen: false,
+      roundsPlayed: 0, disconnected: false
+    });
+    this.bots.set(id, bot);
+
+    this.broadcast({ type: 'PLAYER_JOINED', player: this.playerInfo(id), playerCount: this.players.size, minPlayers: this.minPlayers });
+    return id;
+  }
+
+  private scheduleBotDecisions(): void {
+    if (!this.currentCard) return;
+
+    this.bots.forEach((bot, botId) => {
+      const player = this.players.get(botId);
+      if (!player || !player.alive || player.frozen) return;
+
+      // Random delay 1-8s for human feel
+      const delay = 1000 + Math.floor(Math.random() * 7000);
+      setTimeout(() => {
+        if (this.state !== 'countdown' || player.currentGuess !== null) return;
+
+        const guess = bot.decideGuess(this.currentCard!);
+        this.playCard(botId, guess);
+
+        // Maybe play a special card
+        const special = bot.decideSpecialCard(player.inventory, player.alive);
+        if (special) {
+          this.playSpecialCard(botId, special);
+        }
+      }, delay);
+    });
+  }
+
   removePlayer(id: string): void {
     // BUG-1 fix: during active round, mark disconnected instead of removing
     if (this.state === 'countdown' || this.state === 'revealing') {
@@ -155,6 +198,7 @@ export class GameRoom {
     this.round = 0;
     this.currentCard = null;
     this.previousCard = null;
+    this.bots.forEach(bot => bot.reset());
 
     this.players.forEach(p => {
       p.score = 0; p.streak = 0; p.alive = true;
@@ -211,6 +255,12 @@ export class GameRoom {
     });
 
     this.startCountdown();
+
+    // Track card for bots and schedule their decisions
+    if (this.currentCard) {
+      this.bots.forEach(bot => bot.trackCard(this.currentCard!));
+    }
+    this.scheduleBotDecisions();
   }
 
   private startCountdown(): void {
@@ -459,13 +509,13 @@ export class GameRoom {
   broadcast(msg: object): void {
     const data = JSON.stringify(msg);
     this.players.forEach(p => {
-      if (p.ws.readyState === WebSocket.OPEN) p.ws.send(data);
+      if (p.ws && p.ws.readyState === WebSocket.OPEN) p.ws.send(data);
     });
   }
 
   sendTo(playerId: string, msg: object): void {
     const p = this.players.get(playerId);
-    if (p && p.ws.readyState === WebSocket.OPEN) {
+    if (p && p.ws && p.ws.readyState === WebSocket.OPEN) {
       p.ws.send(JSON.stringify(msg));
     }
   }

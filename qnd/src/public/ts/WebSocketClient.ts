@@ -84,4 +84,8 @@ export class WebSocketClient {
   playSpecial(cardId: string, targetPlayerId?: string): void {
     this.send({ type: 'PLAY_SPECIAL', cardId, targetPlayerId });
   }
+
+  addBot(personality?: string): void {
+    this.send({ type: 'ADD_BOT', personality });
+  }
 }

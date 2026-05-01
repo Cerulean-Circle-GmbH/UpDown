@@ -429,6 +429,15 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       break;
     }
 
+    case 'ADD_BOT': {
+      const room = roomManager.findPlayerRoom(clientId);
+      if (room && room.hostId === clientId) {
+        const botId = room.addBot(msg.personality);
+        addLog(`🤖 Bot added to room ${room.name}: ${botId}`);
+      }
+      break;
+    }
+
     case 'GAME_STATE': {
       const room = roomManager.findPlayerRoom(clientId);
       if (room) {
