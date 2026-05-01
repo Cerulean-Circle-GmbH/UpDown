@@ -1,0 +1,83 @@
+/**
+ * WebSocketClient — Handles WebSocket connection and game protocol
+ * QnD Sprint 3: Simple event-based client for multiplayer
+ */
+
+type MessageHandler = (msg: any) => void;
+
+export class WebSocketClient {
+  private ws: WebSocket | null = null;
+  private handlers: Map<string, MessageHandler[]> = new Map();
+  clientId: string = '';
+  connected: boolean = false;
+
+  connect(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const url = `${protocol}//${location.host}`;
+      this.ws = new WebSocket(url);
+
+      this.ws.onopen = () => {
+        this.connected = true;
+        resolve();
+      };
+
+      this.ws.onclose = () => {
+        this.connected = false;
+        this.emit('disconnected', {});
+      };
+
+      this.ws.onerror = () => reject(new Error('WebSocket connection failed'));
+
+      this.ws.onmessage = (event) => {
+        try {
+          const msg = JSON.parse(event.data);
+          if (msg.type === 'welcome') {
+            this.clientId = msg.clientId;
+          }
+          this.emit(msg.type, msg);
+        } catch {}
+      };
+    });
+  }
+
+  send(msg: object): void {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify(msg));
+    }
+  }
+
+  on(type: string, handler: MessageHandler): void {
+    if (!this.handlers.has(type)) this.handlers.set(type, []);
+    this.handlers.get(type)!.push(handler);
+  }
+
+  private emit(type: string, msg: any): void {
+    const handlers = this.handlers.get(type);
+    if (handlers) handlers.forEach(h => h(msg));
+  }
+
+  createRoom(name: string, playerName: string, maxPlayers?: number, roomKey?: string): void {
+    this.send({ type: 'CREATE_ROOM', name, playerName, maxPlayers, roomKey });
+  }
+
+  joinRoom(roomId: string, playerName: string, roomKey?: string): void {
+    this.send({ type: 'JOIN_ROOM', roomId, playerName, roomKey });
+  }
+
+  leaveRoom(): void {
+    this.send({ type: 'LEAVE_ROOM' });
+  }
+
+  listRooms(): void {
+    this.send({ type: 'LIST_ROOMS' });
+  }
+
+  startGame(): void {
+    this.send({ type: 'START_GAME' });
+  }
+
+  playCard(guess: 'up' | 'down' | 'equal'): void {
+    this.send({ type: 'PLAY_CARD', guess });
+  }
+}
