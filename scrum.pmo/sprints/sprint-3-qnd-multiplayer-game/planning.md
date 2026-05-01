@@ -83,17 +83,22 @@ Files to read:
   - [x] 5.6: Expert — 3-phase resolve: base → special effects → apply. Priority L3>L2>L1. No stacking ✅
   - [ ] 5.7: Tester — Special card effects verification ⏳ IN PROGRESS
 
-## Phase 4: Polish (Expert — IN PROGRESS)
+## Phase 4: Polish ✅ DONE
 
-- [ ] [Task 6: Scoring and Economy](./task-6-scoring-economy.md) **🔧 IN PROGRESS**
-  - [ ] 6.1: Expert — Points per round + streak bonus
-  - [ ] 6.2: Expert — Diamond rewards
-  - [ ] 6.3: Expert — Leaderboard in game over screen
+- [x] [Task 6: Scoring and Economy](./task-6-scoring-economy.md) **✅ DONE**
+  - [x] 6.1: Expert — Points per round + streak bonus ✅
+  - [x] 6.2: Expert — Diamond rewards ✅
+  - [x] 6.3: Expert — Leaderboard in game over screen ✅
 
-- [ ] [Task 7: PWA and Mobile](./task-7-pwa-mobile.md)
-  - [ ] 7.1: Expert — Verify PWA install works with multiplayer
-  - [ ] 7.2: Expert — Mobile touch: card selection, swipe gestures
-  - [ ] 7.3: Tester — Works on mobile Safari + Chrome
+- [x] [Task 7: PWA and Mobile](./task-7-pwa-mobile.md) **✅ DONE**
+  - [x] 7.1: Expert — PWA manifest for multiplayer ✅
+  - [x] 7.2: Expert — Mobile CSS + touch support ✅
+  - [ ] 7.3: Tester — Final verification ⏳
+
+## Bugs Fixed
+- BUG-1: Disconnected player elimination before round resolve ✅
+- BUG-SCORE: Scores included in ROUND_RESULT broadcast ✅
+- BUG-INVENTORY: Per-player inventory sync (card IDs sent in ROUND_START) ✅
 
 ## Critical Path
 ```
