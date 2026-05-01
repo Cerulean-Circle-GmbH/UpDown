@@ -148,14 +148,14 @@ export class GameRoom {
       setTimeout(() => {
         if (this.state !== 'countdown' || player.currentGuess !== null) return;
 
-        const guess = bot.decideGuess(this.currentCard!);
-        this.playCard(botId, guess);
-
-        // Maybe play a special card
+        // Play special card FIRST (before guess, since guess can trigger resolveRound)
         const special = bot.decideSpecialCard(player.inventory, player.alive);
         if (special) {
           this.playSpecialCard(botId, special);
         }
+
+        const guess = bot.decideGuess(this.currentCard!);
+        this.playCard(botId, guess);
       }, delay);
     });
   }
@@ -323,6 +323,8 @@ export class GameRoom {
   }
 
   private resolveRound(): void {
+    // Re-entry guard: prevent double resolution from timer + allPlayed race
+    if (this.state !== 'countdown') return;
     this.state = 'revealing';
 
     // GM plays next card

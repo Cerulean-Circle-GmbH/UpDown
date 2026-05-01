@@ -45,9 +45,15 @@ export class BotPlayer {
       return choices[Math.floor(Math.random() * 3)];
     }
 
+    // 25% chance to make a random guess (imperfect play, keeps it fair)
+    if (Math.random() < 0.25) {
+      const choices: ('up' | 'down' | 'equal')[] = ['up', 'down', 'equal'];
+      return choices[Math.floor(Math.random() * 3)];
+    }
+
     // Count remaining cards by comparing to what's been played
     const totalInDeck = 52;
-    const remaining = totalInDeck - this.playedCards.length - 1; // -1 for current card
+    const remaining = totalInDeck - this.playedCards.length - 1;
     if (remaining <= 0) return 'equal';
 
     // Count remaining cards above/below/equal to current value
