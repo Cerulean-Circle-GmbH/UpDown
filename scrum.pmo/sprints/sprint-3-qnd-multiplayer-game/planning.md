@@ -113,22 +113,30 @@ Files to read:
   - [ ] 8.5: Tester — Verify HTML has base href, JS bundle loads (not 404)
   - [ ] 8.6: Tester — Restart server, check server log — no /mp/dist/ prefixed requests
 
-- [ ] [Task 9: DoD Browser Verification](./task-9-dod-browser-verification.md) **PLANNED**
-  - [ ] 9.1: Tester — Write Node.js automated game test (WS: create room, join, play full game) → qnd/test/
-  - [ ] 9.2: Tester — curl /mp returns HTML with base href + dist/multiplayer.js
-  - [ ] 9.3: Tester — curl /dist/multiplayer.js returns JS (not 404)
-  - [ ] 9.4: Tester — Automated game test PASS (room→join→play→score→gameover)
+- [ ] [Task 9: E2E Test Suite](./task-9-dod-browser-verification.md) **🔧 IN PROGRESS**
+  - [x] 9.1: Architect — Test cases spec: 8 UCs, 30+ TCs with SEND/EXPECT ✅ task-9-test-cases.md
+  - [x] 9.2: Tester — protocol-test-suite.js: 21/26 PASS, 2 test assertion bugs, 3 SKIP ✅
+  - [ ] 9.3: Tester — Fix 2 assertion bugs (field name mismatches), re-run → 23/26 PASS
+  - [ ] 9.4: Tester — Verify base href: curl /mp shows `<base href="/">`
   - [ ] 9.5: PO — Tron browser test: page renders lobby, game playable
-  - [ ] 9.6: PO — DoD checklist verified against tester + Tron evidence
+  - [ ] 9.6: PO — DoD checklist verified against ALL evidence
 
-## Previous Tester Results (WS protocol only — NOT browser verified)
-- T1-T5: PASS (protocol level)
-- T6-T7: PASS (after fixes, protocol level)
-- T8: needs human
-- NOTE: These tests did NOT verify browser rendering — page was blank the whole time
-- T8 Mobile layout: needs human
+- [ ] [Task 10: Mobile-First CSS](./task-10-mobile-first-css.md) **🔧 IN PROGRESS**
+  - [ ] 10.1: Expert — Rewrite multiplayer.css mobile-first (min-width 320px = iPhone 4/SE)
+  - [ ] 10.2: Expert — All elements fit without horizontal scroll at 375px (iPhone 15)
+  - [ ] 10.3: Expert — Reference existing styles.css from QnD prototype (that one works on mobile)
+  - [ ] 10.4: Expert — Card play area thumb-reachable, font/button sizes scale
+  - [ ] 10.5: Expert — Keep QnD look and feel
+  - [ ] 10.6: Tester — Verify with curl: multiplayer.css has mobile-first media queries (min-width not max-width)
+  - [ ] 10.7: Tester — Verify viewport meta tag correct in multiplayer.html
+  - [ ] 10.8: PO — Tron tests on iPhone: lobby fits, game fits, cards playable
 
-## SPRINT 3: ❌ REOPENED — Tron browser test: BLANK PAGE
+## E2E Test Results
+- Protocol suite: 21/26 PASS, 2 FAIL (test bugs), 3 SKIP
+- Base href fix: deployed, page loads in browser ✅
+- Mobile CSS: ❌ NOT mobile-first — doesn't fit iPhone 15
+
+## SPRINT 3: ❌ REOPENED — Mobile CSS not fitting iPhone
 
 ### Root Cause
 multiplayer.html loads raw .ts file (`<script src="ts/multiplayer.ts">`). Browser can't execute TypeScript. esbuild only builds main.ts, not multiplayer.ts. Tester validated WebSocket protocol only — never loaded page in browser.
