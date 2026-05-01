@@ -131,11 +131,22 @@ Files to read:
   - [ ] 10.7: Tester — Verify viewport meta tag correct in multiplayer.html
   - [ ] 10.8: PO — Tron tests on iPhone: lobby fits, game fits, cards playable
 
-- [ ] [Task 11: Multi-player URL support](./task-11-multiplayer-urls.md) **🔧 IN PROGRESS**
-  - [ ] 11.1: Expert — Add ?name= query param to LobbyUI.ts (overrides localStorage)
-  - [ ] 11.2: Expert — Rebuild + restart server
-  - [ ] 11.3: PO — Provide 5 test URLs to Tron
-  - [ ] 11.4: Tester — Verify 5 tabs with different ?name= params show different player names
+- [x] [Task 11: Multi-player URL support](./task-11-multiplayer-urls.md) **✅ TESTER VERIFIED**
+  - [x] 11.1: Expert — ?name= query param ✅
+  - [x] 11.2: Expert — Rebuild + restart ✅
+  - [x] 11.3: PO — 5 test URLs provided ✅
+  - [x] 11.4: Tester — /mp?name=Tron returns 200 HTML with base href ✅
+
+- [ ] [Task 12: Pre-created Rooms with Join Links](./task-12-precreated-rooms.md) **📋 PLANNED**
+  - [ ] 12.1: Expert — Server auto-creates rooms on startup: "2 Players", "3 Players", "4 Players", "5 Players", "Party (10 Players)"
+  - [ ] 12.2: Expert — Each room has a direct join URL: /mp?join=room-id&name=PlayerName
+  - [ ] 12.3: Expert — Rooms wait for required player count before auto-starting game
+  - [ ] 12.4: Expert — Lobby shows pre-created rooms with player count (e.g. "2/3 players — waiting")
+  - [ ] 12.5: Expert — Rooms auto-recreate after game ends (always available)
+  - [ ] 12.6: Tester — Verify pre-created rooms appear in lobby on page load
+  - [ ] 12.7: Tester — Verify ?join= URL puts player directly into room
+  - [ ] 12.8: Tester — Verify game auto-starts when required player count reached
+  - [ ] 12.9: PO — Provide Tron with direct join links for each room size
 
 ## E2E Test Results
 - Protocol suite: 23/26 PASS, 0 FAIL, 3 SKIP ✅
