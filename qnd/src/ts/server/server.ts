@@ -420,6 +420,14 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       break;
     }
 
+    case 'PLAY_SPECIAL': {
+      const room = roomManager.findPlayerRoom(clientId);
+      if (room && msg.cardId) {
+        room.playSpecialCard(clientId, msg.cardId, msg.targetPlayerId);
+      }
+      break;
+    }
+
     case 'GAME_STATE': {
       const room = roomManager.findPlayerRoom(clientId);
       if (room) {

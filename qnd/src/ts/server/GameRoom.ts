@@ -5,6 +5,7 @@
 
 import { WebSocket } from 'ws';
 import crypto from 'node:crypto';
+import { SPECIAL_CARDS, resolveSpecialCards, type PlayedSpecialCard, type EffectResult } from './SpecialCards.js';
 
 // Card suits and values for French deck
 const SUITS = ['hearts', 'diamonds', 'clubs', 'spades'] as const;
@@ -26,6 +27,10 @@ export interface RoomPlayer {
   alive: boolean;
   currentGuess: 'up' | 'down' | 'equal' | null;
   specialCard: string | null;
+  specialCardTarget: string | null;
+  inventory: string[];
+  usedSpecials: string[];
+  frozen: boolean;
   roundsPlayed: number;
   disconnected: boolean;
 }
@@ -79,8 +84,9 @@ export class GameRoom {
     this.players.set(id, {
       id, ws, name, avatarUrl,
       score: 0, streak: 0, alive: true,
-      currentGuess: null, specialCard: null, roundsPlayed: 0,
-      disconnected: false
+      currentGuess: null, specialCard: null, specialCardTarget: null,
+      inventory: this.generateStarterInventory(), usedSpecials: [], frozen: false,
+      roundsPlayed: 0, disconnected: false
     });
 
     this.broadcast({ type: 'PLAYER_JOINED', player: this.playerInfo(id), playerCount: this.players.size });
@@ -194,9 +200,36 @@ export class GameRoom {
     }, 1000);
   }
 
+  playSpecialCard(playerId: string, cardId: string, targetPlayerId?: string): void {
+    const player = this.players.get(playerId);
+    if (!player || !player.alive || this.state !== 'countdown') return;
+    if (!player.inventory.includes(cardId)) return;
+    if (player.usedSpecials.includes(cardId)) return;
+
+    player.specialCard = cardId;
+    player.specialCardTarget = targetPlayerId || null;
+    player.inventory = player.inventory.filter(c => c !== cardId);
+    player.usedSpecials.push(cardId);
+
+    const card = SPECIAL_CARDS.find(c => c.id === cardId);
+    this.broadcast({ type: 'SPECIAL_CARD_PLAYED', playerId, cardName: card?.name, cardEmoji: card?.emoji });
+  }
+
+  private generateStarterInventory(): string[] {
+    // QnD: give each player 2 random Level 1 cards and 1 random Level 2 card
+    const l1 = SPECIAL_CARDS.filter(c => c.level === 1);
+    const l2 = SPECIAL_CARDS.filter(c => c.level === 2);
+    const pick = (arr: typeof SPECIAL_CARDS, n: number) => {
+      const shuffled = [...arr].sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, n).map(c => c.id);
+    };
+    return [...pick(l1, 2), ...pick(l2, 1)];
+  }
+
   playCard(playerId: string, guess: 'up' | 'down' | 'equal'): void {
     const player = this.players.get(playerId);
     if (!player || !player.alive || this.state !== 'countdown') return;
+    if (player.frozen) { player.frozen = false; return; }
     player.currentGuess = guess;
 
     this.broadcast({ type: 'CARD_PLAYED', playerId, hasPlayed: true });
@@ -228,14 +261,14 @@ export class GameRoom {
       this.gmHand.push(this.deck.pop()!);
     }
 
-    const results: { playerId: string; guess: string | null; correct: boolean; eliminated: boolean }[] = [];
+    // Phase 1: Compute base results
+    const baseResults = new Map<string, { correct: boolean; alive: boolean; score: number }>();
 
     this.players.forEach(player => {
       if (!player.alive) return;
 
       let correct = false;
       if (player.currentGuess === null) {
-        // Didn't play — eliminated
         correct = false;
       } else if (this.currentCard && nextCard) {
         switch (player.currentGuess) {
@@ -245,20 +278,49 @@ export class GameRoom {
         }
       }
 
-      if (correct) {
-        player.score += 10 + player.streak;
+      const roundScore = correct ? 10 + player.streak : 0;
+      baseResults.set(player.id, {
+        correct,
+        alive: correct,
+        score: roundScore
+      });
+    });
+
+    // Phase 2: Resolve special cards (priority: L3 > L2 > L1)
+    const playedSpecials: PlayedSpecialCard[] = [];
+    this.players.forEach(player => {
+      if (player.specialCard) {
+        playedSpecials.push({ cardId: player.specialCard, playerId: player.id, targetPlayerId: player.specialCardTarget || undefined });
+      }
+    });
+
+    const totalAlive = [...this.players.values()].filter(p => p.alive).length;
+    const specialEffects = resolveSpecialCards(playedSpecials, baseResults, this.gmHand, totalAlive);
+
+    // Phase 3: Apply results to players
+    const results: { playerId: string; name: string; guess: string | null; correct: boolean; eliminated: boolean; score: number; streak: number }[] = [];
+
+    this.players.forEach(player => {
+      if (!baseResults.has(player.id)) return;
+      const res = baseResults.get(player.id)!;
+
+      player.score += res.score;
+      if (res.correct && res.alive) {
         player.streak++;
       } else {
-        player.alive = false;
         player.streak = 0;
       }
+      player.alive = res.alive;
       player.roundsPlayed++;
 
       results.push({
         playerId: player.id,
+        name: player.name,
         guess: player.currentGuess,
-        correct,
-        eliminated: !player.alive
+        correct: res.correct,
+        eliminated: !player.alive,
+        score: player.score,
+        streak: player.streak
       });
     });
 
@@ -270,6 +332,7 @@ export class GameRoom {
       revealedCard: nextCard,
       previousCard: this.previousCard,
       results,
+      specialEffects,
       scores: this.allScores(),
       cardsLeft: this.deck.length + this.gmHand.length
     });

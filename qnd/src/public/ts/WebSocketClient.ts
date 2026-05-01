@@ -80,4 +80,8 @@ export class WebSocketClient {
   playCard(guess: 'up' | 'down' | 'equal'): void {
     this.send({ type: 'PLAY_CARD', guess });
   }
+
+  playSpecial(cardId: string, targetPlayerId?: string): void {
+    this.send({ type: 'PLAY_SPECIAL', cardId, targetPlayerId });
+  }
 }
