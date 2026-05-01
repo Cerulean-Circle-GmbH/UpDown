@@ -23,7 +23,8 @@ export class BotPlayer {
   constructor(personality?: BotPersonality) {
     this.personality = personality || this.randomPersonality();
     const names = BOT_NAMES[this.personality];
-    this.name = names[Math.floor(Math.random() * names.length)];
+    const raw = names[Math.floor(Math.random() * names.length)];
+    this.name = raw.startsWith('🤖') ? raw : `🤖 ${raw}`;
   }
 
   private randomPersonality(): BotPersonality {

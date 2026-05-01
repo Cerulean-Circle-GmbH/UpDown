@@ -1,5 +1,47 @@
 {
   "enabledPlugins": {
     "javascript-typescript@claude-code-workflows": true
+  },
+  "permissions": {
+    "allow": [
+      "Edit(*)",
+      "Write(*)",
+      "Read(*)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(tsx *)",
+      "Bash(esbuild *)",
+      "Bash(curl *)",
+      "Bash(ls *)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(cat *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(rm *)",
+      "Bash(chmod *)",
+      "Bash(ln *)",
+      "Bash(cd *)",
+      "Bash(echo *)",
+      "Bash(wc *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(sort *)",
+      "Bash(sed *)",
+      "Bash(git *)",
+      "Bash(plantuml *)",
+      "Bash(otmux *)",
+      "Bash(hostname *)",
+      "Bash(sleep *)",
+      "Bash(ps *)",
+      "Bash(source *)",
+      "Bash(bash *)",
+      "Bash(for *)",
+      "Bash(ONCE=*)",
+      "Bash(BASE=*)",
+      "Bash(DIR=*)"
+    ]
   }
 }

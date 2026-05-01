@@ -375,7 +375,7 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
   switch (msg.type) {
     case 'CREATE_ROOM': {
       const room = roomManager.createRoom(
-        msg.name || 'Game Room',
+        msg.roomName || msg.name || 'Game Room',
         clientId,
         msg.maxPlayers || 10,
         msg.roomKey || null

@@ -58,7 +58,7 @@ export class WebSocketClient {
   }
 
   createRoom(name: string, playerName: string, maxPlayers?: number, roomKey?: string): void {
-    this.send({ type: 'CREATE_ROOM', name, playerName, maxPlayers, roomKey });
+    this.send({ type: 'CREATE_ROOM', roomName: name, playerName, maxPlayers, roomKey });
   }
 
   joinRoom(roomId: string, playerName: string, roomKey?: string): void {
