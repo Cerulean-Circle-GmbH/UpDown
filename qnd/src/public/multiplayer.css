@@ -76,7 +76,12 @@ input::placeholder { color: rgba(255,255,255,0.5); }
 .lobby-create-actions { display: flex; gap: 6px; }
 .lobby-create-actions .btn { flex: 1; }
 
-.lobby-rooms { display: flex; flex-direction: column; gap: 6px; }
+.lobby-rooms {
+  display: flex; flex-direction: column; gap: 6px;
+  max-height: calc(100dvh - 340px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .no-rooms, .loading { text-align: center; opacity: 0.7; padding: 16px; font-size: 0.9rem; }
 
 .room-card {
