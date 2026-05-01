@@ -131,10 +131,16 @@ Files to read:
   - [ ] 10.7: Tester — Verify viewport meta tag correct in multiplayer.html
   - [ ] 10.8: PO — Tron tests on iPhone: lobby fits, game fits, cards playable
 
+- [ ] [Task 11: Multi-player URL support](./task-11-multiplayer-urls.md) **🔧 IN PROGRESS**
+  - [ ] 11.1: Expert — Add ?name= query param to LobbyUI.ts (overrides localStorage)
+  - [ ] 11.2: Expert — Rebuild + restart server
+  - [ ] 11.3: PO — Provide 5 test URLs to Tron
+  - [ ] 11.4: Tester — Verify 5 tabs with different ?name= params show different player names
+
 ## E2E Test Results
-- Protocol suite: 21/26 PASS, 2 FAIL (test bugs), 3 SKIP
-- Base href fix: deployed, page loads in browser ✅
-- Mobile CSS: ❌ NOT mobile-first — doesn't fit iPhone 15
+- Protocol suite: 23/26 PASS, 0 FAIL, 3 SKIP ✅
+- Base href fix: deployed, page loads ✅
+- Mobile CSS: mobile-first rewrite deployed ✅ (Tron testing on iPhone)
 
 ## SPRINT 3: ❌ REOPENED — Mobile CSS not fitting iPhone
 

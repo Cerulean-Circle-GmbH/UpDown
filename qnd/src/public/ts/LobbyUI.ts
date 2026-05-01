@@ -22,7 +22,8 @@ export class LobbyUI {
     this.container = container;
     this.onEnterRoom = onEnterRoom;
 
-    this.playerName = localStorage.getItem('updown-name') || `Player ${Math.floor(Math.random() * 1000)}`;
+    const params = new URLSearchParams(window.location.search);
+    this.playerName = params.get('name') || localStorage.getItem('updown-name') || `Player ${Math.floor(Math.random() * 1000)}`;
 
     this.client.on('ROOM_LIST', (msg) => { this.rooms = msg.rooms; this.renderRoomList(); });
     this.client.on('ROOM_JOINED', (msg) => { this.onEnterRoom(msg.room.id); });
