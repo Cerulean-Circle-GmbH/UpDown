@@ -158,6 +158,15 @@ Files to read:
   - [ ] 15.4: Tester — Open /mp fresh — rooms visible without clicking anything
   - [ ] 15.5: PO — Tron verifies rooms show on first load
 
+- [ ] [Task 16: Round Result Visual Feedback](./task-16-round-result-visuals.md) **📋 PLANNED — CRITICAL UX**
+  - [ ] 16.1: Expert — Server includes BOTH cards in ROUND_RESULT: currentCard (bet against) + nextCard (result)
+  - [ ] 16.2: Expert — MultiplayerUI shows round result overlay: both cards face-up with comparison arrow
+  - [ ] 16.3: Expert — Result text: "You bet UP — 7♠ → K♥ — CORRECT!" or "You bet DOWN — 3♦ → 2♣ — WRONG!"
+  - [ ] 16.4: Expert — Card suits displayed with emoji/symbols (♠♥♦♣)
+  - [ ] 16.5: Expert — Result stays visible 3-5 seconds before next round
+  - [ ] 16.6: Tester — Verify both cards shown, comparison correct, text matches result
+  - [ ] 16.7: PO — Tron verifies players understand why they won/lost each round
+
 ## E2E Test Results
 - Protocol suite: 23/26 PASS, 0 FAIL, 3 SKIP ✅
 - Base href fix: deployed, page loads ✅
