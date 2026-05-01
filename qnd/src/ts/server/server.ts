@@ -145,6 +145,8 @@ async function handleRequest(req: http.IncomingMessage, res: http.ServerResponse
       filepath = '/index-js.html'; // Serve the main HTML file
     } else if (filepath === '/ts' || filepath === '/ts/') {
       filepath = '/index-ts.html'; // Serve the main HTML file
+    } else if (filepath === '/mp' || filepath === '/mp/' || filepath === '/multiplayer' || filepath === '/multiplayer/') {
+      filepath = '/multiplayer.html';
     }
     
     const fullPath = path.join(PUBLIC_DIR, filepath);
