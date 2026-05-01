@@ -83,22 +83,33 @@ Files to read:
   - [x] 5.6: Expert — 3-phase resolve: base → special effects → apply. Priority L3>L2>L1. No stacking ✅
   - [ ] 5.7: Tester — Special card effects verification ⏳ IN PROGRESS
 
-## Phase 4: Polish ✅ DONE
+## Phase 4: Polish 🔧 REOPENED — tester regression FAILED
 
-- [x] [Task 6: Scoring and Economy](./task-6-scoring-economy.md) **✅ DONE**
-  - [x] 6.1: Expert — Points per round + streak bonus ✅
-  - [x] 6.2: Expert — Diamond rewards ✅
-  - [x] 6.3: Expert — Leaderboard in game over screen ✅
+- [ ] [Task 6: Scoring and Economy](./task-6-scoring-economy.md) **❌ TESTER FAIL**
+  - [ ] 6.1: Expert — Scores/streaks NOT in ROUND_RESULT broadcast — RELEASE BLOCKER
+  - [ ] 6.2: Expert — Diamond rewards (untested)
+  - [ ] 6.3: Expert — Leaderboard (untested — depends on scores)
 
-- [x] [Task 7: PWA and Mobile](./task-7-pwa-mobile.md) **✅ DONE**
+- [ ] [Task 7: PWA and Mobile](./task-7-pwa-mobile.md) **⏳ NEEDS HUMAN**
   - [x] 7.1: Expert — PWA manifest for multiplayer ✅
   - [x] 7.2: Expert — Mobile CSS + touch support ✅
-  - [ ] 7.3: Tester — Final verification ⏳
+  - [ ] 7.3: Tester — Mobile layout needs human browser test
 
-## Bugs Fixed
-- BUG-1: Disconnected player elimination before round resolve ✅
-- BUG-SCORE: Scores included in ROUND_RESULT broadcast ✅
-- BUG-INVENTORY: Per-player inventory sync (card IDs sent in ROUND_START) ✅
+## Bugs
+- BUG-1: Disconnected player elimination ✅ FIXED
+- BUG-SCORE: Scores in ROUND_RESULT ❌ NOT FIXED — tester verified missing
+- BUG-INVENTORY: Per-player inventory sync ✅ FIXED (expert claims, untested by tester)
+- BUG-SPECIAL: Special cards untestable — players eliminated before specials fire. Expert adding Protective Shell to starter inventory.
+
+## Tester Regression Results (final pass)
+- T1 Room create: PASS
+- T2 Room join: PASS
+- T3 Player list sync: PASS
+- T4 Game start: PASS
+- T5 Card play + timer: PASS
+- T6 Scores in results: **FAIL** — score/streak fields missing from broadcast
+- T7 Special cards: **UNTESTABLE** — eliminated too fast
+- T8 Mobile layout: **NEEDS HUMAN**
 
 ## Critical Path
 ```

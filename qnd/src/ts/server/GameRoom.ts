@@ -221,14 +221,15 @@ export class GameRoom {
   }
 
   private generateStarterInventory(): string[] {
-    // QnD: give each player 2 random Level 1 cards and 1 random Level 2 card
-    const l1 = SPECIAL_CARDS.filter(c => c.level === 1);
+    // Always include Protective Shell so specials are testable from round 1
+    const guaranteed = ['protective_shell'];
+    const l1 = SPECIAL_CARDS.filter(c => c.level === 1 && c.id !== 'protective_shell');
     const l2 = SPECIAL_CARDS.filter(c => c.level === 2);
     const pick = (arr: typeof SPECIAL_CARDS, n: number) => {
       const shuffled = [...arr].sort(() => Math.random() - 0.5);
       return shuffled.slice(0, n).map(c => c.id);
     };
-    return [...pick(l1, 2), ...pick(l2, 1)];
+    return [...guaranteed, ...pick(l1, 1), ...pick(l2, 1)];
   }
 
   playCard(playerId: string, guess: 'up' | 'down' | 'equal'): void {
@@ -303,13 +304,14 @@ export class GameRoom {
     const specialEffects = resolveSpecialCards(playedSpecials, baseResults, this.gmHand, totalAlive);
 
     // Phase 3: Apply results to players
-    const results: { playerId: string; name: string; guess: string | null; correct: boolean; eliminated: boolean; score: number; streak: number }[] = [];
+    const results: any[] = [];
 
     this.players.forEach(player => {
       if (!baseResults.has(player.id)) return;
       const res = baseResults.get(player.id)!;
 
-      player.score += res.score;
+      const roundScore = res.score;
+      player.score += roundScore;
       if (res.correct && res.alive) {
         player.streak++;
       } else {
@@ -325,7 +327,8 @@ export class GameRoom {
         correct: res.correct,
         eliminated: !player.alive,
         score: player.score,
-        streak: player.streak
+        streak: player.streak,
+        roundScore
       });
     });
 
