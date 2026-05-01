@@ -167,6 +167,12 @@ Files to read:
   - [ ] 16.6: Tester — Verify both cards shown, comparison correct, text matches result
   - [ ] 16.7: PO — Tron verifies players understand why they won/lost each round
 
+- [ ] [Task 17: Scrollable Room List on Mobile](./task-17-scrollable-room-list.md) **📋 PLANNED**
+  - [ ] 17.1: Expert — Room list container: overflow-y: auto, max-height calc(100vh - header/footer), -webkit-overflow-scrolling: touch
+  - [ ] 17.2: Expert — Test with 10+ rooms visible on 320px screen
+  - [ ] 17.3: Tester — Verify room list scrolls on mobile viewport
+  - [ ] 17.4: PO — Tron verifies scrolling works on iPhone
+
 ## E2E Test Results
 - Protocol suite: 23/26 PASS, 0 FAIL, 3 SKIP ✅
 - Base href fix: deployed, page loads ✅
