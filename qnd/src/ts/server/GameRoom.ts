@@ -479,12 +479,13 @@ export class GameRoom {
     return deck;
   }
 
-  info(): GameRoomInfo & { minPlayers: number; autoStart: boolean } {
+  info(): GameRoomInfo & { minPlayers: number; autoStart: boolean; shareUrl: string } {
     return {
       id: this.id, name: this.name, hostId: this.hostId,
       playerCount: this.players.size, maxPlayers: this.maxPlayers,
       isPrivate: this.isPrivate, state: this.state, round: this.round,
-      minPlayers: this.minPlayers, autoStart: this.autoStart
+      minPlayers: this.minPlayers, autoStart: this.autoStart,
+      shareUrl: `/mp?join=${this.id}`
     };
   }
 

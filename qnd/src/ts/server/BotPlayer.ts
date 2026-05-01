@@ -102,7 +102,7 @@ export class BotPlayer {
     // Simple rules: play protective_shell if we have it and personality isn't gambler
     if (!alive) return null;
 
-    if (this.personality === 'cautious' && inventory.includes('protective_shell')) {
+    if (this.personality === 'cautious' && inventory.includes('protective_shell') && Math.random() < 0.3) {
       return 'protective_shell';
     }
     if (this.personality === 'gambler' && inventory.includes('double_points')) {
