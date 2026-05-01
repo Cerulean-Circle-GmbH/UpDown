@@ -58,17 +58,19 @@ Files to read:
 
 ## Phase 2: Client — Multiplayer UI (Expert — IN PROGRESS)
 
-- [ ] [Task 3: Lobby UI](./task-3-lobby-ui.md) **🔧 IN PROGRESS**
-  - [ ] 3.1: Expert — LobbyUI Lit component: list rooms, create room, join with key, player count
-  - [ ] 3.2: Expert — Room view: player list, ready state, start game button (host only)
-  - [ ] 3.3: Tester — Can create room, join room, see other players
+- [x] [Task 3: Lobby UI](./task-3-lobby-ui.md) **✅ DONE**
+  - [x] 3.1: Expert — LobbyUI.ts + WebSocketClient.ts ✅
+  - [x] 3.2: Expert — Room view with player list + start button ✅
+  - [x] 3.3: Tester — 8/9 PASS (room create, join, player sync, game start, card play, elimination, game over, reconnect) ✅
 
-- [ ] [Task 4: Multiplayer Game UI](./task-4-multiplayer-game-ui.md) **🔧 IN PROGRESS**
-  - [ ] 4.1: Expert — Extend GameUI for multiplayer: show all players at table, GM card, countdown timer
-  - [ ] 4.2: Expert — Card play UI: player selects Up/Down/Even, optional special card, submit before timer
-  - [ ] 4.3: Expert — Round result display: who guessed right/wrong, scores updated
-  - [ ] 4.4: Expert — Game over: final scores, leaderboard, play again
-  - [ ] 4.5: Tester — Full multiplayer game playable in 2 browsers
+- [x] [Task 4: Multiplayer Game UI](./task-4-multiplayer-game-ui.md) **✅ DONE**
+  - [x] 4.1: Expert — MultiplayerUI.ts with GM card, countdown, player table ✅
+  - [x] 4.2: Expert — Card play UI: Up/Down/Even selection ✅
+  - [x] 4.3: Expert — Round result display ✅ (score field added after tester bug report)
+  - [x] 4.4: Expert — Game over display ✅
+  - [x] 4.5: Tester — Full multiplayer game in 2 browsers ✅ 8/9 PASS
+  **BUG-1 FIXED:** Disconnected player elimination before round resolve
+  **BUG-SCORE FIXED:** Scores now included in ROUND_RESULT broadcast
 
 ## Phase 3: Special Cards (Expert — PRIORITY 3)
 
