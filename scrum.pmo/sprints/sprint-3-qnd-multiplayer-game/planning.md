@@ -74,21 +74,21 @@ Files to read:
 
 ## Phase 3: Special Cards (Expert — PRIORITY 3)
 
-- [ ] [Task 5: Special Effect Cards](./task-5-special-cards.md)
-  - [ ] 5.1: Expert — Card data model: Level 1/2/3 cards from specs/cards.md
-  - [ ] 5.2: Expert — Level 1 cards: Mass Intelligence, Protective Shell, Spy, Copy Cat
-  - [ ] 5.3: Expert — Level 2 cards: Sacrifice, Double Points, Shield, Reveal Hand
-  - [ ] 5.4: Expert — Level 3 cards: One for the Team, Freeze, Swap Hands
-  - [ ] 5.5: Expert — Special card UI: card slots in hand, play alongside main card
-  - [ ] 5.6: Expert — Server-side card resolution: priority by level, effect application
-  - [ ] 5.7: Tester — Each special card effect works correctly in multiplayer
+- [x] [Task 5: Special Effect Cards](./task-5-special-cards.md) **✅ DONE**
+  - [x] 5.1: Expert — SpecialCards.ts (241 lines): 11 cards across L1/L2/L3 ✅
+  - [x] 5.2: Expert — L1: Protective Shell, Mass Intelligence, Double Points, Peek ✅
+  - [x] 5.3: Expert — L2: Sacrifice, Swap, Reveal Hand, Freeze ✅
+  - [x] 5.4: Expert — L3: One for the Team, Second Chance, Point Steal ✅
+  - [x] 5.5: Expert — PLAY_SPECIAL protocol + playSpecial() client ✅
+  - [x] 5.6: Expert — 3-phase resolve: base → special effects → apply. Priority L3>L2>L1. No stacking ✅
+  - [ ] 5.7: Tester — Special card effects verification ⏳ IN PROGRESS
 
-## Phase 4: Polish (Expert+Tester — PRIORITY 4, if time)
+## Phase 4: Polish (Expert — IN PROGRESS)
 
-- [ ] [Task 6: Scoring and Economy](./task-6-scoring-economy.md)
-  - [ ] 6.1: Expert — Points per round survived, bonus for completing deck
-  - [ ] 6.2: Expert — Diamond rewards per game
-  - [ ] 6.3: Expert — Leaderboard display (session-based, no persistence needed for QnD)
+- [ ] [Task 6: Scoring and Economy](./task-6-scoring-economy.md) **🔧 IN PROGRESS**
+  - [ ] 6.1: Expert — Points per round + streak bonus
+  - [ ] 6.2: Expert — Diamond rewards
+  - [ ] 6.3: Expert — Leaderboard in game over screen
 
 - [ ] [Task 7: PWA and Mobile](./task-7-pwa-mobile.md)
   - [ ] 7.1: Expert — Verify PWA install works with multiplayer
