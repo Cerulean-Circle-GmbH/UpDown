@@ -95,20 +95,37 @@ Files to read:
   - [x] 7.2: Mobile CSS ✅
   - [ ] 7.3: Mobile layout — needs human browser test
 
-## Bugs — ALL FIXED + TESTER VERIFIED
+## Bugs
 - BUG-1: Disconnected player elimination ✅ VERIFIED
-- BUG-SCORE: Scores in ROUND_RESULT ✅ VERIFIED (fixed after first FAIL)
+- BUG-SCORE: Scores in ROUND_RESULT ✅ VERIFIED
 - BUG-INVENTORY: Per-player inventory sync ✅ VERIFIED
-- BUG-SPECIAL: Protective Shell in starter inventory ✅ VERIFIED (shield saves wrong guess)
+- BUG-SPECIAL: Protective Shell in starter inventory ✅ VERIFIED
+- BUG-BASEHREF: /mp/ URL prefix breaks relative paths ❌ Expert fixing — add `<base href="/">`
+- BUG-BLANK: Page blank because esbuild not building multiplayer.ts ✅ FIXED
 
-## Tester Regression (re-verification after fixes)
-- T1 Room create: PASS
-- T2 Room join: PASS
-- T3 Player list sync: PASS
-- T4 Game start: PASS
-- T5 Card play + timer: PASS
-- T6 Scores in results: **PASS** (fixed)
-- T7 Special cards (Protective Shell): **PASS** (fixed)
+## Phase 5: Browser Fix + Real Verification (RELEASE BLOCKER)
+
+- [ ] [Task 8: Fix multiplayer page rendering](./task-8-fix-multiplayer-rendering.md) **🔧 IN PROGRESS**
+  - [x] 8.1: Expert — esbuild for multiplayer.ts → dist/multiplayer.js ✅
+  - [x] 8.2: Expert — multiplayer.html loads dist/multiplayer.js ✅
+  - [x] 8.3: Expert — npm start builds both bundles ✅
+  - [ ] 8.4: Expert — Add `<base href="/">` to fix /mp/ relative path prefix ⏳
+  - [ ] 8.5: Tester — Verify HTML has base href, JS bundle loads (not 404)
+  - [ ] 8.6: Tester — Restart server, check server log — no /mp/dist/ prefixed requests
+
+- [ ] [Task 9: DoD Browser Verification](./task-9-dod-browser-verification.md) **PLANNED**
+  - [ ] 9.1: Tester — Write Node.js automated game test (WS: create room, join, play full game) → qnd/test/
+  - [ ] 9.2: Tester — curl /mp returns HTML with base href + dist/multiplayer.js
+  - [ ] 9.3: Tester — curl /dist/multiplayer.js returns JS (not 404)
+  - [ ] 9.4: Tester — Automated game test PASS (room→join→play→score→gameover)
+  - [ ] 9.5: PO — Tron browser test: page renders lobby, game playable
+  - [ ] 9.6: PO — DoD checklist verified against tester + Tron evidence
+
+## Previous Tester Results (WS protocol only — NOT browser verified)
+- T1-T5: PASS (protocol level)
+- T6-T7: PASS (after fixes, protocol level)
+- T8: needs human
+- NOTE: These tests did NOT verify browser rendering — page was blank the whole time
 - T8 Mobile layout: needs human
 
 ## SPRINT 3: ❌ REOPENED — Tron browser test: BLANK PAGE
