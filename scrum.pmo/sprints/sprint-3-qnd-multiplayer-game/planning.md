@@ -137,15 +137,27 @@ Files to read:
   - [x] 11.3: PO — 5 test URLs provided ✅
   - [x] 11.4: Tester — /mp?name=Tron returns 200 HTML with base href ✅
 
-- [ ] [Task 12: Pre-created Rooms with Join Links](./task-12-precreated-rooms.md) **📋 PLANNED**
-  - [ ] 12.1: Expert — Server auto-creates rooms on startup: "2 Players", "3 Players", "4 Players", "5 Players", "Party (10 Players)"
-  - [ ] 12.2: Expert — Each room has a direct join URL: /mp?join=room-id&name=PlayerName
-  - [ ] 12.3: Expert — Rooms wait for required player count before auto-starting game
-  - [ ] 12.4: Expert — Lobby shows pre-created rooms with player count (e.g. "2/3 players — waiting")
-  - [ ] 12.5: Expert — Rooms auto-recreate after game ends (always available)
-  - [ ] 12.6: Tester — Verify pre-created rooms appear in lobby on page load
-  - [ ] 12.7: Tester — Verify ?join= URL puts player directly into room
-  - [ ] 12.8: Tester — Verify game auto-starts when required player count reached
+- [x] [Task 12: Pre-created Rooms with Join Links](./task-12-precreated-rooms.md) **✅ TESTER VERIFIED (4/4 PASS)**
+  - [x] 12.1-12.5: Expert — 5 pre-created rooms, auto-start, auto-recreate, join URLs ✅
+  - [x] 12.6-12.8: Tester — Rooms appear on startup, join URL works, deep-link serves HTML ✅
+
+- [ ] [Task 13: Persistent Pre-created Rooms + Share Button](./task-13-share-and-persist-rooms.md) **📋 PLANNED**
+  - [ ] 13.1: Expert — Pre-created rooms ALWAYS visible in lobby (never disappear, even during/after games)
+  - [ ] 13.2: Expert — Share button per room: copies join URL to clipboard (e.g. https://host:3443/mp?join=2p&name=)
+  - [ ] 13.3: Expert — Share button shows "Copied!" feedback, uses navigator.clipboard.writeText()
+  - [ ] 13.4: Expert — Share URL includes room ID but lets user set own name on join page
+  - [ ] 13.5: Tester — Verify share button copies correct URL to clipboard
+  - [ ] 13.6: Tester — Verify pre-created rooms visible at ALL times (before/during/after games)
+
+- [ ] [Task 14: AI Agent Player](./task-14-ai-agent-player.md) **📋 PLANNED**
+  - [ ] 14.1: Architect — Spec AI player behavior: which LLM API, how it decides Up/Down/Even, special card strategy
+  - [ ] 14.2: Expert — "Add AI Player" button in room view (only for host)
+  - [ ] 14.3: Expert — Server-side AI player: connects as bot, makes decisions each round
+  - [ ] 14.4: Expert — AI uses free LLM API (e.g. Groq/Ollama/local) or simple heuristic fallback
+  - [ ] 14.5: Expert — AI player has name like "🤖 Bot-Alice" and shows as bot in player list
+  - [ ] 14.6: Expert — AI plays special cards strategically (Protective Shell when risky, Peek when available)
+  - [ ] 14.7: Tester — Verify AI player joins, plays cards, gets eliminated/scores correctly
+  - [ ] 14.8: Tester — Verify game works with mix of human + AI players
   - [ ] 12.9: PO — Provide Tron with direct join links for each room size
 
 ## E2E Test Results
