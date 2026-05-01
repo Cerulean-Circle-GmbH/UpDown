@@ -384,7 +384,14 @@ export class MultiplayerUI {
     `;
 
     document.getElementById('play-again-btn')?.addEventListener('click', () => {
-      if (this.isHost) this.client.startGame();
+      // Leave current room, go back to lobby, rejoin same room ID (auto-recreated)
+      const rejoinId = this.roomId;
+      this.client.leaveRoom();
+      this.onLeaveRoom();
+      // After lobby renders, auto-rejoin the recreated room
+      setTimeout(() => {
+        this.client.joinRoom(rejoinId, localStorage.getItem('updown-name') || 'Player');
+      }, 500);
     });
 
     document.getElementById('back-lobby-btn')?.addEventListener('click', () => {

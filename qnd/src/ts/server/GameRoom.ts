@@ -61,6 +61,7 @@ export class GameRoom {
 
   players: Map<string, RoomPlayer> = new Map();
   private bots: Map<string, BotPlayer> = new Map();
+  spectators: Map<string, { id: string; ws: WebSocket; name: string }> = new Map();
 
   // GM state
   private deck: Card[] = [];
@@ -456,11 +457,11 @@ export class GameRoom {
 
     this.broadcast({ type: 'GAME_OVER', leaderboard });
 
-    // Auto-recreate: reset room after delay so players can play again
+    // Auto-recreate: reset room quickly so Play Again works
     if (this.autoRecreate) {
       setTimeout(() => {
         if (this.recreateCallback) this.recreateCallback();
-      }, 8000);
+      }, 2000);
     }
   }
 
