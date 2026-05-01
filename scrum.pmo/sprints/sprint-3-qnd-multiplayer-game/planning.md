@@ -34,40 +34,36 @@ Files to read:
 - Existing components: GameLogicEngine, CardDeckManager, UpDown.Core/Cards/Server/UI
 
 ### Task 0.2: Architect — Gap analysis: spec vs QnD prototype
-**Status:** PLANNED (after 0.1)
-**Deliverable:** Markdown gap analysis listing:
-- What QnD prototype already implements
-- What's missing from the spec
-- What can be reused from existing game components
-- Recommended implementation order (critical path)
+**Status:** ✅ DONE
+**Deliverable:** task-0.2-gap-analysis.md
 
 ### Task 0.3: PO + Architect — Sprint task planning
-**Status:** PLANNED (after 0.2)
-**Deliverable:** This file updated with Tasks 1-N, subtasks, acceptance criteria
+**Status:** ✅ DONE
+**Deliverable:** This file — 7 tasks across 4 phases
 
-## Phase 1: Server — Multiplayer Infrastructure (Expert — PRIORITY 1)
+## Phase 1: Server — Multiplayer Infrastructure ✅ DONE
 
-- [ ] [Task 1: WebSocket Game Rooms](./task-1-websocket-game-rooms.md)
-  - [ ] 1.1: Expert — GameRoom class in server: room creation, join/leave, player list, room state
-  - [ ] 1.2: Expert — WebSocket protocol: JSON messages for lobby/game events (JOIN_ROOM, LEAVE_ROOM, PLAY_CARD, ROUND_RESULT, GAME_STATE)
-  - [ ] 1.3: Expert — Room manager: create room, list rooms, private rooms with key
-  - [ ] 1.4: Tester — 2 browsers can join same room and see each other
+- [x] [Task 1: WebSocket Game Rooms](./task-1-websocket-game-rooms.md) **✅ DONE**
+  - [x] 1.1: Expert — GameRoom class (380 lines): room create/join/leave, player list, room state ✅
+  - [x] 1.2: Expert — WS protocol: CREATE/JOIN/LEAVE/LIST/START/PLAY_CARD/ROUND_START/ROUND_RESULT/COUNTDOWN/GAME_OVER ✅
+  - [x] 1.3: Expert — Room manager: create/list/join rooms, private rooms with key, cleanup ✅
+  - [ ] 1.4: Tester — 2 browsers can join same room ⏳
 
-- [ ] [Task 2: Multiplayer Game Loop on Server](./task-2-multiplayer-game-loop.md)
-  - [ ] 2.1: Expert — Game Master (GM) logic: 52-card French deck, 7-card hand, random card play
-  - [ ] 2.2: Expert — Round loop: GM deals → players place cards (Up/Down/Even) → 10s countdown → reveal → score
-  - [ ] 2.3: Expert — Player state: score, alive/eliminated, cards in hand, special cards
-  - [ ] 2.4: Expert — Exchange phase: players can join/leave between rounds
-  - [ ] 2.5: Tester — Full game loop works with 2+ players
+- [x] [Task 2: Multiplayer Game Loop on Server](./task-2-multiplayer-game-loop.md) **✅ DONE (merged into Task 1)**
+  - [x] 2.1: GM logic: 52-card French deck, 7-card hand, random card play ✅
+  - [x] 2.2: Round loop: deal → place Up/Down/Even → 10s countdown → reveal → score ✅
+  - [x] 2.3: Player state: score, alive/eliminated ✅
+  - [x] 2.4: Exchange phase: join/leave between rounds ✅
+  - [ ] 2.5: Tester — Full game loop with 2+ players ⏳
 
-## Phase 2: Client — Multiplayer UI (Expert — PRIORITY 2)
+## Phase 2: Client — Multiplayer UI (Expert — IN PROGRESS)
 
-- [ ] [Task 3: Lobby UI](./task-3-lobby-ui.md)
+- [ ] [Task 3: Lobby UI](./task-3-lobby-ui.md) **🔧 IN PROGRESS**
   - [ ] 3.1: Expert — LobbyUI Lit component: list rooms, create room, join with key, player count
   - [ ] 3.2: Expert — Room view: player list, ready state, start game button (host only)
   - [ ] 3.3: Tester — Can create room, join room, see other players
 
-- [ ] [Task 4: Multiplayer Game UI](./task-4-multiplayer-game-ui.md)
+- [ ] [Task 4: Multiplayer Game UI](./task-4-multiplayer-game-ui.md) **🔧 IN PROGRESS**
   - [ ] 4.1: Expert — Extend GameUI for multiplayer: show all players at table, GM card, countdown timer
   - [ ] 4.2: Expert — Card play UI: player selects Up/Down/Even, optional special card, submit before timer
   - [ ] 4.3: Expert — Round result display: who guessed right/wrong, scores updated
