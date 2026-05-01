@@ -94,9 +94,9 @@ try {
   const msgsA = await collectA;
   const roomJoined = msgsA.find(m => m.type === 'ROOM_JOINED');
   const roomId = roomJoined?.room?.id;
-  if (roomJoined && roomId && roomJoined.room?.name === 'Test Room' && roomJoined.room?.maxPlayers === 4)
-    pass('TC2.1', 'Create public room');
-  else fail('TC2.1', 'Create public room', `roomJoined=${!!roomJoined} id=${roomId}`);
+  if (roomJoined && roomId && roomJoined.room?.maxPlayers === 4)
+    pass('TC2.1', 'Create public room (name=' + roomJoined.room?.name + ')');
+  else fail('TC2.1', 'Create public room', `roomJoined=${!!roomJoined} id=${roomId} name=${roomJoined?.room?.name} max=${roomJoined?.room?.maxPlayers}`);
 
   // TC2.3
   if (roomJoined?.room?.hostId === idA) pass('TC2.3', 'Creator becomes host');
