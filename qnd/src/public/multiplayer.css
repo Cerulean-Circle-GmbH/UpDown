@@ -90,6 +90,7 @@ input::placeholder { color: rgba(255,255,255,0.5); }
 .room-players { font-size: 0.75rem; opacity: 0.7; }
 .room-status { display: flex; align-items: center; gap: 6px; }
 .room-state { font-size: 0.7rem; opacity: 0.7; }
+.btn-share { padding: 6px 8px; font-size: 0.9rem; min-height: 36px; background: rgba(255,255,255,0.15); }
 
 .lobby-join-private { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .lobby-join-private input { flex: 1; min-width: 80px; }

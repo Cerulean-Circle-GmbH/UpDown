@@ -156,6 +156,7 @@ export class LobbyUI {
           </div>
           <div class="room-status">
             <span class="room-state">${stateText}</span>
+            <button class="btn btn-share" data-room="${room.id}" title="Copy join link">🔗</button>
             <button class="btn btn-join" data-room="${room.id}">${room.state === 'waiting' ? 'Join' : 'Spectate'}</button>
           </div>
         </div>`;
@@ -165,6 +166,21 @@ export class LobbyUI {
       btn.addEventListener('click', () => {
         const roomId = (btn as HTMLElement).dataset.room!;
         this.client.joinRoom(roomId, this.playerName);
+      });
+    });
+
+    list.querySelectorAll('.btn-share').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const roomId = (btn as HTMLElement).dataset.room!;
+        const url = `${location.origin}/mp?join=${roomId}`;
+        try {
+          await navigator.clipboard.writeText(url);
+          const orig = btn.textContent;
+          btn.textContent = '✅';
+          setTimeout(() => { btn.textContent = orig; }, 1500);
+        } catch {
+          prompt('Copy this link:', url);
+        }
       });
     });
   }
