@@ -70,11 +70,14 @@ export class GameRoom {
   previousCard: Card | null = null;
   countdownTimer: NodeJS.Timeout | null = null;
   private countdownSeconds: number = 0;
+  private lobbyTimer: NodeJS.Timeout | null = null;
+  private lobbyCountdown: number = 0;
 
   minPlayers: number;
   autoStart: boolean;
   autoRecreate: boolean;
   private recreateCallback: (() => void) | null = null;
+  private cleanupCallback: (() => void) | null = null;
 
   constructor(name: string, hostId: string, maxPlayers: number = 10, roomKey: string | null = null, opts?: { minPlayers?: number; autoStart?: boolean; autoRecreate?: boolean; id?: string }) {
     this.id = opts?.id || crypto.randomUUID().slice(0, 8);
@@ -92,6 +95,10 @@ export class GameRoom {
     this.recreateCallback = cb;
   }
 
+  setCleanupCallback(cb: () => void): void {
+    this.cleanupCallback = cb;
+  }
+
   addPlayer(id: string, ws: WebSocket, name: string, avatarUrl: string): boolean {
     if (this.players.size >= this.maxPlayers) return false;
     if (this.state !== 'waiting' && this.state !== 'exchange') return false;
@@ -107,14 +114,20 @@ export class GameRoom {
     this.broadcast({ type: 'PLAYER_JOINED', player: this.playerInfo(id), playerCount: this.players.size, minPlayers: this.minPlayers });
     this.sendTo(id, { type: 'ROOM_JOINED', room: this.info(), players: this.allPlayerInfo(), minPlayers: this.minPlayers });
 
-    // Auto-start when minimum reached
-    if (this.autoStart && this.state === 'waiting' && this.players.size >= this.minPlayers) {
-      this.broadcast({ type: 'AUTO_START', countdown: 5 });
-      setTimeout(() => {
-        if (this.state === 'waiting' && this.players.size >= this.minPlayers) {
-          this.startGame();
+    // Auto-start rooms: first human triggers 30s lobby countdown
+    if (this.autoStart && this.state === 'waiting') {
+      if (!this.lobbyTimer && this.humanCount() === 1) {
+        this.startLobbyCountdown();
+      } else if (this.lobbyTimer) {
+        // Send current countdown to new joiner
+        this.sendTo(id, { type: 'LOBBY_COUNTDOWN', seconds: this.lobbyCountdown });
+        // All slots filled with humans → start immediately
+        if (this.players.size >= this.maxPlayers) {
+          clearInterval(this.lobbyTimer);
+          this.lobbyTimer = null;
+          this.fillBotsAndStart();
         }
-      }, 5000);
+      }
     }
 
     return true;
@@ -182,6 +195,39 @@ export class GameRoom {
     });
   }
 
+  private humanCount(): number {
+    return [...this.players.values()].filter(p => !this.bots.has(p.id)).length;
+  }
+
+  private startLobbyCountdown(): void {
+    this.lobbyCountdown = 30;
+    this.broadcastAll({ type: 'LOBBY_COUNTDOWN', seconds: this.lobbyCountdown, message: 'Game starts in 30s — invite friends!' });
+
+    this.lobbyTimer = setInterval(() => {
+      this.lobbyCountdown--;
+
+      if (this.lobbyCountdown <= 0) {
+        clearInterval(this.lobbyTimer!);
+        this.lobbyTimer = null;
+        this.fillBotsAndStart();
+        return;
+      }
+
+      this.broadcastAll({ type: 'LOBBY_COUNTDOWN', seconds: this.lobbyCountdown });
+    }, 1000);
+  }
+
+  private fillBotsAndStart(): void {
+    if (this.state !== 'waiting') return;
+
+    // Fill remaining slots with bots
+    while (this.players.size < this.minPlayers) {
+      this.addBot();
+    }
+
+    this.startGame();
+  }
+
   private scheduleBotDecisions(): void {
     if (!this.currentCard) return;
 
@@ -219,7 +265,15 @@ export class GameRoom {
     }
 
     this.players.delete(id);
+    this.bots.delete(id);
     this.broadcast({ type: 'PLAYER_LEFT', playerId: id, playerCount: this.players.size });
+
+    // Cancel lobby countdown if no humans left
+    if (this.lobbyTimer && this.humanCount() === 0) {
+      clearInterval(this.lobbyTimer);
+      this.lobbyTimer = null;
+      this.broadcastAll({ type: 'LOBBY_COUNTDOWN_CANCELLED' });
+    }
 
     if (id === this.hostId && this.players.size > 0) {
       const active = [...this.players.values()].find(p => !p.disconnected);
@@ -507,6 +561,11 @@ export class GameRoom {
       setTimeout(() => {
         if (this.recreateCallback) this.recreateCallback();
       }, 2000);
+    } else {
+      // User-created rooms: auto-remove after 60s
+      setTimeout(() => {
+        if (this.cleanupCallback) this.cleanupCallback();
+      }, 60000);
     }
   }
 
@@ -582,6 +641,7 @@ export class RoomManager {
 
   createRoom(name: string, hostId: string, maxPlayers?: number, roomKey?: string | null): GameRoom {
     const room = new GameRoom(name, hostId, maxPlayers, roomKey ?? null);
+    room.setCleanupCallback(() => { this.removeRoom(room.id); });
     this.rooms.set(room.id, room);
     return room;
   }

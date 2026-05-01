@@ -87,6 +87,26 @@ export class MultiplayerUI {
       this.renderGameOver(msg.leaderboard);
     });
 
+    this.client.on('LOBBY_COUNTDOWN', (msg) => {
+      const el = document.getElementById('mp-controls');
+      if (el && this.round === 0) {
+        el.innerHTML = `
+          <div class="mp-lobby-countdown">
+            <p>⏱️ Game starts in <strong>${msg.seconds}s</strong></p>
+            <p class="waiting-text">${msg.message || 'Waiting for players — bots fill empty slots'}</p>
+          </div>
+          ${this.isHost ? '<button id="add-bot-btn" class="btn btn-secondary" style="margin-top:6px;width:100%">🤖 Add Bot</button>' : ''}
+        `;
+        if (this.isHost) {
+          document.getElementById('add-bot-btn')?.addEventListener('click', () => { this.client.addBot(); });
+        }
+      }
+    });
+
+    this.client.on('LOBBY_COUNTDOWN_CANCELLED', () => {
+      this.renderControls();
+    });
+
     this.client.on('SPECTATE_JOINED', (msg) => {
       this.isSpectator = true;
       this.roomId = msg.room.id;
