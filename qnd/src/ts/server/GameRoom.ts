@@ -68,13 +68,25 @@ export class GameRoom {
   countdownTimer: NodeJS.Timeout | null = null;
   private countdownSeconds: number = 0;
 
-  constructor(name: string, hostId: string, maxPlayers: number = 10, roomKey: string | null = null) {
-    this.id = crypto.randomUUID().slice(0, 8);
+  minPlayers: number;
+  autoStart: boolean;
+  autoRecreate: boolean;
+  private recreateCallback: (() => void) | null = null;
+
+  constructor(name: string, hostId: string, maxPlayers: number = 10, roomKey: string | null = null, opts?: { minPlayers?: number; autoStart?: boolean; autoRecreate?: boolean; id?: string }) {
+    this.id = opts?.id || crypto.randomUUID().slice(0, 8);
     this.name = name;
     this.hostId = hostId;
     this.maxPlayers = maxPlayers;
+    this.minPlayers = opts?.minPlayers || 1;
+    this.autoStart = opts?.autoStart || false;
+    this.autoRecreate = opts?.autoRecreate || false;
     this.isPrivate = roomKey !== null;
     this.roomKey = roomKey;
+  }
+
+  setRecreateCallback(cb: () => void): void {
+    this.recreateCallback = cb;
   }
 
   addPlayer(id: string, ws: WebSocket, name: string, avatarUrl: string): boolean {
@@ -89,8 +101,19 @@ export class GameRoom {
       roundsPlayed: 0, disconnected: false
     });
 
-    this.broadcast({ type: 'PLAYER_JOINED', player: this.playerInfo(id), playerCount: this.players.size });
-    this.sendTo(id, { type: 'ROOM_JOINED', room: this.info(), players: this.allPlayerInfo() });
+    this.broadcast({ type: 'PLAYER_JOINED', player: this.playerInfo(id), playerCount: this.players.size, minPlayers: this.minPlayers });
+    this.sendTo(id, { type: 'ROOM_JOINED', room: this.info(), players: this.allPlayerInfo(), minPlayers: this.minPlayers });
+
+    // Auto-start when minimum reached
+    if (this.autoStart && this.state === 'waiting' && this.players.size >= this.minPlayers) {
+      this.broadcast({ type: 'AUTO_START', countdown: 5 });
+      setTimeout(() => {
+        if (this.state === 'waiting' && this.players.size >= this.minPlayers) {
+          this.startGame();
+        }
+      }, 5000);
+    }
+
     return true;
   }
 
@@ -380,6 +403,13 @@ export class GameRoom {
       });
 
     this.broadcast({ type: 'GAME_OVER', leaderboard });
+
+    // Auto-recreate: reset room after delay so players can play again
+    if (this.autoRecreate) {
+      setTimeout(() => {
+        if (this.recreateCallback) this.recreateCallback();
+      }, 8000);
+    }
   }
 
   // Helpers
@@ -399,11 +429,12 @@ export class GameRoom {
     return deck;
   }
 
-  info(): GameRoomInfo {
+  info(): GameRoomInfo & { minPlayers: number; autoStart: boolean } {
     return {
       id: this.id, name: this.name, hostId: this.hostId,
       playerCount: this.players.size, maxPlayers: this.maxPlayers,
-      isPrivate: this.isPrivate, state: this.state, round: this.round
+      isPrivate: this.isPrivate, state: this.state, round: this.round,
+      minPlayers: this.minPlayers, autoStart: this.autoStart
     };
   }
 
@@ -477,7 +508,34 @@ export class RoomManager {
 
   cleanupEmptyRooms(): void {
     for (const [id, room] of this.rooms) {
-      if (room.players.size === 0) this.removeRoom(id);
+      // Don't cleanup preset auto-recreate rooms
+      if (room.players.size === 0 && !room.autoRecreate) this.removeRoom(id);
     }
+  }
+
+  createPresetRooms(): void {
+    const presets = [
+      { name: '2 Players', id: '2p', min: 2, max: 2 },
+      { name: '3 Players', id: '3p', min: 3, max: 3 },
+      { name: '4 Players', id: '4p', min: 4, max: 4 },
+      { name: '5 Players', id: '5p', min: 5, max: 5 },
+      { name: 'Party (10)', id: 'party', min: 3, max: 10 },
+    ];
+
+    for (const p of presets) {
+      this.createPresetRoom(p.name, p.id, p.min, p.max);
+    }
+  }
+
+  private createPresetRoom(name: string, id: string, minPlayers: number, maxPlayers: number): void {
+    const room = new GameRoom(name, 'server', maxPlayers, null, {
+      id, minPlayers, autoStart: true, autoRecreate: true
+    });
+    room.setRecreateCallback(() => {
+      // Reset room state for next game, keep the room alive
+      this.rooms.delete(id);
+      this.createPresetRoom(name, id, minPlayers, maxPlayers);
+    });
+    this.rooms.set(room.id, room);
   }
 }

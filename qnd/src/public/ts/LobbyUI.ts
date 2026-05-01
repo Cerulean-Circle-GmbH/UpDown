@@ -28,6 +28,14 @@ export class LobbyUI {
     this.client.on('ROOM_LIST', (msg) => { this.rooms = msg.rooms; this.renderRoomList(); });
     this.client.on('ROOM_JOINED', (msg) => { this.onEnterRoom(msg.room.id); });
     this.client.on('ERROR', (msg) => { this.showError(msg.message); });
+
+    // Auto-join if ?join= param present
+    const joinId = params.get('join');
+    if (joinId) {
+      this.client.on('welcome', () => {
+        this.client.joinRoom(joinId, this.playerName);
+      });
+    }
   }
 
   show(): void {
@@ -132,18 +140,26 @@ export class LobbyUI {
       return;
     }
 
-    list.innerHTML = this.rooms.map(room => `
-      <div class="room-card" data-room-id="${room.id}">
-        <div class="room-info">
-          <span class="room-name">${room.isPrivate ? '🔒 ' : ''}${room.name}</span>
-          <span class="room-players">${room.playerCount}/${room.maxPlayers} players</span>
-        </div>
-        <div class="room-status">
-          <span class="room-state">${room.state === 'waiting' ? '⏳ Waiting' : room.state === 'finished' ? '🏁 Finished' : `🎮 Round ${room.round}`}</span>
-          <button class="btn btn-join" data-room="${room.id}">Join</button>
-        </div>
-      </div>
-    `).join('');
+    list.innerHTML = this.rooms.map((room: any) => {
+      const waiting = room.autoStart && room.state === 'waiting';
+      const need = waiting ? Math.max(0, (room.minPlayers || 1) - room.playerCount) : 0;
+      const stateText = waiting && need > 0
+        ? `⏳ Need ${need} more`
+        : room.state === 'waiting' ? '⏳ Waiting'
+        : room.state === 'finished' ? '🏁 Finished'
+        : `🎮 Round ${room.round}`;
+      return `
+        <div class="room-card" data-room-id="${room.id}">
+          <div class="room-info">
+            <span class="room-name">${room.isPrivate ? '🔒 ' : ''}${room.name}</span>
+            <span class="room-players">${room.playerCount}/${room.maxPlayers} players</span>
+          </div>
+          <div class="room-status">
+            <span class="room-state">${stateText}</span>
+            <button class="btn btn-join" data-room="${room.id}">${room.state === 'waiting' ? 'Join' : 'Spectate'}</button>
+          </div>
+        </div>`;
+    }).join('');
 
     list.querySelectorAll('.btn-join').forEach(btn => {
       btn.addEventListener('click', () => {

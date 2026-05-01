@@ -75,8 +75,9 @@ const wsClients = new Set<WebSocketClient>();
 const avatarCache = new Map<string, string>(); // clientId -> data URL
 let totalRequests = 0;
 
-// Game room manager
+// Game room manager — preset rooms created on startup
 const roomManager = new RoomManager();
+roomManager.createPresetRooms();
 let serverStartTime = new Date();
 const serverLogs: string[] = [];
 const MAX_LOGS = 1000; // Keep last 1000 log entries
