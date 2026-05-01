@@ -111,7 +111,39 @@ Files to read:
 - T7 Special cards (Protective Shell): **PASS** (fixed)
 - T8 Mobile layout: needs human
 
-## SPRINT 3: ✅ COMPLETE — 7/7 tasks, 4 bugs fixed, 7/8 tester PASS (T8 needs human)
+## SPRINT 3: ❌ REOPENED — Tron browser test: BLANK PAGE
+
+### Root Cause
+multiplayer.html loads raw .ts file (`<script src="ts/multiplayer.ts">`). Browser can't execute TypeScript. esbuild only builds main.ts, not multiplayer.ts. Tester validated WebSocket protocol only — never loaded page in browser.
+
+### Process Failure
+Tester tested protocol messages, not browser rendering. DoD says "Multiplayer game works with 2+ players in browser" — never actually verified in a browser.
+
+## Phase 5: Browser Fix (RELEASE BLOCKER)
+
+- [ ] [Task 8: Fix multiplayer page rendering](./task-8-fix-multiplayer-rendering.md)
+  - [ ] 8.1: Expert — Add esbuild for multiplayer.ts → dist/multiplayer.js
+  - [ ] 8.2: Expert — Update multiplayer.html to load dist/multiplayer.js
+  - [ ] 8.3: Expert — Add multiplayer build to npm start
+  - [ ] 8.4: Expert — Verify page loads and renders in browser (use expert shell)
+  - [ ] 8.5: Tester — Load https://localhost:3443/mp in browser, verify lobby renders
+
+- [ ] [Task 9: DoD Browser Verification](./task-9-dod-browser-verification.md)
+  - [ ] 9.1: Tester — Open 2 browser tabs, create room, join room — SCREENSHOT or describe what renders
+  - [ ] 9.2: Tester — Start game, play cards, see round results in browser
+  - [ ] 9.3: Tester — Play special card (Protective Shell) — verify UI shows it
+  - [ ] 9.4: Tester — Game over screen shows leaderboard
+  - [ ] 9.5: PO — Verify DoD checklist against ACTUAL browser evidence, not protocol logs
+
+## DoD Validation (MUST ALL BE BROWSER-VERIFIED)
+- [ ] Multiplayer game works with 2+ players **IN BROWSER** (not just WS protocol)
+- [ ] Lobby UI renders: room list, create, join
+- [ ] Game UI renders: GM card, countdown, Up/Down/Even buttons
+- [ ] Special card UI renders: inventory, play button
+- [ ] Round results display: scores, streaks
+- [ ] Game over: leaderboard visible
+- [ ] PWA installable
+- [ ] Works on mobile browsers
 
 ## Critical Path
 ```
