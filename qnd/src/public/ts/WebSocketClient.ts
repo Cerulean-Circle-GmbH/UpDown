@@ -88,4 +88,16 @@ export class WebSocketClient {
   addBot(personality?: string): void {
     this.send({ type: 'ADD_BOT', personality });
   }
+
+  spectateRoom(roomId: string, playerName: string): void {
+    this.send({ type: 'SPECTATE', roomId, playerName });
+  }
+
+  leaveSpectate(): void {
+    this.send({ type: 'LEAVE_SPECTATE' });
+  }
+
+  joinNextGame(playerName: string): void {
+    this.send({ type: 'JOIN_NEXT_GAME', playerName });
+  }
 }

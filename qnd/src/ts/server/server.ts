@@ -313,12 +313,16 @@ function setupWebSocketServer(server: https.Server): void {
       avatarCache.delete(clientId);
       addLog(`👋 WebSocket disconnected: ${ip} (${wsClients.size} online)`);
 
-      // Remove from any game room
+      // Remove from any game room or spectator list
       const room = roomManager.findPlayerRoom(clientId);
       if (room) {
         room.removePlayer(clientId);
-        if (room.players.size === 0) roomManager.removeRoom(room.id);
+        if (room.players.size === 0 && !room.autoRecreate) roomManager.removeRoom(room.id);
         addLog(`🚪 ${clientId.slice(0,8)} left room ${room.name}`);
+      }
+      const specRoom = roomManager.findSpectatorRoom(clientId);
+      if (specRoom) {
+        specRoom.removeSpectator(clientId);
       }
 
       // Broadcast player left to all remaining clients
@@ -437,6 +441,35 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       if (room && room.hostId === clientId) {
         const botId = room.addBot(msg.personality);
         addLog(`🤖 Bot added to room ${room.name}: ${botId}`);
+      }
+      break;
+    }
+
+    case 'SPECTATE': {
+      const room = roomManager.getRoom(msg.roomId);
+      if (room) {
+        room.addSpectator(clientId, ws, msg.playerName || 'Spectator');
+        addLog(`👁️ ${msg.playerName || clientId.slice(0,8)} spectating room ${room.name}`);
+      } else {
+        send({ type: 'ERROR', message: 'Room not found' });
+      }
+      break;
+    }
+
+    case 'LEAVE_SPECTATE': {
+      const room = roomManager.findSpectatorRoom(clientId);
+      if (room) {
+        room.removeSpectator(clientId);
+        send({ type: 'SPECTATE_LEFT' });
+      }
+      break;
+    }
+
+    case 'JOIN_NEXT_GAME': {
+      const room = roomManager.findSpectatorRoom(clientId);
+      if (room) {
+        const ok = room.promoteSpectator(clientId, msg.playerName || 'Player', avatarUrl);
+        if (!ok) send({ type: 'ERROR', message: 'Cannot join — room full or game in progress' });
       }
       break;
     }

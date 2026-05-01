@@ -137,6 +137,51 @@ export class GameRoom {
     return id;
   }
 
+  addSpectator(id: string, ws: WebSocket, name: string): void {
+    this.spectators.set(id, { id, ws, name });
+    this.sendToSpectator(id, {
+      type: 'SPECTATE_JOINED',
+      room: this.info(),
+      players: this.allPlayerInfo(),
+      currentCard: this.currentCard,
+      previousCard: this.previousCard,
+      round: this.round,
+      state: this.state
+    });
+    this.broadcastAll({ type: 'SPECTATOR_JOINED', name, spectatorCount: this.spectators.size });
+  }
+
+  removeSpectator(id: string): void {
+    const spec = this.spectators.get(id);
+    this.spectators.delete(id);
+    if (spec) this.broadcastAll({ type: 'SPECTATOR_LEFT', spectatorCount: this.spectators.size });
+  }
+
+  promoteSpectator(id: string, name: string, avatarUrl: string): boolean {
+    const spec = this.spectators.get(id);
+    if (!spec || (this.state !== 'waiting' && this.state !== 'exchange')) return false;
+    if (this.players.size >= this.maxPlayers) return false;
+    this.spectators.delete(id);
+    return this.addPlayer(id, spec.ws, name, avatarUrl);
+  }
+
+  private sendToSpectator(id: string, msg: object): void {
+    const s = this.spectators.get(id);
+    if (s && s.ws && s.ws.readyState === WebSocket.OPEN) {
+      s.ws.send(JSON.stringify(msg));
+    }
+  }
+
+  private broadcastAll(msg: object): void {
+    const data = JSON.stringify(msg);
+    this.players.forEach(p => {
+      if (p.ws && p.ws.readyState === WebSocket.OPEN) p.ws.send(data);
+    });
+    this.spectators.forEach(s => {
+      if (s.ws && s.ws.readyState === WebSocket.OPEN) s.ws.send(data);
+    });
+  }
+
   private scheduleBotDecisions(): void {
     if (!this.currentCard) return;
 
@@ -482,13 +527,14 @@ export class GameRoom {
     return deck;
   }
 
-  info(): GameRoomInfo & { minPlayers: number; autoStart: boolean; shareUrl: string } {
+  info(): GameRoomInfo & { minPlayers: number; autoStart: boolean; shareUrl: string; spectatorCount: number } {
     return {
       id: this.id, name: this.name, hostId: this.hostId,
       playerCount: this.players.size, maxPlayers: this.maxPlayers,
       isPrivate: this.isPrivate, state: this.state, round: this.round,
       minPlayers: this.minPlayers, autoStart: this.autoStart,
-      shareUrl: `/mp?join=${this.id}`
+      shareUrl: `/mp?join=${this.id}`,
+      spectatorCount: this.spectators.size
     };
   }
 
@@ -514,6 +560,9 @@ export class GameRoom {
     const data = JSON.stringify(msg);
     this.players.forEach(p => {
       if (p.ws && p.ws.readyState === WebSocket.OPEN) p.ws.send(data);
+    });
+    this.spectators.forEach(s => {
+      if (s.ws && s.ws.readyState === WebSocket.OPEN) s.ws.send(data);
     });
   }
 
@@ -556,6 +605,13 @@ export class RoomManager {
   findPlayerRoom(playerId: string): GameRoom | undefined {
     for (const room of this.rooms.values()) {
       if (room.players.has(playerId)) return room;
+    }
+    return undefined;
+  }
+
+  findSpectatorRoom(spectatorId: string): GameRoom | undefined {
+    for (const room of this.rooms.values()) {
+      if (room.spectators.has(spectatorId)) return room;
     }
     return undefined;
   }

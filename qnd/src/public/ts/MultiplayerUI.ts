@@ -26,6 +26,7 @@ export class MultiplayerUI {
   private round: number = 0;
   private inventory: string[] = [];
   private frozen: boolean = false;
+  private isSpectator: boolean = false;
   private onLeaveRoom: () => void;
 
   constructor(client: WebSocketClient, container: HTMLElement, onLeaveRoom: () => void) {
@@ -85,6 +86,24 @@ export class MultiplayerUI {
     this.client.on('GAME_OVER', (msg) => {
       this.renderGameOver(msg.leaderboard);
     });
+
+    this.client.on('SPECTATE_JOINED', (msg) => {
+      this.isSpectator = true;
+      this.roomId = msg.room.id;
+      this.players = msg.players;
+      this.currentCard = msg.currentCard;
+      this.previousCard = msg.previousCard;
+      this.round = msg.round;
+      this.render();
+      if (msg.state !== 'waiting') {
+        this.renderCard('mp-prev-card', this.previousCard);
+        this.renderCard('mp-current-card', this.currentCard);
+      }
+    });
+
+    this.client.on('SPECTATE_LEFT', () => {
+      this.isSpectator = false;
+    });
   }
 
   show(roomId: string): void {
@@ -127,7 +146,12 @@ export class MultiplayerUI {
     `;
 
     document.getElementById('leave-room-btn')?.addEventListener('click', () => {
-      this.client.leaveRoom();
+      if (this.isSpectator) {
+        this.client.leaveSpectate();
+      } else {
+        this.client.leaveRoom();
+      }
+      this.isSpectator = false;
       this.onLeaveRoom();
     });
 
@@ -152,7 +176,15 @@ export class MultiplayerUI {
     const el = document.getElementById('mp-controls');
     if (!el) return;
 
-    if (this.round === 0) {
+    if (this.isSpectator) {
+      el.innerHTML = `
+        <p class="waiting-text">👁️ Spectating</p>
+        <button id="join-next-btn" class="btn btn-primary" style="margin-top:6px;width:100%">🎮 Join Next Game</button>
+      `;
+      document.getElementById('join-next-btn')?.addEventListener('click', () => {
+        this.client.joinNextGame(localStorage.getItem('updown-name') || 'Player');
+      });
+    } else if (this.round === 0) {
       if (this.isHost) {
         el.innerHTML = `
           <button id="start-game-btn" class="btn btn-primary btn-large">🎲 Start Game (${this.players.length} players)</button>
@@ -168,7 +200,7 @@ export class MultiplayerUI {
 
   private renderGame(): void {
     const roundEl = document.getElementById('mp-round');
-    if (roundEl) roundEl.textContent = `Round ${this.round}`;
+    if (roundEl) roundEl.textContent = `Round ${this.round}${this.isSpectator ? ' 👁️' : ''}`;
 
     const resultEl = document.getElementById('mp-result');
     if (resultEl) resultEl.style.display = 'none';
@@ -180,7 +212,9 @@ export class MultiplayerUI {
     const el = document.getElementById('mp-controls');
     if (!el) return;
 
-    if (this.frozen) {
+    if (this.isSpectator) {
+      el.innerHTML = '<p class="waiting-text">👁️ Watching — players are choosing...</p>';
+    } else if (this.frozen) {
       el.innerHTML = '<p class="waiting-text">🧊 Frozen! Cannot play this round.</p>';
     } else if (this.hasPlayed) {
       el.innerHTML = '<p class="waiting-text">Card played! Waiting for others...</p>';

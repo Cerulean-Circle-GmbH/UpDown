@@ -158,7 +158,7 @@ export class LobbyUI {
           <div class="room-status">
             <span class="room-state">${stateText}</span>
             <button class="btn btn-share" data-room="${room.id}" title="Copy join link">🔗</button>
-            <button class="btn btn-join" data-room="${room.id}">${room.state === 'waiting' ? 'Join' : 'Spectate'}</button>
+            <button class="btn ${room.state === 'waiting' ? 'btn-join' : 'btn-spectate'}" data-room="${room.id}" data-state="${room.state}">${room.state === 'waiting' ? 'Join' : '👁️ Watch'}</button>
           </div>
         </div>`;
     }).join('');
@@ -167,6 +167,14 @@ export class LobbyUI {
       btn.addEventListener('click', () => {
         const roomId = (btn as HTMLElement).dataset.room!;
         this.client.joinRoom(roomId, this.playerName);
+      });
+    });
+
+    list.querySelectorAll('.btn-spectate').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const roomId = (btn as HTMLElement).dataset.room!;
+        this.client.spectateRoom(roomId, this.playerName);
+        this.onEnterRoom(roomId);
       });
     });
 
