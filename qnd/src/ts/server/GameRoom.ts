@@ -27,6 +27,7 @@ export interface RoomPlayer {
   currentGuess: 'up' | 'down' | 'equal' | null;
   specialCard: string | null;
   roundsPlayed: number;
+  disconnected: boolean;
 }
 
 export type RoomState = 'waiting' | 'countdown' | 'revealing' | 'exchange' | 'finished';
@@ -78,7 +79,8 @@ export class GameRoom {
     this.players.set(id, {
       id, ws, name, avatarUrl,
       score: 0, streak: 0, alive: true,
-      currentGuess: null, specialCard: null, roundsPlayed: 0
+      currentGuess: null, specialCard: null, roundsPlayed: 0,
+      disconnected: false
     });
 
     this.broadcast({ type: 'PLAYER_JOINED', player: this.playerInfo(id), playerCount: this.players.size });
@@ -87,12 +89,30 @@ export class GameRoom {
   }
 
   removePlayer(id: string): void {
+    // BUG-1 fix: during active round, mark disconnected instead of removing
+    if (this.state === 'countdown' || this.state === 'revealing') {
+      const player = this.players.get(id);
+      if (player) {
+        player.disconnected = true;
+        player.alive = false;
+      }
+      this.broadcast({ type: 'PLAYER_DISCONNECTED', playerId: id });
+      return;
+    }
+
     this.players.delete(id);
     this.broadcast({ type: 'PLAYER_LEFT', playerId: id, playerCount: this.players.size });
 
     if (id === this.hostId && this.players.size > 0) {
-      this.hostId = this.players.keys().next().value!;
+      const active = [...this.players.values()].find(p => !p.disconnected);
+      this.hostId = active?.id || this.players.keys().next().value!;
       this.broadcast({ type: 'HOST_CHANGED', hostId: this.hostId });
+    }
+  }
+
+  private cleanupDisconnected(): void {
+    for (const [id, player] of this.players) {
+      if (player.disconnected) this.players.delete(id);
     }
   }
 
@@ -181,8 +201,8 @@ export class GameRoom {
 
     this.broadcast({ type: 'CARD_PLAYED', playerId, hasPlayed: true });
 
-    // Check if all alive players have played
-    const alivePlayers = [...this.players.values()].filter(p => p.alive);
+    // Check if all alive, connected players have played
+    const alivePlayers = [...this.players.values()].filter(p => p.alive && !p.disconnected);
     const allPlayed = alivePlayers.every(p => p.currentGuess !== null);
     if (allPlayed) {
       if (this.countdownTimer) { clearInterval(this.countdownTimer); this.countdownTimer = null; }
@@ -259,9 +279,10 @@ export class GameRoom {
     if (alivePlayers.length === 0 || (this.gmHand.length === 0 && this.deck.length === 0)) {
       setTimeout(() => this.endGame(), 2000);
     } else {
-      // Exchange phase then next round
+      // Exchange phase: cleanup disconnected, then next round
       this.state = 'exchange';
       setTimeout(() => {
+        this.cleanupDisconnected();
         this.state = 'countdown';
         this.nextRound();
       }, 3000);
