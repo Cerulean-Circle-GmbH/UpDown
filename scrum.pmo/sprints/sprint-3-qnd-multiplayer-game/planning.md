@@ -173,6 +173,12 @@ Files to read:
   - [ ] 17.3: Tester — Verify room list scrolls on mobile viewport
   - [ ] 17.4: PO — Tron verifies scrolling works on iPhone
 
+- [ ] [Task 18: Fix "Play Again" Button](./task-18-play-again-fix.md) **📋 PLANNED — TRON BUG**
+  - [ ] 18.1: Expert — Investigate "Play Again" behavior: what happens when clicked? Expected: return to lobby or restart game in same room
+  - [ ] 18.2: Expert — Fix: Play Again should return player to lobby with room list, or rejoin the same pre-created room
+  - [ ] 18.3: Tester — Verify Play Again: game over → click → back in lobby with rooms visible, can join new game
+  - [ ] 18.4: PO — Tron verifies Play Again flow feels natural
+
 ## E2E Test Results
 - Protocol suite: 23/26 PASS, 0 FAIL, 3 SKIP ✅
 - Base href fix: deployed, page loads ✅
