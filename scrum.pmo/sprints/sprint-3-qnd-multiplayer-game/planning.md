@@ -183,6 +183,17 @@ Files to read:
   - [ ] 19.7: Tester — Verify spectator doesn't affect game logic (not counted in player list)
   - [ ] 19.8: PO — Tron verifies spectate experience
 
+- [ ] [Task 20: Auto-Start with Bot Backfill](./task-20-autostart-bot-backfill.md) **🔧 IN PROGRESS — CRITICAL UX**
+  - [ ] 20.1: Expert — Bot is default host of every pre-created room
+  - [ ] 20.2: Expert — 30-second countdown starts when first human joins
+  - [ ] 20.3: Expert — Countdown visible to all players in room ("Game starts in 25s...")
+  - [ ] 20.4: Expert — At countdown 0: empty slots auto-fill with bots, game starts immediately
+  - [ ] 20.5: Expert — Humans joining during countdown replace bot slots
+  - [ ] 20.6: Expert — Zero friction: join room → wait max 30s → game starts automatically
+  - [ ] 20.7: Tester — Verify: join pre-created room alone → 30s countdown → bots fill → game starts
+  - [ ] 20.8: Tester — Verify: 2 humans join → countdown → remaining slots fill with bots
+  - [ ] 20.9: PO — Tron verifies no manual "Start" needed, game starts automatically
+
 ## E2E Test Results
 - Protocol suite: 23/26 PASS, 0 FAIL, 3 SKIP ✅
 - Base href fix: deployed, page loads ✅
