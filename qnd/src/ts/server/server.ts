@@ -445,6 +445,7 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       break;
     }
 
+    case 'SPECTATE_ROOM':
     case 'SPECTATE': {
       const room = roomManager.getRoom(msg.roomId);
       if (room) {

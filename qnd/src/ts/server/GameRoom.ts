@@ -219,12 +219,15 @@ export class GameRoom {
 
   private fillBotsAndStart(): void {
     if (this.state !== 'waiting') return;
+    if (this.humanCount() === 0) return;
 
     // Fill remaining slots with bots
-    while (this.players.size < this.minPlayers) {
+    const needed = this.minPlayers - this.players.size;
+    for (let i = 0; i < needed; i++) {
       this.addBot();
     }
 
+    this.broadcast({ type: 'BOTS_FILLED', botCount: needed, totalPlayers: this.players.size });
     this.startGame();
   }
 
@@ -554,7 +557,7 @@ export class GameRoom {
         };
       });
 
-    this.broadcast({ type: 'GAME_OVER', leaderboard });
+    this.broadcast({ type: 'GAME_OVER', leaderboard, playAgain: true, roomId: this.id });
 
     // Auto-recreate: reset room quickly so Play Again works
     if (this.autoRecreate) {
