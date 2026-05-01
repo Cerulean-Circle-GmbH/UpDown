@@ -179,6 +179,16 @@ Files to read:
   - [ ] 18.3: Tester — Verify Play Again: game over → click → back in lobby with rooms visible, can join new game
   - [ ] 18.4: PO — Tron verifies Play Again flow feels natural
 
+- [ ] [Task 19: Spectate Mode](./task-19-spectate-mode.md) **📋 PLANNED — TRON FEATURE**
+  - [ ] 19.1: Expert — "Spectate" button on rooms that are in-game (not just waiting rooms)
+  - [ ] 19.2: Expert — Spectator joins room but gets NO play buttons (Up/Down/Even hidden)
+  - [ ] 19.3: Expert — Spectator sees: all players, GM card, round results, scores, who's eliminated
+  - [ ] 19.4: Expert — Spectator count shown in room info ("3 playing, 2 watching")
+  - [ ] 19.5: Expert — Spectator can leave anytime, or "Join Next Game" when current game ends
+  - [ ] 19.6: Tester — Verify spectator sees game state but cannot play cards
+  - [ ] 19.7: Tester — Verify spectator doesn't affect game logic (not counted in player list)
+  - [ ] 19.8: PO — Tron verifies spectate experience
+
 ## E2E Test Results
 - Protocol suite: 23/26 PASS, 0 FAIL, 3 SKIP ✅
 - Base href fix: deployed, page loads ✅
