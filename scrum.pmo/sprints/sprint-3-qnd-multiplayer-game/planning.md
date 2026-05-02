@@ -219,6 +219,23 @@ Files to read:
   - [ ] 24.4: Expert — If host leaves during waiting, next player becomes host (transfer)
   - [ ] 24.5: Tester — Verify first joiner is host, host transfer on leave
 
+- [ ] [Task 25: Invite Link in Chat + Remove Auto-Start](./task-25-invite-in-chat.md) **📋 PLANNED**
+  - [ ] 25.1: Expert — Add invite link/button at top of chat pane in room view
+  - [ ] 25.2: Expert — REMOVE auto-start countdown — game NEVER starts automatically
+  - [ ] 25.3: Expert — Host ALWAYS has "Start Game" button — only host can start
+  - [ ] 25.4: Expert — Start Game button visible at all times while waiting (not hidden by countdown)
+  - [ ] 25.5: Tester — Verify no auto-start, only host can click Start Game
+  - [ ] 25.6: Tester — Verify invite link present in chat pane header
+
+- [ ] [Task 26: Clickable Player Profiles](./task-26-player-profiles.md) **📋 PLANNED**
+  - [ ] 26.1: Expert — Player names in room/game are clickable
+  - [ ] 26.2: Expert — Click opens details pane (slide-up like chat, Google Maps style)
+  - [ ] 26.3: Expert — Profile shows: name, avatar/emoji, games played (session), win rate, current score, streak
+  - [ ] 26.4: Expert — Bot profiles show personality type + strategy description
+  - [ ] 26.5: Expert — Pane dismissable by tap outside or drag down
+  - [ ] 26.6: Tester — Verify clicking player name opens profile pane
+  - [ ] 26.7: Tester — Verify bot profile shows personality info
+
 ## E2E Test Results
 - Protocol suite: 23/26 PASS, 0 FAIL, 3 SKIP ✅
 - Base href fix: deployed, page loads ✅
