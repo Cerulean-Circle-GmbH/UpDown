@@ -1,0 +1,127 @@
+@startuml Traceability-Diagram
+!theme plain
+skinparam backgroundColor White
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 9
+skinparam linetype ortho
+
+title UpDown QnD — Traceability Chain\nUseCase(UUID) → Task → Implementation(file:method) → Test(file:TC)\n4 covered examples from traceability-matrix.md
+
+' ═══════════════════════════════════════════════════════════════
+' LEGEND
+' ═══════════════════════════════════════════════════════════════
+
+legend top left
+  |= Color |= Meaning |
+  | <#E8F5E9> | Use Case (spec) |
+  | <#E3F2FD> | Sprint Task (planning) |
+  | <#FFF3E0> | Implementation (source) |
+  | <#FCE4EC> | Test Case (verification) |
+endlegend
+
+' ═══════════════════════════════════════════════════════════════
+' UC-C1: connection.open (UUID: 92a061e0)
+' ═══════════════════════════════════════════════════════════════
+
+package "UC-C1: connection.open" as P1 {
+  card "**UseCase**\nconnection.open\n//UUID: 92a061e0//\n//usecase-tree.md//" as UC1 #E8F5E9
+
+  card "**Task**\nSprint3 / Task-1\n//Lobby + WebSocket//" as T1 #E3F2FD
+
+  card "**Client Impl**\nWebSocketClient.ts:14\n**connect()**\n//new WebSocket(url)//" as IC1 #FFF3E0
+
+  card "**Server Impl**\nserver.ts:303\n**setupWebSocketServer()**\n//ws.on('connection')//" as IS1 #FFF3E0
+
+  card "**Test**\nprotocol-test-suite.js:70\n**TC1.1**\n//readyState===OPEN && playerId//" as TC1 #FCE4EC
+
+  UC1 --> T1
+  T1 --> IC1
+  T1 --> IS1
+  IC1 --> TC1
+  IS1 --> TC1
+}
+
+' ═══════════════════════════════════════════════════════════════
+' UC-R2: room.create (UUID: fbfed148)
+' ═══════════════════════════════════════════════════════════════
+
+package "UC-R2: room.create" as P2 {
+  card "**UseCase**\nroom.create\n//UUID: fbfed148//\n//usecase-tree.md//" as UC2 #E8F5E9
+
+  card "**Task**\nSprint3 / Task-2\n//Room Management//" as T2 #E3F2FD
+
+  card "**Client Impl**\nWebSocketClient.ts:60\n**createRoom()**\n//sends CREATE_ROOM//" as IC2 #FFF3E0
+
+  card "**Server Impl**\nRoomManager.ts:643\n**createRoom()**\n//new GameRoom()//" as IS2a #FFF3E0
+
+  card "**Server Impl**\nGameRoom.ts:103\n**addPlayer()**\n//broadcasts PLAYER_JOINED//\n//sends ROOM_JOINED//" as IS2b #FFF3E0
+
+  card "**Test**\nprotocol-test-suite.js:91\n**TC2.1**\n//ROOM_JOINED with id, name, max//" as TC2 #FCE4EC
+
+  UC2 --> T2
+  T2 --> IC2
+  IC2 --> IS2a
+  IS2a --> IS2b
+  IS2b --> TC2
+}
+
+' ═══════════════════════════════════════════════════════════════
+' UC-G1: game.start (UUID: 560d9a46)
+' ═══════════════════════════════════════════════════════════════
+
+package "UC-G1: game.start" as P3 {
+  card "**UseCase**\ngame.start\n//UUID: 560d9a46//\n//usecase-tree.md//" as UC3 #E8F5E9
+
+  card "**Task**\nSprint3 / Task-4\n//Game Loop//" as T3 #E3F2FD
+
+  card "**Client Impl**\nWebSocketClient.ts:76\n**startGame()**\n//sends START_GAME//" as IC3 #FFF3E0
+
+  card "**Server Impl**\nGameRoom.ts:290\n**startGame()**\n//createShuffledDeck()//\n//gmHand = 7 cards//\n//reset all players//" as IS3a #FFF3E0
+
+  card "**Server Impl**\nGameRoom.ts:315\n**nextRound()**\n//draw card, countdown=10//\n//sends ROUND_START//" as IS3b #FFF3E0
+
+  card "**Test**\nprotocol-test-suite.js:170\n**TC4.1a+b**\n//ROUND_START round=1//\n//currentCard, countdown=10//" as TC3 #FCE4EC
+
+  UC3 --> T3
+  T3 --> IC3
+  IC3 --> IS3a
+  IS3a --> IS3b
+  IS3b --> TC3
+}
+
+' ═══════════════════════════════════════════════════════════════
+' UC-H1: host.transfer (UUID: dd0392cf)
+' ═══════════════════════════════════════════════════════════════
+
+package "UC-H1: host.transfer" as P4 {
+  card "**UseCase**\nhost.transfer\n//UUID: dd0392cf//\n//usecase-tree.md//" as UC4 #E8F5E9
+
+  card "**Task**\nSprint3 / Task-3\n//Room Edge Cases//" as T4 #E3F2FD
+
+  card "**Server Impl**\nGameRoom.ts:277\n**removePlayer()**\n//if id === hostId//\n//hostId = next player//\n//broadcasts HOST_CHANGED//" as IS4 #FFF3E0
+
+  card "**Client Impl**\nMultiplayerUI.ts:56\n**on('HOST_CHANGED')**\n//isHost = true//\n//renderControls()//" as IC4 #FFF3E0
+
+  card "**Test**\nprotocol-test-suite.js:262\n**TC-E2a+b**\n//PLAYER_LEFT broadcast//\n//HOST_CHANGED received//" as TC4 #FCE4EC
+
+  UC4 --> T4
+  T4 --> IS4
+  IS4 --> IC4
+  IS4 --> TC4
+}
+
+' ═══════════════════════════════════════════════════════════════
+' Cross-package: show the traceability pattern
+' ═══════════════════════════════════════════════════════════════
+
+note bottom of P1
+  **Traceability Pattern**
+  Every UC has a UUID that appears in:
+  1. PUML: //' @uc:uuid:xxx// comment
+  2. Matrix: traceability-matrix.md row
+  3. Test: //// @uc:uuid:xxx// comment
+  Impl files: referenced in matrix only
+  (no source pollution)
+end note
+
+@enduml
