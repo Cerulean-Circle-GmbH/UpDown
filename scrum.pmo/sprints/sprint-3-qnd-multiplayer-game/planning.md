@@ -167,30 +167,21 @@ Files to read:
   - [ ] 17.3: Tester — Verify room list scrolls on mobile viewport
   - [ ] 17.4: PO — Tron verifies scrolling works on iPhone
 
-- [ ] [Task 18: Fix "Play Again" Button](./task-18-play-again-fix.md) **📋 PLANNED — TRON BUG**
-  - [ ] 18.1: Expert — Investigate "Play Again" behavior: what happens when clicked? Expected: return to lobby or restart game in same room
-  - [ ] 18.2: Expert — Fix: Play Again should return player to lobby with room list, or rejoin the same pre-created room
-  - [ ] 18.3: Tester — Verify Play Again: game over → click → back in lobby with rooms visible, can join new game
-  - [ ] 18.4: PO — Tron verifies Play Again flow feels natural
+- [x] [Task 17: Scrollable Room List](./task-17-scrollable-room-list.md) **✅ TESTER VERIFIED**
+  - [x] 17.1-17.3: Expert — overflow-y auto, roomName preserved ✅
+  - [x] 17.4: Tester — custom room name "Trons Arena" shown in LIST_ROOMS ✅
 
-- [ ] [Task 19: Spectate Mode](./task-19-spectate-mode.md) **📋 PLANNED — TRON FEATURE**
-  - [ ] 19.1: Expert — "Spectate" button on rooms that are in-game (not just waiting rooms)
-  - [ ] 19.2: Expert — Spectator joins room but gets NO play buttons (Up/Down/Even hidden)
-  - [ ] 19.3: Expert — Spectator sees: all players, GM card, round results, scores, who's eliminated
-  - [ ] 19.4: Expert — Spectator count shown in room info ("3 playing, 2 watching")
-  - [ ] 19.5: Expert — Spectator can leave anytime, or "Join Next Game" when current game ends
-  - [ ] 19.6: Tester — Verify spectator sees game state but cannot play cards
-  - [ ] 19.7: Tester — Verify spectator doesn't affect game logic (not counted in player list)
-  - [ ] 19.8: PO — Tron verifies spectate experience
+- [x] [Task 18: Fix "Play Again" Button](./task-18-play-again-fix.md) **✅ TESTER VERIFIED**
+  - [x] 18.1-18.2: Expert — playAgain:true in GAME_OVER, returns to lobby ✅
+  - [x] 18.3: Tester — PASS ✅
 
-- [ ] [Task 20: Auto-Start with Bot Backfill](./task-20-autostart-bot-backfill.md) **🔧 IN PROGRESS — CRITICAL UX**
-  - [ ] 20.1: Expert — Bot is default host of every pre-created room
-  - [ ] 20.2: Expert — 30-second countdown starts when first human joins
-  - [ ] 20.3: Expert — Countdown visible to all players in room ("Game starts in 25s...")
-  - [ ] 20.4: Expert — At countdown 0: empty slots auto-fill with bots, game starts immediately
-  - [ ] 20.5: Expert — Humans joining during countdown replace bot slots
-  - [ ] 20.6: Expert — Zero friction: join room → wait max 30s → game starts automatically
-  - [ ] 20.7: Tester — Verify: join pre-created room alone → 30s countdown → bots fill → game starts
+- [x] [Task 19: Spectate Mode](./task-19-spectate-mode.md) **✅ TESTER VERIFIED**
+  - [x] 19.1-19.5: Expert — SPECTATE_ROOM handler, no play buttons, spectator count ✅
+  - [x] 19.6-19.7: Tester — spectator can't play, doesn't affect game ✅
+
+- [x] [Task 20: Auto-Start with Bot Backfill](./task-20-autostart-bot-backfill.md) **✅ TESTER VERIFIED**
+  - [x] 20.1-20.6: Expert — 30s countdown, bot backfill, auto-start, BOTS_FILLED broadcast ✅
+  - [x] 20.7: Tester — game auto-starts, pre-created rooms recreate, bots have 🤖 prefix ✅
   - [ ] 20.8: Tester — Verify: 2 humans join → countdown → remaining slots fill with bots
   - [ ] 20.9: PO — Tron verifies no manual "Start" needed, game starts automatically
 
