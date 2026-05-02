@@ -185,6 +185,33 @@ Files to read:
   - [ ] 20.8: Tester — Verify: 2 humans join → countdown → remaining slots fill with bots
   - [ ] 20.9: PO — Tron verifies no manual "Start" needed, game starts automatically
 
+- [ ] [Task 21: Configurable Share Domain + Mobile Share](./task-21-share-domain.md) **📋 PLANNED**
+  - [ ] 21.1: Expert — Create qnd/.env with BASE_DOMAIN=donges.home.it (loaded by server on start)
+  - [ ] 21.2: Expert — Server reads BASE_DOMAIN from .env, falls back to local IPv4 if not set
+  - [ ] 21.3: Expert — Share URLs use https://${BASE_DOMAIN}:3443/mp?join=... instead of hardcoded IP
+  - [ ] 21.4: Expert — Mobile share button uses navigator.share() API (native OS share dialog)
+  - [ ] 21.5: Expert — Desktop fallback: clipboard copy (existing behavior)
+  - [ ] 21.6: Tester — Verify .env domain used in share URLs
+  - [ ] 21.7: Tester — Verify fallback to IPv4 when .env missing or BASE_DOMAIN empty
+
+- [ ] [Task 22: Room Invite Button](./task-22-room-invite.md) **📋 PLANNED**
+  - [ ] 22.1: Expert — "Invite" button in room waiting view (alongside Share)
+  - [ ] 22.2: Expert — Invite uses same share mechanism (navigator.share on mobile, clipboard on desktop)
+  - [ ] 22.3: Expert — Invite URL includes room ID + optional name param
+
+- [ ] [Task 23: Room Chat with Slide-Up Pane](./task-23-room-chat.md) **📋 PLANNED**
+  - [ ] 23.1: Expert — WebSocket CHAT_MESSAGE protocol: {type, roomId, playerName, text, timestamp}
+  - [ ] 23.2: Expert — Server broadcasts CHAT_MESSAGE to all players+spectators in room
+  - [ ] 23.3: Expert — Slide-up chat pane (Google Maps style): drag handle at top, minimizable
+  - [ ] 23.4: Expert — Minimized state: just the text input bar at bottom of screen
+  - [ ] 23.5: Expert — Expanded state: chat history scrollable, input bar pinned at bottom
+  - [ ] 23.6: Expert — Chat available during waiting + during game
+  - [ ] 23.7: Expert — Mobile: pane slides up from bottom, touch-draggable, snap to min/max
+  - [ ] 23.8: Expert — Chat messages show player name + timestamp
+  - [ ] 23.9: Tester — Verify chat messages sync between 2 players in same room
+  - [ ] 23.10: Tester — Verify pane minimizes/expands on drag
+  - [ ] 23.11: PO — Tron verifies chat UX on mobile
+
 ## E2E Test Results
 - Protocol suite: 23/26 PASS, 0 FAIL, 3 SKIP ✅
 - Base href fix: deployed, page loads ✅
