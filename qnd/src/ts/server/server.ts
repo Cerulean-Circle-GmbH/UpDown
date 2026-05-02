@@ -514,7 +514,10 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
         const player = room.players.get(clientId);
         const spec = room.spectators.get(clientId);
         const name = player?.name || spec?.name || 'Anonymous';
-        room.broadcast({ type: 'CHAT_MESSAGE', senderId: clientId, senderName: name, text, timestamp: Date.now() });
+        const chatMsg = { senderId: clientId, senderName: name, text, timestamp: Date.now() };
+        room.chatHistory.push(chatMsg);
+        if (room.chatHistory.length > 50) room.chatHistory.shift();
+        room.broadcast({ type: 'CHAT_MESSAGE', ...chatMsg });
       }
       break;
     }

@@ -237,6 +237,18 @@ export class MultiplayerUI {
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') doSend(); });
 
     // Receive messages
+    this.client.on('CHAT_HISTORY', (msg: any) => {
+      const msgs = document.getElementById('chat-messages');
+      if (!msgs || !msg.messages) return;
+      for (const m of msg.messages) {
+        const div = document.createElement('div');
+        div.className = `chat-msg ${m.senderId === this.client.clientId ? 'chat-self' : ''}`;
+        div.innerHTML = `<span class="chat-name">${m.senderName}</span> ${m.text}`;
+        msgs.appendChild(div);
+      }
+      msgs.scrollTop = msgs.scrollHeight;
+    });
+
     this.client.on('CHAT_MESSAGE', (msg: any) => {
       const msgs = document.getElementById('chat-messages');
       if (!msgs) return;

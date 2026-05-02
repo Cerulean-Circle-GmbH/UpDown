@@ -62,6 +62,7 @@ export class GameRoom {
   players: Map<string, RoomPlayer> = new Map();
   private bots: Map<string, BotPlayer> = new Map();
   spectators: Map<string, { id: string; ws: WebSocket; name: string }> = new Map();
+  chatHistory: { senderId: string; senderName: string; text: string; timestamp: number }[] = [];
 
   // GM state
   private deck: Card[] = [];
@@ -118,6 +119,9 @@ export class GameRoom {
 
     this.broadcast({ type: 'PLAYER_JOINED', player: this.playerInfo(id), playerCount: this.players.size, minPlayers: this.minPlayers });
     this.sendTo(id, { type: 'ROOM_JOINED', room: this.info(), players: this.allPlayerInfo(), minPlayers: this.minPlayers });
+    if (this.chatHistory.length > 0) {
+      this.sendTo(id, { type: 'CHAT_HISTORY', messages: this.chatHistory });
+    }
 
     return true;
   }
@@ -151,6 +155,9 @@ export class GameRoom {
       state: this.state
     });
     this.broadcastAll({ type: 'SPECTATOR_JOINED', name, spectatorCount: this.spectators.size });
+    if (this.chatHistory.length > 0) {
+      this.sendToSpectator(id, { type: 'CHAT_HISTORY', messages: this.chatHistory });
+    }
   }
 
   removeSpectator(id: string): void {
