@@ -212,6 +212,13 @@ Files to read:
   - [ ] 23.10: Tester — Verify pane minimizes/expands on drag
   - [ ] 23.11: PO — Tron verifies chat UX on mobile
 
+- [ ] [Task 24: Auto-Host Assignment on Pre-created Rooms](./task-24-auto-host.md) **📋 PLANNED**
+  - [ ] 24.1: Expert — First human joining a pre-created room automatically becomes host
+  - [ ] 24.2: Expert — Host badge shown in player list ("👑 PlayerName")
+  - [ ] 24.3: Expert — Host can kick players, add bots, adjust settings before game starts
+  - [ ] 24.4: Expert — If host leaves during waiting, next player becomes host (transfer)
+  - [ ] 24.5: Tester — Verify first joiner is host, host transfer on leave
+
 ## E2E Test Results
 - Protocol suite: 23/26 PASS, 0 FAIL, 3 SKIP ✅
 - Base href fix: deployed, page loads ✅
