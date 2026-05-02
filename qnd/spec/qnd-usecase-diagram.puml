@@ -18,11 +18,17 @@ actor "Bot (AI)" as bot
 ' ═══════════════════════════════════════════════════════════════
 
 rectangle "Lobby System" as Lobby {
+  ' @uc:uuid:92a061e0 connection.open
   usecase "UC1: lobby.connect\n(WebSocket + name)" as UC1
+  ' @uc:uuid:fbfed148 room.create
   usecase "UC2: lobby.createRoom\n(name, maxPlayers, key?)" as UC2
+  ' @uc:uuid:9cc60247 room.join
   usecase "UC3: lobby.joinRoom\n(roomId, key?)" as UC3
+  ' @uc:uuid:7cd55a0b rooms.list
   usecase "UC4: lobby.listRooms\n(public only)" as UC4
+  ' @uc:uuid:96f2ecd5 room.leave
   usecase "UC5: lobby.leaveRoom" as UC5
+  ' @uc:uuid:433fe03f room.share
   usecase "UC6: lobby.shareInvite\n(clipboard/share API)" as UC6
 
   usecase "UC1a: WebSocketClient.connect()" as UC1a
@@ -50,11 +56,17 @@ UC6 ..> UC6a : <<include>>
 ' ═══════════════════════════════════════════════════════════════
 
 rectangle "Multiplayer Game" as Game {
+  ' @uc:uuid:560d9a46 game.start
   usecase "UC7: game.start\n(host only)" as UC7
+  ' @uc:uuid:f0295f28 player.guess
   usecase "UC8: game.playCard\n(up/down/equal)" as UC8
+  ' @uc:uuid:f43897d5 player.playSpecial
   usecase "UC9: game.playSpecial\n(13 card types, 3 levels)" as UC9
+  ' @uc:uuid:e5c73817 round.resolve
   usecase "UC10: game.receiveResult\n(scores, eliminations)" as UC10
+  ' @uc:uuid:38d62fef game.end
   usecase "UC11: game.over\n(leaderboard + diamonds)" as UC11
+  ' @uc:uuid:f8e39106 round.start
   usecase "UC12: game.nextRound\n(auto after 3s exchange)" as UC12
 
   usecase "UC7a: GameRoom.startGame()" as UC7a
@@ -86,8 +98,11 @@ UC12 ..> UC7b : <<include>>
 ' ═══════════════════════════════════════════════════════════════
 
 rectangle "AI Bot System" as BotSys {
+  ' @uc:uuid:f1ba3e42 bot.add
   usecase "UC13: bot.add\n(host picks personality)" as UC13
+  ' @uc:uuid:8e46d39e bot.decide
   usecase "UC14: bot.decide\n(card-counting heuristic)" as UC14
+  ' @uc:uuid:2d695025 bot.playDelayed
   usecase "UC15: bot.playDelayed\n(1-8s human feel)" as UC15
 
   usecase "UC13a: GameRoom.addBot()" as UC13a
@@ -108,8 +123,11 @@ UC14 ..> UC15a : <<include>>
 ' ═══════════════════════════════════════════════════════════════
 
 rectangle "Spectator Mode" as Spec {
+  ' @uc:uuid:ac08aa49 spectator.join
   usecase "UC16: spectate.join\n(watch live game)" as UC16
+  ' @uc:uuid:d30575e7 spectator.leave
   usecase "UC17: spectate.leave" as UC17
+  ' @uc:uuid:df7ec971 spectator.joinNext
   usecase "UC18: spectate.joinNext\n(become player next game)" as UC18
 
   usecase "UC16a: GameRoom.addSpectator()" as UC16a
@@ -126,8 +144,11 @@ UC16 ..> UC16a : <<include>>
 ' ═══════════════════════════════════════════════════════════════
 
 rectangle "Social Features" as Social {
+  ' @uc:uuid:0dfe22b0 chat.send
   usecase "UC19: chat.send\n(room chat)" as UC19
+  ' @uc:uuid:433fe03f profile.view (client-only)
   usecase "UC20: profile.view\n(player stats, avatar)" as UC20
+  ' @uc:uuid:ea33c5b7 game.end.playAgain
   usecase "UC21: share.result\n(game over stats)" as UC21
 
   usecase "UC19a: GameRoom.broadcastChat()" as UC19a
