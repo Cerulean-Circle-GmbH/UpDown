@@ -237,19 +237,23 @@ export class MultiplayerUI {
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') doSend(); });
 
     // Receive messages
-    this.client.on('CHAT_MESSAGE', (msg) => {
-      const messages = document.getElementById('chat-messages');
-      if (!messages) return;
+    this.client.on('CHAT_MESSAGE', (msg: any) => {
+      const msgs = document.getElementById('chat-messages');
+      if (!msgs) return;
       const isSelf = msg.senderId === this.client.clientId;
       const div = document.createElement('div');
       div.className = `chat-msg ${isSelf ? 'chat-self' : ''}`;
       div.innerHTML = `<span class="chat-name">${msg.senderName}</span> ${msg.text}`;
-      messages.appendChild(div);
-      messages.scrollTop = messages.scrollHeight;
-      // Auto-expand briefly on new message if collapsed
-      if (!expanded) {
-        sheet.classList.add('chat-peek');
-        setTimeout(() => sheet.classList.remove('chat-peek'), 3000);
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+      // Show preview on handle when collapsed
+      if (!expanded && handle) {
+        handle.innerHTML = `<div class="chat-preview"><b>${msg.senderName}:</b> ${(msg.text || '').slice(0, 40)}</div>`;
+        sheet!.classList.add('chat-peek');
+        setTimeout(() => {
+          handle!.innerHTML = '<div class="chat-handle-bar"></div>';
+          sheet!.classList.remove('chat-peek');
+        }, 4000);
       }
     });
   }

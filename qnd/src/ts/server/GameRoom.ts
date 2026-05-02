@@ -552,11 +552,9 @@ export class GameRoom {
 
     this.broadcast({ type: 'GAME_OVER', leaderboard, playAgain: true, roomId: this.id });
 
-    // Auto-recreate: reset room quickly so Play Again works
+    // Auto-recreate: instant so room ID is always valid
     if (this.autoRecreate) {
-      setTimeout(() => {
-        if (this.recreateCallback) this.recreateCallback();
-      }, 2000);
+      if (this.recreateCallback) this.recreateCallback();
     } else {
       // User-created rooms: auto-remove after 60s
       setTimeout(() => {
