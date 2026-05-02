@@ -286,8 +286,81 @@ try {
   if (hostChanged) pass('TC-E2b', 'Host transfer — HOST_CHANGED received');
   else skip('TC-E2b', 'Host transfer', 'not received (may need >1 remaining player)');
 
-  // Cleanup
-  wsA.close(); wsB.close(); wsD.close(); wsF.close(); wsI.close();
+  // Cleanup edge case connections
+  wsI.close();
+  await sleep(500);
+
+  // ═══════════════════════════════════════════
+  // TRON REGRESSIONS: TC-R1 to TC-R4
+  // These must NEVER break again
+  // ═══════════════════════════════════════════
+  console.log('\n── Tron Regressions ──');
+
+  // TC-R1: Leave room → receive ROOM_LIST
+  const { ws: wsR1 } = await connect();
+  await sleep(500);
+  const collectR1 = collectFor(wsR1, 4000);
+  send(wsR1, { type: 'CREATE_ROOM', roomName: 'RegLeave', playerName: 'Leaver', maxPlayers: 2 });
+  await sleep(1000);
+  send(wsR1, { type: 'LEAVE_ROOM' });
+  const msgsR1 = await collectR1;
+  const r1List = msgsR1.find(m => m.type === 'ROOM_LIST');
+  if (r1List) pass('TC-R1', 'Leave room → receive ROOM_LIST');
+  else fail('TC-R1', 'Leave room → ROOM_LIST', `got: ${msgsR1.map(m => m.type).join(',')}`);
+  wsR1.close();
+  await sleep(300);
+
+  // TC-R2: LIST_ROOMS request → receive ROOM_LIST
+  const { ws: wsR2 } = await connect();
+  await sleep(500);
+  const collectR2 = collectFor(wsR2, 3000);
+  send(wsR2, { type: 'LIST_ROOMS' });
+  const msgsR2 = await collectR2;
+  const r2List = msgsR2.find(m => m.type === 'ROOM_LIST');
+  if (r2List && r2List.rooms) pass('TC-R2', 'LIST_ROOMS → receive ROOM_LIST with rooms array');
+  else fail('TC-R2', 'LIST_ROOMS response', `got: ${msgsR2.map(m => m.type).join(',')}`);
+  wsR2.close();
+  await sleep(300);
+
+  // TC-R3: Join pre-created room → hostId is the joiner (not 'server')
+  const { ws: wsR3, playerId: idR3 } = await connect();
+  await sleep(500);
+  const collectR3 = collectFor(wsR3, 3000);
+  send(wsR3, { type: 'JOIN_ROOM', roomId: '5p', playerName: 'HostCheck' });
+  const msgsR3 = await collectR3;
+  const joinedR3 = msgsR3.find(m => m.type === 'ROOM_JOINED');
+  const r3HostId = joinedR3?.room?.hostId;
+  if (r3HostId && r3HostId !== 'server' && r3HostId === idR3)
+    pass('TC-R3', 'Pre-created room → first joiner becomes host');
+  else if (r3HostId && r3HostId !== 'server')
+    pass('TC-R3', 'Pre-created room → hostId is a player (not server)');
+  else
+    fail('TC-R3', 'Pre-created room host', `hostId=${r3HostId} myId=${idR3}`);
+  wsR3.close();
+  await sleep(300);
+
+  // TC-R4: CREATE_ROOM → room appears in subsequent LIST_ROOMS
+  const { ws: wsR4a } = await connect();
+  await sleep(500);
+  const collectR4a = collectFor(wsR4a, 2000);
+  send(wsR4a, { type: 'CREATE_ROOM', roomName: 'RegVisible', playerName: 'Creator', maxPlayers: 3 });
+  const msgsR4a = await collectR4a;
+  const createdRoom = msgsR4a.find(m => m.type === 'ROOM_JOINED')?.room?.id;
+
+  const { ws: wsR4b } = await connect();
+  await sleep(500);
+  const collectR4b = collectFor(wsR4b, 2000);
+  send(wsR4b, { type: 'LIST_ROOMS' });
+  const msgsR4b = await collectR4b;
+  const r4List = msgsR4b.find(m => m.type === 'ROOM_LIST');
+  const r4Found = r4List?.rooms?.some(r => r.id === createdRoom);
+  if (r4Found) pass('TC-R4', 'Created room visible in LIST_ROOMS');
+  else fail('TC-R4', 'Created room in list', `roomId=${createdRoom} listed=${r4List?.rooms?.map(r => r.id).join(',')}`);
+  wsR4a.close(); wsR4b.close();
+  await sleep(300);
+
+  // Cleanup remaining connections
+  wsA.close(); wsB.close(); wsD.close(); wsF.close();
   await sleep(500);
 
   // ═══════════════════════════════════════════

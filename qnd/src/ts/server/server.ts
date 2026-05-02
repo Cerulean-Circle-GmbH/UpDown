@@ -433,6 +433,7 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
         room.removePlayer(clientId);
         if (room.players.size === 0) roomManager.removeRoom(room.id);
         send({ type: 'ROOM_LEFT' });
+        send({ type: 'ROOM_LIST', rooms: roomManager.listRooms() });
         addLog(`🚪 ${clientId.slice(0,8)} left room ${room.name}`);
       }
       break;
