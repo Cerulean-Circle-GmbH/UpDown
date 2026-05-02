@@ -163,6 +163,15 @@ export class MultiplayerUI {
         <div class="mp-result" id="mp-result" style="display:none"></div>
         <div class="mp-gameover" id="mp-gameover" style="display:none"></div>
       </div>
+
+      <div class="chat-sheet" id="chat-sheet">
+        <div class="chat-handle" id="chat-handle"><div class="chat-handle-bar"></div></div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-bar">
+          <input type="text" id="chat-input" placeholder="Message..." maxlength="200" autocomplete="off">
+          <button id="chat-send" class="btn btn-small btn-primary">Send</button>
+        </div>
+      </div>
     `;
 
     document.getElementById('leave-room-btn')?.addEventListener('click', () => {
@@ -177,6 +186,59 @@ export class MultiplayerUI {
 
     this.renderPlayers();
     this.renderControls();
+    this.setupChat();
+  }
+
+  private setupChat(): void {
+    const sheet = document.getElementById('chat-sheet');
+    const handle = document.getElementById('chat-handle');
+    const input = document.getElementById('chat-input') as HTMLInputElement;
+    const sendBtn = document.getElementById('chat-send');
+    if (!sheet || !handle || !input || !sendBtn) return;
+
+    let expanded = false;
+
+    // Toggle expand/collapse on handle tap
+    handle.addEventListener('click', () => {
+      expanded = !expanded;
+      sheet.classList.toggle('chat-expanded', expanded);
+    });
+
+    // Touch drag on handle
+    let startY = 0;
+    handle.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; }, { passive: true });
+    handle.addEventListener('touchmove', (e) => {
+      const dy = startY - e.touches[0].clientY;
+      if (dy > 30 && !expanded) { expanded = true; sheet.classList.add('chat-expanded'); }
+      if (dy < -30 && expanded) { expanded = false; sheet.classList.remove('chat-expanded'); }
+    }, { passive: true });
+
+    // Send message
+    const doSend = () => {
+      const text = input.value.trim();
+      if (!text) return;
+      this.client.sendChat(text);
+      input.value = '';
+    };
+    sendBtn.addEventListener('click', doSend);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') doSend(); });
+
+    // Receive messages
+    this.client.on('CHAT_MESSAGE', (msg) => {
+      const messages = document.getElementById('chat-messages');
+      if (!messages) return;
+      const isSelf = msg.senderId === this.client.clientId;
+      const div = document.createElement('div');
+      div.className = `chat-msg ${isSelf ? 'chat-self' : ''}`;
+      div.innerHTML = `<span class="chat-name">${msg.senderName}</span> ${msg.text}`;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+      // Auto-expand briefly on new message if collapsed
+      if (!expanded) {
+        sheet.classList.add('chat-peek');
+        setTimeout(() => sheet.classList.remove('chat-peek'), 3000);
+      }
+    });
   }
 
   private renderPlayers(): void {
@@ -205,16 +267,32 @@ export class MultiplayerUI {
         this.client.joinNextGame(localStorage.getItem('updown-name') || 'Player');
       });
     } else if (this.round === 0) {
+      const inviteBtn = `<button id="invite-btn" class="btn btn-secondary" style="margin-top:6px;width:100%">📨 Invite Friends</button>`;
       if (this.isHost) {
         el.innerHTML = `
           <button id="start-game-btn" class="btn btn-primary btn-large">🎲 Start Game (${this.players.length} players)</button>
           <button id="add-bot-btn" class="btn btn-secondary" style="margin-top:6px;width:100%">🤖 Add Bot</button>
+          ${inviteBtn}
         `;
         document.getElementById('start-game-btn')?.addEventListener('click', () => { this.client.startGame(); });
         document.getElementById('add-bot-btn')?.addEventListener('click', () => { this.client.addBot(); });
       } else {
-        el.innerHTML = '<p class="waiting-text">Waiting for host to start...</p>';
+        el.innerHTML = `<p class="waiting-text">Waiting for host to start...</p>${inviteBtn}`;
       }
+      document.getElementById('invite-btn')?.addEventListener('click', async () => {
+        const base = (window as any).__shareBase || location.origin;
+        const url = `${base}/mp?join=${this.roomId}`;
+        if (navigator.share) {
+          try { await navigator.share({ title: 'UpDown — Join my game!', text: 'Play UpDown with me!', url }); } catch {}
+        } else {
+          try {
+            await navigator.clipboard.writeText(url);
+            const btn = document.getElementById('invite-btn')!;
+            btn.textContent = '✅ Link copied!';
+            setTimeout(() => { btn.textContent = '📨 Invite Friends'; }, 2000);
+          } catch { prompt('Copy this link:', url); }
+        }
+      });
     }
   }
 

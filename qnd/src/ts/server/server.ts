@@ -24,9 +24,32 @@ const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Load .env (manual parse, no deps)
+const ENV_PATH = path.join(__dirname, '../../../.env');
+const envVars: Record<string, string> = {};
+if (fsSync.existsSync(ENV_PATH)) {
+  fsSync.readFileSync(ENV_PATH, 'utf-8').split('\n').forEach(line => {
+    const match = line.match(/^([^#=]+)=(.*)$/);
+    if (match) envVars[match[1].trim()] = match[2].trim();
+  });
+}
+
+// Detect local IP fallback
+import os from 'node:os';
+function getLocalIP(): string {
+  for (const ifaces of Object.values(os.networkInterfaces())) {
+    if (!ifaces) continue;
+    for (const iface of ifaces) {
+      if (iface.family === 'IPv4' && !iface.internal) return iface.address;
+    }
+  }
+  return 'localhost';
+}
+
 // Configuration
 const PORT = 3000;
 const HTTPS_PORT = 3443;
+const BASE_DOMAIN = envVars['BASE_DOMAIN'] || '';
 const PUBLIC_DIR = path.join(__dirname, '../../public');
 const CERT_DIR = path.join(__dirname, '.certs');
 const CERT_FILE = path.join(CERT_DIR, 'cert.pem');
@@ -135,7 +158,15 @@ async function handleRequest(req: http.IncomingMessage, res: http.ServerResponse
   
   try {
     let filepath = req.url || '/';
-    
+
+    // API: serve config for client
+    if (filepath === '/api/config') {
+      const domain = BASE_DOMAIN || getLocalIP();
+      res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' });
+      res.end(JSON.stringify({ baseDomain: domain, httpsPort: HTTPS_PORT }));
+      return;
+    }
+
     // Remove query string
     filepath = filepath.split('?')[0];
 
@@ -471,6 +502,18 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       if (room) {
         const ok = room.promoteSpectator(clientId, msg.playerName || 'Player', avatarUrl);
         if (!ok) send({ type: 'ERROR', message: 'Cannot join — room full or game in progress' });
+      }
+      break;
+    }
+
+    case 'CHAT_MESSAGE': {
+      const room = roomManager.findPlayerRoom(clientId) || roomManager.findSpectatorRoom(clientId);
+      if (room && msg.text && typeof msg.text === 'string') {
+        const text = msg.text.slice(0, 200);
+        const player = room.players.get(clientId);
+        const spec = room.spectators.get(clientId);
+        const name = player?.name || spec?.name || 'Anonymous';
+        room.broadcast({ type: 'CHAT_MESSAGE', senderId: clientId, senderName: name, text, timestamp: Date.now() });
       }
       break;
     }

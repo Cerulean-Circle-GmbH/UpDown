@@ -100,4 +100,8 @@ export class WebSocketClient {
   joinNextGame(playerName: string): void {
     this.send({ type: 'JOIN_NEXT_GAME', playerName });
   }
+
+  sendChat(text: string): void {
+    this.send({ type: 'CHAT_MESSAGE', text });
+  }
 }

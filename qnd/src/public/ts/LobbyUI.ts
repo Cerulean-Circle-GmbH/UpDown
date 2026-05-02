@@ -181,14 +181,23 @@ export class LobbyUI {
     list.querySelectorAll('.btn-share').forEach(btn => {
       btn.addEventListener('click', async () => {
         const roomId = (btn as HTMLElement).dataset.room!;
-        const url = `${location.origin}/mp?join=${roomId}`;
-        try {
-          await navigator.clipboard.writeText(url);
-          const orig = btn.textContent;
-          btn.textContent = '✅';
-          setTimeout(() => { btn.textContent = orig; }, 1500);
-        } catch {
-          prompt('Copy this link:', url);
+        const base = (window as any).__shareBase || location.origin;
+        const url = `${base}/mp?join=${roomId}`;
+        // Mobile: native share dialog. Desktop: clipboard copy.
+        if (navigator.share) {
+          try {
+            await navigator.share({ title: 'UpDown — Join my game!', text: 'Play UpDown with me!', url });
+            btn.textContent = '✅';
+            setTimeout(() => { btn.textContent = '🔗'; }, 1500);
+          } catch { /* user cancelled */ }
+        } else {
+          try {
+            await navigator.clipboard.writeText(url);
+            btn.textContent = '✅';
+            setTimeout(() => { btn.textContent = '🔗'; }, 1500);
+          } catch {
+            prompt('Copy this link:', url);
+          }
         }
       });
     });
