@@ -119,22 +119,6 @@ export class GameRoom {
     this.broadcast({ type: 'PLAYER_JOINED', player: this.playerInfo(id), playerCount: this.players.size, minPlayers: this.minPlayers });
     this.sendTo(id, { type: 'ROOM_JOINED', room: this.info(), players: this.allPlayerInfo(), minPlayers: this.minPlayers });
 
-    // Auto-start rooms: first human triggers 30s lobby countdown
-    if (this.autoStart && this.state === 'waiting') {
-      if (!this.lobbyTimer && this.humanCount() === 1) {
-        this.startLobbyCountdown();
-      } else if (this.lobbyTimer) {
-        // Send current countdown to new joiner
-        this.sendTo(id, { type: 'LOBBY_COUNTDOWN', seconds: this.lobbyCountdown });
-        // All slots filled with humans → start immediately
-        if (this.players.size >= this.maxPlayers) {
-          clearInterval(this.lobbyTimer);
-          this.lobbyTimer = null;
-          this.fillBotsAndStart();
-        }
-      }
-    }
-
     return true;
   }
 
@@ -298,6 +282,10 @@ export class GameRoom {
 
   startGame(): void {
     if (this.players.size < 1) return;
+    // Fill remaining slots with bots up to minPlayers
+    while (this.players.size < this.minPlayers) {
+      this.addBot();
+    }
     this.deck = this.createShuffledDeck();
     this.gmHand = [];
     for (let i = 0; i < 7 && this.deck.length > 0; i++) {

@@ -44,11 +44,13 @@ export class MultiplayerUI {
     this.client.on('PLAYER_JOINED', (msg) => {
       this.players.push(msg.player);
       this.renderPlayers();
+      this.renderControls();
     });
 
     this.client.on('PLAYER_LEFT', (msg) => {
       this.players = this.players.filter(p => p.id !== msg.playerId);
       this.renderPlayers();
+      this.renderControls();
     });
 
     this.client.on('HOST_CHANGED', (msg) => {
@@ -87,25 +89,6 @@ export class MultiplayerUI {
       this.renderGameOver(msg.leaderboard);
     });
 
-    this.client.on('LOBBY_COUNTDOWN', (msg) => {
-      const el = document.getElementById('mp-controls');
-      if (el && this.round === 0) {
-        el.innerHTML = `
-          <div class="mp-lobby-countdown">
-            <p>⏱️ Game starts in <strong>${msg.seconds}s</strong></p>
-            <p class="waiting-text">${msg.message || 'Waiting for players — bots fill empty slots'}</p>
-          </div>
-          ${this.isHost ? '<button id="add-bot-btn" class="btn btn-secondary" style="margin-top:6px;width:100%">🤖 Add Bot</button>' : ''}
-        `;
-        if (this.isHost) {
-          document.getElementById('add-bot-btn')?.addEventListener('click', () => { this.client.addBot(); });
-        }
-      }
-    });
-
-    this.client.on('LOBBY_COUNTDOWN_CANCELLED', () => {
-      this.renderControls();
-    });
 
     this.client.on('SPECTATE_JOINED', (msg) => {
       this.isSpectator = true;
@@ -166,6 +149,10 @@ export class MultiplayerUI {
 
       <div class="chat-sheet" id="chat-sheet">
         <div class="chat-handle" id="chat-handle"><div class="chat-handle-bar"></div></div>
+        <div class="chat-invite" id="chat-invite">
+          <button id="chat-invite-btn" class="btn btn-small btn-primary">📨 Invite</button>
+          <span class="chat-invite-label">Share room link</span>
+        </div>
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input-bar">
           <input type="text" id="chat-input" placeholder="Message..." maxlength="200" autocomplete="off">
@@ -187,6 +174,16 @@ export class MultiplayerUI {
     this.renderPlayers();
     this.renderControls();
     this.setupChat();
+
+    // Profile overlay (hidden by default)
+    const profileEl = document.createElement('div');
+    profileEl.id = 'player-profile';
+    profileEl.className = 'profile-overlay';
+    profileEl.style.display = 'none';
+    profileEl.addEventListener('click', (e) => {
+      if (e.target === profileEl) profileEl.style.display = 'none';
+    });
+    document.body.appendChild(profileEl);
   }
 
   private setupChat(): void {
@@ -195,6 +192,22 @@ export class MultiplayerUI {
     const input = document.getElementById('chat-input') as HTMLInputElement;
     const sendBtn = document.getElementById('chat-send');
     if (!sheet || !handle || !input || !sendBtn) return;
+
+    // Invite button in chat header
+    document.getElementById('chat-invite-btn')?.addEventListener('click', async () => {
+      const base = (window as any).__shareBase || location.origin;
+      const url = `${base}/mp?join=${this.roomId}`;
+      if (navigator.share) {
+        try { await navigator.share({ title: 'UpDown — Join my game!', url }); } catch {}
+      } else {
+        try {
+          await navigator.clipboard.writeText(url);
+          const btn = document.getElementById('chat-invite-btn')!;
+          btn.textContent = '✅ Copied!';
+          setTimeout(() => { btn.textContent = '📨 Invite'; }, 2000);
+        } catch { prompt('Copy:', url); }
+      }
+    });
 
     let expanded = false;
 
@@ -245,13 +258,57 @@ export class MultiplayerUI {
     const el = document.getElementById('mp-players');
     if (!el) return;
     el.innerHTML = this.players.map(p => `
-      <div class="mp-player ${p.id === this.client.clientId ? 'mp-player-self' : ''}" id="player-${p.id}">
+      <div class="mp-player ${p.id === this.client.clientId ? 'mp-player-self' : ''}" id="player-${p.id}" data-pid="${p.id}">
         <span class="mp-player-avatar">${p.avatarUrl ? `<img src="${p.avatarUrl}" width="24" height="24" style="border-radius:50%">` : '👤'}</span>
-        <span class="mp-player-name">${p.name}${p.id === this.client.clientId ? ' (you)' : ''}</span>
+        <span class="mp-player-name mp-clickable" data-pid="${p.id}">${p.name}${p.id === this.client.clientId ? ' (you)' : ''}</span>
         <span class="mp-player-score">${p.score || 0}</span>
         <span class="mp-player-status" id="status-${p.id}">●</span>
       </div>
     `).join('');
+
+    el.querySelectorAll('.mp-clickable').forEach(name => {
+      name.addEventListener('click', () => {
+        const pid = (name as HTMLElement).dataset.pid!;
+        this.showProfile(pid);
+      });
+    });
+  }
+
+  private showProfile(playerId: string): void {
+    const p = this.players.find(pl => pl.id === playerId);
+    if (!p) return;
+
+    const isBot = p.name.includes('🤖');
+    const profileEl = document.getElementById('player-profile');
+    if (!profileEl) return;
+
+    profileEl.style.display = 'flex';
+    profileEl.innerHTML = `
+      <div class="profile-sheet">
+        <div class="chat-handle"><div class="chat-handle-bar"></div></div>
+        <div class="profile-avatar">${p.avatarUrl ? `<img src="${p.avatarUrl}" width="64" height="64" style="border-radius:50%">` : (isBot ? '🤖' : '👤')}</div>
+        <h3 class="profile-name">${p.name}</h3>
+        ${isBot ? '<p class="profile-bot-type">AI Bot — Card-counting heuristic</p>' : ''}
+        <div class="profile-stats">
+          <div class="profile-stat"><span class="profile-stat-val">${p.score || 0}</span><span class="profile-stat-label">Score</span></div>
+          <div class="profile-stat"><span class="profile-stat-val">${p.alive !== false ? '✅' : '💀'}</span><span class="profile-stat-label">Status</span></div>
+          <div class="profile-stat"><span class="profile-stat-val">${this.round}</span><span class="profile-stat-label">Round</span></div>
+        </div>
+        <button class="btn btn-secondary profile-close" style="margin-top:12px;width:100%">Close</button>
+      </div>
+    `;
+
+    profileEl.querySelector('.profile-close')?.addEventListener('click', () => {
+      profileEl.style.display = 'none';
+    });
+
+    // Touch drag down to dismiss
+    let startY = 0;
+    const sheet = profileEl.querySelector('.profile-sheet') as HTMLElement;
+    sheet?.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; }, { passive: true });
+    sheet?.addEventListener('touchmove', (e) => {
+      if (e.touches[0].clientY - startY > 50) profileEl.style.display = 'none';
+    }, { passive: true });
   }
 
   private renderControls(): void {

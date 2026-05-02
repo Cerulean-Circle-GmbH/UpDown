@@ -306,6 +306,13 @@ input::placeholder { color: rgba(255,255,255,0.5); }
 .chat-sheet.chat-expanded { transform: translateY(0); }
 .chat-sheet.chat-peek { transform: translateY(calc(100% - 90px)); }
 
+.chat-invite {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.chat-invite-label { font-size: 0.75rem; opacity: 0.5; }
+
 .chat-handle {
   display: flex; justify-content: center; padding: 8px;
   cursor: pointer; -webkit-tap-highlight-color: transparent;
@@ -345,5 +352,35 @@ input::placeholder { color: rgba(255,255,255,0.5); }
   min-height: 38px;
 }
 .chat-input-bar input::placeholder { color: rgba(255,255,255,0.4); }
+
+/* Clickable player names */
+.mp-clickable { cursor: pointer; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 2px; }
+
+/* Player profile overlay */
+.profile-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex; align-items: flex-end; justify-content: center;
+  z-index: 80;
+}
+.profile-sheet {
+  background: rgba(20, 20, 40, 0.97);
+  border-radius: 16px 16px 0 0;
+  padding: 12px 20px 24px;
+  width: 100%; max-width: 400px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.profile-avatar { font-size: 3rem; margin: 8px 0; }
+.profile-avatar img { display: block; margin: 0 auto; }
+.profile-name { font-size: 1.2rem; margin-bottom: 4px; }
+.profile-bot-type { font-size: 0.8rem; opacity: 0.6; margin-bottom: 8px; }
+.profile-stats { display: flex; justify-content: center; gap: 20px; margin: 12px 0; }
+.profile-stat { display: flex; flex-direction: column; align-items: center; }
+.profile-stat-val { font-size: 1.3rem; font-weight: 700; }
+.profile-stat-label { font-size: 0.7rem; opacity: 0.6; }
+.profile-close { }
 
 .error { text-align: center; padding: 30px; }
