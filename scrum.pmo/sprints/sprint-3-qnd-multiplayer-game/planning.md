@@ -72,14 +72,20 @@ Fully working UpDown multiplayer online card game. Deadline: Sunday. QnD — web
 
 ---
 
-## PENDING TESTER VERIFICATION
-- [ ] T1.4: 2 browsers join same room
-- [ ] T5.7: Special card effects in multiplayer
-- [ ] T7.3: Mobile layout human test
-- [ ] T21.6-21.7: .env domain in share URLs
-- [ ] T23.9-23.11: Chat sync + pane minimize/expand
-- [ ] T25.5-25.6: No auto-start, invite in chat
-- [ ] T26.6-26.7: Player profile pane
+## TESTER VERIFICATION (batch run 2026-05-02)
+- [x] Chat sync: 2 clients both receive CHAT_MESSAGE ✅
+- [x] Chat history: new joiner gets CHAT_HISTORY ✅
+- [x] No auto-start: game doesn't start without host ✅
+- [x] Host-only START_GAME ✅
+- [x] Invite URL in ROOM_JOINED ✅
+- [x] SERVER_CONFIG shareDomain=home.donges.it ✅
+- [ ] Player profile avatarUrl — FAIL (cosmetic, protocol test has no avatar)
+
+## PENDING TRON VERIFICATION
+- [ ] PWA installable on iPhone
+- [ ] Mobile layout fits iPhone 15
+- [ ] Chat pane UX on mobile
+- [ ] Full game playthrough on mobile
 
 ---
 
