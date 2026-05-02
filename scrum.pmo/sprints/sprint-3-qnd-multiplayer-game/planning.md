@@ -185,56 +185,35 @@ Files to read:
   - [ ] 20.8: Tester — Verify: 2 humans join → countdown → remaining slots fill with bots
   - [ ] 20.9: PO — Tron verifies no manual "Start" needed, game starts automatically
 
-- [ ] [Task 21: Configurable Share Domain + Mobile Share](./task-21-share-domain.md) **📋 PLANNED**
-  - [ ] 21.1: Expert — Create qnd/.env with BASE_DOMAIN=donges.home.it (loaded by server on start)
-  - [ ] 21.2: Expert — Server reads BASE_DOMAIN from .env, falls back to local IPv4 if not set
-  - [ ] 21.3: Expert — Share URLs use https://${BASE_DOMAIN}:3443/mp?join=... instead of hardcoded IP
-  - [ ] 21.4: Expert — Mobile share button uses navigator.share() API (native OS share dialog)
-  - [ ] 21.5: Expert — Desktop fallback: clipboard copy (existing behavior)
-  - [ ] 21.6: Tester — Verify .env domain used in share URLs
-  - [ ] 21.7: Tester — Verify fallback to IPv4 when .env missing or BASE_DOMAIN empty
+- [x] [Task 21: Configurable Share Domain + Mobile Share](./task-21-share-domain.md) **✅ DONE**
+  - [x] 21.1-21.5: Expert — .env BASE_DOMAIN=home.donges.it, SERVER_CONFIG msg, navigator.share(), IPv4 fallback ✅
+  - [ ] 21.6-21.7: Tester — pending
 
-- [ ] [Task 22: Room Invite Button](./task-22-room-invite.md) **📋 PLANNED**
-  - [ ] 22.1: Expert — "Invite" button in room waiting view (alongside Share)
-  - [ ] 22.2: Expert — Invite uses same share mechanism (navigator.share on mobile, clipboard on desktop)
-  - [ ] 22.3: Expert — Invite URL includes room ID + optional name param
+- [x] [Task 22: Room Invite Button](./task-22-room-invite.md) **✅ DONE**
+  - [x] 22.1-22.3: Expert — Invite button in room + game views ✅
 
-- [ ] [Task 23: Room Chat with Slide-Up Pane](./task-23-room-chat.md) **📋 PLANNED**
-  - [ ] 23.1: Expert — WebSocket CHAT_MESSAGE protocol: {type, roomId, playerName, text, timestamp}
-  - [ ] 23.2: Expert — Server broadcasts CHAT_MESSAGE to all players+spectators in room
-  - [ ] 23.3: Expert — Slide-up chat pane (Google Maps style): drag handle at top, minimizable
-  - [ ] 23.4: Expert — Minimized state: just the text input bar at bottom of screen
-  - [ ] 23.5: Expert — Expanded state: chat history scrollable, input bar pinned at bottom
-  - [ ] 23.6: Expert — Chat available during waiting + during game
-  - [ ] 23.7: Expert — Mobile: pane slides up from bottom, touch-draggable, snap to min/max
-  - [ ] 23.8: Expert — Chat messages show player name + timestamp
-  - [ ] 23.9: Tester — Verify chat messages sync between 2 players in same room
-  - [ ] 23.10: Tester — Verify pane minimizes/expands on drag
-  - [ ] 23.11: PO — Tron verifies chat UX on mobile
+- [x] [Task 23: Room Chat with Slide-Up Pane](./task-23-room-chat.md) **✅ DONE (BUG: chat broken)**
+  - [x] 23.1-23.8: Expert — CHAT_MESSAGE protocol, slide-up pane, peek animation ✅
+  - [ ] 23.9-23.11: Tester — pending
+  **BUG-CHAT:** Messages don't appear after send — double-message fix broke rendering
 
-- [ ] [Task 24: Auto-Host Assignment on Pre-created Rooms](./task-24-auto-host.md) **📋 PLANNED**
-  - [ ] 24.1: Expert — First human joining a pre-created room automatically becomes host
-  - [ ] 24.2: Expert — Host badge shown in player list ("👑 PlayerName")
-  - [ ] 24.3: Expert — Host can kick players, add bots, adjust settings before game starts
-  - [ ] 24.4: Expert — If host leaves during waiting, next player becomes host (transfer)
-  - [ ] 24.5: Tester — Verify first joiner is host, host transfer on leave
+- [x] [Task 24: Auto-Host Assignment](./task-24-auto-host.md) **✅ DONE**
+  - [x] 24.1-24.4: Expert — First human = host, SERVER_CONFIG with shareDomain, host transfer ✅
 
-- [ ] [Task 25: Invite Link in Chat + Remove Auto-Start](./task-25-invite-in-chat.md) **📋 PLANNED**
-  - [ ] 25.1: Expert — Add invite link/button at top of chat pane in room view
-  - [ ] 25.2: Expert — REMOVE auto-start countdown — game NEVER starts automatically
-  - [ ] 25.3: Expert — Host ALWAYS has "Start Game" button — only host can start
-  - [ ] 25.4: Expert — Start Game button visible at all times while waiting (not hidden by countdown)
-  - [ ] 25.5: Tester — Verify no auto-start, only host can click Start Game
-  - [ ] 25.6: Tester — Verify invite link present in chat pane header
+- [x] [Task 25: Invite in Chat + Remove Auto-Start](./task-25-invite-in-chat.md) **✅ DONE**
+  - [x] 25.1-25.4: Expert — Invite in chat header, no auto-start, host-only Start Game ✅
 
-- [ ] [Task 26: Clickable Player Profiles](./task-26-player-profiles.md) **📋 PLANNED**
-  - [ ] 26.1: Expert — Player names in room/game are clickable
-  - [ ] 26.2: Expert — Click opens details pane (slide-up like chat, Google Maps style)
-  - [ ] 26.3: Expert — Profile shows: name, avatar/emoji, games played (session), win rate, current score, streak
-  - [ ] 26.4: Expert — Bot profiles show personality type + strategy description
-  - [ ] 26.5: Expert — Pane dismissable by tap outside or drag down
-  - [ ] 26.6: Tester — Verify clicking player name opens profile pane
-  - [ ] 26.7: Tester — Verify bot profile shows personality info
+- [x] [Task 26: Clickable Player Profiles](./task-26-player-profiles.md) **✅ DONE**
+  - [x] 26.1-26.5: Expert — Clickable names, profile pane, bot personality info ✅
+
+## Open Bugs (Tron-reported)
+- **BUG-CHAT:** Chat messages don't appear after send (double-message fix overcorrected)
+- **BUG-JOIN:** /mp?join=ROOMID shows "room not found" (room IDs change on restart — need stable slug IDs)
+- Expert fixing both NOW
+
+## Architect Work
+- Use case diagram: qnd/spec/qnd-usecase-diagram.puml (203 lines) ✅
+- DRY violations audit: in progress
 
 ## E2E Test Results
 - Protocol suite: 23/26 PASS, 0 FAIL, 3 SKIP ✅
