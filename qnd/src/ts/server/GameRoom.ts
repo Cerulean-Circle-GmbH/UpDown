@@ -111,6 +111,11 @@ export class GameRoom {
       roundsPlayed: 0, disconnected: false
     });
 
+    // Transfer host from 'server' to first human
+    if (this.hostId === 'server' && !this.bots.has(id)) {
+      this.hostId = id;
+    }
+
     this.broadcast({ type: 'PLAYER_JOINED', player: this.playerInfo(id), playerCount: this.players.size, minPlayers: this.minPlayers });
     this.sendTo(id, { type: 'ROOM_JOINED', room: this.info(), players: this.allPlayerInfo(), minPlayers: this.minPlayers });
 

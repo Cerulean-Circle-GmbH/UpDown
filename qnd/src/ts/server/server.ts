@@ -323,7 +323,8 @@ function setupWebSocketServer(server: https.Server): void {
       players: getAllPlayers()
     }));
     
-    // Send room list immediately
+    // Send config + room list immediately
+    ws.send(JSON.stringify({ type: 'SERVER_CONFIG', shareDomain: BASE_DOMAIN || getLocalIP(), httpsPort: HTTPS_PORT }));
     ws.send(JSON.stringify({ type: 'ROOM_LIST', rooms: roomManager.listRooms() }));
 
     // Broadcast new player to all other clients
