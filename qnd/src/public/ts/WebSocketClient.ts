@@ -105,3 +105,30 @@ export class WebSocketClient {
     this.send({ type: 'CHAT_MESSAGE', text });
   }
 }
+
+export function generateInviteMessage(url: string): { title: string; text: string; clipboardText: string } {
+  return {
+    title: '🎴 UpDown — Higher or Lower?',
+    text: '🎴 Hey! Come play UpDown with me! Can you beat the odds? 🃏\nGuess higher, lower or equal — outlast everyone at the table! 🔥',
+    clipboardText: `🎴 Hey! Come play UpDown with me! Can you beat the odds? 🃏\n\nJoin here: ${url}`
+  };
+}
+
+export async function shareOrCopy(url: string, feedbackEl?: HTMLElement): Promise<void> {
+  const invite = generateInviteMessage(url);
+  if (navigator.share) {
+    try { await navigator.share({ title: invite.title, text: invite.text, url }); } catch {}
+  } else {
+    try {
+      await navigator.clipboard.writeText(invite.clipboardText);
+    } catch {
+      prompt('Copy this link:', url);
+      return;
+    }
+  }
+  if (feedbackEl) {
+    const orig = feedbackEl.textContent;
+    feedbackEl.textContent = '✅ Shared!';
+    setTimeout(() => { feedbackEl.textContent = orig; }, 2000);
+  }
+}

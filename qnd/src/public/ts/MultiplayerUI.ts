@@ -3,7 +3,7 @@
  * QnD Sprint 3: Shows table, players, GM card, countdown, Up/Down/Equal buttons
  */
 
-import { WebSocketClient } from './WebSocketClient.js';
+import { WebSocketClient, shareOrCopy } from './WebSocketClient.js';
 
 interface PlayerScore {
   id: string; name: string; score: number; streak: number; alive: boolean;
@@ -196,17 +196,7 @@ export class MultiplayerUI {
     // Invite button in chat header
     document.getElementById('chat-invite-btn')?.addEventListener('click', async () => {
       const base = (window as any).__shareBase || location.origin;
-      const url = `${base}/mp?join=${this.roomId}`;
-      if (navigator.share) {
-        try { await navigator.share({ title: 'UpDown — Join my game!', url }); } catch {}
-      } else {
-        try {
-          await navigator.clipboard.writeText(url);
-          const btn = document.getElementById('chat-invite-btn')!;
-          btn.textContent = '✅ Copied!';
-          setTimeout(() => { btn.textContent = '📨 Invite'; }, 2000);
-        } catch { prompt('Copy:', url); }
-      }
+      await shareOrCopy(`${base}/mp?join=${this.roomId}`, document.getElementById('chat-invite-btn') as HTMLElement);
     });
 
     let expanded = false;
@@ -354,17 +344,7 @@ export class MultiplayerUI {
       }
       document.getElementById('invite-btn')?.addEventListener('click', async () => {
         const base = (window as any).__shareBase || location.origin;
-        const url = `${base}/mp?join=${this.roomId}`;
-        if (navigator.share) {
-          try { await navigator.share({ title: 'UpDown — Join my game!', text: 'Play UpDown with me!', url }); } catch {}
-        } else {
-          try {
-            await navigator.clipboard.writeText(url);
-            const btn = document.getElementById('invite-btn')!;
-            btn.textContent = '✅ Link copied!';
-            setTimeout(() => { btn.textContent = '📨 Invite Friends'; }, 2000);
-          } catch { prompt('Copy this link:', url); }
-        }
+        await shareOrCopy(`${base}/mp?join=${this.roomId}`, document.getElementById('invite-btn') as HTMLElement);
       });
     }
   }
