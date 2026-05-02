@@ -98,6 +98,28 @@ Fully working UpDown multiplayer online card game. Deadline: Sunday. QnD — web
 
 ---
 
+## DRY Refactoring (from architect audit — qnd/spec/dry-violations.md)
+
+- [ ] [Task 27: DRY — MessageTypes.ts](./task-27-dry-message-types.md) **📋 PRIORITY 1**
+  - [ ] 27.1: Expert — Create shared/MessageTypes.ts with all 20+ WS message type constants
+  - [ ] 27.2: Expert — Replace hardcoded strings in server.ts, GameRoom.ts, WebSocketClient.ts, LobbyUI.ts, MultiplayerUI.ts
+  - [ ] 27.3: Tester — Run regression suite — all PASS
+
+- [ ] [Task 28: DRY — ShareUtil.ts](./task-28-dry-share-util.md) **📋 PRIORITY 2**
+  - [ ] 28.1: Expert — shareOrCopy() already extracted — verify no remaining duplicates
+  - [ ] 28.2: Expert — generateInviteMessage() single source, used by lobby + game + chat
+
+- [ ] [Task 29: DRY — CardUtils.ts](./task-29-dry-card-utils.md) **📋 DEFERRED**
+  - [ ] 29.1: Expert — Extract suitSymbol(), cardColor(), cardToHtml() — 7 locations → 1
+
+- [ ] [Task 30: DRY — ScoreCalculator.ts](./task-30-dry-score-calc.md) **📋 DEFERRED**
+  - [ ] 30.1: Expert — Shared scoring formula between GameModel + GameRoom
+
+- [ ] [Task 31: DRY — SpecialCards import](./task-31-dry-special-cards.md) **📋 DEFERRED**
+  - [ ] 31.1: Expert — Client imports card data from SpecialCards.ts, no duplicate catalog
+
+---
+
 ## DoD (pending Tron browser verification)
 - [x] Multiplayer game works with 2+ players ✅ (Tron tested)
 - [x] Lobby with pre-created rooms on load ✅ (Tron verified)
