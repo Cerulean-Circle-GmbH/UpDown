@@ -2,126 +2,180 @@
 !theme plain
 skinparam backgroundColor White
 skinparam defaultFontName "Segoe UI"
-skinparam defaultFontSize 9
-skinparam linetype ortho
+skinparam defaultFontSize 8
+skinparam wrapWidth 200
 
-title UpDown QnD — Traceability Chain\nUseCase(UUID) → Task → Implementation(file:method) → Test(file:TC)\n4 covered examples from traceability-matrix.md
+title UpDown QnD — Full Traceability: 75 Use Cases\nUC(UUID) → Impl(file:method) → Test(file:TC)\n<color:green>■ Covered (13)</color>  <color:orange>■ Partial (5)</color>  <color:red>■ Missing (57)</color>
+
+' ═══════════════════════════════════════════════════════════════
+' CONNECTION (3 UCs — 100% covered)
+' ═══════════════════════════════════════════════════════════════
+
+package "CONNECTION (3/3 = 100%)" as PKG_CONN #E8F5E9 {
+  card "**UC-C1** connection.open\n//92a061e0//\nWebSocketClient.ts:14\nvitest/uc-c1 AC1-AC2" as C1 #A5D6A7
+  card "**UC-C1b** connection.open.multi\n//aa33a8d3//\nserver.ts:303\nTC1.2" as C1b #A5D6A7
+  card "**UC-C2** connection.close\n//e6b4716c//\nGameRoom.ts:254\nTC-E2" as C2 #A5D6A7
+}
+
+' ═══════════════════════════════════════════════════════════════
+' ROOMS (8 UCs — 63% covered)
+' ═══════════════════════════════════════════════════════════════
+
+package "ROOMS (5/8 = 63%)" as PKG_ROOM #E8F5E9 {
+  card "**UC-R1** rooms.list\n//7cd55a0b//\nRoomManager.ts:660\nTC3.7+TC-R2+TC-R4" as R1 #A5D6A7
+  card "**UC-R2** room.create\n//fbfed148//\nRoomManager.ts:643\nvitest/uc-r2 AC1-AC7" as R2 #A5D6A7
+  card "**UC-R2b** room.create.host\n//177c8da5//\nGameRoom.ts:116\nTC2.3" as R2b #A5D6A7
+  card "**UC-R3** room.create.private\n//1c21171d//\nGameRoom.ts:70\nTC2.2" as R3 #A5D6A7
+  card "**UC-R4** room.join\n//9cc60247//\nGameRoom.ts:103\nvitest/uc-r4 AC1-AC9" as R4 #A5D6A7
+  card "**UC-R5** join.private.ok\n//61449e82//\nTC3.3" as R5 #A5D6A7
+  card "**UC-R6** join.private.wrong\n//148f2e73//\nTC3.4" as R6 #A5D6A7
+  card "**UC-R7** join.full\n//d0b57a5a//" as R7 #EF9A9A
+  card "**UC-R8** join.midGame\n//8db2e073//" as R8 #EF9A9A
+  card "**UC-R10** room.leave\n//96f2ecd5//\nTC-R1" as R10 #A5D6A7
+  card "**UC-R11** room.share\n//433fe03f//\nclient-only" as R11 #EF9A9A
+}
+
+' ═══════════════════════════════════════════════════════════════
+' HOST (4 UCs — 50%)
+' ═══════════════════════════════════════════════════════════════
+
+package "HOST (2/4 = 50%)" as PKG_HOST #FFF9C4 {
+  card "**UC-H1** host.transfer\n//dd0392cf//\nGameRoom.ts:277\nTC-E2a+b" as H1 #A5D6A7
+  card "**UC-H2** host.addBot\n//fc6c941a//" as H2 #EF9A9A
+  card "**UC-H3** host.startGame\n//→ UC-G1//" as H3 #A5D6A7
+  card "**UC-H4** nonHost.rejected\n//57311798//" as H4 #EF9A9A
+}
+
+' ═══════════════════════════════════════════════════════════════
+' GAME START (2 UCs — 50%)
+' ═══════════════════════════════════════════════════════════════
+
+package "GAME START (1/2 = 50%)" as PKG_GAME #FFF9C4 {
+  card "**UC-G1** game.start\n//560d9a46//\nGameRoom.ts:290\nvitest/uc-g1 AC1-AC7" as G1 #A5D6A7
+  card "**UC-G2** autoFillBots\n//f89b9338//" as G2 #EF9A9A
+}
+
+' ═══════════════════════════════════════════════════════════════
+' ROUND (8 UCs — 4 partial, 4 missing)
+' ═══════════════════════════════════════════════════════════════
+
+package "ROUND (0+4p/8 = partial)" as PKG_ROUND #FFF9C4 {
+  card "**UC-RD1** round.start\n//f8e39106//\n(implicit TC4.1)" as RD1 #FFE082
+  card "**UC-RD2** countdown\n//224c5b9e//\nTC4.4" as RD2 #FFE082
+  card "**UC-RD3** resolve\n//e5c73817//\n(implicit TC5.1)" as RD3 #FFE082
+  card "**UC-RD4** allPlayed\n//b3fb6696//\nTC5.4" as RD4 #FFE082
+  card "**UC-RD5** timeout\n//34620f4b//" as RD5 #EF9A9A
+  card "**UC-RD6** specials\n//4af9fb90//" as RD6 #EF9A9A
+  card "**UC-RD7** exchange\n//76f767e4//" as RD7 #EF9A9A
+  card "**UC-RD8** deckEmpty\n//7886e805//" as RD8 #EF9A9A
+}
+
+' ═══════════════════════════════════════════════════════════════
+' PLAYER (14 UCs — 1 partial, 13 missing)
+' ═══════════════════════════════════════════════════════════════
+
+package "PLAYER (0+1p/14 = 7%)" as PKG_PLAYER #FFCDD2 {
+  card "**UC-P1** guess.up\n//f0295f28//\nvitest/uc-p1 AC1-AC11" as P1 #FFE082
+  card "**UC-P2** guess.down //c9866c6e//" as P2 #EF9A9A
+  card "**UC-P3** guess.equal //fa8f1c83//" as P3 #EF9A9A
+  card "**UC-P4** correct //035d2535//" as P4 #EF9A9A
+  card "**UC-P5** wrong //1a56ba00//" as P5 #EF9A9A
+  card "**UC-P6** timeout //344fcec6//" as P6 #EF9A9A
+  card "**UC-P7** frozen //e4b6d041//" as P7 #EF9A9A
+  card "**UC-P8** dead //d51d24ec//" as P8 #EF9A9A
+  card "**UC-P9** playSpecial //f43897d5//" as P9 #EF9A9A
+  card "**UC-P10** noInventory //b6862ad2//" as P10 #EF9A9A
+  card "**UC-P11** alreadyUsed //c503e19a//" as P11 #EF9A9A
+  card "**UC-P13** streak //d309011d//" as P13 #EF9A9A
+  card "**UC-P14** score //18224bc2//" as P14 #EF9A9A
+}
+
+' ═══════════════════════════════════════════════════════════════
+' BOT (8 UCs — 0%)
+' ═══════════════════════════════════════════════════════════════
+
+package "BOT (0/8 = 0%)" as PKG_BOT #FFCDD2 {
+  card "**UC-B1** bot.add\n//f1ba3e42//\nvitest/uc-b1 AC1-AC6" as B1 #EF9A9A
+  card "**UC-B2** decide //8e46d39e//" as B2 #EF9A9A
+  card "**UC-B3** cautious //fe84fad6//" as B3 #EF9A9A
+  card "**UC-B4** gambler //f0364019//" as B4 #EF9A9A
+  card "**UC-B5** equalLover //a4c55c47//" as B5 #EF9A9A
+  card "**UC-B6** random //a067feff//" as B6 #EF9A9A
+  card "**UC-B7** observe //b324159f//" as B7 #EF9A9A
+  card "**UC-B8** playDelayed //2d695025//" as B8 #EF9A9A
+}
+
+' ═══════════════════════════════════════════════════════════════
+' SPECTATOR (4 UCs — 0%)
+' ═══════════════════════════════════════════════════════════════
+
+package "SPECTATOR (0/4 = 0%)" as PKG_SPEC #FFCDD2 {
+  card "**UC-S1** spectator.join\n//ac08aa49//\nvitest/uc-s1 AC1-AC8" as S1 #EF9A9A
+  card "**UC-S2** leave //d30575e7//" as S2 #EF9A9A
+  card "**UC-S3** joinNext //df7ec971//" as S3 #EF9A9A
+  card "**UC-S4** seesGame //91825bbd//" as S4 #EF9A9A
+}
+
+' ═══════════════════════════════════════════════════════════════
+' CHAT (4 UCs — 0%)
+' ═══════════════════════════════════════════════════════════════
+
+package "CHAT (0/4 = 0%)" as PKG_CHAT #FFCDD2 {
+  card "**UC-CH1** chat.send\n//0dfe22b0//\nvitest/uc-ch1 AC1-AC6" as CH1 #EF9A9A
+  card "**UC-CH2** history //7b4f1505//" as CH2 #EF9A9A
+  card "**UC-CH3** maxLength //8a319461//" as CH3 #EF9A9A
+  card "**UC-CH4** maxHistory //f552ec48//" as CH4 #EF9A9A
+}
+
+' ═══════════════════════════════════════════════════════════════
+' GAME END (5 UCs — 0%)
+' ═══════════════════════════════════════════════════════════════
+
+package "GAME END (0/5 = 0%)" as PKG_END #FFCDD2 {
+  card "**UC-GE1** allEliminated\n//38d62fef//\nvitest/uc-ge1 AC1-AC7" as GE1 #EF9A9A
+  card "**UC-GE2** deckEmpty //e73e7784//" as GE2 #EF9A9A
+  card "**UC-GE3** leaderboard //e4bd6ed5//" as GE3 #EF9A9A
+  card "**UC-GE4** diamonds //b1be7a22//" as GE4 #EF9A9A
+  card "**UC-GE5** playAgain //ea33c5b7//" as GE5 #EF9A9A
+}
+
+' ═══════════════════════════════════════════════════════════════
+' SPECIAL CARDS (13 UCs — 0%)
+' ═══════════════════════════════════════════════════════════════
+
+package "SPECIAL CARDS (0/13 = 0%)" as PKG_SC #FFCDD2 {
+  card "**SC1** shield //58aca2aa//" as SC1 #EF9A9A
+  card "**SC2** 2xPts //fc29d64c//" as SC2 #EF9A9A
+  card "**SC3** peek //7c992d5a//" as SC3 #EF9A9A
+  card "**SC4** sacrifice //994dc326//" as SC4 #EF9A9A
+  card "**SC5** swap //288df581//" as SC5 #EF9A9A
+  card "**SC6** reveal //c11e9372//" as SC6 #EF9A9A
+  card "**SC7** freeze //872c8b2b//" as SC7 #EF9A9A
+  card "**SC8** teamSave //5c153b82//" as SC8 #EF9A9A
+  card "**SC9** 2ndChance //7ed5c89e//" as SC9 #EF9A9A
+  card "**SC10** steal //47b2e416//" as SC10 #EF9A9A
+  card "**SC11** massIntel //725f1f43//" as SC11 #EF9A9A
+  card "**SC12** priority //fb209fdd//" as SC12 #EF9A9A
+  card "**SC13** inventory //dda127ab//" as SC13 #EF9A9A
+}
 
 ' ═══════════════════════════════════════════════════════════════
 ' LEGEND
 ' ═══════════════════════════════════════════════════════════════
 
-legend top left
-  |= Color |= Meaning |
-  | <#E8F5E9> | Use Case (spec) |
-  | <#E3F2FD> | Sprint Task (planning) |
-  | <#FFF3E0> | Implementation (source) |
-  | <#FCE4EC> | Test Case (verification) |
+legend bottom right
+  |= Color |= Status |= Count |
+  | <#A5D6A7> | ✅ Covered (impl + test) | 13 |
+  | <#FFE082> | ⚠️ Partial (test incomplete) | 5 |
+  | <#EF9A9A> | ❌ Missing test | 57 |
+  |= Package BG |= Category Health |
+  | <#E8F5E9> | >60% covered |
+  | <#FFF9C4> | 30-60% covered |
+  | <#FFCDD2> | <30% covered |
+
+  **Total: 75 UCs — 17% covered**
+  **Target: 80%+ by Sprint 3 end**
+  **Source: traceability-matrix.md**
 endlegend
-
-' ═══════════════════════════════════════════════════════════════
-' UC-C1: connection.open (UUID: 92a061e0)
-' ═══════════════════════════════════════════════════════════════
-
-package "UC-C1: connection.open" as P1 {
-  card "**UseCase**\nconnection.open\n//UUID: 92a061e0//\n//usecase-tree.md//" as UC1 #E8F5E9
-
-  card "**Task**\nSprint3 / Task-1\n//Lobby + WebSocket//" as T1 #E3F2FD
-
-  card "**Client Impl**\nWebSocketClient.ts:14\n**connect()**\n//new WebSocket(url)//" as IC1 #FFF3E0
-
-  card "**Server Impl**\nserver.ts:303\n**setupWebSocketServer()**\n//ws.on('connection')//" as IS1 #FFF3E0
-
-  card "**Test**\nprotocol-test-suite.js:70\n**TC1.1**\n//readyState===OPEN && playerId//" as TC1 #FCE4EC
-
-  UC1 --> T1
-  T1 --> IC1
-  T1 --> IS1
-  IC1 --> TC1
-  IS1 --> TC1
-}
-
-' ═══════════════════════════════════════════════════════════════
-' UC-R2: room.create (UUID: fbfed148)
-' ═══════════════════════════════════════════════════════════════
-
-package "UC-R2: room.create" as P2 {
-  card "**UseCase**\nroom.create\n//UUID: fbfed148//\n//usecase-tree.md//" as UC2 #E8F5E9
-
-  card "**Task**\nSprint3 / Task-2\n//Room Management//" as T2 #E3F2FD
-
-  card "**Client Impl**\nWebSocketClient.ts:60\n**createRoom()**\n//sends CREATE_ROOM//" as IC2 #FFF3E0
-
-  card "**Server Impl**\nRoomManager.ts:643\n**createRoom()**\n//new GameRoom()//" as IS2a #FFF3E0
-
-  card "**Server Impl**\nGameRoom.ts:103\n**addPlayer()**\n//broadcasts PLAYER_JOINED//\n//sends ROOM_JOINED//" as IS2b #FFF3E0
-
-  card "**Test**\nprotocol-test-suite.js:91\n**TC2.1**\n//ROOM_JOINED with id, name, max//" as TC2 #FCE4EC
-
-  UC2 --> T2
-  T2 --> IC2
-  IC2 --> IS2a
-  IS2a --> IS2b
-  IS2b --> TC2
-}
-
-' ═══════════════════════════════════════════════════════════════
-' UC-G1: game.start (UUID: 560d9a46)
-' ═══════════════════════════════════════════════════════════════
-
-package "UC-G1: game.start" as P3 {
-  card "**UseCase**\ngame.start\n//UUID: 560d9a46//\n//usecase-tree.md//" as UC3 #E8F5E9
-
-  card "**Task**\nSprint3 / Task-4\n//Game Loop//" as T3 #E3F2FD
-
-  card "**Client Impl**\nWebSocketClient.ts:76\n**startGame()**\n//sends START_GAME//" as IC3 #FFF3E0
-
-  card "**Server Impl**\nGameRoom.ts:290\n**startGame()**\n//createShuffledDeck()//\n//gmHand = 7 cards//\n//reset all players//" as IS3a #FFF3E0
-
-  card "**Server Impl**\nGameRoom.ts:315\n**nextRound()**\n//draw card, countdown=10//\n//sends ROUND_START//" as IS3b #FFF3E0
-
-  card "**Test**\nprotocol-test-suite.js:170\n**TC4.1a+b**\n//ROUND_START round=1//\n//currentCard, countdown=10//" as TC3 #FCE4EC
-
-  UC3 --> T3
-  T3 --> IC3
-  IC3 --> IS3a
-  IS3a --> IS3b
-  IS3b --> TC3
-}
-
-' ═══════════════════════════════════════════════════════════════
-' UC-H1: host.transfer (UUID: dd0392cf)
-' ═══════════════════════════════════════════════════════════════
-
-package "UC-H1: host.transfer" as P4 {
-  card "**UseCase**\nhost.transfer\n//UUID: dd0392cf//\n//usecase-tree.md//" as UC4 #E8F5E9
-
-  card "**Task**\nSprint3 / Task-3\n//Room Edge Cases//" as T4 #E3F2FD
-
-  card "**Server Impl**\nGameRoom.ts:277\n**removePlayer()**\n//if id === hostId//\n//hostId = next player//\n//broadcasts HOST_CHANGED//" as IS4 #FFF3E0
-
-  card "**Client Impl**\nMultiplayerUI.ts:56\n**on('HOST_CHANGED')**\n//isHost = true//\n//renderControls()//" as IC4 #FFF3E0
-
-  card "**Test**\nprotocol-test-suite.js:262\n**TC-E2a+b**\n//PLAYER_LEFT broadcast//\n//HOST_CHANGED received//" as TC4 #FCE4EC
-
-  UC4 --> T4
-  T4 --> IS4
-  IS4 --> IC4
-  IS4 --> TC4
-}
-
-' ═══════════════════════════════════════════════════════════════
-' Cross-package: show the traceability pattern
-' ═══════════════════════════════════════════════════════════════
-
-note bottom of P1
-  **Traceability Pattern**
-  Every UC has a UUID that appears in:
-  1. PUML: //' @uc:uuid:xxx// comment
-  2. Matrix: traceability-matrix.md row
-  3. Test: //// @uc:uuid:xxx// comment
-  Impl files: referenced in matrix only
-  (no source pollution)
-end note
 
 @enduml
