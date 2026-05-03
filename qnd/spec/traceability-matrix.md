@@ -10,11 +10,11 @@ Implementation file:line references maintained here (NOT as comments in source �
 
 | UUID | UC | Object.verb | Task | Impl File:Method | Test File:Line | Status |
 |------|-----|-------------|------|-----------------|----------------|--------|
-| 92a061e0 | UC-C1 | connection.open | Sprint3/T1 | WebSocketClient.ts:14 connect() / server.ts:303 setupWebSocketServer() | protocol-test-suite.js:70 TC1.1 | ✅ |
+| 92a061e0 | UC-C1 | connection.open | Sprint3/T1 | WebSocketClient.ts:14 connect() / server.ts:303 setupWebSocketServer() | vitest/uc-c1-connection-open.test.ts (4 AC) | ✅ |
 | aa33a8d3 | UC-C1b | connection.open.multi | Sprint3/T1 | server.ts:303 (concurrent) | protocol-test-suite.js:75 TC1.2 | ✅ |
 | e6b4716c | UC-C2 | connection.close | Sprint3/T1 | server.ts ws.on('close') / GameRoom.ts:254 removePlayer() | protocol-test-suite.js:262 TC-E2 | ✅ |
 | 7cd55a0b | UC-R1 | rooms.list | Sprint3/T2 | WebSocketClient.ts:72 listRooms() / RoomManager.ts:660 listRooms() | protocol-test-suite.js:152 TC3.7 + :448 TC-R2 + :477 TC-R4 | ✅ |
-| fbfed148 | UC-R2 | room.create | Sprint3/T2 | WebSocketClient.ts:60 createRoom() / RoomManager.ts:643 createRoom() / GameRoom.ts:103 addPlayer() | protocol-test-suite.js:91 TC2.1 | ✅ |
+| fbfed148 | UC-R2 | room.create | Sprint3/T2 | WebSocketClient.ts:60 createRoom() / RoomManager.ts:643 createRoom() / GameRoom.ts:103 addPlayer() | vitest/uc-r2-room-create.test.ts (7 AC) | ✅ |
 | 177c8da5 | UC-R2b | room.create.host | Sprint3/T2 | GameRoom.ts:116 hostId assignment | protocol-test-suite.js:101 TC2.3 | ✅ |
 | 1c21171d | UC-R3 | room.create.private | Sprint3/T2 | GameRoom.ts:70 isPrivate / server.ts:422 key check | protocol-test-suite.js:105 TC2.2 | ✅ |
 | 9cc60247 | UC-R4 | room.join | Sprint3/T3 | WebSocketClient.ts:64 joinRoom() / GameRoom.ts:103 addPlayer() | protocol-test-suite.js:120 TC3.1a+TC3.1b | ✅ |

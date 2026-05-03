@@ -5,5 +5,6 @@ export default defineConfig({
     include: ['test/vitest/**/*.test.ts'],
     testTimeout: 30000,
     hookTimeout: 15000,
+    fileParallelism: false,
   },
 });
