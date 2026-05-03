@@ -3,178 +3,175 @@
 skinparam backgroundColor White
 skinparam defaultFontName "Segoe UI"
 skinparam defaultFontSize 8
-skinparam wrapWidth 200
+skinparam linetype ortho
 
-title UpDown QnD — Full Traceability: 75 Use Cases\nUC(UUID) → Impl(file:method) → Test(file:TC)\n<color:green>■ Covered (13)</color>  <color:orange>■ Partial (5)</color>  <color:red>■ Missing (57)</color>
+title UpDown QnD — Full Traceability\n**Section 1:** Status Dashboard (75 UCs) | **Section 2:** Detailed Chains (13 covered)
 
-' ═══════════════════════════════════════════════════════════════
-' CONNECTION (3 UCs — 100% covered)
-' ═══════════════════════════════════════════════════════════════
+' ╔═════════════════════════════════════════════════════════════╗
+' ║  SECTION 1: STATUS DASHBOARD — All 75 UCs color-coded      ║
+' ╚═════════════════════════════════════════════════════════════╝
 
-package "CONNECTION (3/3 = 100%)" as PKG_CONN #E8F5E9 {
-  card "**UC-C1** connection.open\n//92a061e0//\nWebSocketClient.ts:14\nvitest/uc-c1 AC1-AC2" as C1 #A5D6A7
-  card "**UC-C1b** connection.open.multi\n//aa33a8d3//\nserver.ts:303\nTC1.2" as C1b #A5D6A7
-  card "**UC-C2** connection.close\n//e6b4716c//\nGameRoom.ts:254\nTC-E2" as C2 #A5D6A7
+package "DASHBOARD: 75 UCs — <color:green>13 covered</color> <color:orange>5 partial</color> <color:red>57 missing</color>" as DASH {
+
+  package "CONN 3/3" as D_C #E8F5E9 {
+    card "C1 open" as DC1 #A5D6A7
+    card "C1b multi" as DC1b #A5D6A7
+    card "C2 close" as DC2 #A5D6A7
+  }
+  package "ROOMS 5/8" as D_R #E8F5E9 {
+    card "R1 list" as DR1 #A5D6A7
+    card "R2 create" as DR2 #A5D6A7
+    card "R2b host" as DR2b #A5D6A7
+    card "R3 private" as DR3 #A5D6A7
+    card "R4 join" as DR4 #A5D6A7
+    card "R5 ok" as DR5 #A5D6A7
+    card "R6 wrong" as DR6 #A5D6A7
+    card "R7 full" as DR7 #EF9A9A
+    card "R8 mid" as DR8 #EF9A9A
+    card "R10 leave" as DR10 #A5D6A7
+    card "R11 share" as DR11 #EF9A9A
+  }
+  package "HOST 2/4" as D_H #FFF9C4 {
+    card "H1 xfer" as DH1 #A5D6A7
+    card "H2 bot" as DH2 #EF9A9A
+    card "H3 start" as DH3 #A5D6A7
+    card "H4 noHost" as DH4 #EF9A9A
+  }
+  package "GAME 1/2" as D_G #FFF9C4 {
+    card "G1 start" as DG1 #A5D6A7
+    card "G2 fill" as DG2 #EF9A9A
+  }
+  package "ROUND 4p/8" as D_RD #FFF9C4 {
+    card "RD1" as DRD1 #FFE082
+    card "RD2" as DRD2 #FFE082
+    card "RD3" as DRD3 #FFE082
+    card "RD4" as DRD4 #FFE082
+    card "RD5" as DRD5 #EF9A9A
+    card "RD6" as DRD6 #EF9A9A
+    card "RD7" as DRD7 #EF9A9A
+    card "RD8" as DRD8 #EF9A9A
+  }
+  package "PLAYER 1p/14" as D_P #FFCDD2 {
+    card "P1" as DP1 #FFE082
+    card "P2-P14" as DP2 #EF9A9A
+  }
+  package "BOT 0/8" as D_B #FFCDD2 {
+    card "B1-B8" as DB1 #EF9A9A
+  }
+  package "SPEC 0/4" as D_S #FFCDD2 {
+    card "S1-S4" as DS1 #EF9A9A
+  }
+  package "CHAT 0/4" as D_CH #FFCDD2 {
+    card "CH1-CH4" as DCH1 #EF9A9A
+  }
+  package "END 0/5" as D_GE #FFCDD2 {
+    card "GE1-GE5" as DGE1 #EF9A9A
+  }
+  package "CARDS 0/13" as D_SC #FFCDD2 {
+    card "SC1-SC13" as DSC1 #EF9A9A
+  }
 }
 
-' ═══════════════════════════════════════════════════════════════
-' ROOMS (8 UCs — 63% covered)
-' ═══════════════════════════════════════════════════════════════
+' ╔═════════════════════════════════════════════════════════════╗
+' ║  SECTION 2: DETAILED CHAINS — UC → Task → Impl → Test      ║
+' ║  Arrows show flow for all 13 covered UCs                    ║
+' ╚═════════════════════════════════════════════════════════════╝
 
-package "ROOMS (5/8 = 63%)" as PKG_ROOM #E8F5E9 {
-  card "**UC-R1** rooms.list\n//7cd55a0b//\nRoomManager.ts:660\nTC3.7+TC-R2+TC-R4" as R1 #A5D6A7
-  card "**UC-R2** room.create\n//fbfed148//\nRoomManager.ts:643\nvitest/uc-r2 AC1-AC7" as R2 #A5D6A7
-  card "**UC-R2b** room.create.host\n//177c8da5//\nGameRoom.ts:116\nTC2.3" as R2b #A5D6A7
-  card "**UC-R3** room.create.private\n//1c21171d//\nGameRoom.ts:70\nTC2.2" as R3 #A5D6A7
-  card "**UC-R4** room.join\n//9cc60247//\nGameRoom.ts:103\nvitest/uc-r4 AC1-AC9" as R4 #A5D6A7
-  card "**UC-R5** join.private.ok\n//61449e82//\nTC3.3" as R5 #A5D6A7
-  card "**UC-R6** join.private.wrong\n//148f2e73//\nTC3.4" as R6 #A5D6A7
-  card "**UC-R7** join.full\n//d0b57a5a//" as R7 #EF9A9A
-  card "**UC-R8** join.midGame\n//8db2e073//" as R8 #EF9A9A
-  card "**UC-R10** room.leave\n//96f2ecd5//\nTC-R1" as R10 #A5D6A7
-  card "**UC-R11** room.share\n//433fe03f//\nclient-only" as R11 #EF9A9A
+package "CHAINS: UC(green) → Task(blue) → Impl(orange) → Test(pink)" as CHAINS {
+
+  package "UC-C1: connection.open [92a061e0]" as CH1 {
+    card "**UC** connection.open\n//92a061e0//" as CH1U #E8F5E9
+    card "**Task** Sprint3/T1" as CH1T #E3F2FD
+    card "**Client** WebSocketClient.ts:14\n**connect()**" as CH1C #FFF3E0
+    card "**Server** server.ts:303\n**setupWebSocketServer()**" as CH1S #FFF3E0
+    card "**Test** vitest/uc-c1\n**AC1-AC4**" as CH1X #FCE4EC
+    CH1U --> CH1T
+    CH1T --> CH1C
+    CH1T --> CH1S
+    CH1C --> CH1X
+    CH1S --> CH1X
+  }
+
+  package "UC-R2: room.create [fbfed148]" as CH2 {
+    card "**UC** room.create\n//fbfed148//" as CH2U #E8F5E9
+    card "**Task** Sprint3/T2" as CH2T #E3F2FD
+    card "**Client** WebSocketClient.ts:60\n**createRoom()**" as CH2C #FFF3E0
+    card "**Server** RoomManager.ts:643\n**createRoom()**" as CH2S1 #FFF3E0
+    card "**Server** GameRoom.ts:103\n**addPlayer()**" as CH2S2 #FFF3E0
+    card "**Test** vitest/uc-r2\n**AC1-AC7**" as CH2X #FCE4EC
+    CH2U --> CH2T
+    CH2T --> CH2C
+    CH2C --> CH2S1
+    CH2S1 --> CH2S2
+    CH2S2 --> CH2X
+  }
+
+  package "UC-R4: room.join [9cc60247]" as CH3 {
+    card "**UC** room.join\n//9cc60247//" as CH3U #E8F5E9
+    card "**Task** Sprint3/T3" as CH3T #E3F2FD
+    card "**Client** WebSocketClient.ts:64\n**joinRoom()**" as CH3C #FFF3E0
+    card "**Server** GameRoom.ts:103\n**addPlayer()**\n//guards: size,state,key//" as CH3S #FFF3E0
+    card "**Test** vitest/uc-r4\n**AC1-AC9**" as CH3X #FCE4EC
+    CH3U --> CH3T
+    CH3T --> CH3C
+    CH3C --> CH3S
+    CH3S --> CH3X
+  }
+
+  package "UC-G1: game.start [560d9a46]" as CH4 {
+    card "**UC** game.start\n//560d9a46//" as CH4U #E8F5E9
+    card "**Task** Sprint3/T4" as CH4T #E3F2FD
+    card "**Client** WebSocketClient.ts:76\n**startGame()**" as CH4C #FFF3E0
+    card "**Server** GameRoom.ts:290\n**startGame()→nextRound()**" as CH4S #FFF3E0
+    card "**Test** vitest/uc-g1\n**AC1-AC7**" as CH4X #FCE4EC
+    CH4U --> CH4T
+    CH4T --> CH4C
+    CH4C --> CH4S
+    CH4S --> CH4X
+  }
+
+  package "UC-H1: host.transfer [dd0392cf]" as CH5 {
+    card "**UC** host.transfer\n//dd0392cf//" as CH5U #E8F5E9
+    card "**Task** Sprint3/T3" as CH5T #E3F2FD
+    card "**Server** GameRoom.ts:277\n**removePlayer()**\n//hostId reassign//" as CH5S #FFF3E0
+    card "**Client** MultiplayerUI.ts:56\n**on('HOST_CHANGED')**" as CH5C #FFF3E0
+    card "**Test** TC-E2a+b" as CH5X #FCE4EC
+    CH5U --> CH5T
+    CH5T --> CH5S
+    CH5S --> CH5C
+    CH5S --> CH5X
+  }
+
+  package "UC-R1: rooms.list [7cd55a0b]" as CH6 {
+    card "**UC** rooms.list\n//7cd55a0b//" as CH6U #E8F5E9
+    card "**Task** Sprint3/T2" as CH6T #E3F2FD
+    card "**Client** WebSocketClient.ts:72\n**listRooms()**" as CH6C #FFF3E0
+    card "**Server** RoomManager.ts:660\n**listRooms()**" as CH6S #FFF3E0
+    card "**Test** TC3.7+R2+R4" as CH6X #FCE4EC
+    CH6U --> CH6T
+    CH6T --> CH6C
+    CH6C --> CH6S
+    CH6S --> CH6X
+  }
+
+  package "Remaining 7 covered (compact)" as CH_REST {
+    card "**UC-R5** join.private.ok //61449e82//\nserver.ts:422 → TC3.3" as CHR5 #A5D6A7
+    card "**UC-R6** join.private.wrong //148f2e73//\nserver.ts:422 → TC3.4" as CHR6 #A5D6A7
+    card "**UC-R2b** create.host //177c8da5//\nGameRoom.ts:116 → TC2.3" as CHR2b #A5D6A7
+    card "**UC-R3** create.private //1c21171d//\nGameRoom.ts:70 → TC2.2" as CHR3 #A5D6A7
+    card "**UC-R10** room.leave //96f2ecd5//\nGameRoom.ts:254 → TC-R1" as CHR10 #A5D6A7
+    card "**UC-C1b** conn.multi //aa33a8d3//\nserver.ts:303 → TC1.2" as CHC1b #A5D6A7
+    card "**UC-C2** conn.close //e6b4716c//\nGameRoom.ts:254 → TC-E2" as CHC2 #A5D6A7
+  }
 }
-
-' ═══════════════════════════════════════════════════════════════
-' HOST (4 UCs — 50%)
-' ═══════════════════════════════════════════════════════════════
-
-package "HOST (2/4 = 50%)" as PKG_HOST #FFF9C4 {
-  card "**UC-H1** host.transfer\n//dd0392cf//\nGameRoom.ts:277\nTC-E2a+b" as H1 #A5D6A7
-  card "**UC-H2** host.addBot\n//fc6c941a//" as H2 #EF9A9A
-  card "**UC-H3** host.startGame\n//→ UC-G1//" as H3 #A5D6A7
-  card "**UC-H4** nonHost.rejected\n//57311798//" as H4 #EF9A9A
-}
-
-' ═══════════════════════════════════════════════════════════════
-' GAME START (2 UCs — 50%)
-' ═══════════════════════════════════════════════════════════════
-
-package "GAME START (1/2 = 50%)" as PKG_GAME #FFF9C4 {
-  card "**UC-G1** game.start\n//560d9a46//\nGameRoom.ts:290\nvitest/uc-g1 AC1-AC7" as G1 #A5D6A7
-  card "**UC-G2** autoFillBots\n//f89b9338//" as G2 #EF9A9A
-}
-
-' ═══════════════════════════════════════════════════════════════
-' ROUND (8 UCs — 4 partial, 4 missing)
-' ═══════════════════════════════════════════════════════════════
-
-package "ROUND (0+4p/8 = partial)" as PKG_ROUND #FFF9C4 {
-  card "**UC-RD1** round.start\n//f8e39106//\n(implicit TC4.1)" as RD1 #FFE082
-  card "**UC-RD2** countdown\n//224c5b9e//\nTC4.4" as RD2 #FFE082
-  card "**UC-RD3** resolve\n//e5c73817//\n(implicit TC5.1)" as RD3 #FFE082
-  card "**UC-RD4** allPlayed\n//b3fb6696//\nTC5.4" as RD4 #FFE082
-  card "**UC-RD5** timeout\n//34620f4b//" as RD5 #EF9A9A
-  card "**UC-RD6** specials\n//4af9fb90//" as RD6 #EF9A9A
-  card "**UC-RD7** exchange\n//76f767e4//" as RD7 #EF9A9A
-  card "**UC-RD8** deckEmpty\n//7886e805//" as RD8 #EF9A9A
-}
-
-' ═══════════════════════════════════════════════════════════════
-' PLAYER (14 UCs — 1 partial, 13 missing)
-' ═══════════════════════════════════════════════════════════════
-
-package "PLAYER (0+1p/14 = 7%)" as PKG_PLAYER #FFCDD2 {
-  card "**UC-P1** guess.up\n//f0295f28//\nvitest/uc-p1 AC1-AC11" as P1 #FFE082
-  card "**UC-P2** guess.down //c9866c6e//" as P2 #EF9A9A
-  card "**UC-P3** guess.equal //fa8f1c83//" as P3 #EF9A9A
-  card "**UC-P4** correct //035d2535//" as P4 #EF9A9A
-  card "**UC-P5** wrong //1a56ba00//" as P5 #EF9A9A
-  card "**UC-P6** timeout //344fcec6//" as P6 #EF9A9A
-  card "**UC-P7** frozen //e4b6d041//" as P7 #EF9A9A
-  card "**UC-P8** dead //d51d24ec//" as P8 #EF9A9A
-  card "**UC-P9** playSpecial //f43897d5//" as P9 #EF9A9A
-  card "**UC-P10** noInventory //b6862ad2//" as P10 #EF9A9A
-  card "**UC-P11** alreadyUsed //c503e19a//" as P11 #EF9A9A
-  card "**UC-P13** streak //d309011d//" as P13 #EF9A9A
-  card "**UC-P14** score //18224bc2//" as P14 #EF9A9A
-}
-
-' ═══════════════════════════════════════════════════════════════
-' BOT (8 UCs — 0%)
-' ═══════════════════════════════════════════════════════════════
-
-package "BOT (0/8 = 0%)" as PKG_BOT #FFCDD2 {
-  card "**UC-B1** bot.add\n//f1ba3e42//\nvitest/uc-b1 AC1-AC6" as B1 #EF9A9A
-  card "**UC-B2** decide //8e46d39e//" as B2 #EF9A9A
-  card "**UC-B3** cautious //fe84fad6//" as B3 #EF9A9A
-  card "**UC-B4** gambler //f0364019//" as B4 #EF9A9A
-  card "**UC-B5** equalLover //a4c55c47//" as B5 #EF9A9A
-  card "**UC-B6** random //a067feff//" as B6 #EF9A9A
-  card "**UC-B7** observe //b324159f//" as B7 #EF9A9A
-  card "**UC-B8** playDelayed //2d695025//" as B8 #EF9A9A
-}
-
-' ═══════════════════════════════════════════════════════════════
-' SPECTATOR (4 UCs — 0%)
-' ═══════════════════════════════════════════════════════════════
-
-package "SPECTATOR (0/4 = 0%)" as PKG_SPEC #FFCDD2 {
-  card "**UC-S1** spectator.join\n//ac08aa49//\nvitest/uc-s1 AC1-AC8" as S1 #EF9A9A
-  card "**UC-S2** leave //d30575e7//" as S2 #EF9A9A
-  card "**UC-S3** joinNext //df7ec971//" as S3 #EF9A9A
-  card "**UC-S4** seesGame //91825bbd//" as S4 #EF9A9A
-}
-
-' ═══════════════════════════════════════════════════════════════
-' CHAT (4 UCs — 0%)
-' ═══════════════════════════════════════════════════════════════
-
-package "CHAT (0/4 = 0%)" as PKG_CHAT #FFCDD2 {
-  card "**UC-CH1** chat.send\n//0dfe22b0//\nvitest/uc-ch1 AC1-AC6" as CH1 #EF9A9A
-  card "**UC-CH2** history //7b4f1505//" as CH2 #EF9A9A
-  card "**UC-CH3** maxLength //8a319461//" as CH3 #EF9A9A
-  card "**UC-CH4** maxHistory //f552ec48//" as CH4 #EF9A9A
-}
-
-' ═══════════════════════════════════════════════════════════════
-' GAME END (5 UCs — 0%)
-' ═══════════════════════════════════════════════════════════════
-
-package "GAME END (0/5 = 0%)" as PKG_END #FFCDD2 {
-  card "**UC-GE1** allEliminated\n//38d62fef//\nvitest/uc-ge1 AC1-AC7" as GE1 #EF9A9A
-  card "**UC-GE2** deckEmpty //e73e7784//" as GE2 #EF9A9A
-  card "**UC-GE3** leaderboard //e4bd6ed5//" as GE3 #EF9A9A
-  card "**UC-GE4** diamonds //b1be7a22//" as GE4 #EF9A9A
-  card "**UC-GE5** playAgain //ea33c5b7//" as GE5 #EF9A9A
-}
-
-' ═══════════════════════════════════════════════════════════════
-' SPECIAL CARDS (13 UCs — 0%)
-' ═══════════════════════════════════════════════════════════════
-
-package "SPECIAL CARDS (0/13 = 0%)" as PKG_SC #FFCDD2 {
-  card "**SC1** shield //58aca2aa//" as SC1 #EF9A9A
-  card "**SC2** 2xPts //fc29d64c//" as SC2 #EF9A9A
-  card "**SC3** peek //7c992d5a//" as SC3 #EF9A9A
-  card "**SC4** sacrifice //994dc326//" as SC4 #EF9A9A
-  card "**SC5** swap //288df581//" as SC5 #EF9A9A
-  card "**SC6** reveal //c11e9372//" as SC6 #EF9A9A
-  card "**SC7** freeze //872c8b2b//" as SC7 #EF9A9A
-  card "**SC8** teamSave //5c153b82//" as SC8 #EF9A9A
-  card "**SC9** 2ndChance //7ed5c89e//" as SC9 #EF9A9A
-  card "**SC10** steal //47b2e416//" as SC10 #EF9A9A
-  card "**SC11** massIntel //725f1f43//" as SC11 #EF9A9A
-  card "**SC12** priority //fb209fdd//" as SC12 #EF9A9A
-  card "**SC13** inventory //dda127ab//" as SC13 #EF9A9A
-}
-
-' ═══════════════════════════════════════════════════════════════
-' LEGEND
-' ═══════════════════════════════════════════════════════════════
 
 legend bottom right
-  |= Color |= Status |= Count |
-  | <#A5D6A7> | ✅ Covered (impl + test) | 13 |
-  | <#FFE082> | ⚠️ Partial (test incomplete) | 5 |
-  | <#EF9A9A> | ❌ Missing test | 57 |
-  |= Package BG |= Category Health |
-  | <#E8F5E9> | >60% covered |
-  | <#FFF9C4> | 30-60% covered |
-  | <#FFCDD2> | <30% covered |
-
-  **Total: 75 UCs — 17% covered**
-  **Target: 80%+ by Sprint 3 end**
+  |= Dashboard Colors |= Chain Colors |
+  | <#A5D6A7> ✅ Covered (13) | <#E8F5E9> UseCase |
+  | <#FFE082> ⚠️ Partial (5) | <#E3F2FD> Task |
+  | <#EF9A9A> ❌ Missing (57) | <#FFF3E0> Impl |
+  | | <#FCE4EC> Test |
+  **Arrows: UC → Task → Client → Server → Test**
   **Source: traceability-matrix.md**
 endlegend
 
