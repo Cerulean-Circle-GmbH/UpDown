@@ -100,14 +100,26 @@ Fully working UpDown multiplayer online card game. Deadline: Sunday. QnD — web
 
 ## DRY Refactoring (from architect audit — qnd/spec/dry-violations.md)
 
-- [ ] [Task 27: DRY — MessageTypes.ts](./task-27-dry-message-types.md) **📋 PRIORITY 1**
-  - [ ] 27.1: Expert — Create shared/MessageTypes.ts with all 20+ WS message type constants
-  - [ ] 27.2: Expert — Replace hardcoded strings in server.ts, GameRoom.ts, WebSocketClient.ts, LobbyUI.ts, MultiplayerUI.ts
-  - [ ] 27.3: Tester — Run regression suite — all PASS
+- [x] [Task 27: DRY — MessageTypes.ts](./task-27-dry-message-types.md) **✅ DONE**
+  - [x] 27.1: Expert — Created shared/MessageTypes.ts ✅
+  - [x] 27.2: Expert — Replaced hardcoded strings ✅
+  - [x] 27.3: Tester — Regression 34/37 PASS, 0 FAIL, 3 SKIP ✅
 
-- [ ] [Task 28: DRY — ShareUtil.ts](./task-28-dry-share-util.md) **📋 PRIORITY 2**
-  - [ ] 28.1: Expert — shareOrCopy() already extracted — verify no remaining duplicates
-  - [ ] 28.2: Expert — generateInviteMessage() single source, used by lobby + game + chat
+- [x] [Task 28: DRY — ShareUtil.ts](./task-28-dry-share-util.md) **✅ DONE**
+  - [x] 28.1: Expert — shareOrCopy() verified ✅
+  - [x] 28.2: Expert — generateInviteMessage() single source ✅
+
+## Professional Test Suite (vitest migration)
+
+- [ ] [Task 32: Vitest Migration — UC-based test suite with full traceability](./task-32-vitest-migration.md) **🔧 IN PROGRESS**
+  Each top-level UC from qnd-usecase-diagram.puml → task file with AC → vitest test → traceability-matrix.md updated
+  - [ ] 32.1: Tester+Architect — UC-C1 connection.open vitest (uuid: 92a061e0)
+  - [ ] 32.2: Tester+Architect — UC-R2 room.create vitest (uuid: fbfed148)
+  - [ ] 32.3: Tester+Architect — UC-R4 room.join vitest (uuid: 9cc60247)
+  - [ ] 32.4: Tester+Architect — UC-G1 game.start vitest (uuid: 560d9a46)
+  - [ ] 32.5: Tester+Architect — UC-P1 player.guess vitest (uuid: f0295f28)
+  - [ ] ... (remaining 21 top-level UCs)
+  42-pair: Tester creates, Architect reviews AC, SM monitors quality
 
 - [ ] [Task 29: DRY — CardUtils.ts](./task-29-dry-card-utils.md) **📋 DEFERRED**
   - [ ] 29.1: Expert — Extract suitSymbol(), cardColor(), cardToHtml() — 7 locations → 1

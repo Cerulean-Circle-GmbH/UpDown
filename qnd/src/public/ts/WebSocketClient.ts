@@ -1,3 +1,4 @@
+import { MSG } from '../../shared/MessageTypes.js';
 /**
  * WebSocketClient — Handles WebSocket connection and game protocol
  * QnD Sprint 3: Simple event-based client for multiplayer
@@ -58,51 +59,51 @@ export class WebSocketClient {
   }
 
   createRoom(name: string, playerName: string, maxPlayers?: number, roomKey?: string): void {
-    this.send({ type: 'CREATE_ROOM', roomName: name, playerName, maxPlayers, roomKey });
+    this.send({ type: MSG.CREATE_ROOM, roomName: name, playerName, maxPlayers, roomKey });
   }
 
   joinRoom(roomId: string, playerName: string, roomKey?: string): void {
-    this.send({ type: 'JOIN_ROOM', roomId, playerName, roomKey });
+    this.send({ type: MSG.JOIN_ROOM, roomId, playerName, roomKey });
   }
 
   leaveRoom(): void {
-    this.send({ type: 'LEAVE_ROOM' });
+    this.send({ type: MSG.LEAVE_ROOM });
   }
 
   listRooms(): void {
-    this.send({ type: 'LIST_ROOMS' });
+    this.send({ type: MSG.LIST_ROOMS });
   }
 
   startGame(): void {
-    this.send({ type: 'START_GAME' });
+    this.send({ type: MSG.START_GAME });
   }
 
   playCard(guess: 'up' | 'down' | 'equal'): void {
-    this.send({ type: 'PLAY_CARD', guess });
+    this.send({ type: MSG.PLAY_CARD, guess });
   }
 
   playSpecial(cardId: string, targetPlayerId?: string): void {
-    this.send({ type: 'PLAY_SPECIAL', cardId, targetPlayerId });
+    this.send({ type: MSG.PLAY_SPECIAL, cardId, targetPlayerId });
   }
 
   addBot(personality?: string): void {
-    this.send({ type: 'ADD_BOT', personality });
+    this.send({ type: MSG.ADD_BOT, personality });
   }
 
   spectateRoom(roomId: string, playerName: string): void {
-    this.send({ type: 'SPECTATE', roomId, playerName });
+    this.send({ type: MSG.SPECTATE, roomId, playerName });
   }
 
   leaveSpectate(): void {
-    this.send({ type: 'LEAVE_SPECTATE' });
+    this.send({ type: MSG.LEAVE_SPECTATE });
   }
 
   joinNextGame(playerName: string): void {
-    this.send({ type: 'JOIN_NEXT_GAME', playerName });
+    this.send({ type: MSG.JOIN_NEXT_GAME, playerName });
   }
 
   sendChat(text: string): void {
-    this.send({ type: 'CHAT_MESSAGE', text });
+    this.send({ type: MSG.CHAT_MESSAGE, text });
   }
 }
 

@@ -1,3 +1,4 @@
+import { MSG } from '../shared/MessageTypes.js';
 /**
  * GameRoom — Multiplayer game room with WebSocket protocol
  * QnD Sprint 3: Quick and dirty, web2, working multiplayer
@@ -117,10 +118,10 @@ export class GameRoom {
       this.hostId = id;
     }
 
-    this.broadcast({ type: 'PLAYER_JOINED', player: this.playerInfo(id), playerCount: this.players.size, minPlayers: this.minPlayers });
-    this.sendTo(id, { type: 'ROOM_JOINED', room: this.info(), players: this.allPlayerInfo(), minPlayers: this.minPlayers });
+    this.broadcast({ type: MSG.PLAYER_JOINED, player: this.playerInfo(id), playerCount: this.players.size, minPlayers: this.minPlayers });
+    this.sendTo(id, { type: MSG.ROOM_JOINED, room: this.info(), players: this.allPlayerInfo(), minPlayers: this.minPlayers });
     if (this.chatHistory.length > 0) {
-      this.sendTo(id, { type: 'CHAT_HISTORY', messages: this.chatHistory });
+      this.sendTo(id, { type: MSG.CHAT_HISTORY, messages: this.chatHistory });
     }
 
     return true;
@@ -139,14 +140,14 @@ export class GameRoom {
     });
     this.bots.set(id, bot);
 
-    this.broadcast({ type: 'PLAYER_JOINED', player: this.playerInfo(id), playerCount: this.players.size, minPlayers: this.minPlayers });
+    this.broadcast({ type: MSG.PLAYER_JOINED, player: this.playerInfo(id), playerCount: this.players.size, minPlayers: this.minPlayers });
     return id;
   }
 
   addSpectator(id: string, ws: WebSocket, name: string): void {
     this.spectators.set(id, { id, ws, name });
     this.sendToSpectator(id, {
-      type: 'SPECTATE_JOINED',
+      type: MSG.SPECTATE_JOINED,
       room: this.info(),
       players: this.allPlayerInfo(),
       currentCard: this.currentCard,
@@ -154,16 +155,16 @@ export class GameRoom {
       round: this.round,
       state: this.state
     });
-    this.broadcastAll({ type: 'SPECTATOR_JOINED', name, spectatorCount: this.spectators.size });
+    this.broadcastAll({ type: MSG.SPECTATOR_JOINED, name, spectatorCount: this.spectators.size });
     if (this.chatHistory.length > 0) {
-      this.sendToSpectator(id, { type: 'CHAT_HISTORY', messages: this.chatHistory });
+      this.sendToSpectator(id, { type: MSG.CHAT_HISTORY, messages: this.chatHistory });
     }
   }
 
   removeSpectator(id: string): void {
     const spec = this.spectators.get(id);
     this.spectators.delete(id);
-    if (spec) this.broadcastAll({ type: 'SPECTATOR_LEFT', spectatorCount: this.spectators.size });
+    if (spec) this.broadcastAll({ type: MSG.SPECTATOR_LEFT, spectatorCount: this.spectators.size });
   }
 
   promoteSpectator(id: string, name: string, avatarUrl: string): boolean {
@@ -197,7 +198,7 @@ export class GameRoom {
 
   private startLobbyCountdown(): void {
     this.lobbyCountdown = 30;
-    this.broadcastAll({ type: 'LOBBY_COUNTDOWN', seconds: this.lobbyCountdown, message: 'Game starts in 30s — invite friends!' });
+    this.broadcastAll({ type: MSG.LOBBY_COUNTDOWN, seconds: this.lobbyCountdown, message: 'Game starts in 30s — invite friends!' });
 
     this.lobbyTimer = setInterval(() => {
       this.lobbyCountdown--;
@@ -209,7 +210,7 @@ export class GameRoom {
         return;
       }
 
-      this.broadcastAll({ type: 'LOBBY_COUNTDOWN', seconds: this.lobbyCountdown });
+      this.broadcastAll({ type: MSG.LOBBY_COUNTDOWN, seconds: this.lobbyCountdown });
     }, 1000);
   }
 
@@ -223,7 +224,7 @@ export class GameRoom {
       this.addBot();
     }
 
-    this.broadcast({ type: 'BOTS_FILLED', botCount: needed, totalPlayers: this.players.size });
+    this.broadcast({ type: MSG.BOTS_FILLED, botCount: needed, totalPlayers: this.players.size });
     this.startGame();
   }
 
@@ -259,25 +260,25 @@ export class GameRoom {
         player.disconnected = true;
         player.alive = false;
       }
-      this.broadcast({ type: 'PLAYER_DISCONNECTED', playerId: id });
+      this.broadcast({ type: MSG.PLAYER_DISCONNECTED, playerId: id });
       return;
     }
 
     this.players.delete(id);
     this.bots.delete(id);
-    this.broadcast({ type: 'PLAYER_LEFT', playerId: id, playerCount: this.players.size });
+    this.broadcast({ type: MSG.PLAYER_LEFT, playerId: id, playerCount: this.players.size });
 
     // Cancel lobby countdown if no humans left
     if (this.lobbyTimer && this.humanCount() === 0) {
       clearInterval(this.lobbyTimer);
       this.lobbyTimer = null;
-      this.broadcastAll({ type: 'LOBBY_COUNTDOWN_CANCELLED' });
+      this.broadcastAll({ type: MSG.LOBBY_COUNTDOWN_CANCELLED });
     }
 
     if (id === this.hostId && this.players.size > 0) {
       const active = [...this.players.values()].find(p => !p.disconnected);
       this.hostId = active?.id || this.players.keys().next().value!;
-      this.broadcast({ type: 'HOST_CHANGED', hostId: this.hostId });
+      this.broadcast({ type: MSG.HOST_CHANGED, hostId: this.hostId });
     }
   }
 
@@ -345,7 +346,7 @@ export class GameRoom {
     // Send ROUND_START per-player (each gets their own inventory)
     this.players.forEach(player => {
       this.sendTo(player.id, {
-        type: 'ROUND_START',
+        type: MSG.ROUND_START,
         round: this.round,
         currentCard: this.currentCard,
         previousCard: this.previousCard,
@@ -371,7 +372,7 @@ export class GameRoom {
 
     this.countdownTimer = setInterval(() => {
       this.countdownSeconds--;
-      this.broadcast({ type: 'COUNTDOWN', seconds: this.countdownSeconds });
+      this.broadcast({ type: MSG.COUNTDOWN, seconds: this.countdownSeconds });
 
       if (this.countdownSeconds <= 0) {
         clearInterval(this.countdownTimer!);
@@ -393,7 +394,7 @@ export class GameRoom {
     player.usedSpecials.push(cardId);
 
     const card = SPECIAL_CARDS.find(c => c.id === cardId);
-    this.broadcast({ type: 'SPECIAL_CARD_PLAYED', playerId, cardName: card?.name, cardEmoji: card?.emoji });
+    this.broadcast({ type: MSG.SPECIAL_CARD_PLAYED, playerId, cardName: card?.name, cardEmoji: card?.emoji });
   }
 
   private generateStarterInventory(): string[] {
@@ -414,7 +415,7 @@ export class GameRoom {
     if (player.frozen) { player.frozen = false; return; }
     player.currentGuess = guess;
 
-    this.broadcast({ type: 'CARD_PLAYED', playerId, hasPlayed: true });
+    this.broadcast({ type: MSG.CARD_PLAYED, playerId, hasPlayed: true });
 
     // Check if all alive, connected players have played
     const alivePlayers = [...this.players.values()].filter(p => p.alive && !p.disconnected);
@@ -513,7 +514,7 @@ export class GameRoom {
     this.currentCard = nextCard;
 
     this.broadcast({
-      type: 'ROUND_RESULT',
+      type: MSG.ROUND_RESULT,
       round: this.round,
       revealedCard: nextCard,
       previousCard: this.previousCard,
@@ -557,7 +558,7 @@ export class GameRoom {
         };
       });
 
-    this.broadcast({ type: 'GAME_OVER', leaderboard, playAgain: true, roomId: this.id });
+    this.broadcast({ type: MSG.GAME_OVER, leaderboard, playAgain: true, roomId: this.id });
 
     // Auto-recreate: instant so room ID is always valid
     if (this.autoRecreate) {

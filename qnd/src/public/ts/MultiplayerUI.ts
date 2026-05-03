@@ -4,6 +4,7 @@
  */
 
 import { WebSocketClient, shareOrCopy } from './WebSocketClient.js';
+import { MSG } from '../../shared/MessageTypes.js';
 
 interface PlayerScore {
   id: string; name: string; score: number; streak: number; alive: boolean;
@@ -34,31 +35,31 @@ export class MultiplayerUI {
     this.container = container;
     this.onLeaveRoom = onLeaveRoom;
 
-    this.client.on('ROOM_JOINED', (msg) => {
+    this.client.on(MSG.ROOM_JOINED, (msg) => {
       this.roomId = msg.room.id;
       this.isHost = msg.room.hostId === this.client.clientId;
       this.players = msg.players;
       this.render();
     });
 
-    this.client.on('PLAYER_JOINED', (msg) => {
+    this.client.on(MSG.PLAYER_JOINED, (msg) => {
       this.players.push(msg.player);
       this.renderPlayers();
       this.renderControls();
     });
 
-    this.client.on('PLAYER_LEFT', (msg) => {
+    this.client.on(MSG.PLAYER_LEFT, (msg) => {
       this.players = this.players.filter(p => p.id !== msg.playerId);
       this.renderPlayers();
       this.renderControls();
     });
 
-    this.client.on('HOST_CHANGED', (msg) => {
+    this.client.on(MSG.HOST_CHANGED, (msg) => {
       this.isHost = msg.hostId === this.client.clientId;
       this.renderControls();
     });
 
-    this.client.on('ROUND_START', (msg) => {
+    this.client.on(MSG.ROUND_START, (msg) => {
       this.round = msg.round;
       this.currentCard = msg.currentCard;
       this.previousCard = msg.previousCard;
@@ -69,28 +70,28 @@ export class MultiplayerUI {
       this.renderGame();
     });
 
-    this.client.on('COUNTDOWN', (msg) => {
+    this.client.on(MSG.COUNTDOWN, (msg) => {
       this.countdown = msg.seconds;
       this.updateCountdown();
     });
 
-    this.client.on('CARD_PLAYED', (msg) => {
+    this.client.on(MSG.CARD_PLAYED, (msg) => {
       if (msg.playerId === this.client.clientId) this.hasPlayed = true;
       this.renderPlayerStatus(msg.playerId, true);
     });
 
-    this.client.on('ROUND_RESULT', (msg) => {
+    this.client.on(MSG.ROUND_RESULT, (msg) => {
       this.renderRoundResult(msg.previousCard, msg.revealedCard, msg.results, msg.scores, msg.specialEffects || []);
       this.previousCard = msg.previousCard;
       this.currentCard = msg.revealedCard;
     });
 
-    this.client.on('GAME_OVER', (msg) => {
+    this.client.on(MSG.GAME_OVER, (msg) => {
       this.renderGameOver(msg.leaderboard);
     });
 
 
-    this.client.on('SPECTATE_JOINED', (msg) => {
+    this.client.on(MSG.SPECTATE_JOINED, (msg) => {
       this.isSpectator = true;
       this.roomId = msg.room.id;
       this.players = msg.players;
@@ -104,7 +105,7 @@ export class MultiplayerUI {
       }
     });
 
-    this.client.on('SPECTATE_LEFT', () => {
+    this.client.on(MSG.SPECTATE_LEFT, () => {
       this.isSpectator = false;
     });
   }
@@ -227,7 +228,7 @@ export class MultiplayerUI {
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') doSend(); });
 
     // Receive messages
-    this.client.on('CHAT_HISTORY', (msg: any) => {
+    this.client.on(MSG.CHAT_HISTORY, (msg: any) => {
       const msgs = document.getElementById('chat-messages');
       if (!msgs || !msg.messages) return;
       for (const m of msg.messages) {
@@ -239,7 +240,7 @@ export class MultiplayerUI {
       msgs.scrollTop = msgs.scrollHeight;
     });
 
-    this.client.on('CHAT_MESSAGE', (msg: any) => {
+    this.client.on(MSG.CHAT_MESSAGE, (msg: any) => {
       const msgs = document.getElementById('chat-messages');
       if (!msgs) return;
       const isSelf = msg.senderId === this.client.clientId;

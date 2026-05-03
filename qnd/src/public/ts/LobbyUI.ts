@@ -4,6 +4,7 @@
  */
 
 import { WebSocketClient, shareOrCopy } from './WebSocketClient.js';
+import { MSG } from '../../shared/MessageTypes.js';
 
 interface RoomInfo {
   id: string; name: string; playerCount: number; maxPlayers: number;
@@ -25,9 +26,9 @@ export class LobbyUI {
     const params = new URLSearchParams(window.location.search);
     this.playerName = params.get('name') || localStorage.getItem('updown-name') || `Player ${Math.floor(Math.random() * 1000)}`;
 
-    this.client.on('ROOM_LIST', (msg) => { this.rooms = msg.rooms; this.renderRoomList(); });
-    this.client.on('ROOM_JOINED', (msg) => { this.onEnterRoom(msg.room.id); });
-    this.client.on('ERROR', (msg) => { this.showError(msg.message); });
+    this.client.on(MSG.ROOM_LIST, (msg) => { this.rooms = msg.rooms; this.renderRoomList(); });
+    this.client.on(MSG.ROOM_JOINED, (msg) => { this.onEnterRoom(msg.room.id); });
+    this.client.on(MSG.ERROR, (msg) => { this.showError(msg.message); });
 
     // On WS connect: auto-load rooms, auto-join if ?join= param
     const joinId = params.get('join');
