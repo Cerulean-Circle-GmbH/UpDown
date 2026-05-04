@@ -124,6 +124,14 @@ Fully working UpDown multiplayer online card game. Deadline: Sunday. QnD — web
   - [x] 32.9: UC-GE1 game.end ✅
   Architect created 9 task files (32.1-32.9) with 61 AC. Tester implemented all. Serialized config fixed flaky timeouts.
 
+- [ ] [Task 33: Auto-name Rooms with Host Player Name](./task-33-room-autoname.md) **🔧 IN PROGRESS**
+  - [ ] 33.1: Expert — server.ts CREATE_ROOM default name "{playerName}'s Room"
+  - [ ] 33.2: Tester — verify room names in lobby
+
+- [ ] [Task 34: Room UC Test Coverage (R7/R8/R9 + Share Link Verification)](./task-34-room-uc-coverage.md) **🔧 IN PROGRESS**
+  - [ ] 34.1: Expert — vitest for R7 (join full), R8 (join mid-game), R9 (join rejected)
+  - [ ] 34.2: Tester — verify share links work end-to-end (user-created + pre-created + expired)
+
 - [ ] [Task 29: DRY — CardUtils.ts](./task-29-dry-card-utils.md) **📋 DEFERRED**
   - [ ] 29.1: Expert — Extract suitSymbol(), cardColor(), cardToHtml() — 7 locations → 1
 
