@@ -67,12 +67,12 @@ try {
   // ═══════════════════════════════════════════
   console.log('── UC1: Connect to Server ──');
 
-  // TC1.1 @uc:uuid:92a061e0 connection.open
+  // TC1.1 [uc:uuid:92a061e0] connection.open
   const { ws: wsA, playerId: idA } = await connect();
   if (wsA.readyState === WebSocket.OPEN && idA) pass('TC1.1', 'Basic connection + playerId');
   else fail('TC1.1', 'Basic connection', `state=${wsA.readyState} id=${idA}`);
 
-  // TC1.2 @uc:uuid:aa33a8d3 connection.open.multi
+  // TC1.2 [uc:uuid:aa33a8d3] connection.open.multi
   const { ws: wsB, playerId: idB } = await connect();
   const { ws: wsC, playerId: idC } = await connect();
   const uniqueIds = new Set([idA, idB, idC]).size === 3;
@@ -88,7 +88,7 @@ try {
   // ═══════════════════════════════════════════
   console.log('\n── UC2: Create Room ──');
 
-  // TC2.1 @uc:uuid:fbfed148 room.create
+  // TC2.1 [uc:uuid:fbfed148] room.create
   const collectA = collectFor(wsA, 2000);
   send(wsA, { type: 'CREATE_ROOM', roomName: 'Test Room', playerName: 'Alice', maxPlayers: 4 });
   const msgsA = await collectA;
@@ -98,11 +98,11 @@ try {
     pass('TC2.1', 'Create public room (name=' + roomJoined.room?.name + ')');
   else fail('TC2.1', 'Create public room', `roomJoined=${!!roomJoined} id=${roomId} name=${roomJoined?.room?.name} max=${roomJoined?.room?.maxPlayers}`);
 
-  // TC2.3 @uc:uuid:177c8da5 room.create.host
+  // TC2.3 [uc:uuid:177c8da5] room.create.host
   if (roomJoined?.room?.hostId === idA) pass('TC2.3', 'Creator becomes host');
   else fail('TC2.3', 'Creator becomes host', `hostId=${roomJoined?.room?.hostId} expected=${idA}`);
 
-  // TC2.2 @uc:uuid:1c21171d room.create.private
+  // TC2.2 [uc:uuid:1c21171d] room.create.private
   const { ws: wsD, playerId: idD } = await connect();
   const collectD = collectFor(wsD, 2000);
   send(wsD, { type: 'CREATE_ROOM', roomName: 'Secret', playerName: 'Dave', maxPlayers: 2, roomKey: 'abc123' });
@@ -117,7 +117,7 @@ try {
   // ═══════════════════════════════════════════
   console.log('\n── UC3: Join Room ──');
 
-  // TC3.1 @uc:uuid:9cc60247 room.join
+  // TC3.1 [uc:uuid:9cc60247] room.join
   const collectB = collectFor(wsB, 2000);
   const collectA2 = collectFor(wsA, 2000);
   send(wsB, { type: 'JOIN_ROOM', roomId, playerName: 'Bob' });
@@ -130,7 +130,7 @@ try {
   if (aliceNotified?.playerCount >= 2) pass('TC3.1b', 'Join public room — host notified');
   else fail('TC3.1b', 'Host notification', `count=${aliceNotified?.playerCount}`);
 
-  // TC3.4 @uc:uuid:148f2e73 room.join.private.wrong
+  // TC3.4 [uc:uuid:148f2e73] room.join.private.wrong
   const { ws: wsE, playerId: idE } = await connect();
   const collectE = collectFor(wsE, 2000);
   send(wsE, { type: 'JOIN_ROOM', roomId: privRoomId, roomKey: 'wrong', playerName: 'Eve' });
@@ -140,7 +140,7 @@ try {
   else fail('TC3.4', 'Wrong key', `msgs=${msgsE.map(m => m.type).join(',')}`);
   wsE.close();
 
-  // TC3.3 @uc:uuid:61449e82 room.join.private.correct
+  // TC3.3 [uc:uuid:61449e82] room.join.private.correct
   const { ws: wsF, playerId: idF } = await connect();
   const collectF = collectFor(wsF, 2000);
   send(wsF, { type: 'JOIN_ROOM', roomId: privRoomId, roomKey: 'abc123', playerName: 'Frank' });
@@ -149,7 +149,7 @@ try {
   if (frankJoined) pass('TC3.3', 'Correct key accepted');
   else fail('TC3.3', 'Correct key', `msgs=${msgsF.map(m => m.type).join(',')}`);
 
-  // TC3.7 @uc:uuid:7cd55a0b rooms.list
+  // TC3.7 [uc:uuid:7cd55a0b] rooms.list
   const { ws: wsG } = await connect();
   const collectG = collectFor(wsG, 2000);
   send(wsG, { type: 'LIST_ROOMS' });
@@ -167,7 +167,7 @@ try {
   // ═══════════════════════════════════════════
   console.log('\n── UC4: Start Game ──');
 
-  // TC4.1 @uc:uuid:560d9a46 game.start
+  // TC4.1 [uc:uuid:560d9a46] game.start
   const collectA3 = collectFor(wsA, 3000);
   const collectB2 = collectFor(wsB, 3000);
   send(wsA, { type: 'START_GAME' });
@@ -181,7 +181,7 @@ try {
   if (roundStartB?.round === 1) pass('TC4.1b', 'Guest receives ROUND_START');
   else fail('TC4.1b', 'Guest ROUND_START', `${!!roundStartB}`);
 
-  // TC4.4 @uc:uuid:224c5b9e round.countdown
+  // TC4.4 [uc:uuid:224c5b9e] round.countdown
   const countdownMsgs = await collectFor(wsA, 3000);
   const ticks = countdownMsgs.filter(m => m.type === 'COUNTDOWN');
   if (ticks.length >= 2) pass('TC4.4', 'Countdown ticks received');
@@ -192,7 +192,7 @@ try {
   // ═══════════════════════════════════════════
   console.log('\n── UC5+UC7: Play Cards + Round Results ──');
 
-  // TC5.1+TC5.4 @uc:uuid:f0295f28+b3fb6696 player.guess+round.allPlayed
+  // TC5.1+TC5.4 [uc:uuid:f0295f28+b3fb6696 player.guess+round.allPlayed
   const collectA4 = collectFor(wsA, 13000);
   const collectB3 = collectFor(wsB, 13000);
   send(wsA, { type: 'PLAY_CARD', guess: 'up' });
@@ -259,7 +259,7 @@ try {
   }
 
   // ═══════════════════════════════════════════
-  // TC-E2 @uc:uuid:dd0392cf host.transfer
+  // TC-E2 [uc:uuid:dd0392cf] host.transfer
   // ═══════════════════════════════════════════
   console.log('\n── Edge Cases ──');
 
@@ -431,7 +431,7 @@ try {
   // ═══════════════════════════════════════════
   console.log('\n── Tron Regressions ──');
 
-  // TC-R1 @uc:uuid:96f2ecd5 room.leave
+  // TC-R1 [uc:uuid:96f2ecd5] room.leave
   const { ws: wsR1 } = await connect();
   await sleep(500);
   const collectR1 = collectFor(wsR1, 4000);
@@ -445,7 +445,7 @@ try {
   wsR1.close();
   await sleep(300);
 
-  // TC-R2 @uc:uuid:7cd55a0b rooms.list
+  // TC-R2 [uc:uuid:7cd55a0b] rooms.list
   const { ws: wsR2 } = await connect();
   await sleep(500);
   const collectR2 = collectFor(wsR2, 3000);
@@ -474,7 +474,7 @@ try {
   wsR3.close();
   await sleep(300);
 
-  // TC-R4 @uc:uuid:fbfed148+7cd55a0b room.create+rooms.list
+  // TC-R4 [uc:uuid:fbfed148+7cd55a0b room.create+rooms.list
   const { ws: wsR4a } = await connect();
   await sleep(500);
   const collectR4a = collectFor(wsR4a, 2000);

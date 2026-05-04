@@ -41,6 +41,7 @@ afterAll(() => { sockets.forEach(ws => ws.close()); });
 
 describe('UC-R4 room.join [9cc60247]', () => {
 
+  // [uc:uuid:9cc60247] UC-R4: room.join
   it('AC-1: join returns ROOM_JOINED with players including self', async () => {
     const { ws: wA } = await connectWs();
     const cA = collectFor(wA, 2000);
@@ -58,6 +59,7 @@ describe('UC-R4 room.join [9cc60247]', () => {
     expect(joined.players.find((p: any) => p.id === idB)).toBeDefined();
   });
 
+  // [uc:uuid:9cc60247] UC-R4: room.join — notification
   it('AC-2: existing players notified via PLAYER_JOINED', async () => {
     const { ws: wA } = await connectWs();
     const cA1 = collectFor(wA, 2000);

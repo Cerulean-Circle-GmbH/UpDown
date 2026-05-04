@@ -101,9 +101,10 @@ export class GameRoom {
     this.cleanupCallback = cb;
   }
 
+  // [uc:uuid:9cc60247] UC-R4: room.join — [uc:uuid:d0b57a5a] UC-R7: room.join.full — [uc:uuid:8db2e073] UC-R8: room.join.midGame
   addPlayer(id: string, ws: WebSocket, name: string, avatarUrl: string): boolean {
-    if (this.players.size >= this.maxPlayers) return false;
-    if (this.state !== 'waiting' && this.state !== 'exchange') return false;
+    if (this.players.size >= this.maxPlayers) return false; // [uc:uuid:d0b57a5a]
+    if (this.state !== 'waiting' && this.state !== 'exchange') return false; // [uc:uuid:d466a7f1] UC-R9: room.join.rejected
 
     this.players.set(id, {
       id, ws, name, avatarUrl,
@@ -127,6 +128,7 @@ export class GameRoom {
     return true;
   }
 
+  // [uc:uuid:f1ba3e42] UC-B1: bot.add
   addBot(personality?: BotPersonality): string {
     const bot = new BotPlayer(personality);
     const id = `bot-${crypto.randomUUID().slice(0, 6)}`;
@@ -144,6 +146,7 @@ export class GameRoom {
     return id;
   }
 
+  // [uc:uuid:ac08aa49] UC-S1: spectator.join
   addSpectator(id: string, ws: WebSocket, name: string): void {
     this.spectators.set(id, { id, ws, name });
     this.sendToSpectator(id, {
@@ -161,12 +164,14 @@ export class GameRoom {
     }
   }
 
+  // [uc:uuid:d30575e7] UC-S2: spectator.leave
   removeSpectator(id: string): void {
     const spec = this.spectators.get(id);
     this.spectators.delete(id);
     if (spec) this.broadcastAll({ type: MSG.SPECTATOR_LEFT, spectatorCount: this.spectators.size });
   }
 
+  // [uc:uuid:df7ec971] UC-S3: spectator.joinNext
   promoteSpectator(id: string, name: string, avatarUrl: string): boolean {
     const spec = this.spectators.get(id);
     if (!spec || (this.state !== 'waiting' && this.state !== 'exchange')) return false;
@@ -252,6 +257,7 @@ export class GameRoom {
     });
   }
 
+  // [uc:uuid:96f2ecd5] UC-R10: room.leave — [uc:uuid:e6b4716c] UC-C2: connection.close — [uc:uuid:dd0392cf] UC-H1: host.transfer
   removePlayer(id: string): void {
     // BUG-1 fix: during active round, mark disconnected instead of removing
     if (this.state === 'countdown' || this.state === 'revealing') {
@@ -288,6 +294,7 @@ export class GameRoom {
     }
   }
 
+  // [uc:uuid:560d9a46] UC-G1: game.start — [uc:uuid:f89b9338] UC-G2: game.start.autoFillBots
   startGame(): void {
     if (this.players.size < 1) return;
     // Fill remaining slots with bots up to minPlayers
@@ -313,6 +320,7 @@ export class GameRoom {
     this.nextRound();
   }
 
+  // [uc:uuid:f8e39106] UC-RD1: round.start — [uc:uuid:7886e805] UC-RD8: round.deckExhausted
   private nextRound(): void {
     if (this.gmHand.length === 0 && this.deck.length === 0) {
       this.endGame();
@@ -367,6 +375,7 @@ export class GameRoom {
     this.scheduleBotDecisions();
   }
 
+  // [uc:uuid:224c5b9e] UC-RD2: round.countdown — [uc:uuid:34620f4b] UC-RD5: round.resolve.timeout
   private startCountdown(): void {
     if (this.countdownTimer) clearInterval(this.countdownTimer);
 
@@ -382,6 +391,7 @@ export class GameRoom {
     }, 1000);
   }
 
+  // [uc:uuid:f43897d5] UC-P9: player.playSpecial — [uc:uuid:b6862ad2] UC-P10: notInInventory — [uc:uuid:c503e19a] UC-P11: alreadyUsed
   playSpecialCard(playerId: string, cardId: string, targetPlayerId?: string): void {
     const player = this.players.get(playerId);
     if (!player || !player.alive || this.state !== 'countdown') return;
@@ -397,6 +407,7 @@ export class GameRoom {
     this.broadcast({ type: MSG.SPECIAL_CARD_PLAYED, playerId, cardName: card?.name, cardEmoji: card?.emoji });
   }
 
+  // [uc:uuid:dda127ab] UC-SC13: special.inventory
   private generateStarterInventory(): string[] {
     // Always include Protective Shell so specials are testable from round 1
     const guaranteed = ['protective_shell'];
@@ -409,6 +420,7 @@ export class GameRoom {
     return [...guaranteed, ...pick(l1, 1), ...pick(l2, 1)];
   }
 
+  // [uc:uuid:f0295f28] UC-P1: player.guess.up — [uc:uuid:c9866c6e] UC-P2: down — [uc:uuid:fa8f1c83] UC-P3: equal — [uc:uuid:e4b6d041] UC-P7: frozen — [uc:uuid:b3fb6696] UC-RD4: allPlayed
   playCard(playerId: string, guess: 'up' | 'down' | 'equal'): void {
     const player = this.players.get(playerId);
     if (!player || !player.alive || this.state !== 'countdown') return;
@@ -426,6 +438,7 @@ export class GameRoom {
     }
   }
 
+  // [uc:uuid:e5c73817] UC-RD3: round.resolve — [uc:uuid:035d2535] UC-P4: correct — [uc:uuid:1a56ba00] UC-P5: wrong — [uc:uuid:4af9fb90] UC-RD6: specials — [uc:uuid:76f767e4] UC-RD7: exchange
   private resolveRound(): void {
     // Re-entry guard: prevent double resolution from timer + allPlayed race
     if (this.state !== 'countdown') return;
@@ -539,6 +552,7 @@ export class GameRoom {
     }
   }
 
+  // [uc:uuid:38d62fef] UC-GE1: allEliminated — [uc:uuid:e73e7784] UC-GE2: deckEmpty — [uc:uuid:e4bd6ed5] UC-GE3: leaderboard — [uc:uuid:b1be7a22] UC-GE4: diamonds
   private endGame(): void {
     this.state = 'finished';
     if (this.countdownTimer) { clearInterval(this.countdownTimer); this.countdownTimer = null; }

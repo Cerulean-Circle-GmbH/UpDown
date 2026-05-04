@@ -12,6 +12,7 @@ export class WebSocketClient {
   clientId: string = '';
   connected: boolean = false;
 
+  // [uc:uuid:92a061e0] UC-C1: connection.open
   connect(): Promise<void> {
     return new Promise((resolve, reject) => {
       const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -58,30 +59,37 @@ export class WebSocketClient {
     if (handlers) handlers.forEach(h => h(msg));
   }
 
+  // [uc:uuid:fbfed148] UC-R2: room.create — [uc:uuid:1c21171d] UC-R3: room.create.private
   createRoom(name: string, playerName: string, maxPlayers?: number, roomKey?: string): void {
     this.send({ type: MSG.CREATE_ROOM, roomName: name, playerName, maxPlayers, roomKey });
   }
 
+  // [uc:uuid:9cc60247] UC-R4: room.join — [uc:uuid:61449e82] UC-R5: room.join.private.correct — [uc:uuid:148f2e73] UC-R6: room.join.private.wrong
   joinRoom(roomId: string, playerName: string, roomKey?: string): void {
     this.send({ type: MSG.JOIN_ROOM, roomId, playerName, roomKey });
   }
 
+  // [uc:uuid:96f2ecd5] UC-R10: room.leave
   leaveRoom(): void {
     this.send({ type: MSG.LEAVE_ROOM });
   }
 
+  // [uc:uuid:7cd55a0b] UC-R1: rooms.list
   listRooms(): void {
     this.send({ type: MSG.LIST_ROOMS });
   }
 
+  // [uc:uuid:560d9a46] UC-G1: game.start
   startGame(): void {
     this.send({ type: MSG.START_GAME });
   }
 
+  // [uc:uuid:f0295f28] UC-P1: player.guess.up — [uc:uuid:c9866c6e] UC-P2: down — [uc:uuid:fa8f1c83] UC-P3: equal
   playCard(guess: 'up' | 'down' | 'equal'): void {
     this.send({ type: MSG.PLAY_CARD, guess });
   }
 
+  // [uc:uuid:f43897d5] UC-P9: player.playSpecial
   playSpecial(cardId: string, targetPlayerId?: string): void {
     this.send({ type: MSG.PLAY_SPECIAL, cardId, targetPlayerId });
   }

@@ -37,12 +37,14 @@ afterAll(() => {
 describe('UC-C1 connection.open [92a061e0]', () => {
 
   // AC-1: WebSocket connects successfully
+  // [uc:uuid:92a061e0] UC-C1: connection.open
   it('AC-1: WebSocket connects and reaches OPEN state', async () => {
     const { ws } = await connectWs();
     expect(ws.readyState).toBe(WebSocket.OPEN);
   });
 
   // AC-2: Server sends welcome with clientId
+  // [uc:uuid:92a061e0] UC-C1: connection.open — welcome
   it('AC-2: Welcome message has type and clientId', async () => {
     const { welcome } = await connectWs();
     expect(welcome.type).toBe('welcome');
@@ -52,6 +54,7 @@ describe('UC-C1 connection.open [92a061e0]', () => {
   });
 
   // AC-3: Multiple concurrent connections get unique IDs
+  // [uc:uuid:aa33a8d3] UC-C1b: connection.open.multi
   it('AC-3: Three connections get unique clientIds', async () => {
     const c1 = await connectWs();
     const c2 = await connectWs();

@@ -2,82 +2,131 @@
 !theme plain
 skinparam backgroundColor White
 skinparam defaultFontName "Segoe UI"
-skinparam defaultFontSize 8
+skinparam defaultFontSize 7
 skinparam linetype ortho
 
-title UpDown QnD — Full Traceability\n**Section 1:** Status Dashboard (75 UCs) | **Section 2:** Detailed Chains (13 covered)
+title UpDown QnD — Full Traceability with UUIDs\n**Section 1:** Dashboard (75 UCs) | **Section 2:** Chains (13 covered)
 
 ' ╔═════════════════════════════════════════════════════════════╗
-' ║  SECTION 1: STATUS DASHBOARD — All 75 UCs color-coded      ║
+' ║  SECTION 1: STATUS DASHBOARD — All 75 UCs with UUIDs       ║
 ' ╚═════════════════════════════════════════════════════════════╝
 
 package "DASHBOARD: 75 UCs — <color:green>13 covered</color> <color:orange>5 partial</color> <color:red>57 missing</color>" as DASH {
 
-  package "CONN 3/3" as D_C #E8F5E9 {
-    card "C1 open" as DC1 #A5D6A7
-    card "C1b multi" as DC1b #A5D6A7
-    card "C2 close" as DC2 #A5D6A7
+  package "CONNECTION 3/3" as D_C #E8F5E9 {
+    card "UC-C1 connection.open\n//92a061e0//" as DC1 #A5D6A7
+    card "UC-C1b connection.open.multi\n//aa33a8d3//" as DC1b #A5D6A7
+    card "UC-C2 connection.close\n//e6b4716c//" as DC2 #A5D6A7
   }
-  package "ROOMS 5/8" as D_R #E8F5E9 {
-    card "R1 list" as DR1 #A5D6A7
-    card "R2 create" as DR2 #A5D6A7
-    card "R2b host" as DR2b #A5D6A7
-    card "R3 private" as DR3 #A5D6A7
-    card "R4 join" as DR4 #A5D6A7
-    card "R5 ok" as DR5 #A5D6A7
-    card "R6 wrong" as DR6 #A5D6A7
-    card "R7 full" as DR7 #EF9A9A
-    card "R8 mid" as DR8 #EF9A9A
-    card "R10 leave" as DR10 #A5D6A7
-    card "R11 share" as DR11 #EF9A9A
+
+  package "ROOMS 8/11" as D_R #E8F5E9 {
+    card "UC-R1 rooms.list\n//7cd55a0b//" as DR1 #A5D6A7
+    card "UC-R2 room.create\n//fbfed148//" as DR2 #A5D6A7
+    card "UC-R2b room.create.host\n//177c8da5//" as DR2b #A5D6A7
+    card "UC-R3 room.create.private\n//1c21171d//" as DR3 #A5D6A7
+    card "UC-R4 room.join\n//9cc60247//" as DR4 #A5D6A7
+    card "UC-R5 room.join.private.ok\n//61449e82//" as DR5 #A5D6A7
+    card "UC-R6 room.join.private.wrong\n//148f2e73//" as DR6 #A5D6A7
+    card "UC-R7 room.join.full\n//d0b57a5a//" as DR7 #EF9A9A
+    card "UC-R8 room.join.midGame\n//8db2e073//" as DR8 #EF9A9A
+    card "UC-R9 room.join.rejected\n//d466a7f1//" as DR9 #EF9A9A
+    card "UC-R10 room.leave\n//96f2ecd5//" as DR10 #A5D6A7
+    card "UC-R11 room.share\n//433fe03f//" as DR11 #EF9A9A
   }
+
   package "HOST 2/4" as D_H #FFF9C4 {
-    card "H1 xfer" as DH1 #A5D6A7
-    card "H2 bot" as DH2 #EF9A9A
-    card "H3 start" as DH3 #A5D6A7
-    card "H4 noHost" as DH4 #EF9A9A
+    card "UC-H1 host.transfer\n//dd0392cf//" as DH1 #A5D6A7
+    card "UC-H2 host.addBot\n//fc6c941a//" as DH2 #EF9A9A
+    card "UC-H4 host.startGame.nonHost\n//57311798//" as DH4 #EF9A9A
   }
+
   package "GAME 1/2" as D_G #FFF9C4 {
-    card "G1 start" as DG1 #A5D6A7
-    card "G2 fill" as DG2 #EF9A9A
+    card "UC-G1 game.start\n//560d9a46//" as DG1 #A5D6A7
+    card "UC-G2 game.start.autoFillBots\n//f89b9338//" as DG2 #EF9A9A
   }
-  package "ROUND 4p/8" as D_RD #FFF9C4 {
-    card "RD1" as DRD1 #FFE082
-    card "RD2" as DRD2 #FFE082
-    card "RD3" as DRD3 #FFE082
-    card "RD4" as DRD4 #FFE082
-    card "RD5" as DRD5 #EF9A9A
-    card "RD6" as DRD6 #EF9A9A
-    card "RD7" as DRD7 #EF9A9A
-    card "RD8" as DRD8 #EF9A9A
+
+  package "ROUND 0+4p/8" as D_RD #FFF9C4 {
+    card "UC-RD1 round.start\n//f8e39106//" as DRD1 #FFE082
+    card "UC-RD2 round.countdown\n//224c5b9e//" as DRD2 #FFE082
+    card "UC-RD3 round.resolve\n//e5c73817//" as DRD3 #FFE082
+    card "UC-RD4 round.resolve.allPlayed\n//b3fb6696//" as DRD4 #FFE082
+    card "UC-RD5 round.resolve.timeout\n//34620f4b//" as DRD5 #EF9A9A
+    card "UC-RD6 round.resolve.specials\n//4af9fb90//" as DRD6 #EF9A9A
+    card "UC-RD7 round.exchange\n//76f767e4//" as DRD7 #EF9A9A
+    card "UC-RD8 round.deckExhausted\n//7886e805//" as DRD8 #EF9A9A
   }
-  package "PLAYER 1p/14" as D_P #FFCDD2 {
-    card "P1" as DP1 #FFE082
-    card "P2-P14" as DP2 #EF9A9A
+
+  package "PLAYER 0+1p/14" as D_P #FFCDD2 {
+    card "UC-P1 player.guess.up\n//f0295f28//" as DP1 #FFE082
+    card "UC-P2 player.guess.down\n//c9866c6e//" as DP2 #EF9A9A
+    card "UC-P3 player.guess.equal\n//fa8f1c83//" as DP3 #EF9A9A
+    card "UC-P4 player.guess.correct\n//035d2535//" as DP4 #EF9A9A
+    card "UC-P5 player.guess.wrong\n//1a56ba00//" as DP5 #EF9A9A
+    card "UC-P6 player.guess.timeout\n//344fcec6//" as DP6 #EF9A9A
+    card "UC-P7 player.guess.frozen\n//e4b6d041//" as DP7 #EF9A9A
+    card "UC-P8 player.guess.dead\n//d51d24ec//" as DP8 #EF9A9A
+    card "UC-P9 player.playSpecial\n//f43897d5//" as DP9 #EF9A9A
+    card "UC-P10 player.playSpecial.notInInv\n//b6862ad2//" as DP10 #EF9A9A
+    card "UC-P11 player.playSpecial.alreadyUsed\n//c503e19a//" as DP11 #EF9A9A
+    card "UC-P13 player.streak\n//d309011d//" as DP13 #EF9A9A
+    card "UC-P14 player.score\n//18224bc2//" as DP14 #EF9A9A
   }
+
+  package "GAME END 0/5" as D_GE #FFCDD2 {
+    card "UC-GE1 game.end.allEliminated\n//38d62fef//" as DGE1 #EF9A9A
+    card "UC-GE2 game.end.deckEmpty\n//e73e7784//" as DGE2 #EF9A9A
+    card "UC-GE3 game.end.leaderboard\n//e4bd6ed5//" as DGE3 #EF9A9A
+    card "UC-GE4 game.end.diamonds\n//b1be7a22//" as DGE4 #EF9A9A
+    card "UC-GE5 game.end.playAgain\n//ea33c5b7//" as DGE5 #EF9A9A
+  }
+
   package "BOT 0/8" as D_B #FFCDD2 {
-    card "B1-B8" as DB1 #EF9A9A
+    card "UC-B1 bot.add\n//f1ba3e42//" as DB1 #EF9A9A
+    card "UC-B2 bot.decide\n//8e46d39e//" as DB2 #EF9A9A
+    card "UC-B3 bot.decide.cautious\n//fe84fad6//" as DB3 #EF9A9A
+    card "UC-B4 bot.decide.gambler\n//f0364019//" as DB4 #EF9A9A
+    card "UC-B5 bot.decide.equalLover\n//a4c55c47//" as DB5 #EF9A9A
+    card "UC-B6 bot.decide.random\n//a067feff//" as DB6 #EF9A9A
+    card "UC-B7 bot.observe\n//b324159f//" as DB7 #EF9A9A
+    card "UC-B8 bot.playDelayed\n//2d695025//" as DB8 #EF9A9A
   }
-  package "SPEC 0/4" as D_S #FFCDD2 {
-    card "S1-S4" as DS1 #EF9A9A
+
+  package "SPECTATOR 0/4" as D_S #FFCDD2 {
+    card "UC-S1 spectator.join\n//ac08aa49//" as DS1 #EF9A9A
+    card "UC-S2 spectator.leave\n//d30575e7//" as DS2 #EF9A9A
+    card "UC-S3 spectator.joinNext\n//df7ec971//" as DS3 #EF9A9A
+    card "UC-S4 spectator.seesGame\n//91825bbd//" as DS4 #EF9A9A
   }
+
   package "CHAT 0/4" as D_CH #FFCDD2 {
-    card "CH1-CH4" as DCH1 #EF9A9A
+    card "UC-CH1 chat.send\n//0dfe22b0//" as DCH1 #EF9A9A
+    card "UC-CH2 chat.history\n//7b4f1505//" as DCH2 #EF9A9A
+    card "UC-CH3 chat.maxLength\n//8a319461//" as DCH3 #EF9A9A
+    card "UC-CH4 chat.maxHistory\n//f552ec48//" as DCH4 #EF9A9A
   }
-  package "END 0/5" as D_GE #FFCDD2 {
-    card "GE1-GE5" as DGE1 #EF9A9A
-  }
-  package "CARDS 0/13" as D_SC #FFCDD2 {
-    card "SC1-SC13" as DSC1 #EF9A9A
+
+  package "SPECIAL CARDS 0/13" as D_SC #FFCDD2 {
+    card "UC-SC1 protectiveShell\n//58aca2aa//" as DSC1 #EF9A9A
+    card "UC-SC2 doublePoints\n//fc29d64c//" as DSC2 #EF9A9A
+    card "UC-SC3 peek\n//7c992d5a//" as DSC3 #EF9A9A
+    card "UC-SC4 sacrifice\n//994dc326//" as DSC4 #EF9A9A
+    card "UC-SC5 swap\n//288df581//" as DSC5 #EF9A9A
+    card "UC-SC6 revealHand\n//c11e9372//" as DSC6 #EF9A9A
+    card "UC-SC7 freeze\n//872c8b2b//" as DSC7 #EF9A9A
+    card "UC-SC8 oneForTheTeam\n//5c153b82//" as DSC8 #EF9A9A
+    card "UC-SC9 secondChance\n//7ed5c89e//" as DSC9 #EF9A9A
+    card "UC-SC10 pointSteal\n//47b2e416//" as DSC10 #EF9A9A
+    card "UC-SC11 massIntelligence\n//725f1f43//" as DSC11 #EF9A9A
+    card "UC-SC12 priorityOrder\n//fb209fdd//" as DSC12 #EF9A9A
+    card "UC-SC13 inventory\n//dda127ab//" as DSC13 #EF9A9A
   }
 }
 
 ' ╔═════════════════════════════════════════════════════════════╗
-' ║  SECTION 2: DETAILED CHAINS — UC → Task → Impl → Test      ║
-' ║  Arrows show flow for all 13 covered UCs                    ║
+' ║  SECTION 2: DETAILED CHAINS — 13 covered UCs               ║
 ' ╚═════════════════════════════════════════════════════════════╝
 
-package "CHAINS: UC(green) → Task(blue) → Impl(orange) → Test(pink)" as CHAINS {
+package "CHAINS: UC → Task → Impl → Test (13 covered)" as CHAINS {
 
   package "UC-C1: connection.open [92a061e0]" as CH1 {
     card "**UC** connection.open\n//92a061e0//" as CH1U #E8F5E9
@@ -92,86 +141,98 @@ package "CHAINS: UC(green) → Task(blue) → Impl(orange) → Test(pink)" as CH
     CH1S --> CH1X
   }
 
-  package "UC-R2: room.create [fbfed148]" as CH2 {
-    card "**UC** room.create\n//fbfed148//" as CH2U #E8F5E9
-    card "**Task** Sprint3/T2" as CH2T #E3F2FD
-    card "**Client** WebSocketClient.ts:60\n**createRoom()**" as CH2C #FFF3E0
-    card "**Server** RoomManager.ts:643\n**createRoom()**" as CH2S1 #FFF3E0
-    card "**Server** GameRoom.ts:103\n**addPlayer()**" as CH2S2 #FFF3E0
-    card "**Test** vitest/uc-r2\n**AC1-AC7**" as CH2X #FCE4EC
-    CH2U --> CH2T
-    CH2T --> CH2C
-    CH2C --> CH2S1
-    CH2S1 --> CH2S2
-    CH2S2 --> CH2X
+  package "UC-C1b: connection.open.multi [aa33a8d3]" as CH1b {
+    card "**UC** conn.open.multi\n//aa33a8d3//" as CH1bU #E8F5E9
+    card "**Task** Sprint3/T1" as CH1bT #E3F2FD
+    card "**Server** server.ts:303 (concurrent)" as CH1bS #FFF3E0
+    card "**Test** TC1.2" as CH1bX #FCE4EC
+    CH1bU --> CH1bT --> CH1bS --> CH1bX
   }
 
-  package "UC-R4: room.join [9cc60247]" as CH3 {
-    card "**UC** room.join\n//9cc60247//" as CH3U #E8F5E9
-    card "**Task** Sprint3/T3" as CH3T #E3F2FD
-    card "**Client** WebSocketClient.ts:64\n**joinRoom()**" as CH3C #FFF3E0
-    card "**Server** GameRoom.ts:103\n**addPlayer()**\n//guards: size,state,key//" as CH3S #FFF3E0
-    card "**Test** vitest/uc-r4\n**AC1-AC9**" as CH3X #FCE4EC
-    CH3U --> CH3T
-    CH3T --> CH3C
-    CH3C --> CH3S
-    CH3S --> CH3X
-  }
-
-  package "UC-G1: game.start [560d9a46]" as CH4 {
-    card "**UC** game.start\n//560d9a46//" as CH4U #E8F5E9
-    card "**Task** Sprint3/T4" as CH4T #E3F2FD
-    card "**Client** WebSocketClient.ts:76\n**startGame()**" as CH4C #FFF3E0
-    card "**Server** GameRoom.ts:290\n**startGame()→nextRound()**" as CH4S #FFF3E0
-    card "**Test** vitest/uc-g1\n**AC1-AC7**" as CH4X #FCE4EC
-    CH4U --> CH4T
-    CH4T --> CH4C
-    CH4C --> CH4S
-    CH4S --> CH4X
-  }
-
-  package "UC-H1: host.transfer [dd0392cf]" as CH5 {
-    card "**UC** host.transfer\n//dd0392cf//" as CH5U #E8F5E9
-    card "**Task** Sprint3/T3" as CH5T #E3F2FD
-    card "**Server** GameRoom.ts:277\n**removePlayer()**\n//hostId reassign//" as CH5S #FFF3E0
-    card "**Client** MultiplayerUI.ts:56\n**on('HOST_CHANGED')**" as CH5C #FFF3E0
-    card "**Test** TC-E2a+b" as CH5X #FCE4EC
-    CH5U --> CH5T
-    CH5T --> CH5S
-    CH5S --> CH5C
-    CH5S --> CH5X
+  package "UC-C2: connection.close [e6b4716c]" as CH1c {
+    card "**UC** conn.close\n//e6b4716c//" as CH1cU #E8F5E9
+    card "**Task** Sprint3/T1" as CH1cT #E3F2FD
+    card "**Server** server.ts ws.on('close')\nGameRoom.ts:254 removePlayer()" as CH1cS #FFF3E0
+    card "**Test** TC-E2" as CH1cX #FCE4EC
+    CH1cU --> CH1cT --> CH1cS --> CH1cX
   }
 
   package "UC-R1: rooms.list [7cd55a0b]" as CH6 {
     card "**UC** rooms.list\n//7cd55a0b//" as CH6U #E8F5E9
     card "**Task** Sprint3/T2" as CH6T #E3F2FD
-    card "**Client** WebSocketClient.ts:72\n**listRooms()**" as CH6C #FFF3E0
-    card "**Server** RoomManager.ts:660\n**listRooms()**" as CH6S #FFF3E0
+    card "**Impl** WebSocketClient.ts:72 listRooms()\nRoomManager.ts:660 listRooms()" as CH6I #FFF3E0
     card "**Test** TC3.7+R2+R4" as CH6X #FCE4EC
-    CH6U --> CH6T
-    CH6T --> CH6C
-    CH6C --> CH6S
-    CH6S --> CH6X
+    CH6U --> CH6T --> CH6I --> CH6X
   }
 
-  package "Remaining 7 covered (compact)" as CH_REST {
-    card "**UC-R5** join.private.ok //61449e82//\nserver.ts:422 → TC3.3" as CHR5 #A5D6A7
-    card "**UC-R6** join.private.wrong //148f2e73//\nserver.ts:422 → TC3.4" as CHR6 #A5D6A7
-    card "**UC-R2b** create.host //177c8da5//\nGameRoom.ts:116 → TC2.3" as CHR2b #A5D6A7
-    card "**UC-R3** create.private //1c21171d//\nGameRoom.ts:70 → TC2.2" as CHR3 #A5D6A7
-    card "**UC-R10** room.leave //96f2ecd5//\nGameRoom.ts:254 → TC-R1" as CHR10 #A5D6A7
-    card "**UC-C1b** conn.multi //aa33a8d3//\nserver.ts:303 → TC1.2" as CHC1b #A5D6A7
-    card "**UC-C2** conn.close //e6b4716c//\nGameRoom.ts:254 → TC-E2" as CHC2 #A5D6A7
+  package "UC-R2: room.create [fbfed148]" as CH2 {
+    card "**UC** room.create\n//fbfed148//" as CH2U #E8F5E9
+    card "**Task** Sprint3/T2" as CH2T #E3F2FD
+    card "**Impl** WebSocketClient.ts:60 createRoom()\nRoomManager.ts:643 createRoom()\nGameRoom.ts:103 addPlayer()" as CH2I #FFF3E0
+    card "**Test** vitest/uc-r2 AC1-AC7" as CH2X #FCE4EC
+    CH2U --> CH2T --> CH2I --> CH2X
+  }
+
+  package "UC-R2b: room.create.host [177c8da5]" as CH2b {
+    card "**UC** create.host\n//177c8da5//" as CH2bU #E8F5E9
+    card "**Impl** GameRoom.ts:116 hostId" as CH2bI #FFF3E0
+    card "**Test** TC2.3" as CH2bX #FCE4EC
+    CH2bU --> CH2bI --> CH2bX
+  }
+
+  package "UC-R3: room.create.private [1c21171d]" as CH3p {
+    card "**UC** create.private\n//1c21171d//" as CH3pU #E8F5E9
+    card "**Impl** GameRoom.ts:70 isPrivate\nserver.ts:422 key check" as CH3pI #FFF3E0
+    card "**Test** TC2.2" as CH3pX #FCE4EC
+    CH3pU --> CH3pI --> CH3pX
+  }
+
+  package "UC-R4: room.join [9cc60247]" as CH3 {
+    card "**UC** room.join\n//9cc60247//" as CH3U #E8F5E9
+    card "**Task** Sprint3/T3" as CH3T #E3F2FD
+    card "**Impl** WebSocketClient.ts:64 joinRoom()\nGameRoom.ts:103 addPlayer()" as CH3I #FFF3E0
+    card "**Test** TC3.1a+b" as CH3X #FCE4EC
+    CH3U --> CH3T --> CH3I --> CH3X
+  }
+
+  package "UC-R5/R6: join.private [61449e82/148f2e73]" as CH3r {
+    card "**UC-R5** join.private.ok //61449e82//\n**UC-R6** join.private.wrong //148f2e73//" as CH3rU #E8F5E9
+    card "**Impl** server.ts:422 key match/mismatch" as CH3rI #FFF3E0
+    card "**Test** TC3.3 + TC3.4" as CH3rX #FCE4EC
+    CH3rU --> CH3rI --> CH3rX
+  }
+
+  package "UC-R10: room.leave [96f2ecd5]" as CH5r {
+    card "**UC** room.leave\n//96f2ecd5//" as CH5rU #E8F5E9
+    card "**Impl** WebSocketClient.ts:68 leaveRoom()\nGameRoom.ts:254 removePlayer()" as CH5rI #FFF3E0
+    card "**Test** TC-R1" as CH5rX #FCE4EC
+    CH5rU --> CH5rI --> CH5rX
+  }
+
+  package "UC-H1: host.transfer [dd0392cf]" as CH5 {
+    card "**UC** host.transfer\n//dd0392cf//" as CH5U #E8F5E9
+    card "**Task** Sprint3/T3" as CH5T #E3F2FD
+    card "**Impl** GameRoom.ts:277 hostId reassign" as CH5I #FFF3E0
+    card "**Test** TC-E2a+b" as CH5X #FCE4EC
+    CH5U --> CH5T --> CH5I --> CH5X
+  }
+
+  package "UC-G1: game.start [560d9a46]" as CH4 {
+    card "**UC** game.start\n//560d9a46//" as CH4U #E8F5E9
+    card "**Task** Sprint3/T4" as CH4T #E3F2FD
+    card "**Impl** WebSocketClient.ts:76 startGame()\nGameRoom.ts:290 startGame()→nextRound()" as CH4I #FFF3E0
+    card "**Test** TC4.1a+b" as CH4X #FCE4EC
+    CH4U --> CH4T --> CH4I --> CH4X
   }
 }
 
 legend bottom right
   |= Dashboard Colors |= Chain Colors |
-  | <#A5D6A7> ✅ Covered (13) | <#E8F5E9> UseCase |
-  | <#FFE082> ⚠️ Partial (5) | <#E3F2FD> Task |
-  | <#EF9A9A> ❌ Missing (57) | <#FFF3E0> Impl |
+  | <#A5D6A7> Covered (13) | <#E8F5E9> UseCase |
+  | <#FFE082> Partial (5) | <#E3F2FD> Task |
+  | <#EF9A9A> Missing (57) | <#FFF3E0> Impl |
   | | <#FCE4EC> Test |
-  **Arrows: UC → Task → Client → Server → Test**
+  **All 75 UCs have UUID annotations**
   **Source: traceability-matrix.md**
 endlegend
 

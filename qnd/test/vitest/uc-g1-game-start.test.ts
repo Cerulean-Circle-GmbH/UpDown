@@ -39,6 +39,7 @@ afterAll(() => { sockets.forEach(ws => ws.close()); });
 
 describe('UC-G1 game.start [560d9a46]', () => {
 
+  // [uc:uuid:560d9a46] UC-G1: game.start
   it('AC-1: START_GAME → ROUND_START with round:1, card, countdown:10', async () => {
     const { ws: wA, playerId: idA } = await connectWs();
     send(wA, { type: 'CREATE_ROOM', roomName: 'StartTest', playerName: 'Alice', maxPlayers: 2 });
@@ -65,6 +66,7 @@ describe('UC-G1 game.start [560d9a46]', () => {
     expect(rs.countdown).toBe(10);
   });
 
+  // [uc:uuid:560d9a46] UC-G1: game.start — alivePlayers
   it('AC-2: alivePlayers[] contains all player IDs', async () => {
     const { ws: wA, playerId: idA } = await connectWs();
     const cA = collectFor(wA, 2000);

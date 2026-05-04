@@ -111,15 +111,18 @@ Fully working UpDown multiplayer online card game. Deadline: Sunday. QnD — web
 
 ## Professional Test Suite (vitest migration)
 
-- [ ] [Task 32: Vitest Migration — UC-based test suite with full traceability](./task-32-vitest-migration.md) **🔧 IN PROGRESS**
-  Each top-level UC from qnd-usecase-diagram.puml → task file with AC → vitest test → traceability-matrix.md updated
-  - [ ] 32.1: Tester+Architect — UC-C1 connection.open vitest (uuid: 92a061e0)
-  - [ ] 32.2: Tester+Architect — UC-R2 room.create vitest (uuid: fbfed148)
-  - [ ] 32.3: Tester+Architect — UC-R4 room.join vitest (uuid: 9cc60247)
-  - [ ] 32.4: Tester+Architect — UC-G1 game.start vitest (uuid: 560d9a46)
-  - [ ] 32.5: Tester+Architect — UC-P1 player.guess vitest (uuid: f0295f28)
-  - [ ] ... (remaining 21 top-level UCs)
-  42-pair: Tester creates, Architect reviews AC, SM monitors quality
+- [x] [Task 32: Vitest Migration — UC-based test suite with full traceability](./task-32-vitest-migration.md) **✅ DONE — 47/47 PASS**
+  9 UC category test files, 47 tests, UUID traceability throughout
+  - [x] 32.1: UC-C1 connection.open ✅
+  - [x] 32.2: UC-R2 room.create ✅
+  - [x] 32.3: UC-R4 room.join ✅
+  - [x] 32.4: UC-G1 game.start ✅
+  - [x] 32.5: UC-P1 player.guess ✅
+  - [x] 32.6: UC-B1 bot.add ✅
+  - [x] 32.7: UC-S1 spectator.join ✅
+  - [x] 32.8: UC-CH1 chat.send ✅
+  - [x] 32.9: UC-GE1 game.end ✅
+  Architect created 9 task files (32.1-32.9) with 61 AC. Tester implemented all. Serialized config fixed flaky timeouts.
 
 - [ ] [Task 29: DRY — CardUtils.ts](./task-29-dry-card-utils.md) **📋 DEFERRED**
   - [ ] 29.1: Expert — Extract suitSymbol(), cardColor(), cardToHtml() — 7 locations → 1

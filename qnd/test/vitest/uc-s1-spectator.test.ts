@@ -33,6 +33,7 @@ afterAll(() => { sockets.forEach(ws => ws.close()); });
 
 describe('UC-S1 spectator.join [ac08aa49]', () => {
 
+  // [uc:uuid:ac08aa49] UC-S1: spectator.join
   it('AC-1: SPECTATE_ROOM → SPECTATE_JOINED with room info', async () => {
     const { ws: wH } = await connectWs();
     send(wH, { type: 'CREATE_ROOM', roomName: 'SpecRoom', playerName: 'Host', maxPlayers: 4 });
@@ -50,6 +51,7 @@ describe('UC-S1 spectator.join [ac08aa49]', () => {
     expect(joined).toBeDefined();
   });
 
+  // [uc:uuid:91825bbd] UC-S4: spectator.seesGame
   it('AC-3: spectator receives ROUND_RESULT during game', async () => {
     const { ws: wH } = await connectWs();
     send(wH, { type: 'CREATE_ROOM', roomName: 'SpecGame', playerName: 'Host', maxPlayers: 2 });

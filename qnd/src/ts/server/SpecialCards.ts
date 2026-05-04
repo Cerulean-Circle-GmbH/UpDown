@@ -102,6 +102,7 @@ export interface EffectResult {
  * Resolve special card effects in priority order (Level 3 first, then 2, then 1)
  * Returns modifications to player state
  */
+// [uc:uuid:fb209fdd] UC-SC12: special.priorityOrder — [uc:uuid:4af9fb90] UC-RD6: round.resolve.specials
 export function resolveSpecialCards(
   playedCards: PlayedSpecialCard[],
   playerResults: Map<string, { correct: boolean; alive: boolean; score: number }>,
@@ -132,13 +133,13 @@ export function resolveSpecialCards(
     if (!playerState) continue;
 
     switch (played.cardId) {
-      case 'protective_shell': {
+      case 'protective_shell': { // [uc:uuid:58aca2aa] UC-SC1
         playerState.alive = true;
         effects.push({ playerId: played.playerId, effect: 'protected', message: `${card.emoji} Protective Shell — survived!` });
         break;
       }
 
-      case 'mass_intelligence': {
+      case 'mass_intelligence': { // [uc:uuid:725f1f43] UC-SC11
         const correctCount = [...playerResults.values()].filter(p => p.correct).length;
         if (correctCount > totalPlayers / 2) {
           playerState.alive = true;
@@ -149,7 +150,7 @@ export function resolveSpecialCards(
         break;
       }
 
-      case 'double_points': {
+      case 'double_points': { // [uc:uuid:fc29d64c] UC-SC2
         if (playerState.correct) {
           playerState.score *= 2;
           effects.push({ playerId: played.playerId, effect: 'doubled', message: `${card.emoji} Double Points — score doubled!` });
@@ -157,7 +158,7 @@ export function resolveSpecialCards(
         break;
       }
 
-      case 'peek': {
+      case 'peek': { // [uc:uuid:7c992d5a] UC-SC3
         if (gmHand.length > 0) {
           const peekCard = gmHand[Math.floor(Math.random() * gmHand.length)];
           effects.push({ playerId: played.playerId, effect: 'peek', message: `${card.emoji} Peek — GM has a ${peekCard.value} of ${peekCard.suit}` });
@@ -165,7 +166,7 @@ export function resolveSpecialCards(
         break;
       }
 
-      case 'sacrifice': {
+      case 'sacrifice': { // [uc:uuid:994dc326] UC-SC4
         if (played.targetPlayerId) {
           const target = playerResults.get(played.targetPlayerId);
           if (target) {
@@ -176,7 +177,7 @@ export function resolveSpecialCards(
         break;
       }
 
-      case 'swap': {
+      case 'swap': { // [uc:uuid:288df581] UC-SC5
         if (played.targetPlayerId) {
           const target = playerResults.get(played.targetPlayerId);
           if (target) {
@@ -192,20 +193,20 @@ export function resolveSpecialCards(
         break;
       }
 
-      case 'reveal_hand': {
+      case 'reveal_hand': { // [uc:uuid:c11e9372] UC-SC6
         const handStr = gmHand.map(c => `${c.value}${c.suit[0].toUpperCase()}`).join(', ');
         effects.push({ playerId: played.playerId, effect: 'revealed', message: `${card.emoji} Reveal — GM hand: ${handStr}` });
         break;
       }
 
-      case 'freeze': {
+      case 'freeze': { // [uc:uuid:872c8b2b] UC-SC7
         if (played.targetPlayerId) {
           effects.push({ playerId: played.targetPlayerId, effect: 'frozen', message: `${card.emoji} Freeze — cannot play next round!` });
         }
         break;
       }
 
-      case 'one_for_the_team': {
+      case 'one_for_the_team': { // [uc:uuid:5c153b82] UC-SC8
         if (!playerState.alive) {
           // Player died, so everyone else survives
           playerResults.forEach((state) => { state.alive = true; });
@@ -214,7 +215,7 @@ export function resolveSpecialCards(
         break;
       }
 
-      case 'second_chance': {
+      case 'second_chance': { // [uc:uuid:7ed5c89e] UC-SC9
         if (!playerState.alive) {
           playerState.alive = true;
           effects.push({ playerId: played.playerId, effect: 'revived', message: `${card.emoji} Second Chance — back in the game!` });
@@ -222,7 +223,7 @@ export function resolveSpecialCards(
         break;
       }
 
-      case 'point_steal': {
+      case 'point_steal': { // [uc:uuid:47b2e416] UC-SC10
         if (played.targetPlayerId) {
           const target = playerResults.get(played.targetPlayerId);
           if (target) {

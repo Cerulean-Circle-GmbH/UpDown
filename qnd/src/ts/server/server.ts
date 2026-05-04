@@ -298,6 +298,7 @@ async function fetchUniqueAvatar(): Promise<string> {
 /**
  * Setup WebSocket server for real-time player notifications
  */
+// [uc:uuid:92a061e0] UC-C1: connection.open — [uc:uuid:aa33a8d3] UC-C1b: connection.open.multi
 function setupWebSocketServer(server: https.Server): void {
   const wss = new WebSocketServer({ server });
   
@@ -406,7 +407,7 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
   const send = (data: object) => ws.send(JSON.stringify(data));
 
   switch (msg.type) {
-    case MSG.CREATE_ROOM: {
+    case MSG.CREATE_ROOM: { // [uc:uuid:fbfed148] UC-R2 — [uc:uuid:177c8da5] UC-R2b — [uc:uuid:1c21171d] UC-R3
       const room = roomManager.createRoom(
         msg.roomName || msg.name || 'Game Room',
         clientId,
@@ -418,7 +419,7 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       break;
     }
 
-    case MSG.JOIN_ROOM: {
+    case MSG.JOIN_ROOM: { // [uc:uuid:9cc60247] UC-R4 — [uc:uuid:61449e82] UC-R5 — [uc:uuid:148f2e73] UC-R6
       const room = roomManager.getRoom(msg.roomId);
       if (!room) { send({ type: MSG.ERROR, message: 'Room not found' }); break; }
       if (room.isPrivate && room.roomKey !== msg.roomKey) { send({ type: MSG.ERROR, message: 'Wrong room key' }); break; }
@@ -428,7 +429,7 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       break;
     }
 
-    case MSG.LEAVE_ROOM: {
+    case MSG.LEAVE_ROOM: { // [uc:uuid:96f2ecd5] UC-R10
       const room = roomManager.findPlayerRoom(clientId);
       if (room) {
         room.removePlayer(clientId);
@@ -440,12 +441,12 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       break;
     }
 
-    case MSG.LIST_ROOMS: {
+    case MSG.LIST_ROOMS: { // [uc:uuid:7cd55a0b] UC-R1
       send({ type: MSG.ROOM_LIST, rooms: roomManager.listRooms() });
       break;
     }
 
-    case MSG.START_GAME: {
+    case MSG.START_GAME: { // [uc:uuid:560d9a46] UC-G1 — [uc:uuid:57311798] UC-H4: nonHost check
       const room = roomManager.findPlayerRoom(clientId);
       if (room && room.hostId === clientId) {
         room.startGame();
@@ -454,7 +455,7 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       break;
     }
 
-    case MSG.PLAY_CARD: {
+    case MSG.PLAY_CARD: { // [uc:uuid:f0295f28] UC-P1 — [uc:uuid:c9866c6e] UC-P2 — [uc:uuid:fa8f1c83] UC-P3
       const room = roomManager.findPlayerRoom(clientId);
       if (room && (msg.guess === 'up' || msg.guess === 'down' || msg.guess === 'equal')) {
         room.playCard(clientId, msg.guess);
@@ -462,7 +463,7 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       break;
     }
 
-    case MSG.PLAY_SPECIAL: {
+    case MSG.PLAY_SPECIAL: { // [uc:uuid:f43897d5] UC-P9
       const room = roomManager.findPlayerRoom(clientId);
       if (room && msg.cardId) {
         room.playSpecialCard(clientId, msg.cardId, msg.targetPlayerId);
@@ -470,7 +471,7 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       break;
     }
 
-    case MSG.ADD_BOT: {
+    case MSG.ADD_BOT: { // [uc:uuid:fc6c941a] UC-H2: host.addBot — [uc:uuid:f1ba3e42] UC-B1
       const room = roomManager.findPlayerRoom(clientId);
       if (room && room.hostId === clientId) {
         const botId = room.addBot(msg.personality);
@@ -479,7 +480,7 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       break;
     }
 
-    case MSG.SPECTATE_ROOM:
+    case MSG.SPECTATE_ROOM: // [uc:uuid:ac08aa49] UC-S1: spectator.join
     case MSG.SPECTATE: {
       const room = roomManager.getRoom(msg.roomId);
       if (room) {
@@ -491,7 +492,7 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       break;
     }
 
-    case MSG.LEAVE_SPECTATE: {
+    case MSG.LEAVE_SPECTATE: { // [uc:uuid:d30575e7] UC-S2
       const room = roomManager.findSpectatorRoom(clientId);
       if (room) {
         room.removeSpectator(clientId);
@@ -500,7 +501,7 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       break;
     }
 
-    case MSG.JOIN_NEXT_GAME: {
+    case MSG.JOIN_NEXT_GAME: { // [uc:uuid:df7ec971] UC-S3
       const room = roomManager.findSpectatorRoom(clientId);
       if (room) {
         const ok = room.promoteSpectator(clientId, msg.playerName || 'Player', avatarUrl);
@@ -509,7 +510,7 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       break;
     }
 
-    case MSG.CHAT_MESSAGE: {
+    case MSG.CHAT_MESSAGE: { // [uc:uuid:0dfe22b0] UC-CH1 — [uc:uuid:8a319461] UC-CH3: maxLength — [uc:uuid:f552ec48] UC-CH4: maxHistory
       const room = roomManager.findPlayerRoom(clientId) || roomManager.findSpectatorRoom(clientId);
       if (room && msg.text && typeof msg.text === 'string') {
         const text = msg.text.slice(0, 200);

@@ -30,6 +30,7 @@ afterAll(() => { sockets.forEach(ws => ws.close()); });
 
 describe('UC-GE1 game.end [38d62fef]', () => {
 
+  // [uc:uuid:38d62fef] UC-GE1: game.end.allEliminated
   it('AC-1: all eliminated → GAME_OVER', async () => {
     const { ws } = await connectWs();
     const all: any[] = [];
@@ -50,6 +51,7 @@ describe('UC-GE1 game.end [38d62fef]', () => {
     expect(go).toBeDefined();
   }, 210000);
 
+  // [uc:uuid:e4bd6ed5] UC-GE3: game.end.leaderboard
   it('AC-3: leaderboard sorted by score DESC', async () => {
     const { ws } = await connectWs();
     const all: any[] = [];

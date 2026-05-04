@@ -52,6 +52,7 @@ describe('UC-R2 room.create [fbfed148]', () => {
   let hostId: string;
 
   // AC-1: CREATE_ROOM returns ROOM_JOINED with id, name, maxPlayers
+  // [uc:uuid:fbfed148] UC-R2: room.create
   it('AC-1: CREATE_ROOM returns ROOM_JOINED with id, name, maxPlayers', async () => {
     const { ws, playerId } = await connectWs();
     hostId = playerId;
@@ -70,6 +71,7 @@ describe('UC-R2 room.create [fbfed148]', () => {
 
   // AC-2: creator becomes host (hostId === playerId)
   // @uc:uuid:177c8da5
+  // [uc:uuid:177c8da5] UC-R2b: room.create.host
   it('AC-2: creator becomes host', async () => {
     const { ws, playerId } = await connectWs();
     const collect = collectFor(ws, 2000);

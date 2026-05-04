@@ -33,6 +33,7 @@ afterAll(() => { sockets.forEach(ws => ws.close()); });
 
 describe('UC-B1 bot.add [f1ba3e42]', () => {
 
+  // [uc:uuid:f1ba3e42] UC-B1: bot.add
   it('AC-1: ADD_BOT → PLAYER_JOINED with 🤖 in name', async () => {
     const { ws } = await connectWs();
     send(ws, { type: 'CREATE_ROOM', roomName: 'BotTest1', playerName: 'Host', maxPlayers: 4 });
@@ -45,6 +46,7 @@ describe('UC-B1 bot.add [f1ba3e42]', () => {
     expect(joined.player.name).toContain('🤖');
   });
 
+  // [uc:uuid:8e46d39e] UC-B2: bot.decide
   it('AC-3: bot plays during round (CARD_PLAYED received)', async () => {
     const { ws } = await connectWs();
     send(ws, { type: 'CREATE_ROOM', roomName: 'BotPlay', playerName: 'Host', maxPlayers: 2 });

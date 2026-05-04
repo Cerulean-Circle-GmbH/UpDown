@@ -2,9 +2,10 @@
 !theme plain
 skinparam backgroundColor White
 skinparam defaultFontName "Segoe UI"
-skinparam defaultFontSize 9
+skinparam defaultFontSize 8
+skinparam packageFontSize 10
 
-title UpDown QnD Multiplayer — Use Cases (Sprint 3 Complete)
+title UpDown QnD Multiplayer — 75 Use Cases with UUID Traceability\nGreen=Covered(13) Orange=Partial(5) Red=Missing(57)
 
 left to right direction
 
@@ -12,213 +13,309 @@ actor "Player" as player
 actor "Host" as host
 actor "Spectator" as spectator
 actor "Bot (AI)" as bot
-
-' ═══════════════════════════════════════════════════════════════
-' LOBBY
-' ═══════════════════════════════════════════════════════════════
-
-rectangle "Lobby System" as Lobby {
-  ' @uc:uuid:92a061e0 connection.open
-  usecase "UC1: lobby.connect\n(WebSocket + name)" as UC1
-  ' @uc:uuid:fbfed148 room.create
-  usecase "UC2: lobby.createRoom\n(name, maxPlayers, key?)" as UC2
-  ' @uc:uuid:9cc60247 room.join
-  usecase "UC3: lobby.joinRoom\n(roomId, key?)" as UC3
-  ' @uc:uuid:7cd55a0b rooms.list
-  usecase "UC4: lobby.listRooms\n(public only)" as UC4
-  ' @uc:uuid:96f2ecd5 room.leave
-  usecase "UC5: lobby.leaveRoom" as UC5
-  ' @uc:uuid:433fe03f room.share
-  usecase "UC6: lobby.shareInvite\n(clipboard/share API)" as UC6
-
-  usecase "UC1a: WebSocketClient.connect()" as UC1a
-  usecase "UC1b: server.handleConnection()" as UC1b
-  usecase "UC2a: RoomManager.createRoom()" as UC2a
-  usecase "UC3a: GameRoom.addPlayer()" as UC3a
-  usecase "UC6a: ShareUtil.shareRoomLink()" as UC6a
-}
-
-player --> UC1
-player --> UC3
-player --> UC4
-player --> UC5
-player --> UC6
-host --> UC2
-
-UC1 ..> UC1a : <<include>>
-UC1 ..> UC1b : <<include>>
-UC2 ..> UC2a : <<include>>
-UC3 ..> UC3a : <<include>>
-UC6 ..> UC6a : <<include>>
-
-' ═══════════════════════════════════════════════════════════════
-' GAME FLOW
-' ═══════════════════════════════════════════════════════════════
-
-rectangle "Multiplayer Game" as Game {
-  ' @uc:uuid:560d9a46 game.start
-  usecase "UC7: game.start\n(host only)" as UC7
-  ' @uc:uuid:f0295f28 player.guess
-  usecase "UC8: game.playCard\n(up/down/equal)" as UC8
-  ' @uc:uuid:f43897d5 player.playSpecial
-  usecase "UC9: game.playSpecial\n(13 card types, 3 levels)" as UC9
-  ' @uc:uuid:e5c73817 round.resolve
-  usecase "UC10: game.receiveResult\n(scores, eliminations)" as UC10
-  ' @uc:uuid:38d62fef game.end
-  usecase "UC11: game.over\n(leaderboard + diamonds)" as UC11
-  ' @uc:uuid:f8e39106 round.start
-  usecase "UC12: game.nextRound\n(auto after 3s exchange)" as UC12
-
-  usecase "UC7a: GameRoom.startGame()" as UC7a
-  usecase "UC7b: GameRoom.nextRound()" as UC7b
-  usecase "UC8a: GameRoom.playCard()" as UC8a
-  usecase "UC8b: GameRoom.startCountdown()" as UC8b
-  usecase "UC9a: SpecialCards.applyEffect()" as UC9a
-  usecase "UC10a: GameRoom.resolveRound()" as UC10a
-  usecase "UC11a: GameRoom.endGame()" as UC11a
-}
-
-host --> UC7
-player --> UC8
-player --> UC9
-player --> UC10
-player --> UC11
-
-UC7 ..> UC7a : <<include>>
-UC7 ..> UC7b : <<include>>
-UC8 ..> UC8a : <<include>>
-UC8 ..> UC8b : <<include>>
-UC9 ..> UC9a : <<include>>
-UC10 ..> UC10a : <<include>>
-UC11 ..> UC11a : <<include>>
-UC12 ..> UC7b : <<include>>
-
-' ═══════════════════════════════════════════════════════════════
-' BOT SYSTEM
-' ═══════════════════════════════════════════════════════════════
-
-rectangle "AI Bot System" as BotSys {
-  ' @uc:uuid:f1ba3e42 bot.add
-  usecase "UC13: bot.add\n(host picks personality)" as UC13
-  ' @uc:uuid:8e46d39e bot.decide
-  usecase "UC14: bot.decide\n(card-counting heuristic)" as UC14
-  ' @uc:uuid:2d695025 bot.playDelayed
-  usecase "UC15: bot.playDelayed\n(1-8s human feel)" as UC15
-
-  usecase "UC13a: GameRoom.addBot()" as UC13a
-  usecase "UC14a: BotPlayer.decideGuess()" as UC14a
-  usecase "UC15a: BotPlayer.observeCard()" as UC15a
-}
-
-host --> UC13
-bot --> UC14
-bot --> UC15
-
-UC13 ..> UC13a : <<include>>
-UC14 ..> UC14a : <<include>>
-UC14 ..> UC15a : <<include>>
-
-' ═══════════════════════════════════════════════════════════════
-' SPECTATOR
-' ═══════════════════════════════════════════════════════════════
-
-rectangle "Spectator Mode" as Spec {
-  ' @uc:uuid:ac08aa49 spectator.join
-  usecase "UC16: spectate.join\n(watch live game)" as UC16
-  ' @uc:uuid:d30575e7 spectator.leave
-  usecase "UC17: spectate.leave" as UC17
-  ' @uc:uuid:df7ec971 spectator.joinNext
-  usecase "UC18: spectate.joinNext\n(become player next game)" as UC18
-
-  usecase "UC16a: GameRoom.addSpectator()" as UC16a
-}
-
-spectator --> UC16
-spectator --> UC17
-spectator --> UC18
-
-UC16 ..> UC16a : <<include>>
-
-' ═══════════════════════════════════════════════════════════════
-' SOCIAL
-' ═══════════════════════════════════════════════════════════════
-
-rectangle "Social Features" as Social {
-  ' @uc:uuid:0dfe22b0 chat.send
-  usecase "UC19: chat.send\n(room chat)" as UC19
-  ' @uc:uuid:433fe03f profile.view (client-only)
-  usecase "UC20: profile.view\n(player stats, avatar)" as UC20
-  ' @uc:uuid:ea33c5b7 game.end.playAgain
-  usecase "UC21: share.result\n(game over stats)" as UC21
-
-  usecase "UC19a: GameRoom.broadcastChat()" as UC19a
-}
-
-player --> UC19
-player --> UC20
-player --> UC21
-
-UC19 ..> UC19a : <<include>>
-UC21 ..> UC6a : <<include>>
-
-' ═══════════════════════════════════════════════════════════════
-' SINGLE PLAYER (existing)
-' ═══════════════════════════════════════════════════════════════
-
-rectangle "Single Player (Rapid Mode)" as SP {
-  usecase "UC22: rapid.start\n(52-card solo)" as UC22
-  usecase "UC23: rapid.guess\n(up/down/equal)" as UC23
-  usecase "UC24: rapid.gameOver\n(score + restart)" as UC24
-
-  usecase "UC22a: GameModel.startNewGame()" as UC22a
-  usecase "UC23a: GameModel.makeGuess()" as UC23a
-}
-
-player --> UC22
-player --> UC23
-player --> UC24
-
-UC22 ..> UC22a : <<include>>
-UC23 ..> UC23a : <<include>>
-
-' ═══════════════════════════════════════════════════════════════
-' INFRASTRUCTURE
-' ═══════════════════════════════════════════════════════════════
-
-rectangle "Server Infrastructure" as Infra {
-  usecase "UC25: server.tui\n(status, clients, logs)" as UC25
-  usecase "UC26: pwa.install\n(offline + home screen)" as UC26
-}
-
 actor "Admin" as admin
-admin --> UC25
-player --> UC26
 
 ' ═══════════════════════════════════════════════════════════════
-' Cross-cutting: Timeout auto-resolves
+' CONNECTION (3 UCs)
 ' ═══════════════════════════════════════════════════════════════
 
-note right of UC8b
-  10-second countdown.
-  If all alive players play early,
-  countdown cancels → immediate resolve.
-  If timeout: no-guess = eliminated.
-end note
+rectangle "Connection" as CONN {
+  ' @uc:uuid:92a061e0 connection.open
+  usecase "UC-C1: connection.open\n[92a061e0]" as C1 #A5D6A7
+  ' @uc:uuid:aa33a8d3 connection.open.multi
+  usecase "UC-C1b: connection.open.multi\n[aa33a8d3]" as C1b #A5D6A7
+  ' @uc:uuid:e6b4716c connection.close
+  usecase "UC-C2: connection.close\n[e6b4716c]" as C2 #A5D6A7
+}
 
-note right of UC14a
-  Card counting heuristic:
-  P(up) = cardsAbove / remaining
-  P(down) = cardsBelow / remaining
-  P(equal) = cardsEqual / remaining
-  Pick argmax with personality modifier.
-end note
+player --> C1
+player --> C2
 
-note bottom of UC9
-  13 special cards across 3 levels:
-  L1: Shield, Mass Intel, Double Points
-  L2: Peek, Sacrifice, Swap, Reveal
-  L3: Freeze, Team Save, 2nd Chance, Steal
-  Priority: L3 > L2 > L1
-end note
+' ═══════════════════════════════════════════════════════════════
+' ROOMS (11 UCs: R1-R11)
+' ═══════════════════════════════════════════════════════════════
+
+rectangle "Rooms" as ROOMS {
+  ' @uc:uuid:7cd55a0b rooms.list
+  usecase "UC-R1: rooms.list\n[7cd55a0b]" as R1 #A5D6A7
+  ' @uc:uuid:fbfed148 room.create
+  usecase "UC-R2: room.create\n[fbfed148]" as R2 #A5D6A7
+  ' @uc:uuid:177c8da5 room.create.host
+  usecase "UC-R2b: room.create.host\n[177c8da5]" as R2b #A5D6A7
+  ' @uc:uuid:1c21171d room.create.private
+  usecase "UC-R3: room.create.private\n[1c21171d]" as R3 #A5D6A7
+  ' @uc:uuid:9cc60247 room.join
+  usecase "UC-R4: room.join\n[9cc60247]" as R4 #A5D6A7
+  ' @uc:uuid:61449e82 room.join.private.correct
+  usecase "UC-R5: room.join.private.ok\n[61449e82]" as R5 #A5D6A7
+  ' @uc:uuid:148f2e73 room.join.private.wrong
+  usecase "UC-R6: room.join.private.wrong\n[148f2e73]" as R6 #A5D6A7
+  ' @uc:uuid:d0b57a5a room.join.full
+  usecase "UC-R7: room.join.full\n[d0b57a5a]" as R7 #EF9A9A
+  ' @uc:uuid:8db2e073 room.join.midGame
+  usecase "UC-R8: room.join.midGame\n[8db2e073]" as R8 #EF9A9A
+  ' @uc:uuid:d466a7f1 room.join.rejected
+  usecase "UC-R9: room.join.rejected\n[d466a7f1]" as R9 #EF9A9A
+  ' @uc:uuid:96f2ecd5 room.leave
+  usecase "UC-R10: room.leave\n[96f2ecd5]" as R10 #A5D6A7
+  ' @uc:uuid:433fe03f room.share
+  usecase "UC-R11: room.share\n[433fe03f]" as R11 #EF9A9A
+}
+
+player --> R1
+player --> R4
+player --> R10
+host --> R2
+
+R2 ..> R2b : <<include>>
+R4 ..> R5 : <<extend>>
+R4 ..> R6 : <<extend>>
+R4 ..> R7 : <<extend>>
+R4 ..> R8 : <<extend>>
+R4 ..> R9 : <<extend>>
+
+' ═══════════════════════════════════════════════════════════════
+' HOST (4 UCs)
+' ═══════════════════════════════════════════════════════════════
+
+rectangle "Host Actions" as HOST {
+  ' @uc:uuid:dd0392cf host.transfer
+  usecase "UC-H1: host.transfer\n[dd0392cf]" as H1 #A5D6A7
+  ' @uc:uuid:fc6c941a host.addBot
+  usecase "UC-H2: host.addBot\n[fc6c941a]" as H2 #EF9A9A
+  ' @uc:uuid:57311798 host.startGame.nonHost
+  usecase "UC-H4: host.startGame.nonHost\n[57311798]" as H4 #EF9A9A
+}
+
+host --> H1
+host --> H2
+
+' ═══════════════════════════════════════════════════════════════
+' GAME (2 UCs)
+' ═══════════════════════════════════════════════════════════════
+
+rectangle "Game Lifecycle" as GAME {
+  ' @uc:uuid:560d9a46 game.start
+  usecase "UC-G1: game.start\n[560d9a46]" as G1 #A5D6A7
+  ' @uc:uuid:f89b9338 game.start.autoFillBots
+  usecase "UC-G2: game.start.autoFillBots\n[f89b9338]" as G2 #EF9A9A
+}
+
+host --> G1
+G1 ..> G2 : <<extend>>
+G1 ..> H4 : <<extend>>
+
+' ═══════════════════════════════════════════════════════════════
+' ROUND (8 UCs: RD1-RD8)
+' ═══════════════════════════════════════════════════════════════
+
+rectangle "Round Flow" as ROUND {
+  ' @uc:uuid:f8e39106 round.start
+  usecase "UC-RD1: round.start\n[f8e39106]" as RD1 #FFE082
+  ' @uc:uuid:224c5b9e round.countdown
+  usecase "UC-RD2: round.countdown\n[224c5b9e]" as RD2 #FFE082
+  ' @uc:uuid:e5c73817 round.resolve
+  usecase "UC-RD3: round.resolve\n[e5c73817]" as RD3 #FFE082
+  ' @uc:uuid:b3fb6696 round.resolve.allPlayed
+  usecase "UC-RD4: round.resolve.allPlayed\n[b3fb6696]" as RD4 #FFE082
+  ' @uc:uuid:34620f4b round.resolve.timeout
+  usecase "UC-RD5: round.resolve.timeout\n[34620f4b]" as RD5 #EF9A9A
+  ' @uc:uuid:4af9fb90 round.resolve.specials
+  usecase "UC-RD6: round.resolve.specials\n[4af9fb90]" as RD6 #EF9A9A
+  ' @uc:uuid:76f767e4 round.exchange
+  usecase "UC-RD7: round.exchange\n[76f767e4]" as RD7 #EF9A9A
+  ' @uc:uuid:7886e805 round.deckExhausted
+  usecase "UC-RD8: round.deckExhausted\n[7886e805]" as RD8 #EF9A9A
+}
+
+RD1 ..> RD2 : <<include>>
+RD2 ..> RD3 : <<include>>
+RD3 ..> RD4 : <<extend>>
+RD3 ..> RD5 : <<extend>>
+RD3 ..> RD6 : <<extend>>
+RD3 ..> RD7 : <<include>>
+
+' ═══════════════════════════════════════════════════════════════
+' PLAYER (14 UCs: P1-P14)
+' ═══════════════════════════════════════════════════════════════
+
+rectangle "Player Actions" as PLAYER {
+  ' @uc:uuid:f0295f28 player.guess.up
+  usecase "UC-P1: player.guess.up\n[f0295f28]" as P1 #FFE082
+  ' @uc:uuid:c9866c6e player.guess.down
+  usecase "UC-P2: player.guess.down\n[c9866c6e]" as P2 #EF9A9A
+  ' @uc:uuid:fa8f1c83 player.guess.equal
+  usecase "UC-P3: player.guess.equal\n[fa8f1c83]" as P3 #EF9A9A
+  ' @uc:uuid:035d2535 player.guess.correct
+  usecase "UC-P4: player.guess.correct\n[035d2535]" as P4 #EF9A9A
+  ' @uc:uuid:1a56ba00 player.guess.wrong
+  usecase "UC-P5: player.guess.wrong\n[1a56ba00]" as P5 #EF9A9A
+  ' @uc:uuid:344fcec6 player.guess.timeout
+  usecase "UC-P6: player.guess.timeout\n[344fcec6]" as P6 #EF9A9A
+  ' @uc:uuid:e4b6d041 player.guess.frozen
+  usecase "UC-P7: player.guess.frozen\n[e4b6d041]" as P7 #EF9A9A
+  ' @uc:uuid:d51d24ec player.guess.dead
+  usecase "UC-P8: player.guess.dead\n[d51d24ec]" as P8 #EF9A9A
+  ' @uc:uuid:f43897d5 player.playSpecial
+  usecase "UC-P9: player.playSpecial\n[f43897d5]" as P9 #EF9A9A
+  ' @uc:uuid:b6862ad2 player.playSpecial.notInInventory
+  usecase "UC-P10: player.playSpecial.notInInventory\n[b6862ad2]" as P10 #EF9A9A
+  ' @uc:uuid:c503e19a player.playSpecial.alreadyUsed
+  usecase "UC-P11: player.playSpecial.alreadyUsed\n[c503e19a]" as P11 #EF9A9A
+  ' @uc:uuid:d309011d player.streak
+  usecase "UC-P13: player.streak\n[d309011d]" as P13 #EF9A9A
+  ' @uc:uuid:18224bc2 player.score
+  usecase "UC-P14: player.score\n[18224bc2]" as P14 #EF9A9A
+}
+
+player --> P1
+player --> P2
+player --> P3
+player --> P9
+P1 ..> P4 : <<extend>>
+P1 ..> P5 : <<extend>>
+P9 ..> P10 : <<extend>>
+P9 ..> P11 : <<extend>>
+
+' ═══════════════════════════════════════════════════════════════
+' GAME END (5 UCs)
+' ═══════════════════════════════════════════════════════════════
+
+rectangle "Game End" as GEND {
+  ' @uc:uuid:38d62fef game.end.allEliminated
+  usecase "UC-GE1: game.end.allEliminated\n[38d62fef]" as GE1 #EF9A9A
+  ' @uc:uuid:e73e7784 game.end.deckEmpty
+  usecase "UC-GE2: game.end.deckEmpty\n[e73e7784]" as GE2 #EF9A9A
+  ' @uc:uuid:e4bd6ed5 game.end.leaderboard
+  usecase "UC-GE3: game.end.leaderboard\n[e4bd6ed5]" as GE3 #EF9A9A
+  ' @uc:uuid:b1be7a22 game.end.diamonds
+  usecase "UC-GE4: game.end.diamonds\n[b1be7a22]" as GE4 #EF9A9A
+  ' @uc:uuid:ea33c5b7 game.end.playAgain
+  usecase "UC-GE5: game.end.playAgain\n[ea33c5b7]" as GE5 #EF9A9A
+}
+
+GE1 ..> GE3 : <<include>>
+GE2 ..> GE3 : <<include>>
+GE3 ..> GE4 : <<include>>
+
+' ═══════════════════════════════════════════════════════════════
+' BOT (8 UCs)
+' ═══════════════════════════════════════════════════════════════
+
+rectangle "AI Bot System" as BOT {
+  ' @uc:uuid:f1ba3e42 bot.add
+  usecase "UC-B1: bot.add\n[f1ba3e42]" as B1 #EF9A9A
+  ' @uc:uuid:8e46d39e bot.decide
+  usecase "UC-B2: bot.decide\n[8e46d39e]" as B2 #EF9A9A
+  ' @uc:uuid:fe84fad6 bot.decide.cautious
+  usecase "UC-B3: bot.decide.cautious\n[fe84fad6]" as B3 #EF9A9A
+  ' @uc:uuid:f0364019 bot.decide.gambler
+  usecase "UC-B4: bot.decide.gambler\n[f0364019]" as B4 #EF9A9A
+  ' @uc:uuid:a4c55c47 bot.decide.equalLover
+  usecase "UC-B5: bot.decide.equalLover\n[a4c55c47]" as B5 #EF9A9A
+  ' @uc:uuid:a067feff bot.decide.random
+  usecase "UC-B6: bot.decide.random\n[a067feff]" as B6 #EF9A9A
+  ' @uc:uuid:b324159f bot.observe
+  usecase "UC-B7: bot.observe\n[b324159f]" as B7 #EF9A9A
+  ' @uc:uuid:2d695025 bot.playDelayed
+  usecase "UC-B8: bot.playDelayed\n[2d695025]" as B8 #EF9A9A
+}
+
+host --> B1
+bot --> B2
+B2 ..> B3 : <<extend>>
+B2 ..> B4 : <<extend>>
+B2 ..> B5 : <<extend>>
+B2 ..> B6 : <<extend>>
+B2 ..> B7 : <<include>>
+B2 ..> B8 : <<include>>
+
+' ═══════════════════════════════════════════════════════════════
+' SPECTATOR (4 UCs)
+' ═══════════════════════════════════════════════════════════════
+
+rectangle "Spectator Mode" as SPEC {
+  ' @uc:uuid:ac08aa49 spectator.join
+  usecase "UC-S1: spectator.join\n[ac08aa49]" as S1 #EF9A9A
+  ' @uc:uuid:d30575e7 spectator.leave
+  usecase "UC-S2: spectator.leave\n[d30575e7]" as S2 #EF9A9A
+  ' @uc:uuid:df7ec971 spectator.joinNext
+  usecase "UC-S3: spectator.joinNext\n[df7ec971]" as S3 #EF9A9A
+  ' @uc:uuid:91825bbd spectator.seesGame
+  usecase "UC-S4: spectator.seesGame\n[91825bbd]" as S4 #EF9A9A
+}
+
+spectator --> S1
+spectator --> S2
+spectator --> S3
+
+' ═══════════════════════════════════════════════════════════════
+' CHAT (4 UCs)
+' ═══════════════════════════════════════════════════════════════
+
+rectangle "Chat" as CHAT {
+  ' @uc:uuid:0dfe22b0 chat.send
+  usecase "UC-CH1: chat.send\n[0dfe22b0]" as CH1 #EF9A9A
+  ' @uc:uuid:7b4f1505 chat.history
+  usecase "UC-CH2: chat.history\n[7b4f1505]" as CH2 #EF9A9A
+  ' @uc:uuid:8a319461 chat.maxLength
+  usecase "UC-CH3: chat.maxLength\n[8a319461]" as CH3 #EF9A9A
+  ' @uc:uuid:f552ec48 chat.maxHistory
+  usecase "UC-CH4: chat.maxHistory\n[f552ec48]" as CH4 #EF9A9A
+}
+
+player --> CH1
+CH1 ..> CH3 : <<extend>>
+
+' ═══════════════════════════════════════════════════════════════
+' SPECIAL CARDS (13 UCs)
+' ═══════════════════════════════════════════════════════════════
+
+rectangle "Special Cards (13 types, 3 levels)" as SCARDS {
+  ' @uc:uuid:58aca2aa special.protectiveShell
+  usecase "UC-SC1: special.protectiveShell\n[58aca2aa]" as SC1 #EF9A9A
+  ' @uc:uuid:fc29d64c special.doublePoints
+  usecase "UC-SC2: special.doublePoints\n[fc29d64c]" as SC2 #EF9A9A
+  ' @uc:uuid:7c992d5a special.peek
+  usecase "UC-SC3: special.peek\n[7c992d5a]" as SC3 #EF9A9A
+  ' @uc:uuid:994dc326 special.sacrifice
+  usecase "UC-SC4: special.sacrifice\n[994dc326]" as SC4 #EF9A9A
+  ' @uc:uuid:288df581 special.swap
+  usecase "UC-SC5: special.swap\n[288df581]" as SC5 #EF9A9A
+  ' @uc:uuid:c11e9372 special.revealHand
+  usecase "UC-SC6: special.revealHand\n[c11e9372]" as SC6 #EF9A9A
+  ' @uc:uuid:872c8b2b special.freeze
+  usecase "UC-SC7: special.freeze\n[872c8b2b]" as SC7 #EF9A9A
+  ' @uc:uuid:5c153b82 special.oneForTheTeam
+  usecase "UC-SC8: special.oneForTheTeam\n[5c153b82]" as SC8 #EF9A9A
+  ' @uc:uuid:7ed5c89e special.secondChance
+  usecase "UC-SC9: special.secondChance\n[7ed5c89e]" as SC9 #EF9A9A
+  ' @uc:uuid:47b2e416 special.pointSteal
+  usecase "UC-SC10: special.pointSteal\n[47b2e416]" as SC10 #EF9A9A
+  ' @uc:uuid:725f1f43 special.massIntelligence
+  usecase "UC-SC11: special.massIntelligence\n[725f1f43]" as SC11 #EF9A9A
+  ' @uc:uuid:fb209fdd special.priorityOrder
+  usecase "UC-SC12: special.priorityOrder\n[fb209fdd]" as SC12 #EF9A9A
+  ' @uc:uuid:dda127ab special.inventory
+  usecase "UC-SC13: special.inventory\n[dda127ab]" as SC13 #EF9A9A
+}
+
+player --> P9
+P9 ..> SC1 : <<extend>>
+P9 ..> SC2 : <<extend>>
+P9 ..> SC3 : <<extend>>
+
+' ═══════════════════════════════════════════════════════════════
+' Legend
+' ═══════════════════════════════════════════════════════════════
+
+legend bottom right
+  |= Color |= Status |= Count |
+  | <#A5D6A7> | Covered (impl+test) | 13 |
+  | <#FFE082> | Partial (impl, test incomplete) | 5 |
+  | <#EF9A9A> | Missing (no test) | 57 |
+  **75 UCs total — each annotated with @uc:uuid**
+  **Source: traceability-matrix.md**
+endlegend
 
 @enduml

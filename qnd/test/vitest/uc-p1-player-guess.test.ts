@@ -46,6 +46,7 @@ afterAll(() => { sockets.forEach(ws => ws.close()); });
 
 describe('UC-P1 player.guess [f0295f28]', () => {
 
+  // [uc:uuid:f0295f28] UC-P1: player.guess.up
   it('AC-1: PLAY_CARD up → CARD_PLAYED broadcast', async () => {
     const { ws, all } = await createGameWithBot('GuessUp');
     send(ws, { type: 'PLAY_CARD', guess: 'up' });
@@ -55,6 +56,7 @@ describe('UC-P1 player.guess [f0295f28]', () => {
     expect(played.hasPlayed).toBe(true);
   });
 
+  // [uc:uuid:c9866c6e] UC-P2: player.guess.down
   it('AC-2: PLAY_CARD down → CARD_PLAYED broadcast', async () => {
     const { ws, all } = await createGameWithBot('GuessDown');
     send(ws, { type: 'PLAY_CARD', guess: 'down' });

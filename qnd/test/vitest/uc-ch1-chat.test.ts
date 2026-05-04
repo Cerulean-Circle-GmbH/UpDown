@@ -33,6 +33,7 @@ afterAll(() => { sockets.forEach(ws => ws.close()); });
 
 describe('UC-CH1 chat.send [0dfe22b0]', () => {
 
+  // [uc:uuid:0dfe22b0] UC-CH1: chat.send
   it('AC-1: CHAT_MESSAGE → broadcast to all in room', async () => {
     const { ws: wA } = await connectWs();
     send(wA, { type: 'CREATE_ROOM', roomName: 'ChatRoom', playerName: 'Alice', maxPlayers: 4 });
