@@ -146,7 +146,9 @@ package "CHAINS: UC → Task → Impl → Test (13 covered)" as CHAINS {
     card "**Task** Sprint3/T1" as CH1bT #E3F2FD
     card "**Server** server.ts:303 (concurrent)" as CH1bS #FFF3E0
     card "**Test** TC1.2" as CH1bX #FCE4EC
-    CH1bU --> CH1bT --> CH1bS --> CH1bX
+    CH1bU --> CH1bT
+    CH1bT --> CH1bS
+    CH1bS --> CH1bX
   }
 
   package "UC-C2: connection.close [e6b4716c]" as CH1c {
@@ -154,7 +156,9 @@ package "CHAINS: UC → Task → Impl → Test (13 covered)" as CHAINS {
     card "**Task** Sprint3/T1" as CH1cT #E3F2FD
     card "**Server** server.ts ws.on('close')\nGameRoom.ts:254 removePlayer()" as CH1cS #FFF3E0
     card "**Test** TC-E2" as CH1cX #FCE4EC
-    CH1cU --> CH1cT --> CH1cS --> CH1cX
+    CH1cU --> CH1cT
+    CH1cT --> CH1cS
+    CH1cS --> CH1cX
   }
 
   package "UC-R1: rooms.list [7cd55a0b]" as CH6 {
@@ -162,7 +166,9 @@ package "CHAINS: UC → Task → Impl → Test (13 covered)" as CHAINS {
     card "**Task** Sprint3/T2" as CH6T #E3F2FD
     card "**Impl** WebSocketClient.ts:72 listRooms()\nRoomManager.ts:660 listRooms()" as CH6I #FFF3E0
     card "**Test** TC3.7+R2+R4" as CH6X #FCE4EC
-    CH6U --> CH6T --> CH6I --> CH6X
+    CH6U --> CH6T
+    CH6T --> CH6I
+    CH6I --> CH6X
   }
 
   package "UC-R2: room.create [fbfed148]" as CH2 {
@@ -170,21 +176,25 @@ package "CHAINS: UC → Task → Impl → Test (13 covered)" as CHAINS {
     card "**Task** Sprint3/T2" as CH2T #E3F2FD
     card "**Impl** WebSocketClient.ts:60 createRoom()\nRoomManager.ts:643 createRoom()\nGameRoom.ts:103 addPlayer()" as CH2I #FFF3E0
     card "**Test** vitest/uc-r2 AC1-AC7" as CH2X #FCE4EC
-    CH2U --> CH2T --> CH2I --> CH2X
+    CH2U --> CH2T
+    CH2T --> CH2I
+    CH2I --> CH2X
   }
 
   package "UC-R2b: room.create.host [177c8da5]" as CH2b {
     card "**UC** create.host\n//177c8da5//" as CH2bU #E8F5E9
     card "**Impl** GameRoom.ts:116 hostId" as CH2bI #FFF3E0
     card "**Test** TC2.3" as CH2bX #FCE4EC
-    CH2bU --> CH2bI --> CH2bX
+    CH2bU --> CH2bI
+    CH2bI --> CH2bX
   }
 
   package "UC-R3: room.create.private [1c21171d]" as CH3p {
     card "**UC** create.private\n//1c21171d//" as CH3pU #E8F5E9
     card "**Impl** GameRoom.ts:70 isPrivate\nserver.ts:422 key check" as CH3pI #FFF3E0
     card "**Test** TC2.2" as CH3pX #FCE4EC
-    CH3pU --> CH3pI --> CH3pX
+    CH3pU --> CH3pI
+    CH3pI --> CH3pX
   }
 
   package "UC-R4: room.join [9cc60247]" as CH3 {
@@ -192,21 +202,25 @@ package "CHAINS: UC → Task → Impl → Test (13 covered)" as CHAINS {
     card "**Task** Sprint3/T3" as CH3T #E3F2FD
     card "**Impl** WebSocketClient.ts:64 joinRoom()\nGameRoom.ts:103 addPlayer()" as CH3I #FFF3E0
     card "**Test** TC3.1a+b" as CH3X #FCE4EC
-    CH3U --> CH3T --> CH3I --> CH3X
+    CH3U --> CH3T
+    CH3T --> CH3I
+    CH3I --> CH3X
   }
 
   package "UC-R5/R6: join.private [61449e82/148f2e73]" as CH3r {
     card "**UC-R5** join.private.ok //61449e82//\n**UC-R6** join.private.wrong //148f2e73//" as CH3rU #E8F5E9
     card "**Impl** server.ts:422 key match/mismatch" as CH3rI #FFF3E0
     card "**Test** TC3.3 + TC3.4" as CH3rX #FCE4EC
-    CH3rU --> CH3rI --> CH3rX
+    CH3rU --> CH3rI
+    CH3rI --> CH3rX
   }
 
   package "UC-R10: room.leave [96f2ecd5]" as CH5r {
     card "**UC** room.leave\n//96f2ecd5//" as CH5rU #E8F5E9
     card "**Impl** WebSocketClient.ts:68 leaveRoom()\nGameRoom.ts:254 removePlayer()" as CH5rI #FFF3E0
     card "**Test** TC-R1" as CH5rX #FCE4EC
-    CH5rU --> CH5rI --> CH5rX
+    CH5rU --> CH5rI
+    CH5rI --> CH5rX
   }
 
   package "UC-H1: host.transfer [dd0392cf]" as CH5 {
@@ -214,7 +228,9 @@ package "CHAINS: UC → Task → Impl → Test (13 covered)" as CHAINS {
     card "**Task** Sprint3/T3" as CH5T #E3F2FD
     card "**Impl** GameRoom.ts:277 hostId reassign" as CH5I #FFF3E0
     card "**Test** TC-E2a+b" as CH5X #FCE4EC
-    CH5U --> CH5T --> CH5I --> CH5X
+    CH5U --> CH5T
+    CH5T --> CH5I
+    CH5I --> CH5X
   }
 
   package "UC-G1: game.start [560d9a46]" as CH4 {
@@ -222,7 +238,9 @@ package "CHAINS: UC → Task → Impl → Test (13 covered)" as CHAINS {
     card "**Task** Sprint3/T4" as CH4T #E3F2FD
     card "**Impl** WebSocketClient.ts:76 startGame()\nGameRoom.ts:290 startGame()→nextRound()" as CH4I #FFF3E0
     card "**Test** TC4.1a+b" as CH4X #FCE4EC
-    CH4U --> CH4T --> CH4I --> CH4X
+    CH4U --> CH4T
+    CH4T --> CH4I
+    CH4I --> CH4X
   }
 }
 

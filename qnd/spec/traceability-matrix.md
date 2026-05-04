@@ -23,6 +23,8 @@ Implementation file:line references maintained here (NOT as comments in source �
 | 96f2ecd5 | UC-R10 | room.leave | Sprint3/T3 | WebSocketClient.ts:68 leaveRoom() / GameRoom.ts:254 removePlayer() | protocol-test-suite.js:434 TC-R1 | ✅ |
 | dd0392cf | UC-H1 | host.transfer | Sprint3/T3 | GameRoom.ts:277 hostId reassign | protocol-test-suite.js:262 TC-E2a+TC-E2b | ✅ |
 | 560d9a46 | UC-G1 | game.start | Sprint3/T4 | WebSocketClient.ts:76 startGame() / GameRoom.ts:290 startGame() → nextRound() | protocol-test-suite.js:170 TC4.1a+TC4.1b | ✅ |
+| 0dfe22b0 | UC-CH1 | chat.send | Sprint3/T10 | server.ts:511 / GameRoom broadcast | test/vitest/uc-ch1-chat.test.ts | ✅ |
+| f1ba3e42 | UC-B1 | bot.add | Sprint3/T14 | GameRoom.ts:129 addBot() / BotPlayer constructor | test/vitest/uc-b1-bot-add.test.ts | ✅ |
 
 ## PARTIAL (5 UCs — implementation exists, test is incomplete)
 
@@ -48,7 +50,6 @@ Implementation file:line references maintained here (NOT as comments in source �
 | 38d62fef | UC-GE1 | game.end.allEliminated | Sprint3/T11 | GameRoom.ts:528 alivePlayers === 0 → endGame() | All wrong → GAME_OVER |
 | e73e7784 | UC-GE2 | game.end.deckEmpty | Sprint3/T11 | GameRoom.ts:528 gmHand+deck === 0 → endGame() | Play until deck exhausted |
 | e4bd6ed5 | UC-GE3 | game.end.leaderboard | Sprint3/T11 | GameRoom.ts:545 sort(score DESC) | Verify ordering in GAME_OVER |
-| f1ba3e42 | UC-B1 | bot.add | Sprint3/T14 | GameRoom.ts:129 addBot() / BotPlayer constructor | ADD_BOT → PLAYER_JOINED with isBot |
 | 8e46d39e | UC-B2 | bot.decide | Sprint3/T14 | BotPlayer.ts:127 decideGuess() | Verify bot plays during round |
 
 ## MISSING — P1 Multiplayer Flow (11 UCs)
@@ -64,7 +65,6 @@ Implementation file:line references maintained here (NOT as comments in source �
 | ac08aa49 | UC-S1 | spectator.join | Sprint3/T8 | GameRoom.ts:146 addSpectator() | SPECTATE → SPECTATE_JOINED |
 | d30575e7 | UC-S2 | spectator.leave | Sprint3/T8 | GameRoom.ts:159 removeSpectator() | LEAVE_SPECTATE → SPECTATOR_LEFT |
 | df7ec971 | UC-S3 | spectator.joinNext | Sprint3/T8 | GameRoom.ts:169 promoteSpectator() | JOIN_NEXT_GAME → becomes player |
-| 0dfe22b0 | UC-CH1 | chat.send | Sprint3/T10 | server.ts:511 / GameRoom broadcast | CHAT_MESSAGE round-trip |
 | 8a319461 | UC-CH3 | chat.maxLength | Sprint3/T10 | server.ts:515 text.slice(0, 200) | Send 300 chars → truncated to 200 |
 
 ## MISSING — P2 Special Cards (13 UCs)
@@ -129,15 +129,15 @@ Implementation file:line references maintained here (NOT as comments in source �
 | Category | Total | ✅ Covered | ⚠️ Partial | ❌ Missing |
 |----------|-------|-----------|-----------|-----------|
 | Connection | 3 | 3 | 0 | 0 |
-| Rooms | 8 | 5 | 0 | 3 |
+| Rooms | 8 | 7 | 0 | 1 |
 | Host | 4 | 2 | 0 | 2 |
 | Game | 2 | 1 | 0 | 1 |
 | Round | 8 | 0 | 4 | 4 |
 | Player | 14 | 0 | 1 | 13 |
-| Bot | 8 | 0 | 0 | 8 |
+| Bot | 8 | 1 | 0 | 7 |
 | Spectator | 4 | 0 | 0 | 4 |
-| Chat | 4 | 0 | 0 | 4 |
+| Chat | 4 | 1 | 0 | 3 |
 | Game End | 5 | 0 | 0 | 5 |
 | Special Cards | 13 | 0 | 0 | 13 |
 | Client-only | 2 | 0 | 0 | 2 |
-| **TOTAL** | **75** | **11** | **5** | **59** |
+| **TOTAL** | **75** | **15** | **5** | **55** |
