@@ -56,9 +56,9 @@ Implementation file:line references maintained here (NOT as comments in source �
 
 | UUID | UC | Object.verb | Task | Impl File:Method | Test Needed |
 |------|-----|-------------|------|-----------------|-------------|
-| d0b57a5a | UC-R7 | room.join.full | Sprint3/T3 | GameRoom.ts:75 size check | Join when players === maxPlayers → ERROR |
-| 8db2e073 | UC-R8 | room.join.midGame | Sprint3/T3 | GameRoom.ts:76 state === 'exchange' | Join during exchange phase → OK |
-| d466a7f1 | UC-R9 | room.join.rejected | Sprint3/T3 | GameRoom.ts:76 state === 'countdown' | Join during countdown → ERROR |
+| d0b57a5a | UC-R7 | room.join.full | Sprint3/T3 | GameRoom.ts addPlayer() size guard | vitest/uc-r7-room-join-full.test.ts (1 AC) | ✅ |
+| 8db2e073 | UC-R8 | room.join.midGame | Sprint3/T3 | GameRoom.ts addPlayer() exchange state | vitest/uc-r8-room-join-midgame.test.ts (1 AC) | ✅ |
+| d466a7f1 | UC-R9 | room.join.rejected | Sprint3/T3 | GameRoom.ts addPlayer() countdown guard | vitest/uc-r9-room-join-rejected.test.ts (1 AC) | ✅ |
 | fc6c941a | UC-H2 | host.addBot | Sprint3/T14 | GameRoom.ts:129 addBot() | Host sends ADD_BOT → bot appears |
 | 57311798 | UC-H4 | host.startGame.nonHost | Sprint3/T4 | server.ts:448 hostId check | Non-host START_GAME → ERROR |
 | f89b9338 | UC-G2 | game.start.autoFillBots | Sprint3/T4 | GameRoom.ts:292 addBot() loop | Start with 1 player → bots auto-added |

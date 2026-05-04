@@ -408,13 +408,15 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
 
   switch (msg.type) {
     case MSG.CREATE_ROOM: { // [uc:uuid:fbfed148] UC-R2 — [uc:uuid:177c8da5] UC-R2b — [uc:uuid:1c21171d] UC-R3
+      const playerName = msg.playerName || 'Player';
+      const roomName = msg.roomName || msg.name || `${playerName}'s Room`;
       const room = roomManager.createRoom(
-        msg.roomName || msg.name || 'Game Room',
+        roomName,
         clientId,
         msg.maxPlayers || 10,
         msg.roomKey || null
       );
-      room.addPlayer(clientId, ws, msg.playerName || 'Player', avatarUrl);
+      room.addPlayer(clientId, ws, playerName, avatarUrl);
       addLog(`🏠 Room created: ${room.name} (${room.id}) by ${clientId.slice(0,8)}`);
       break;
     }
