@@ -124,11 +124,23 @@ Fully working UpDown multiplayer online card game. Deadline: Sunday. QnD — web
   - [x] 32.9: UC-GE1 game.end ✅
   Architect created 9 task files (32.1-32.9) with 61 AC. Tester implemented all. Serialized config fixed flaky timeouts.
 
-- [ ] [Task 33: Auto-name Rooms with Host Player Name](./task-33-room-autoname.md) **🔧 IN PROGRESS**
-  - [ ] 33.1: Expert — server.ts CREATE_ROOM default name "{playerName}'s Room"
-  - [ ] 33.2: Tester — verify room names in lobby
+- [x] [Task 33: Auto-name Rooms with Host Player Name](./task-33-room-autoname.md) **✅ DONE**
+  - [x] 33.1: Expert — prefill "{playerName}'s Room" dynamically ✅
+  - [x] 33.2: Tester — verified in lobby ✅
 
-- [ ] [Task 34: Room UC Test Coverage (R7/R8/R9 + Share Link Verification)](./task-34-room-uc-coverage.md) **🔧 IN PROGRESS**
+- [x] [Task 34: Room UC Test Coverage (R7/R8/R9 + Share Link Verification)](./task-34-room-uc-coverage.md) **✅ DONE**
+  - [x] 34.1: Expert — vitest R7/R8/R9 ✅
+  - [x] 34.2: Tester — share links 4/4 PASS ✅
+
+- [ ] [Task 35: Room Replay — Same Group Plays Multiple Games](./task-35-room-replay.md) **🔧 IN PROGRESS**
+  **Priority:** 1 (BUG — Play Again broken, 6 root causes identified by architect)
+  - [ ] 35.1: Expert — GameRoom.resetForReplay() method
+  - [ ] 35.2: Expert — PLAY_AGAIN + ROOM_RESET messages
+  - [ ] 35.3: Expert — Client Play Again fix (no leave/rejoin)
+  - [ ] 35.4: Expert — Fix cleanup timer (don't delete rooms with players)
+  - [ ] 35.5: Tester — Verify replay flow end-to-end
+
+- [ ] [Task 34: Room UC Test Coverage (R7/R8/R9 + Share Link Verification)](./task-34-room-uc-coverage.md) **✅ DONE (kept for ref)**
   - [ ] 34.1: Expert — vitest for R7 (join full), R8 (join mid-game), R9 (join rejected)
   - [ ] 34.2: Tester — verify share links work end-to-end (user-created + pre-created + expired)
 
