@@ -68,7 +68,7 @@ export class LobbyUI {
         </div>
 
         <div class="lobby-create-form" id="create-form" style="display:none">
-          <input type="text" id="room-name" placeholder="Room name..." value="Game Room">
+          <input type="text" id="room-name" placeholder="Room name (optional)">
           <input type="text" id="room-key" placeholder="Private key (optional)">
           <div class="lobby-create-actions">
             <button id="confirm-create-btn" class="btn btn-primary">Create</button>
@@ -113,7 +113,7 @@ export class LobbyUI {
     });
 
     document.getElementById('confirm-create-btn')?.addEventListener('click', () => {
-      const name = (document.getElementById('room-name') as HTMLInputElement).value || 'Game Room';
+      const name = (document.getElementById('room-name') as HTMLInputElement).value.trim();
       const key = (document.getElementById('room-key') as HTMLInputElement).value || undefined;
       this.client.createRoom(name, this.playerName, 10, key);
     });

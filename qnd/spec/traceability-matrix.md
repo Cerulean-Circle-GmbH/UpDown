@@ -119,7 +119,7 @@ Implementation file:line references maintained here (NOT as comments in source �
 
 | UUID | UC | Object.verb | Task | Impl File:Method | Test |
 |------|-----|-------------|------|-----------------|------|
-| 433fe03f | UC-R11 | room.share | Sprint3/T10 | LobbyUI.ts:181 / MultiplayerUI.ts:197,345 shareOrCopy() | Manual (navigator.share API) |
+| 433fe03f | UC-R11 | room.share | Sprint3/T10 | LobbyUI.ts:181 / MultiplayerUI.ts:197,345 shareOrCopy() | vitest/uc-r11-room-share.test.ts (2 AC) + Manual | ✅ |
 | — | UC-P12 | player.profile | Sprint3/T10 | MultiplayerUI.ts showProfile() | Manual (client-only) |
 
 ---
