@@ -68,7 +68,7 @@ export class LobbyUI {
         </div>
 
         <div class="lobby-create-form" id="create-form" style="display:none">
-          <input type="text" id="room-name" placeholder="Room name (optional)">
+          <input type="text" id="room-name" placeholder="Room name..." value="${this.playerName}'s Room">
           <input type="text" id="room-key" placeholder="Private key (optional)">
           <div class="lobby-create-actions">
             <button id="confirm-create-btn" class="btn btn-primary">Create</button>
