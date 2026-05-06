@@ -1,0 +1,115 @@
+@startuml Room-Replay-UseCases
+!theme plain
+skinparam backgroundColor White
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 9
+
+title UpDown QnD — Room Replay Flow\nCurrent (broken) vs Correct (designed)
+
+left to right direction
+
+actor "Player" as player
+actor "Host" as host
+
+' ═══════════════════════════════════════════════════════════════
+' CURRENT BROKEN FLOW
+' ═══════════════════════════════════════════════════════════════
+
+rectangle "CURRENT FLOW (BROKEN)" as BROKEN #FFCDD2 {
+  usecase "game.over\nstate='finished'" as B1
+  usecase "player.clickPlayAgain\n(client-side)" as B2
+  usecase "client.leaveRoom()\n← WRONG: disconnects" as B3 #EF9A9A
+  usecase "client.onLeaveRoom()\nshows lobby UI" as B4
+  usecase "setTimeout(500ms)\nclient.joinRoom(sameId)" as B5 #EF9A9A
+  usecase "server.addPlayer()\nREJECTED: state='finished'" as B6 #EF9A9A
+
+  usecase "PRESET ROOMS: autoRecreate\ndeletes room, creates new" as B7 #FFE082
+  usecase "Race condition:\nnew room may not exist\nat 500ms" as B8 #EF9A9A
+}
+
+player --> B2
+B1 --> B2 : GAME_OVER msg
+B2 --> B3
+B3 --> B4
+B4 --> B5
+B5 --> B6 : FAILS for user rooms
+B1 --> B7 : preset rooms only
+B7 --> B8
+
+' ═══════════════════════════════════════════════════════════════
+' CORRECT REPLAY FLOW
+' ═══════════════════════════════════════════════════════════════
+
+rectangle "CORRECT FLOW (DESIGN)" as CORRECT #E8F5E9 {
+  ' @uc:uuid:ea33c5b7 game.end.playAgain
+  usecase "UC-GE5: game.end.playAgain\n[ea33c5b7]\nPlayer clicks 'Play Again'" as C1 #A5D6A7
+
+  usecase "client.sendPlayAgain()\nNO leaveRoom, NO rejoin\nplayer stays connected" as C2 #A5D6A7
+
+  usecase "server.handlePlayAgain()\nroom.votePlayAgain(playerId)" as C3 #A5D6A7
+
+  usecase "room.resetForReplay()\n<<include>>" as C4 #A5D6A7
+
+  usecase "reset state → 'waiting'\nreset scores/alive/hands/round\nkeep players + chat + host" as C4a #E8F5E9
+
+  usecase "broadcast ROOM_RESET\nall clients show lobby\nwith same player list" as C5 #A5D6A7
+
+  usecase "UC-G1: host.startGame()\n[560d9a46]\nHost starts new game" as C6 #A5D6A7
+
+  usecase "UC-R10: player.leave()\n[96f2ecd5]\nPlayer leaves (Back to Lobby)" as C7 #A5D6A7
+}
+
+player --> C1
+C1 ..> C2 : <<include>>
+C2 ..> C3 : <<include>>
+C3 ..> C4 : <<include>>
+C4 ..> C4a : <<include>>
+C4 ..> C5 : <<include>>
+C5 --> C6 : host ready
+host --> C6
+player --> C7 : opts out
+
+' ═══════════════════════════════════════════════════════════════
+' IMPLEMENTATION CHANGES NEEDED
+' ═══════════════════════════════════════════════════════════════
+
+rectangle "Implementation Changes" as IMPL #FFF3E0 {
+  usecase "NEW: GameRoom.resetForReplay()\nreset state/scores/deck\nkeep connections" as I1
+  usecase "NEW: MSG.PLAY_AGAIN\nclient→server message" as I2
+  usecase "NEW: MSG.ROOM_RESET\nserver→client broadcast" as I3
+  usecase "FIX: MultiplayerUI.renderGameOver()\nsend PLAY_AGAIN, don't leaveRoom" as I4
+  usecase "FIX: endGame() for user rooms\ndon't auto-delete after 60s\nif players present" as I5
+  usecase "NEW: MultiplayerUI.handleRoomReset()\nre-render lobby with existing players" as I6
+}
+
+note bottom of CORRECT
+  **Design Principles:**
+  P6: resetForReplay() resets model, not object
+  P1: Room IS its scenario — reset scenario
+  P11: No protocol knowledge in UI
+  P4: Room resets itself (polymorphism)
+
+  **What resetForReplay() does:**
+  - this.state = 'waiting'
+  - this.round = 0
+  - this.deck = createShuffledDeck()
+  - this.gmHand = []
+  - this.currentCard = null
+  - players.forEach: score=0, streak=0,
+    alive=true, currentGuess=null,
+    roundsPlayed=0, inventory=fresh
+  - keep: players Map, chatHistory,
+    hostId, spectators, bots
+end note
+
+note bottom of BROKEN
+  **Root causes:**
+  1. No PLAY_AGAIN server message
+  2. Client does leave+rejoin (wrong)
+  3. state='finished' blocks addPlayer()
+  4. User rooms auto-delete after 60s
+  5. Preset rooms delete+recreate (race)
+  6. No resetForReplay() method exists
+end note
+
+@enduml

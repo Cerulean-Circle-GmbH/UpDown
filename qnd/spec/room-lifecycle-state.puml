@@ -1,0 +1,112 @@
+@startuml Room-Lifecycle-State
+!theme plain
+skinparam backgroundColor White
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 9
+
+title UpDown QnD — Room State Machine\nStates: waiting → countdown → revealing → exchange → finished\n<color:red>BUG: 'finished' is terminal — no path back to 'waiting'</color>
+
+[*] --> waiting : Room created\n(RoomManager.createRoom)
+
+state "waiting" as W #A5D6A7 {
+  W : Players can join/leave
+  W : Host can add bots
+  W : Host can start game
+  W : Lobby countdown (30s) may auto-start
+}
+
+state "countdown" as CD #FFE082 {
+  CD : 10-second round timer
+  CD : Players submit guesses (PLAY_CARD)
+  CD : Players play special cards
+  CD : Timer ticks broadcast to all
+}
+
+state "revealing" as RV #FFF3E0 {
+  RV : Round resolved
+  RV : Scores calculated
+  RV : Eliminations processed
+  RV : ROUND_RESULT broadcast
+}
+
+state "exchange" as EX #E3F2FD {
+  EX : 3-second pause between rounds
+  EX : Players can JOIN during exchange
+  EX : Next round auto-starts after 3s
+}
+
+state "finished" as FIN #EF9A9A {
+  FIN : GAME_OVER broadcast
+  FIN : Leaderboard + diamonds shown
+  FIN : <color:red>STATE IS TERMINAL</color>
+  FIN : <color:red>No reset back to 'waiting'</color>
+}
+
+W --> CD : host.startGame()\n[uc:560d9a46]\nGameRoom.ts:319
+W --> CD : lobbyCountdown=0\n(auto-start for preset rooms)
+
+CD --> RV : allPlayed OR timeout\n[uc:b3fb6696] [uc:34620f4b]\nGameRoom.ts:444-445
+CD --> FIN : deck empty before round\nGameRoom.ts:326,332
+
+RV --> FIN : alivePlayers === 0\n[uc:38d62fef]\nGameRoom.ts:449
+RV --> FIN : deck + gmHand empty\n[uc:e73e7784]\nGameRoom.ts:543
+RV --> EX : players alive + cards remain\nGameRoom.ts:546
+RV --> CD : solo mode (no exchange)\nGameRoom.ts:549
+
+EX --> CD : after 3s setTimeout\nGameRoom.ts:547-549\nnextRound()
+
+' ═══════════════════════════════════════════════════════════════
+' THE BUG: No transition from finished → waiting
+' ═══════════════════════════════════════════════════════════════
+
+FIN -[#red,dashed]-> W : <color:red>MISSING TRANSITION</color>\n<color:red>resetForReplay() needed</color>
+
+note right of FIN
+  **BUG ANALYSIS: Play Again is broken**
+
+  **Current flow (WRONG):**
+  1. endGame() sets state='finished'
+  2. Client receives GAME_OVER
+  3. 'Play Again' button clicked
+  4. Client calls leaveRoom() ← WRONG
+  5. Client calls joinRoom(sameId) after 500ms
+  6. But for user-created rooms:
+     - 60s cleanup timer runs
+     - Room may be deleted
+     - Even if alive, state='finished'
+     - addPlayer() rejects: state !== 'waiting'
+
+  **For preset rooms:**
+  - autoRecreate deletes & recreates room
+  - Same room ID but NEW GameRoom instance
+  - Players must re-join (lose chat history)
+  - Race condition on 500ms setTimeout
+
+  **Correct flow (SHOULD BE):**
+  1. endGame() sets state='finished'
+  2. Client receives GAME_OVER
+  3. 'Play Again' clicked
+  4. Client sends PLAY_AGAIN message
+  5. Server: room.resetForReplay()
+     - state → 'waiting'
+     - reset scores, alive, hands
+     - keep players connected
+     - keep chat history
+  6. Server broadcasts ROOM_RESET
+  7. All clients show lobby with same players
+  8. Host starts new game when ready
+end note
+
+note left of W
+  **Join guards (addPlayer):**
+  - size >= maxPlayers → reject [R7]
+  - state !== 'waiting' AND
+    state !== 'exchange' → reject [R9]
+  - state === 'exchange' → OK [R8]
+
+  These guards BLOCK replay:
+  state='finished' ≠ 'waiting'
+  so rejoin after leave FAILS
+end note
+
+@enduml

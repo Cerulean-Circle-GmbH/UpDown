@@ -574,15 +574,52 @@ export class GameRoom {
 
     this.broadcast({ type: MSG.GAME_OVER, leaderboard, playAgain: true, roomId: this.id });
 
-    // Auto-recreate: instant so room ID is always valid
+    // Auto-recreate: instant so room ID is always valid (preset rooms only)
     if (this.autoRecreate) {
       if (this.recreateCallback) this.recreateCallback();
     } else {
-      // User-created rooms: auto-remove after 60s
+      // User-created rooms: auto-remove after 60s ONLY if no players remain
       setTimeout(() => {
-        if (this.cleanupCallback) this.cleanupCallback();
+        if (this.players.size === 0 && this.spectators.size === 0) {
+          if (this.cleanupCallback) this.cleanupCallback();
+        }
       }, 60000);
     }
+  }
+
+  // [uc:uuid:ea33c5b7] UC-GE5: game.end.playAgain
+  resetForReplay(): void {
+    if (this.countdownTimer) { clearInterval(this.countdownTimer); this.countdownTimer = null; }
+
+    this.state = 'waiting';
+    this.round = 0;
+    this.currentCard = null;
+    this.previousCard = null;
+    this.deck = [];
+    this.gmHand = [];
+
+    // Reset players but KEEP them connected
+    this.players.forEach(player => {
+      player.score = 0;
+      player.streak = 0;
+      player.alive = true;
+      player.currentGuess = null;
+      player.specialCard = null;
+      player.specialCardTarget = null;
+      player.inventory = this.generateStarterInventory();
+      player.usedSpecials = [];
+      player.frozen = false;
+      player.roundsPlayed = 0;
+      player.disconnected = false;
+    });
+
+    // Remove bots (will be re-added on next start)
+    for (const botId of this.bots.keys()) {
+      this.players.delete(botId);
+    }
+    this.bots.clear();
+
+    // Keep: chatHistory, hostId, room name/id, spectators
   }
 
   // Helpers

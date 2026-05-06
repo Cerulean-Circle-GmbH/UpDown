@@ -90,6 +90,18 @@ export class MultiplayerUI {
       this.renderGameOver(msg.leaderboard);
     });
 
+    this.client.on(MSG.ROOM_RESET, (msg) => {
+      this.round = 0;
+      this.currentCard = null;
+      this.previousCard = null;
+      this.hasPlayed = false;
+      this.inventory = [];
+      this.frozen = false;
+      this.isHost = msg.hostId === this.client.clientId;
+      this.players = msg.players || [];
+      this.render();
+    });
+
 
     this.client.on(MSG.SPECTATE_JOINED, (msg) => {
       this.isSpectator = true;
@@ -570,14 +582,8 @@ export class MultiplayerUI {
     `;
 
     document.getElementById('play-again-btn')?.addEventListener('click', () => {
-      // Leave current room, go back to lobby, rejoin same room ID (auto-recreated)
-      const rejoinId = this.roomId;
-      this.client.leaveRoom();
-      this.onLeaveRoom();
-      // After lobby renders, auto-rejoin the recreated room
-      setTimeout(() => {
-        this.client.joinRoom(rejoinId, localStorage.getItem('updown-name') || 'Player');
-      }, 500);
+      // Stay connected — send PLAY_AGAIN, server resets room, broadcasts ROOM_RESET
+      this.client.send({ type: MSG.PLAY_AGAIN });
     });
 
     document.getElementById('back-lobby-btn')?.addEventListener('click', () => {

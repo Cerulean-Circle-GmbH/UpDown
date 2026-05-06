@@ -457,6 +457,17 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       break;
     }
 
+    case MSG.PLAY_AGAIN: { // [uc:uuid:ea33c5b7] UC-GE5: game.end.playAgain
+      const room = roomManager.findPlayerRoom(clientId);
+      if (room && room.state === 'finished') {
+        room.resetForReplay();
+        const players = [...room.players.values()].map(p => ({ id: p.id, name: p.name, avatarUrl: p.avatarUrl, score: 0, alive: true }));
+        room.broadcast({ type: MSG.ROOM_RESET, room: room.info(), players, hostId: room.hostId });
+        addLog(`🔄 Room ${room.name} reset for replay by ${clientId.slice(0,8)}`);
+      }
+      break;
+    }
+
     case MSG.PLAY_CARD: { // [uc:uuid:f0295f28] UC-P1 — [uc:uuid:c9866c6e] UC-P2 — [uc:uuid:fa8f1c83] UC-P3
       const room = roomManager.findPlayerRoom(clientId);
       if (room && (msg.guess === 'up' || msg.guess === 'down' || msg.guess === 'equal')) {

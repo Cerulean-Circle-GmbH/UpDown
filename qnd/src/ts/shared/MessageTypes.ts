@@ -19,6 +19,7 @@ export const MSG = {
   SPECTATE_ROOM: 'SPECTATE_ROOM',
   LEAVE_SPECTATE: 'LEAVE_SPECTATE',
   JOIN_NEXT_GAME: 'JOIN_NEXT_GAME',
+  PLAY_AGAIN: 'PLAY_AGAIN',
 
   // Server → Client
   ROOM_LIST: 'ROOM_LIST',
@@ -45,6 +46,7 @@ export const MSG = {
   SPECTATOR_LEFT: 'SPECTATOR_LEFT',
   CHAT_HISTORY: 'CHAT_HISTORY',
   AUTO_START: 'AUTO_START',
+  ROOM_RESET: 'ROOM_RESET',
 } as const;
 
 export type MessageType = typeof MSG[keyof typeof MSG];
