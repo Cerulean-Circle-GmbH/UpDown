@@ -613,13 +613,7 @@ export class GameRoom {
       player.disconnected = false;
     });
 
-    // Remove bots (will be re-added on next start)
-    for (const botId of this.bots.keys()) {
-      this.players.delete(botId);
-    }
-    this.bots.clear();
-
-    // Keep: chatHistory, hostId, room name/id, spectators
+    // Keep: bots, chatHistory, hostId, room name/id, spectators
   }
 
   // Helpers

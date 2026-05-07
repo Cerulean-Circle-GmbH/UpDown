@@ -544,7 +544,7 @@ export class MultiplayerUI {
 
     const myEntry = leaderboard.find((e: any) => e.playerId === this.client.clientId);
 
-    el.style.display = 'block';
+    el.style.display = 'flex';
     el.innerHTML = `
       <div class="mp-gameover-content">
         <h2>🏆 Game Over!</h2>
