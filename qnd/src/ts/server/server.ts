@@ -462,7 +462,7 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       if (room && room.state === 'finished') {
         room.resetForReplay();
         const players = [...room.players.values()].map(p => ({ id: p.id, name: p.name, avatarUrl: p.avatarUrl, score: 0, alive: true }));
-        room.broadcast({ type: MSG.ROOM_RESET, room: room.info(), players, hostId: room.hostId });
+        room.broadcast({ type: MSG.ROOM_RESET, room: room.info(), players, hostId: room.hostId, chatHistory: room.chatHistory });
         addLog(`🔄 Room ${room.name} reset for replay by ${clientId.slice(0,8)}`);
       }
       break;

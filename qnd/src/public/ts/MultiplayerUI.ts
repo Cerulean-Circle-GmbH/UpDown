@@ -28,6 +28,7 @@ export class MultiplayerUI {
   private inventory: string[] = [];
   private frozen: boolean = false;
   private isSpectator: boolean = false;
+  private chatMessages: { senderId: string; senderName: string; text: string }[] = [];
   private onLeaveRoom: () => void;
 
   constructor(client: WebSocketClient, container: HTMLElement, onLeaveRoom: () => void) {
@@ -99,7 +100,11 @@ export class MultiplayerUI {
       this.frozen = false;
       this.isHost = msg.hostId === this.client.clientId;
       this.players = msg.players || [];
+      if (msg.chatHistory) {
+        this.chatMessages = msg.chatHistory.map((m: any) => ({ senderId: m.senderId, senderName: m.senderName, text: m.text }));
+      }
       this.render();
+      this.renderChatMessages();
     });
 
 
@@ -241,26 +246,14 @@ export class MultiplayerUI {
 
     // Receive messages
     this.client.on(MSG.CHAT_HISTORY, (msg: any) => {
-      const msgs = document.getElementById('chat-messages');
-      if (!msgs || !msg.messages) return;
-      for (const m of msg.messages) {
-        const div = document.createElement('div');
-        div.className = `chat-msg ${m.senderId === this.client.clientId ? 'chat-self' : ''}`;
-        div.innerHTML = `<span class="chat-name">${m.senderName}</span> ${m.text}`;
-        msgs.appendChild(div);
-      }
-      msgs.scrollTop = msgs.scrollHeight;
+      if (!msg.messages) return;
+      this.chatMessages = msg.messages.map((m: any) => ({ senderId: m.senderId, senderName: m.senderName, text: m.text }));
+      this.renderChatMessages();
     });
 
     this.client.on(MSG.CHAT_MESSAGE, (msg: any) => {
-      const msgs = document.getElementById('chat-messages');
-      if (!msgs) return;
-      const isSelf = msg.senderId === this.client.clientId;
-      const div = document.createElement('div');
-      div.className = `chat-msg ${isSelf ? 'chat-self' : ''}`;
-      div.innerHTML = `<span class="chat-name">${msg.senderName}</span> ${msg.text}`;
-      msgs.appendChild(div);
-      msgs.scrollTop = msgs.scrollHeight;
+      this.chatMessages.push({ senderId: msg.senderId, senderName: msg.senderName, text: msg.text });
+      this.appendChatMessage(msg);
       // Show preview on handle when collapsed
       if (!expanded && handle) {
         handle.innerHTML = `<div class="chat-preview"><b>${msg.senderName}:</b> ${(msg.text || '').slice(0, 40)}</div>`;
@@ -590,5 +583,28 @@ export class MultiplayerUI {
       this.client.leaveRoom();
       this.onLeaveRoom();
     });
+  }
+
+  private renderChatMessages(): void {
+    const el = document.getElementById('chat-messages');
+    if (!el) return;
+    el.innerHTML = '';
+    for (const m of this.chatMessages) {
+      const div = document.createElement('div');
+      div.className = `chat-msg ${m.senderId === this.client.clientId ? 'chat-self' : ''}`;
+      div.innerHTML = `<span class="chat-name">${m.senderName}</span> ${m.text}`;
+      el.appendChild(div);
+    }
+    el.scrollTop = el.scrollHeight;
+  }
+
+  private appendChatMessage(msg: { senderId: string; senderName: string; text: string }): void {
+    const el = document.getElementById('chat-messages');
+    if (!el) return;
+    const div = document.createElement('div');
+    div.className = `chat-msg ${msg.senderId === this.client.clientId ? 'chat-self' : ''}`;
+    div.innerHTML = `<span class="chat-name">${msg.senderName}</span> ${msg.text}`;
+    el.appendChild(div);
+    el.scrollTop = el.scrollHeight;
   }
 }
