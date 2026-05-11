@@ -72,6 +72,7 @@ export class GameRoom {
   previousCard: Card | null = null;
   countdownTimer: NodeJS.Timeout | null = null;
   private countdownSeconds: number = 0;
+  countdownEnabled: boolean = true;
   private lobbyTimer: NodeJS.Timeout | null = null;
   private lobbyCountdown: number = 0;
 
@@ -349,7 +350,7 @@ export class GameRoom {
     this.players.forEach(p => { p.currentGuess = null; p.specialCard = null; });
 
     this.state = 'countdown';
-    this.countdownSeconds = 10;
+    this.countdownSeconds = this.countdownEnabled ? 10 : 0;
 
     // Send ROUND_START per-player (each gets their own inventory)
     this.players.forEach(player => {
@@ -359,6 +360,7 @@ export class GameRoom {
         currentCard: this.currentCard,
         previousCard: this.previousCard,
         countdown: this.countdownSeconds,
+        countdownEnabled: this.countdownEnabled,
         cardsLeft: this.deck.length + this.gmHand.length,
         alivePlayers: alivePlayers.map(p => p.id),
         inventory: player.inventory,
@@ -366,7 +368,9 @@ export class GameRoom {
       });
     });
 
-    this.startCountdown();
+    if (this.countdownEnabled) {
+      this.startCountdown();
+    }
 
     // Track card for bots and schedule their decisions
     if (this.currentCard) {
@@ -389,6 +393,17 @@ export class GameRoom {
         this.resolveRound();
       }
     }, 1000);
+  }
+
+  forceNextRound(): void {
+    if (this.state !== 'countdown') return;
+    if (this.countdownTimer) { clearInterval(this.countdownTimer); this.countdownTimer = null; }
+    this.resolveRound();
+  }
+
+  toggleCountdown(enabled: boolean): void {
+    this.countdownEnabled = enabled;
+    this.broadcast({ type: MSG.COUNTDOWN_SETTING, countdownEnabled: this.countdownEnabled });
   }
 
   // [uc:uuid:f43897d5] UC-P9: player.playSpecial — [uc:uuid:b6862ad2] UC-P10: notInInventory — [uc:uuid:c503e19a] UC-P11: alreadyUsed

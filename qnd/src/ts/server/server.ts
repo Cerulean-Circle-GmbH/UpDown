@@ -457,6 +457,24 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       break;
     }
 
+    case MSG.TOGGLE_COUNTDOWN: {
+      const room = roomManager.findPlayerRoom(clientId);
+      if (room && room.hostId === clientId) {
+        room.toggleCountdown(!room.countdownEnabled);
+        addLog(`⏱️ Countdown ${room.countdownEnabled ? 'ON' : 'OFF'} in room ${room.name}`);
+      }
+      break;
+    }
+
+    case MSG.FORCE_NEXT_ROUND: {
+      const room = roomManager.findPlayerRoom(clientId);
+      if (room && room.hostId === clientId) {
+        room.forceNextRound();
+        addLog(`⏩ Force next round in room ${room.name}`);
+      }
+      break;
+    }
+
     case MSG.PLAY_AGAIN: { // [uc:uuid:ea33c5b7] UC-GE5: game.end.playAgain
       const room = roomManager.findPlayerRoom(clientId);
       if (room && room.state === 'finished') {

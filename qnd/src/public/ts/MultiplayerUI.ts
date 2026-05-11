@@ -29,6 +29,7 @@ export class MultiplayerUI {
   private frozen: boolean = false;
   private isSpectator: boolean = false;
   private chatMessages: { senderId: string; senderName: string; text: string }[] = [];
+  private countdownEnabled: boolean = true;
   private onLeaveRoom: () => void;
 
   constructor(client: WebSocketClient, container: HTMLElement, onLeaveRoom: () => void) {
@@ -65,6 +66,7 @@ export class MultiplayerUI {
       this.currentCard = msg.currentCard;
       this.previousCard = msg.previousCard;
       this.countdown = msg.countdown;
+      this.countdownEnabled = msg.countdownEnabled !== false;
       this.inventory = msg.inventory || [];
       this.frozen = msg.frozen || false;
       this.hasPlayed = false;
@@ -105,6 +107,11 @@ export class MultiplayerUI {
       }
       this.render();
       this.renderChatMessages();
+    });
+
+    this.client.on(MSG.COUNTDOWN_SETTING, (msg) => {
+      this.countdownEnabled = msg.countdownEnabled;
+      this.renderControls();
     });
 
 
@@ -341,10 +348,12 @@ export class MultiplayerUI {
         el.innerHTML = `
           <button id="start-game-btn" class="btn btn-primary btn-large">🎲 Start Game (${this.players.length} players)</button>
           <button id="add-bot-btn" class="btn btn-secondary" style="margin-top:6px;width:100%">🤖 Add Bot</button>
+          <button id="toggle-countdown-btn" class="btn btn-secondary" style="margin-top:6px;width:100%">⏱️ Countdown: ${this.countdownEnabled ? 'ON' : 'OFF'}</button>
           ${inviteBtn}
         `;
         document.getElementById('start-game-btn')?.addEventListener('click', () => { this.client.startGame(); });
         document.getElementById('add-bot-btn')?.addEventListener('click', () => { this.client.addBot(); });
+        document.getElementById('toggle-countdown-btn')?.addEventListener('click', () => { this.client.send({ type: MSG.TOGGLE_COUNTDOWN }); });
       } else {
         el.innerHTML = `<p class="waiting-text">Waiting for host to start...</p>${inviteBtn}`;
       }
@@ -374,7 +383,9 @@ export class MultiplayerUI {
     } else if (this.frozen) {
       el.innerHTML = '<p class="waiting-text">🧊 Frozen! Cannot play this round.</p>';
     } else if (this.hasPlayed) {
-      el.innerHTML = '<p class="waiting-text">Card played! Waiting for others...</p>';
+      const forceBtn = (this.isHost && !this.countdownEnabled) ? '<button id="force-next-btn" class="btn btn-primary" style="margin-top:8px;width:100%">⏩ Next Round</button>' : '';
+      el.innerHTML = `<p class="waiting-text">Card played! ${this.countdownEnabled ? 'Waiting for others...' : 'Waiting for host...'}</p>${forceBtn}`;
+      document.getElementById('force-next-btn')?.addEventListener('click', () => { this.client.send({ type: MSG.FORCE_NEXT_ROUND }); });
     } else {
       // Special card names for display
       const CARD_INFO: Record<string, { emoji: string; name: string }> = {

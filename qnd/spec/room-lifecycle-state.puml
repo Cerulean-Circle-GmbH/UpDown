@@ -4,7 +4,7 @@ skinparam backgroundColor White
 skinparam defaultFontName "Segoe UI"
 skinparam defaultFontSize 9
 
-title UpDown QnD — Room State Machine\nStates: waiting → countdown → revealing → exchange → finished\n<color:red>BUG: 'finished' is terminal — no path back to 'waiting'</color>
+title UpDown QnD — Room State Machine\nStates: waiting → countdown/hostControl → revealing → exchange → finished\n<color:red>BUG: 'finished' is terminal — no path back to 'waiting'</color>\n<color:blue>NEW: Host can toggle countdown OFF → manual 'Force Next Round'</color>
 
 [*] --> waiting : Room created\n(RoomManager.createRoom)
 
@@ -20,6 +20,16 @@ state "countdown" as CD #FFE082 {
   CD : Players submit guesses (PLAY_CARD)
   CD : Players play special cards
   CD : Timer ticks broadcast to all
+  CD : countdownEnabled = true
+}
+
+state "hostControl" as HC #E1BEE7 {
+  HC : No timer — host controls pace
+  HC : Players submit guesses (PLAY_CARD)
+  HC : Players play special cards
+  HC : Host sees 'Force Next Round' button
+  HC : Auto-resolve when allPlayed
+  HC : countdownEnabled = false
 }
 
 state "revealing" as RV #FFF3E0 {
@@ -42,18 +52,27 @@ state "finished" as FIN #EF9A9A {
   FIN : <color:red>No reset back to 'waiting'</color>
 }
 
-W --> CD : host.startGame()\n[uc:560d9a46]\nGameRoom.ts:319
+W --> CD : host.startGame()\ncountdownEnabled=true\n[uc:560d9a46]
+W --> HC : host.startGame()\ncountdownEnabled=false
 W --> CD : lobbyCountdown=0\n(auto-start for preset rooms)
+
+W : host.toggleCountdown()\nsets countdownEnabled on/off\nbefore starting game
 
 CD --> RV : allPlayed OR timeout\n[uc:b3fb6696] [uc:34620f4b]\nGameRoom.ts:444-445
 CD --> FIN : deck empty before round\nGameRoom.ts:326,332
 
+HC --> RV : allPlayed\n(auto-resolve when\nall alive players guessed)
+HC --> RV : host.forceResolve()\n'Force Next Round' button\n(resolves even if not all played)
+HC --> FIN : deck empty before round
+
 RV --> FIN : alivePlayers === 0\n[uc:38d62fef]\nGameRoom.ts:449
 RV --> FIN : deck + gmHand empty\n[uc:e73e7784]\nGameRoom.ts:543
 RV --> EX : players alive + cards remain\nGameRoom.ts:546
-RV --> CD : solo mode (no exchange)\nGameRoom.ts:549
+RV --> CD : solo mode (no exchange)\ncountdownEnabled=true
+RV --> HC : solo mode (no exchange)\ncountdownEnabled=false
 
-EX --> CD : after 3s setTimeout\nGameRoom.ts:547-549\nnextRound()
+EX --> CD : after 3s setTimeout\ncountdownEnabled=true\nnextRound()
+EX --> HC : after 3s setTimeout\ncountdownEnabled=false\nnextRound()
 
 ' ═══════════════════════════════════════════════════════════════
 ' THE BUG: No transition from finished → waiting
@@ -95,6 +114,31 @@ note right of FIN
   6. Server broadcasts ROOM_RESET
   7. All clients show lobby with same players
   8. Host starts new game when ready
+end note
+
+note right of HC
+  **Host Control Mode (countdown OFF)**
+
+  **Toggle:** Host clicks toggle in lobby
+  before starting game. Sets room option
+  countdownEnabled = false.
+
+  **During round:**
+  - No 10s timer runs
+  - Players guess at their own pace
+  - Host sees "Force Next Round" button
+  - allPlayed still auto-resolves
+  - Host can force-resolve early
+
+  **Use case:** Teaching, demo, casual
+  play where time pressure unwanted.
+
+  **Implementation:**
+  - GameRoom: countdownEnabled field
+  - startCountdown(): skip if !enabled
+  - New MSG: FORCE_RESOLVE (host only)
+  - UI: toggle switch in lobby settings
+  - UI: "Force Next Round" btn for host
 end note
 
 note left of W
