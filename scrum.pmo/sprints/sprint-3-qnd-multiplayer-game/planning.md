@@ -132,17 +132,33 @@ Fully working UpDown multiplayer online card game. Deadline: Sunday. QnD — web
   - [x] 34.1: Expert — vitest R7/R8/R9 ✅
   - [x] 34.2: Tester — share links 4/4 PASS ✅
 
-- [ ] [Task 35: Room Replay — Same Group Plays Multiple Games](./task-35-room-replay.md) **🔧 IN PROGRESS**
-  **Priority:** 1 (BUG — Play Again broken, 6 root causes identified by architect)
-  - [ ] 35.1: Expert — GameRoom.resetForReplay() method
-  - [ ] 35.2: Expert — PLAY_AGAIN + ROOM_RESET messages
-  - [ ] 35.3: Expert — Client Play Again fix (no leave/rejoin)
-  - [ ] 35.4: Expert — Fix cleanup timer (don't delete rooms with players)
-  - [ ] 35.5: Tester — Verify replay flow end-to-end
+- [x] [Task 35: Room Replay — Same Group Plays Multiple Games](./task-35-room-replay.md) **✅ DONE**
+  - [x] 35.1: Expert — resetForReplay() ✅
+  - [x] 35.2: Expert — PLAY_AGAIN + ROOM_RESET messages ✅
+  - [x] 35.3: Expert — Client fix (no leave/rejoin) ✅
+  - [x] 35.4: Expert — Cleanup timer fix ✅
+  - [x] 35.5: Tester — 6/6 TC PASS (chat fix took 3 iterations) ✅
 
-- [ ] [Task 34: Room UC Test Coverage (R7/R8/R9 + Share Link Verification)](./task-34-room-uc-coverage.md) **✅ DONE (kept for ref)**
-  - [ ] 34.1: Expert — vitest for R7 (join full), R8 (join mid-game), R9 (join rejected)
-  - [ ] 34.2: Tester — verify share links work end-to-end (user-created + pre-created + expired)
+- [x] [Task 36: Bots Survive Replay](./task-36-bots-survive-replay.md) **✅ DONE**
+  - [x] 36.1: Expert — Removed bot deletion from resetForReplay() ✅
+
+- [x] [Task 37: Host Countdown Toggle + Force Next Round](./task-37-host-countdown-toggle.md) **✅ DONE**
+  - [x] 37.1: Architect — State diagram updated ✅
+  - [x] 37.2: Expert — Server toggle + force handler ✅
+  - [x] 37.3: Expert — Client toggle button + force button ✅
+
+- [x] [Task 38: MP UX Parity with /ts](./task-38-mp-ux-parity.md) **✅ DONE (38.1-38.9)**
+  - [x] 38.1: Scroll fix ✅
+  - [x] 38.2: Fullscreen toggle ✅
+  - [x] 38.3: Keybindings U/D/E ✅
+  - [x] 38.4: Card labels ✅
+  - [x] 38.5: Darken previous card ✅
+  - [x] 38.6: Flip animation ✅
+  - [x] 38.9: Header parity (in-game only) ✅
+  - [ ] [Task 38.10: DRY Shared Header Component](./task-38.10-dry-shared-header.md) **🔧 IN PROGRESS**
+    - [ ] 38.10.1: Expert — Create shared Header.ts component
+    - [ ] 38.10.2: Expert — Refactor all 3 views to use it
+    - [ ] 38.10.3: Tester — Verify header consistent across all views
 
 - [ ] [Task 29: DRY — CardUtils.ts](./task-29-dry-card-utils.md) **📋 DEFERRED**
   - [ ] 29.1: Expert — Extract suitSymbol(), cardColor(), cardToHtml() — 7 locations → 1
