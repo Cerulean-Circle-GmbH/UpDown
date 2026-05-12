@@ -396,9 +396,14 @@ export class GameRoom {
   }
 
   forceNextRound(): void {
-    if (this.state !== 'countdown') return;
-    if (this.countdownTimer) { clearInterval(this.countdownTimer); this.countdownTimer = null; }
-    this.resolveRound();
+    if (this.state === 'countdown') {
+      if (this.countdownTimer) { clearInterval(this.countdownTimer); this.countdownTimer = null; }
+      this.resolveRound();
+    } else if (this.state === 'revealing') {
+      this.cleanupDisconnected();
+      this.state = 'countdown';
+      this.nextRound();
+    }
   }
 
   toggleCountdown(enabled: boolean): void {
@@ -549,15 +554,19 @@ export class GameRoom {
       results,
       specialEffects,
       scores: this.allScores(),
-      cardsLeft: this.deck.length + this.gmHand.length
+      cardsLeft: this.deck.length + this.gmHand.length,
+      countdownEnabled: this.countdownEnabled
     });
 
     // Check game end
     const alivePlayers = [...this.players.values()].filter(p => p.alive);
     if (alivePlayers.length === 0 || (this.gmHand.length === 0 && this.deck.length === 0)) {
       setTimeout(() => this.endGame(), 2000);
+    } else if (!this.countdownEnabled) {
+      // Countdown OFF: stay in revealing state, wait for host FORCE_NEXT_ROUND
+      this.state = 'revealing';
     } else {
-      // Exchange phase: cleanup disconnected, then next round
+      // Countdown ON: exchange phase, then auto-start next round
       this.state = 'exchange';
       setTimeout(() => {
         this.cleanupDisconnected();

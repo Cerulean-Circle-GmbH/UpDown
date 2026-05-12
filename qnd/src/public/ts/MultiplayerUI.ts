@@ -85,6 +85,7 @@ export class MultiplayerUI {
     });
 
     this.client.on(MSG.ROUND_RESULT, (msg) => {
+      this.countdownEnabled = msg.countdownEnabled !== false;
       this.renderRoundResult(msg.previousCard, msg.revealedCard, msg.results, msg.scores, msg.specialEffects || []);
       this.previousCard = msg.previousCard;
       this.currentCard = msg.revealedCard;
@@ -552,7 +553,17 @@ export class MultiplayerUI {
           </div>
         `).join('')}
       </div>
+      ${!this.countdownEnabled ? (this.isHost
+        ? '<button id="enforce-next-btn" class="btn btn-primary" style="margin-top:8px;width:100%">Enforce Next Round ▶</button>'
+        : '<p class="waiting-text" style="margin-top:8px">Waiting for host...</p>'
+      ) : ''}
     `;
+
+    if (!this.countdownEnabled) {
+      document.getElementById('enforce-next-btn')?.addEventListener('click', () => {
+        this.client.send({ type: MSG.FORCE_NEXT_ROUND });
+      });
+    }
 
     // Update player scores in player list
     scores.forEach(s => {
