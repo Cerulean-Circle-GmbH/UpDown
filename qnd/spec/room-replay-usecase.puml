@@ -40,7 +40,7 @@ B7 --> B8
 ' CORRECT REPLAY FLOW
 ' ═══════════════════════════════════════════════════════════════
 
-rectangle "CORRECT FLOW (DESIGN)" as CORRECT #E8F5E9 {
+rectangle "CORRECT FLOW (IMPLEMENTED — Task 35+36)" as CORRECT #E8F5E9 {
   ' @uc:uuid:ea33c5b7 game.end.playAgain
   usecase "UC-GE5: game.end.playAgain\n[ea33c5b7]\nPlayer clicks 'Play Again'" as C1 #A5D6A7
 
@@ -50,7 +50,7 @@ rectangle "CORRECT FLOW (DESIGN)" as CORRECT #E8F5E9 {
 
   usecase "room.resetForReplay()\n<<include>>" as C4 #A5D6A7
 
-  usecase "reset state → 'waiting'\nreset scores/alive/hands/round\nkeep players + chat + host" as C4a #E8F5E9
+  usecase "reset state → 'waiting'\nreset scores/alive/hands/round\nkeep players + chat + host + bots" as C4a #E8F5E9
 
   usecase "broadcast ROOM_RESET\nall clients show lobby\nwith same player list" as C5 #A5D6A7
 
@@ -73,13 +73,12 @@ player --> C7 : opts out
 ' IMPLEMENTATION CHANGES NEEDED
 ' ═══════════════════════════════════════════════════════════════
 
-rectangle "Implementation Changes" as IMPL #FFF3E0 {
-  usecase "NEW: GameRoom.resetForReplay()\nreset state/scores/deck\nkeep connections" as I1
-  usecase "NEW: MSG.PLAY_AGAIN\nclient→server message" as I2
-  usecase "NEW: MSG.ROOM_RESET\nserver→client broadcast" as I3
-  usecase "FIX: MultiplayerUI.renderGameOver()\nsend PLAY_AGAIN, don't leaveRoom" as I4
-  usecase "FIX: endGame() for user rooms\ndon't auto-delete after 60s\nif players present" as I5
-  usecase "NEW: MultiplayerUI.handleRoomReset()\nre-render lobby with existing players" as I6
+rectangle "Implementation (ALL DONE)" as IMPL #E8F5E9 {
+  usecase "✅ GameRoom.resetForReplay()\nTask 35" as I1 #A5D6A7
+  usecase "✅ MSG.PLAY_AGAIN + ROOM_RESET\nTask 35" as I2 #A5D6A7
+  usecase "✅ MultiplayerUI sends PLAY_AGAIN\n(no leaveRoom) Task 35" as I4 #A5D6A7
+  usecase "✅ Chat preserved on replay\nchat fix commit" as I5 #A5D6A7
+  usecase "✅ Bots survive replay\nTask 36" as I6 #A5D6A7
 }
 
 note bottom of CORRECT

@@ -11,7 +11,7 @@ title UpDown QnD — Full Traceability with UUIDs\n**Section 1:** Dashboard (75 
 ' ║  SECTION 1: STATUS DASHBOARD — All 75 UCs with UUIDs       ║
 ' ╚═════════════════════════════════════════════════════════════╝
 
-package "DASHBOARD: 75 UCs — <color:green>13 covered</color> <color:orange>5 partial</color> <color:red>57 missing</color>" as DASH {
+package "DASHBOARD: 75 UCs — <color:green>15 covered</color> <color:orange>5 partial</color> <color:red>55 missing</color>" as DASH {
 
   package "CONNECTION 3/3" as D_C #E8F5E9 {
     card "UC-C1 connection.open\n//92a061e0//" as DC1 #A5D6A7
@@ -80,8 +80,8 @@ package "DASHBOARD: 75 UCs — <color:green>13 covered</color> <color:orange>5 p
     card "UC-GE5 game.end.playAgain\n//ea33c5b7//" as DGE5 #EF9A9A
   }
 
-  package "BOT 0/8" as D_B #FFCDD2 {
-    card "UC-B1 bot.add\n//f1ba3e42//" as DB1 #EF9A9A
+  package "BOT 1/8" as D_B #FFF9C4 {
+    card "UC-B1 bot.add\n//f1ba3e42//" as DB1 #A5D6A7
     card "UC-B2 bot.decide\n//8e46d39e//" as DB2 #EF9A9A
     card "UC-B3 bot.decide.cautious\n//fe84fad6//" as DB3 #EF9A9A
     card "UC-B4 bot.decide.gambler\n//f0364019//" as DB4 #EF9A9A
@@ -98,8 +98,8 @@ package "DASHBOARD: 75 UCs — <color:green>13 covered</color> <color:orange>5 p
     card "UC-S4 spectator.seesGame\n//91825bbd//" as DS4 #EF9A9A
   }
 
-  package "CHAT 0/4" as D_CH #FFCDD2 {
-    card "UC-CH1 chat.send\n//0dfe22b0//" as DCH1 #EF9A9A
+  package "CHAT 1/4" as D_CH #FFF9C4 {
+    card "UC-CH1 chat.send\n//0dfe22b0//" as DCH1 #A5D6A7
     card "UC-CH2 chat.history\n//7b4f1505//" as DCH2 #EF9A9A
     card "UC-CH3 chat.maxLength\n//8a319461//" as DCH3 #EF9A9A
     card "UC-CH4 chat.maxHistory\n//f552ec48//" as DCH4 #EF9A9A
@@ -246,9 +246,9 @@ package "CHAINS: UC → Task → Impl → Test (13 covered)" as CHAINS {
 
 legend bottom right
   |= Dashboard Colors |= Chain Colors |
-  | <#A5D6A7> Covered (13) | <#E8F5E9> UseCase |
+  | <#A5D6A7> Covered (15) | <#E8F5E9> UseCase |
   | <#FFE082> Partial (5) | <#E3F2FD> Task |
-  | <#EF9A9A> Missing (57) | <#FFF3E0> Impl |
+  | <#EF9A9A> Missing (55) | <#FFF3E0> Impl |
   | | <#FCE4EC> Test |
   **All 75 UCs have UUID annotations**
   **Source: traceability-matrix.md**

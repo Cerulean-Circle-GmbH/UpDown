@@ -5,7 +5,7 @@ skinparam defaultFontName "Segoe UI"
 skinparam defaultFontSize 8
 skinparam packageFontSize 10
 
-title UpDown QnD Multiplayer — 75 Use Cases with UUID Traceability\nGreen=Covered(13) Orange=Partial(5) Red=Missing(57)
+title UpDown QnD Multiplayer — 75+ Use Cases with UUID Traceability\nGreen=Covered(15) Orange=Partial(5) Red=Missing(55+)
 
 left to right direction
 
@@ -85,6 +85,10 @@ rectangle "Host Actions" as HOST {
   usecase "UC-H2: host.addBot\n[fc6c941a]" as H2 #EF9A9A
   ' @uc:uuid:57311798 host.startGame.nonHost
   usecase "UC-H4: host.startGame.nonHost\n[57311798]" as H4 #EF9A9A
+  ' Task 37: countdown toggle
+  usecase "UC-H5: host.toggleCountdown\n(on/off before start)" as H5 #A5D6A7
+  ' Task 37: force resolve
+  usecase "UC-H6: host.forceResolve\n(skip timer, resolve now)" as H6 #A5D6A7
 }
 
 host --> H1
@@ -191,7 +195,7 @@ rectangle "Game End" as GEND {
   ' @uc:uuid:b1be7a22 game.end.diamonds
   usecase "UC-GE4: game.end.diamonds\n[b1be7a22]" as GE4 #EF9A9A
   ' @uc:uuid:ea33c5b7 game.end.playAgain
-  usecase "UC-GE5: game.end.playAgain\n[ea33c5b7]" as GE5 #EF9A9A
+  usecase "UC-GE5: game.end.playAgain\n[ea33c5b7]" as GE5 #A5D6A7
 }
 
 GE1 ..> GE3 : <<include>>
@@ -204,7 +208,7 @@ GE3 ..> GE4 : <<include>>
 
 rectangle "AI Bot System" as BOT {
   ' @uc:uuid:f1ba3e42 bot.add
-  usecase "UC-B1: bot.add\n[f1ba3e42]" as B1 #EF9A9A
+  usecase "UC-B1: bot.add\n[f1ba3e42]" as B1 #A5D6A7
   ' @uc:uuid:8e46d39e bot.decide
   usecase "UC-B2: bot.decide\n[8e46d39e]" as B2 #EF9A9A
   ' @uc:uuid:fe84fad6 bot.decide.cautious
@@ -255,7 +259,7 @@ spectator --> S3
 
 rectangle "Chat" as CHAT {
   ' @uc:uuid:0dfe22b0 chat.send
-  usecase "UC-CH1: chat.send\n[0dfe22b0]" as CH1 #EF9A9A
+  usecase "UC-CH1: chat.send\n[0dfe22b0]" as CH1 #A5D6A7
   ' @uc:uuid:7b4f1505 chat.history
   usecase "UC-CH2: chat.history\n[7b4f1505]" as CH2 #EF9A9A
   ' @uc:uuid:8a319461 chat.maxLength
@@ -311,9 +315,9 @@ P9 ..> SC3 : <<extend>>
 
 legend bottom right
   |= Color |= Status |= Count |
-  | <#A5D6A7> | Covered (impl+test) | 13 |
+  | <#A5D6A7> | Covered (impl+test) | 15+2 new |
   | <#FFE082> | Partial (impl, test incomplete) | 5 |
-  | <#EF9A9A> | Missing (no test) | 57 |
+  | <#EF9A9A> | Missing (no test) | 55 |
   **75 UCs total — each annotated with @uc:uuid**
   **Source: traceability-matrix.md**
 endlegend

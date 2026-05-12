@@ -52,8 +52,8 @@ export class LobbyUI {
 
   private render(): void {
     this.container.innerHTML = `
+      <div id="lobby-header-slot"></div>
       <div class="lobby">
-        <div id="lobby-header-slot"></div>
 
         <div class="lobby-name">
           <label>Your Name</label>

@@ -4,7 +4,7 @@ skinparam backgroundColor White
 skinparam defaultFontName "Segoe UI"
 skinparam defaultFontSize 9
 
-title UpDown QnD — Room State Machine\nStates: waiting → countdown/hostControl → revealing → exchange → finished\n<color:red>BUG: 'finished' is terminal — no path back to 'waiting'</color>\n<color:blue>NEW: Host can toggle countdown OFF → manual 'Force Next Round'</color>
+title UpDown QnD — Room State Machine\nStates: waiting → countdown/hostControl → revealing → exchange → finished → waiting\n<color:green>FIXED (Task 35): resetForReplay() returns room to 'waiting'</color>\n<color:blue>Task 37: Host can toggle countdown OFF → manual 'Force Next Round'</color>
 
 [*] --> waiting : Room created\n(RoomManager.createRoom)
 
@@ -45,11 +45,11 @@ state "exchange" as EX #E3F2FD {
   EX : Next round auto-starts after 3s
 }
 
-state "finished" as FIN #EF9A9A {
+state "finished" as FIN #FFE082 {
   FIN : GAME_OVER broadcast
   FIN : Leaderboard + diamonds shown
-  FIN : <color:red>STATE IS TERMINAL</color>
-  FIN : <color:red>No reset back to 'waiting'</color>
+  FIN : Players click 'Play Again'
+  FIN : <color:green>resetForReplay() resets to 'waiting'</color>
 }
 
 W --> CD : host.startGame()\ncountdownEnabled=true\n[uc:560d9a46]
@@ -75,44 +75,26 @@ EX --> CD : after 3s setTimeout\ncountdownEnabled=true\nnextRound()
 EX --> HC : after 3s setTimeout\ncountdownEnabled=false\nnextRound()
 
 ' ═══════════════════════════════════════════════════════════════
-' THE BUG: No transition from finished → waiting
+' REPLAY: finished → waiting (IMPLEMENTED Task 35)
 ' ═══════════════════════════════════════════════════════════════
 
-FIN -[#red,dashed]-> W : <color:red>MISSING TRANSITION</color>\n<color:red>resetForReplay() needed</color>
+FIN -[#green]-> W : <color:green>PLAY_AGAIN → resetForReplay()</color>\n<color:green>state→'waiting', keep players+chat+bots</color>
 
 note right of FIN
-  **BUG ANALYSIS: Play Again is broken**
+  **Replay Flow (IMPLEMENTED — Task 35+36)**
 
-  **Current flow (WRONG):**
   1. endGame() sets state='finished'
   2. Client receives GAME_OVER
-  3. 'Play Again' button clicked
-  4. Client calls leaveRoom() ← WRONG
-  5. Client calls joinRoom(sameId) after 500ms
-  6. But for user-created rooms:
-     - 60s cleanup timer runs
-     - Room may be deleted
-     - Even if alive, state='finished'
-     - addPlayer() rejects: state !== 'waiting'
-
-  **For preset rooms:**
-  - autoRecreate deletes & recreates room
-  - Same room ID but NEW GameRoom instance
-  - Players must re-join (lose chat history)
-  - Race condition on 500ms setTimeout
-
-  **Correct flow (SHOULD BE):**
-  1. endGame() sets state='finished'
-  2. Client receives GAME_OVER
-  3. 'Play Again' clicked
+  3. Player clicks 'Play Again'
   4. Client sends PLAY_AGAIN message
   5. Server: room.resetForReplay()
      - state → 'waiting'
-     - reset scores, alive, hands
+     - reset scores, alive, deck, hands
      - keep players connected
-     - keep chat history
+     - keep chat history (Task 35 fix)
+     - keep bots alive (Task 36 fix)
   6. Server broadcasts ROOM_RESET
-  7. All clients show lobby with same players
+  7. All clients re-render lobby
   8. Host starts new game when ready
 end note
 
@@ -148,9 +130,10 @@ note left of W
     state !== 'exchange' → reject [R9]
   - state === 'exchange' → OK [R8]
 
-  These guards BLOCK replay:
-  state='finished' ≠ 'waiting'
-  so rejoin after leave FAILS
+  Replay bypasses join guards:
+  resetForReplay() sets state='waiting'
+  so existing players stay connected,
+  no rejoin needed.
 end note
 
 @enduml

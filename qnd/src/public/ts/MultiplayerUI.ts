@@ -145,8 +145,8 @@ export class MultiplayerUI {
 
   private render(): void {
     this.container.innerHTML = `
+      <div id="mp-header-slot"></div>
       <div class="mp-game">
-        <div id="mp-header-slot"></div>
 
         <div class="mp-players" id="mp-players"></div>
 
