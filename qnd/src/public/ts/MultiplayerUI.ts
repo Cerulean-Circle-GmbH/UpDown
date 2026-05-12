@@ -5,6 +5,7 @@
 
 import { WebSocketClient, shareOrCopy } from './WebSocketClient.js';
 import { MSG } from '../../shared/MessageTypes.js';
+import { renderHeader } from './components/Header.js';
 
 interface PlayerScore {
   id: string; name: string; score: number; streak: number; alive: boolean;
@@ -145,12 +146,7 @@ export class MultiplayerUI {
   private render(): void {
     this.container.innerHTML = `
       <div class="mp-game">
-        <div class="mp-compact-header">
-          <button id="leave-room-btn" class="mp-hdr-btn">←</button>
-          <span class="mp-title">🎴 UpDown</span>
-          <span class="mp-round" id="mp-round"></span>
-          <button id="fullscreen-btn" class="mp-hdr-btn">⛶</button>
-        </div>
+        <div id="mp-header-slot"></div>
 
         <div class="mp-players" id="mp-players"></div>
 
@@ -193,23 +189,24 @@ export class MultiplayerUI {
       </div>
     `;
 
-    document.getElementById('leave-room-btn')?.addEventListener('click', () => {
-      if (this.isSpectator) {
-        this.client.leaveSpectate();
-      } else {
-        this.client.leaveRoom();
-      }
-      this.isSpectator = false;
-      this.onLeaveRoom();
-    });
-
-    document.getElementById('fullscreen-btn')?.addEventListener('click', () => {
-      if (document.fullscreenElement) {
-        document.exitFullscreen();
-      } else {
-        document.documentElement.requestFullscreen().catch(() => {});
-      }
-    });
+    // Insert shared header with Leave + Fullscreen buttons
+    const slot = document.getElementById('mp-header-slot');
+    if (slot) {
+      slot.replaceWith(renderHeader({
+        leftButton: { icon: '←', onClick: () => {
+          if (this.isSpectator) { this.client.leaveSpectate(); } else { this.client.leaveRoom(); }
+          this.isSpectator = false;
+          this.onLeaveRoom();
+        }},
+        centerText: `<span class="mp-round" id="mp-round"></span>`,
+        rightButtons: [
+          { icon: '⛶', onClick: () => {
+            if (document.fullscreenElement) { document.exitFullscreen(); }
+            else { document.documentElement.requestFullscreen().catch(() => {}); }
+          }}
+        ]
+      }));
+    }
 
     this.renderPlayers();
     this.renderControls();

@@ -5,6 +5,7 @@
 
 import { WebSocketClient, shareOrCopy } from './WebSocketClient.js';
 import { MSG } from '../../shared/MessageTypes.js';
+import { renderHeader } from './components/Header.js';
 
 interface RoomInfo {
   id: string; name: string; playerCount: number; maxPlayers: number;
@@ -52,9 +53,7 @@ export class LobbyUI {
   private render(): void {
     this.container.innerHTML = `
       <div class="lobby">
-        <div class="mp-compact-header">
-          <span class="mp-title">🎴 UpDown</span>
-        </div>
+        <div id="lobby-header-slot"></div>
 
         <div class="lobby-name">
           <label>Your Name</label>
@@ -92,6 +91,10 @@ export class LobbyUI {
         </div>
       </div>
     `;
+
+    // Insert shared header
+    const slot = document.getElementById('lobby-header-slot');
+    if (slot) slot.replaceWith(renderHeader());
 
     this.setupEvents();
   }
