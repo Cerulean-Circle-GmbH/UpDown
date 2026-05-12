@@ -155,10 +155,10 @@ Fully working UpDown multiplayer online card game. Deadline: Sunday. QnD — web
   - [x] 38.5: Darken previous card ✅
   - [x] 38.6: Flip animation ✅
   - [x] 38.9: Header parity (in-game only) ✅
-  - [ ] [Task 38.10: DRY Shared Header Component](./task-38.10-dry-shared-header.md) **🔧 IN PROGRESS**
-    - [ ] 38.10.1: Expert — Create shared Header.ts component
-    - [ ] 38.10.2: Expert — Refactor all 3 views to use it
-    - [ ] 38.10.3: Tester — Verify header consistent across all views
+  - [x] [Task 38.10: DRY Shared Header Component](./task-38.10-dry-shared-header.md) **✅ DONE**
+    - [x] 38.10.1: Expert — Created components/Header.ts ✅
+    - [x] 38.10.2: Expert — LobbyUI + MultiplayerUI refactored ✅
+    - [ ] 38.10.3: Tester — Verify header consistent across all views ⏳
 
 - [ ] [Task 29: DRY — CardUtils.ts](./task-29-dry-card-utils.md) **📋 DEFERRED**
   - [ ] 29.1: Expert — Extract suitSymbol(), cardColor(), cardToHtml() — 7 locations → 1
