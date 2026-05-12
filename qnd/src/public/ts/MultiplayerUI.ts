@@ -553,16 +553,20 @@ export class MultiplayerUI {
           </div>
         `).join('')}
       </div>
-      ${!this.countdownEnabled ? (this.isHost
-        ? '<button id="enforce-next-btn" class="btn btn-primary" style="margin-top:8px;width:100%">Enforce Next Round ▶</button>'
-        : '<p class="waiting-text" style="margin-top:8px">Waiting for host...</p>'
-      ) : ''}
     `;
 
+    // Show enforce button in mp-controls (above result, always visible)
     if (!this.countdownEnabled) {
-      document.getElementById('enforce-next-btn')?.addEventListener('click', () => {
-        this.client.send({ type: MSG.FORCE_NEXT_ROUND });
-      });
+      const controls = document.getElementById('mp-controls');
+      if (controls) {
+        controls.innerHTML = this.isHost
+          ? '<button id="enforce-next-btn" class="btn btn-primary" style="width:100%">Enforce Next Round ▶</button>'
+          : '<p class="waiting-text">Waiting for host...</p>';
+        document.getElementById('enforce-next-btn')?.addEventListener('click', () => {
+          this.client.send({ type: MSG.FORCE_NEXT_ROUND });
+        });
+        document.getElementById('enforce-next-btn')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
 
     // Update player scores in player list

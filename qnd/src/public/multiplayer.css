@@ -133,7 +133,7 @@ input::placeholder { color: rgba(255,255,255,0.5); }
 .lobby-rapid { margin-top: 4px; }
 
 /* ═══ MULTIPLAYER GAME ═══ */
-.mp-game { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+.mp-game { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding-bottom: 80px; }
 
 /* Old mp-compact-header removed — replaced by shared .app-header */
 .mp-round { font-weight: 600; font-size: 0.8rem; opacity: 0.8; }

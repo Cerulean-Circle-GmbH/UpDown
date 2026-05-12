@@ -43,9 +43,15 @@
 - On FORCE_NEXT_ROUND / ROUND_START: clear feedback, hide button
 
 ## Acceptance Criteria
-1. Countdown OFF + round resolved → feedback stays visible indefinitely
-2. Host sees "Enforce Next Round ▶" button after results
+1. ✅ Countdown OFF + round resolved → feedback stays visible indefinitely
+2. ❌ Host sees "Enforce Next Round ▶" button after results — BUTTON EXISTS BUT HIDDEN below chat panel
 3. Host presses button → next round starts, feedback clears
 4. Non-host sees "Waiting for host..." after results
 5. Countdown ON → feedback still fades normally (no regression)
 6. Button label is "Enforce Next Round" (not "Next Round" — distinct from countdown variant)
+
+## Bugs Found During Testing (must fix)
+- BUG-A: Button hidden below chat/messenger panel — not scrollable into view
+- FIX-A: padding-bottom of .mp-game must be AT LEAST the height of the chat/messenger panel (approx 60-80px). This ensures ANY content above the chat bar can scroll into view. Plus auto-scroll to button: `document.getElementById('enforce-next-btn')?.scrollIntoView({ behavior: 'smooth', block: 'center' })`
+- BUG-B: Play Again regression — verify PLAY_AGAIN still works after state handling changes
+- FIX-B: Check GameRoom.resetForReplay() works from all states including 'revealing'

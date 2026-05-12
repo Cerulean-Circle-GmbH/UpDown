@@ -564,7 +564,14 @@ export class GameRoom {
       setTimeout(() => this.endGame(), 2000);
     } else if (!this.countdownEnabled) {
       // Countdown OFF: stay in revealing state, wait for host FORCE_NEXT_ROUND
-      this.state = 'revealing';
+      // But if only bots remain alive, auto-advance (no human to press button)
+      const aliveHumans = alivePlayers.filter(p => !this.bots.has(p.id));
+      if (aliveHumans.length === 0) {
+        this.state = 'exchange';
+        setTimeout(() => { this.cleanupDisconnected(); this.state = 'countdown'; this.nextRound(); }, 1500);
+      } else {
+        this.state = 'revealing';
+      }
     } else {
       // Countdown ON: exchange phase, then auto-start next round
       this.state = 'exchange';
