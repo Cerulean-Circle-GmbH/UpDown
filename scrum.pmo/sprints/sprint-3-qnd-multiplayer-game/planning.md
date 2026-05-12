@@ -159,6 +159,13 @@ Fully working UpDown multiplayer online card game. Deadline: Sunday. QnD — web
     - [x] 38.10.1: Expert — Created components/Header.ts ✅
     - [x] 38.10.2: Expert — LobbyUI + MultiplayerUI refactored ✅
     - [ ] 38.10.3: Tester — Verify header consistent across all views ⏳
+  - [ ] [Task 38.11: Lobby Header Match](./task-38.11-lobby-header-match.md) **🔧 IN PROGRESS**
+  - [x] [Task 38.12: Responsive Layout Parity](./task-38.12-responsive-layout-parity.md) **✅ DONE** — no scrollbar, /ts pattern
+  - [ ] [Task 38.13: Leave Returns to Lobby](./task-38.13-leave-returns-to-lobby.md) **📋 PLANNED**
+  - [ ] [Task 38.14: Persistent Feedback + Enforce Next Round](./task-38.14-persistent-feedback-no-countdown.md) **🔧 IN PROGRESS**
+    - [ ] 38.14.1: Expert — Server: stay in revealing state when countdown off
+    - [ ] 38.14.2: Expert — Client: persistent feedback + "Enforce Next Round" button
+    - [ ] 38.14.3: Tester — Verify feedback stays, button works, no regression with countdown on
 
 - [ ] [Task 29: DRY — CardUtils.ts](./task-29-dry-card-utils.md) **📋 DEFERRED**
   - [ ] 29.1: Expert — Extract suitSymbol(), cardColor(), cardToHtml() — 7 locations → 1
