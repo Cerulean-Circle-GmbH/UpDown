@@ -21,6 +21,8 @@ body {
   padding: 8px;
   min-height: 100vh;
   min-height: 100dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Buttons — 44px min tap target (Apple HIG) */
@@ -279,6 +281,42 @@ input::placeholder { color: rgba(255,255,255,0.5); }
   .mp-table { padding: 16px 12px; }
   .btn-guess { padding: 18px 8px; }
 }
+
+/* Card labels (38.4) */
+.mp-card-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.mp-card-label { font-size: 0.7rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Darken previous card (38.5) */
+.mp-prev .playing-card { opacity: 0.5; filter: brightness(0.7); }
+
+/* Card flip animation (38.6) */
+@keyframes cardFlipIn {
+  0% { transform: rotateY(90deg); opacity: 0; }
+  100% { transform: rotateY(0deg); opacity: 1; }
+}
+.card-flip-in { animation: cardFlipIn 0.4s ease-out; }
+.mp-prev .card-flip-in { animation: none; }
+
+/* Key hints on buttons (38.3) */
+.btn-guess kbd {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-size: 0.7rem;
+  margin-left: 4px;
+  font-family: inherit;
+}
+@media (max-width: 768px) {
+  .btn-guess kbd { display: none; }
+}
+
+/* Fullscreen button (38.2) */
+#fullscreen-btn { font-size: 1.1rem; padding: 4px 8px; background: transparent; }
+
+/* Fullscreen mode */
+:fullscreen #app { border-radius: 0; }
+:fullscreen .mp-game { border-radius: 0; }
 
 /* PWA safe areas */
 @supports (padding: env(safe-area-inset-top)) {

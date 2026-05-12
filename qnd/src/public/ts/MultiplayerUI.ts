@@ -146,21 +146,28 @@ export class MultiplayerUI {
     this.container.innerHTML = `
       <div class="mp-game">
         <div class="mp-header">
-          <button id="leave-room-btn" class="btn btn-small">← Leave</button>
-          <span class="mp-room-name">Room: ${this.roomId}</span>
+          <button id="leave-room-btn" class="btn btn-small">←</button>
+          <span class="mp-room-name">${this.roomId}</span>
           <span class="mp-round" id="mp-round">Waiting...</span>
+          <button id="fullscreen-btn" class="btn btn-small">⛶</button>
         </div>
 
         <div class="mp-players" id="mp-players"></div>
 
         <div class="mp-table">
           <div class="mp-cards">
-            <div class="mp-card mp-prev" id="mp-prev-card">
-              <div class="card-placeholder">?</div>
+            <div class="mp-card-col">
+              <span class="mp-card-label">Previous</span>
+              <div class="mp-card mp-prev" id="mp-prev-card">
+                <div class="card-placeholder">?</div>
+              </div>
             </div>
             <div class="mp-arrow">→</div>
-            <div class="mp-card mp-current" id="mp-current-card">
-              <div class="card-placeholder">?</div>
+            <div class="mp-card-col">
+              <span class="mp-card-label">Current</span>
+              <div class="mp-card mp-current" id="mp-current-card">
+                <div class="card-placeholder">?</div>
+              </div>
             </div>
           </div>
           <div class="mp-countdown" id="mp-countdown"></div>
@@ -196,9 +203,18 @@ export class MultiplayerUI {
       this.onLeaveRoom();
     });
 
+    document.getElementById('fullscreen-btn')?.addEventListener('click', () => {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    });
+
     this.renderPlayers();
     this.renderControls();
     this.setupChat();
+    this.setupKeybindings();
 
     // Profile overlay (hidden by default)
     const profileEl = document.createElement('div');
@@ -404,9 +420,9 @@ export class MultiplayerUI {
 
       el.innerHTML = `
         <div class="mp-guess-buttons">
-          <button class="btn btn-guess btn-up" data-guess="up">⬆️ Higher</button>
-          <button class="btn btn-guess btn-equal" data-guess="equal">⚖️ Equal</button>
-          <button class="btn btn-guess btn-down" data-guess="down">⬇️ Lower</button>
+          <button class="btn btn-guess btn-up" data-guess="up">⬆️ Higher <kbd>U</kbd></button>
+          <button class="btn btn-guess btn-equal" data-guess="equal">⚖️ Equal <kbd>E</kbd></button>
+          <button class="btn btn-guess btn-down" data-guess="down">⬇️ Lower <kbd>D</kbd></button>
         </div>
         ${this.inventory.length > 0 ? `
           <div class="mp-special-cards">
@@ -451,7 +467,7 @@ export class MultiplayerUI {
     const suitColor = (card.suit === 'hearts' || card.suit === 'diamonds') ? 'red' : 'black';
 
     el.innerHTML = `
-      <div class="playing-card ${suitColor}">
+      <div class="playing-card ${suitColor} card-flip-in">
         <span class="card-value">${card.value}</span>
         <span class="card-suit">${suitSymbol[card.suit] || card.suit}</span>
       </div>
@@ -595,6 +611,22 @@ export class MultiplayerUI {
       this.onLeaveRoom();
     });
   }
+
+  private setupKeybindings(): void {
+    const handler = (e: KeyboardEvent) => {
+      // Don't capture when typing in chat
+      if ((e.target as HTMLElement)?.tagName === 'INPUT') return;
+      if (this.hasPlayed || this.frozen || this.state === 'finished' || this.round === 0) return;
+
+      const key = e.key.toLowerCase();
+      if (key === 'u' || key === 'arrowup') { this.client.playCard('up'); this.hasPlayed = true; this.renderGame(); }
+      else if (key === 'd' || key === 'arrowdown') { this.client.playCard('down'); this.hasPlayed = true; this.renderGame(); }
+      else if (key === 'e' || key === 'arrowleft' || key === 'arrowright') { this.client.playCard('equal'); this.hasPlayed = true; this.renderGame(); }
+    };
+    document.addEventListener('keydown', handler);
+  }
+
+  private get state(): string { return this.round > 0 && !this.hasPlayed ? 'playing' : this.round === 0 ? 'waiting' : 'played'; }
 
   private renderChatMessages(): void {
     const el = document.getElementById('chat-messages');
