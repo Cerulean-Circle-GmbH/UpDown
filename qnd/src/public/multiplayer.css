@@ -33,23 +33,25 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
   margin: 0;
   padding: 0;
   color: white;
-  overflow-x: hidden;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
 }
 
 #app {
   width: 100%;
   max-width: 500px;
-  margin: 0 auto;
+  height: 100%;
   padding: 8px;
-  min-height: 100vh;
-  min-height: 100dvh;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Buttons — 44px min tap target (Apple HIG) */
@@ -74,7 +76,7 @@ body {
 .btn-join { background: #667eea; color: white; padding: 8px 12px; font-size: 0.8rem; }
 
 /* ═══ LOBBY ═══ */
-.lobby { display: flex; flex-direction: column; gap: 12px; }
+.lobby { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
 /* lobby-header replaced by mp-compact-header */
 
 .lobby-name { display: flex; flex-direction: column; gap: 3px; }
@@ -131,7 +133,7 @@ input::placeholder { color: rgba(255,255,255,0.5); }
 .lobby-rapid { margin-top: 4px; }
 
 /* ═══ MULTIPLAYER GAME ═══ */
-.mp-game { display: flex; flex-direction: column; gap: 8px; min-height: 100dvh; }
+.mp-game { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
 
 /* Old mp-compact-header removed — replaced by shared .app-header */
 .mp-round { font-weight: 600; font-size: 0.8rem; opacity: 0.8; }
