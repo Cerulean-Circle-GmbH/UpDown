@@ -52,9 +52,8 @@ export class LobbyUI {
   private render(): void {
     this.container.innerHTML = `
       <div class="lobby">
-        <div class="lobby-header">
-          <h1>🎴 UpDown</h1>
-          <p class="lobby-subtitle">Multiplayer Card Game</p>
+        <div class="mp-compact-header">
+          <span class="mp-title">🎴 UpDown</span>
         </div>
 
         <div class="lobby-name">

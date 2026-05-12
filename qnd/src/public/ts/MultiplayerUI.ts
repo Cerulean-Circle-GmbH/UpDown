@@ -145,11 +145,11 @@ export class MultiplayerUI {
   private render(): void {
     this.container.innerHTML = `
       <div class="mp-game">
-        <div class="mp-header">
-          <button id="leave-room-btn" class="btn btn-small">←</button>
-          <span class="mp-room-name">${this.roomId}</span>
-          <span class="mp-round" id="mp-round">Waiting...</span>
-          <button id="fullscreen-btn" class="btn btn-small">⛶</button>
+        <div class="mp-compact-header">
+          <button id="leave-room-btn" class="mp-hdr-btn">←</button>
+          <span class="mp-title">🎴 UpDown</span>
+          <span class="mp-round" id="mp-round"></span>
+          <button id="fullscreen-btn" class="mp-hdr-btn">⛶</button>
         </div>
 
         <div class="mp-players" id="mp-players"></div>

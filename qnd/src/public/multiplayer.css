@@ -48,9 +48,7 @@ body {
 
 /* ═══ LOBBY ═══ */
 .lobby { display: flex; flex-direction: column; gap: 12px; }
-.lobby-header { text-align: center; padding: 12px 0 4px; }
-.lobby-header h1 { font-size: 1.5rem; }
-.lobby-subtitle { opacity: 0.8; font-size: 0.85rem; margin-top: 2px; }
+/* lobby-header replaced by mp-compact-header */
 
 .lobby-name { display: flex; flex-direction: column; gap: 3px; }
 .lobby-name label { font-size: 0.75rem; opacity: 0.8; }
@@ -108,12 +106,29 @@ input::placeholder { color: rgba(255,255,255,0.5); }
 /* ═══ MULTIPLAYER GAME ═══ */
 .mp-game { display: flex; flex-direction: column; gap: 8px; min-height: 100dvh; }
 
-.mp-header {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 4px 0;
+/* Compact header — matches /ts game-header */
+.mp-compact-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 10px 10px 0 0;
+  flex-shrink: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
-.mp-room-name { font-size: 0.7rem; opacity: 0.7; }
-.mp-round { font-weight: 600; font-size: 0.85rem; }
+.mp-title { font-size: 1.2rem; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
+.mp-hdr-btn {
+  background: transparent; border: none; color: white;
+  font-size: 1.2rem; opacity: 0.6; cursor: pointer;
+  padding: 8px; margin: -8px; transition: opacity 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mp-hdr-btn:hover, .mp-hdr-btn:active { opacity: 1; }
+.mp-round { font-weight: 600; font-size: 0.8rem; opacity: 0.8; }
 
 .mp-players { display: flex; flex-wrap: wrap; gap: 4px; }
 .mp-player {
