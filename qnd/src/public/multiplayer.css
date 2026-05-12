@@ -17,17 +17,17 @@
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
-.app-hdr-title { font-size: 1.2rem; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
-.app-hdr-center { font-size: 0.8rem; opacity: 0.8; margin-left: auto; }
+.app-hdr-title { font-size: 1.2rem; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.2); flex: 1; text-align: center; }
+.app-hdr-center { font-size: 0.8rem; opacity: 0.8; }
 .app-hdr-btn {
   background: transparent; border: none; color: white;
   font-size: 1.2rem; opacity: 0.6; cursor: pointer;
   padding: 8px; margin: -4px; transition: opacity 0.2s;
   -webkit-tap-highlight-color: transparent; flex-shrink: 0;
+  width: 32px; text-align: center;
 }
 .app-hdr-btn:hover, .app-hdr-btn:active { opacity: 1; }
-.app-hdr-spacer { width: 28px; flex-shrink: 0; }
-.app-hdr-left { margin-right: auto; }
+.app-hdr-spacer { width: 32px; flex-shrink: 0; }
 :fullscreen .app-header { border-radius: 0; }
 
 body {

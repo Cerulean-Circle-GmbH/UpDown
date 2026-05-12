@@ -94,7 +94,15 @@ export class LobbyUI {
 
     // Insert shared header
     const slot = document.getElementById('lobby-header-slot');
-    if (slot) slot.replaceWith(renderHeader());
+    if (slot) slot.replaceWith(renderHeader({
+      leftButton: { icon: '⟲', onClick: () => { location.reload(); }},
+      rightButtons: [
+        { icon: '⛶', onClick: () => {
+          if (document.fullscreenElement) { document.exitFullscreen(); }
+          else { document.documentElement.requestFullscreen().catch(() => {}); }
+        }}
+      ]
+    }));
 
     this.setupEvents();
   }

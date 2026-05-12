@@ -23,7 +23,7 @@ export function renderHeader(options: HeaderOptions = {}): HTMLElement {
 
   let leftHtml = '';
   if (options.leftButton) {
-    leftHtml = `<button class="app-hdr-btn app-hdr-left" id="hdr-left-btn">${options.leftButton.icon}</button>`;
+    leftHtml = `<button class="app-hdr-btn" id="hdr-left-btn">${options.leftButton.icon}</button>`;
   } else {
     leftHtml = '<span class="app-hdr-spacer"></span>';
   }
