@@ -408,6 +408,10 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
 
   switch (msg.type) {
     case MSG.CREATE_ROOM: { // [uc:uuid:fbfed148] UC-R2 — [uc:uuid:177c8da5] UC-R2b — [uc:uuid:1c21171d] UC-R3
+      // Auto-cleanup stale finished rooms before creating new one
+      const cleaned = roomManager.cleanupStale();
+      if (cleaned > 0) addLog(`🧹 Auto-cleaned ${cleaned} stale room(s)`);
+
       const playerName = msg.playerName || 'Player';
       const roomName = msg.roomName || msg.name || `${playerName}'s Room`;
       const room = roomManager.createRoom(
@@ -417,6 +421,7 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
         msg.roomKey || null
       );
       room.addPlayer(clientId, ws, playerName, avatarUrl);
+      room.hostId = clientId; // Creator is ALWAYS host
       addLog(`🏠 Room created: ${room.name} (${room.id}) by ${clientId.slice(0,8)}`);
       break;
     }
@@ -439,6 +444,25 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
         send({ type: MSG.ROOM_LEFT });
         send({ type: MSG.ROOM_LIST, rooms: roomManager.listRooms() });
         addLog(`🚪 ${clientId.slice(0,8)} left room ${room.name}`);
+      }
+      break;
+    }
+
+    case MSG.REMOVE_ROOM: { // UC-R13: room.remove (host, or anyone for orphan/empty/finished)
+      const room = roomManager.getRoom(msg.roomId);
+      const isHost = room?.hostId === clientId;
+      const isOrphan = room && !room.players.has(room.hostId);
+      const isEmpty = room && room.players.size === 0;
+      const isFinished = room?.state === 'finished';
+      if (room && (isHost || isOrphan || isEmpty || isFinished)) {
+        roomManager.removeRoom(room.id);
+        // Broadcast updated room list to all connected clients
+        wsClients.forEach(c => {
+          if (c.ws.readyState === WebSocket.OPEN) {
+            c.ws.send(JSON.stringify({ type: MSG.ROOM_LIST, rooms: roomManager.listRooms() }));
+          }
+        });
+        addLog(`🗑 Room removed: ${room.name} by host ${clientId.slice(0,8)}`);
       }
       break;
     }
@@ -1002,6 +1026,12 @@ async function main(): Promise<void> {
   // Wait a brief moment for servers to be ready
   await new Promise(resolve => setTimeout(resolve, 100));
   
+  // Periodic stale room cleanup every 2 minutes
+  setInterval(() => {
+    const cleaned = roomManager.cleanupStale();
+    if (cleaned > 0) addLog(`🧹 Periodic cleanup: ${cleaned} stale room(s)`);
+  }, 2 * 60 * 1000);
+
   // Setup TUI - this takes over the terminal completely
   setupTUI();
 }

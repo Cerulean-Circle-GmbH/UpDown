@@ -159,13 +159,57 @@ Fully working UpDown multiplayer online card game. Deadline: Sunday. QnD — web
     - [x] 38.10.1: Expert — Created components/Header.ts ✅
     - [x] 38.10.2: Expert — LobbyUI + MultiplayerUI refactored ✅
     - [ ] 38.10.3: Tester — Verify header consistent across all views ⏳
-  - [ ] [Task 38.11: Lobby Header Match](./task-38.11-lobby-header-match.md) **🔧 IN PROGRESS**
+  - [x] [Task 38.11: Lobby Header Match](./task-38.11-lobby-header-match.md) **✅ DONE** — same game-header class across /ts, /mp lobby, /mp game
   - [x] [Task 38.12: Responsive Layout Parity](./task-38.12-responsive-layout-parity.md) **✅ DONE** — no scrollbar, /ts pattern
-  - [ ] [Task 38.13: Leave Returns to Lobby](./task-38.13-leave-returns-to-lobby.md) **📋 PLANNED**
-  - [ ] [Task 38.14: Persistent Feedback + Enforce Next Round](./task-38.14-persistent-feedback-no-countdown.md) **🔧 IN PROGRESS**
-    - [ ] 38.14.1: Expert — Server: stay in revealing state when countdown off
-    - [ ] 38.14.2: Expert — Client: persistent feedback + "Enforce Next Round" button
-    - [ ] 38.14.3: Tester — Verify feedback stays, button works, no regression with countdown on
+  - [x] [Task 38.13: Leave Returns to Lobby](./task-38.13-leave-returns-to-lobby.md) **✅ DONE** — LEAVE_ROOM hides game, shows lobby, refreshes rooms
+  - [x] [Task 38.14: Persistent Feedback + Enforce Next Round](./task-38.14-persistent-feedback-no-countdown.md) **✅ DONE**
+    - [x] 38.14.1: Expert — Server: stays in revealing when countdown off, forceNextRound from both states ✅
+    - [x] 38.14.2: Expert — Client: host "Enforce Next Round ▶", non-host "Waiting for host..." ✅
+    - [x] 38.14.3: Tester — 55/55 PASS, persistent feedback + FORCE_NEXT_ROUND verified ✅
+
+  - [x] [Task 38.15: Game Container White + Shadow](./task-38.15-game-container-white-shadow.md) **✅ DONE** — white bg, shadow, border-radius, overflow:hidden
+  - [x] [Task 38.16: Lobby Room Panes Purple](./task-38.16-lobby-room-panes-purple.md) **✅ DONE** — purple tints, text readable
+  - [x] [Task 38.17: Cards Side-by-Side Layout](./task-38.17-cards-side-by-side.md) **✅ DONE** — cards-row flex, arrow, dimmed previous
+  - [x] [Task 38.18: Game Room Bottom Padding](./task-38.18-game-room-bottom-padding.md) **✅ DONE** — 100px padding-bottom
+  - [x] [Task 38.19: Game Header No Reload](./task-38.19-game-header-no-reload.md) **✅ DONE** — mp-header hides reload
+  - [x] [Task 38.20: Playwright Visual Verification](./task-38.20-tester-playwright-visual-verification.md) **✅ DONE** — 6/6 PASS, all screenshot-verified
+  - [x] [Task 38.21: CSS Text Color Regression](./task-38.21-css-text-color-regression.md) **✅ DONE** — 3/3 PASS (player pane, chat, lobby text), play-again SKIP (untestable)
+
+## TRON Requirements (new)
+
+- [x] [Task 42: Card Played Mode — Host Controls with Live Updates](./task-42-card-played-mode.md) **✅ ALREADY EXISTS** — architect confirmed: covered by Tasks 37 + 38.14
+  - [x] 42.1: Architect — Review: DUPLICATE of existing forceNextRound (HC→RV→nextRound) ✅
+  - [ ] 42.2: Expert — Verify button labels match Tron preference ("Enforce Result" vs "Force Next Round")
+  - [ ] 42.5: Tester — Verify existing flow covers all 6 ACs
+
+- [x] [Task 43: Share Link — Append Room Name](./task-43-share-link-room-name.md) **✅ DONE** — ": {roomName}" appended to share text
+
+- [x] [Task 44: Watch→Remove + Stale Room Cleanup + Room Disposal](./task-44-watch-remove-stale-rooms.md) **✅ DONE**
+  - [x] 44.1-44.4: Expert — Stale criteria + periodic timer + Remove button + age-based cleanup ✅
+  - [ ] 44.5: Tester — Verify cleanup ⏳
+
+- [x] [Task 45: BUG — Stale Rooms](./task-45-stale-rooms-not-cleaning.md) **✅ FIXED** — age-based cleanup + 2-min timer + CREATE_ROOM trigger (needs server restart)
+- [x] [Task 46: BUG — Dispose Button](./task-46-missing-finish-button.md) **✅ FIXED** — 🗑 Remove on all host rooms in lobby
+- [x] [Task 47: BUG — Leave Regression](./task-47-leave-button-regression.md) **✅ FIXED** — stopPropagation on leave click
+- [x] [Task 48: Remove Button on Orphan/Hostless Rooms](./task-48-remove-orphan-rooms.md) **✅ DONE** — any user can remove orphan/empty/finished rooms
+
+- [ ] [Task 49: Card Played Mode — Live Player State + Sequential Host Controls](./task-49-card-played-mode.md) **🔧 IN PROGRESS**
+  - [x] 49.1: Architect — Review: NO new messages needed. Client-only rename + button sequencing ✅
+  - [x] 49.2: Expert — Renamed: "Enforce Result ▶" + "Next Round ▶", non-host guarded ✅
+  - [ ] 49.5: Tester — 2+ player verification ⏳
+
+- [x] [Task 50: BUG — Header Rounded Corners iPhone](./task-50-header-rounded-corners-iphone.md) **✅ FIXED** — explicit border-radius + -webkit prefix on .game-header
+- [x] [Task 51: BUG — Bot Host Deadlock + Creator Not Host](./task-51-bot-host-deadlock.md) **✅ FIXED** — creator always host, transfer skips bots, server restarted
+- [x] [Task 52: CRITICAL — Game Skips Betting on Revealed Card](./task-52-game-logic-skip-card.md) **✅ FIXED** — nextRound() consumed extra card; now reuses resolveRound() card
+- [x] [Task 53: CRITICAL — Wrong Bet Shows "Did Not Bet"](./task-53-wrong-bet-spectator-feedback.md) **✅ FIXED** — proper elimination feedback, "card went DOWN", timeout distinct
+- [x] [Task 54: BUG — Spectator After Elimination](./task-54-spectator-after-elimination.md) **✅ FIXED** — eliminated flag, "👁️ watching" message, receives all updates, resets on Play Again
+- [x] [Task 55: BUG — Second Room Creation Broken](./task-55-second-room-creation-broken.md) **✅ FIXED** — resetState() in ROOM_JOINED, DRY with ROOM_RESET
+- [x] [Task 56: BUG — Duplicate Messages (Keybinding Stacking)](./task-56-duplicate-messages-bot-handling.md) **✅ FIXED** — handler in constructor, guards control state. Tester 3/3 PASS
+- [x] [Task 57: WebSocket Status Indicator](./task-57-websocket-status-indicator.md) **✅ DONE** — green/red dot in chat header + clickable reconnect (in progress)
+- [x] [Task 58: Edit Profile Panel](./task-58-edit-profile-panel.md) **✅ DONE** — ✏️ button, modal with name/phone/URL/avatar, localStorage persistence
+- [ ] [Task 59: Profile Photo Fixes](./task-59-profile-photo-fixes.md) **🔧 IN PROGRESS** — upload broken + avatar not shown in profile popup or game player list
+
+---
 
 - [ ] [Task 29: DRY — CardUtils.ts](./task-29-dry-card-utils.md) **📋 DEFERRED**
   - [ ] 29.1: Expert — Extract suitSymbol(), cardColor(), cardToHtml() — 7 locations → 1

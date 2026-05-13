@@ -60,14 +60,22 @@ rectangle "Rooms" as ROOMS {
   usecase "UC-R10: room.leave\n[96f2ecd5]" as R10 #A5D6A7
   ' @uc:uuid:433fe03f room.share
   usecase "UC-R11: room.share\n[433fe03f]" as R11 #EF9A9A
+  ' Task 40: unique room names
+  usecase "UC-R12: room.create.uniqueName\n(auto-append number)" as R12 #A5D6A7
+  ' Task 41: room removal + cleanup
+  usecase "UC-R13: room.remove\n(host only, state=finished)" as R13 #A5D6A7
+  usecase "UC-R14: room.autoCleanup\n(stale finished on CREATE)" as R14 #A5D6A7
 }
 
 player --> R1
 player --> R4
 player --> R10
 host --> R2
+host --> R13
 
 R2 ..> R2b : <<include>>
+R2 ..> R12 : <<include>>
+R2 ..> R14 : <<include>>
 R4 ..> R5 : <<extend>>
 R4 ..> R6 : <<extend>>
 R4 ..> R7 : <<extend>>

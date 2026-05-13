@@ -50,7 +50,13 @@ state "finished" as FIN #FFE082 {
   FIN : Leaderboard + diamonds shown
   FIN : Players click 'Play Again'
   FIN : <color:green>resetForReplay() resets to 'waiting'</color>
+  FIN : Host can REMOVE_ROOM (Task 41)
 }
+
+state "removed" as DEL <<end>>
+
+FIN --> DEL : host.removeRoom()\nREMOVE_ROOM (host only)
+FIN --> DEL : autoCleanup()\nstale + 0 connected players\n(triggered on CREATE_ROOM)
 
 W --> CD : host.startGame()\ncountdownEnabled=true\n[uc:560d9a46]
 W --> HC : host.startGame()\ncountdownEnabled=false

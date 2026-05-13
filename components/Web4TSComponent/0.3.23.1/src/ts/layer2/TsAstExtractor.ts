@@ -66,8 +66,18 @@ export class TsAstExtractor {
   }): this {
     this.componentRoot = config.componentRoot;
     this.componentName = config.componentName;
-    this.componentVersion = config.componentVersion;
     this.scenariosDir = config.scenariosDir;
+
+    // BUG-W02 fix: derive version from componentRoot directory name if missing
+    let version = config.componentVersion;
+    if (!version || version === '0.0.0.0' || version === 'undefined') {
+      const dirName = path.basename(config.componentRoot);
+      if (/^\d+\.\d+\.\d+\.\d+$/.test(dirName)) {
+        version = dirName;
+      }
+    }
+    this.componentVersion = version || '0.0.0.0';
+
     return this;
   }
   
@@ -258,9 +268,9 @@ export class TsAstExtractor {
       extends: extendsIOR,
       implements: implementsIORs,
       sourcePath: relativePath,
-      indexPath: `scenarios/index/${uuid}.type.scenario.json`,
+      indexPath: this.uuidToIndexPath(uuid),
       symlinkPaths: [
-        `scenarios/type/${className}.type.scenario.json`,
+        `scenarios/type/${className}.scenario.json`,
       ],
       attributes,
       properties,
@@ -343,9 +353,9 @@ export class TsAstExtractor {
       extends: extendsIORs.length > 0 ? extendsIORs[0] : null,
       implements: extendsIORs.slice(1), // Additional extends go to implements
       sourcePath: relativePath,
-      indexPath: `scenarios/index/${uuid}.type.scenario.json`,
+      indexPath: this.uuidToIndexPath(uuid),
       symlinkPaths: [
-        `scenarios/type/${interfaceName}.type.scenario.json`,
+        `scenarios/type/${interfaceName}.scenario.json`,
       ],
       attributes,
       properties,
@@ -610,6 +620,15 @@ export class TsAstExtractor {
   }
   
   /**
+   * Compute 5-level UUID index path (same algorithm as UcpStorage.uuidFolderPathGenerate)
+   */
+  private uuidToIndexPath(uuid: string): string {
+    const clean = uuid.replace(/-/g, '');
+    const folders = clean.substring(0, 5).split('');
+    return `scenarios/index/${folders.join('/')}/${uuid}.scenario.json`;
+  }
+
+  /**
    * Save extracted type descriptors as scenarios
    */
   async saveScenarios(results: ExtractionResult[]): Promise<void> {
@@ -638,6 +657,10 @@ export class TsAstExtractor {
         
         // FsM.7: Save to index via IOR (P2P pattern)
         const indexPath = path.join(this.scenariosDir, typeModel.indexPath.replace('scenarios/', ''));
+        const indexFolder = path.dirname(indexPath);
+        if (!fs.existsSync(indexFolder)) {
+          fs.mkdirSync(indexFolder, { recursive: true });
+        }
         const saveIor = new IOR<string>().initRemote(`ior:file://${indexPath}`);
         await saveIor.save(scenario);
         

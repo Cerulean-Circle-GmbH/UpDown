@@ -19,6 +19,7 @@ export class MultiplayerUI {
   private client: WebSocketClient;
   private container: HTMLElement;
   private roomId: string = '';
+  private roomName: string = '';
   private isHost: boolean = false;
   private players: any[] = [];
   private currentCard: Card | null = null;
@@ -28,18 +29,23 @@ export class MultiplayerUI {
   private round: number = 0;
   private inventory: string[] = [];
   private frozen: boolean = false;
+  private eliminated: boolean = false;
   private isSpectator: boolean = false;
   private chatMessages: { senderId: string; senderName: string; text: string }[] = [];
   private countdownEnabled: boolean = true;
+  private chatExpanded: boolean = false;
   private onLeaveRoom: () => void;
 
   constructor(client: WebSocketClient, container: HTMLElement, onLeaveRoom: () => void) {
     this.client = client;
     this.container = container;
     this.onLeaveRoom = onLeaveRoom;
+    this.setupKeybindings();
 
     this.client.on(MSG.ROOM_JOINED, (msg) => {
+      this.resetState();
       this.roomId = msg.room.id;
+      this.roomName = msg.room.name || '';
       this.isHost = msg.room.hostId === this.client.clientId;
       this.players = msg.players;
       this.render();
@@ -71,6 +77,7 @@ export class MultiplayerUI {
       this.inventory = msg.inventory || [];
       this.frozen = msg.frozen || false;
       this.hasPlayed = false;
+      this.eliminated = msg.alivePlayers ? !msg.alivePlayers.includes(this.client.clientId) : false;
       this.renderGame();
     });
 
@@ -86,6 +93,8 @@ export class MultiplayerUI {
 
     this.client.on(MSG.ROUND_RESULT, (msg) => {
       this.countdownEnabled = msg.countdownEnabled !== false;
+      const myRes = msg.results?.find((r: any) => r.playerId === this.client.clientId);
+      if (myRes?.eliminated) this.eliminated = true;
       this.renderRoundResult(msg.previousCard, msg.revealedCard, msg.results, msg.scores, msg.specialEffects || []);
       this.previousCard = msg.previousCard;
       this.currentCard = msg.revealedCard;
@@ -96,12 +105,7 @@ export class MultiplayerUI {
     });
 
     this.client.on(MSG.ROOM_RESET, (msg) => {
-      this.round = 0;
-      this.currentCard = null;
-      this.previousCard = null;
-      this.hasPlayed = false;
-      this.inventory = [];
-      this.frozen = false;
+      this.resetState();
       this.isHost = msg.hostId === this.client.clientId;
       this.players = msg.players || [];
       if (msg.chatHistory) {
@@ -134,6 +138,34 @@ export class MultiplayerUI {
     this.client.on(MSG.SPECTATE_LEFT, () => {
       this.isSpectator = false;
     });
+
+    // WS status + chat handlers registered ONCE (not in setupChat which re-runs on each render)
+    this.client.on('disconnected', () => this.updateWsStatus('disconnected'));
+    this.client.on('reconnecting', () => this.updateWsStatus('reconnecting'));
+    this.client.on('reconnected', () => this.updateWsStatus('connected'));
+
+    this.client.on(MSG.CHAT_HISTORY, (msg: any) => {
+      if (!msg.messages) return;
+      this.chatMessages = msg.messages.map((m: any) => ({ senderId: m.senderId, senderName: m.senderName, text: m.text }));
+      this.renderChatMessages();
+    });
+
+    this.client.on(MSG.CHAT_MESSAGE, (msg: any) => {
+      this.chatMessages.push({ senderId: msg.senderId, senderName: msg.senderName, text: msg.text });
+      this.appendChatMessage(msg);
+      if (!this.chatExpanded) {
+        const handle = document.getElementById('chat-handle');
+        const sheet = document.getElementById('chat-sheet');
+        if (handle && sheet) {
+          handle.innerHTML = `<div class="chat-preview"><b>${msg.senderName}:</b> ${(msg.text || '').slice(0, 40)}</div>`;
+          sheet.classList.add('chat-peek');
+          setTimeout(() => {
+            handle.innerHTML = '<div class="chat-handle-bar"></div>';
+            sheet.classList.remove('chat-peek');
+          }, 4000);
+        }
+      }
+    });
   }
 
   show(roomId: string): void {
@@ -144,43 +176,64 @@ export class MultiplayerUI {
     this.container.innerHTML = '';
   }
 
+  private resetState(): void {
+    this.round = 0;
+    this.currentCard = null;
+    this.previousCard = null;
+    this.hasPlayed = false;
+    this.eliminated = false;
+    this.isSpectator = false;
+    this.frozen = false;
+    this.countdown = 0;
+    this.countdownEnabled = true;
+    this.inventory = [];
+    this.chatMessages = [];
+  }
+
   private render(): void {
     this.container.innerHTML = `
-      <div id="mp-header-slot"></div>
-      <div class="mp-game">
+      <div class="game-container">
+      <header class="game-header mp-header" style="position:relative">
+        <button id="leave-btn" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;opacity:0.6;padding:8px;z-index:10">←</button>
+        <h1>🎴 UpDown</h1>
+        <div class="stats">
+          <div class="stat"><span class="stat-label">Round</span><span class="stat-value" id="mp-round">0</span></div>
+          <div class="stat"><span class="stat-label">Players</span><span class="stat-value" id="mp-player-count">${this.players.length}</span></div>
+        </div>
+      </header>
+      <main class="game-board mp-game">
 
         <div class="mp-players" id="mp-players"></div>
 
-        <div class="mp-table">
-          <div class="mp-cards">
-            <div class="mp-card-col">
-              <span class="mp-card-label">Previous</span>
-              <div class="mp-card mp-prev" id="mp-prev-card">
-                <div class="card-placeholder">?</div>
-              </div>
-            </div>
-            <div class="mp-arrow">→</div>
-            <div class="mp-card-col">
-              <span class="mp-card-label">Current</span>
-              <div class="mp-card mp-current" id="mp-current-card">
-                <div class="card-placeholder">?</div>
-              </div>
+        <div class="cards-row">
+          <div class="previous-card-container">
+            <span class="card-label">Previous</span>
+            <div class="card-slot empty" id="mp-prev-card">
+              <span class="card-back">🂠</span>
             </div>
           </div>
-          <div class="mp-countdown" id="mp-countdown"></div>
+          <div class="cards-arrow">→</div>
+          <div class="current-card-container">
+            <span class="card-label">Current</span>
+            <div class="card-slot empty" id="mp-current-card">
+              <span class="card-back">🂠</span>
+            </div>
+          </div>
         </div>
+        <div class="mp-countdown" id="mp-countdown"></div>
 
         <div class="mp-controls" id="mp-controls"></div>
 
         <div class="mp-result" id="mp-result" style="display:none"></div>
         <div class="mp-gameover" id="mp-gameover" style="display:none"></div>
-      </div>
+      </main>
 
       <div class="chat-sheet" id="chat-sheet">
         <div class="chat-handle" id="chat-handle"><div class="chat-handle-bar"></div></div>
         <div class="chat-invite" id="chat-invite">
           <button id="chat-invite-btn" class="btn btn-small btn-primary">📨 Invite</button>
           <span class="chat-invite-label">Share room link</span>
+          <span id="ws-status" class="ws-status ws-connected" title="Connected">●</span>
         </div>
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input-bar">
@@ -188,31 +241,20 @@ export class MultiplayerUI {
           <button id="chat-send" class="btn btn-small btn-primary">Send</button>
         </div>
       </div>
+      </div>
     `;
 
-    // Insert shared header with Leave + Fullscreen buttons
-    const slot = document.getElementById('mp-header-slot');
-    if (slot) {
-      slot.replaceWith(renderHeader({
-        leftButton: { icon: '←', onClick: () => {
-          if (this.isSpectator) { this.client.leaveSpectate(); } else { this.client.leaveRoom(); }
-          this.isSpectator = false;
-          this.onLeaveRoom();
-        }},
-        centerText: `<span class="mp-round" id="mp-round"></span>`,
-        rightButtons: [
-          { icon: '⛶', onClick: () => {
-            if (document.fullscreenElement) { document.exitFullscreen(); }
-            else { document.documentElement.requestFullscreen().catch(() => {}); }
-          }}
-        ]
-      }));
-    }
+    // Leave button
+    document.getElementById('leave-btn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (this.isSpectator) { this.client.leaveSpectate(); } else { this.client.leaveRoom(); }
+      this.isSpectator = false;
+      this.onLeaveRoom();
+    });
 
     this.renderPlayers();
     this.renderControls();
     this.setupChat();
-    this.setupKeybindings();
 
     // Profile overlay (hidden by default)
     const profileEl = document.createElement('div');
@@ -225,6 +267,21 @@ export class MultiplayerUI {
     document.body.appendChild(profileEl);
   }
 
+  private updateWsStatus(state: string): void {
+    const el = document.getElementById('ws-status');
+    if (!el) return;
+    el.className = `ws-status ws-${state}`;
+    el.title = state === 'connected' ? 'Connected' : state === 'disconnected' ? 'Disconnected' : 'Reconnecting';
+  }
+
+  private localAvatarHtml(size: number): string {
+    const img = localStorage.getItem('updown-avatar');
+    if (img) return `<img src="${img}" width="${size}" height="${size}" style="border-radius:50%">`;
+    const card = localStorage.getItem('updown-avatar-card');
+    if (card) return `<span style="font-size:${size > 32 ? '2rem' : '0.9rem'}">${card}</span>`;
+    return '';
+  }
+
   private setupChat(): void {
     const sheet = document.getElementById('chat-sheet');
     const handle = document.getElementById('chat-handle');
@@ -235,15 +292,27 @@ export class MultiplayerUI {
     // Invite button in chat header
     document.getElementById('chat-invite-btn')?.addEventListener('click', async () => {
       const base = (window as any).__shareBase || location.origin;
-      await shareOrCopy(`${base}/mp?join=${this.roomId}`, document.getElementById('chat-invite-btn') as HTMLElement);
+      await shareOrCopy(`${base}/mp?join=${this.roomId}`, document.getElementById('chat-invite-btn') as HTMLElement, this.roomName);
     });
 
-    let expanded = false;
+    // WebSocket status indicator — initial state + click handler (listeners in constructor)
+    const wsStatus = document.getElementById('ws-status');
+    if (wsStatus) {
+      this.updateWsStatus(this.client.connected ? 'connected' : 'disconnected');
+      wsStatus.style.cursor = 'pointer';
+      wsStatus.addEventListener('click', async () => {
+        if (this.client.connected) return;
+        this.updateWsStatus('reconnecting');
+        try { await this.client.reconnect(); } catch { this.updateWsStatus('disconnected'); }
+      });
+    }
+
+    this.chatExpanded = false;
 
     // Toggle expand/collapse on handle tap
     handle.addEventListener('click', () => {
-      expanded = !expanded;
-      sheet.classList.toggle('chat-expanded', expanded);
+      this.chatExpanded = !this.chatExpanded;
+      sheet.classList.toggle('chat-expanded', this.chatExpanded);
     });
 
     // Touch drag on handle
@@ -251,8 +320,8 @@ export class MultiplayerUI {
     handle.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; }, { passive: true });
     handle.addEventListener('touchmove', (e) => {
       const dy = startY - e.touches[0].clientY;
-      if (dy > 30 && !expanded) { expanded = true; sheet.classList.add('chat-expanded'); }
-      if (dy < -30 && expanded) { expanded = false; sheet.classList.remove('chat-expanded'); }
+      if (dy > 30 && !this.chatExpanded) { this.chatExpanded = true; sheet.classList.add('chat-expanded'); }
+      if (dy < -30 && this.chatExpanded) { this.chatExpanded = false; sheet.classList.remove('chat-expanded'); }
     }, { passive: true });
 
     // Send message
@@ -264,40 +333,23 @@ export class MultiplayerUI {
     };
     sendBtn.addEventListener('click', doSend);
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') doSend(); });
-
-    // Receive messages
-    this.client.on(MSG.CHAT_HISTORY, (msg: any) => {
-      if (!msg.messages) return;
-      this.chatMessages = msg.messages.map((m: any) => ({ senderId: m.senderId, senderName: m.senderName, text: m.text }));
-      this.renderChatMessages();
-    });
-
-    this.client.on(MSG.CHAT_MESSAGE, (msg: any) => {
-      this.chatMessages.push({ senderId: msg.senderId, senderName: msg.senderName, text: msg.text });
-      this.appendChatMessage(msg);
-      // Show preview on handle when collapsed
-      if (!expanded && handle) {
-        handle.innerHTML = `<div class="chat-preview"><b>${msg.senderName}:</b> ${(msg.text || '').slice(0, 40)}</div>`;
-        sheet!.classList.add('chat-peek');
-        setTimeout(() => {
-          handle!.innerHTML = '<div class="chat-handle-bar"></div>';
-          sheet!.classList.remove('chat-peek');
-        }, 4000);
-      }
-    });
   }
 
   private renderPlayers(): void {
     const el = document.getElementById('mp-players');
     if (!el) return;
-    el.innerHTML = this.players.map(p => `
-      <div class="mp-player ${p.id === this.client.clientId ? 'mp-player-self' : ''}" id="player-${p.id}" data-pid="${p.id}">
-        <span class="mp-player-avatar">${p.avatarUrl ? `<img src="${p.avatarUrl}" width="24" height="24" style="border-radius:50%">` : '👤'}</span>
-        <span class="mp-player-name mp-clickable" data-pid="${p.id}">${p.name}${p.id === this.client.clientId ? ' (you)' : ''}</span>
+    el.innerHTML = this.players.map(p => {
+      const isSelf = p.id === this.client.clientId;
+      const avatar = isSelf ? (this.localAvatarHtml(24) || (p.avatarUrl ? `<img src="${p.avatarUrl}" width="24" height="24" style="border-radius:50%">` : '👤'))
+        : (p.avatarUrl ? `<img src="${p.avatarUrl}" width="24" height="24" style="border-radius:50%">` : '👤');
+      return `
+      <div class="mp-player ${isSelf ? 'mp-player-self' : ''}" id="player-${p.id}" data-pid="${p.id}">
+        <span class="mp-player-avatar">${avatar}</span>
+        <span class="mp-player-name mp-clickable" data-pid="${p.id}">${p.name}${isSelf ? ' (you)' : ''}</span>
         <span class="mp-player-score">${p.score || 0}</span>
         <span class="mp-player-status" id="status-${p.id}">●</span>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
 
     el.querySelectorAll('.mp-clickable').forEach(name => {
       name.addEventListener('click', () => {
@@ -315,11 +367,15 @@ export class MultiplayerUI {
     const profileEl = document.getElementById('player-profile');
     if (!profileEl) return;
 
+    const isSelf = playerId === this.client.clientId;
+    const avatar = isSelf ? (this.localAvatarHtml(64) || (p.avatarUrl ? `<img src="${p.avatarUrl}" width="64" height="64" style="border-radius:50%">` : '👤'))
+      : (p.avatarUrl ? `<img src="${p.avatarUrl}" width="64" height="64" style="border-radius:50%">` : (isBot ? '🤖' : '👤'));
+
     profileEl.style.display = 'flex';
     profileEl.innerHTML = `
       <div class="profile-sheet">
         <div class="chat-handle"><div class="chat-handle-bar"></div></div>
-        <div class="profile-avatar">${p.avatarUrl ? `<img src="${p.avatarUrl}" width="64" height="64" style="border-radius:50%">` : (isBot ? '🤖' : '👤')}</div>
+        <div class="profile-avatar">${avatar}</div>
         <h3 class="profile-name">${p.name}</h3>
         ${isBot ? '<p class="profile-bot-type">AI Bot — Card-counting heuristic</p>' : ''}
         <div class="profile-stats">
@@ -373,7 +429,7 @@ export class MultiplayerUI {
       }
       document.getElementById('invite-btn')?.addEventListener('click', async () => {
         const base = (window as any).__shareBase || location.origin;
-        await shareOrCopy(`${base}/mp?join=${this.roomId}`, document.getElementById('invite-btn') as HTMLElement);
+        await shareOrCopy(`${base}/mp?join=${this.roomId}`, document.getElementById('invite-btn') as HTMLElement, this.roomName);
       });
     }
   }
@@ -392,12 +448,12 @@ export class MultiplayerUI {
     const el = document.getElementById('mp-controls');
     if (!el) return;
 
-    if (this.isSpectator) {
-      el.innerHTML = '<p class="waiting-text">👁️ Watching — players are choosing...</p>';
+    if (this.isSpectator || this.eliminated) {
+      el.innerHTML = `<p class="waiting-text">👁️ ${this.eliminated ? 'Eliminated — watching remaining players...' : 'Watching — players are choosing...'}</p>`;
     } else if (this.frozen) {
       el.innerHTML = '<p class="waiting-text">🧊 Frozen! Cannot play this round.</p>';
     } else if (this.hasPlayed) {
-      const forceBtn = (this.isHost && !this.countdownEnabled) ? '<button id="force-next-btn" class="btn btn-primary" style="margin-top:8px;width:100%">⏩ Next Round</button>' : '';
+      const forceBtn = (this.isHost && !this.countdownEnabled) ? '<button id="force-next-btn" class="btn btn-primary" style="margin-top:8px;width:100%">Enforce Result ▶</button>' : '';
       el.innerHTML = `<p class="waiting-text">Card played! ${this.countdownEnabled ? 'Waiting for others...' : 'Waiting for host...'}</p>${forceBtn}`;
       document.getElementById('force-next-btn')?.addEventListener('click', () => { this.client.send({ type: MSG.FORCE_NEXT_ROUND }); });
     } else {
@@ -446,7 +502,7 @@ export class MultiplayerUI {
           const guess = (btn as HTMLElement).dataset.guess as 'up' | 'down' | 'equal';
           this.client.playCard(guess);
           this.hasPlayed = true;
-          el.innerHTML = '<p class="waiting-text">Card played! ✅</p>';
+          this.renderGame();
         });
       });
     }
@@ -457,18 +513,18 @@ export class MultiplayerUI {
     if (!el) return;
 
     if (!card) {
-      el.innerHTML = '<div class="card-placeholder">?</div>';
+      el.className = 'card-slot empty';
+      el.innerHTML = '<span class="card-back">🂠</span>';
       return;
     }
 
     const suitSymbol: Record<string, string> = { hearts: '♥', diamonds: '♦', clubs: '♣', spades: '♠' };
     const suitColor = (card.suit === 'hearts' || card.suit === 'diamonds') ? 'red' : 'black';
 
+    el.className = `card-slot card ${suitColor} flip-in`;
     el.innerHTML = `
-      <div class="playing-card ${suitColor} card-flip-in">
-        <span class="card-value">${card.value}</span>
-        <span class="card-suit">${suitSymbol[card.suit] || card.suit}</span>
-      </div>
+      <span class="card-value">${card.value}</span>
+      <span class="card-suit">${suitSymbol[card.suit] || card.suit}</span>
     `;
   }
 
@@ -509,9 +565,19 @@ export class MultiplayerUI {
     const myResult = results.find(r => r.playerId === this.client.clientId);
     const myEffects = specialEffects.filter((e: any) => e.playerId === this.client.clientId);
 
+    // Dead player not in results — keep previous feedback, just update scores
+    if (!myResult) {
+      scores.forEach(s => {
+        const p = this.players.find(pl => pl.id === s.id);
+        if (p) { p.score = s.score; p.alive = s.alive; }
+      });
+      this.renderPlayers();
+      return;
+    }
+
     // Build explanation
     const guessLabel: Record<string, string> = { up: '⬆️ HIGHER', down: '⬇️ LOWER', equal: '⚖️ EQUAL' };
-    const guessText = myResult?.guess ? guessLabel[myResult.guess] || myResult.guess : 'nothing';
+    const guessText = myResult.guess ? guessLabel[myResult.guess] || myResult.guess : 'did not bet (timeout)';
     let comparison = '';
     if (betCard && revealedCard) {
       if (revealedCard.numericValue > betCard.numericValue) comparison = 'went UP';
@@ -525,10 +591,10 @@ export class MultiplayerUI {
 
     el.style.display = 'block';
     el.innerHTML = `
-      <div class="mp-result-card ${myResult?.correct ? 'mp-result-correct' : 'mp-result-wrong'}">
-        <h3>${myResult?.correct ? '✅ Correct!' : myResult?.eliminated ? '💀 Eliminated!' : '❌ Wrong!'}</h3>
+      <div class="mp-result-card ${myResult.correct ? 'mp-result-correct' : 'mp-result-wrong'}">
+        <h3>${myResult.correct ? '✅ Correct!' : myResult.eliminated ? '💀 Eliminated!' : '❌ Wrong!'}</h3>
         <div class="mp-result-explain">
-          <span>You bet ${guessText}</span>
+          <span>You bet ${guessText}${!myResult.correct && comparison ? ` — card ${comparison}` : ''}</span>
           <div class="mp-result-cards">
             ${this.cardHtml(betCard, 'small')}
             <span class="mp-result-arrow">→</span>
@@ -560,7 +626,7 @@ export class MultiplayerUI {
       const controls = document.getElementById('mp-controls');
       if (controls) {
         controls.innerHTML = this.isHost
-          ? '<button id="enforce-next-btn" class="btn btn-primary" style="width:100%">Enforce Next Round ▶</button>'
+          ? '<button id="enforce-next-btn" class="btn btn-primary" style="width:100%">Next Round ▶</button>'
           : '<p class="waiting-text">Waiting for host...</p>';
         document.getElementById('enforce-next-btn')?.addEventListener('click', () => {
           this.client.send({ type: MSG.FORCE_NEXT_ROUND });
@@ -624,18 +690,19 @@ export class MultiplayerUI {
     });
   }
 
-  private setupKeybindings(): void {
-    const handler = (e: KeyboardEvent) => {
-      // Don't capture when typing in chat
-      if ((e.target as HTMLElement)?.tagName === 'INPUT') return;
-      if (this.hasPlayed || this.frozen || this.state === 'finished' || this.round === 0) return;
+  private keyHandler: ((e: KeyboardEvent) => void) | null = null;
 
+  private setupKeybindings(): void {
+    if (this.keyHandler) document.removeEventListener('keydown', this.keyHandler);
+    this.keyHandler = (e: KeyboardEvent) => {
+      if ((e.target as HTMLElement)?.tagName === 'INPUT') return;
+      if (this.hasPlayed || this.frozen || this.eliminated || this.round === 0) return;
       const key = e.key.toLowerCase();
       if (key === 'u' || key === 'arrowup') { this.client.playCard('up'); this.hasPlayed = true; this.renderGame(); }
       else if (key === 'd' || key === 'arrowdown') { this.client.playCard('down'); this.hasPlayed = true; this.renderGame(); }
       else if (key === 'e' || key === 'arrowleft' || key === 'arrowright') { this.client.playCard('equal'); this.hasPlayed = true; this.renderGame(); }
     };
-    document.addEventListener('keydown', handler);
+    document.addEventListener('keydown', this.keyHandler);
   }
 
   private get state(): string { return this.round > 0 && !this.hasPlayed ? 'playing' : this.round === 0 ? 'waiting' : 'played'; }

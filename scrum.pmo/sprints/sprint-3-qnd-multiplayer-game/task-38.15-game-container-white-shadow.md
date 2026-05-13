@@ -47,3 +47,14 @@ Note: text color needs to change from white to dark since container is now white
 3. Text color is dark (readable on white)
 4. Buttons still have colored backgrounds (not affected)
 5. Matches /ts .game-container visual weight
+6. NO white border/gap around header — header gradient flush with container top
+7. Header border-radius matches container top corners only
+
+## Bug: White Border Around Header (Tron found)
+#app has padding (8px) creating white gap between container edge and header. In /ts, .game-container has overflow:hidden and .game-header is first child with NO top padding.
+
+### Fix
+- #app padding: 0 (not 8px) — content padding moves to .lobby and .mp-game instead
+- OR: #app padding: 0 8px 8px 8px (no top padding)
+- .app-header border-radius: 20px 20px 0 0 (match container top corners)
+- overflow: hidden on #app clips header to container shape

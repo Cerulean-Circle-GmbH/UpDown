@@ -43,6 +43,7 @@ export interface GameRoomInfo {
   id: string;
   name: string;
   hostId: string;
+  hostConnected: boolean;
   playerCount: number;
   maxPlayers: number;
   isPrivate: boolean;
@@ -73,6 +74,7 @@ export class GameRoom {
   countdownTimer: NodeJS.Timeout | null = null;
   private countdownSeconds: number = 0;
   countdownEnabled: boolean = true;
+  createdAt: number = Date.now();
   private lobbyTimer: NodeJS.Timeout | null = null;
   private lobbyCountdown: number = 0;
 
@@ -115,9 +117,10 @@ export class GameRoom {
       roundsPlayed: 0, disconnected: false
     });
 
-    // Transfer host from 'server' to first human
-    if (this.hostId === 'server' && !this.bots.has(id)) {
+    // Transfer host to first human (from 'server' or from bot)
+    if (!this.bots.has(id) && (this.hostId === 'server' || this.bots.has(this.hostId))) {
       this.hostId = id;
+      this.broadcast({ type: MSG.HOST_CHANGED, hostId: this.hostId });
     }
 
     this.broadcast({ type: MSG.PLAYER_JOINED, player: this.playerInfo(id), playerCount: this.players.size, minPlayers: this.minPlayers });
@@ -283,8 +286,10 @@ export class GameRoom {
     }
 
     if (id === this.hostId && this.players.size > 0) {
-      const active = [...this.players.values()].find(p => !p.disconnected);
-      this.hostId = active?.id || this.players.keys().next().value!;
+      // Transfer to next human (skip bots), fallback to any player
+      const nextHuman = [...this.players.values()].find(p => !p.disconnected && !this.bots.has(p.id));
+      const fallback = [...this.players.values()].find(p => !p.disconnected);
+      this.hostId = nextHuman?.id || fallback?.id || this.players.keys().next().value!;
       this.broadcast({ type: MSG.HOST_CHANGED, hostId: this.hostId });
     }
   }
@@ -336,14 +341,13 @@ export class GameRoom {
 
     this.round++;
 
-    // GM plays a random card from hand
-    this.previousCard = this.currentCard;
-    const cardIndex = Math.floor(Math.random() * this.gmHand.length);
-    this.currentCard = this.gmHand.splice(cardIndex, 1)[0];
-
-    // Refill GM hand from deck
-    if (this.deck.length > 0) {
-      this.gmHand.push(this.deck.pop()!);
+    // Round 1: draw first card. Later rounds: currentCard was set by resolveRound()
+    if (!this.currentCard) {
+      const cardIndex = Math.floor(Math.random() * this.gmHand.length);
+      this.currentCard = this.gmHand.splice(cardIndex, 1)[0];
+      if (this.deck.length > 0) {
+        this.gmHand.push(this.deck.pop()!);
+      }
     }
 
     // Reset player guesses
@@ -667,6 +671,7 @@ export class GameRoom {
   info(): GameRoomInfo & { minPlayers: number; autoStart: boolean; shareUrl: string; spectatorCount: number } {
     return {
       id: this.id, name: this.name, hostId: this.hostId,
+      hostConnected: this.players.has(this.hostId),
       playerCount: this.players.size, maxPlayers: this.maxPlayers,
       isPrivate: this.isPrivate, state: this.state, round: this.round,
       minPlayers: this.minPlayers, autoStart: this.autoStart,
@@ -718,10 +723,19 @@ export class RoomManager {
   private rooms: Map<string, GameRoom> = new Map();
 
   createRoom(name: string, hostId: string, maxPlayers?: number, roomKey?: string | null): GameRoom {
-    const room = new GameRoom(name, hostId, maxPlayers, roomKey ?? null);
+    const uniqueName = this.uniqueNameGenerate(name);
+    const room = new GameRoom(uniqueName, hostId, maxPlayers, roomKey ?? null);
     room.setCleanupCallback(() => { this.removeRoom(room.id); });
     this.rooms.set(room.id, room);
     return room;
+  }
+
+  private uniqueNameGenerate(name: string): string {
+    const existing = new Set([...this.rooms.values()].map(r => r.name));
+    if (!existing.has(name)) return name;
+    let n = 2;
+    while (existing.has(`${name} (${n})`)) n++;
+    return `${name} (${n})`;
   }
 
   getRoom(roomId: string): GameRoom | undefined {
@@ -738,6 +752,23 @@ export class RoomManager {
     return [...this.rooms.values()]
       .filter(r => !r.isPrivate)
       .map(r => r.info());
+  }
+
+  cleanupStale(): number {
+    let removed = 0;
+    const now = Date.now();
+    for (const [id, room] of this.rooms) {
+      if (room.autoRecreate) continue;
+      if (room.state === 'waiting') continue; // Waiting rooms are NOT stale
+      const empty = room.players.size === 0 && room.spectators.size === 0;
+      const finished = room.state === 'finished';
+      const aged = (now - room.createdAt) > 10 * 60 * 1000;
+      if ((finished && empty) || (finished && aged) || (empty && aged)) {
+        this.removeRoom(id);
+        removed++;
+      }
+    }
+    return removed;
   }
 
   findPlayerRoom(playerId: string): GameRoom | undefined {

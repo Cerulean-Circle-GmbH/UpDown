@@ -43,6 +43,15 @@ export class WebSocketClient {
     });
   }
 
+  async reconnect(): Promise<void> {
+    if (this.ws) { try { this.ws.close(); } catch {} }
+    this.ws = null;
+    this.connected = false;
+    this.emit('reconnecting', {});
+    await this.connect();
+    this.emit('reconnected', {});
+  }
+
   send(msg: object): void {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(msg));
@@ -52,6 +61,12 @@ export class WebSocketClient {
   on(type: string, handler: MessageHandler): void {
     if (!this.handlers.has(type)) this.handlers.set(type, []);
     this.handlers.get(type)!.push(handler);
+  }
+
+  off(type: string, handler?: MessageHandler): void {
+    if (!handler) { this.handlers.delete(type); return; }
+    const list = this.handlers.get(type);
+    if (list) this.handlers.set(type, list.filter(h => h !== handler));
   }
 
   private emit(type: string, msg: any): void {
@@ -115,16 +130,17 @@ export class WebSocketClient {
   }
 }
 
-export function generateInviteMessage(url: string): { title: string; text: string; clipboardText: string } {
+export function generateInviteMessage(url: string, roomName?: string): { title: string; text: string; clipboardText: string } {
+  const suffix = roomName ? ` : ${roomName}` : '';
   return {
-    title: '🎴 UpDown — Higher or Lower?',
-    text: '🎴 Hey! Come play UpDown with me! Can you beat the odds? 🃏\nGuess higher, lower or equal — outlast everyone at the table! 🔥',
-    clipboardText: `🎴 Hey! Come play UpDown with me! Can you beat the odds? 🃏\n\nJoin here: ${url}`
+    title: `🎴 UpDown — Higher or Lower?${suffix}`,
+    text: `🎴 Hey! Come play UpDown with me! Can you beat the odds? 🃏\nGuess higher, lower or equal — outlast everyone at the table! 🔥${suffix}`,
+    clipboardText: `🎴 Hey! Come play UpDown with me! Can you beat the odds? 🃏\n\nJoin here: ${url}${suffix}`
   };
 }
 
-export async function shareOrCopy(url: string, feedbackEl?: HTMLElement): Promise<void> {
-  const invite = generateInviteMessage(url);
+export async function shareOrCopy(url: string, feedbackEl?: HTMLElement, roomName?: string): Promise<void> {
+  const invite = generateInviteMessage(url, roomName);
   if (navigator.share) {
     try { await navigator.share({ title: invite.title, text: invite.text, url }); } catch {}
   } else {
