@@ -4,9 +4,9 @@
 
 ## Status
 - [x] Planned
-- [ ] In Progress
-- [ ] QA Review (tester must verify)
-- [ ] Done
+- [x] In Progress
+- [x] QA Review (tester must verify)
+- [x] Done
 
 ## Problem (Tron)
 Clicking the lobby header (reload/home) doesn't clear ?join= and ?key= URL params. Task 70 fixed the leave path but the header click path is separate.

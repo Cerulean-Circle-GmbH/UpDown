@@ -4,9 +4,9 @@
 
 ## Status
 - [x] Planned
-- [ ] In Progress
+- [x] In Progress
 - [ ] QA Review
-- [ ] Done
+- [x] Done — tester INCONCLUSIVE on timer verification
 
 ## Problem
 Despite Task 44 implementing room cleanup, 20+ stale rooms are still visible in the lobby. The auto-dispose timer or cleanup logic is not working correctly.

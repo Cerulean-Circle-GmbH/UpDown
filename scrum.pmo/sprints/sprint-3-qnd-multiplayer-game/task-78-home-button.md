@@ -4,9 +4,9 @@
 
 ## Status
 - [x] Planned
-- [ ] In Progress
-- [ ] QA Review
-- [ ] Done
+- [x] In Progress
+- [x] QA Review
+- [x] Done
 
 ## Description
 Add a small home button/icon that navigates to the / page (main landing page). Should be visible from lobby and in-game views.

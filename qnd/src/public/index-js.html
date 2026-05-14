@@ -109,6 +109,16 @@
   </div>
 
   <script src="js/game.js"></script>
+  <div id="ud-ver" style="position:fixed;bottom:4px;left:50%;transform:translateX(-50%);z-index:200">
+    <span id="ud-nav-ver" style="cursor:pointer;color:rgba(255,255,255,0.4);font-size:0.65rem;text-decoration:underline;text-decoration-style:dotted" onclick="var p=document.getElementById('ud-project-nav');p.style.display=p.style.display==='none'?'flex':'none'">v0.3.0 · qndNow</span>
+  </div>
+  <div id="ud-project-nav" style="display:none;position:fixed;bottom:22px;left:0;right:0;justify-content:center;gap:8px;padding:6px;background:rgba(0,0,0,0.8);z-index:201;backdrop-filter:blur(6px)">
+    <a href="/md/qnd/README.md" style="padding:4px 10px;border-radius:6px;background:#667eea;color:white;text-decoration:none;font-size:0.7rem">📋 Spec</a>
+    <a href="/docs" style="padding:4px 10px;border-radius:6px;background:#667eea;color:white;text-decoration:none;font-size:0.7rem">📖 Docs</a>
+    <a href="/md/scrum.pmo/sprints/sprint-3-qnd-multiplayer-game/planning.md" style="padding:4px 10px;border-radius:6px;background:#667eea;color:white;text-decoration:none;font-size:0.7rem">🗂 Planning</a>
+    <span style="padding:4px 10px;border-radius:6px;background:#555;color:#888;font-size:0.7rem">🐛 Bug Report</span>
+  </div>
+  <script>fetch('/api/config').then(r=>r.json()).then(c=>{const e=document.getElementById('ud-nav-ver');if(e&&c.version)e.textContent='v'+c.version+' · '+(c.branch||'')}).catch(()=>{})</script>
 </body>
 </html>
 

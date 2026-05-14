@@ -4,9 +4,9 @@
 
 ## Status
 - [x] Planned
-- [ ] In Progress
-- [ ] QA Review
-- [ ] Done
+- [x] In Progress
+- [x] QA Review
+- [x] Done
 
 ## Requirement (Tron)
 User must be able to go back to the lobby WITHOUT any room parameters in the URL. Clean URL = lobby view. Add a "Back to Lobby" button that navigates to the base /mp URL with no query params (?join=, ?key= removed).

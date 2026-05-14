@@ -4,9 +4,9 @@
 
 ## Status
 - [x] Planned
-- [ ] In Progress
-- [ ] QA Review
-- [ ] Done
+- [x] In Progress
+- [x] QA Review
+- [x] Done
 
 ## Requirement (Tron)
 When sharing a room invite link, append ": room name" to the share text so the recipient knows which room they're joining.

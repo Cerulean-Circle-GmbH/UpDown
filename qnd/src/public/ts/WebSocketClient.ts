@@ -11,6 +11,16 @@ export class WebSocketClient {
   private handlers: Map<string, MessageHandler[]> = new Map();
   clientId: string = '';
   connected: boolean = false;
+  readonly playerToken: string;
+
+  constructor() {
+    let token = localStorage.getItem('updown-player-id');
+    if (!token) {
+      token = crypto.randomUUID();
+      localStorage.setItem('updown-player-id', token);
+    }
+    this.playerToken = token;
+  }
 
   // [uc:uuid:92a061e0] UC-C1: connection.open
   connect(): Promise<void> {
@@ -36,6 +46,17 @@ export class WebSocketClient {
           const msg = JSON.parse(event.data);
           if (msg.type === 'welcome') {
             this.clientId = msg.clientId;
+            this.send({
+              type: MSG.IDENTIFY,
+              playerToken: this.playerToken,
+              name: localStorage.getItem('updown-name') || '',
+              avatar: localStorage.getItem('updown-avatar') || localStorage.getItem('updown-avatar-card') || '',
+              phone: localStorage.getItem('updown-phone') || '',
+              url: localStorage.getItem('updown-url') || '',
+              screenWidth: screen.width,
+              screenHeight: screen.height,
+              platform: navigator.platform,
+            });
           }
           this.emit(msg.type, msg);
         } catch {}
@@ -74,14 +95,18 @@ export class WebSocketClient {
     if (handlers) handlers.forEach(h => h(msg));
   }
 
+  private clientAvatarUrl(): string {
+    return localStorage.getItem('updown-avatar') || '';
+  }
+
   // [uc:uuid:fbfed148] UC-R2: room.create — [uc:uuid:1c21171d] UC-R3: room.create.private
   createRoom(name: string, playerName: string, maxPlayers?: number, roomKey?: string): void {
-    this.send({ type: MSG.CREATE_ROOM, roomName: name, playerName, maxPlayers, roomKey });
+    this.send({ type: MSG.CREATE_ROOM, roomName: name, playerName, maxPlayers, roomKey, playerToken: this.playerToken, clientAvatar: this.clientAvatarUrl() });
   }
 
   // [uc:uuid:9cc60247] UC-R4: room.join — [uc:uuid:61449e82] UC-R5: room.join.private.correct — [uc:uuid:148f2e73] UC-R6: room.join.private.wrong
   joinRoom(roomId: string, playerName: string, roomKey?: string): void {
-    this.send({ type: MSG.JOIN_ROOM, roomId, playerName, roomKey });
+    this.send({ type: MSG.JOIN_ROOM, roomId, playerName, roomKey, playerToken: this.playerToken, clientAvatar: this.clientAvatarUrl() });
   }
 
   // [uc:uuid:96f2ecd5] UC-R10: room.leave
@@ -128,6 +153,18 @@ export class WebSocketClient {
   sendChat(text: string): void {
     this.send({ type: MSG.CHAT_MESSAGE, text });
   }
+}
+
+export function guardClick(btn: HTMLElement, action: () => void | Promise<void>): void {
+  btn.addEventListener('click', async () => {
+    if ((btn as HTMLButtonElement).disabled) return;
+    (btn as HTMLButtonElement).disabled = true;
+    btn.classList.add('loading');
+    try { await action(); } finally {
+      (btn as HTMLButtonElement).disabled = false;
+      btn.classList.remove('loading');
+    }
+  });
 }
 
 export function generateInviteMessage(url: string, roomName?: string): { title: string; text: string; clipboardText: string } {

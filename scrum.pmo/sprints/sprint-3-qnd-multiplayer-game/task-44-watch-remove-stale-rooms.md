@@ -4,9 +4,9 @@
 
 ## Status
 - [x] Planned
-- [ ] In Progress
-- [ ] QA Review
-- [ ] Done
+- [x] In Progress
+- [x] QA Review
+- [x] Done
 
 ## Requirement (Tron)
 1. Finished rooms show a "Remove" button instead of "Watch" in the lobby

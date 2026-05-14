@@ -4,9 +4,9 @@
 
 ## Status
 - [x] Planned
-- [ ] In Progress
-- [ ] QA Review
-- [ ] Done
+- [x] In Progress
+- [x] QA Review
+- [x] Done
 
 ## Problem
 Header/container CSS changes (38.15 white container with color:#333) caused text color regressions in several areas where content sits on dark backgrounds:

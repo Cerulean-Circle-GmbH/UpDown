@@ -35,6 +35,7 @@ export interface RoomPlayer {
   frozen: boolean;
   roundsPlayed: number;
   disconnected: boolean;
+  playerToken: string;
 }
 
 export type RoomState = 'waiting' | 'countdown' | 'revealing' | 'exchange' | 'finished';
@@ -83,6 +84,7 @@ export class GameRoom {
   autoRecreate: boolean;
   private recreateCallback: (() => void) | null = null;
   private cleanupCallback: (() => void) | null = null;
+  private gameOverCallback: ((leaderboard: any[]) => void) | null = null;
 
   constructor(name: string, hostId: string, maxPlayers: number = 10, roomKey: string | null = null, opts?: { minPlayers?: number; autoStart?: boolean; autoRecreate?: boolean; id?: string }) {
     this.id = opts?.id || crypto.randomUUID().slice(0, 8);
@@ -103,9 +105,12 @@ export class GameRoom {
   setCleanupCallback(cb: () => void): void {
     this.cleanupCallback = cb;
   }
+  setGameOverCallback(cb: (leaderboard: any[]) => void): void {
+    this.gameOverCallback = cb;
+  }
 
   // [uc:uuid:9cc60247] UC-R4: room.join — [uc:uuid:d0b57a5a] UC-R7: room.join.full — [uc:uuid:8db2e073] UC-R8: room.join.midGame
-  addPlayer(id: string, ws: WebSocket, name: string, avatarUrl: string): boolean {
+  addPlayer(id: string, ws: WebSocket, name: string, avatarUrl: string, playerToken: string = ''): boolean {
     if (this.players.size >= this.maxPlayers) return false; // [uc:uuid:d0b57a5a]
     if (this.state !== 'waiting' && this.state !== 'exchange') return false; // [uc:uuid:d466a7f1] UC-R9: room.join.rejected
 
@@ -114,7 +119,7 @@ export class GameRoom {
       score: 0, streak: 0, alive: true,
       currentGuess: null, specialCard: null, specialCardTarget: null,
       inventory: this.generateStarterInventory(), usedSpecials: [], frozen: false,
-      roundsPlayed: 0, disconnected: false
+      roundsPlayed: 0, disconnected: false, playerToken
     });
 
     // Transfer host to first human (from 'server' or from bot)
@@ -142,7 +147,7 @@ export class GameRoom {
       score: 0, streak: 0, alive: true,
       currentGuess: null, specialCard: null, specialCardTarget: null,
       inventory: this.generateStarterInventory(), usedSpecials: [], frozen: false,
-      roundsPlayed: 0, disconnected: false
+      roundsPlayed: 0, disconnected: false, playerToken: ''
     });
     this.bots.set(id, bot);
 
@@ -368,7 +373,8 @@ export class GameRoom {
         cardsLeft: this.deck.length + this.gmHand.length,
         alivePlayers: alivePlayers.map(p => p.id),
         inventory: player.inventory,
-        frozen: player.frozen
+        frozen: player.frozen,
+        level: Math.max(1, ...player.inventory.map(id => SPECIAL_CARDS.find(c => c.id === id)?.level || 1))
       });
     });
 
@@ -550,6 +556,13 @@ export class GameRoom {
 
     this.currentCard = nextCard;
 
+    // Auto-enable countdown if host was just eliminated and countdown was OFF
+    const hostPlayer = this.players.get(this.hostId);
+    if (hostPlayer && !hostPlayer.alive && !this.countdownEnabled) {
+      this.countdownEnabled = true;
+      this.broadcast({ type: MSG.COUNTDOWN_SETTING, countdownEnabled: true });
+    }
+
     this.broadcast({
       type: MSG.ROUND_RESULT,
       round: this.round,
@@ -601,13 +614,14 @@ export class GameRoom {
         const streakBonus = p.streak >= 10 ? 25 : p.streak >= 5 ? 10 : 0;
         const diamonds = rankDiamonds + roundDiamonds + streakBonus;
         return {
-          rank: i + 1, playerId: p.id, name: p.name,
+          rank: i + 1, playerId: p.id, playerToken: p.playerToken, name: p.name,
           score: p.score, rounds: p.roundsPlayed,
           maxStreak: p.streak, diamonds
         };
       });
 
     this.broadcast({ type: MSG.GAME_OVER, leaderboard, playAgain: true, roomId: this.id });
+    if (this.gameOverCallback) this.gameOverCallback(leaderboard);
 
     // Auto-recreate: instant so room ID is always valid (preset rooms only)
     if (this.autoRecreate) {
@@ -632,6 +646,11 @@ export class GameRoom {
     this.previousCard = null;
     this.deck = [];
     this.gmHand = [];
+
+    // Purge ghost players (disconnected/null-ws) before resetting survivors
+    for (const [id, p] of this.players) {
+      if (!p.ws || p.disconnected) this.players.delete(id);
+    }
 
     // Reset players but KEEP them connected
     this.players.forEach(player => {
@@ -673,9 +692,9 @@ export class GameRoom {
       id: this.id, name: this.name, hostId: this.hostId,
       hostConnected: this.players.has(this.hostId),
       playerCount: this.players.size, maxPlayers: this.maxPlayers,
-      isPrivate: this.isPrivate, state: this.state, round: this.round,
+      isPrivate: this.isPrivate, roomKey: this.roomKey, state: this.state, round: this.round,
       minPlayers: this.minPlayers, autoStart: this.autoStart,
-      shareUrl: `/mp?join=${this.id}`,
+      shareUrl: `/mp?join=${this.id}${this.roomKey ? `&key=${encodeURIComponent(this.roomKey)}` : ''}`,
       spectatorCount: this.spectators.size
     };
   }
@@ -721,11 +740,18 @@ export class GameRoom {
  */
 export class RoomManager {
   private rooms: Map<string, GameRoom> = new Map();
+  private globalGameOverCallback: ((leaderboard: any[]) => void) | null = null;
+
+  setGlobalGameOverCallback(cb: (leaderboard: any[]) => void): void {
+    this.globalGameOverCallback = cb;
+    for (const room of this.rooms.values()) room.setGameOverCallback(cb);
+  }
 
   createRoom(name: string, hostId: string, maxPlayers?: number, roomKey?: string | null): GameRoom {
     const uniqueName = this.uniqueNameGenerate(name);
     const room = new GameRoom(uniqueName, hostId, maxPlayers, roomKey ?? null);
     room.setCleanupCallback(() => { this.removeRoom(room.id); });
+    if (this.globalGameOverCallback) room.setGameOverCallback(this.globalGameOverCallback);
     this.rooms.set(room.id, room);
     return room;
   }
@@ -759,11 +785,14 @@ export class RoomManager {
     const now = Date.now();
     for (const [id, room] of this.rooms) {
       if (room.autoRecreate) continue;
-      if (room.state === 'waiting') continue; // Waiting rooms are NOT stale
+      if (room.state === 'waiting') continue;
       const empty = room.players.size === 0 && room.spectators.size === 0;
       const finished = room.state === 'finished';
-      const aged = (now - room.createdAt) > 10 * 60 * 1000;
-      if ((finished && empty) || (finished && aged) || (empty && aged)) {
+      const noHumans = room.players.size > 0 && [...room.players.values()].every(p => p.disconnected || !p.ws || p.id.startsWith('bot-'));
+      const agedShort = (now - room.createdAt) > 2 * 60 * 1000;
+      const agedLong = (now - room.createdAt) > 10 * 60 * 1000;
+      const agedMin = (now - room.createdAt) > 30 * 1000;
+      if ((empty && agedMin) || (finished && agedShort) || (finished && noHumans) || agedLong) {
         this.removeRoom(id);
         removed++;
       }
@@ -811,10 +840,10 @@ export class RoomManager {
       id, minPlayers, autoStart: true, autoRecreate: true
     });
     room.setRecreateCallback(() => {
-      // Reset room state for next game, keep the room alive
       this.rooms.delete(id);
       this.createPresetRoom(name, id, minPlayers, maxPlayers);
     });
+    if (this.globalGameOverCallback) room.setGameOverCallback(this.globalGameOverCallback);
     this.rooms.set(room.id, room);
   }
 }

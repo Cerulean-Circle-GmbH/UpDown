@@ -3,7 +3,7 @@
  * QnD Sprint 3: Vanilla DOM, no framework
  */
 
-import { WebSocketClient, shareOrCopy } from './WebSocketClient.js';
+import { WebSocketClient, shareOrCopy, guardClick } from './WebSocketClient.js';
 import { MSG } from '../../shared/MessageTypes.js';
 import { renderHeader } from './components/Header.js';
 
@@ -33,10 +33,11 @@ export class LobbyUI {
 
     // On WS connect: auto-load rooms, auto-join if ?join= param
     const joinId = params.get('join');
+    const joinKey = params.get('key') || undefined;
     this.client.on('welcome', () => {
       this.client.listRooms();
       if (joinId) {
-        this.client.joinRoom(joinId, this.playerName);
+        this.client.joinRoom(joinId, this.playerName, joinKey);
       }
     });
   }
@@ -53,8 +54,12 @@ export class LobbyUI {
   private render(): void {
     this.container.innerHTML = `
       <div class="game-container">
-      <header class="game-header">
+      <header class="game-header" style="position:relative">
         <h1>🎴 UpDown</h1>
+        <div style="position:absolute;right:2px;top:50%;transform:translateY(-50%);display:flex;gap:0;z-index:10">
+          <a id="home-btn" href="/" style="color:white;font-size:0.9rem;opacity:0.5;padding:10px;text-decoration:none;min-width:36px;min-height:36px;display:flex;align-items:center;justify-content:center">🏠</a>
+          <button id="fullscreen-btn" style="background:none;border:none;color:white;font-size:0.9rem;opacity:0.5;padding:10px;cursor:pointer;min-width:36px;min-height:36px;display:flex;align-items:center;justify-content:center">⛶</button>
+        </div>
       </header>
       <main class="lobby">
 
@@ -100,6 +105,7 @@ export class LobbyUI {
         <div class="lobby-actions">
           <button id="create-room-btn" class="btn btn-primary">🏠 Create Room</button>
           <button id="refresh-rooms-btn" class="btn btn-secondary">🔄 Refresh</button>
+          <button id="leaderboard-btn" class="btn btn-secondary">🏆</button>
         </div>
 
         <div class="lobby-create-form" id="create-form" style="display:none">
@@ -130,32 +136,38 @@ export class LobbyUI {
       </div>
     `;
 
-    // Header click — left for reload, right for fullscreen (same as /ts)
+    // Header click — left for reload
     const header = this.container.querySelector('.game-header');
     if (header) {
       header.addEventListener('click', (e: Event) => {
         const rect = (header as HTMLElement).getBoundingClientRect();
         const x = (e as MouseEvent).clientX - rect.left;
-        if (x < 50) { location.reload(); }
-        else if (x > rect.width - 50) {
-          if (document.fullscreenElement) { document.exitFullscreen(); }
-          else { document.documentElement.requestFullscreen().catch(() => {}); }
-        }
+        if (x < 50) { history.replaceState({}, '', '/mp'); location.reload(); }
       });
     }
+
+    document.getElementById('fullscreen-btn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (document.fullscreenElement) { document.exitFullscreen(); }
+      else { document.documentElement.requestFullscreen().catch(() => {}); }
+    });
 
     this.setupEvents();
   }
 
   private setupEvents(): void {
     const nameInput = document.getElementById('player-name') as HTMLInputElement;
-    nameInput?.addEventListener('change', () => {
+    const saveName = () => {
       this.playerName = nameInput.value.trim() || 'Player';
       localStorage.setItem('updown-name', this.playerName);
-    });
+    };
+    nameInput?.addEventListener('input', saveName);
+    nameInput?.addEventListener('change', saveName);
 
     // Profile panel
     document.getElementById('edit-profile-btn')?.addEventListener('click', () => {
+      const profileNameInput = document.getElementById('profile-name') as HTMLInputElement;
+      if (profileNameInput) profileNameInput.value = this.playerName;
       this.refreshAvatarPreview();
       document.getElementById('profile-panel')!.style.display = 'flex';
     });
@@ -211,7 +223,8 @@ export class LobbyUI {
         updateCardFromPickers();
       });
     });
-    document.getElementById('profile-save')?.addEventListener('click', () => {
+    const profileSaveBtn = document.getElementById('profile-save');
+    if (profileSaveBtn) guardClick(profileSaveBtn, () => {
       const name = (document.getElementById('profile-name') as HTMLInputElement).value.trim();
       const phone = (document.getElementById('profile-phone') as HTMLInputElement).value.trim();
       const url = (document.getElementById('profile-url') as HTMLInputElement).value.trim();
@@ -222,6 +235,8 @@ export class LobbyUI {
     });
 
     document.getElementById('create-room-btn')?.addEventListener('click', () => {
+      const roomNameInput = document.getElementById('room-name') as HTMLInputElement;
+      if (roomNameInput) roomNameInput.value = `${this.playerName}'s Room`;
       document.getElementById('create-form')!.style.display = 'block';
     });
 
@@ -229,17 +244,22 @@ export class LobbyUI {
       document.getElementById('create-form')!.style.display = 'none';
     });
 
-    document.getElementById('confirm-create-btn')?.addEventListener('click', () => {
+    const createBtn = document.getElementById('confirm-create-btn');
+    if (createBtn) guardClick(createBtn, () => {
       const name = (document.getElementById('room-name') as HTMLInputElement).value.trim();
       const key = (document.getElementById('room-key') as HTMLInputElement).value || undefined;
       this.client.createRoom(name, this.playerName, 10, key);
     });
 
-    document.getElementById('refresh-rooms-btn')?.addEventListener('click', () => {
-      this.client.listRooms();
+    const refreshBtn = document.getElementById('refresh-rooms-btn');
+    if (refreshBtn) guardClick(refreshBtn, () => { this.client.listRooms(); });
+
+    document.getElementById('leaderboard-btn')?.addEventListener('click', () => {
+      window.location.href = '/leaderboard';
     });
 
-    document.getElementById('join-private-btn')?.addEventListener('click', () => {
+    const joinPrivateBtn = document.getElementById('join-private-btn');
+    if (joinPrivateBtn) guardClick(joinPrivateBtn, () => {
       const roomId = (document.getElementById('join-room-id') as HTMLInputElement).value;
       const key = (document.getElementById('join-room-key') as HTMLInputElement).value || undefined;
       if (roomId) this.client.joinRoom(roomId, this.playerName, key);
@@ -275,10 +295,10 @@ export class LobbyUI {
           </div>
           <div class="room-status">
             <span class="room-state">${stateText}</span>
-            <button class="btn btn-share" data-room="${room.id}" title="Copy join link">🔗</button>
+            <button class="btn btn-share" data-room="${room.id}" data-key="${room.roomKey || ''}" data-name="${room.name}" title="Copy join link">🔗</button>
             ${room.state === 'waiting'
               ? `<button class="btn btn-join" data-room="${room.id}">Join</button>`
-              : room.state === 'finished' && room.hostId === this.client.clientId
+              : room.state === 'finished'
                 ? `<button class="btn btn-remove" data-room="${room.id}">🗑</button>`
                 : `<button class="btn btn-spectate" data-room="${room.id}">👁️ Watch</button>`
             }
@@ -287,14 +307,14 @@ export class LobbyUI {
     }).join('');
 
     list.querySelectorAll('.btn-join').forEach(btn => {
-      btn.addEventListener('click', () => {
+      guardClick(btn as HTMLElement, () => {
         const roomId = (btn as HTMLElement).dataset.room!;
         this.client.joinRoom(roomId, this.playerName);
       });
     });
 
     list.querySelectorAll('.btn-spectate').forEach(btn => {
-      btn.addEventListener('click', () => {
+      guardClick(btn as HTMLElement, () => {
         const roomId = (btn as HTMLElement).dataset.room!;
         this.client.spectateRoom(roomId, this.playerName);
         this.onEnterRoom(roomId);
@@ -302,17 +322,19 @@ export class LobbyUI {
     });
 
     list.querySelectorAll('.btn-remove').forEach(btn => {
-      btn.addEventListener('click', () => {
+      guardClick(btn as HTMLElement, () => {
         const roomId = (btn as HTMLElement).dataset.room!;
         this.client.send({ type: MSG.REMOVE_ROOM, roomId });
       });
     });
 
     list.querySelectorAll('.btn-share').forEach(btn => {
-      btn.addEventListener('click', async () => {
+      guardClick(btn as HTMLElement, async () => {
         const roomId = (btn as HTMLElement).dataset.room!;
+        const key = (btn as HTMLElement).dataset.key || '';
         const base = (window as any).__shareBase || location.origin;
-        await shareOrCopy(`${base}/mp?join=${roomId}`, btn as HTMLElement);
+        const url = `${base}/mp?join=${roomId}${key ? `&key=${encodeURIComponent(key)}` : ''}`;
+        await shareOrCopy(url, btn as HTMLElement, (btn as HTMLElement).dataset.name);
       });
     });
   }
@@ -332,6 +354,8 @@ export class LobbyUI {
     const el = document.getElementById('profile-avatar-preview');
     if (el) el.innerHTML = this.avatarPreviewHtml();
   }
+
+
 
   private showError(message: string): void {
     const el = document.getElementById('lobby-error');

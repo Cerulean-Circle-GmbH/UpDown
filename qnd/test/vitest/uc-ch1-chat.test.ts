@@ -98,6 +98,28 @@ describe('UC-CH1 chat.send [0dfe22b0]', () => {
     expect(hist.messages?.length).toBeGreaterThanOrEqual(2);
   });
 
+  it('AC-5: multiline lorem ipsum text preserved', async () => {
+    const { ws: wA } = await connectWs();
+    send(wA, { type: 'CREATE_ROOM', roomName: 'LoremRoom', playerName: 'Alice', maxPlayers: 4 });
+    await sleep(1000);
+    const { ws: wB } = await connectWs();
+    const cList = collectFor(wB, 1500);
+    send(wB, { type: 'LIST_ROOMS' });
+    const listMsgs = await cList;
+    const roomId = listMsgs.find((m: any) => m.type === 'ROOM_LIST')?.rooms?.find((r: any) => r.name === 'LoremRoom')?.id;
+    send(wB, { type: 'JOIN_ROOM', roomId, playerName: 'Bob' });
+    await sleep(1000);
+
+    const loremText = 'Lorem ipsum dolor sit amet.\nConsectetur adipiscing elit.\nSed do eiusmod tempor incididunt.';
+    const cBob = collectFor(wB, 2000);
+    send(wA, { type: 'CHAT_MESSAGE', text: loremText });
+    const msgs = await cBob;
+    const chat = msgs.find((m: any) => m.type === 'CHAT_MESSAGE' && m.text?.includes('Lorem'));
+    expect(chat).toBeDefined();
+    expect(chat.text).toContain('\n');
+    expect(chat.text.split('\n').length).toBe(3);
+  });
+
   it('AC-6: empty text → no broadcast', async () => {
     const { ws: wA } = await connectWs();
     send(wA, { type: 'CREATE_ROOM', roomName: 'EmptyChat', playerName: 'Alice', maxPlayers: 2 });

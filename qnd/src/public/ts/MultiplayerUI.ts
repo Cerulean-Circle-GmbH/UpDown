@@ -3,7 +3,7 @@
  * QnD Sprint 3: Shows table, players, GM card, countdown, Up/Down/Equal buttons
  */
 
-import { WebSocketClient, shareOrCopy } from './WebSocketClient.js';
+import { WebSocketClient, shareOrCopy, guardClick } from './WebSocketClient.js';
 import { MSG } from '../../shared/MessageTypes.js';
 import { renderHeader } from './components/Header.js';
 
@@ -20,6 +20,7 @@ export class MultiplayerUI {
   private container: HTMLElement;
   private roomId: string = '';
   private roomName: string = '';
+  private roomKey: string = '';
   private isHost: boolean = false;
   private players: any[] = [];
   private currentCard: Card | null = null;
@@ -28,12 +29,14 @@ export class MultiplayerUI {
   private hasPlayed: boolean = false;
   private round: number = 0;
   private inventory: string[] = [];
+  private playerLevel: number = 1;
   private frozen: boolean = false;
   private eliminated: boolean = false;
   private isSpectator: boolean = false;
   private chatMessages: { senderId: string; senderName: string; text: string }[] = [];
   private countdownEnabled: boolean = true;
   private chatExpanded: boolean = false;
+  private myProfile: any = null;
   private onLeaveRoom: () => void;
 
   constructor(client: WebSocketClient, container: HTMLElement, onLeaveRoom: () => void) {
@@ -46,6 +49,7 @@ export class MultiplayerUI {
       this.resetState();
       this.roomId = msg.room.id;
       this.roomName = msg.room.name || '';
+      this.roomKey = msg.room.roomKey || '';
       this.isHost = msg.room.hostId === this.client.clientId;
       this.players = msg.players;
       this.render();
@@ -65,7 +69,7 @@ export class MultiplayerUI {
 
     this.client.on(MSG.HOST_CHANGED, (msg) => {
       this.isHost = msg.hostId === this.client.clientId;
-      this.renderControls();
+      if (this.round > 0) this.renderGame(); else this.renderControls();
     });
 
     this.client.on(MSG.ROUND_START, (msg) => {
@@ -76,6 +80,7 @@ export class MultiplayerUI {
       this.countdownEnabled = msg.countdownEnabled !== false;
       this.inventory = msg.inventory || [];
       this.frozen = msg.frozen || false;
+      this.playerLevel = msg.level || 1;
       this.hasPlayed = false;
       this.eliminated = msg.alivePlayers ? !msg.alivePlayers.includes(this.client.clientId) : false;
       this.renderGame();
@@ -157,7 +162,10 @@ export class MultiplayerUI {
         const handle = document.getElementById('chat-handle');
         const sheet = document.getElementById('chat-sheet');
         if (handle && sheet) {
-          handle.innerHTML = `<div class="chat-preview"><b>${msg.senderName}:</b> ${(msg.text || '').slice(0, 40)}</div>`;
+          const preview = document.createElement('div'); preview.className = 'chat-preview';
+          const b = document.createElement('b'); b.textContent = `${msg.senderName}:`; preview.appendChild(b);
+          preview.appendChild(document.createTextNode(' ' + (msg.text || '').replace(/\n/g, ' ').slice(0, 40)));
+          handle.innerHTML = ''; handle.appendChild(preview);
           sheet.classList.add('chat-peek');
           setTimeout(() => {
             handle.innerHTML = '<div class="chat-handle-bar"></div>';
@@ -165,6 +173,10 @@ export class MultiplayerUI {
           }, 4000);
         }
       }
+    });
+
+    this.client.on(MSG.PROFILE, (msg: any) => {
+      if (msg.profile) this.myProfile = msg.profile;
     });
   }
 
@@ -187,6 +199,7 @@ export class MultiplayerUI {
     this.countdown = 0;
     this.countdownEnabled = true;
     this.inventory = [];
+    this.playerLevel = 1;
     this.chatMessages = [];
   }
 
@@ -196,6 +209,10 @@ export class MultiplayerUI {
       <header class="game-header mp-header" style="position:relative">
         <button id="leave-btn" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;opacity:0.6;padding:8px;z-index:10">←</button>
         <h1>🎴 UpDown</h1>
+        <div style="position:absolute;right:2px;top:50%;transform:translateY(-50%);display:flex;gap:0;z-index:10">
+          <a id="home-btn" href="/" style="color:white;font-size:0.9rem;opacity:0.5;padding:10px;text-decoration:none;min-width:36px;min-height:36px;display:flex;align-items:center;justify-content:center">🏠</a>
+          <button id="fullscreen-btn" style="background:none;border:none;color:white;font-size:0.9rem;opacity:0.5;padding:10px;cursor:pointer;min-width:36px;min-height:36px;display:flex;align-items:center;justify-content:center">⛶</button>
+        </div>
         <div class="stats">
           <div class="stat"><span class="stat-label">Round</span><span class="stat-value" id="mp-round">0</span></div>
           <div class="stat"><span class="stat-label">Players</span><span class="stat-value" id="mp-player-count">${this.players.length}</span></div>
@@ -245,26 +262,34 @@ export class MultiplayerUI {
     `;
 
     // Leave button
-    document.getElementById('leave-btn')?.addEventListener('click', (e) => {
-      e.stopPropagation();
+    const leaveBtn = document.getElementById('leave-btn');
+    if (leaveBtn) guardClick(leaveBtn, () => {
       if (this.isSpectator) { this.client.leaveSpectate(); } else { this.client.leaveRoom(); }
       this.isSpectator = false;
       this.onLeaveRoom();
+    });
+
+    document.getElementById('fullscreen-btn')?.addEventListener('click', () => {
+      if (document.fullscreenElement) { document.exitFullscreen(); }
+      else { document.documentElement.requestFullscreen().catch(() => {}); }
     });
 
     this.renderPlayers();
     this.renderControls();
     this.setupChat();
 
-    // Profile overlay (hidden by default)
-    const profileEl = document.createElement('div');
-    profileEl.id = 'player-profile';
-    profileEl.className = 'profile-overlay';
-    profileEl.style.display = 'none';
-    profileEl.addEventListener('click', (e) => {
-      if (e.target === profileEl) profileEl.style.display = 'none';
-    });
-    document.body.appendChild(profileEl);
+    // Profile overlay — reuse existing or create once
+    let profileEl = document.getElementById('player-profile');
+    if (!profileEl) {
+      profileEl = document.createElement('div');
+      profileEl.id = 'player-profile';
+      profileEl.className = 'profile-overlay';
+      profileEl.style.display = 'none';
+      profileEl.addEventListener('click', (e) => {
+        if (e.target === profileEl) profileEl.style.display = 'none';
+      });
+      document.body.appendChild(profileEl);
+    }
   }
 
   private updateWsStatus(state: string): void {
@@ -290,9 +315,11 @@ export class MultiplayerUI {
     if (!sheet || !handle || !input || !sendBtn) return;
 
     // Invite button in chat header
-    document.getElementById('chat-invite-btn')?.addEventListener('click', async () => {
+    const chatInviteBtn = document.getElementById('chat-invite-btn');
+    if (chatInviteBtn) guardClick(chatInviteBtn, async () => {
       const base = (window as any).__shareBase || location.origin;
-      await shareOrCopy(`${base}/mp?join=${this.roomId}`, document.getElementById('chat-invite-btn') as HTMLElement, this.roomName);
+      const url = `${base}/mp?join=${this.roomId}${this.roomKey ? `&key=${encodeURIComponent(this.roomKey)}` : ''}`;
+      await shareOrCopy(url, chatInviteBtn, this.roomName);
     });
 
     // WebSocket status indicator — initial state + click handler (listeners in constructor)
@@ -383,6 +410,19 @@ export class MultiplayerUI {
           <div class="profile-stat"><span class="profile-stat-val">${p.alive !== false ? '✅' : '💀'}</span><span class="profile-stat-label">Status</span></div>
           <div class="profile-stat"><span class="profile-stat-val">${this.round}</span><span class="profile-stat-label">Round</span></div>
         </div>
+        ${isSelf && this.myProfile?.devices?.length ? `
+          <div class="profile-devices">
+            <p style="font-size:0.7rem;opacity:0.6;margin:8px 0 4px">Devices</p>
+            ${this.myProfile.devices.map((d: any) => {
+              const ua = d.userAgent || '';
+              const short = ua.includes('Mobile') ? '📱 Mobile' : ua.includes('Mac') ? '💻 Mac' : ua.includes('Windows') ? '🖥 Windows' : ua.includes('Linux') ? '🐧 Linux' : '🌐 Browser';
+              return `<div style="font-size:0.7rem;opacity:0.8;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.1)">
+                <span>${short}</span> <span style="opacity:0.5">${d.screenSize || ''} · ${d.platform || ''}</span>
+                <span style="opacity:0.4;display:block">${d.connectionCount}× · last ${new Date(d.lastSeen).toLocaleDateString()}</span>
+              </div>`;
+            }).join('')}
+          </div>
+        ` : ''}
         <button class="btn btn-secondary profile-close" style="margin-top:12px;width:100%">Close</button>
       </div>
     `;
@@ -409,7 +449,8 @@ export class MultiplayerUI {
         <p class="waiting-text">👁️ Spectating</p>
         <button id="join-next-btn" class="btn btn-primary" style="margin-top:6px;width:100%">🎮 Join Next Game</button>
       `;
-      document.getElementById('join-next-btn')?.addEventListener('click', () => {
+      const joinNextBtn = document.getElementById('join-next-btn');
+      if (joinNextBtn) guardClick(joinNextBtn, () => {
         this.client.joinNextGame(localStorage.getItem('updown-name') || 'Player');
       });
     } else if (this.round === 0) {
@@ -421,15 +462,19 @@ export class MultiplayerUI {
           <button id="toggle-countdown-btn" class="btn btn-secondary" style="margin-top:6px;width:100%">⏱️ Countdown: ${this.countdownEnabled ? 'ON' : 'OFF'}</button>
           ${inviteBtn}
         `;
-        document.getElementById('start-game-btn')?.addEventListener('click', () => { this.client.startGame(); });
-        document.getElementById('add-bot-btn')?.addEventListener('click', () => { this.client.addBot(); });
+        const startBtn = document.getElementById('start-game-btn');
+        if (startBtn) guardClick(startBtn, () => { this.client.startGame(); });
+        const addBotBtn = document.getElementById('add-bot-btn');
+        if (addBotBtn) guardClick(addBotBtn, () => { this.client.addBot(); });
         document.getElementById('toggle-countdown-btn')?.addEventListener('click', () => { this.client.send({ type: MSG.TOGGLE_COUNTDOWN }); });
       } else {
         el.innerHTML = `<p class="waiting-text">Waiting for host to start...</p>${inviteBtn}`;
       }
-      document.getElementById('invite-btn')?.addEventListener('click', async () => {
+      const invBtn = document.getElementById('invite-btn');
+      if (invBtn) guardClick(invBtn, async () => {
         const base = (window as any).__shareBase || location.origin;
-        await shareOrCopy(`${base}/mp?join=${this.roomId}`, document.getElementById('invite-btn') as HTMLElement, this.roomName);
+        const url = `${base}/mp?join=${this.roomId}${this.roomKey ? `&key=${encodeURIComponent(this.roomKey)}` : ''}`;
+        await shareOrCopy(url, invBtn, this.roomName);
       });
     }
   }
@@ -455,7 +500,8 @@ export class MultiplayerUI {
     } else if (this.hasPlayed) {
       const forceBtn = (this.isHost && !this.countdownEnabled) ? '<button id="force-next-btn" class="btn btn-primary" style="margin-top:8px;width:100%">Enforce Result ▶</button>' : '';
       el.innerHTML = `<p class="waiting-text">Card played! ${this.countdownEnabled ? 'Waiting for others...' : 'Waiting for host...'}</p>${forceBtn}`;
-      document.getElementById('force-next-btn')?.addEventListener('click', () => { this.client.send({ type: MSG.FORCE_NEXT_ROUND }); });
+      const fb2 = document.getElementById('force-next-btn');
+      if (fb2) guardClick(fb2, () => { this.client.send({ type: MSG.FORCE_NEXT_ROUND }); });
     } else {
       // Special card names for display
       const CARD_INFO: Record<string, { emoji: string; name: string }> = {
@@ -480,6 +526,7 @@ export class MultiplayerUI {
         </div>
         ${this.inventory.length > 0 ? `
           <div class="mp-special-cards">
+            <span style="font-size:0.7rem;opacity:0.6;width:100%;text-align:center;display:block;margin-bottom:2px">Lv.${this.playerLevel} ${'⭐'.repeat(this.playerLevel)}</span>
             ${this.inventory.map(cardId => {
               const info = CARD_INFO[cardId] || { emoji: '🎴', name: cardId };
               return `<button class="btn btn-special" data-card="${cardId}">${info.emoji} ${info.name}</button>`;
@@ -489,16 +536,15 @@ export class MultiplayerUI {
       `;
 
       el.querySelectorAll('.btn-special').forEach(btn => {
-        btn.addEventListener('click', () => {
+        guardClick(btn as HTMLElement, () => {
           const cardId = (btn as HTMLElement).dataset.card!;
           this.client.playSpecial(cardId);
           (btn as HTMLButtonElement).disabled = true;
-          (btn as HTMLElement).style.opacity = '0.4';
         });
       });
 
       el.querySelectorAll('.btn-guess').forEach(btn => {
-        btn.addEventListener('click', () => {
+        guardClick(btn as HTMLElement, () => {
           const guess = (btn as HTMLElement).dataset.guess as 'up' | 'down' | 'equal';
           this.client.playCard(guess);
           this.hasPlayed = true;
@@ -628,10 +674,8 @@ export class MultiplayerUI {
         controls.innerHTML = this.isHost
           ? '<button id="enforce-next-btn" class="btn btn-primary" style="width:100%">Next Round ▶</button>'
           : '<p class="waiting-text">Waiting for host...</p>';
-        document.getElementById('enforce-next-btn')?.addEventListener('click', () => {
-          this.client.send({ type: MSG.FORCE_NEXT_ROUND });
-        });
-        document.getElementById('enforce-next-btn')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const enBtn = document.getElementById('enforce-next-btn');
+        if (enBtn) { guardClick(enBtn, () => { this.client.send({ type: MSG.FORCE_NEXT_ROUND }); }); enBtn.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
       }
     }
 
@@ -679,12 +723,13 @@ export class MultiplayerUI {
       </div>
     `;
 
-    document.getElementById('play-again-btn')?.addEventListener('click', () => {
-      // Stay connected — send PLAY_AGAIN, server resets room, broadcasts ROOM_RESET
+    const playAgainBtn = document.getElementById('play-again-btn');
+    if (playAgainBtn) guardClick(playAgainBtn, () => {
       this.client.send({ type: MSG.PLAY_AGAIN });
     });
 
-    document.getElementById('back-lobby-btn')?.addEventListener('click', () => {
+    const backLobbyBtn = document.getElementById('back-lobby-btn');
+    if (backLobbyBtn) guardClick(backLobbyBtn, () => {
       this.client.leaveRoom();
       this.onLeaveRoom();
     });
@@ -707,15 +752,23 @@ export class MultiplayerUI {
 
   private get state(): string { return this.round > 0 && !this.hasPlayed ? 'playing' : this.round === 0 ? 'waiting' : 'played'; }
 
+  private createChatBubble(senderId: string, senderName: string, text: string): HTMLElement {
+    const div = document.createElement('div');
+    div.className = `chat-msg ${senderId === this.client.clientId ? 'chat-self' : ''}`;
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'chat-name';
+    nameSpan.textContent = senderName;
+    div.appendChild(nameSpan);
+    div.appendChild(document.createTextNode(' ' + text));
+    return div;
+  }
+
   private renderChatMessages(): void {
     const el = document.getElementById('chat-messages');
     if (!el) return;
     el.innerHTML = '';
     for (const m of this.chatMessages) {
-      const div = document.createElement('div');
-      div.className = `chat-msg ${m.senderId === this.client.clientId ? 'chat-self' : ''}`;
-      div.innerHTML = `<span class="chat-name">${m.senderName}</span> ${m.text}`;
-      el.appendChild(div);
+      el.appendChild(this.createChatBubble(m.senderId, m.senderName, m.text));
     }
     el.scrollTop = el.scrollHeight;
   }
@@ -723,10 +776,7 @@ export class MultiplayerUI {
   private appendChatMessage(msg: { senderId: string; senderName: string; text: string }): void {
     const el = document.getElementById('chat-messages');
     if (!el) return;
-    const div = document.createElement('div');
-    div.className = `chat-msg ${msg.senderId === this.client.clientId ? 'chat-self' : ''}`;
-    div.innerHTML = `<span class="chat-name">${msg.senderName}</span> ${msg.text}`;
-    el.appendChild(div);
+    el.appendChild(this.createChatBubble(msg.senderId, msg.senderName, msg.text));
     el.scrollTop = el.scrollHeight;
   }
 }

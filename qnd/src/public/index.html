@@ -160,6 +160,16 @@
   <div class="container">
     <h1>🎴 UpDown</h1>
     <p class="subtitle">Choose Your Version</p>
+    <p id="version-info" style="text-align:center;font-size:0.75rem;color:#667eea;margin-bottom:20px;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px" onclick="document.getElementById('project-nav').style.display=document.getElementById('project-nav').style.display==='none'?'block':'none'">v0.3.0 · qndNow</p>
+    <div id="project-nav" style="display:none;background:#f0f0ff;border-radius:10px;padding:12px;margin-bottom:20px;text-align:center">
+      <p style="font-size:0.8rem;font-weight:600;color:#333;margin-bottom:8px">Project</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
+        <a href="/md/qnd/README.md" style="padding:6px 12px;border-radius:8px;background:#667eea;color:white;text-decoration:none;font-size:0.8rem">📋 Spec</a>
+        <a href="/docs" style="padding:6px 12px;border-radius:8px;background:#667eea;color:white;text-decoration:none;font-size:0.8rem">📖 Docs</a>
+        <a href="/md/scrum.pmo/sprints/sprint-3-qnd-multiplayer-game/planning.md" style="padding:6px 12px;border-radius:8px;background:#667eea;color:white;text-decoration:none;font-size:0.8rem">🗂 Sprint Planning</a>
+        <span style="padding:6px 12px;border-radius:8px;background:#ccc;color:#888;font-size:0.8rem">🐛 Bug Report</span>
+      </div>
+    </div>
 
     <div class="version-cards">
       <a href="js/" class="version-card">
@@ -210,12 +220,17 @@
     // Auto-redirect based on query parameter
     const params = new URLSearchParams(window.location.search);
     const version = params.get('v');
-    
+
     if (version === 'js') {
       window.location.href = 'js/';
     } else if (version === 'ts') {
       window.location.href = 'ts/';
     }
+
+    fetch('/api/config').then(r => r.json()).then(c => {
+      const el = document.getElementById('version-info');
+      if (el && c.version) el.textContent = `v${c.version} · ${c.branch || ''}`;
+    }).catch(() => {});
   </script>
 </body>
 </html>

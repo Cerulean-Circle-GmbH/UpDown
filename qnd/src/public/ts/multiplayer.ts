@@ -17,6 +17,7 @@ const lobby = new LobbyUI(client, container, (roomId) => {
 const game = new MultiplayerUI(client, container, () => {
   game.hide();
   lobby.show();
+  history.replaceState({}, '', '/mp');
 });
 
 // Fetch server config for share URLs

@@ -6,8 +6,8 @@
 ## Status
 - [x] Planned
 - [x] Architect Review — **ALREADY IMPLEMENTED** (see below)
-- [ ] QA Review (tester verification pending)
-- [ ] Done
+- [x] QA Review (tester verification pending)
+- [x] Done
 
 ## Requirement (Tron)
 Host plays a card → if countdown OFF: show "Enforce Result" button. If countdown ON: countdown starts. After feedback shown → "Next Round" button. All state changes live-update to other players.

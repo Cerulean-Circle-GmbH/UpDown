@@ -16,6 +16,7 @@ import { promisify } from 'node:util';
 import readline from 'node:readline';
 import { WebSocketServer, WebSocket } from 'ws';
 import fetch from 'node-fetch';
+import { marked } from 'marked';
 import { RoomManager } from './GameRoom.js';
 import { MSG } from '../shared/MessageTypes.js';
 
@@ -89,6 +90,7 @@ interface WebSocketClient {
   ws: WebSocket;
   id: string;
   ip: string;
+  userAgent: string;
   connectedAt: number;
   avatarUrl: string;
 }
@@ -97,10 +99,76 @@ interface WebSocketClient {
 const clientSessions = new Map<string, ClientSession>();
 const wsClients = new Set<WebSocketClient>();
 const avatarCache = new Map<string, string>(); // clientId -> data URL
+const tokenToClient = new Map<string, string>(); // playerToken -> clientId
 let totalRequests = 0;
+
+// Player profiles — persisted to data/profiles.json
+interface DeviceInfo {
+  userAgent: string;
+  ip: string;
+  screenSize: string;
+  platform: string;
+  firstSeen: string;
+  lastSeen: string;
+  connectionCount: number;
+}
+interface PlayerProfile {
+  token: string;
+  name: string;
+  avatar: string;
+  phone: string;
+  url: string;
+  devices: DeviceInfo[];
+  gamesPlayed: number;
+  wins: number;
+  totalScore: number;
+  totalDiamonds: number;
+  bestScore: number;
+  bestStreak: number;
+  bestRank: number;
+  lastPlayed: string;
+}
+const PROFILES_PATH = path.join(__dirname, '../../../data/profiles.json');
+const playerProfiles = new Map<string, PlayerProfile>();
+
+function loadProfiles(): void {
+  try {
+    if (fsSync.existsSync(PROFILES_PATH)) {
+      const data = JSON.parse(fsSync.readFileSync(PROFILES_PATH, 'utf-8'));
+      for (const p of data) playerProfiles.set(p.token, p);
+    }
+  } catch {}
+}
+function saveProfiles(): void {
+  try {
+    fsSync.mkdirSync(path.dirname(PROFILES_PATH), { recursive: true });
+    fsSync.writeFileSync(PROFILES_PATH, JSON.stringify([...playerProfiles.values()], null, 2));
+  } catch {}
+}
+loadProfiles();
+
+function recordGameResults(leaderboard: any[]): void {
+  addLog(`🏆 Recording ${leaderboard.length} game results`);
+  for (const entry of leaderboard) {
+    const token = entry.playerToken;
+    if (!token) continue;
+    const profile = playerProfiles.get(token);
+    if (!profile) continue;
+    profile.gamesPlayed = (profile.gamesPlayed || 0) + 1;
+    profile.totalScore = (profile.totalScore || 0) + entry.score;
+    profile.totalDiamonds = (profile.totalDiamonds || 0) + (entry.diamonds || 0);
+    profile.wins = (profile.wins || 0) + (entry.rank === 1 ? 1 : 0);
+    profile.bestScore = Math.max(profile.bestScore || 0, entry.score);
+    profile.bestStreak = Math.max(profile.bestStreak || 0, entry.maxStreak || 0);
+    profile.bestRank = Math.min(profile.bestRank || 999, entry.rank);
+    profile.lastPlayed = new Date().toISOString();
+  }
+  saveProfiles();
+}
 
 // Game room manager — preset rooms created on startup
 const roomManager = new RoomManager();
+roomManager.setGlobalGameOverCallback(recordGameResults);
 roomManager.createPresetRooms();
 let serverStartTime = new Date();
 const serverLogs: string[] = [];
@@ -160,11 +228,71 @@ async function handleRequest(req: http.IncomingMessage, res: http.ServerResponse
   try {
     let filepath = req.url || '/';
 
+    // API: leaderboard data
+    if (filepath === '/api/leaderboard') {
+      const entries = [...playerProfiles.values()]
+        .filter(p => (p.gamesPlayed || 0) > 0)
+        .sort((a, b) => (b.totalDiamonds || 0) - (a.totalDiamonds || 0)
+          || (b.wins || 0) - (a.wins || 0)
+          || (b.bestScore || 0) - (a.bestScore || 0)
+          || (b.gamesPlayed || 0) - (a.gamesPlayed || 0))
+        .map((p, i) => ({
+          rank: i + 1, name: p.name || 'Unknown',
+          totalDiamonds: p.totalDiamonds || 0, wins: p.wins || 0,
+          gamesPlayed: p.gamesPlayed || 0, bestScore: p.bestScore || 0,
+          bestStreak: p.bestStreak || 0
+        }));
+      res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' });
+      res.end(JSON.stringify({ entries }));
+      return;
+    }
+
     // API: serve config for client
     if (filepath === '/api/config') {
       const domain = BASE_DOMAIN || getLocalIP();
       res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' });
-      res.end(JSON.stringify({ baseDomain: domain, httpsPort: HTTPS_PORT }));
+      res.end(JSON.stringify({ baseDomain: domain, httpsPort: HTTPS_PORT, version: '0.3.0', branch: 'qndNow' }));
+      return;
+    }
+
+    // Docs: render .md files from project
+    const PROJECT_ROOT = path.join(__dirname, '../../../../');
+    const DOCS_DIR = path.join(__dirname, '../../../docs');
+    const MD_CSS = 'body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;max-width:700px;margin:40px auto;padding:0 20px;color:#333;line-height:1.6}a{color:#667eea}h1,h2,h3{margin-top:1.5em}code{background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:0.9em}pre{background:#f5f5f5;padding:12px;border-radius:8px;overflow-x:auto}pre code{background:none;padding:0}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#f5f5f5}';
+    if (filepath === '/docs' || filepath === '/docs/') {
+      try {
+        const files = fsSync.readdirSync(DOCS_DIR).filter(f => f.endsWith('.md'));
+        const list = files.map(f => `<li><a href="/docs/${f}">${f.replace('.md', '')}</a></li>`).join('');
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(`<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>UpDown Docs</title><style>${MD_CSS}</style></head><body><h1>📖 UpDown Docs</h1><p><a href="/">← Home</a></p><ul>${list}</ul></body></html>`);
+      } catch { res.writeHead(404); res.end('Docs not found'); }
+      return;
+    }
+    if (filepath.startsWith('/docs/') && filepath.endsWith('.md')) {
+      const relPath = filepath.slice(6);
+      if (relPath.includes('..')) { res.writeHead(403); res.end('Forbidden'); return; }
+      const mdFile = path.join(DOCS_DIR, relPath);
+      try {
+        const md = fsSync.readFileSync(mdFile, 'utf-8');
+        const html = marked(md) as string;
+        const backLink = path.dirname(relPath) === '.' ? '/docs' : `/docs/${path.dirname(relPath)}`;
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(`<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${path.basename(filepath, '.md')} — UpDown</title><style>${MD_CSS}</style></head><body><p><a href="${backLink}">← Back</a> · <a href="/docs">Docs</a> · <a href="/">Home</a></p>${html}</body></html>`);
+      } catch { res.writeHead(404); res.end('Doc not found'); }
+      return;
+    }
+    if (filepath.startsWith('/md/') && filepath.endsWith('.md')) {
+      const relPath = filepath.slice(4);
+      if (relPath.includes('..')) { res.writeHead(403); res.end('Forbidden'); return; }
+      const mdFile = path.join(PROJECT_ROOT, relPath);
+      try {
+        const md = fsSync.readFileSync(mdFile, 'utf-8');
+        const dirPrefix = path.dirname(relPath);
+        const relinked = md.replace(/\]\(([^)]+\.md)\)/g, (_, p) => `](/md/${dirPrefix}/${p})`);
+        const html = marked(relinked) as string;
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(`<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${path.basename(filepath, '.md')} — UpDown</title><style>${MD_CSS}</style></head><body><p><a href="/">← Home</a></p>${html}</body></html>`);
+      } catch { res.writeHead(404); res.end('File not found'); }
       return;
     }
 
@@ -180,6 +308,39 @@ async function handleRequest(req: http.IncomingMessage, res: http.ServerResponse
       filepath = '/index-ts.html'; // Serve the main HTML file
     } else if (filepath === '/mp' || filepath === '/mp/' || filepath === '/multiplayer' || filepath === '/multiplayer/') {
       filepath = '/multiplayer.html';
+    } else if (filepath === '/leaderboard' || filepath === '/leaderboard/') {
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(`<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>🏆 Leaderboard — UpDown</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:#333}
+.container{background:white;border-radius:20px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.3);max-width:500px;width:100%}
+h1{text-align:center;margin-bottom:16px;font-size:1.5rem}
+.back{display:inline-block;margin-bottom:12px;color:#667eea;text-decoration:none;font-size:0.9rem}
+.row{display:flex;justify-content:space-between;padding:8px 10px;border-radius:6px;font-size:0.85rem;margin-bottom:4px}
+.row:nth-child(odd){background:rgba(102,126,234,0.06)}
+.medal{font-size:1rem;margin-right:4px}
+.name{flex:1;margin-left:6px;font-weight:600}
+.stat{opacity:0.7;font-size:0.8rem;margin-left:8px}
+.empty{text-align:center;opacity:0.6;padding:20px}
+.ver{text-align:center;font-size:0.7rem;opacity:0.4;margin-top:16px}
+</style></head><body>
+<div class="container">
+<a class="back" href="/mp">← Back to Lobby</a>
+<h1>🏆 Leaderboard</h1>
+<div id="lb"><p class="empty">Loading...</p></div>
+<p class="ver" id="ver"></p>
+</div>
+<script>
+fetch('/api/leaderboard').then(r=>r.json()).then(d=>{
+  const lb=document.getElementById('lb');
+  if(!d.entries||!d.entries.length){lb.innerHTML='<p class="empty">No games played yet</p>';return}
+  lb.innerHTML=d.entries.slice(0,50).map(e=>{
+    const m=e.rank===1?'🥇':e.rank===2?'🥈':e.rank===3?'🥉':'#'+e.rank;
+    return '<div class="row"><span class="medal">'+m+'</span><span class="name">'+e.name+'</span><span class="stat">💎'+e.totalDiamonds+'</span><span class="stat">'+e.wins+'W</span><span class="stat">'+e.gamesPlayed+'G</span><span class="stat">'+e.bestStreak+'🔥</span></div>'
+  }).join('')
+}).catch(()=>{document.getElementById('lb').innerHTML='<p class="empty">Could not load leaderboard</p>'});
+fetch('/api/config').then(r=>r.json()).then(c=>{document.getElementById('ver').textContent='v'+c.version+' · '+c.branch}).catch(()=>{});
+</script></body></html>`);
+      return;
     }
     
     const fullPath = path.join(PUBLIC_DIR, filepath);
@@ -306,13 +467,14 @@ function setupWebSocketServer(server: https.Server): void {
     const ip = req.socket.remoteAddress || 'unknown';
     const clientId = `${ip}-${Date.now()}`;
     const connectedAt = Date.now();
-    
+    const userAgent = req.headers['user-agent'] || '';
+
     // Fetch a unique avatar from thispersondoesnotexist.com
     // Each call generates a NEW image
     const avatarUrl = await fetchUniqueAvatar();
     avatarCache.set(clientId, avatarUrl);
-    
-    const client: WebSocketClient = { ws, id: clientId, ip, connectedAt, avatarUrl };
+
+    const client: WebSocketClient = { ws, id: clientId, ip, userAgent, connectedAt, avatarUrl };
     wsClients.add(client);
     
     addLog(`🎮 WebSocket connected: ${ip} (${wsClients.size} online)`);
@@ -345,6 +507,7 @@ function setupWebSocketServer(server: https.Server): void {
     ws.on('close', () => {
       wsClients.delete(client);
       avatarCache.delete(clientId);
+      for (const [token, cid] of tokenToClient) { if (cid === clientId) tokenToClient.delete(token); }
       addLog(`👋 WebSocket disconnected: ${ip} (${wsClients.size} online)`);
 
       // Remove from any game room or spectator list
@@ -414,13 +577,15 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
 
       const playerName = msg.playerName || 'Player';
       const roomName = msg.roomName || msg.name || `${playerName}'s Room`;
+      const useAvatar = msg.clientAvatar || avatarUrl;
       const room = roomManager.createRoom(
         roomName,
         clientId,
         msg.maxPlayers || 10,
         msg.roomKey || null
       );
-      room.addPlayer(clientId, ws, playerName, avatarUrl);
+      if (msg.playerToken) tokenToClient.set(msg.playerToken, clientId);
+      room.addPlayer(clientId, ws, playerName, useAvatar, msg.playerToken || '');
       room.hostId = clientId; // Creator is ALWAYS host
       addLog(`🏠 Room created: ${room.name} (${room.id}) by ${clientId.slice(0,8)}`);
       break;
@@ -430,9 +595,29 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       const room = roomManager.getRoom(msg.roomId);
       if (!room) { send({ type: MSG.ERROR, message: 'Room not found' }); break; }
       if (room.isPrivate && room.roomKey !== msg.roomKey) { send({ type: MSG.ERROR, message: 'Wrong room key' }); break; }
-      const joined = room.addPlayer(clientId, ws, msg.playerName || 'Player', avatarUrl);
+      const joinName = msg.playerName || 'Player';
+      // Token-based dedup: same token already in room = reject
+      if (msg.playerToken) {
+        const oldId = tokenToClient.get(msg.playerToken);
+        if (oldId && oldId !== clientId && room.players.has(oldId)) {
+          send({ type: MSG.ERROR, message: 'You are already in this room' }); break;
+        }
+        tokenToClient.set(msg.playerToken, clientId);
+      } else {
+        // Fallback: name+IP dedup
+        const thisClient = [...wsClients].find(c => c.id === clientId);
+        if (thisClient) {
+          const dup = [...room.players.values()].some(p => {
+            const pc = [...wsClients].find(c => c.id === p.id);
+            return p.name === joinName && pc?.ip === thisClient.ip;
+          });
+          if (dup) { send({ type: MSG.ERROR, message: 'You are already in this room' }); break; }
+        }
+      }
+      const useAvatar = msg.clientAvatar || avatarUrl;
+      const joined = room.addPlayer(clientId, ws, joinName, useAvatar, msg.playerToken || '');
       if (!joined) { send({ type: MSG.ERROR, message: 'Room is full or game in progress' }); break; }
-      addLog(`🎮 ${msg.playerName || clientId.slice(0,8)} joined room ${room.name}`);
+      addLog(`🎮 ${joinName} joined room ${room.name}`);
       break;
     }
 
@@ -585,6 +770,59 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       if (room) {
         send({ type: MSG.GAME_STATE, room: room.info(), currentCard: room.currentCard, previousCard: room.previousCard });
       }
+      break;
+    }
+
+    case MSG.IDENTIFY: {
+      const token = msg.playerToken;
+      if (!token) break;
+      tokenToClient.set(token, clientId);
+      const thisClient = [...wsClients].find(c => c.id === clientId);
+      const ua = thisClient?.userAgent || '';
+      const ip = thisClient?.ip || '';
+      const screenSize = msg.screenWidth && msg.screenHeight ? `${msg.screenWidth}x${msg.screenHeight}` : '';
+      const now = new Date().toISOString();
+
+      let profile = playerProfiles.get(token);
+      if (!profile) {
+        profile = { token, name: '', avatar: '', phone: '', url: '', devices: [], gamesPlayed: 0, wins: 0, totalScore: 0, totalDiamonds: 0, bestScore: 0, bestStreak: 0, bestRank: 999, lastPlayed: '' };
+        playerProfiles.set(token, profile);
+      }
+      if (msg.name) profile.name = msg.name;
+      if (msg.avatar) profile.avatar = msg.avatar;
+      if (msg.phone) profile.phone = msg.phone;
+      if (msg.url) profile.url = msg.url;
+
+      const existing = profile.devices.find(d => d.userAgent === ua && d.ip === ip);
+      if (existing) {
+        existing.lastSeen = now;
+        existing.connectionCount++;
+        if (screenSize) existing.screenSize = screenSize;
+        if (msg.platform) existing.platform = msg.platform;
+      } else {
+        profile.devices.push({ userAgent: ua, ip, screenSize, platform: msg.platform || '', firstSeen: now, lastSeen: now, connectionCount: 1 });
+      }
+      saveProfiles();
+      send({ type: MSG.PROFILE, profile });
+      break;
+    }
+
+    case MSG.GET_LEADERBOARD: {
+      const myToken = [...tokenToClient.entries()].find(([, cid]) => cid === clientId)?.[0];
+      const entries = [...playerProfiles.values()]
+        .filter(p => (p.gamesPlayed || 0) > 0)
+        .sort((a, b) => (b.totalDiamonds || 0) - (a.totalDiamonds || 0)
+          || (b.wins || 0) - (a.wins || 0)
+          || (b.bestScore || 0) - (a.bestScore || 0)
+          || (b.gamesPlayed || 0) - (a.gamesPlayed || 0))
+        .map((p, i) => ({
+          rank: i + 1, name: p.name || 'Unknown',
+          totalDiamonds: p.totalDiamonds || 0, wins: p.wins || 0,
+          gamesPlayed: p.gamesPlayed || 0, bestScore: p.bestScore || 0,
+          bestStreak: p.bestStreak || 0, isYou: p.token === myToken
+        }));
+      const myRank = entries.findIndex(e => e.isYou) + 1;
+      send({ type: MSG.LEADERBOARD, entries, myRank });
       break;
     }
   }
@@ -1029,7 +1267,14 @@ async function main(): Promise<void> {
   // Periodic stale room cleanup every 2 minutes
   setInterval(() => {
     const cleaned = roomManager.cleanupStale();
-    if (cleaned > 0) addLog(`🧹 Periodic cleanup: ${cleaned} stale room(s)`);
+    if (cleaned > 0) {
+      addLog(`🧹 Periodic cleanup: ${cleaned} stale room(s)`);
+      wsClients.forEach(c => {
+        if (c.ws.readyState === WebSocket.OPEN) {
+          c.ws.send(JSON.stringify({ type: MSG.ROOM_LIST, rooms: roomManager.listRooms() }));
+        }
+      });
+    }
   }, 2 * 60 * 1000);
 
   // Setup TUI - this takes over the terminal completely
