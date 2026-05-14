@@ -207,7 +207,24 @@ Fully working UpDown multiplayer online card game. Deadline: Sunday. QnD — web
 - [x] [Task 56: BUG — Duplicate Messages (Keybinding Stacking)](./task-56-duplicate-messages-bot-handling.md) **✅ FIXED** — handler in constructor, guards control state. Tester 3/3 PASS
 - [x] [Task 57: WebSocket Status Indicator](./task-57-websocket-status-indicator.md) **✅ DONE** — green/red dot in chat header + clickable reconnect (in progress)
 - [x] [Task 58: Edit Profile Panel](./task-58-edit-profile-panel.md) **✅ DONE** — ✏️ button, modal with name/phone/URL/avatar, localStorage persistence
-- [ ] [Task 59: Profile Photo Fixes](./task-59-profile-photo-fixes.md) **🔧 IN PROGRESS** — upload broken + avatar not shown in profile popup or game player list
+- [ ] [Task 59: Profile Photo Fixes](./task-59-profile-photo-fixes.md) **📋 UNBLOCKED** — T60 done, can resume
+- [x] [Task 60: Player Identity Token](./task-60-player-identity-token.md) **✅ DONE** — 3/3 PASS (dedup, name persist, client avatar)
+
+- [x] [Task 61: Parallel Games Architecture Review](./task-61-parallel-games-architecture.md) **✅ DONE** — single-thread fine, <1ms ops, 1000+ rooms trivially
+  - [x] 61.1: Architect — No changes needed ✅
+
+- [x] [Task 62: Device Tracking in User Profile](./task-62-device-tracking-user-profile.md) **✅ DONE**
+  - [x] 62.1-62.5: Architect spec + Expert implementation ✅
+  - [x] 62.6: Tester — Profile popup: 💻 device, screen, platform, count, last seen ✅
+
+- [x] [Task 63: Name Sync Lobby ↔ Profile Editor](./task-63-name-sync-lobby-editor.md) **✅ DONE**
+- [x] [Task 64: Eliminated Host Deadlock](./task-64-eliminated-host-deadlock.md) **✅ DONE** — host controls visible when eliminated
+- [x] [Task 65: Private Room Key in Share + Join](./task-65-private-room-key.md) **✅ DONE** — key in URL, auto-join works
+- [x] [Task 66: Room Name Uses Current Player Name](./task-66-room-name-current-player.md) **✅ DONE**
+- [x] [Task 67: Button Press Feedback + Double-Press Protection](./task-67-button-press-feedback.md) **✅ DONE** — withGuard() on 22 buttons, CSS :active states
+- [x] [Task 68: BUG — Enforce Result Visible to Non-Host](./task-68-enforce-result-non-host.md) **✅ FIXED** — re-render controls on host transfer
+- [x] [Task 69: BUG — Duplicate Player on Cross-Device Leave/Rejoin](./task-69-duplicate-player-cross-device.md) **✅ FIXED** — ghost players purged in resetForReplay(), test PASS
+- [x] [Task 70: Back to Lobby Clean URL](./task-70-back-to-lobby-clean-url.md) **✅ DONE** — history.replaceState clears ?join=/?key= on leave
 
 ---
 
