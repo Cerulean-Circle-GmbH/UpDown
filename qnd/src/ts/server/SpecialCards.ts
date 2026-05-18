@@ -3,88 +3,10 @@
  * QnD Sprint 3: Implements spec Level 1/2/3 cards with priority system
  */
 
-export interface SpecialCardDef {
-  id: string;
-  name: string;
-  description: string;
-  level: 1 | 2 | 3;
-  emoji: string;
-  targetType: 'self' | 'other' | 'all';
-}
+import { SPECIAL_CARD_CATALOG, type SpecialCardInfo } from '../shared/SpecialCardInfo.js';
 
-export const SPECIAL_CARDS: SpecialCardDef[] = [
-  // Level 1: Low impact, one round, self only
-  {
-    id: 'protective_shell',
-    name: 'Protective Shell',
-    description: 'Survive this round no matter what.',
-    level: 1, emoji: '🛡️', targetType: 'self'
-  },
-  {
-    id: 'mass_intelligence',
-    name: 'Mass Intelligence',
-    description: 'Survive if more than 50% of players guess correctly.',
-    level: 1, emoji: '🧠', targetType: 'self'
-  },
-  {
-    id: 'double_points',
-    name: 'Double Points',
-    description: 'Double your points this round if correct.',
-    level: 1, emoji: '💰', targetType: 'self'
-  },
-  {
-    id: 'peek',
-    name: 'Peek',
-    description: 'See one random card from the GM hand before guessing.',
-    level: 1, emoji: '👁️', targetType: 'self'
-  },
-
-  // Level 2: Can target others, one round
-  {
-    id: 'sacrifice',
-    name: 'Sacrifice',
-    description: 'Eliminate a target player this round (even if they guessed right).',
-    level: 2, emoji: '💀', targetType: 'other'
-  },
-  {
-    id: 'swap',
-    name: 'Swap',
-    description: 'Swap your guess result with another player.',
-    level: 2, emoji: '🔄', targetType: 'other'
-  },
-  {
-    id: 'reveal_hand',
-    name: 'Reveal Hand',
-    description: 'All players see the GM full hand this round.',
-    level: 2, emoji: '🃏', targetType: 'all'
-  },
-  {
-    id: 'freeze',
-    name: 'Freeze',
-    description: 'Target player cannot play a card next round.',
-    level: 2, emoji: '🧊', targetType: 'other'
-  },
-
-  // Level 3: Multi-round or multi-player, high impact
-  {
-    id: 'one_for_the_team',
-    name: 'One for the Team',
-    description: 'If you are eliminated, all other players survive this round too.',
-    level: 3, emoji: '🤝', targetType: 'all'
-  },
-  {
-    id: 'second_chance',
-    name: 'Second Chance',
-    description: 'If eliminated, return to the game next round (once per game).',
-    level: 3, emoji: '🔮', targetType: 'self'
-  },
-  {
-    id: 'point_steal',
-    name: 'Point Steal',
-    description: 'Steal 20 points from a target player.',
-    level: 3, emoji: '🏴‍☠️', targetType: 'other'
-  },
-];
+export type SpecialCardDef = SpecialCardInfo;
+export const SPECIAL_CARDS: SpecialCardDef[] = SPECIAL_CARD_CATALOG;
 
 export interface PlayedSpecialCard {
   cardId: string;

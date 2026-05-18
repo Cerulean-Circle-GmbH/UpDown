@@ -31,8 +31,15 @@
 | 45: Room auto-disposal | 57/59 | 57/59 | NO | INCONCLUSIVE — timer too long for test window |
 | 68: Enforce result non-host | N/A (part of 42/49) | N/A | NO | covered by 42/49 |
 | 78: Home button | 57/59 | 57/59 | NO | ✅ PASS — overlap fixed, 🏠+⛶ separate buttons |
-| 79: Landing page version+nav | 57/59 | 57/59 | NO | pending tester — md renderer + project nav |
-| 80: Game documentation | N/A (docs only) | N/A | NO | 3 docs at qnd/docs/ — architect verified vs code |
+| 79: Landing page version+nav | 57/59 | 56/59 | NO | ✅ PASS — version click → Spec/Docs/Sprint/Bug Report |
+| 80: Game documentation | N/A (docs only) | N/A | NO | ✅ 3 docs at qnd/docs/ — architect verified vs code |
+| 81: Player level display | 57/59 | 57/59 | NO | ✅ PASS — Lv.N ⭐ above inventory |
+| 82: Leaderboard | 57/59 | 58/59 | NO | ✅ PASS (after fix — playerToken on RoomPlayer) |
+| 83: Host elimination fix | 58/59 | 58/59 | NO | ✅ PASS — countdown auto-enables, spectator view |
+| 84: Chat multiline | 58/59 | 58/59 | NO | ✅ PASS — pre-wrap, XSS fix |
+| 85: Leaderboard own page | 58/59 | 56/59 | NO | ✅ PASS — /leaderboard, persistence verified |
+| 86: User editor page | 56/59 | 58/59 | NO | ✅ DONE — /profile, devices, 4-digit code, consolidation |
+| 87: Bug report → PO | | | | 🔧 IN PROGRESS |
 
 ## ACT (process adjustments after CHECK)
 - If regressions found: add specific vitest for the broken feature BEFORE fixing

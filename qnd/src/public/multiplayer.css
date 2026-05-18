@@ -161,6 +161,7 @@ input::placeholder { color: rgba(0,0,0,0.4); }
 
 /* Game room: hide reload pseudo-element — leave button replaces it */
 .game-header.mp-header::before { display: none; }
+.game-header::after { display: none; }
 .mp-round { font-weight: 600; font-size: 0.8rem; opacity: 0.8; }
 
 .mp-players { display: flex; flex-wrap: wrap; gap: 4px; }

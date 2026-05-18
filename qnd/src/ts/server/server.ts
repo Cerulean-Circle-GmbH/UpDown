@@ -11,7 +11,8 @@ import fs from 'node:fs/promises';
 import fsSync from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { exec } from 'node:child_process';
+import { exec, execFile } from 'node:child_process';
+import crypto from 'node:crypto';
 import { promisify } from 'node:util';
 import readline from 'node:readline';
 import { WebSocketServer, WebSocket } from 'ws';
@@ -93,6 +94,8 @@ interface WebSocketClient {
   userAgent: string;
   connectedAt: number;
   avatarUrl: string;
+  deviceId: string;
+  playerToken: string;
 }
 
 // Global state for TUI
@@ -104,6 +107,7 @@ let totalRequests = 0;
 
 // Player profiles — persisted to data/profiles.json
 interface DeviceInfo {
+  deviceId: string;
   userAgent: string;
   ip: string;
   screenSize: string;
@@ -119,6 +123,9 @@ interface PlayerProfile {
   phone: string;
   url: string;
   devices: DeviceInfo[];
+  secretCode: string;
+  consolidatedFrom: string[];
+  redirectTo?: string;
   gamesPlayed: number;
   wins: number;
   totalScore: number;
@@ -127,6 +134,7 @@ interface PlayerProfile {
   bestStreak: number;
   bestRank: number;
   lastPlayed: string;
+  bugReports: { date: string; text: string; status: string }[];
 }
 const PROFILES_PATH = path.join(__dirname, '../../../data/profiles.json');
 const playerProfiles = new Map<string, PlayerProfile>();
@@ -138,6 +146,17 @@ function loadProfiles(): void {
       for (const p of data) playerProfiles.set(p.token, p);
     }
   } catch {}
+  // Backfill missing fields for pre-T86 profiles
+  let dirty = false;
+  for (const p of playerProfiles.values()) {
+    if (!p.secretCode) { p.secretCode = generateSecretCode(); dirty = true; }
+    if (!p.consolidatedFrom) { p.consolidatedFrom = []; dirty = true; }
+    if (!p.bugReports) { p.bugReports = []; dirty = true; }
+    for (const d of (p.devices || [])) {
+      if (!d.deviceId) { d.deviceId = crypto.randomUUID(); dirty = true; }
+    }
+  }
+  if (dirty) saveProfiles();
 }
 function saveProfiles(): void {
   try {
@@ -146,6 +165,27 @@ function saveProfiles(): void {
   } catch {}
 }
 loadProfiles();
+
+function generateSecretCode(): string {
+  return String(1000 + Math.floor(Math.random() * 9000));
+}
+
+// Bug report forwarding
+const execFileAsync = promisify(execFile);
+let bugReportTarget = 'upDownTeam:0.0';
+const PAIRING_PATH = path.join(__dirname, '../../../data/agent-pairing.json');
+try { const p = JSON.parse(fsSync.readFileSync(PAIRING_PATH, 'utf-8')); if (p.bugReportTarget) bugReportTarget = p.bugReportTarget; } catch {}
+
+function sanitizeBugReport(text: string): string {
+  return text.slice(0, 500).replace(/[`$\\'";\n\r]/g, '').replace(/[^\x20-\x7E]/g, '').trim();
+}
+function appendBugReport(name: string, text: string, token: string = ''): void {
+  const file = path.join(__dirname, '../../../data/bug-reports.json');
+  let reports: any[] = [];
+  try { reports = JSON.parse(fsSync.readFileSync(file, 'utf-8')); } catch {}
+  reports.push({ name, token, text, timestamp: new Date().toISOString() });
+  fsSync.writeFileSync(file, JSON.stringify(reports, null, 2));
+}
 
 function recordGameResults(leaderboard: any[]): void {
   addLog(`🏆 Recording ${leaderboard.length} game results`);
@@ -231,7 +271,7 @@ async function handleRequest(req: http.IncomingMessage, res: http.ServerResponse
     // API: leaderboard data
     if (filepath === '/api/leaderboard') {
       const entries = [...playerProfiles.values()]
-        .filter(p => (p.gamesPlayed || 0) > 0)
+        .filter(p => (p.gamesPlayed || 0) > 0 && !p.redirectTo)
         .sort((a, b) => (b.totalDiamonds || 0) - (a.totalDiamonds || 0)
           || (b.wins || 0) - (a.wins || 0)
           || (b.bestScore || 0) - (a.bestScore || 0)
@@ -308,6 +348,135 @@ async function handleRequest(req: http.IncomingMessage, res: http.ServerResponse
       filepath = '/index-ts.html'; // Serve the main HTML file
     } else if (filepath === '/mp' || filepath === '/mp/' || filepath === '/multiplayer' || filepath === '/multiplayer/') {
       filepath = '/multiplayer.html';
+    } else if (filepath === '/bug-report' || filepath === '/bug-report/') {
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(`<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>🐛 Bug Report — UpDown</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:#333}
+.container{background:white;border-radius:20px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.3);max-width:500px;width:100%}
+h1{text-align:center;margin-bottom:16px;font-size:1.5rem}
+.back{display:inline-block;margin-bottom:12px;color:#667eea;text-decoration:none;font-size:0.9rem}
+textarea{width:100%;min-height:120px;border:2px solid rgba(102,126,234,0.3);border-radius:10px;padding:12px;font-size:0.95rem;font-family:inherit;resize:vertical}
+textarea:focus{outline:none;border-color:#667eea}
+.submit{width:100%;padding:12px;background:#e74c3c;color:white;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;margin-top:12px}
+.submit:disabled{opacity:0.5;cursor:default}
+.submit:active:not(:disabled){transform:scale(0.97)}
+.status{text-align:center;margin-top:12px;font-size:0.9rem}
+.ver{text-align:center;font-size:0.7rem;opacity:0.4;margin-top:16px}
+</style></head><body>
+<div class="container">
+<a class="back" href="/">← Back</a>
+<h1>🐛 Bug Report</h1>
+<p id="reporter-id" style="font-size:0.75rem;text-align:center;color:#667eea;margin-bottom:8px"></p>
+<p style="font-size:0.85rem;opacity:0.6;margin-bottom:12px;text-align:center">Describe the bug you found. Your report will be sent to the development team.</p>
+<textarea id="bug-text" placeholder="What happened? What did you expect?" maxlength="500"></textarea>
+<p id="char-counter" style="text-align:right;font-size:0.75rem;color:#999;margin:4px 0 8px">0/500</p>
+<button class="submit" id="bug-submit">Submit Bug Report</button>
+<p class="status" id="bug-status"></p>
+<p class="ver" id="ver"></p>
+</div>
+<script>
+var ws,connected=false;
+function connect(){
+  ws=new WebSocket((location.protocol==='https:'?'wss:':'ws:')+'//'+location.host);
+  ws.onopen=function(){connected=true};
+  ws.addEventListener('message',function(e){
+    var m=JSON.parse(e.data);
+    if(m.type==='welcome'){
+      var token=localStorage.getItem('updown-player-id')||'';
+      var devId=localStorage.getItem('updown-device-id')||'';
+      if(token)ws.send(JSON.stringify({type:'IDENTIFY',playerToken:token,deviceId:devId,name:localStorage.getItem('updown-name')||'',screenWidth:screen.width,screenHeight:screen.height,platform:navigator.platform}));
+    }
+    if(m.type==='TOKEN_REDIRECT'&&m.newToken)localStorage.setItem('updown-player-id',m.newToken);
+  });
+  ws.onmessage=function(e){
+    var m=JSON.parse(e.data);
+    if(m.type==='PROFILE'&&m.profile){var r=document.getElementById('reporter-id');if(r)r.textContent='Reporting as: '+(m.profile.name||'Unknown')+' ('+m.profile.token.slice(0,8)+'...)'}
+    if(m.type==='BUG_REPORT_OK'){document.getElementById('bug-status').textContent='✅ Report sent! Thank you.';document.getElementById('bug-text').value='';document.getElementById('char-counter').textContent='0/500';document.getElementById('char-counter').style.color='#999';document.getElementById('bug-submit').disabled=false}
+    if(m.type==='ERROR'){document.getElementById('bug-status').textContent='❌ '+m.message;document.getElementById('bug-submit').disabled=false}
+  };
+  ws.onclose=function(){connected=false;setTimeout(connect,2000)};
+}
+connect();
+document.getElementById('bug-text').addEventListener('input',function(){
+  var len=this.value.length;var el=document.getElementById('char-counter');
+  el.textContent=len+'/500';el.style.color=len>=450?'#e74c3c':len>=400?'#ff9800':'#999';
+});
+document.getElementById('bug-submit').addEventListener('click',function(){
+  var text=document.getElementById('bug-text').value.trim();
+  if(!text){document.getElementById('bug-status').textContent='Please describe the bug.';return}
+  if(!connected){document.getElementById('bug-status').textContent='Connecting...';return}
+  document.getElementById('bug-submit').disabled=true;
+  document.getElementById('bug-status').textContent='Sending...';
+  ws.send(JSON.stringify({type:'BUG_REPORT',text:text}));
+});
+fetch('/api/config').then(function(r){return r.json()}).then(function(c){document.getElementById('ver').textContent='v'+c.version+' · '+c.branch}).catch(function(){});
+</script></body></html>`);
+      return;
+    } else if (filepath === '/profile' || filepath === '/profile/') {
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(`<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>👤 Profile — UpDown</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:#333}
+.container{background:white;border-radius:20px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.3);max-width:500px;width:100%}
+h1{text-align:center;margin-bottom:16px;font-size:1.5rem}
+h3{font-size:1rem;margin:16px 0 8px;border-bottom:1px solid #eee;padding-bottom:4px}
+.back{display:inline-block;margin-bottom:12px;color:#667eea;text-decoration:none;font-size:0.9rem}
+.code{text-align:center;font-size:2rem;font-weight:700;letter-spacing:8px;color:#667eea;padding:12px;background:rgba(102,126,234,0.08);border-radius:10px;margin:12px 0}
+.field{display:flex;justify-content:space-between;padding:6px 0;font-size:0.85rem;border-bottom:1px solid rgba(0,0,0,0.05)}
+.field .label{opacity:0.6}
+.device{background:rgba(102,126,234,0.06);border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:0.8rem}
+.device .dtype{font-weight:600}
+.device .dmeta{opacity:0.5;font-size:0.75rem;margin-top:2px}
+.empty{text-align:center;opacity:0.6;padding:16px}
+.ver{text-align:center;font-size:0.7rem;opacity:0.4;margin-top:16px}
+</style></head><body>
+<div class="container">
+<a class="back" href="/mp">← Back to Lobby</a>
+<h1>👤 My Profile</h1>
+<div id="profile"><p class="empty">Connecting...</p></div>
+<p class="ver" id="ver"></p>
+</div>
+<script>
+const token=localStorage.getItem('updown-player-id');
+if(!token){document.getElementById('profile').innerHTML='<p class="empty">No profile found. Play a game first.</p>'}
+else{
+  const ws=new WebSocket((location.protocol==='https:'?'wss:':'ws:')+'//'+location.host);
+  ws.onmessage=e=>{
+    const m=JSON.parse(e.data);
+    if(m.type==='welcome'){ws.send(JSON.stringify({type:'IDENTIFY',playerToken:token,deviceId:localStorage.getItem('updown-device-id')||'',screenWidth:screen.width,screenHeight:screen.height,platform:navigator.platform}))}
+    if(m.type==='TOKEN_REDIRECT'&&m.newToken){localStorage.setItem('updown-player-id',m.newToken)}
+    if(m.type==='PROFILE'&&m.profile){
+      const p=m.profile;var cids=m.connectedDeviceIds||[];
+      const el=document.getElementById('profile');
+      const ua=navigator.userAgent;
+      const dtype=ua.includes('Mobile')?'📱 Mobile':ua.includes('Mac')?'💻 Mac':ua.includes('Windows')?'🖥 Windows':ua.includes('Linux')?'🐧 Linux':'🌐 Browser';
+      el.innerHTML='<div class="field"><span class="label">Name</span><span>'+(p.name||'Unknown')+'</span></div>'
+        +'<div class="field"><span class="label">Token</span><span style="font-size:0.6rem;opacity:0.5;word-break:break-all">'+p.token+'</span></div>'
+        +'<h3>🔑 Your Secret Code</h3>'
+        +'<div class="code">'+(p.secretCode||'----')+'</div>'
+        +'<p style="text-align:center;font-size:0.75rem;opacity:0.5;margin-bottom:8px">Share this code so friends can link their account to yours</p>'
+        +'<h3>📊 Stats</h3>'
+        +'<div class="field"><span class="label">Games</span><span>'+(p.gamesPlayed||0)+'</span></div>'
+        +'<div class="field"><span class="label">Wins</span><span>'+(p.wins||0)+'</span></div>'
+        +'<div class="field"><span class="label">Best Score</span><span>'+(p.bestScore||0)+'</span></div>'
+        +'<div class="field"><span class="label">Best Streak</span><span>'+(p.bestStreak||0)+'🔥</span></div>'
+        +'<div class="field"><span class="label">Diamonds</span><span>💎 '+(p.totalDiamonds||0)+'</span></div>'
+        +'<h3>📱 Devices ('+(p.devices?.length||0)+')</h3>'
+        +(p.devices&&p.devices.length?p.devices.map(function(d){
+          var t=d.userAgent||'';var short=t.includes('Mobile')?'📱 Mobile':t.includes('Mac')?'💻 Mac':t.includes('Windows')?'🖥 Windows':t.includes('Linux')?'🐧 Linux':'🌐 Browser';
+          var online=cids.indexOf(d.deviceId)>=0;var dot=online?'<span style="color:#4CAF50">●</span>':'<span style="color:#f44336">●</span>';
+          return '<div class="device">'+dot+' <span class="dtype">'+short+'</span> <span style="opacity:0.4">'+((d.deviceId||'').slice(0,8)||'legacy')+'</span><div class="dmeta">IP: '+(d.ip||'unknown').replace('::ffff:','')+'</div><div class="dmeta">'+(d.screenSize||'')+(d.platform?' · '+d.platform:'')+(d.connectionCount?' · '+d.connectionCount+'× connected':'')+'</div><div class="dmeta">Last: '+new Date(d.lastSeen).toLocaleString()+'</div></div>'
+        }).join(''):'<p class="empty">No devices recorded</p>')
+        +'<h3>🐛 My Bug Reports ('+(p.bugReports?.length||0)+')</h3>'
+        +(p.bugReports&&p.bugReports.length?p.bugReports.map(function(b){
+          var statusColor=b.status==='FIXED'?'#4CAF50':b.status==='IN PROGRESS'?'#ff9800':'#999';
+          return '<div class="device"><span style="color:'+statusColor+';font-weight:600">'+b.status+'</span> <span style="opacity:0.5;font-size:0.7rem">'+new Date(b.date).toLocaleDateString()+'</span><div class="dmeta">'+b.text+'</div></div>'
+        }).join(''):'<p class="empty">No bug reports filed</p>');
+    }
+  };
+}
+fetch('/api/config').then(r=>r.json()).then(c=>{document.getElementById('ver').textContent='v'+c.version+' · '+c.branch}).catch(()=>{});
+</script></body></html>`);
+      return;
     } else if (filepath === '/leaderboard' || filepath === '/leaderboard/') {
       res.writeHead(200, { 'Content-Type': 'text/html' });
       res.end(`<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>🏆 Leaderboard — UpDown</title>
@@ -474,7 +643,7 @@ function setupWebSocketServer(server: https.Server): void {
     const avatarUrl = await fetchUniqueAvatar();
     avatarCache.set(clientId, avatarUrl);
 
-    const client: WebSocketClient = { ws, id: clientId, ip, userAgent, connectedAt, avatarUrl };
+    const client: WebSocketClient = { ws, id: clientId, ip, userAgent, connectedAt, avatarUrl, deviceId: '', playerToken: '' };
     wsClients.add(client);
     
     addLog(`🎮 WebSocket connected: ${ip} (${wsClients.size} online)`);
@@ -585,7 +754,8 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
         msg.roomKey || null
       );
       if (msg.playerToken) tokenToClient.set(msg.playerToken, clientId);
-      room.addPlayer(clientId, ws, playerName, useAvatar, msg.playerToken || '');
+      const createProfile = msg.playerToken ? playerProfiles.get(msg.playerToken) : undefined;
+      room.addPlayer(clientId, ws, playerName, useAvatar, msg.playerToken || '', createProfile?.phone || '', createProfile?.url || '');
       room.hostId = clientId; // Creator is ALWAYS host
       addLog(`🏠 Room created: ${room.name} (${room.id}) by ${clientId.slice(0,8)}`);
       break;
@@ -615,7 +785,8 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
         }
       }
       const useAvatar = msg.clientAvatar || avatarUrl;
-      const joined = room.addPlayer(clientId, ws, joinName, useAvatar, msg.playerToken || '');
+      const joinProfile = msg.playerToken ? playerProfiles.get(msg.playerToken) : undefined;
+      const joined = room.addPlayer(clientId, ws, joinName, useAvatar, msg.playerToken || '', joinProfile?.phone || '', joinProfile?.url || '');
       if (!joined) { send({ type: MSG.ERROR, message: 'Room is full or game in progress' }); break; }
       addLog(`🎮 ${joinName} joined room ${room.name}`);
       break;
@@ -635,11 +806,13 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
 
     case MSG.REMOVE_ROOM: { // UC-R13: room.remove (host, or anyone for orphan/empty/finished)
       const room = roomManager.getRoom(msg.roomId);
-      const isHost = room?.hostId === clientId;
-      const isOrphan = room && !room.players.has(room.hostId);
-      const isEmpty = room && room.players.size === 0;
-      const isFinished = room?.state === 'finished';
-      if (room && (isHost || isOrphan || isEmpty || isFinished)) {
+      if (!room) { addLog(`🗑 Remove failed: room ${msg.roomId} not found`); break; }
+      const isHost = room.hostId === clientId;
+      const isOrphan = !room.players.has(room.hostId);
+      const isEmpty = room.players.size === 0;
+      const isFinished = room.state === 'finished';
+      const notPreset = !room.autoRecreate;
+      if (isHost || isOrphan || isEmpty || isFinished || notPreset) {
         roomManager.removeRoom(room.id);
         // Broadcast updated room list to all connected clients
         wsClients.forEach(c => {
@@ -774,10 +947,18 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
     }
 
     case MSG.IDENTIFY: {
-      const token = msg.playerToken;
+      let token = msg.playerToken;
       if (!token) break;
+      // Follow redirect chain for consolidated profiles
+      let redirectProfile = playerProfiles.get(token);
+      if (redirectProfile?.redirectTo) {
+        const newToken = redirectProfile.redirectTo;
+        send({ type: MSG.TOKEN_REDIRECT, newToken });
+        token = newToken;
+      }
       tokenToClient.set(token, clientId);
       const thisClient = [...wsClients].find(c => c.id === clientId);
+      if (thisClient) { thisClient.deviceId = msg.deviceId || ''; thisClient.playerToken = token; }
       const ua = thisClient?.userAgent || '';
       const ip = thisClient?.ip || '';
       const screenSize = msg.screenWidth && msg.screenHeight ? `${msg.screenWidth}x${msg.screenHeight}` : '';
@@ -785,7 +966,7 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
 
       let profile = playerProfiles.get(token);
       if (!profile) {
-        profile = { token, name: '', avatar: '', phone: '', url: '', devices: [], gamesPlayed: 0, wins: 0, totalScore: 0, totalDiamonds: 0, bestScore: 0, bestStreak: 0, bestRank: 999, lastPlayed: '' };
+        profile = { token, name: '', avatar: '', phone: '', url: '', devices: [], secretCode: generateSecretCode(), consolidatedFrom: [], gamesPlayed: 0, wins: 0, totalScore: 0, totalDiamonds: 0, bestScore: 0, bestStreak: 0, bestRank: 999, lastPlayed: '', bugReports: [] };
         playerProfiles.set(token, profile);
       }
       if (msg.name) profile.name = msg.name;
@@ -793,24 +974,28 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       if (msg.phone) profile.phone = msg.phone;
       if (msg.url) profile.url = msg.url;
 
-      const existing = profile.devices.find(d => d.userAgent === ua && d.ip === ip);
+      const devId = msg.deviceId || '';
+      const existing = (devId && profile.devices.find(d => d.deviceId === devId))
+        || profile.devices.find(d => d.userAgent === ua && d.ip === ip);
       if (existing) {
         existing.lastSeen = now;
         existing.connectionCount++;
         if (screenSize) existing.screenSize = screenSize;
         if (msg.platform) existing.platform = msg.platform;
+        if (devId && !existing.deviceId) existing.deviceId = devId;
       } else {
-        profile.devices.push({ userAgent: ua, ip, screenSize, platform: msg.platform || '', firstSeen: now, lastSeen: now, connectionCount: 1 });
+        profile.devices.push({ deviceId: devId, userAgent: ua, ip, screenSize, platform: msg.platform || '', firstSeen: now, lastSeen: now, connectionCount: 1 });
       }
       saveProfiles();
-      send({ type: MSG.PROFILE, profile });
+      const connectedDeviceIds = [...wsClients].filter(c => c.playerToken === token && c.deviceId).map(c => c.deviceId);
+      send({ type: MSG.PROFILE, profile, connectedDeviceIds });
       break;
     }
 
     case MSG.GET_LEADERBOARD: {
       const myToken = [...tokenToClient.entries()].find(([, cid]) => cid === clientId)?.[0];
       const entries = [...playerProfiles.values()]
-        .filter(p => (p.gamesPlayed || 0) > 0)
+        .filter(p => (p.gamesPlayed || 0) > 0 && !p.redirectTo)
         .sort((a, b) => (b.totalDiamonds || 0) - (a.totalDiamonds || 0)
           || (b.wins || 0) - (a.wins || 0)
           || (b.bestScore || 0) - (a.bestScore || 0)
@@ -823,6 +1008,109 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
         }));
       const myRank = entries.findIndex(e => e.isYou) + 1;
       send({ type: MSG.LEADERBOARD, entries, myRank });
+      break;
+    }
+
+    case MSG.CONSOLIDATE: {
+      const myToken = [...tokenToClient.entries()].find(([, cid]) => cid === clientId)?.[0];
+      if (!myToken) { send({ type: MSG.CONSOLIDATE_FAILED, reason: 'Not identified' }); break; }
+      const myProfile = playerProfiles.get(myToken);
+      if (!myProfile) { send({ type: MSG.CONSOLIDATE_FAILED, reason: 'No profile' }); break; }
+      const targetToken = msg.targetToken;
+      if (!targetToken) { send({ type: MSG.CONSOLIDATE_FAILED, reason: 'No target' }); break; }
+      if (targetToken === myToken) { send({ type: MSG.CONSOLIDATE_FAILED, reason: 'Cannot link with yourself' }); break; }
+
+      // Security: target must be in same room
+      const myRoom = roomManager.findPlayerRoom(clientId);
+      if (!myRoom) { send({ type: MSG.CONSOLIDATE_FAILED, reason: 'Not in a room' }); break; }
+      const targetInRoom = [...myRoom.players.values()].some(p => p.playerToken === targetToken);
+      if (!targetInRoom) { send({ type: MSG.CONSOLIDATE_FAILED, reason: 'Player not in your room' }); break; }
+
+      const friend = playerProfiles.get(targetToken);
+      if (!friend) { send({ type: MSG.CONSOLIDATE_FAILED, reason: 'Player has no profile' }); break; }
+      if (myProfile.consolidatedFrom?.includes(friend.token)) { send({ type: MSG.CONSOLIDATE_FAILED, reason: 'Already linked' }); break; }
+
+      addLog(`🤝 Link account: ${myToken.slice(0,8)} absorbs ${targetToken.slice(0,8)}`);
+
+      // Merge stats (additive counts, max bests)
+      myProfile.gamesPlayed = (myProfile.gamesPlayed || 0) + (friend.gamesPlayed || 0);
+      myProfile.wins = (myProfile.wins || 0) + (friend.wins || 0);
+      myProfile.totalScore = (myProfile.totalScore || 0) + (friend.totalScore || 0);
+      myProfile.totalDiamonds = (myProfile.totalDiamonds || 0) + (friend.totalDiamonds || 0);
+      myProfile.bestScore = Math.max(myProfile.bestScore || 0, friend.bestScore || 0);
+      myProfile.bestStreak = Math.max(myProfile.bestStreak || 0, friend.bestStreak || 0);
+      myProfile.bestRank = Math.min(myProfile.bestRank || 999, friend.bestRank || 999);
+      myProfile.lastPlayed = [myProfile.lastPlayed, friend.lastPlayed].filter(Boolean).sort().pop() || '';
+
+      // Merge devices (dedup by deviceId)
+      const existingIds = new Set(myProfile.devices.map(d => d.deviceId).filter(Boolean));
+      for (const d of friend.devices) {
+        if (d.deviceId && existingIds.has(d.deviceId)) continue;
+        myProfile.devices.push(d);
+      }
+
+      if (!myProfile.consolidatedFrom) myProfile.consolidatedFrom = [];
+      myProfile.consolidatedFrom.push(friend.token);
+
+      // Redirect then delete: set redirect first so reconnecting gets TOKEN_REDIRECT
+      friend.redirectTo = myToken;
+      saveProfiles();
+      playerProfiles.delete(targetToken);
+
+      send({ type: MSG.CONSOLIDATE_OK, mergedDevices: friend.devices.length, mergedGames: friend.gamesPlayed || 0 });
+      break;
+    }
+
+    case MSG.UPDATE_SECRET_CODE: {
+      const myToken = [...tokenToClient.entries()].find(([, cid]) => cid === clientId)?.[0];
+      if (!myToken) { send({ type: MSG.SECRET_CODE_FAILED, reason: 'Not identified' }); break; }
+      const myProfile = playerProfiles.get(myToken);
+      if (!myProfile) { send({ type: MSG.SECRET_CODE_FAILED, reason: 'No profile' }); break; }
+      const newCode = String(msg.code || '');
+      if (!/^\d{4}$/.test(newCode)) { send({ type: MSG.SECRET_CODE_FAILED, reason: 'Must be a 4-digit number' }); break; }
+      myProfile.secretCode = newCode;
+      saveProfiles();
+      send({ type: MSG.SECRET_CODE_OK, code: newCode });
+      break;
+    }
+
+    case MSG.BUG_REPORT: {
+      const text = sanitizeBugReport(msg.text || '');
+      if (!text) { send({ type: MSG.ERROR, message: 'Empty bug report' }); break; }
+      const bugClient = [...wsClients].find(c => c.id === clientId);
+      const reporterToken = bugClient?.playerToken || [...tokenToClient.entries()].find(([, cid]) => cid === clientId)?.[0] || 'unknown';
+      const reporterProfile = reporterToken !== 'unknown' ? playerProfiles.get(reporterToken) : undefined;
+      const playerName = roomManager.findPlayerRoom(clientId)?.players.get(clientId)?.name || reporterProfile?.name || 'Anonymous';
+      const prompt = `[@browser-user ${playerName} ${reporterToken.slice(0, 8)}] BUG REPORT: ${text}`;
+      // Store in reporter's profile
+      if (reporterToken !== 'unknown') {
+        const reporterProfile = playerProfiles.get(reporterToken);
+        if (reporterProfile) {
+          if (!reporterProfile.bugReports) reporterProfile.bugReports = [];
+          reporterProfile.bugReports.push({ date: new Date().toISOString(), text, status: 'PLANNED' });
+          saveProfiles();
+        }
+      }
+      try {
+        execFile('otmux', ['send', bugReportTarget, prompt, 'Enter'], (err) => {
+          if (err) { appendBugReport(playerName, text, reporterToken); }
+        });
+        send({ type: MSG.BUG_REPORT_OK });
+        addLog(`🐛 Bug report from ${playerName} (${reporterToken.slice(0, 8)}): ${text.slice(0, 50)}...`);
+      } catch {
+        appendBugReport(playerName, text, reporterToken);
+        send({ type: MSG.BUG_REPORT_OK });
+      }
+      break;
+    }
+
+    case MSG.PAIR_BUG_REPORT: {
+      if (msg.pane && typeof msg.pane === 'string') {
+        bugReportTarget = msg.pane.replace(/[^a-zA-Z0-9:._-]/g, '');
+        try { fsSync.writeFileSync(PAIRING_PATH, JSON.stringify({ bugReportTarget, pairedAt: new Date().toISOString() })); } catch {}
+        send({ type: MSG.PAIR_OK, target: bugReportTarget });
+        addLog(`🔗 Bug report paired to ${bugReportTarget}`);
+      }
       break;
     }
   }

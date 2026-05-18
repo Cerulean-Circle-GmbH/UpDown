@@ -1,4 +1,5 @@
 import { MSG } from '../shared/MessageTypes.js';
+import { calculateScore, calculateDiamonds } from '../shared/ScoreCalculator.js';
 /**
  * GameRoom — Multiplayer game room with WebSocket protocol
  * QnD Sprint 3: Quick and dirty, web2, working multiplayer
@@ -36,6 +37,8 @@ export interface RoomPlayer {
   roundsPlayed: number;
   disconnected: boolean;
   playerToken: string;
+  phone: string;
+  url: string;
 }
 
 export type RoomState = 'waiting' | 'countdown' | 'revealing' | 'exchange' | 'finished';
@@ -110,7 +113,7 @@ export class GameRoom {
   }
 
   // [uc:uuid:9cc60247] UC-R4: room.join — [uc:uuid:d0b57a5a] UC-R7: room.join.full — [uc:uuid:8db2e073] UC-R8: room.join.midGame
-  addPlayer(id: string, ws: WebSocket, name: string, avatarUrl: string, playerToken: string = ''): boolean {
+  addPlayer(id: string, ws: WebSocket, name: string, avatarUrl: string, playerToken: string = '', phone: string = '', url: string = ''): boolean {
     if (this.players.size >= this.maxPlayers) return false; // [uc:uuid:d0b57a5a]
     if (this.state !== 'waiting' && this.state !== 'exchange') return false; // [uc:uuid:d466a7f1] UC-R9: room.join.rejected
 
@@ -119,7 +122,7 @@ export class GameRoom {
       score: 0, streak: 0, alive: true,
       currentGuess: null, specialCard: null, specialCardTarget: null,
       inventory: this.generateStarterInventory(), usedSpecials: [], frozen: false,
-      roundsPlayed: 0, disconnected: false, playerToken
+      roundsPlayed: 0, disconnected: false, playerToken, phone, url
     });
 
     // Transfer host to first human (from 'server' or from bot)
@@ -147,7 +150,7 @@ export class GameRoom {
       score: 0, streak: 0, alive: true,
       currentGuess: null, specialCard: null, specialCardTarget: null,
       inventory: this.generateStarterInventory(), usedSpecials: [], frozen: false,
-      roundsPlayed: 0, disconnected: false, playerToken: ''
+      roundsPlayed: 0, disconnected: false, playerToken: '', phone: '', url: ''
     });
     this.bots.set(id, bot);
 
@@ -506,7 +509,7 @@ export class GameRoom {
         }
       }
 
-      const roundScore = correct ? 10 + player.streak : 0;
+      const { score: roundScore } = calculateScore(correct, player.streak);
       baseResults.set(player.id, {
         correct,
         alive: correct,
@@ -608,11 +611,7 @@ export class GameRoom {
     const leaderboard = [...this.players.values()]
       .sort((a, b) => b.score - a.score || b.roundsPlayed - a.roundsPlayed)
       .map((p, i) => {
-        // Diamond rewards: 1st=50, 2nd=30, 3rd=20, rest=5 per round survived
-        const rankDiamonds = i === 0 ? 50 : i === 1 ? 30 : i === 2 ? 20 : 0;
-        const roundDiamonds = p.roundsPlayed * 5;
-        const streakBonus = p.streak >= 10 ? 25 : p.streak >= 5 ? 10 : 0;
-        const diamonds = rankDiamonds + roundDiamonds + streakBonus;
+        const diamonds = calculateDiamonds(i + 1, p.roundsPlayed, p.streak);
         return {
           rank: i + 1, playerId: p.id, playerToken: p.playerToken, name: p.name,
           score: p.score, rounds: p.roundsPlayed,
@@ -702,12 +701,12 @@ export class GameRoom {
   private playerInfo(id: string) {
     const p = this.players.get(id);
     if (!p) return null;
-    return { id: p.id, name: p.name, avatarUrl: p.avatarUrl, score: p.score, alive: p.alive };
+    return { id: p.id, name: p.name, avatarUrl: p.avatarUrl, score: p.score, alive: p.alive, phone: p.phone, url: p.url, playerToken: p.playerToken };
   }
 
   private allPlayerInfo() {
     return [...this.players.values()].map(p => ({
-      id: p.id, name: p.name, avatarUrl: p.avatarUrl, score: p.score, alive: p.alive
+      id: p.id, name: p.name, avatarUrl: p.avatarUrl, score: p.score, alive: p.alive, phone: p.phone, url: p.url, playerToken: p.playerToken
     }));
   }
 

@@ -30,6 +30,20 @@ export class LobbyUI {
     this.client.on(MSG.ROOM_LIST, (msg) => { this.rooms = msg.rooms; this.renderRoomList(); });
     this.client.on(MSG.ROOM_JOINED, (msg) => { this.onEnterRoom(msg.room.id); });
     this.client.on(MSG.ERROR, (msg) => { this.showError(msg.message); });
+    this.client.on(MSG.PROFILE, (msg: any) => {
+      if (msg.profile?.secretCode) {
+        const el = document.getElementById('profile-secret-code') as HTMLInputElement;
+        if (el && !el.value) el.value = msg.profile.secretCode;
+      }
+    });
+    this.client.on(MSG.SECRET_CODE_OK, (msg: any) => {
+      const el = document.getElementById('profile-code-status');
+      if (el) { el.textContent = '✅ Saved'; el.style.color = '#4CAF50'; }
+    });
+    this.client.on(MSG.SECRET_CODE_FAILED, (msg: any) => {
+      const el = document.getElementById('profile-code-status');
+      if (el) { el.textContent = '❌ ' + msg.reason; el.style.color = '#e74c3c'; }
+    });
 
     // On WS connect: auto-load rooms, auto-join if ?join= param
     const joinId = params.get('join');
@@ -68,6 +82,7 @@ export class LobbyUI {
           <div class="lobby-name-row">
             <input type="text" id="player-name" value="${this.playerName}" maxlength="20" placeholder="Enter name...">
             <button id="edit-profile-btn" class="btn btn-small" style="flex-shrink:0">✏️</button>
+            <a href="/profile" class="btn btn-small" style="flex-shrink:0;text-decoration:none">👤</a>
           </div>
         </div>
 
@@ -97,6 +112,11 @@ export class LobbyUI {
               <div class="card-picker-scroll card-picker-values" id="value-picker">
                 ${['A','2','3','4','5','6','7','8','9','10','J','Q','K'].map(v => `<span class="card-picker-item card-value-item" data-value="${v}">${v}</span>`).join('')}
               </div>
+            </div>
+            <label>🔑 Secret Code (4 digits)</label>
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="text" id="profile-secret-code" maxlength="4" pattern="[0-9]{4}" placeholder="----" style="width:80px;text-align:center;font-size:1.2rem;font-weight:700;letter-spacing:4px">
+              <span id="profile-code-status" style="font-size:0.75rem"></span>
             </div>
             <button id="profile-save" class="btn btn-primary" style="width:100%;margin-top:8px">Save</button>
           </div>
@@ -231,6 +251,10 @@ export class LobbyUI {
       if (name) { this.playerName = name; localStorage.setItem('updown-name', name); (document.getElementById('player-name') as HTMLInputElement).value = name; }
       if (phone) localStorage.setItem('updown-phone', phone);
       if (url) localStorage.setItem('updown-url', url);
+      const code = (document.getElementById('profile-secret-code') as HTMLInputElement)?.value.trim();
+      if (code && /^\d{4}$/.test(code)) {
+        this.client.send({ type: MSG.UPDATE_SECRET_CODE, code });
+      }
       document.getElementById('profile-panel')!.style.display = 'none';
     });
 
@@ -249,6 +273,7 @@ export class LobbyUI {
       const name = (document.getElementById('room-name') as HTMLInputElement).value.trim();
       const key = (document.getElementById('room-key') as HTMLInputElement).value || undefined;
       this.client.createRoom(name, this.playerName, 10, key);
+      return this.client.waitFor(MSG.ROOM_JOINED, MSG.ERROR);
     });
 
     const refreshBtn = document.getElementById('refresh-rooms-btn');
@@ -262,7 +287,9 @@ export class LobbyUI {
     if (joinPrivateBtn) guardClick(joinPrivateBtn, () => {
       const roomId = (document.getElementById('join-room-id') as HTMLInputElement).value;
       const key = (document.getElementById('join-room-key') as HTMLInputElement).value || undefined;
-      if (roomId) this.client.joinRoom(roomId, this.playerName, key);
+      if (!roomId) return;
+      this.client.joinRoom(roomId, this.playerName, key);
+      return this.client.waitFor(MSG.ROOM_JOINED, MSG.ERROR);
     });
 
     document.getElementById('rapid-mode-btn')?.addEventListener('click', () => {
@@ -310,6 +337,7 @@ export class LobbyUI {
       guardClick(btn as HTMLElement, () => {
         const roomId = (btn as HTMLElement).dataset.room!;
         this.client.joinRoom(roomId, this.playerName);
+        return this.client.waitFor(MSG.ROOM_JOINED, MSG.ERROR);
       });
     });
 

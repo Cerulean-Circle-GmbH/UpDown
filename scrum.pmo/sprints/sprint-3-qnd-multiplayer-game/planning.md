@@ -193,7 +193,7 @@ Fully working UpDown multiplayer online card game. Deadline: Sunday. QnD — web
 - [x] [Task 47: BUG — Leave Regression](./task-47-leave-button-regression.md) **✅ FIXED** — stopPropagation on leave click
 - [x] [Task 48: Remove Button on Orphan/Hostless Rooms](./task-48-remove-orphan-rooms.md) **✅ DONE** — any user can remove orphan/empty/finished rooms
 
-- [ ] [Task 49: Card Played Mode — Live Player State + Sequential Host Controls](./task-49-card-played-mode.md) **🔧 IN PROGRESS**
+- [x] [Task 49: Card Played Mode — Live Player State + Sequential Host Controls](./task-49-card-played-mode.md) **✅ DONE** — architect verified already implemented via T37+T38.14
   - [x] 49.1: Architect — Review: NO new messages needed. Client-only rename + button sequencing ✅
   - [x] 49.2: Expert — Renamed: "Enforce Result ▶" + "Next Round ▶", non-host guarded ✅
   - [ ] 49.5: Tester — 2+ player verification ⏳
@@ -207,7 +207,7 @@ Fully working UpDown multiplayer online card game. Deadline: Sunday. QnD — web
 - [x] [Task 56: BUG — Duplicate Messages (Keybinding Stacking)](./task-56-duplicate-messages-bot-handling.md) **✅ FIXED** — handler in constructor, guards control state. Tester 3/3 PASS
 - [x] [Task 57: WebSocket Status Indicator](./task-57-websocket-status-indicator.md) **✅ DONE** — green/red dot in chat header + clickable reconnect (in progress)
 - [x] [Task 58: Edit Profile Panel](./task-58-edit-profile-panel.md) **✅ DONE** — ✏️ button, modal with name/phone/URL/avatar, localStorage persistence
-- [ ] [Task 59: Profile Photo Fixes](./task-59-profile-photo-fixes.md) **📋 UNBLOCKED** — T60 done, can resume
+- [x] [Task 59: Profile Photo Fixes](./task-59-profile-photo-fixes.md) **✅ DONE** — upload quota alert, local avatar in player list + profile popup
 - [x] [Task 60: Player Identity Token](./task-60-player-identity-token.md) **✅ DONE** — 3/3 PASS (dedup, name persist, client avatar)
 
 - [x] [Task 61: Parallel Games Architecture Review](./task-61-parallel-games-architecture.md) **✅ DONE** — single-thread fine, <1ms ops, 1000+ rooms trivially
@@ -226,16 +226,43 @@ Fully working UpDown multiplayer online card game. Deadline: Sunday. QnD — web
 - [x] [Task 69: BUG — Duplicate Player on Cross-Device Leave/Rejoin](./task-69-duplicate-player-cross-device.md) **✅ FIXED** — ghost players purged in resetForReplay(), test PASS
 - [x] [Task 70: Back to Lobby Clean URL](./task-70-back-to-lobby-clean-url.md) **✅ DONE** — history.replaceState clears ?join=/?key= on leave
 
+### Tron Requirements Batch (T78-T87)
+- [x] [Task 78: Home Button](./task-78-home-button.md) **✅ DONE** — 🏠 + ⛶ distinct buttons, no overlap
+- [x] [Task 79: Version Nav + MD Renderer](./task-79-landing-page-version-nav.md) **✅ DONE** — version click → Spec/Docs/Sprint Planning/Bug Report, /md/* renders .md as HTML
+- [x] [Task 80: Game Documentation](./task-80-game-documentation.md) **✅ DONE** — game-rules.md, special-cards.md, multiplayer.md at qnd/docs/
+- [x] [Task 81: Show Player Level](./task-81-show-player-level.md) **✅ DONE** — Lv.N ⭐ above card inventory
+- [x] [Task 82: Highscore & Leaderboard](./task-82-highscore-leaderboard.md) **✅ DONE** — 🏆 leaderboard, stats in PlayerProfile, diamonds ranking
+- [x] [Task 83: Host Elimination Fix](./task-83-host-elimination-premature-end.md) **✅ DONE** — countdown auto-enables on host elimination, spectator view
+- [x] [Task 84: Chat Long Text Multiline](./task-84-chat-long-text-multiline.md) **✅ DONE** — pre-wrap CSS, XSS fix, lorem ipsum test
+- [x] [Task 85: Leaderboard Own Page](./task-85-leaderboard-own-page-persistent.md) **✅ DONE** — /leaderboard page, /api/leaderboard, disk persistence
+- [x] [Task 86: User Editor Own Page](./task-86-user-editor-own-page.md) **✅ DONE** — /profile page, device list, 4-digit code, consolidation (editable code queued)
+- [x] [Task 87: Bug Report → PO Prompt](./task-87-bug-report-client-to-po.md) **✅ DONE** — browser → otmux send → Claude Code prompt
+  - [x] [Task 87.1: Fix target pane](./task-87.1-fix-bug-report-target.md) ✅ route to 0.0
+  - [x] [Task 87.2: Include reporter UUID + auto-create .md](./task-87.2-bug-report-uuid-and-md.md) ✅
+
+### Bug Reports (from browser)
+- [x] [BR-001: Secret code editable in user editor, not profile](./bug-report-20260515-001.md) ✅ VERIFIED — input in LobbyUI.ts profile-panel
+- [x] [BR-002: /profile code read-only + Link Account backfill fix](./bug-report-20260515-002.md) ✅ FIXED — profile read-only, pre-T86 profiles backfilled with secretCodes
+- [x] [BR-003: Secret code propagation + profile display](./bug-report-20260515-003.md) ✅ FIXED — code propagates, IP shown, full token displayed
+- [x] [BR-004: Secret code must not enforce uniqueness](./bug-report-20260515-004.md) ✅ FIXED — uniqueness check removed, any 4-digit accepted
+- [x] [BR-005: Bug reports track reporter UUID + profile integration](./bug-report-20260516-001.md) ✅ FIXED — UUID from WS, stored in profile.bugReports[], shown on /profile with status colors
+- [x] [BR-006: Two fullscreen buttons in header](./bug-report-20260517-001.md) ✅ FIXED — CSS ::after pseudo-element hidden, real T78 button kept
+- [x] BR-007a: Bug report text truncation fix — profile storage now keeps full 500 chars (was 100)
+- [x] [BR-007: Rework Link Account — player popup + correct merge](./bug-report-20260518-001.md) ✅ FIXED — targetToken direct, profile deleted after merge, popup reworked, same-room check
+- [x] [BR-008: Bug report reporter formatting broken](./bug-report-20260518-002.md) ✅ FIXED — /bug-report page sends IDENTIFY on welcome, name+UUID resolved
+- [x] [BR-009: Room delete + reporter ID on bug page](./bug-report-20260518-003.md) ✅ FIXED — reporter ID shown, REMOVE_ROOM expanded for user rooms. Tester e2e verifying.
+
+### New Tasks
+- [x] [Task 88: Device Connection Status + UUID](./task-88-device-connection-status.md) ✅ DONE — green/red dots, deviceId backfill, connectedDeviceIds array
+- [x] [Task 89: QR Code Invite Popup](./task-89-qr-code-invite.md) ✅ DONE — QR code modal, qrcode lib, 240px canvas, dismissible
+- [x] [Task 90: Player Popup — Game Stats + vCard](./task-90-player-popup-game-stats-vcard.md) ✅ DONE — game stats + .vcf download, devices removed from popup
+- [x] [Task 91: Button Feedback Review](./task-91-button-feedback-review.md) ✅ DONE — DRY: WebSocketClient.once()+waitFor(), visible loading until server responds
+
 ---
 
-- [ ] [Task 29: DRY — CardUtils.ts](./task-29-dry-card-utils.md) **📋 DEFERRED**
-  - [ ] 29.1: Expert — Extract suitSymbol(), cardColor(), cardToHtml() — 7 locations → 1
-
-- [ ] [Task 30: DRY — ScoreCalculator.ts](./task-30-dry-score-calc.md) **📋 DEFERRED**
-  - [ ] 30.1: Expert — Shared scoring formula between GameModel + GameRoom
-
-- [ ] [Task 31: DRY — SpecialCards import](./task-31-dry-special-cards.md) **📋 DEFERRED**
-  - [ ] 31.1: Expert — Client imports card data from SpecialCards.ts, no duplicate catalog
+- [x] [Task 29: DRY — CardUtils.ts](./task-29-dry-card-utils.md) **✅ DONE** — shared/CardUtils.ts: suitSymbol, cardColor, cardToHtml, cardText
+- [x] [Task 30: DRY — ScoreCalculator.ts](./task-30-dry-score-calc.md) **✅ DONE** — shared/ScoreCalculator.ts: calculateScore, calculateDiamonds
+- [x] [Task 31: DRY — SpecialCards import](./task-31-dry-special-cards.md) **✅ DONE** — shared/SpecialCardInfo.ts: single catalog, no inline duplicates
 
 ---
 

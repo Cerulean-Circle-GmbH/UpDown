@@ -4,7 +4,10 @@
  */
 
 import { WebSocketClient, shareOrCopy, guardClick } from './WebSocketClient.js';
+import QRCode from 'qrcode';
 import { MSG } from '../../shared/MessageTypes.js';
+import { suitSymbol, cardColor, cardToHtml, cardText } from '../../ts/shared/CardUtils.js';
+import { CARD_INFO_MAP } from '../../ts/shared/SpecialCardInfo.js';
 import { renderHeader } from './components/Header.js';
 
 interface PlayerScore {
@@ -175,6 +178,13 @@ export class MultiplayerUI {
       }
     });
 
+    this.client.on(MSG.CONSOLIDATE_OK, (msg: any) => {
+      alert(`Account linked! Merged ${msg.mergedDevices} device(s) and ${msg.mergedGames} game(s).`);
+    });
+    this.client.on(MSG.CONSOLIDATE_FAILED, (msg: any) => {
+      alert(`Link failed: ${msg.reason}`);
+    });
+
     this.client.on(MSG.PROFILE, (msg: any) => {
       if (msg.profile) this.myProfile = msg.profile;
     });
@@ -289,6 +299,30 @@ export class MultiplayerUI {
         if (e.target === profileEl) profileEl.style.display = 'none';
       });
       document.body.appendChild(profileEl);
+    }
+  }
+
+  private async showQrPopup(url: string): Promise<void> {
+    let overlay = document.getElementById('qr-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'qr-overlay';
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(4px)';
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay!.style.display = 'none'; });
+      document.body.appendChild(overlay);
+    }
+    overlay.style.display = 'flex';
+    overlay.innerHTML = `
+      <div style="background:white;border-radius:16px;padding:24px;text-align:center;max-width:320px;width:90%;position:relative">
+        <button id="qr-close" style="position:absolute;top:8px;right:12px;background:none;border:none;font-size:1.2rem;cursor:pointer;opacity:0.5">✕</button>
+        <h3 style="margin:0 0 12px;font-size:1.1rem;color:#333">📨 Scan to Join</h3>
+        <canvas id="qr-canvas" style="max-width:100%;border-radius:8px"></canvas>
+        <p style="margin:10px 0 0;font-size:0.75rem;color:#999;word-break:break-all">${url}</p>
+      </div>`;
+    document.getElementById('qr-close')?.addEventListener('click', () => { overlay!.style.display = 'none'; });
+    const canvas = document.getElementById('qr-canvas') as HTMLCanvasElement;
+    if (canvas) {
+      try { await QRCode.toCanvas(canvas, url, { width: 240, margin: 2 }); } catch {}
     }
   }
 
@@ -408,27 +442,43 @@ export class MultiplayerUI {
         <div class="profile-stats">
           <div class="profile-stat"><span class="profile-stat-val">${p.score || 0}</span><span class="profile-stat-label">Score</span></div>
           <div class="profile-stat"><span class="profile-stat-val">${p.alive !== false ? '✅' : '💀'}</span><span class="profile-stat-label">Status</span></div>
-          <div class="profile-stat"><span class="profile-stat-val">${this.round}</span><span class="profile-stat-label">Round</span></div>
+          <div class="profile-stat"><span class="profile-stat-val">${p.streak || 0}🔥</span><span class="profile-stat-label">Streak</span></div>
+          <div class="profile-stat"><span class="profile-stat-val">Lv.${isSelf ? this.playerLevel : '?'}</span><span class="profile-stat-label">Level</span></div>
         </div>
-        ${isSelf && this.myProfile?.devices?.length ? `
-          <div class="profile-devices">
-            <p style="font-size:0.7rem;opacity:0.6;margin:8px 0 4px">Devices</p>
-            ${this.myProfile.devices.map((d: any) => {
-              const ua = d.userAgent || '';
-              const short = ua.includes('Mobile') ? '📱 Mobile' : ua.includes('Mac') ? '💻 Mac' : ua.includes('Windows') ? '🖥 Windows' : ua.includes('Linux') ? '🐧 Linux' : '🌐 Browser';
-              return `<div style="font-size:0.7rem;opacity:0.8;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.1)">
-                <span>${short}</span> <span style="opacity:0.5">${d.screenSize || ''} · ${d.platform || ''}</span>
-                <span style="opacity:0.4;display:block">${d.connectionCount}× · last ${new Date(d.lastSeen).toLocaleDateString()}</span>
-              </div>`;
-            }).join('')}
-          </div>
-        ` : ''}
-        <button class="btn btn-secondary profile-close" style="margin-top:12px;width:100%">Close</button>
+        <button id="vcard-btn" class="btn btn-secondary" style="margin-top:8px;width:100%">📇 Download vCard</button>
+        ${!isSelf && !isBot ? `<button id="link-account-btn" class="btn btn-primary" style="margin-top:6px;width:100%" data-token="${p.playerToken || ''}" data-name="${p.name}">🔗 Link Account</button>` : ''}
       </div>
     `;
 
-    profileEl.querySelector('.profile-close')?.addEventListener('click', () => {
-      profileEl.style.display = 'none';
+    document.getElementById('link-account-btn')?.addEventListener('click', () => {
+      const targetToken = (document.getElementById('link-account-btn') as HTMLElement).dataset.token;
+      const targetName = (document.getElementById('link-account-btn') as HTMLElement).dataset.name;
+      if (targetToken && confirm(`Link ${targetName}'s account into yours? Their devices will be added to your profile. This cannot be undone.`)) {
+        this.client.send({ type: MSG.CONSOLIDATE, targetToken });
+        profileEl.style.display = 'none';
+      }
+    });
+
+    document.getElementById('vcard-btn')?.addEventListener('click', () => {
+      const lines = ['BEGIN:VCARD', 'VERSION:3.0', `FN:${p.name}`];
+      const phone = isSelf ? (localStorage.getItem('updown-phone') || '') : (p.phone || '');
+      const pUrl = isSelf ? (localStorage.getItem('updown-url') || '') : (p.url || '');
+      const avatar = isSelf ? (localStorage.getItem('updown-avatar') || '') : (p.avatarUrl || '');
+      const token = isSelf ? this.client.playerToken : (p.playerToken || '');
+      if (phone) lines.push(`TEL:${phone}`);
+      if (pUrl) lines.push(`URL:${pUrl}`);
+      if (avatar && avatar.startsWith('data:image')) {
+        const match = avatar.match(/^data:image\/(\w+);base64,(.+)$/);
+        if (match) lines.push(`PHOTO;ENCODING=b;TYPE=${match[1].toUpperCase()}:${match[2]}`);
+      }
+      lines.push(`NOTE:UUID: ${token}\\nScore: ${p.score || 0}\\nStreak: ${p.streak || 0}`);
+      lines.push('END:VCARD');
+      const blob = new Blob([lines.join('\r\n')], { type: 'text/vcard' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${p.name.replace(/[^a-zA-Z0-9 ]/g, '')}.vcf`;
+      a.click();
+      URL.revokeObjectURL(a.href);
     });
 
     // Touch drag down to dismiss
@@ -463,10 +513,14 @@ export class MultiplayerUI {
           ${inviteBtn}
         `;
         const startBtn = document.getElementById('start-game-btn');
-        if (startBtn) guardClick(startBtn, () => { this.client.startGame(); });
+        if (startBtn) guardClick(startBtn, () => {
+          this.client.startGame();
+          return this.client.waitFor(MSG.ROUND_START, MSG.ERROR);
+        });
         const addBotBtn = document.getElementById('add-bot-btn');
         if (addBotBtn) guardClick(addBotBtn, () => { this.client.addBot(); });
-        document.getElementById('toggle-countdown-btn')?.addEventListener('click', () => { this.client.send({ type: MSG.TOGGLE_COUNTDOWN }); });
+        const toggleBtn = document.getElementById('toggle-countdown-btn');
+        if (toggleBtn) guardClick(toggleBtn, () => { this.client.send({ type: MSG.TOGGLE_COUNTDOWN }); });
       } else {
         el.innerHTML = `<p class="waiting-text">Waiting for host to start...</p>${inviteBtn}`;
       }
@@ -474,7 +528,7 @@ export class MultiplayerUI {
       if (invBtn) guardClick(invBtn, async () => {
         const base = (window as any).__shareBase || location.origin;
         const url = `${base}/mp?join=${this.roomId}${this.roomKey ? `&key=${encodeURIComponent(this.roomKey)}` : ''}`;
-        await shareOrCopy(url, invBtn, this.roomName);
+        this.showQrPopup(url);
       });
     }
   }
@@ -504,20 +558,6 @@ export class MultiplayerUI {
       if (fb2) guardClick(fb2, () => { this.client.send({ type: MSG.FORCE_NEXT_ROUND }); });
     } else {
       // Special card names for display
-      const CARD_INFO: Record<string, { emoji: string; name: string }> = {
-        protective_shell: { emoji: '🛡️', name: 'Shield' },
-        mass_intelligence: { emoji: '🧠', name: 'Mass Intel' },
-        double_points: { emoji: '💰', name: '2x Points' },
-        peek: { emoji: '👁️', name: 'Peek' },
-        sacrifice: { emoji: '💀', name: 'Sacrifice' },
-        swap: { emoji: '🔄', name: 'Swap' },
-        reveal_hand: { emoji: '🃏', name: 'Reveal' },
-        freeze: { emoji: '🧊', name: 'Freeze' },
-        one_for_the_team: { emoji: '🤝', name: 'Team Save' },
-        second_chance: { emoji: '🔮', name: '2nd Chance' },
-        point_steal: { emoji: '🏴‍☠️', name: 'Steal' },
-      };
-
       el.innerHTML = `
         <div class="mp-guess-buttons">
           <button class="btn btn-guess btn-up" data-guess="up">⬆️ Higher <kbd>U</kbd></button>
@@ -528,7 +568,7 @@ export class MultiplayerUI {
           <div class="mp-special-cards">
             <span style="font-size:0.7rem;opacity:0.6;width:100%;text-align:center;display:block;margin-bottom:2px">Lv.${this.playerLevel} ${'⭐'.repeat(this.playerLevel)}</span>
             ${this.inventory.map(cardId => {
-              const info = CARD_INFO[cardId] || { emoji: '🎴', name: cardId };
+              const info = CARD_INFO_MAP[cardId] || { emoji: '🎴', name: cardId };
               return `<button class="btn btn-special" data-card="${cardId}">${info.emoji} ${info.name}</button>`;
             }).join('')}
           </div>
@@ -564,13 +604,10 @@ export class MultiplayerUI {
       return;
     }
 
-    const suitSymbol: Record<string, string> = { hearts: '♥', diamonds: '♦', clubs: '♣', spades: '♠' };
-    const suitColor = (card.suit === 'hearts' || card.suit === 'diamonds') ? 'red' : 'black';
-
-    el.className = `card-slot card ${suitColor} flip-in`;
+    el.className = `card-slot card ${cardColor(card.suit)} flip-in`;
     el.innerHTML = `
       <span class="card-value">${card.value}</span>
-      <span class="card-suit">${suitSymbol[card.suit] || card.suit}</span>
+      <span class="card-suit">${suitSymbol(card.suit)}</span>
     `;
   }
 
@@ -590,18 +627,14 @@ export class MultiplayerUI {
     if (el) el.textContent = hasPlayed ? '✅' : '●';
   }
 
-  private cardText(card: Card | null): string {
+  private cardTextFmt(card: Card | null): string {
     if (!card) return '?';
-    const suit: Record<string, string> = { hearts: '♥', diamonds: '♦', clubs: '♣', spades: '♠' };
-    return `${card.value}${suit[card.suit] || card.suit}`;
+    return cardText(card);
   }
 
   private cardHtml(card: Card | null, size: 'small' | 'normal' = 'normal'): string {
     if (!card) return '<div class="card-placeholder">?</div>';
-    const suit: Record<string, string> = { hearts: '♥', diamonds: '♦', clubs: '♣', spades: '♠' };
-    const color = (card.suit === 'hearts' || card.suit === 'diamonds') ? 'red' : 'black';
-    const cls = size === 'small' ? 'playing-card playing-card-sm' : 'playing-card';
-    return `<div class="${cls} ${color}"><span class="card-value">${card.value}</span><span class="card-suit">${suit[card.suit] || card.suit}</span></div>`;
+    return cardToHtml(card, size);
   }
 
   private renderRoundResult(betCard: Card | null, revealedCard: Card | null, results: any[], scores: PlayerScore[], specialEffects: any[]): void {
@@ -646,7 +679,7 @@ export class MultiplayerUI {
             <span class="mp-result-arrow">→</span>
             ${this.cardHtml(revealedCard, 'small')}
           </div>
-          <span class="mp-result-comparison">${this.cardText(betCard)} ${comparison} to ${this.cardText(revealedCard)}</span>
+          <span class="mp-result-comparison">${this.cardTextFmt(betCard)} ${comparison} to ${this.cardTextFmt(revealedCard)}</span>
         </div>
         <p class="mp-result-points">+${myResult?.roundScore || 0} pts ${myResult?.streak ? `(${myResult.streak}🔥 streak)` : ''} | Total: ${myResult?.score || 0}</p>
         ${myEffects.length > 0 ? `<div class="mp-effects">${myEffects.map((e: any) => `<p class="mp-effect">${e.message}</p>`).join('')}</div>` : ''}

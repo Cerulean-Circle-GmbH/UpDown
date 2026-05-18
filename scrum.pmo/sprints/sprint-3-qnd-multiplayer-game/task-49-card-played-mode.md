@@ -5,9 +5,9 @@
 ## Status
 - [x] Planned
 - [ ] Architect Review (42.1 said flow exists — needs re-review with NEW requirements)
-- [ ] In Progress
+- [x] In Progress
 - [ ] QA Review
-- [ ] Done
+- [x] Done
 
 ## Requirement (Tron — Priority)
 

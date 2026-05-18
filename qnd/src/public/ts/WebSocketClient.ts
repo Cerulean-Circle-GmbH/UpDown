@@ -12,6 +12,7 @@ export class WebSocketClient {
   clientId: string = '';
   connected: boolean = false;
   readonly playerToken: string;
+  readonly deviceId: string;
 
   constructor() {
     let token = localStorage.getItem('updown-player-id');
@@ -20,6 +21,12 @@ export class WebSocketClient {
       localStorage.setItem('updown-player-id', token);
     }
     this.playerToken = token;
+    let devId = localStorage.getItem('updown-device-id');
+    if (!devId) {
+      devId = crypto.randomUUID();
+      localStorage.setItem('updown-device-id', devId);
+    }
+    this.deviceId = devId;
   }
 
   // [uc:uuid:92a061e0] UC-C1: connection.open
@@ -49,6 +56,7 @@ export class WebSocketClient {
             this.send({
               type: MSG.IDENTIFY,
               playerToken: this.playerToken,
+              deviceId: this.deviceId,
               name: localStorage.getItem('updown-name') || '',
               avatar: localStorage.getItem('updown-avatar') || localStorage.getItem('updown-avatar-card') || '',
               phone: localStorage.getItem('updown-phone') || '',
@@ -57,6 +65,9 @@ export class WebSocketClient {
               screenHeight: screen.height,
               platform: navigator.platform,
             });
+          }
+          if (msg.type === MSG.TOKEN_REDIRECT && msg.newToken) {
+            localStorage.setItem('updown-player-id', msg.newToken);
           }
           this.emit(msg.type, msg);
         } catch {}
@@ -88,6 +99,22 @@ export class WebSocketClient {
     if (!handler) { this.handlers.delete(type); return; }
     const list = this.handlers.get(type);
     if (list) this.handlers.set(type, list.filter(h => h !== handler));
+  }
+
+  once(type: string): Promise<any> {
+    return new Promise(resolve => {
+      const handler = (msg: any) => { this.off(type, handler); resolve(msg); };
+      this.on(type, handler);
+    });
+  }
+
+  waitFor(...types: string[]): Promise<any> {
+    return new Promise(resolve => {
+      const cleanup = () => types.forEach(t => this.off(t, handler));
+      const handler = (msg: any) => { cleanup(); resolve(msg); };
+      types.forEach(t => this.on(t, handler));
+      setTimeout(() => { cleanup(); resolve(null); }, 5000);
+    });
   }
 
   private emit(type: string, msg: any): void {
@@ -152,6 +179,10 @@ export class WebSocketClient {
 
   sendChat(text: string): void {
     this.send({ type: MSG.CHAT_MESSAGE, text });
+  }
+
+  sendBugReport(text: string): void {
+    this.send({ type: MSG.BUG_REPORT, text });
   }
 }
 

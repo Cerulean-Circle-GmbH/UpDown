@@ -6,7 +6,7 @@
 - [x] Planned
 - [x] In Progress
 - [ ] QA Review
-- [ ] Done
+- [x] Done
 
 ## Problems (Tron)
 1. Upload photo in profile editor doesn't work — file input or FileReader callback broken
