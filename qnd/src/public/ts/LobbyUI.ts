@@ -325,7 +325,7 @@ export class LobbyUI {
             <button class="btn btn-share" data-room="${room.id}" data-key="${room.roomKey || ''}" data-name="${room.name}" title="Copy join link">🔗</button>
             ${room.state === 'waiting'
               ? `<button class="btn btn-join" data-room="${room.id}">Join</button>`
-              : room.state === 'finished'
+              : room.state === 'finished' && room.playerCount === 0
                 ? `<button class="btn btn-remove" data-room="${room.id}">🗑</button>`
                 : `<button class="btn btn-spectate" data-room="${room.id}">👁️ Watch</button>`
             }

@@ -565,6 +565,14 @@ export class GameRoom {
       this.countdownEnabled = true;
       this.broadcast({ type: MSG.COUNTDOWN_SETTING, countdownEnabled: true });
     }
+    // Transfer host to next alive human on elimination
+    if (hostPlayer && !hostPlayer.alive) {
+      const nextHost = [...this.players.values()].find(p => p.alive && !this.bots.has(p.id) && p.id !== this.hostId);
+      if (nextHost) {
+        this.hostId = nextHost.id;
+        this.broadcast({ type: MSG.HOST_CHANGED, hostId: this.hostId });
+      }
+    }
 
     this.broadcast({
       type: MSG.ROUND_RESULT,

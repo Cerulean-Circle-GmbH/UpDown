@@ -22,6 +22,7 @@ import { RoomManager } from './GameRoom.js';
 import { MSG } from '../shared/MessageTypes.js';
 
 const execAsync = promisify(exec);
+const ADMIN_KEY = process.env.ADMIN_KEY || crypto.randomUUID();
 
 // ESM __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -269,6 +270,39 @@ async function handleRequest(req: http.IncomingMessage, res: http.ServerResponse
     let filepath = req.url || '/';
 
     // API: leaderboard data
+    if (req.method === 'POST' && filepath === '/api/bug-status') {
+      let body = '';
+      req.on('data', (chunk: Buffer) => body += chunk);
+      req.on('end', () => {
+        try {
+          const { adminKey, playerToken, bugIndex, status } = JSON.parse(body);
+          if (adminKey !== ADMIN_KEY) { res.writeHead(403); res.end('Forbidden'); return; }
+          if (!['PLANNED', 'IN PROGRESS', 'FIXED', 'WONTFIX'].includes(status)) { res.writeHead(400); res.end('Invalid status'); return; }
+          const profile = playerProfiles.get(playerToken);
+          if (!profile || !profile.bugReports || !profile.bugReports[bugIndex]) { res.writeHead(404); res.end('Bug report not found'); return; }
+          profile.bugReports[bugIndex].status = status;
+          saveProfiles();
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ ok: true, updated: profile.bugReports[bugIndex] }));
+          addLog(`🐛 Bug status updated: ${playerToken.slice(0,8)} #${bugIndex} → ${status}`);
+        } catch { res.writeHead(400); res.end('Bad request'); }
+      });
+      return;
+    }
+
+    if (filepath === '/api/bugs') {
+      const allBugs: any[] = [];
+      playerProfiles.forEach((p, token) => {
+        (p.bugReports || []).forEach((b, i) => {
+          allBugs.push({ token: token.slice(0, 8), name: p.name, index: i, ...b });
+        });
+      });
+      allBugs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' });
+      res.end(JSON.stringify(allBugs));
+      return;
+    }
+
     if (filepath === '/api/leaderboard') {
       const entries = [...playerProfiles.values()]
         .filter(p => (p.gamesPlayed || 0) > 0 && !p.redirectTo)
@@ -807,12 +841,13 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
     case MSG.REMOVE_ROOM: { // UC-R13: room.remove (host, or anyone for orphan/empty/finished)
       const room = roomManager.getRoom(msg.roomId);
       if (!room) { addLog(`🗑 Remove failed: room ${msg.roomId} not found`); break; }
+      if (room.players.size > 0 && room.hostId !== clientId) {
+        send({ type: MSG.ERROR, message: 'Room still has players' }); break;
+      }
       const isHost = room.hostId === clientId;
-      const isOrphan = !room.players.has(room.hostId);
       const isEmpty = room.players.size === 0;
-      const isFinished = room.state === 'finished';
       const notPreset = !room.autoRecreate;
-      if (isHost || isOrphan || isEmpty || isFinished || notPreset) {
+      if (isHost || isEmpty || notPreset) {
         roomManager.removeRoom(room.id);
         // Broadcast updated room list to all connected clients
         wsClients.forEach(c => {
@@ -1023,11 +1058,20 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       // Security: target must be in same room
       const myRoom = roomManager.findPlayerRoom(clientId);
       if (!myRoom) { send({ type: MSG.CONSOLIDATE_FAILED, reason: 'Not in a room' }); break; }
-      const targetInRoom = [...myRoom.players.values()].some(p => p.playerToken === targetToken);
+      const targetClientId = tokenToClient.get(targetToken) || [...wsClients].find(c => c.playerToken === targetToken)?.id;
+      const targetInRoom = targetClientId ? myRoom.players.has(targetClientId) : [...myRoom.players.values()].some(p => p.playerToken === targetToken);
       if (!targetInRoom) { send({ type: MSG.CONSOLIDATE_FAILED, reason: 'Player not in your room' }); break; }
+
+      const secretCode = msg.secretCode;
+      if (!secretCode) { send({ type: MSG.CONSOLIDATE_FAILED, reason: 'Secret code required' }); break; }
 
       const friend = playerProfiles.get(targetToken);
       if (!friend) { send({ type: MSG.CONSOLIDATE_FAILED, reason: 'Player has no profile' }); break; }
+      if (friend.secretCode !== secretCode) {
+        send({ type: MSG.CONSOLIDATE_FAILED, reason: 'Wrong secret code' });
+        addLog(`🔒 Link account REJECTED: ${myToken.slice(0,8)} → ${targetToken.slice(0,8)} (wrong code)`);
+        break;
+      }
       if (myProfile.consolidatedFrom?.includes(friend.token)) { send({ type: MSG.CONSOLIDATE_FAILED, reason: 'Already linked' }); break; }
 
       addLog(`🤝 Link account: ${myToken.slice(0,8)} absorbs ${targetToken.slice(0,8)}`);
@@ -1052,10 +1096,12 @@ function handleGameMessage(clientId: string, ws: WebSocket, avatarUrl: string, m
       if (!myProfile.consolidatedFrom) myProfile.consolidatedFrom = [];
       myProfile.consolidatedFrom.push(friend.token);
 
-      // Redirect then delete: set redirect first so reconnecting gets TOKEN_REDIRECT
+      // Mark target as redirect stub — keep in Map for reconnect TOKEN_REDIRECT
       friend.redirectTo = myToken;
+      friend.devices = [];
+      friend.secretCode = '';
+      friend.bugReports = [];
       saveProfiles();
-      playerProfiles.delete(targetToken);
 
       send({ type: MSG.CONSOLIDATE_OK, mergedDevices: friend.devices.length, mergedGames: friend.gamesPlayed || 0 });
       break;
@@ -1535,6 +1581,7 @@ function setupTUI(): void {
   
   // Log server start
   addLog('🚀 Server started');
+  addLog(`🔑 Admin key: ${ADMIN_KEY}`);
   addLog(`📡 HTTPS: https://localhost:${HTTPS_PORT}`);
   addLog(`🔄 HTTP redirect: http://localhost:${PORT}`);
 }

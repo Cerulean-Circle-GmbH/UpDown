@@ -251,6 +251,11 @@ input::placeholder { color: rgba(0,0,0,0.4); }
 }
 .btn-special:active { transform: scale(0.95); }
 .btn-special:disabled { opacity: 0.4; }
+.btn-special-selected { border: 2px solid #ffd700; box-shadow: 0 0 12px rgba(255,215,0,0.6); transform: scale(1.05); animation: pulse-glow 1.5s infinite; }
+.btn-special-dimmed { opacity: 0.5; }
+@keyframes pulse-glow { 0%,100%{box-shadow:0 0 8px rgba(255,215,0,0.4)} 50%{box-shadow:0 0 16px rgba(255,215,0,0.8)} }
+.target-picker { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 6px; padding: 8px; background: rgba(255,215,0,0.1); border-radius: 8px; }
+.target-picker .btn { font-size: 0.75rem; padding: 6px 10px; min-height: 32px; }
 
 /* Round results */
 .mp-result { margin-top: 6px; }

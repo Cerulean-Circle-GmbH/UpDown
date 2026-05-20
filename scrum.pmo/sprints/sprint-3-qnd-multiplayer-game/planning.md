@@ -250,7 +250,12 @@ Fully working UpDown multiplayer online card game. Deadline: Sunday. QnD — web
 - [x] BR-007a: Bug report text truncation fix — profile storage now keeps full 500 chars (was 100)
 - [x] [BR-007: Rework Link Account — player popup + correct merge](./bug-report-20260518-001.md) ✅ FIXED — targetToken direct, profile deleted after merge, popup reworked, same-room check
 - [x] [BR-008: Bug report reporter formatting broken](./bug-report-20260518-002.md) ✅ FIXED — /bug-report page sends IDENTIFY on welcome, name+UUID resolved
-- [x] [BR-009: Room delete + reporter ID on bug page](./bug-report-20260518-003.md) ✅ FIXED — reporter ID shown, REMOVE_ROOM expanded for user rooms. Tester e2e verifying.
+- [x] [BR-009: Room delete + reporter ID on bug page](./bug-report-20260518-003.md) ✅ FIXED — tester 5/5 PASS
+- [x] [BR-010: Bug report lifecycle — REST API for status updates](./bug-report-20260518-004.md) ✅ FIXED — POST /api/bug-status + GET /api/bugs + ADMIN_KEY
+- [x] [BR-011: Link Account — secret code + redirect stub](./bug-report-20260518-005.md) ✅ FIXED — prompt for code, validate server-side, keep redirect stub (same-room fix applied)
+- [x] [BR-012: Host elimination defense + UX](./bug-report-20260518-006.md) ✅ FIXED — hostId transfer on elimination + clearer spectator message
+- [x] [BR-013: Spectator can delete room with host still in it](./bug-report-20260518-007.md) ✅ FIXED — Remove only for empty rooms, Watch shown if players remain
+- [x] [BR-014: Special card selection — two-step select/confirm](./bug-report-20260518-008.md) ✅ FIXED — gold glow select, target picker for 'other' cards, auto-confirm on guess
 
 ### New Tasks
 - [x] [Task 88: Device Connection Status + UUID](./task-88-device-connection-status.md) ✅ DONE — green/red dots, deviceId backfill, connectedDeviceIds array

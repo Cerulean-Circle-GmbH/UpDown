@@ -33,6 +33,7 @@ export class MultiplayerUI {
   private round: number = 0;
   private inventory: string[] = [];
   private playerLevel: number = 1;
+  private selectedSpecialCard: string | null = null;
   private frozen: boolean = false;
   private eliminated: boolean = false;
   private isSpectator: boolean = false;
@@ -84,6 +85,7 @@ export class MultiplayerUI {
       this.inventory = msg.inventory || [];
       this.frozen = msg.frozen || false;
       this.playerLevel = msg.level || 1;
+      this.selectedSpecialCard = null;
       this.hasPlayed = false;
       this.eliminated = msg.alivePlayers ? !msg.alivePlayers.includes(this.client.clientId) : false;
       this.renderGame();
@@ -210,6 +212,7 @@ export class MultiplayerUI {
     this.countdownEnabled = true;
     this.inventory = [];
     this.playerLevel = 1;
+    this.selectedSpecialCard = null;
     this.chatMessages = [];
   }
 
@@ -324,6 +327,48 @@ export class MultiplayerUI {
     if (canvas) {
       try { await QRCode.toCanvas(canvas, url, { width: 240, margin: 2 }); } catch {}
     }
+  }
+
+  private confirmSpecialCard(cardId: string, targetPlayerId?: string): void {
+    this.client.playSpecial(cardId, targetPlayerId);
+    this.inventory = this.inventory.filter(id => id !== cardId);
+    this.selectedSpecialCard = null;
+    document.getElementById('target-picker')?.remove();
+    this.renderGame();
+  }
+
+  private updateSpecialCardVisuals(): void {
+    document.querySelectorAll('.btn-special').forEach(btn => {
+      const id = (btn as HTMLElement).dataset.card;
+      btn.classList.toggle('btn-special-selected', id === this.selectedSpecialCard);
+      btn.classList.toggle('btn-special-dimmed', this.selectedSpecialCard !== null && id !== this.selectedSpecialCard);
+    });
+  }
+
+  private showTargetPicker(cardId: string): void {
+    document.getElementById('target-picker')?.remove();
+    const info = CARD_INFO_MAP[cardId];
+    const alivePlayers = this.players.filter(p => p.alive !== false && p.id !== this.client.clientId);
+    if (alivePlayers.length === 0) { this.confirmSpecialCard(cardId); return; }
+    const container = document.querySelector('.mp-special-cards');
+    if (!container) return;
+    const picker = document.createElement('div');
+    picker.id = 'target-picker';
+    picker.className = 'target-picker';
+    picker.innerHTML = `<span style="width:100%;text-align:center;font-size:0.7rem;opacity:0.7">🎯 Target for ${info?.emoji || ''} ${info?.name || cardId}:</span>`
+      + alivePlayers.map(p => `<button class="btn btn-join target-btn" data-tid="${p.id}">${p.name}</button>`).join('')
+      + `<button class="btn btn-secondary target-cancel">Cancel</button>`;
+    container.appendChild(picker);
+    picker.querySelectorAll('.target-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.confirmSpecialCard(cardId, (btn as HTMLElement).dataset.tid);
+      });
+    });
+    picker.querySelector('.target-cancel')?.addEventListener('click', () => {
+      this.selectedSpecialCard = null;
+      this.updateSpecialCardVisuals();
+      picker.remove();
+    });
   }
 
   private updateWsStatus(state: string): void {
@@ -453,8 +498,9 @@ export class MultiplayerUI {
     document.getElementById('link-account-btn')?.addEventListener('click', () => {
       const targetToken = (document.getElementById('link-account-btn') as HTMLElement).dataset.token;
       const targetName = (document.getElementById('link-account-btn') as HTMLElement).dataset.name;
-      if (targetToken && confirm(`Link ${targetName}'s account into yours? Their devices will be added to your profile. This cannot be undone.`)) {
-        this.client.send({ type: MSG.CONSOLIDATE, targetToken });
+      const code = prompt(`Enter ${targetName}'s secret code to link accounts.\nThe code is a 4-digit number shown on their /profile page.\nThis cannot be undone.`);
+      if (code && targetToken) {
+        this.client.send({ type: MSG.CONSOLIDATE, targetToken, secretCode: code.trim() });
         profileEl.style.display = 'none';
       }
     });
@@ -548,7 +594,8 @@ export class MultiplayerUI {
     if (!el) return;
 
     if (this.isSpectator || this.eliminated) {
-      el.innerHTML = `<p class="waiting-text">👁️ ${this.eliminated ? 'Eliminated — watching remaining players...' : 'Watching — players are choosing...'}</p>`;
+      const aliveCount = this.players.filter(pl => pl.alive !== false).length;
+      el.innerHTML = `<p class="waiting-text">👁️ ${this.eliminated ? `💀 You're eliminated! The game continues for ${aliveCount} remaining player${aliveCount !== 1 ? 's' : ''}. Watching as spectator...` : 'Watching — players are choosing...'}</p>`;
     } else if (this.frozen) {
       el.innerHTML = '<p class="waiting-text">🧊 Frozen! Cannot play this round.</p>';
     } else if (this.hasPlayed) {
@@ -576,15 +623,28 @@ export class MultiplayerUI {
       `;
 
       el.querySelectorAll('.btn-special').forEach(btn => {
-        guardClick(btn as HTMLElement, () => {
+        btn.addEventListener('click', () => {
           const cardId = (btn as HTMLElement).dataset.card!;
-          this.client.playSpecial(cardId);
-          (btn as HTMLButtonElement).disabled = true;
+          const info = CARD_INFO_MAP[cardId];
+          if (this.selectedSpecialCard === cardId) {
+            if (info?.targetType !== 'other') {
+              this.confirmSpecialCard(cardId);
+            }
+          } else {
+            this.selectedSpecialCard = cardId;
+            this.updateSpecialCardVisuals();
+            if (info?.targetType === 'other') {
+              this.showTargetPicker(cardId);
+            }
+          }
         });
       });
 
       el.querySelectorAll('.btn-guess').forEach(btn => {
         guardClick(btn as HTMLElement, () => {
+          if (this.selectedSpecialCard) {
+            this.confirmSpecialCard(this.selectedSpecialCard);
+          }
           const guess = (btn as HTMLElement).dataset.guess as 'up' | 'down' | 'equal';
           this.client.playCard(guess);
           this.hasPlayed = true;
