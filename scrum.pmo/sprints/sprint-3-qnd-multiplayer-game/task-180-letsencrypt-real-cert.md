@@ -5,6 +5,59 @@
 
 **THE blocker.** Nothing reaches Tron's device without a trusted cert.
 
+## iOS Browser Target Clarification (PO directive)
+
+### The Facts About iOS Browsers + Service Workers
+
+**All iOS browsers use WebKit (WKWebView).** Apple mandates this — Chrome iOS, Firefox iOS, Edge iOS are all WebKit skins. They do NOT use Blink/Gecko.
+
+| Browser on iOS | Engine | SW Support | Add-to-Home-Screen PWA | Notes |
+|---|---|---|---|---|
+| **Safari** | WebKit | **YES** (since iOS 11.3) | **YES** — runs as standalone app with SW | The ONLY path for full PWA on iOS |
+| **Chrome iOS** | WKWebView | **NO** — WKWebView has no SW API | **NO** — Chrome can't install PWAs on iOS | Chrome iOS = web page viewer only |
+| **Firefox iOS** | WKWebView | **NO** | **NO** | Same limitation |
+
+### What This Means
+
+1. **Chrome iOS CANNOT run our SW at all** — not a cert issue, a platform limitation. WKWebView does not expose the ServiceWorker API. `navigator.serviceWorker` is `undefined` in Chrome iOS.
+
+2. **Safari iOS + Add to Home Screen IS the supported path.** When user taps Share → Add to Home Screen, iOS creates a standalone app context with full WebKit SW support. This is the only way to get:
+   - Service Worker caching (offline mode)
+   - `display: standalone` (no browser chrome)
+   - Push notifications (iOS 16.4+)
+   - Background sync
+
+3. **The cert is STILL needed** — Safari iOS requires HTTPS (secure context) for SW registration. Self-signed cert = no secure context = no SW. Let's Encrypt resolves this.
+
+4. **WSS works in both** — WebSocket over TLS works in Chrome iOS AND Safari iOS, but ONLY with a trusted cert. Self-signed = silent rejection in both.
+
+### Revised Understanding of Tron's Symptoms
+
+```
+Tron on Chrome iOS:
+- "Connection Failed" → WSS rejected (self-signed cert, WKWebView strict)
+- SW never registered → not a Chrome-blocks-SW-on-self-signed issue
+  → Chrome iOS simply HAS NO SW API (WKWebView limitation)
+- v0.2.12 was from Safari (where SW works) — Chrome iOS never had a SW
+
+Tron on Safari iOS:
+- With self-signed: SW registration fails (no secure context)
+- With LE cert: SW registers, caches work, Add-to-Home-Screen = full PWA
+```
+
+### Target Browser Decision
+
+**Primary target: Safari iOS → Add to Home Screen (standalone PWA)**
+- Full SW support, offline caching, game installed as app icon
+- Requires: LE cert (secure context)
+
+**Secondary target: Chrome iOS (web page mode only)**
+- No SW, no offline, no PWA install
+- Requires: LE cert (for WSS WebSocket connection)
+- Game works as a regular web page — just no offline/caching
+
+**Recommendation to Tron:** Use Safari → Add to Home Screen for the full PWA experience. Chrome iOS will work for gameplay (with LE cert) but without offline capability.
+
 ## Status
 - [ ] Planned
 - [x] In Progress
