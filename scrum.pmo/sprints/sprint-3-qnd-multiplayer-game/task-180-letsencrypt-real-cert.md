@@ -208,15 +208,101 @@ Tron: T1 (credentials)
 
 ---
 
+## (5) Playwright — CDP Security.setIgnoreCertificateErrors
+
+Until the LE cert is deployed, Playwright tests need cert bypass. The `--ignore-certificate-errors` flag alone is insufficient — Playwright needs the CDP protocol command.
+
+### Current (broken for Chrome):
+```typescript
+const browser = await chromium.launch({
+  args: ['--ignore-certificate-errors']  // Only works for page loads, NOT for SW/wss
+});
+```
+
+### Fix — CDP session:
+```typescript
+const browser = await chromium.launch();
+const context = await browser.newContext({ ignoreHTTPSErrors: true });
+
+// For WebSocket + SW cert bypass, need CDP:
+const page = await context.newPage();
+const cdpSession = await page.context().newCDPSession(page);
+await cdpSession.send('Security.setIgnoreCertificateErrors', { ignore: true });
+```
+
+### Or simpler — Playwright's built-in:
+```typescript
+const context = await browser.newContext({
+  ignoreHTTPSErrors: true  // Playwright handles CDP internally
+});
+```
+
+`ignoreHTTPSErrors: true` on the BrowserContext is the correct Playwright API. It handles CDP `Security.setIgnoreCertificateErrors` internally. This bypasses cert validation for ALL requests in that context (page loads, fetch, WebSocket, SW registration).
+
+### Test config update:
+```typescript
+// vitest.config.ts or playwright.config.ts
+export default defineConfig({
+  use: {
+    ignoreHTTPSErrors: true,  // Until LE cert deployed
+    baseURL: `https://home.donges.it:4444`,
+  },
+});
+```
+
+**WARNING:** This is a TEST-ONLY bypass. It does NOT fix real browsers. The LE cert (T180) is still required for Chrome users. This flag just stops tests from being FALSE CLEAN — they now explicitly declare the bypass rather than hiding it.
+
+---
+
+## CRISP TRON-ACTION-LIST
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│  TRON ACTIONS NEEDED (3 items, 1 critical)                     │
+├────┬───────────────────────────────────────────────────────────┤
+│ T1 │ CRITICAL: Provide All-Inkl KAS login + password          │
+│    │ → We hash to SHA1 locally, never stored in plaintext     │
+│    │ → Needed for: acme.sh dns_kas plugin (DNS-01 challenge)  │
+│    │ → Without this: EVERYTHING blocked                        │
+├────┼───────────────────────────────────────────────────────────┤
+│ T2 │ VERIFY: Check KAS panel can create TXT records           │
+│    │ → KAS panel → DNS → donges.it → add TXT record           │
+│    │ → Name: _acme-challenge.home  Value: test123              │
+│    │ → Needed for: confirm DNS-01 will work before we run it  │
+├────┼───────────────────────────────────────────────────────────┤
+│ T3 │ OPTIONAL: Port-forward :443 → MacStudio:4444             │
+│    │ → Fritz!Box → Port Forwarding → External 443 → Int 4444  │
+│    │ → Benefit: users type home.donges.it (no :4444 suffix)   │
+│    │ → Not required — game works on :4444 with LE cert        │
+└────┴───────────────────────────────────────────────────────────┘
+
+WE EXECUTE (no Tron needed):
+  E1: brew install acme.sh (MacStudio)
+  E2: Configure KAS credentials (from T1)
+  E3: acme.sh --issue -d home.donges.it --dns dns_kas
+  E4: Copy fullchain.pem + key.pem to .certs/
+  E5: Update server.ts (fullchain, SIGHUP reload)
+  E6: Add ignoreHTTPSErrors to Playwright config
+  E7: Test: real Chrome loads without warning
+  E8: Test: wss:// connects, SW registers
+  E9: cron auto-renewal verified
+
+TIMELINE: T1 received → E1-E4 in 10 minutes → E5-E9 in 30 minutes
+```
+
+---
+
 ## Acceptance Criteria
 - [ ] AC-1: `acme.sh --issue -d home.donges.it --dns dns_kas` succeeds
 - [ ] AC-2: `.certs/fullchain.pem` contains Let's Encrypt cert + chain
-- [ ] AC-3: `openssl s_client -connect home.donges.it:3443` shows `Verify return code: 0 (ok)`
-- [ ] AC-4: Real Safari (no bypass flags) loads `https://home.donges.it:3443` without warning
-- [ ] AC-5: WSS connects in real Safari — "Connection Failed" resolved
-- [ ] AC-6: SW update: fresh load gets v0.5.78 SW (not stuck on v0.2.12)
+- [ ] AC-3: `openssl s_client -connect home.donges.it:4444` shows `Verify return code: 0 (ok)`
+- [ ] AC-4: Real Chrome (no flags) loads `https://home.donges.it:4444` without warning
+- [ ] AC-5: WSS connects in real Chrome — "Connection Failed" resolved
+- [ ] AC-6: SW registers in Chrome (previously blocked on untrusted cert)
 - [ ] AC-7: Auto-renewal cron job installed and tested
 - [ ] AC-8: Server reloads cert on SIGHUP without restart
+- [ ] AC-9: Playwright config has `ignoreHTTPSErrors: true` (explicit, not hidden)
+- [ ] AC-10: Real Safari + real Chrome both load without any user action (zero bypass needed)
 
 ---
 
