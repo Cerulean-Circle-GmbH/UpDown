@@ -1,0 +1,165 @@
+@startuml S17-TraceabilityChain-UseCases
+!theme plain
+skinparam backgroundColor White
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam actorBorderColor #333333
+skinparam usecaseBorderColor #666666
+
+title Sprint 17 — Traceability Chain Use Cases\nForward-Only: Requirement → Task → UseCase → Class → Method
+
+' Actors
+actor "Product Owner" as PO
+actor "Architect" as ARCH
+actor "Expert" as EXP
+actor "Tester" as TEST
+actor "Tron (QA)" as TRON
+actor "/trace Browser" as BROWSER
+
+' ═══════════════════════════════════════════
+' Package: Requirement Management
+' ═══════════════════════════════════════════
+package "Requirement Management" {
+  usecase "Create Requirement\n(requirements.md)" as UC_REQ_CREATE
+  usecase "Link Requirement → Task\n(forward-only)" as UC_REQ_LINK
+  usecase "View Requirement Status\n(covered/partial/missing)" as UC_REQ_STATUS
+}
+
+' ═══════════════════════════════════════════
+' Package: Task Lifecycle
+' ═══════════════════════════════════════════
+package "Task Lifecycle" {
+  usecase "Create Task\n(task-N-name.md)" as UC_TASK_CREATE
+  usecase "Create Subtask\n(task-N.M-role-name.md)" as UC_SUBTASK_CREATE
+  usecase "Link Task → UseCase\n(forward-only)" as UC_TASK_UC_LINK
+  usecase "Link Task → Files Changed\n(forward-only)" as UC_TASK_FILES
+}
+
+' ═══════════════════════════════════════════
+' Package: UseCase Traceability
+' ═══════════════════════════════════════════
+package "UseCase Traceability" {
+  usecase "Define UseCase\n(object.verb in matrix)" as UC_UC_DEFINE
+  usecase "Link UseCase → Class\n(Impl File:Method column)" as UC_UC_CLASS
+  usecase "Attach Test Evidence\n(Test File:Line column)" as UC_UC_TEST
+  usecase "Set Coverage Status\n(covered/partial/missing)" as UC_UC_COVERAGE
+}
+
+' ═══════════════════════════════════════════
+' Package: Class/Method Discovery
+' ═══════════════════════════════════════════
+package "Class/Method Discovery" {
+  usecase "Create .ts.unit\n(next to source file)" as UC_UNIT_CREATE
+  usecase "Create M3 CLASS Unit\n(MDAv4/M3/CLASS/)" as UC_M3_CREATE
+  usecase "Parse PUML → Units\n(class diagram → M3)" as UC_PUML_PARSE
+  usecase "Extract Methods\n(TypeScript AST)" as UC_METHOD_EXTRACT
+}
+
+' ═══════════════════════════════════════════
+' Package: Traceability Browser (/trace)
+' ═══════════════════════════════════════════
+package "/trace Browser (T158)" {
+  usecase "Browse Forward Chain\n(Req→Task→UC→Class→Method)" as UC_BROWSE
+  usecase "Filter by Class" as UC_FILTER_CLASS
+  usecase "Filter by UC Category\n(VerbRegistry)" as UC_FILTER_VERB
+  usecase "Expand/Collapse Depth\n(1/2/3/∞)" as UC_DEPTH
+  usecase "View DetailView\n(per chain type)" as UC_DETAIL
+}
+
+' ═══════════════════════════════════════════
+' Package: Forward-Ref Repopulation (T160)
+' ═══════════════════════════════════════════
+package "Data Repopulation (T160)" {
+  usecase "Parse requirements.md\n→ req.forwardTo.tasks[]" as UC_PARSE_REQ
+  usecase "Parse traceability-matrix.md\n→ task.forwardTo.useCases[]" as UC_PARSE_MATRIX
+  usecase "Invalidate Cache\n(fs.watch on sources)" as UC_CACHE_INVALIDATE
+}
+
+' ═══════════════════════════════════════════
+' Package: IOR Resolution (T173)
+' ═══════════════════════════════════════════
+package "IOR Resolution (T173)" {
+  usecase "Normalize IOR to UUID\n(strip ior: prefixes)" as UC_IOR_NORMALIZE
+  usecase "Resolve /scenario?ior=\n(all 4 IOR forms)" as UC_SCENARIO_RESOLVE
+}
+
+' ═══════════════════════════════════════════
+' Actor → UseCase Relationships
+' ═══════════════════════════════════════════
+
+' PO actions
+PO --> UC_REQ_CREATE
+PO --> UC_REQ_LINK
+PO --> UC_TASK_CREATE
+PO --> UC_SUBTASK_CREATE
+
+' Architect actions
+ARCH --> UC_UC_DEFINE
+ARCH --> UC_PUML_PARSE
+ARCH --> UC_M3_CREATE
+
+' Expert actions
+EXP --> UC_UNIT_CREATE
+EXP --> UC_METHOD_EXTRACT
+EXP --> UC_TASK_UC_LINK
+EXP --> UC_TASK_FILES
+EXP --> UC_IOR_NORMALIZE
+
+' Tester actions
+TEST --> UC_UC_COVERAGE
+TEST --> UC_UC_TEST
+TEST --> UC_SCENARIO_RESOLVE
+
+' Tron actions
+TRON --> UC_REQ_STATUS
+TRON --> UC_BROWSE
+TRON --> UC_FILTER_CLASS
+
+' Browser actions
+BROWSER --> UC_BROWSE
+BROWSER --> UC_FILTER_CLASS
+BROWSER --> UC_FILTER_VERB
+BROWSER --> UC_DEPTH
+BROWSER --> UC_DETAIL
+BROWSER --> UC_PARSE_REQ
+BROWSER --> UC_PARSE_MATRIX
+BROWSER --> UC_CACHE_INVALIDATE
+
+' ═══════════════════════════════════════════
+' Include/Extend Relationships
+' ═══════════════════════════════════════════
+
+UC_REQ_LINK ..> UC_TASK_CREATE : <<includes>>
+UC_TASK_UC_LINK ..> UC_UC_DEFINE : <<includes>>
+UC_UC_CLASS ..> UC_UNIT_CREATE : <<includes>>
+UC_BROWSE ..> UC_PARSE_REQ : <<includes>>
+UC_BROWSE ..> UC_PARSE_MATRIX : <<includes>>
+UC_SCENARIO_RESOLVE ..> UC_IOR_NORMALIZE : <<includes>>
+UC_DETAIL ..> UC_BROWSE : <<extends>>
+
+' ═══════════════════════════════════════════
+' Notes
+' ═══════════════════════════════════════════
+
+note right of UC_REQ_LINK
+  **T159 Rule:** Forward-only.
+  Requirement → Task.
+  Task NEVER → Requirement.
+  (scrum.pmo/standards/traceability-standard.md)
+end note
+
+note bottom of UC_IOR_NORMALIZE
+  **T173 Fix:** Normalize all IOR forms
+  to bare UUID before scenarioLoad().
+  Handles: bare UUID, ior:instance:,
+  ior:scenario:, symlink path.
+end note
+
+note right of UC_PARSE_REQ
+  **T160:** Parse forward sources only.
+  req.tasks[] from requirements.md links.
+  task.useCases[] from matrix Task column.
+  NEVER parse task→req back-refs.
+end note
+
+@enduml
